@@ -51,7 +51,11 @@ class SyncProtocol(LineReceiver):
         ))
 
     def _send(self, *args):
-        self.sendLine(' '.join((arg if isinstance(arg, basestring) else str(arg)) for arg in args))
+        self.sendLine(' '.join(
+            (arg if isinstance(arg, basestring) else str(arg))
+            for arg in args
+            if arg is not None
+        ))
 
     def _drop(self):
         self.active = False
@@ -200,7 +204,10 @@ class SyncFactory(Factory):
             position = self._find_position()
         if curtime is None:
             curtime = time.time()
-        watcher.watcher_proto.send_state(self.paused, position, (self.pause_change_by and self.pause_change_by.name) or '')
+        if self.pause_change_by:
+            watcher.watcher_proto.send_state(self.paused, position, self.pause_change_by.name)
+        else:
+            watcher.watcher_proto.send_state(self.paused, position, None)
         watcher.last_update_sent = curtime
 
     def _find_position(self):
