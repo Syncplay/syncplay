@@ -59,7 +59,7 @@ def parse_lines(leftovers, data):
     leftovers = lines.pop(-1)
     return leftovers, lines
 
-class LineProcessProtocol(ProcessProtocol)
+class LineProcessProtocol(ProcessProtocol):
     __leftover_out = ''
     __leftover_err = ''
 
