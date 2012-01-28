@@ -30,14 +30,12 @@ class MplayerProtocol(LineProcessProtocol):
         if not line.startswith('ANS_'):
             sys.stdout.write(line+'\n')
             return
-        print line
         m = RE_ANSWER.match(line)
         if not m:
             return
 
         name, value = m.group(1).lower(), m.group(2)
         handler = getattr(self, 'answer_' + name, None)
-        print value
         if handler:
             handler(value)
 
