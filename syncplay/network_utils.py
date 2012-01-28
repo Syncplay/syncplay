@@ -1,9 +1,5 @@
 #coding:utf8
 
-import re
-
-RE_NL_SPLIT = re.compile(r'(?:\r\n|\n|\r)')
-
 from twisted.internet.protocol import ProcessProtocol
 from twisted.protocols.basic import LineReceiver
 
@@ -55,21 +51,27 @@ class CommandProtocol(LineReceiver):
 
 def parse_lines(leftovers, data):
     data = leftovers+data
-    lines = RE_NL.split(data)
+    lines = data.split('\n')
     leftovers = lines.pop(-1)
     return leftovers, lines
 
 class LineProcessProtocol(ProcessProtocol):
-    __leftover_out = ''
-    __leftover_err = ''
+    _leftover_out = ''
+    _leftover_err = ''
+
+    def errLineReceived(self, line):
+        pass
+
+    def outLineReceived(self, line):
+        pass
 
     def outReceived(self, data):
-        self.__leftover_out, lines = parse_lines(__leftover_out, data)
+        self._leftover_out, lines = parse_lines(self._leftover_out, data)
         for line in lines:
             self.outLineReceived(line)
 
     def errReceived(self, data):
-        self.__leftover_err, lines = parse_lines(__leftover_err, data)
+        self._leftover_err, lines = parse_lines(self._leftover_err, data)
         for line in lines:
             self.errLineReceived(line)
 
