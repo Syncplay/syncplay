@@ -7,17 +7,17 @@ from twisted.protocols.basic import LineReceiver
 
 class SyncProtocol(LineReceiver):
     def __init__(self, factory):
-        self.factory = factory
+        self._factory = factory
 
-        self.state = 'init'
-        self.active = False
+        self._state = 'init'
+        self._active = False
 
     def connectionMade(self):
-        self.active = True
+        self._active = True
 
     def connectionLost(self, reason):
-        self.active = False
-        self.factory.remove_watcher(self)
+        self._active = False
+        self._factory.remove_watcher(self)
 
     def lineReceived(self, line):
         line = line.strip()
@@ -29,7 +29,7 @@ class SyncProtocol(LineReceiver):
             return
         command, arg = line
 
-        available_commands = self.states.get(self.state)
+        available_commands = self.states.get(self._state)
         if not available_commands:
             return # TODO log it
 
@@ -42,7 +42,6 @@ class SyncProtocol(LineReceiver):
 
         handler(arg)
 
-    # Own
 
     def _get_ident(self):
         return '|'.join((
@@ -58,7 +57,7 @@ class SyncProtocol(LineReceiver):
         ))
 
     def _drop(self):
-        self.active = False
+        self._active = False
         self.transport.loseConnection()
 
     def _drop_with_error(self, error):
@@ -66,8 +65,8 @@ class SyncProtocol(LineReceiver):
         self._drop()
 
     def _handle_init_iam(self, arg):
-        self.factory.add_watcher(self, arg.strip())
-        self.state = 'connected'
+        self._factory.add_watcher(self, arg.strip())
+        self._state = 'connected'
 
     def _handle_connected_state(self, arg):
         arg = arg.split(None, 1)
@@ -89,7 +88,7 @@ class SyncProtocol(LineReceiver):
 
         position /= 100.0
 
-        self.factory.update_state(self, paused, position)
+        self._factory.update_state(self, paused, position)
 
     def _handle_connected_seek(self, arg):
         try:
@@ -99,13 +98,18 @@ class SyncProtocol(LineReceiver):
 
         position /= 100.0
 
-        self.factory.seek(self, position)
+        self._factory.seek(self, position)
+
+    def __hash__(self):
+        return hash(self._get_ident())
+
 
     def send_state(self, paused, position, who_last_changed):
         self._send('state', ('paused' if paused else 'playing'), int(position*100), who_last_changed)
 
     def send_seek(self, position, who_seeked):
         self._send('seek', int(position*100), who_seeked)
+
 
     states = dict(
         init = dict(
@@ -117,9 +121,6 @@ class SyncProtocol(LineReceiver):
             #ping = '_handle_connected_ping',
         ),
     )
-
-    def __hash__(self):
-        return hash(self._get_ident())
 
 
 class WatcherInfo(object):
@@ -152,7 +153,6 @@ class SyncFactory(Factory):
     def buildProtocol(self, addr):
         return SyncProtocol(self)
 
-    # Own
 
     def add_watcher(self, watcher_proto, name):
         watcher = WatcherInfo(watcher_proto, name)
@@ -196,8 +196,9 @@ class SyncFactory(Factory):
                 self._send_state_to(receiver, position, curtime)
 
     def seek(self, watcher_proto, position):
-        pass
+        #TODO
         #for receiver in self.watchers.itervalues():
+        pass
 
     def _send_state_to(self, watcher, position=None, curtime=None):
         if position is None:
