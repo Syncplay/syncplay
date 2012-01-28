@@ -15,12 +15,6 @@ class SyncServerProtocol(CommandProtocol):
     def connectionLost(self, reason):
         self.factory.remove_watcher(self)
 
-    def get_ident(self):
-        return '|'.join((
-            self.transport.getPeer().host,
-            str(id(self)),
-        ))
-
     def handle_init_iam(self, arg):
         self.factory.add_watcher(self, arg.strip())
         self.change_state('connected')
@@ -58,7 +52,10 @@ class SyncServerProtocol(CommandProtocol):
         self.factory.seek(self, position)
 
     def __hash__(self):
-        return hash(self.get_ident())
+        return hash('|'.join((
+            self.transport.getPeer().host,
+            str(id(self)),
+        )))
 
 
     def send_state(self, paused, position, who_last_changed):
