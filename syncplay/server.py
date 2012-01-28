@@ -5,6 +5,8 @@ import time
 from twisted.internet.protocol import Factory
 
 from .network_utils import CommandProtocol
+from .utils import parse_state
+
 
 class SyncServerProtocol(CommandProtocol):
     def __init__(self, factory):
@@ -20,24 +22,12 @@ class SyncServerProtocol(CommandProtocol):
         self.change_state('connected')
 
     def handle_connected_state(self, arg):
-        arg = arg.split(None, 1)
-        if len(arg) != 2:
+        arg = parse_state(arg)
+        if not arg:
             self.drop_with_error('Malformed state attributes')
             return
-        state, position = arg
 
-        if not state in ('paused', 'playing'):
-            self.drop_with_error('Unknown state')
-            return
-
-        paused = state == 'paused'
-
-        try:
-            position = int(position)
-        except ValueError:
-            self.drop_with_error('Invalid position numeral')
-
-        position /= 100.0
+        paused, position, _ = arg
 
         self.factory.update_state(self, paused, position)
 
