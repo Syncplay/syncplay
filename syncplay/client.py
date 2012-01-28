@@ -122,16 +122,18 @@ class Manager(object):
     
     def update_player_position(self, value):
         self.player_position = value
-        #diff = self.get_current_global_position() - value
-        #if 0.2 <= abs(diff) <= 4:
-        #    if diff > 0:
-        #        diff -= 0.2
-        #    else:
-        #        diff += 0.2
-        #    speed = (diff/4.0) + 1
-        #    self.player.send_set_speed(speed)
-        #else:
-        #    self.player.send_set_speed(1)
+        diff = self.get_current_global_position() - value
+        if 0.2 <= abs(diff) <= 4:
+            print 'server is %0.2fs ahead of client' % diff
+            if diff > 0:
+                diff -= 0.2
+            else:
+                diff += 0.2
+            speed = (diff/4.0) + 1
+            print 'fixing at speed %0.2f' % speed
+            self.player.send_set_speed(speed)
+        else:
+            self.player.send_set_speed(1)
 
     def update_player_paused(self, value):
         old = self.player_paused
@@ -142,6 +144,7 @@ class Manager(object):
     def update_global_state(self, paused, position, name):
         self.global_paused = paused
         self.global_position = position
+        self.last_global_update = time.time()
         if self.player:
             changed = False
             if abs(self.player_position - position) > 4:
