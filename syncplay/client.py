@@ -123,13 +123,12 @@ class Manager(object):
     def update_player_position(self, value):
         self.player_position = value
         diff = self.get_current_global_position() - value
-        if 0.2 <= abs(diff) <= 4:
+        if 0.6 <= abs(diff) <= 4:
             print 'server is %0.2fs ahead of client' % diff
             if diff > 0:
-                diff -= 0.2
+                speed = 1.5
             else:
-                diff += 0.2
-            speed = (diff/4.0) + 1
+                speed = 0.75
             print 'fixing at speed %0.2f' % speed
             self.player.send_set_speed(speed)
         else:
