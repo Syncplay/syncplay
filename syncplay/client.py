@@ -114,7 +114,6 @@ class Manager(object):
 
     
     def update_player_position(self, value):
-        print value
         self.player_position = value
 
     def update_player_paused(self, value):
@@ -126,4 +125,14 @@ class Manager(object):
     def update_global_state(self, paused, position, name):
         self.global_paused = paused
         self.global_position = position
+        if self.player:
+            changed = False
+            if abs(self.player_position - position) > 4:
+                self.player.send_set_position(position)
+                changed = True
+            if self.player_paused != paused:
+                self.player.send_set_paused(paused)
+                changed = True
+            if changed:
+                self.schedule_ask_player()
 
