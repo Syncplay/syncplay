@@ -23,6 +23,9 @@ class MplayerProtocol(LineProcessProtocol):
     def processExited(self, reason):
         self.manager.player = None
 
+    def processEnded(self, reason):
+        reactor.stop()
+
     def errLineReceived(self, line):
         sys.stderr.write(line+'\n')
 
