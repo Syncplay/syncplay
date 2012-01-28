@@ -1,12 +1,19 @@
 #coding:utf8
 
 import time
+import random
 
 from twisted.internet.protocol import Factory
 
 from .network_utils import CommandProtocol
 from .utils import parse_state
 
+random.seed()
+
+CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+
+def random_chars():
+    return ''.join(random.choice(CHARS) for _ in xrange(10))
 
 class SyncServerProtocol(CommandProtocol):
     def __init__(self, factory):
@@ -41,6 +48,9 @@ class SyncServerProtocol(CommandProtocol):
 
         self.factory.seek(self, position)
 
+    def handle_connected_pong(self, arg):
+        self.factory.pong_received(self, arg)
+
     def __hash__(self):
         return hash('|'.join((
             self.transport.getPeer().host,
@@ -62,7 +72,7 @@ class SyncServerProtocol(CommandProtocol):
         connected = dict(
             state = 'handle_connected_state',
             seek = 'handle_connected_seek',
-            #ping = 'handle_connected_ping',
+            pong = 'handle_connected_pong',
         ),
     )
     initial_state = 'init'
@@ -78,7 +88,13 @@ class WatcherInfo(object):
         self.last_update = None
         self.last_update_sent = None
 
+        self.ping = None
+        self.last_ping_time = None
+        self.last_ping_value = None
+
     def update_position(self, position):
+        if self.ping is not None:
+            position += self.ping
         self.position = position
         self.max_position = max(position, self.max_position)
         self.last_update = time.time()
@@ -150,10 +166,15 @@ class SyncFactory(Factory):
             position = self.find_position()
         if curtime is None:
             curtime = time.time()
+
+        if watcher.ping is not None:
+            position += watcher.ping
+
         if self.pause_change_by:
             watcher.watcher_proto.send_state(self.paused, position, self.pause_change_by.name)
         else:
             watcher.watcher_proto.send_state(self.paused, position, None)
+
         watcher.last_update_sent = curtime
 
     def find_position(self):
@@ -167,4 +188,27 @@ class SyncFactory(Factory):
         except ValueError:
             #min() arg is an empty sequence
             return 0.0
+
+    def pong_received(self, watcher_proto, value):
+        watcher = self.watchers.get(watcher_proto)
+        if not watcher:
+            return
+
+        if watcher.last_ping_value == value:
+            time = (time.time() - watcher.last_ping_time)/2
+            if watcher.ping is None:
+                watcher.ping = time
+            else:
+                watcher.ping = watcher.ping*0.6 + time*0.4
+
+        self.schedule_send_ping(watcher)
+
+    def send_ping(self, watcher):
+        chars = random_chars()
+        watcher.last_ping_time = time.time()
+        watcher.last_ping_value = chars
+        watcher.watcher_proto.send_ping(chars)
+
+    def schedule_send_ping(self, watcher, when=1):
+        reactor.callLater(when, self.send_ping, watcher)
 

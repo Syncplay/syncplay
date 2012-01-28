@@ -32,6 +32,9 @@ class SyncClientProtocol(CommandProtocol):
 
         self.manager.update_global_state(paused, position, name)
 
+    def handle_connected_ping(self, arg):
+        self.send_message('pong', arg)
+
     def send_state(self, paused, position):
         self.send_message('state', ('paused' if paused else 'playing'), int(position*100))
 
@@ -40,7 +43,7 @@ class SyncClientProtocol(CommandProtocol):
         connected = dict(
             state = 'handle_connected_state',
             seek = 'handle_connected_seek',
-            #ping = 'handle_connected_ping',
+            ping = 'handle_connected_ping',
         ),
     )
     initial_state = 'connected'
@@ -67,9 +70,13 @@ class Manager(object):
 
         self.global_paused = True
         self.global_position = 0.0
+        self.last_global_update = 0.0
 
         self.player_paused = True
         self.player_position = 0.0
+
+    def get_current_global_position(self):
+        return self.global_position + (time.time() - self.last_global_update)
 
     def start(self):
         factory = SyncClientFactory(self)
@@ -115,6 +122,16 @@ class Manager(object):
     
     def update_player_position(self, value):
         self.player_position = value
+        #diff = self.get_current_global_position() - value
+        #if 0.2 <= abs(diff) <= 4:
+        #    if diff > 0:
+        #        diff -= 0.2
+        #    else:
+        #        diff += 0.2
+        #    speed = (diff/4.0) + 1
+        #    self.player.send_set_speed(speed)
+        #else:
+        #    self.player.send_set_speed(1)
 
     def update_player_paused(self, value):
         old = self.player_paused
