@@ -61,7 +61,7 @@ class SyncProtocol(LineReceiver):
         self._send('error', error)
         self._drop()
 
-    def _handle_init_welcome(self, arg):
+    def _handle_init_iam(self, arg):
         self.factory.add_watcher(self, arg.strip())
         self.state = 'connected'
 
@@ -105,7 +105,7 @@ class SyncProtocol(LineReceiver):
 
     states = dict(
         init = dict(
-            welcome = '_handle_init_welcome',
+            iam = '_handle_init_iam',
         ),
         connected = dict(
             state = '_handle_connected_state',
