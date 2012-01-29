@@ -208,7 +208,6 @@ class SyncFactory(Factory):
                 watcher.ping = ping
             else:
                 watcher.ping = watcher.ping*0.6 + ping*0.4
-            print watcher.name, watcher.ping
 
         self.schedule_send_ping(watcher_proto)
 

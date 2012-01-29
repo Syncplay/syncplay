@@ -119,7 +119,6 @@ class Manager(object):
             return
         self.counter += 1
         if self.protocol:
-            print 'sent', self.counter
             self.protocol.send_state(self.counter, self.player_paused, self.player_position)
         self.schedule_send_status()
 
@@ -128,12 +127,12 @@ class Manager(object):
         self.player_position = value
         diff = self.get_current_global_position() - value
         if not self.global_paused and 0.6 <= abs(diff) <= 4:
-            print 'server is %0.2fs ahead of client' % diff
+            #print 'server is %0.2fs ahead of client' % diff
             if diff > 0:
                 speed = 1.5
             else:
                 speed = 0.75
-            print 'fixing at speed %0.2f' % speed
+            #print 'fixing at speed %0.2f' % speed
             self.player.send_set_speed(speed)
         else:
             self.player.send_set_speed(1)
@@ -148,7 +147,6 @@ class Manager(object):
         self.global_paused = paused
         self.global_position = position
         self.last_global_update = time.time()
-        print 'received', counter
         if self.player and not (self.counter and counter < self.counter):
             changed = False
             if abs(self.player_position - position) > 4:
