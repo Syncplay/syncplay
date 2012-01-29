@@ -3,6 +3,7 @@
 import time
 import random
 
+from twisted.internet import reactor
 from twisted.internet.protocol import Factory
 
 from .network_utils import CommandProtocol
@@ -64,6 +65,9 @@ class SyncServerProtocol(CommandProtocol):
     def send_seek(self, position, who_seeked):
         self.send_message('seek', int(position*100), who_seeked)
 
+    def send_ping(self, value):
+        self.send_message('ping', value)
+
 
     states = dict(
         init = dict(
@@ -119,6 +123,7 @@ class SyncFactory(Factory):
         watcher = WatcherInfo(watcher_proto, name)
         self.watchers[watcher_proto] = watcher
         self.send_state_to(watcher)
+        self.schedule_send_ping(watcher_proto)
         # send info someone joined
 
     def remove_watcher(self, watcher_proto):
@@ -195,20 +200,24 @@ class SyncFactory(Factory):
             return
 
         if watcher.last_ping_value == value:
-            time = (time.time() - watcher.last_ping_time)/2
+            ping = (time.time() - watcher.last_ping_time)/2
             if watcher.ping is None:
-                watcher.ping = time
+                watcher.ping = ping
             else:
-                watcher.ping = watcher.ping*0.6 + time*0.4
+                watcher.ping = watcher.ping*0.6 + ping*0.4
+            print watcher.name, watcher.ping
 
-        self.schedule_send_ping(watcher)
+        self.schedule_send_ping(watcher_proto)
 
-    def send_ping(self, watcher):
+    def send_ping_to(self, watcher_proto):
+        watcher = self.watchers.get(watcher_proto)
+        if not watcher:
+            return
         chars = random_chars()
         watcher.last_ping_time = time.time()
         watcher.last_ping_value = chars
         watcher.watcher_proto.send_ping(chars)
 
-    def schedule_send_ping(self, watcher, when=1):
-        reactor.callLater(when, self.send_ping, watcher)
+    def schedule_send_ping(self, watcher_proto, when=1):
+        reactor.callLater(when, self.send_ping_to, watcher_proto)
 
