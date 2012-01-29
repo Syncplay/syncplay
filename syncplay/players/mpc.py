@@ -12,7 +12,58 @@ from twisted.web.iweb import IBodyProducer
 
 from ..network_utils import handle_response
 
-RE_MPC_STATUS = re.compile("^OnStatus\('(.+)', '(Paused|Playing)', (\d+), '\d{2}:\d{2}:\d{2}', \d+, '\d{2}:\d{2}:\d{2}', \d+, \d+, '.+'\)$")
+#RE_MPC_STATUS = re.compile("^OnStatus\('(.+)', '(Paused|Playing)', (\d+), '\d{2}:\d{2}:\d{2}', \d+, '\d{2}:\d{2}:\d{2}', \d+, \d+, '.+'\)$")
+RE_MPC_STATUS = re.compile(r"^OnStatus\('((?:[^']*(?:\\\\)*\\')*[^']*)', '(.+?)', (\d+),")
+
+PLAYING_STATUSES = {
+    'Playing': False,
+    'Reproduzindo': False,
+    'Прайграванне': False,
+    'Reproduint': False,
+    'Přehrávání': False,
+    'Spiele ab': False,
+    'Reproduciendo': False,
+    'Lecture': False,
+    'מנגן': False,
+    'Lejátszás': False,
+    'Վերարատադրվում է': False,
+    'Riproduzione': False,
+    '再生中': False,
+    '재생중': False,
+    'Afspelen': False,
+    'Odtwarzanie...': False,
+    'Воспроизведение': False,
+    '正在播放': False,
+    'Prehráva sa': False,
+    'Spelar': False,
+    '播放中': False,
+    'Oynatılıyor': False,
+    'Відтворення': False,
+
+    'Paused': True,
+    'Pausado': True,
+    'Паўза': True,
+    'Pausat': True,
+    'Pozastaveno': True,
+    'Angehalten': True,
+    'Pausado': True,
+    'En pause': True,
+    'מושהה': True,
+    'Szünet': True,
+    'Դադար': True,
+    'In pausa': True,
+    '一時停止': True,
+    '일시정지': True,
+    'Gepauzeerd': True,
+    'Wstrzymano': True,
+    'Пауза': True,
+    '已暂停': True,
+    'Pozastavené': True,
+    'Pausad': True,
+    '已暫停': True,
+    'Duraklatıldı': True,
+    'Пауза': True,
+}
  
 class MPCHCPlayer(object):
     def __init__(self, manager):
@@ -59,8 +110,11 @@ class MPCHCPlayer(object):
             if not m:
                 return
             fileName, playerStatus, currentTime = m.group(1), m.group(2), m.group(3)
+            playerStatus = PLAYING_STATUSES.get(playerStatus)
+            if playerStatus is None:
+                return
             if(propertyName == "Paused"):
-                self.manager.update_player_paused(True if playerStatus=="Paused" else False)
+                self.manager.update_player_paused(playerStatus)
             if(propertyName == "Position"):
                 self.manager.update_player_position(float(currentTime)/1000.0)
 				
