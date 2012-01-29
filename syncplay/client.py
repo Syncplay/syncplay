@@ -73,12 +73,11 @@ class Manager(object):
         self.last_global_update = 0.0
 
         self.player_paused = True
+        self.player_paused_at = 0.0
         self.player_position = 0.0
+        self.last_player_update = 0.0
 
         self.counter = 0
-
-    def get_current_global_position(self):
-        return self.global_position + (time.time() - self.last_global_update)
 
     def start(self):
         factory = SyncClientFactory(self)
@@ -124,8 +123,10 @@ class Manager(object):
 
     
     def update_player_position(self, value):
+        curtime = time.time()
         self.player_position = value
-        diff = self.get_current_global_position() - value
+        self.last_player_update = curtime
+        diff = self.global_position + (curtime - self.last_global_update) - value
         if not self.global_paused and 0.6 <= abs(diff) <= 4:
             #print 'server is %0.2fs ahead of client' % diff
             if diff > 0:
@@ -137,24 +138,40 @@ class Manager(object):
         else:
             self.player.send_set_speed(1)
 
+        if not self.player_paused and self.player_paused_at is not None and value >= self.player_paused_at:
+            self.player.send_set_paused(True)
+            self.schedule_ask_player()
+
+
     def update_player_paused(self, value):
         old = self.player_paused
         self.player_paused = value
+        if not value:
+            self.player_paused_at = None
         if old != value and self.global_paused != value:
             self.send_status()
 
     def update_global_state(self, counter, paused, position, name):
+        curtime = time.time()
         self.global_paused = paused
         self.global_position = position
-        self.last_global_update = time.time()
+        self.last_global_update = curtime
         if self.player and not (self.counter and counter < self.counter):
             changed = False
-            if abs(self.player_position - position) > 4:
+            diff = position - self.player_position + (curtime - self.last_player_update)
+            if abs(diff) > 4:
                 self.player.send_set_position(position)
                 changed = True
-            if self.player_paused != paused:
-                self.player.send_set_paused(paused)
+            if self.player_paused and not paused:
+                self.player_paused_at = None
+                self.player.send_set_paused(False)
                 changed = True
+            elif paused and not self.player_paused:
+                self.player_paused_at = position
+                if diff > 0:
+                    self.player.send_set_paused(True)
+                    changed = True
+
             if changed:
                 self.schedule_ask_player()
 
