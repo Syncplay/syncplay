@@ -14,9 +14,10 @@ from ..network_utils import handle_response
 
 RE_MPC_STATUS = re.compile("^OnStatus\('(.+)', '(Paused|Playing)', (\d+), '\d{2}:\d{2}:\d{2}', \d+, '\d{2}:\d{2}:\d{2}', \d+, \d+, '.+'\)$")
  
-class MPCHCProtocol(object):
+class MPCHCPlayer(object):
     def __init__(self, manager):
         self.manager = manager
+        manager.player = self
     
     def send_set_paused(self, value):
         self.set_property('pause', value)
