@@ -98,13 +98,6 @@ class WatcherInfo(object):
 
         self.counter = 0
 
-    def update_position(self, position):
-        if self.ping is not None:
-            position += self.ping
-        self.position = position
-        self.max_position = max(position, self.max_position)
-        self.last_update = time.time()
-
 
 class SyncFactory(Factory):
     def __init__(self, min_pause_lock = 3, update_time_limit = 1):
@@ -139,8 +132,13 @@ class SyncFactory(Factory):
         if not watcher:
             return
 
-        watcher.update_position(position)
+        if not paused and watcher.ping is not None:
+            position += watcher.ping
+        watcher.position = position
+        watcher.max_position = max(position, watcher.max_position)
+        watcher.last_update = time.time()
         watcher.counter = counter
+
         pause_changed = paused != self.paused
 
         curtime = time.time()
@@ -175,7 +173,7 @@ class SyncFactory(Factory):
         if curtime is None:
             curtime = time.time()
 
-        if watcher.ping is not None:
+        if not self.paused and watcher.ping is not None:
             position += watcher.ping
 
         if self.pause_change_by:
