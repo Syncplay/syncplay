@@ -1,6 +1,14 @@
 #coding:utf8
 
-from twisted.internet.protocol import ProcessProtocol
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
+from twisted.internet.protocol import (
+    ProcessProtocol,
+    Protocol,
+)
 from twisted.protocols.basic import LineReceiver
 
 class CommandProtocol(LineReceiver):
@@ -78,4 +86,29 @@ class LineProcessProtocol(ProcessProtocol):
     def writeLines(self, *lines):
         for line in lines:
             self.transport.write(line+'\n')
+
+ 
+class BodyGetter(Protocol):
+    def __init__(self, length, callback):
+        self.length = length
+        self.callback = callback
+        self.body = StringIO()
+ 
+    def dataReceived(self, data):
+        if self.length > 0:
+            data = data[:self.length]
+            self.body.write(data)
+            self.length -= len(length)
+ 
+    def connectionLost(self, reason):
+        self.callback(self.body.getvalue())
+ 
+def handle_response(callback):
+    def defer_callback(response):
+        status = response.code
+        headers = response.headers.getAllRawHeaders()
+        def body_callback(body):
+            callback(status, headers, body)
+        response.deliverBody(BodyGetter(response.length, body_callback))
+    return defer_callback
 
