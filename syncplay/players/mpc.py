@@ -56,6 +56,8 @@ class MPCHCPlayer(object):
             
         def cbRequest(status, headers, body):
             m = RE_MPC_STATUS.match(body)
+            if not m:
+                return
             fileName, playerStatus, currentTime = m.group(1), m.group(2), m.group(3)
             if(propertyName == "Paused"):
                 self.manager.update_player_paused(True if playerStatus=="Paused" else False)
