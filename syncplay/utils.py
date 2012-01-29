@@ -8,14 +8,19 @@ def split_args(args, number):
     return args.split(None, number-1)
 
 def parse_state(args):
-    args = split_args(args, 3)
+    args = split_args(args, 4)
     l = len(args)
-    if l == 2:
-        state, position = args
+    if l == 3:
+        counter, state, position = args
         who_changed_state = None
-    elif l == 3:
-        state, position, who_changed_state = args
+    elif l == 4:
+        counter, state, position, who_changed_state = args
     else:
+        return
+
+    try:
+        counter = int(counter)
+    except ValueError:
         return
 
     if not state in ('paused', 'playing'):
@@ -30,7 +35,7 @@ def parse_state(args):
 
     position /= 100.0
 
-    return paused, position, who_changed_state
+    return counter, paused, position, who_changed_state
 
 def find_exec_path(name):
     if os.access(name, os.X_OK):

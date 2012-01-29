@@ -28,15 +28,15 @@ class SyncClientProtocol(CommandProtocol):
             self.drop_with_error('Malformed state attributes')
             return
 
-        paused, position, name = arg
+        counter, paused, position, name = arg
 
-        self.manager.update_global_state(paused, position, name)
+        self.manager.update_global_state(counter, paused, position, name)
 
     def handle_connected_ping(self, arg):
         self.send_message('pong', arg)
 
-    def send_state(self, paused, position):
-        self.send_message('state', ('paused' if paused else 'playing'), int(position*100))
+    def send_state(self, counter, paused, position):
+        self.send_message('state', counter, ('paused' if paused else 'playing'), int(position*100))
 
 
     states = dict(
@@ -74,6 +74,8 @@ class Manager(object):
 
         self.player_paused = True
         self.player_position = 0.0
+
+        self.counter = 0
 
     def get_current_global_position(self):
         return self.global_position + (time.time() - self.last_global_update)
@@ -115,8 +117,10 @@ class Manager(object):
     def send_status(self):
         if not self.running:
             return
+        self.counter += 1
         if self.protocol:
-            self.protocol.send_state(self.player_paused, self.player_position)
+            print 'sent', self.counter
+            self.protocol.send_state(self.counter, self.player_paused, self.player_position)
         self.schedule_send_status()
 
     
@@ -140,11 +144,12 @@ class Manager(object):
         if old != value and self.global_paused != value:
             self.send_status()
 
-    def update_global_state(self, paused, position, name):
+    def update_global_state(self, counter, paused, position, name):
         self.global_paused = paused
         self.global_position = position
         self.last_global_update = time.time()
-        if self.player:
+        print 'received', counter
+        if self.player and not (self.counter and counter < self.counter):
             changed = False
             if abs(self.player_position - position) > 4:
                 self.player.send_set_position(position)

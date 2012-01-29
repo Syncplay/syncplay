@@ -35,9 +35,9 @@ class SyncServerProtocol(CommandProtocol):
             self.drop_with_error('Malformed state attributes')
             return
 
-        paused, position, _ = arg
+        counter, paused, position, _ = arg
 
-        self.factory.update_state(self, paused, position)
+        self.factory.update_state(self, counter, paused, position)
 
     def handle_connected_seek(self, arg):
         try:
@@ -59,8 +59,8 @@ class SyncServerProtocol(CommandProtocol):
         )))
 
 
-    def send_state(self, paused, position, who_last_changed):
-        self.send_message('state', ('paused' if paused else 'playing'), int(position*100), who_last_changed)
+    def send_state(self, counter, paused, position, who_last_changed):
+        self.send_message('state', counter, ('paused' if paused else 'playing'), int(position*100), who_last_changed)
 
     def send_seek(self, position, who_seeked):
         self.send_message('seek', int(position*100), who_seeked)
@@ -95,6 +95,8 @@ class WatcherInfo(object):
         self.ping = None
         self.last_ping_time = None
         self.last_ping_value = None
+
+        self.counter = 0
 
     def update_position(self, position):
         if self.ping is not None:
@@ -132,12 +134,13 @@ class SyncFactory(Factory):
             self.pause_change_by = None
         # send info someone quit
 
-    def update_state(self, watcher_proto, paused, position):
+    def update_state(self, watcher_proto, counter, paused, position):
         watcher = self.watchers.get(watcher_proto)
         if not watcher:
             return
 
         watcher.update_position(position)
+        watcher.counter = counter
         pause_changed = paused != self.paused
 
         curtime = time.time()
@@ -176,9 +179,9 @@ class SyncFactory(Factory):
             position += watcher.ping
 
         if self.pause_change_by:
-            watcher.watcher_proto.send_state(self.paused, position, self.pause_change_by.name)
+            watcher.watcher_proto.send_state(watcher.counter, self.paused, position, self.pause_change_by.name)
         else:
-            watcher.watcher_proto.send_state(self.paused, position, None)
+            watcher.watcher_proto.send_state(watcher.counter, self.paused, position, None)
 
         watcher.last_update_sent = curtime
 
