@@ -76,6 +76,7 @@ class Manager(object):
         self.player_paused_at = 0.0
         self.player_position = 0.0
         self.last_player_update = 0.0
+        self.player_speed_fix = False
 
         self.counter = 0
 
@@ -134,9 +135,12 @@ class Manager(object):
             else:
                 speed = 0.75
             #print 'fixing at speed %0.2f' % speed
-            self.player.send_set_speed(speed)
-        else:
+            if not self.player_speed_fix:
+                self.player.send_set_speed(speed)
+                self.player_speed_fix = True
+        elif self.player_speed_fix:
             self.player.send_set_speed(1)
+            self.player_speed_fix = False
 
         if not self.player_paused and self.player_paused_at is not None and value >= self.player_paused_at:
             self.player.send_set_paused(True)
