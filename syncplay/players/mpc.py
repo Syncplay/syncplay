@@ -20,16 +20,16 @@ class MPCHCPlayer(object):
         manager.player = self
     
     def send_set_paused(self, value):
-        self.set_property('pause', value)
+        self.set_property('Paused', value)
 
     def send_get_paused(self):
-        self.get_property('pause')
+        self.get_property('Paused')
         
     def send_set_position(self, value):
-        self.set_property('time_pos', '%d'%(value*1000))
+        self.set_property('Position', '%d'%(value*1000))
 
     def send_get_position(self):
-        self.get_property('time_pos')
+        self.get_property('Position')
 
     def send_set_speed(self, value):
         pass
@@ -39,8 +39,8 @@ class MPCHCPlayer(object):
     
     def set_property(self, name, value):
         requestData = {
-        'paused': lambda value: 'wm_command=888&null=0' if value else 'wm_command=887&null=0',
-        'time_pos': lambda value: "wm_command=-1&position="+  '%d.%d.%d.%d' % ((int(value)/3600000), (int(value)/60000)%60, (int(value)/1000)%60, int(value)%1000)
+        'Paused': lambda value: 'wm_command=888&null=0' if value else 'wm_command=887&null=0',
+        'Position': lambda value: "wm_command=-1&position="+  '%d.%d.%d.%d' % ((int(value)/3600000), (int(value)/60000)%60, (int(value)/1000)%60, int(value)%1000)
         }[name](value)
 
         body = StringBodyProducer(requestData)
@@ -57,9 +57,9 @@ class MPCHCPlayer(object):
         def cbRequest(status, headers, body):
             m = RE_MPC_STATUS.match(body)
             fileName, playerStatus, currentTime = m.group(1), m.group(2), m.group(3)
-            if(propertyName == "paused"):
+            if(propertyName == "Paused"):
                 self.manager.update_player_paused(True if playerStatus=="Paused" else False)
-            if(propertyName == "time_pos"):
+            if(propertyName == "Position"):
                 self.manager.update_player_position(float(currentTime)/1000.0)
 				
         request.addCallback(handle_response(cbRequest))
