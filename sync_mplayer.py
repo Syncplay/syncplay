@@ -16,9 +16,8 @@ if __name__ == '__main__':
         port = int(port)
     else:
         port = 8999
-
-    args.append('-slave')
-    args.append('-quiet')
+    
+    args.extend(('-slave', '-msglevel', 'all=1'))
 
     manager = client.Manager(host, port, name)
     manager.start()

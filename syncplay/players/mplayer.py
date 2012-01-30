@@ -2,6 +2,7 @@
 
 import re
 import sys
+from collections import deque
 
 from twisted.internet import reactor
 
@@ -14,24 +15,34 @@ RE_ANSWER = re.compile('^ANS_([a-zA-Z_]+)=(.+)$')
 class MplayerProtocol(LineProcessProtocol):
     def __init__(self, manager):
         self.manager = manager
+        self.ignore_end = False
+        self.error_lines = deque(maxlen=50)
+        self.filename = None # To be moved to Manager
 
     def connectionMade(self):
-        self.manager.player = self
-        self.send_set_paused(True)
-        self.send_set_position(0)
-
-    def processExited(self, reason):
-        self.manager.player = None
+        reactor.callLater(0.1, self.prepare_player)
 
     def processEnded(self, reason):
+        self.manager.player = None
+        if not self.ignore_end:
+            if reason.value.signal is not None:
+                print 'Mplayer interrupted by signal %d.' % reason.value.signal
+            elif reason.value.exitCode is not None:
+                print 'Mplayer quit with exit code %d.' % reason.value.exitCode
+            else:
+                print 'Mplayer quit unexpectedly.'
+            if self.error_lines:
+                print 'Up to 50 last lines from its error output below:'
+                for line in self.error_lines:
+                    print line
         reactor.stop()
 
     def errLineReceived(self, line):
-        sys.stderr.write(line+'\n')
+        if line:
+            self.error_lines.append(line)
 
     def outLineReceived(self, line):
         if not line.startswith('ANS_'):
-            sys.stdout.write(line+'\n')
             return
         m = RE_ANSWER.match(line)
         if not m:
@@ -43,11 +54,25 @@ class MplayerProtocol(LineProcessProtocol):
             handler(value)
 
     
+    def prepare_player(self):
+        self.send_set_paused(True)
+        self.send_set_position(0)
+        self.send_get_filename()
+        self.manager.player = self
+
+
     def set_property(self, name, value):
         self.writeLines('%s %s %s' % ('set_property', name, value))
 
     def get_property(self, name):
         self.writeLines('%s %s' % ('get_property', name))
+
+
+    def send_get_filename(self):
+        self.get_property('filename')
+
+    def answer_filename(self, value):
+        self.filename = value
 
 
     def send_set_paused(self, value):
@@ -85,18 +110,8 @@ class MplayerProtocol(LineProcessProtocol):
 
     
     def drop(self):
+        self.ignore_end = True
         self.transport.loseConnection()
-        reactor.callLater(1, self.graceful_kill)
-
-    def gracefull_kill(self):
-        if self.transport.pid:
-            self.transport.signalProcess('TERM')
-            reactor.callLater(2, self.try_kill)
-
-    def kill(self):
-        if self.transport.pid:
-            self.transport.signalProcess('KILL')
-
 
 def run_mplayer(manager, mplayer_path, args):
     exec_path = find_exec_path(mplayer_path)
