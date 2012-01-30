@@ -75,7 +75,7 @@ class Manager(object):
         self.player_paused = True
         self.player_paused_at = 0.0
         self.player_position = 0.0
-        self.last_player_update = 0.0
+        self.last_player_update = None
         self.player_speed_fix = False
 
         self.counter = 0
@@ -162,7 +162,9 @@ class Manager(object):
         self.last_global_update = curtime
         if self.player and not (self.counter and counter < self.counter):
             changed = False
-            diff = position - self.player_position + (curtime - self.last_player_update)
+            diff = self.player_position - position
+            if self.last_player_update is not None:
+                diff += curtime - self.last_player_update
             if abs(diff) > 4:
                 self.player.send_set_position(position)
                 changed = True
@@ -172,7 +174,7 @@ class Manager(object):
                 changed = True
             elif paused and not self.player_paused:
                 self.player_paused_at = position
-                if diff > 0:
+                if diff < 0:
                     self.player.send_set_paused(True)
                     changed = True
 
