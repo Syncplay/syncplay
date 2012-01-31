@@ -19,8 +19,6 @@ if __name__ == '__main__':
     
     args.extend(('-slave', '-msglevel', 'all=1:global=4'))
 
-    manager = client.Manager(host, port, name)
+    manager = client.Manager(host, port, name, lambda: mplayer.run_mplayer(manager, 'mplayer', args))
     manager.start()
-    mplayer.run_mplayer(manager, 'mplayer', args)
-    reactor.run()
 

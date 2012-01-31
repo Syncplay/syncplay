@@ -3,7 +3,7 @@
 import time
 
 from twisted.internet import reactor
-from twisted.internet.protocol import ReconnectingClientFactory
+from twisted.internet.protocol import ClientFactory
 
 from .network_utils import CommandProtocol
 from .utils import parse_state
@@ -16,8 +16,8 @@ class SyncClientProtocol(CommandProtocol):
         self.manager = manager
 
     def connectionMade(self):
-        self.manager.protocol = self
         self.send_message('iam', self.manager.name)
+        self.manager.init_protocol(self)
 
     def connectionLost(self, reason):
         self.manager.protocol = None
@@ -48,51 +48,89 @@ class SyncClientProtocol(CommandProtocol):
     )
     initial_state = 'connected'
 
-class SyncClientFactory(ReconnectingClientFactory):
+class SyncClientFactory(ClientFactory):
     def __init__(self, manager):
         self.manager = manager
+        self.retry = True
 
     def buildProtocol(self, addr):
         return SyncClientProtocol(self.manager)
 
+    def startedConnecting(self, connector):
+        destination = connector.getDestination()
+        print 'Connecting to %s:%d' % (destination.host, destination.port)
+
+    def clientConnectionLost(self, connector, reason):
+        if self.retry:
+            print 'Connection lost, reconnecting'
+            connector.connect()
+        else:
+            print 'Disconnected'
+
+    def clientConnectionFailed(self, connector, reason):
+        print 'Connection failed'
+        self.manager.stop()
+
+    def stop_retrying(self):
+        self.retry = False
+
 
 class Manager(object):
-    def __init__(self, host, port, name):
+    def __init__(self, host, port, name, make_player):
         self.host = host
         self.port = port
         self.name = name
 
-        self.player = None
+        self.protocol_factory = None
         self.protocol = None
-
-        self.ask_delayed = None
         self.send_delayed = None
-
         self.global_paused = True
         self.global_position = 0.0
-        self.last_global_update = 0.0
+        self.last_global_update = None
+        self.counter = 0
 
+        self.player = None
+        self.ask_delayed = None
         self.player_paused = True
         self.player_paused_at = 0.0
         self.player_position = 0.0
         self.last_player_update = None
         self.player_speed_fix = False
 
-        self.counter = 0
+        self.make_player = make_player
+        self.running = False
+
 
     def start(self):
-        factory = SyncClientFactory(self)
-        reactor.connectTCP(self.host, self.port, factory)
+        if self.running:
+            return
+        self.protocol_factory = SyncClientFactory(self)
+        reactor.connectTCP(self.host, self.port, self.protocol_factory)
         self.running = True
-        self.schedule_ask_player()
-        self.schedule_send_status()
+        reactor.run()
 
     def stop(self):
+        if not self.running:
+            return
+        self.running = False
+        if self.protocol_factory:
+            self.protocol_factory.stop_retrying()
         if self.protocol:
             self.protocol.drop()
         if self.player:
             self.player.drop()
-        self.running = False
+        reactor.callLater(0.1, reactor.stop)
+
+
+    def init_player(self, player):
+        self.player = player
+        self.schedule_ask_player()
+
+    def init_protocol(self, protocol):
+        self.protocol = protocol
+        self.schedule_send_status()
+        self.make_player()
+
 
     def schedule_ask_player(self, when=0.2):
         if self.ask_delayed and self.ask_delayed.active():
@@ -128,6 +166,7 @@ class Manager(object):
         self.player_position = value
         self.last_player_update = curtime
         diff = self.global_position + (curtime - self.last_global_update) - value
+        #if self
         if not self.global_paused and 0.6 <= abs(diff) <= 4:
             #print 'server is %0.2fs ahead of client' % diff
             if diff > 0:

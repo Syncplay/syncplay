@@ -35,14 +35,14 @@ class MplayerProtocol(LineProcessProtocol):
                 print 'Up to 50 last lines from its error output below:'
                 for line in self.error_lines:
                     print line
-        reactor.stop()
+        self.manager.stop()
 
     def errLineReceived(self, line):
         if line:
             self.error_lines.append(line)
 
     def outLineReceived(self, line):
-        if not line.startswith('ANS_'):
+        if not (line and line.startswith('ANS_')):
             return
         m = RE_ANSWER.match(line)
         if not m:
@@ -58,7 +58,7 @@ class MplayerProtocol(LineProcessProtocol):
         self.send_set_paused(True)
         self.send_set_position(0)
         self.send_get_filename()
-        self.manager.player = self
+        self.manager.init_player(self)
 
 
     def set_property(self, name, value):
@@ -111,7 +111,8 @@ class MplayerProtocol(LineProcessProtocol):
     
     def drop(self):
         self.ignore_end = True
-        self.transport.loseConnection()
+        self.writeLines('quit')
+ 
 
 def run_mplayer(manager, mplayer_path, args):
     exec_path = find_exec_path(mplayer_path)
