@@ -122,8 +122,28 @@ class Manager(object):
         reactor.callLater(0.1, reactor.stop)
 
 
+    def get_player_position(self):
+        if not self.last_player_update:
+            return None
+        position = self.player_position
+        if not self.player_paused:
+            position += time.time() - self.last_player_update
+        return position
+
+    def get_global_position(self):
+        if not self.last_global_update:
+            return None
+        position = self.global_position
+        if not self.global_paused:
+            position += time.time() - self.last_global_update
+        return position
+
+
     def init_player(self, player):
         self.player = player
+        if self.last_global_update:
+            self.player.send_set_position(self.get_global_position())
+            self.player.send_set_paused(self.global_paused)
         self.schedule_ask_player()
 
     def init_protocol(self, protocol):
@@ -146,6 +166,7 @@ class Manager(object):
             self.player.send_get_paused()
         self.schedule_ask_player()
 
+
     def schedule_send_status(self, when=1):
         if self.send_delayed and self.send_delayed.active():
             self.send_delayed.reset(when)
@@ -162,24 +183,24 @@ class Manager(object):
 
     
     def update_player_position(self, value):
-        curtime = time.time()
         self.player_position = value
-        self.last_player_update = curtime
-        diff = self.global_position + (curtime - self.last_global_update) - value
-        #if self
-        if not self.global_paused and 0.6 <= abs(diff) <= 4:
-            #print 'server is %0.2fs ahead of client' % diff
-            if diff > 0:
-                speed = 1.5
-            else:
-                speed = 0.75
-            #print 'fixing at speed %0.2f' % speed
-            if not self.player_speed_fix:
-                self.player.send_set_speed(speed)
-                self.player_speed_fix = True
-        elif self.player_speed_fix:
-            self.player.send_set_speed(1)
-            self.player_speed_fix = False
+        self.last_player_update = time.time()
+
+        if not self.global_paused:
+            diff = self.get_global_position() - value
+            if 0.6 <= abs(diff) <= 4:
+                #print 'server is %0.2fs ahead of client' % diff
+                if diff > 0:
+                    speed = 1.5
+                else:
+                    speed = 0.75
+                #print 'fixing at speed %0.2f' % speed
+                if not self.player_speed_fix:
+                    self.player.send_set_speed(speed)
+                    self.player_speed_fix = True
+            elif self.player_speed_fix:
+                self.player.send_set_speed(1)
+                self.player_speed_fix = False
 
         if not self.player_paused and self.player_paused_at is not None and value >= self.player_paused_at:
             self.player.send_set_paused(True)
@@ -198,25 +219,26 @@ class Manager(object):
         curtime = time.time()
         self.global_paused = paused
         self.global_position = position
+        updated_before = bool(self.last_global_update)
         self.last_global_update = curtime
-        if self.player and not (self.counter and counter < self.counter):
-            changed = False
-            diff = self.player_position - position
+
+        if not self.player:
+            return
+
+        if not updated_before:
+            self.player.send_set_position(position)
+            self.player.send_set_paused(paused)
+        elif not (self.counter and counter < self.counter):
+            diff = self.get_player_position() - position
             if self.last_player_update is not None:
                 diff += curtime - self.last_player_update
             if abs(diff) > 4:
                 self.player.send_set_position(position)
-                changed = True
             if self.player_paused and not paused:
                 self.player_paused_at = None
                 self.player.send_set_paused(False)
-                changed = True
             elif paused and not self.player_paused:
                 self.player_paused_at = position
                 if diff < 0:
                     self.player.send_set_paused(True)
-                    changed = True
-
-            if changed:
-                self.schedule_ask_player()
 
