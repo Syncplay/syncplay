@@ -5,11 +5,15 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+from twisted.internet.defer import succeed
 from twisted.internet.protocol import (
     ProcessProtocol,
     Protocol,
 )
 from twisted.protocols.basic import LineReceiver
+from twisted.web.iweb import IBodyProducer
+
+from zope.interface import implements
 
 class CommandProtocol(LineReceiver):
     states = None
@@ -87,22 +91,42 @@ class LineProcessProtocol(ProcessProtocol):
         for line in lines:
             self.transport.write(line+'\n')
 
- 
+
+class BodyProducer(object):
+    implements(IBodyProducer)
+
+    def __init__(self, body):
+        self.body = body
+        self.length = len(body)
+
+    def startProducing(self, consumer):
+        consumer.write(self.body)
+        return succeed(None)
+
+    def pauseProducing(self):
+        pass
+
+    def stopProducing(self):
+        pass
+
 class BodyGetter(Protocol):
     def __init__(self, length, callback):
         self.length = length
         self.callback = callback
         self.body = StringIO()
- 
+
     def dataReceived(self, data):
         if self.length > 0:
             data = data[:self.length]
             self.body.write(data)
             self.length -= len(length)
- 
+
     def connectionLost(self, reason):
         self.callback(self.body.getvalue())
- 
+
+def null_response_handler(status, headers, body):
+    pass
+
 def handle_response(callback):
     def defer_callback(response):
         status = response.code

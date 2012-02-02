@@ -17,8 +17,6 @@ if __name__ == '__main__':
     else:
         port = 8999
 
-    manager = client.Manager(host, port, name)
+    manager = client.Manager(host, port, name, lambda: mpc.MPCHCPlayer(manager))
     manager.start()
-    player = mpc.MPCHCPlayer(manager)
-    reactor.run()
 
