@@ -13,11 +13,14 @@ RE_ANSWER = re.compile('^ANS_([a-zA-Z_]+)=(.+)$')
 
 
 class MplayerProtocol(LineProcessProtocol):
+    speed_supported = True
+
     def __init__(self, manager):
         self.manager = manager
         self.ignore_end = False
         self.error_lines = deque(maxlen=50)
         self.filename = None # To be moved to Manager
+        self.tmp_paused = None
 
     def connectionMade(self):
         reactor.callLater(0.1, self.prepare_player)
@@ -49,64 +52,68 @@ class MplayerProtocol(LineProcessProtocol):
             return
 
         name, value = m.group(1).lower(), m.group(2)
-        handler = getattr(self, 'answer_' + name, None)
+        handler = getattr(self, 'mplayer_answer_' + name, None)
         if handler:
             handler(value)
 
     
     def prepare_player(self):
-        self.send_set_paused(True)
-        self.send_set_position(0)
+        self.set_paused(True)
+        self.set_position(0)
         self.send_get_filename()
         self.manager.init_player(self)
 
+    def ask_for_status(self):
+        self.send_get_paused()
+        self.send_get_position()
 
-    def set_property(self, name, value):
+
+    def send_set_property(self, name, value):
         self.writeLines('%s %s %s' % ('set_property', name, value))
 
-    def get_property(self, name):
+    def send_get_property(self, name):
         self.writeLines('%s %s' % ('get_property', name))
 
 
     def send_get_filename(self):
-        self.get_property('filename')
+        self.send_get_property('filename')
 
-    def answer_filename(self, value):
+    def mplayer_answer_filename(self, value):
         self.filename = value
 
 
-    def send_set_paused(self, value):
+    def set_paused(self, value):
         # docs say i can't set "pause" property, but it works...
-        self.set_property('pause', 'yes' if value else 'no')
+        self.send_set_property('pause', 'yes' if value else 'no')
 
     def send_get_paused(self):
-        self.get_property('pause')
+        self.send_get_property('pause')
 
-    def answer_pause(self, value):
+    def mplayer_answer_pause(self, value):
         value = value == 'yes'
-        self.manager.update_player_paused(value)
+        self.tmp_paused = value
 
 
-    def send_set_position(self, value):
-        self.set_property('time_pos', '%0.2f'%value)
+    def set_position(self, value):
+        self.send_set_property('time_pos', '%0.2f'%value)
 
     def send_get_position(self):
-        self.get_property('time_pos')
+        self.send_get_property('time_pos')
 
-    def answer_time_pos(self, value):
+    def mplayer_answer_time_pos(self, value):
         value = float(value)
-        self.manager.update_player_position(value)
+        self.manager.update_player_status(self.tmp_paused, value)
 
 
-    def send_set_speed(self, value):
-        self.set_property('speed', '%0.2f'%value)
+    def set_speed(self, value):
+        self.send_set_property('speed', '%0.2f'%value)
 
-    def send_get_speed(self):
-        self.get_property('speed')
+    #def send_get_speed(self):
+    #    self.send_get_property('speed')
 
-    def answer_speed(self, value):
-        value = float(value)
-        self.manager.update_player_speed(value)
+    #def mplayer_answer_speed(self, value):
+    #    value = float(value)
+    #    self.manager.update_player_speed(value)
 
     
     def drop(self):

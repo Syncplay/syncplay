@@ -142,8 +142,8 @@ class Manager(object):
     def init_player(self, player):
         self.player = player
         if self.last_global_update:
-            self.player.send_set_position(self.get_global_position())
-            self.player.send_set_paused(self.global_paused)
+            self.player.set_position(self.get_global_position())
+            self.player.set_paused(self.global_paused)
         self.schedule_ask_player()
 
     def init_protocol(self, protocol):
@@ -162,8 +162,7 @@ class Manager(object):
         if not self.running:
             return
         if self.player:
-            self.player.send_get_position()
-            self.player.send_get_paused()
+            self.player.ask_for_status()
         self.schedule_ask_player()
 
 
@@ -182,12 +181,19 @@ class Manager(object):
         self.schedule_send_status()
 
     
-    def update_player_position(self, value):
-        self.player_position = value
+    def update_player_status(self, paused, position):
+        old_paused = self.player_paused
+        self.player_paused = paused
+        self.player_position = position
         self.last_player_update = time.time()
 
+        if old_paused and not paused:
+            self.player_paused_at = None
+        if old_paused != paused and self.global_paused != paused:
+            self.send_status()
+
         if not self.global_paused:
-            diff = self.get_global_position() - value
+            diff = self.get_global_position() - position
             if 0.6 <= abs(diff) <= 4:
                 #print 'server is %0.2fs ahead of client' % diff
                 if diff > 0:
@@ -196,24 +202,15 @@ class Manager(object):
                     speed = 0.75
                 #print 'fixing at speed %0.2f' % speed
                 if not self.player_speed_fix:
-                    self.player.send_set_speed(speed)
+                    self.player.set_speed(speed)
                     self.player_speed_fix = True
             elif self.player_speed_fix:
-                self.player.send_set_speed(1)
+                self.player.set_speed(1)
                 self.player_speed_fix = False
 
-        if not self.player_paused and self.player_paused_at is not None and value >= self.player_paused_at:
-            self.player.send_set_paused(True)
-            self.schedule_ask_player()
-
-
-    def update_player_paused(self, value):
-        old = self.player_paused
-        self.player_paused = value
-        if not value:
-            self.player_paused_at = None
-        if old != value and self.global_paused != value:
-            self.send_status()
+        if not paused and self.player_paused_at is not None and position >= self.player_paused_at:
+            #print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
+            self.player.set_paused(True)
 
     def update_global_state(self, counter, paused, position, name):
         curtime = time.time()
@@ -226,19 +223,21 @@ class Manager(object):
             return
 
         if not updated_before:
-            self.player.send_set_position(position)
-            self.player.send_set_paused(paused)
+            self.player.set_position(position)
+            self.player.set_paused(paused)
         elif not (self.counter and counter < self.counter):
             diff = self.get_player_position() - position
             if self.last_player_update is not None:
                 diff += curtime - self.last_player_update
             if abs(diff) > 4:
-                self.player.send_set_position(position)
+                self.player.set_position(position)
             if self.player_paused and not paused:
                 self.player_paused_at = None
-                self.player.send_set_paused(False)
+                self.player.set_paused(False)
             elif paused and not self.player_paused:
                 self.player_paused_at = position
                 if diff < 0:
-                    self.player.send_set_paused(True)
+                    self.player.set_paused(True)
+                #else:
+                #    print 'Not pausing now'
 
