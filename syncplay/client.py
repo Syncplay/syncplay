@@ -124,7 +124,7 @@ class Manager(object):
 
     def get_player_position(self):
         if not self.last_player_update:
-            return None
+            return 0.0
         position = self.player_position
         if not self.player_paused:
             position += time.time() - self.last_player_update
@@ -132,7 +132,7 @@ class Manager(object):
 
     def get_global_position(self):
         if not self.last_global_update:
-            return None
+            return 0.0
         position = self.global_position
         if not self.global_paused:
             position += time.time() - self.last_global_update
@@ -180,7 +180,7 @@ class Manager(object):
             self.protocol.send_state(self.counter, self.player_paused, self.player_position)
         self.schedule_send_status()
 
-    
+
     def update_player_status(self, paused, position):
         old_paused = self.player_paused
         self.player_paused = paused
