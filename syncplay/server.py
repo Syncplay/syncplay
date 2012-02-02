@@ -124,7 +124,10 @@ class SyncFactory(Factory):
     def remove_watcher(self, watcher_proto):
         watcher = self.watchers.pop(watcher_proto, None)
         if self.pause_change_by == watcher:
+            self.pause_change_time = None
             self.pause_change_by = None
+        if not self.watchers:
+            self.paused = True 
         # send info someone quit
 
     def update_state(self, watcher_proto, counter, paused, position):
