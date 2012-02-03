@@ -96,6 +96,7 @@ class Manager(object):
         self.player_position = 0.0
         self.last_player_update = None
         self.player_speed_fix = False
+        self.player_filename = None
 
         self.make_player = make_player
         self.running = False
@@ -139,8 +140,9 @@ class Manager(object):
         return position
 
 
-    def init_player(self, player):
+    def init_player(self, player, filename=None):
         self.player = player
+        self.player_filename = filename
         if self.last_global_update:
             self.player.set_position(self.get_global_position())
             self.player.set_paused(self.global_paused)
@@ -149,7 +151,7 @@ class Manager(object):
     def init_protocol(self, protocol):
         self.protocol = protocol
         self.schedule_send_status()
-        self.make_player()
+        self.make_player(self)
 
 
     def schedule_ask_player(self, when=0.2):

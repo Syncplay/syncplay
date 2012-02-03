@@ -19,7 +19,6 @@ class MplayerProtocol(LineProcessProtocol):
         self.manager = manager
         self.ignore_end = False
         self.error_lines = deque(maxlen=50)
-        self.filename = None # To be moved to Manager
         self.tmp_paused = None
 
     def connectionMade(self):
@@ -61,7 +60,6 @@ class MplayerProtocol(LineProcessProtocol):
         self.set_paused(True)
         self.set_position(0)
         self.send_get_filename()
-        self.manager.init_player(self)
 
     def ask_for_status(self):
         self.send_get_paused()
@@ -79,7 +77,7 @@ class MplayerProtocol(LineProcessProtocol):
         self.send_get_property('filename')
 
     def mplayer_answer_filename(self, value):
-        self.filename = value
+        self.manager.init_player(self, value)
 
 
     def set_paused(self, value):
