@@ -1,19 +1,55 @@
 #coding:utf8
 
 import os
+import re
 
+RE_ARG = re.compile(r"('(?:[^\\']+|\\\\|\\')*'|[^\s']+)(?:\s+|\Z)")
+RE_NEED_QUOTING = re.compile(r"[\s'\\]")
+RE_QUOTABLE = re.compile(r"['\\]")
+RE_UNQUOTABLE = re.compile(r"\\(['\\])")
 
-def split_args(args, number):
-    # FIXME Make argument format smarter
-    return args.split(None, number-1)
+class InvalidArgumentException(Exception):
+    pass
+
+def quote_arg(arg):
+    if isinstance(arg, unicode):
+        arg = arg.encode('utf8')
+    elif not isinstance(arg, str):
+        arg = str(arg)
+
+    if not arg or RE_NEED_QUOTING.search(arg):
+        return "'%s'" % RE_QUOTABLE.sub(r'\\\g<0>', arg)
+    return arg
+
+def unqote_arg(arg):
+    if arg.startswith("'") and len(arg) > 1:
+        arg = RE_UNQUOTABLE.sub(r'\1', arg[1:-1])
+    return arg.decode('utf8', 'replace')
+
+def _split_args(args):
+    pos = 0
+    while pos < len(args):
+        match = RE_ARG.match(args, pos)
+        if not match:
+            raise InvalidArgumentException()
+        pos = match.end()
+        yield unqote_arg(match.group(1))
+
+def split_args(args):
+    try:
+        return list(_split_args(args))
+    except InvalidArgumentException:
+        return None
+
+def join_args(args):
+    return ' '.join(quote_arg(arg) for arg in args)
+
 
 def parse_state(args):
-    args = split_args(args, 4)
-    l = len(args)
-    if l == 3:
+    if len(args) == 3:
         counter, state, position = args
         who_changed_state = None
-    elif l == 4:
+    elif len(args) == 4:
         counter, state, position, who_changed_state = args
     else:
         return
@@ -33,7 +69,7 @@ def parse_state(args):
     except ValueError:
         return
 
-    position /= 100.0
+    position /= 1000.0
 
     return counter, paused, position, who_changed_state
 

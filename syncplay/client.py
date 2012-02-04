@@ -22,21 +22,31 @@ class SyncClientProtocol(CommandProtocol):
     def connectionLost(self, reason):
         self.manager.protocol = None
 
-    def handle_connected_state(self, arg):
-        arg = parse_state(arg)
-        if not arg:
+    def handle_error(self, args):
+        self.manager.stop()
+        CommandProtocol.handle_error(self, args)
+
+    def handle_connected_state(self, args):
+        args = parse_state(args)
+        if not args:
             self.drop_with_error('Malformed state attributes')
             return
 
-        counter, paused, position, name = arg
+        counter, paused, position, name = args
 
         self.manager.update_global_state(counter, paused, position, name)
 
-    def handle_connected_ping(self, arg):
-        self.send_message('pong', arg)
+    def handle_connected_ping(self, args):
+        if not len(args) == 1:
+            self.drop_with_error('Invalid arguments')
+            return
+        self.send_message('pong', args[0])
 
     def send_state(self, counter, paused, position):
-        self.send_message('state', counter, ('paused' if paused else 'playing'), int(position*100))
+        self.send_message('state', counter, ('paused' if paused else 'playing'), int(position*1000))
+
+    def send_playing(self, filename):
+        self.send_message('playing', filename)
 
 
     states = dict(
@@ -44,6 +54,7 @@ class SyncClientProtocol(CommandProtocol):
             state = 'handle_connected_state',
             seek = 'handle_connected_seek',
             ping = 'handle_connected_ping',
+            playing = 'handle_connected_playing',
         ),
     )
     initial_state = 'connected'
@@ -63,7 +74,7 @@ class SyncClientFactory(ClientFactory):
     def clientConnectionLost(self, connector, reason):
         if self.retry:
             print 'Connection lost, reconnecting'
-            connector.connect()
+            reactor.callLater(0.1, connector.connect)
         else:
             print 'Disconnected'
 
@@ -150,7 +161,9 @@ class Manager(object):
     def init_protocol(self, protocol):
         self.protocol = protocol
         self.schedule_send_status()
-        self.make_player(self)
+        self.send_filename()
+        if self.player is None:
+            self.make_player(self)
 
 
     def schedule_ask_player(self, when=0.2):
@@ -180,6 +193,10 @@ class Manager(object):
         if self.protocol:
             self.protocol.send_state(self.counter, self.player_paused, self.player_position)
         self.schedule_send_status()
+
+    def send_filename(self):
+        if self.protocol and self.player_filename:
+            self.protocol.send_playing(self.player_filename)
 
 
     def update_player_status(self, paused, position):
@@ -215,6 +232,7 @@ class Manager(object):
 
     def update_filename(self, filename):
         self.player_filename = filename
+        self.send_filename()
 
     def update_global_state(self, counter, paused, position, name):
         curtime = time.time()

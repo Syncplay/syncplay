@@ -15,6 +15,11 @@ from twisted.web.iweb import IBodyProducer
 
 from zope.interface import implements
 
+from .utils import (
+    join_args,
+    split_args,
+)
+
 class CommandProtocol(LineReceiver):
     states = None
 
@@ -25,11 +30,16 @@ class CommandProtocol(LineReceiver):
         line = line.strip()
         if not line:
             return
-        line = line.split(None, 1)
-        if len(line) != 2:
+        #print '>>>', line
+        args = split_args(line)
+        if not args:
             self.drop_with_error('Malformed line')
             return
-        command, arg = line
+        command = args.pop(0)
+
+        if command == 'error':
+            self.handle_error(args)
+            return
 
         available_commands = self.states.get(self._state)
         handler = available_commands.get(command)
@@ -39,7 +49,10 @@ class CommandProtocol(LineReceiver):
             self.drop_with_error('Unknown command: `%s`' % command)
             return # TODO log it too
 
-        handler(arg)
+        handler(args)
+
+    def handle_error(self, args):
+        print 'Error received from other side:', args
 
     def change_state(self, new_state):
         if new_state not in self.states:
@@ -47,11 +60,9 @@ class CommandProtocol(LineReceiver):
         self._state = new_state
 
     def send_message(self, *args):
-        self.sendLine(' '.join(
-            (arg if isinstance(arg, basestring) else str(arg))
-            for arg in args
-            if arg is not None
-        ))
+        line = join_args(args)
+        #print '<<<', line
+        self.sendLine(line)
 
     def drop(self):
         self.transport.loseConnection()

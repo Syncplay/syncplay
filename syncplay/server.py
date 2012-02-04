@@ -25,32 +25,48 @@ class SyncServerProtocol(CommandProtocol):
     def connectionLost(self, reason):
         self.factory.remove_watcher(self)
 
-    def handle_init_iam(self, arg):
-        self.factory.add_watcher(self, arg.strip())
+    def handle_init_iam(self, args):
+        if not len(args) == 1:
+            self.drop_with_error('Invalid arguments')
+            return
+        self.factory.add_watcher(self, args[0])
         self.change_state('connected')
 
-    def handle_connected_state(self, arg):
-        arg = parse_state(arg)
-        if not arg:
+    def handle_connected_state(self, args):
+        args = parse_state(args)
+        if not args:
             self.drop_with_error('Malformed state attributes')
             return
 
-        counter, paused, position, _ = arg
+        counter, paused, position, _ = args
 
         self.factory.update_state(self, counter, paused, position)
 
-    def handle_connected_seek(self, arg):
+    def handle_connected_seek(self, args):
+        if not len(args) == 1:
+            self.drop_with_error('Invalid arguments')
+            return
+
         try:
-            position = int(arg)
+            position = int(args[0])
         except ValueError:
             self.drop_with_error('Invalid position numeral')
 
-        position /= 100.0
+        position /= 1000.0
 
         self.factory.seek(self, position)
 
-    def handle_connected_pong(self, arg):
-        self.factory.pong_received(self, arg)
+    def handle_connected_pong(self, args):
+        if not len(args) == 1:
+            self.drop_with_error('Invalid arguments')
+            return
+        self.factory.pong_received(self, args[0])
+
+    def handle_connected_playing(self, args):
+        if not len(args) == 1:
+            self.drop_with_error('Invalid arguments')
+            return
+        #self.factory.pong_received(self, args[0])
 
     def __hash__(self):
         return hash('|'.join((
@@ -60,10 +76,15 @@ class SyncServerProtocol(CommandProtocol):
 
 
     def send_state(self, counter, paused, position, who_last_changed):
-        self.send_message('state', counter, ('paused' if paused else 'playing'), int(position*100), who_last_changed)
+        paused = 'paused' if paused else 'playing'
+        position = int(position*1000)
+        if who_last_changed is None:
+            self.send_message('state', counter, paused, position)
+        else:
+            self.send_message('state', counter, paused, position, who_last_changed)
 
     def send_seek(self, position, who_seeked):
-        self.send_message('seek', int(position*100), who_seeked)
+        self.send_message('seek', int(position*1000), who_seeked)
 
     def send_ping(self, value):
         self.send_message('ping', value)
@@ -77,6 +98,7 @@ class SyncServerProtocol(CommandProtocol):
             state = 'handle_connected_state',
             seek = 'handle_connected_seek',
             pong = 'handle_connected_pong',
+            playing = 'handle_connected_playing',
         ),
     )
     initial_state = 'init'
