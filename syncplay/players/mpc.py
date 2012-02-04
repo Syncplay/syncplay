@@ -71,6 +71,7 @@ class MPCHCPlayer(object):
         self.host = 'localhost:13579'
 
         self.pinged = False
+        self.tmp_filename = None
 
         self.agent = Agent(reactor)
 
@@ -109,7 +110,9 @@ class MPCHCPlayer(object):
             self.manager.update_player_status(paused, position)
         else:
             self.pinged = True
-            self.manager.init_player(self, filename)
+            self.manager.init_player(self)
+        if filename != self.tmp_filename:
+            self.manager.update_filename(filename)
 
     def ask_for_status(self):
         request = self.agent.request(

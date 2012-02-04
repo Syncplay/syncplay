@@ -140,9 +140,8 @@ class Manager(object):
         return position
 
 
-    def init_player(self, player, filename=None):
+    def init_player(self, player):
         self.player = player
-        self.player_filename = filename
         if self.last_global_update:
             self.player.set_position(self.get_global_position())
             self.player.set_paused(self.global_paused)
@@ -213,6 +212,9 @@ class Manager(object):
         if not paused and self.player_paused_at is not None and position >= self.player_paused_at:
             #print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
             self.player.set_paused(True)
+
+    def update_filename(self, filename):
+        self.player_filename = filename
 
     def update_global_state(self, counter, paused, position, name):
         curtime = time.time()

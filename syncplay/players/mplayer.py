@@ -77,7 +77,8 @@ class MplayerProtocol(LineProcessProtocol):
         self.send_get_property('filename')
 
     def mplayer_answer_filename(self, value):
-        self.manager.init_player(self, value)
+        self.manager.init_player(self)
+        self.manager.update_filename(value)
 
 
     def set_paused(self, value):
