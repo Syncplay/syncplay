@@ -63,7 +63,7 @@ class SyncServerProtocol(CommandProtocol):
 
     @arg_count(1)
     def handle_connected_playing(self, args):
-        pass
+        self.factory.playing_received(self, args[0])
 
     def __hash__(self):
         return hash('|'.join((
@@ -85,6 +85,9 @@ class SyncServerProtocol(CommandProtocol):
 
     def send_ping(self, value):
         self.send_message('ping', value)
+
+    def send_playing(self, who, what):
+        self.send_message('playing', who, what)
 
 
     states = dict(
@@ -242,4 +245,13 @@ class SyncFactory(Factory):
 
     def schedule_send_ping(self, watcher_proto, when=1):
         reactor.callLater(when, self.send_ping_to, watcher_proto)
+
+    def playing_received(self, watcher_proto, filename):
+        watcher = self.watchers.get(watcher_proto)
+        if not watcher:
+            return
+
+        for receiver in self.watchers.itervalues():
+            if receiver != watcher:
+                receiver.watcher_proto.send_playing(watcher.name, filename)
 

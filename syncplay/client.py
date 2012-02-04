@@ -44,6 +44,11 @@ class SyncClientProtocol(CommandProtocol):
     def handle_connected_ping(self, args):
         self.send_message('pong', args[0])
 
+    @arg_count(2)
+    def handle_connected_playing(self, args):
+        who, what = args
+        print '%s plays %s' % (who, what)
+
     def send_state(self, counter, paused, position):
         self.send_message('state', counter, ('paused' if paused else 'playing'), int(position*1000))
 
