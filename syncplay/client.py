@@ -134,6 +134,7 @@ class Manager(object):
         self.send_delayed = None
         self.global_paused = True
         self.global_position = 0.0
+        self.global_who_paused = None
         self.last_global_update = None
         self.counter = 0
 
@@ -266,6 +267,7 @@ class Manager(object):
 
         if not paused and self.player_paused_at is not None and position >= self.player_paused_at:
             #print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
+            print '%s paused' % self.global_who_changed
             self.player.set_paused(True)
 
     def update_filename(self, filename):
@@ -276,6 +278,7 @@ class Manager(object):
         curtime = time.time()
         self.global_paused = paused
         self.global_position = position
+        self.global_who_changed = name
         updated_before = bool(self.last_global_update)
         self.last_global_update = curtime
 
@@ -294,9 +297,11 @@ class Manager(object):
             if self.player_paused and not paused:
                 self.player_paused_at = None
                 self.player.set_paused(False)
+                print '%s unpaused' % name
             elif paused and not self.player_paused:
                 self.player_paused_at = position
                 if diff < 0:
+                    print '%s paused' % name
                     self.player.set_paused(True)
                 #else:
                 #    print 'Not pausing now'
