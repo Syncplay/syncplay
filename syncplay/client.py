@@ -5,7 +5,10 @@ import time
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 
-from .network_utils import CommandProtocol
+from .network_utils import (
+    arg_count,
+    CommandProtocol,
+)
 from .utils import parse_state
 
 
@@ -26,6 +29,7 @@ class SyncClientProtocol(CommandProtocol):
         self.manager.stop()
         CommandProtocol.handle_error(self, args)
 
+    @arg_count(3, 4)
     def handle_connected_state(self, args):
         args = parse_state(args)
         if not args:
@@ -36,10 +40,8 @@ class SyncClientProtocol(CommandProtocol):
 
         self.manager.update_global_state(counter, paused, position, name)
 
+    @arg_count(1)
     def handle_connected_ping(self, args):
-        if not len(args) == 1:
-            self.drop_with_error('Invalid arguments')
-            return
         self.send_message('pong', args[0])
 
     def send_state(self, counter, paused, position):
@@ -162,8 +164,9 @@ class Manager(object):
         self.protocol = protocol
         self.schedule_send_status()
         self.send_filename()
-        if self.player is None:
+        if self.make_player:
             self.make_player(self)
+            self.make_player = None
 
 
     def schedule_ask_player(self, when=0.2):

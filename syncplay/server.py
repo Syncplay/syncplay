@@ -6,7 +6,10 @@ import random
 from twisted.internet import reactor
 from twisted.internet.protocol import Factory
 
-from .network_utils import CommandProtocol
+from .network_utils import (
+    arg_count,
+    CommandProtocol,
+)
 from .utils import parse_state
 
 random.seed()
@@ -32,6 +35,7 @@ class SyncServerProtocol(CommandProtocol):
         self.factory.add_watcher(self, args[0])
         self.change_state('connected')
 
+    @arg_count(3)
     def handle_connected_state(self, args):
         args = parse_state(args)
         if not args:
@@ -42,11 +46,8 @@ class SyncServerProtocol(CommandProtocol):
 
         self.factory.update_state(self, counter, paused, position)
 
+    @arg_count(1)
     def handle_connected_seek(self, args):
-        if not len(args) == 1:
-            self.drop_with_error('Invalid arguments')
-            return
-
         try:
             position = int(args[0])
         except ValueError:
@@ -56,17 +57,13 @@ class SyncServerProtocol(CommandProtocol):
 
         self.factory.seek(self, position)
 
+    @arg_count(1)
     def handle_connected_pong(self, args):
-        if not len(args) == 1:
-            self.drop_with_error('Invalid arguments')
-            return
         self.factory.pong_received(self, args[0])
 
+    @arg_count(1)
     def handle_connected_playing(self, args):
-        if not len(args) == 1:
-            self.drop_with_error('Invalid arguments')
-            return
-        #self.factory.pong_received(self, args[0])
+        pass
 
     def __hash__(self):
         return hash('|'.join((

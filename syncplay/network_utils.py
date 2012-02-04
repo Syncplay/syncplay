@@ -5,6 +5,8 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+from functools import wraps
+
 from twisted.internet.defer import succeed
 from twisted.internet.protocol import (
     ProcessProtocol,
@@ -19,6 +21,17 @@ from .utils import (
     join_args,
     split_args,
 )
+
+def arg_count(minimum, maximum=None):
+    def decorator(f):
+        @wraps(f)
+        def wrapper(self, args):
+            if ((len(args) != minimum) if maximum is None else not (minimum <= len(args) <= maximum)):
+                self.drop_with_error('Invalid arguments')
+                return
+            return f(self, args)
+        return wrapper
+    return decorator
 
 class CommandProtocol(LineReceiver):
     states = None
