@@ -89,6 +89,21 @@ class SyncServerProtocol(CommandProtocol):
     def send_playing(self, who, what):
         self.send_message('playing', who, what)
 
+    def send_present(self, who, what):
+        if what:
+            self.send_message('present', who, what)
+        else:
+            self.send_message('present', who)
+
+    def send_joined(self, who):
+        self.send_message('joined', who)
+
+    def send_left(self, who):
+        self.send_message('left', who)
+
+    def send_hello(self):
+        self.send_message('hello')
+
 
     states = dict(
         init = dict(
@@ -110,6 +125,7 @@ class WatcherInfo(object):
         self.name = name
 
         self.position = 0
+        self.filename = None
         self.max_position = 0
         self.last_update = None
         self.last_update_sent = None
@@ -139,12 +155,20 @@ class SyncFactory(Factory):
     def add_watcher(self, watcher_proto, name):
         watcher = WatcherInfo(watcher_proto, name)
         self.watchers[watcher_proto] = watcher
+        for receiver in self.watchers.itervalues():
+            if receiver == watcher:
+                continue
+            receiver.watcher_proto.send_joined(name)
+            watcher_proto.send_present(receiver.name, receiver.filename)
+        watcher_proto.send_hello()
         self.send_state_to(watcher)
         self.schedule_send_ping(watcher_proto)
-        # send info someone joined
 
     def remove_watcher(self, watcher_proto):
         watcher = self.watchers.pop(watcher_proto, None)
+        for receiver in self.watchers.itervalues():
+            if receiver != watcher:
+                receiver.watcher_proto.send_left(watcher.name)
         if self.pause_change_by == watcher:
             self.pause_change_time = None
             self.pause_change_by = None
@@ -250,6 +274,8 @@ class SyncFactory(Factory):
         watcher = self.watchers.get(watcher_proto)
         if not watcher:
             return
+
+        watcher.filename = filename
 
         for receiver in self.watchers.itervalues():
             if receiver != watcher:

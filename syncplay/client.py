@@ -29,6 +29,21 @@ class SyncClientProtocol(CommandProtocol):
         self.manager.stop()
         CommandProtocol.handle_error(self, args)
 
+    @arg_count(0)
+    def handle_init_hello(self, args):
+        self.change_state('connected')
+
+    @arg_count(1, 2)
+    def handle_init_present(self, args):
+        if len(args) == 2:
+            who, what = args
+        else:
+            who, what = args[0], None
+        if what:
+            print '%s is present and is playing %s' % (who, what)
+        else:
+            print '%s is present' % who
+
     @arg_count(3, 4)
     def handle_connected_state(self, args):
         args = parse_state(args)
@@ -47,7 +62,16 @@ class SyncClientProtocol(CommandProtocol):
     @arg_count(2)
     def handle_connected_playing(self, args):
         who, what = args
-        print '%s plays %s' % (who, what)
+        print '%s is playing %s' % (who, what)
+
+    @arg_count(1)
+    def handle_connected_joined(self, args):
+        print '%s joined' % args[0]
+
+    @arg_count(1)
+    def handle_connected_left(self, args):
+        print '%s left' % args[0]
+
 
     def send_state(self, counter, paused, position):
         self.send_message('state', counter, ('paused' if paused else 'playing'), int(position*1000))
@@ -57,14 +81,20 @@ class SyncClientProtocol(CommandProtocol):
 
 
     states = dict(
+        init = dict(
+            present = 'handle_init_present',
+            hello = 'handle_init_hello',
+        ),
         connected = dict(
             state = 'handle_connected_state',
             seek = 'handle_connected_seek',
             ping = 'handle_connected_ping',
             playing = 'handle_connected_playing',
+            joined = 'handle_connected_joined',
+            left = 'handle_connected_left',
         ),
     )
-    initial_state = 'connected'
+    initial_state = 'init'
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, manager):
