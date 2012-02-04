@@ -112,6 +112,7 @@ class MPCHCPlayer(object):
             self.pinged = True
             self.manager.init_player(self)
         if filename != self.tmp_filename:
+            self.tmp_filename = filename
             self.manager.update_filename(filename)
 
     def ask_for_status(self):
