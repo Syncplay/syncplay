@@ -46,16 +46,17 @@ class SyncServerProtocol(CommandProtocol):
 
         self.factory.update_state(self, counter, paused, position)
 
-    @arg_count(1)
+    @arg_count(2)
     def handle_connected_seek(self, args):
         try:
-            position = int(args[0])
+            counter = int(args[0])
+            position = int(args[1])
         except ValueError:
-            self.drop_with_error('Invalid position numeral')
+            self.drop_with_error('Invalid arguments')
 
         position /= 1000.0
 
-        self.factory.seek(self, position)
+        self.factory.seek(self, counter, position)
 
     @arg_count(1)
     def handle_connected_pong(self, args):
@@ -154,6 +155,8 @@ class SyncFactory(Factory):
 
     def add_watcher(self, watcher_proto, name):
         watcher = WatcherInfo(watcher_proto, name)
+        if self.watchers:
+            watcher.max_position = min(w.max_position for w in self.watchers.itervalues())
         self.watchers[watcher_proto] = watcher
         for receiver in self.watchers.itervalues():
             if receiver == watcher:
@@ -211,10 +214,18 @@ class SyncFactory(Factory):
             ):
                 self.send_state_to(receiver, position, curtime)
 
-    def seek(self, watcher_proto, position):
-        #TODO
-        #for receiver in self.watchers.itervalues():
-        pass
+    def seek(self, watcher_proto, counter, position):
+        watcher = self.watchers.get(watcher_proto)
+        if not watcher:
+            return
+
+        watcher.counter = counter
+        for receiver in self.watchers.itervalues():
+            receiver.max_position = position
+            if receiver == watcher:
+                self.send_state_to(receiver, position)
+            else:
+                receiver.watcher_proto.send_seek(position, watcher.name)
 
     def send_state_to(self, watcher, position=None, curtime=None):
         if position is None:

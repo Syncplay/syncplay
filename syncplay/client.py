@@ -55,6 +55,18 @@ class SyncClientProtocol(CommandProtocol):
 
         self.manager.update_global_state(counter, paused, position, name)
 
+    @arg_count(2)
+    def handle_connected_seek(self, args):
+        position, who = args
+        try:
+            position = int(position)
+        except ValueError:
+            self.drop_with_error('Invalid arguments')
+
+        position /= 1000.0
+
+        self.manager.seek(position, who)
+
     @arg_count(1)
     def handle_connected_ping(self, args):
         self.send_message('pong', args[0])
@@ -75,6 +87,9 @@ class SyncClientProtocol(CommandProtocol):
 
     def send_state(self, counter, paused, position):
         self.send_message('state', counter, ('paused' if paused else 'playing'), int(position*1000))
+
+    def send_seek(self, counter, position):
+        self.send_message('seek', counter, int(position*1000))
 
     def send_playing(self, filename):
         self.send_message('playing', filename)
@@ -135,6 +150,7 @@ class Manager(object):
         self.global_paused = True
         self.global_position = 0.0
         self.global_who_paused = None
+        self.global_noted_pause_change = None
         self.last_global_update = None
         self.counter = 0
 
@@ -233,6 +249,12 @@ class Manager(object):
             self.protocol.send_state(self.counter, self.player_paused, self.player_position)
         self.schedule_send_status()
 
+    def send_seek(self):
+        if not (self.running and self.protocol):
+            return
+        self.counter += 1
+        self.protocol.send_seek(self.counter, self.player_position)
+
     def send_filename(self):
         if self.protocol and self.player_filename:
             self.protocol.send_playing(self.player_filename)
@@ -250,24 +272,22 @@ class Manager(object):
             self.send_status()
 
         if not self.global_paused:
-            diff = self.get_global_position() - position
-            if 0.6 <= abs(diff) <= 4:
-                #print 'server is %0.2fs ahead of client' % diff
-                if diff > 0:
-                    speed = 1.5
-                else:
-                    speed = 0.75
-                #print 'fixing at speed %0.2f' % speed
+            diff = position - self.get_global_position()
+            if (0.4 if self.player_speed_fix else 0.6) <= diff <= 4:
+                #print 'server is %0.2fs ahead of client, slowing down' % diff
                 if not self.player_speed_fix:
-                    self.player.set_speed(speed)
+                    self.player.set_speed(0.75)
                     self.player_speed_fix = True
-            elif self.player_speed_fix:
-                self.player.set_speed(1)
-                self.player_speed_fix = False
+            else:
+                if self.player_speed_fix:
+                    #print 'resetting speed'
+                    self.player.set_speed(1)
+                    self.player_speed_fix = False
+                if abs(diff) > 8:
+                    self.send_seek()
 
         if not paused and self.player_paused_at is not None and position >= self.player_paused_at:
             #print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
-            print '%s paused' % self.global_who_changed
             self.player.set_paused(True)
 
     def update_filename(self, filename):
@@ -297,12 +317,30 @@ class Manager(object):
             if self.player_paused and not paused:
                 self.player_paused_at = None
                 self.player.set_paused(False)
-                print '%s unpaused' % name
+                if self.global_noted_pause_change != paused:
+                    print '%s unpaused' % name
             elif paused and not self.player_paused:
                 self.player_paused_at = position
-                if diff < 0:
+                if self.global_noted_pause_change != paused:
                     print '%s paused' % name
+                if diff < 0:
                     self.player.set_paused(True)
                 #else:
                 #    print 'Not pausing now'
+
+        self.global_noted_pause_change = paused
+
+    def seek(self, position, who):
+        self.global_position = position
+        if self.player:
+            self.player.set_position(position)
+
+        position = int(position*1000)
+        seconds, mseconds = divmod(position, 1000)
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        print '%s seeked to %02d:%02d:%02d.%03d' % (
+            who, hours, minutes, seconds, mseconds
+        )
+
 
