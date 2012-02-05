@@ -219,13 +219,20 @@ class SyncFactory(Factory):
         if not watcher:
             return
 
+        #print watcher.name, 'seeked to', position
+        if not self.paused and watcher.ping is not None:
+            position += watcher.ping
         watcher.counter = counter
+
         for receiver in self.watchers.itervalues():
-            receiver.max_position = position
+            if not self.paused and receiver.ping is not None:
+                position2 = position + receiver.ping
+            receiver.max_position = position2
             if receiver == watcher:
+                # send_state_to modifies by ping already...
                 self.send_state_to(receiver, position)
             else:
-                receiver.watcher_proto.send_seek(position, watcher.name)
+                receiver.watcher_proto.send_seek(position2, watcher.name)
 
     def send_state_to(self, watcher, position=None, curtime=None):
         if position is None:
