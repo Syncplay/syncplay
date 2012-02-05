@@ -163,6 +163,8 @@ class Manager(object):
         self.player_speed_fix = False
         self.player_filename = None
 
+        self.seek_sent_wait = False
+
         self.make_player = make_player
         self.running = False
 
@@ -271,7 +273,7 @@ class Manager(object):
         if old_paused != paused and self.global_paused != paused:
             self.send_status()
 
-        if not self.global_paused:
+        if not (self.global_paused or self.seek_sent_wait):
             diff = position - self.get_global_position()
             if (0.4 if self.player_speed_fix else 0.6) <= diff <= 4:
                 #print 'server is %0.2fs ahead of client, slowing down' % diff
@@ -329,6 +331,7 @@ class Manager(object):
                 #    print 'Not pausing now'
 
         self.global_noted_pause_change = paused
+        self.seek_sent_wait = False
 
     def seek(self, position, who):
         self.global_position = position
