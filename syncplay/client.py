@@ -164,6 +164,8 @@ class Manager(object):
         self.player_filename = None
 
         self.seek_sent_wait = False
+        self.status_ask_sent = 0
+        self.status_ask_received = 0
 
         self.make_player = make_player
         self.running = False
@@ -233,6 +235,7 @@ class Manager(object):
         if not self.running:
             return
         if self.player:
+            self.status_ask_sent += 1
             self.player.ask_for_status()
         self.schedule_ask_player()
 
@@ -263,6 +266,10 @@ class Manager(object):
 
 
     def update_player_status(self, paused, position):
+        self.status_ask_received += 1
+        if self.status_ask_received < self.status_ask_sent:
+            return
+
         old_paused = self.player_paused
         self.player_paused = paused
         self.player_position = position
@@ -291,6 +298,7 @@ class Manager(object):
         if not paused and self.player_paused_at is not None and position >= self.player_paused_at:
             #print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
             self.player.set_paused(True)
+            self.ask_player()
 
     def update_filename(self, filename):
         self.player_filename = filename
@@ -307,18 +315,22 @@ class Manager(object):
         if not self.player:
             return
 
+        changed = False
         if not updated_before:
             self.player.set_position(position)
             self.player.set_paused(paused)
+            changed = True
         elif not (self.counter and counter < self.counter):
             diff = self.get_player_position() - position
             if self.last_player_update is not None:
                 diff += curtime - self.last_player_update
             if abs(diff) > 4:
                 self.player.set_position(position)
+                changed = True
             if self.player_paused and not paused:
                 self.player_paused_at = None
                 self.player.set_paused(False)
+                changed = True
                 if self.global_noted_pause_change != paused:
                     print '%s unpaused' % name
             elif paused and not self.player_paused:
@@ -327,16 +339,20 @@ class Manager(object):
                     print '%s paused' % name
                 if diff < 0:
                     self.player.set_paused(True)
+                    changed = True
                 #else:
                 #    print 'Not pausing now'
 
         self.global_noted_pause_change = paused
         self.seek_sent_wait = False
+        if changed:
+            self.ask_player()
 
     def seek(self, position, who):
         self.global_position = position
         if self.player:
             self.player.set_position(position)
+            self.ask_player()
 
         position = int(position*1000)
         seconds, mseconds = divmod(position, 1000)
