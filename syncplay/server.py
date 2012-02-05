@@ -225,8 +225,9 @@ class SyncFactory(Factory):
         watcher.counter = counter
 
         for receiver in self.watchers.itervalues():
+            position2 = position
             if not self.paused and receiver.ping is not None:
-                position2 = position + receiver.ping
+                position2 += receiver.ping
             receiver.max_position = position2
             if receiver == watcher:
                 # send_state_to modifies by ping already...
