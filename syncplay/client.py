@@ -69,7 +69,7 @@ class SyncClientProtocol(CommandProtocol):
 
     @arg_count(1)
     def handle_connected_ping(self, args):
-        self.send_message('pong', args[0])
+        self.send_message('pong', args[0], int(time.time()*100000))
 
     @arg_count(2)
     def handle_connected_playing(self, args):

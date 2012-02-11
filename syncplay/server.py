@@ -58,9 +58,17 @@ class SyncServerProtocol(CommandProtocol):
 
         self.factory.seek(self, counter, position)
 
-    @arg_count(1)
+    @arg_count(2)
     def handle_connected_pong(self, args):
-        self.factory.pong_received(self, args[0])
+        value, ctime = args
+        try:
+            ctime = int(ctime)
+        except ValueError:
+            self.drop_with_error('Invalid arguments')
+
+        ctime /= 100000.0
+
+        self.factory.pong_received(self, value, ctime)
 
     @arg_count(1)
     def handle_connected_playing(self, args):
@@ -132,6 +140,7 @@ class WatcherInfo(object):
         self.last_update_sent = None
 
         self.ping = None
+        self.time_offset = 0
         self.last_ping_time = None
         self.last_ping_value = None
 
@@ -263,17 +272,16 @@ class SyncFactory(Factory):
             #min() arg is an empty sequence
             return 0.0
 
-    def pong_received(self, watcher_proto, value):
+    def pong_received(self, watcher_proto, value, ctime):
         watcher = self.watchers.get(watcher_proto)
         if not watcher:
             return
 
         if watcher.last_ping_value == value:
             ping = (time.time() - watcher.last_ping_time)/2
-            if watcher.ping is None:
+            if watcher.ping is None or watcher.ping > ping:
                 watcher.ping = ping
-            else:
-                watcher.ping = watcher.ping*0.6 + ping*0.4
+                watcher.time_offset = time.time() - (ctime + ping)
 
         self.schedule_send_ping(watcher_proto)
 
