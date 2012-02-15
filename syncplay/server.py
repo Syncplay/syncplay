@@ -141,6 +141,7 @@ class WatcherInfo(object):
 
         self.ping = None
         self.time_offset = 0
+        self.time_offset_data = []
         self.last_ping_time = None
         self.last_ping_value = None
 
@@ -278,10 +279,28 @@ class SyncFactory(Factory):
             return
 
         if watcher.last_ping_value == value:
-            ping = (time.time() - watcher.last_ping_time)/2
-            if watcher.ping is None or watcher.ping > ping:
-                watcher.ping = ping
-                watcher.time_offset = time.time() - (ctime + ping)
+            curtime = time.time()
+            watcher.ping = ping = (curtime - watcher.last_ping_time)/2
+
+            if watcher.time_offset_data is not None:
+                time_offset = curtime - (ctime + ping)
+                watcher.time_offset_data.append((ping, time_offset))
+
+                if len(watcher.time_offset_data) > 1:
+                    pmax = max(p for p,_ in watcher.time_offset_data)
+                    psum, pweights = 0, 0
+                    for ping, offset in watcher.time_offset_data:
+                        ping = 1-(ping/pmax)
+                        pweights += ping
+                        psum += ping*offset
+                    watcher.time_offset = psum/pweights
+                else:
+                    watcher.time_offset = time_offset
+
+                if len(watcher.time_offset_data) > 20:
+                    watcher.time_offset_data = None
+
+            #print watcher.name, 'last ping', watcher.ping, 'time offset %.6f' % watcher.time_offset
 
         self.schedule_send_ping(watcher_proto)
 
