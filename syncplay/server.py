@@ -1,6 +1,7 @@
 #coding:utf8
 
 from collections import deque
+import re
 import time
 import random
 
@@ -16,6 +17,7 @@ from .utils import parse_state
 random.seed()
 
 CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+RE_NAME = re.compile('^(.*?)(\d*)$')
 
 def random_chars():
     return ''.join(random.choice(CHARS) for _ in xrange(10))
@@ -32,6 +34,10 @@ class SyncServerProtocol(CommandProtocol):
     def handle_init_iam(self, args):
         if not len(args) == 1:
             self.drop_with_error('Invalid arguments')
+            return
+        name = args[0].strip()
+        if not args:
+            self.drop_with_error('Invalid nickname')
             return
         self.factory.add_watcher(self, args[0])
         self.change_state('connected')
@@ -111,8 +117,8 @@ class SyncServerProtocol(CommandProtocol):
     def send_left(self, who):
         self.send_message('left', who)
 
-    def send_hello(self):
-        self.send_message('hello')
+    def send_hello(self, name):
+        self.send_message('hello', name)
 
 
     states = dict(
@@ -164,8 +170,17 @@ class SyncFactory(Factory):
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
 
-
     def add_watcher(self, watcher_proto, name):
+        allnames = (watcher.name.lower() for watcher in self.watchers.itervalues())
+        while name.lower() in allnames:
+            m = RE_NAME.match(name)
+            name, number = m.group(1), m.group(2)
+            if number:
+                number = str(int(number)+1)
+            else:
+                number = '1'
+            name += number
+
         watcher = WatcherInfo(watcher_proto, name)
         if self.watchers:
             watcher.max_position = min(w.max_position for w in self.watchers.itervalues())
@@ -175,7 +190,7 @@ class SyncFactory(Factory):
                 continue
             receiver.watcher_proto.send_joined(name)
             watcher_proto.send_present(receiver.name, receiver.filename)
-        watcher_proto.send_hello()
+        watcher_proto.send_hello(name)
         self.send_state_to(watcher)
         self.send_ping_to(watcher)
 
@@ -320,7 +335,6 @@ class SyncFactory(Factory):
         print ctime - watcher.last_ping_received
         if ctime - watcher.last_ping_received > 60:
             watcher.watcher_proto.drop()
-            print 'dropped', watcher.name
             return
 
         watcher.watcher_proto.send_ping(chars)

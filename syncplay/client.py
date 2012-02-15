@@ -29,8 +29,9 @@ class SyncClientProtocol(CommandProtocol):
         self.manager.stop()
         CommandProtocol.handle_error(self, args)
 
-    @arg_count(0)
+    @arg_count(1)
     def handle_init_hello(self, args):
+        print 'Connected as', args[0]
         self.change_state('connected')
 
     @arg_count(1, 2)
