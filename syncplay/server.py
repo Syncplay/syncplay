@@ -1,5 +1,6 @@
 #coding:utf8
 
+from collections import deque
 import time
 import random
 
@@ -142,8 +143,7 @@ class WatcherInfo(object):
         self.ping = None
         self.time_offset = 0
         self.time_offset_data = []
-        self.last_ping_time = None
-        self.last_ping_value = None
+        self.pings_sent = dict()
 
         self.counter = 0
 
@@ -278,19 +278,21 @@ class SyncFactory(Factory):
         if not watcher:
             return
 
-        if watcher.last_ping_value == value:
+        ping_time = watcher.pings_sent.pop(value, None)
+        if ping_time is not None:
             curtime = time.time()
-            watcher.ping = ping = (curtime - watcher.last_ping_time)/2
+            watcher.ping = ping = (curtime - ping_time)/2
 
             if watcher.time_offset_data is not None:
                 time_offset = curtime - (ctime + ping)
                 watcher.time_offset_data.append((ping, time_offset))
 
                 if len(watcher.time_offset_data) > 1:
-                    pmax = max(p for p,_ in watcher.time_offset_data)
+                    pmin = min(p for p,_ in watcher.time_offset_data)
+                    pmax = max(p for p,_ in watcher.time_offset_data) - pmin
                     psum, pweights = 0, 0
                     for ping, offset in watcher.time_offset_data:
-                        ping = 1-(ping/pmax)
+                        ping = 1-((ping-pmin)/pmax)
                         pweights += ping
                         psum += ping*offset
                     watcher.time_offset = psum/pweights
@@ -303,10 +305,17 @@ class SyncFactory(Factory):
             #print watcher.name, 'last ping', watcher.ping, 'time offset %.6f' % watcher.time_offset
 
     def send_ping_to(self, watcher):
-        chars = random_chars()
-        watcher.last_ping_time = time.time()
-        watcher.last_ping_value = chars
+        chars = None
+        while not chars or chars in watcher.pings_sent:
+            chars = random_chars()
+
+        ctime = time.time()
+
         watcher.watcher_proto.send_ping(chars)
+        watcher.pings_sent[chars] = time.time()
+
+        if len(watcher.pings_sent) > 30:
+            watcher.pings_sent.pop(min((time, key) for key, time in watcher.pings_sent.iteritems())[1])
 
         self.schedule_send_ping(watcher)
 
