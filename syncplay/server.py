@@ -133,6 +133,7 @@ class WatcherInfo(object):
     def __init__(self, watcher_proto, name):
         self.watcher_proto = watcher_proto
         self.name = name
+        self.active = True
 
         self.position = 0
         self.filename = None
@@ -144,6 +145,7 @@ class WatcherInfo(object):
         self.time_offset = 0
         self.time_offset_data = []
         self.pings_sent = dict()
+        self.last_ping_received = time.time()
 
         self.counter = 0
 
@@ -179,6 +181,7 @@ class SyncFactory(Factory):
 
     def remove_watcher(self, watcher_proto):
         watcher = self.watchers.pop(watcher_proto, None)
+        watcher.active = False
         for receiver in self.watchers.itervalues():
             if receiver != watcher:
                 receiver.watcher_proto.send_left(watcher.name)
@@ -281,6 +284,7 @@ class SyncFactory(Factory):
         ping_time = watcher.pings_sent.pop(value, None)
         if ping_time is not None:
             curtime = time.time()
+            watcher.last_ping_received = curtime
             watcher.ping = ping = (curtime - ping_time)/2
 
             if watcher.time_offset_data is not None:
@@ -305,11 +309,19 @@ class SyncFactory(Factory):
             #print watcher.name, 'last ping', watcher.ping, 'time offset %.6f' % watcher.time_offset
 
     def send_ping_to(self, watcher):
+        if not watcher.active:
+            return
+
         chars = None
         while not chars or chars in watcher.pings_sent:
             chars = random_chars()
 
         ctime = time.time()
+        print ctime - watcher.last_ping_received
+        if ctime - watcher.last_ping_received > 60:
+            watcher.watcher_proto.drop()
+            print 'dropped', watcher.name
+            return
 
         watcher.watcher_proto.send_ping(chars)
         watcher.pings_sent[chars] = time.time()
