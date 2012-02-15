@@ -175,7 +175,7 @@ class SyncFactory(Factory):
             watcher_proto.send_present(receiver.name, receiver.filename)
         watcher_proto.send_hello()
         self.send_state_to(watcher)
-        self.schedule_send_ping(watcher_proto)
+        self.send_ping_to(watcher)
 
     def remove_watcher(self, watcher_proto):
         watcher = self.watchers.pop(watcher_proto, None)
@@ -302,19 +302,16 @@ class SyncFactory(Factory):
 
             #print watcher.name, 'last ping', watcher.ping, 'time offset %.6f' % watcher.time_offset
 
-        self.schedule_send_ping(watcher_proto)
-
-    def send_ping_to(self, watcher_proto):
-        watcher = self.watchers.get(watcher_proto)
-        if not watcher:
-            return
+    def send_ping_to(self, watcher):
         chars = random_chars()
         watcher.last_ping_time = time.time()
         watcher.last_ping_value = chars
         watcher.watcher_proto.send_ping(chars)
 
-    def schedule_send_ping(self, watcher_proto, when=1):
-        reactor.callLater(when, self.send_ping_to, watcher_proto)
+        self.schedule_send_ping(watcher)
+
+    def schedule_send_ping(self, watcher, when=1):
+        reactor.callLater(when, self.send_ping_to, watcher)
 
     def playing_received(self, watcher_proto, filename):
         watcher = self.watchers.get(watcher_proto)
