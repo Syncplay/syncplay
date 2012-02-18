@@ -1,11 +1,10 @@
 #coding:utf8
 
+from functools import wraps
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
-
-from functools import wraps
 
 from twisted.internet.defer import succeed
 from twisted.internet.protocol import (
@@ -21,6 +20,7 @@ from .utils import (
     join_args,
     split_args,
 )
+
 
 def arg_count(minimum, maximum=None):
     def decorator(f):

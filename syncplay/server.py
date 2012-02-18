@@ -212,7 +212,6 @@ class SyncFactory(Factory):
             self.pause_change_by = None
         if not self.watchers:
             self.paused = True 
-        # send info someone quit
 
     def update_state(self, watcher_proto, counter, ctime, paused, position):
         watcher = self.watchers.get(watcher_proto)

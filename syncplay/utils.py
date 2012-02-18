@@ -44,7 +44,6 @@ def split_args(args):
 def join_args(args):
     return ' '.join(quote_arg(arg) for arg in args)
 
-
 def parse_state(args):
     if len(args) == 4:
         counter, ctime, state, position = args
@@ -78,4 +77,11 @@ def find_exec_path(name):
         path = os.path.join(os.path.realpath(path), name)
         if os.access(path, os.X_OK):
             return path
+
+def format_time(value):
+    value = int(value*100)
+    seconds, mseconds = divmod(value, 100)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    return '%02d:%02d:%02d.%02d' % (hours, minutes, seconds, mseconds)
 
