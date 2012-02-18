@@ -45,28 +45,30 @@ class SyncClientProtocol(CommandProtocol):
         else:
             print '%s is present' % who
 
-    @arg_count(3, 4)
+    @arg_count(4, 5)
     def handle_connected_state(self, args):
         args = parse_state(args)
         if not args:
             self.drop_with_error('Malformed state attributes')
             return
 
-        counter, paused, position, name = args
+        counter, ctime, paused, position, name = args
 
-        self.manager.update_global_state(counter, paused, position, name)
+        self.manager.update_global_state(counter, ctime, paused, position, name)
 
-    @arg_count(2)
+    @arg_count(3)
     def handle_connected_seek(self, args):
-        position, who = args
+        ctime, position, who = args
         try:
+            ctime = int(ctime)
             position = int(position)
         except ValueError:
             self.drop_with_error('Invalid arguments')
 
+        ctime /= 1000.0
         position /= 1000.0
 
-        self.manager.seek(position, who)
+        self.manager.seek(ctime, position, who)
 
     @arg_count(1)
     def handle_connected_ping(self, args):
@@ -86,11 +88,11 @@ class SyncClientProtocol(CommandProtocol):
         print '%s left' % args[0]
 
 
-    def send_state(self, counter, paused, position):
-        self.send_message('state', counter, ('paused' if paused else 'playing'), int(position*1000))
+    def send_state(self, counter, ctime, paused, position):
+        self.send_message('state', counter, int(ctime*1000), ('paused' if paused else 'playing'), int(position*1000))
 
-    def send_seek(self, counter, position):
-        self.send_message('seek', counter, int(position*1000))
+    def send_seek(self, counter, ctime, position):
+        self.send_message('seek', counter, int(ctime*1000), int(position*1000))
 
     def send_playing(self, filename):
         self.send_message('playing', filename)
@@ -251,15 +253,19 @@ class Manager(object):
         if not self.running:
             return
         self.counter += 1
+        curtime = time.time()
+        position = self.player_position
+        if not self.player_paused:
+            position += curtime - self.last_player_update
         if self.protocol:
-            self.protocol.send_state(self.counter, self.player_paused, self.player_position)
+            self.protocol.send_state(self.counter, curtime, self.player_paused, self.player_position)
         self.schedule_send_status()
 
     def send_seek(self):
         if not (self.running and self.protocol):
             return
         self.counter += 1
-        self.protocol.send_seek(self.counter, self.player_position)
+        self.protocol.send_seek(self.counter, time.time(), self.player_position)
 
     def send_filename(self):
         if self.protocol and self.player_filename:
@@ -305,8 +311,10 @@ class Manager(object):
         self.player_filename = filename
         self.send_filename()
 
-    def update_global_state(self, counter, paused, position, name):
+    def update_global_state(self, counter, ctime, paused, position, name):
         curtime = time.time()
+        if not paused:
+            position += curtime - ctime
         self.global_paused = paused
         self.global_position = position
         self.global_who_changed = name
@@ -344,12 +352,13 @@ class Manager(object):
                 #else:
                 #    print 'Not pausing now'
 
-        self.global_noted_pause_change = paused
         self.seek_sent_wait = False
+        self.global_noted_pause_change = paused
         if changed:
             self.ask_player()
 
-    def seek(self, position, who):
+    def seek(self, ctime, position, who):
+        position += time.time() - ctime
         self.global_position = position
         if self.player:
             self.player.set_position(position)

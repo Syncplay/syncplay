@@ -42,28 +42,31 @@ class SyncServerProtocol(CommandProtocol):
         self.factory.add_watcher(self, args[0])
         self.change_state('connected')
 
-    @arg_count(3)
+    @arg_count(4)
     def handle_connected_state(self, args):
         args = parse_state(args)
         if not args:
             self.drop_with_error('Malformed state attributes')
             return
 
-        counter, paused, position, _ = args
+        counter, ctime, paused, position, _ = args
 
-        self.factory.update_state(self, counter, paused, position)
+        self.factory.update_state(self, counter, ctime, paused, position)
 
-    @arg_count(2)
+    @arg_count(3)
     def handle_connected_seek(self, args):
+        counter, ctime, position = args
         try:
-            counter = int(args[0])
-            position = int(args[1])
+            counter = int(counter)
+            ctime = int(ctime)
+            position = int(position)
         except ValueError:
             self.drop_with_error('Invalid arguments')
 
+        ctime /= 1000.0
         position /= 1000.0
 
-        self.factory.seek(self, counter, position)
+        self.factory.seek(self, counter, ctime, position)
 
     @arg_count(2)
     def handle_connected_pong(self, args):
@@ -88,16 +91,17 @@ class SyncServerProtocol(CommandProtocol):
         )))
 
 
-    def send_state(self, counter, paused, position, who_last_changed):
+    def send_state(self, counter, ctime, paused, position, who_last_changed):
+        ctime = int(ctime*1000)
         paused = 'paused' if paused else 'playing'
         position = int(position*1000)
         if who_last_changed is None:
-            self.send_message('state', counter, paused, position)
+            self.send_message('state', counter, ctime, paused, position)
         else:
-            self.send_message('state', counter, paused, position, who_last_changed)
+            self.send_message('state', counter, ctime, paused, position, who_last_changed)
 
-    def send_seek(self, position, who_seeked):
-        self.send_message('seek', int(position*1000), who_seeked)
+    def send_seek(self, ctime, position, who_seeked):
+        self.send_message('seek', int(ctime*1000), int(position*1000), who_seeked)
 
     def send_ping(self, value):
         self.send_message('ping', value)
@@ -141,6 +145,7 @@ class WatcherInfo(object):
         self.name = name
         self.active = True
 
+        self.paused = True
         self.position = 0
         self.filename = None
         self.max_position = 0
@@ -196,6 +201,8 @@ class SyncFactory(Factory):
 
     def remove_watcher(self, watcher_proto):
         watcher = self.watchers.pop(watcher_proto, None)
+        if not watcher:
+            return
         watcher.active = False
         for receiver in self.watchers.itervalues():
             if receiver != watcher:
@@ -207,21 +214,24 @@ class SyncFactory(Factory):
             self.paused = True 
         # send info someone quit
 
-    def update_state(self, watcher_proto, counter, paused, position):
+    def update_state(self, watcher_proto, counter, ctime, paused, position):
         watcher = self.watchers.get(watcher_proto)
         if not watcher:
             return
 
-        if not paused and watcher.ping is not None:
-            position += watcher.ping
+        curtime = time.time()
+        ctime += watcher.time_offset
+        if not paused:
+            position += curtime - ctime
+
+        watcher.paused = paused
         watcher.position = position
         watcher.max_position = max(position, watcher.max_position)
-        watcher.last_update = time.time()
+        watcher.last_update = curtime
         watcher.counter = counter
-
+        
         pause_changed = paused != self.paused
 
-        curtime = time.time()
         if pause_changed and (
             not self.pause_change_by or
             self.pause_change_by == watcher or
@@ -242,26 +252,24 @@ class SyncFactory(Factory):
             ):
                 self.send_state_to(receiver, position, curtime)
 
-    def seek(self, watcher_proto, counter, position):
+    def seek(self, watcher_proto, counter, ctime, position):
         watcher = self.watchers.get(watcher_proto)
         if not watcher:
             return
 
         #print watcher.name, 'seeked to', position
-        if not self.paused and watcher.ping is not None:
-            position += watcher.ping
+        curtime = time.time()
+        ctime += watcher.time_offset
+        position += curtime - ctime
         watcher.counter = counter
 
         for receiver in self.watchers.itervalues():
             position2 = position
-            if not self.paused and receiver.ping is not None:
-                position2 += receiver.ping
             receiver.max_position = position2
             if receiver == watcher:
-                # send_state_to modifies by ping already...
-                self.send_state_to(receiver, position)
+                self.send_state_to(receiver, position, curtime)
             else:
-                receiver.watcher_proto.send_seek(position2, watcher.name)
+                receiver.watcher_proto.send_seek(curtime-receiver.time_offset, position2, watcher.name)
 
     def send_state_to(self, watcher, position=None, curtime=None):
         if position is None:
@@ -269,13 +277,12 @@ class SyncFactory(Factory):
         if curtime is None:
             curtime = time.time()
 
-        if not self.paused and watcher.ping is not None:
-            position += watcher.ping
+        ctime = curtime - watcher.time_offset
 
         if self.pause_change_by:
-            watcher.watcher_proto.send_state(watcher.counter, self.paused, position, self.pause_change_by.name)
+            watcher.watcher_proto.send_state(watcher.counter, ctime, self.paused, position, self.pause_change_by.name)
         else:
-            watcher.watcher_proto.send_state(watcher.counter, self.paused, position, None)
+            watcher.watcher_proto.send_state(watcher.counter, ctime, self.paused, position, None)
 
         watcher.last_update_sent = curtime
 
@@ -331,9 +338,8 @@ class SyncFactory(Factory):
         while not chars or chars in watcher.pings_sent:
             chars = random_chars()
 
-        ctime = time.time()
-        print ctime - watcher.last_ping_received
-        if ctime - watcher.last_ping_received > 60:
+        curtime = time.time()
+        if curtime - watcher.last_ping_received > 60:
             watcher.watcher_proto.drop()
             return
 

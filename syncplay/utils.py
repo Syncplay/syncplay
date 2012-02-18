@@ -46,17 +46,12 @@ def join_args(args):
 
 
 def parse_state(args):
-    if len(args) == 3:
-        counter, state, position = args
+    if len(args) == 4:
+        counter, ctime, state, position = args
         who_changed_state = None
-    elif len(args) == 4:
-        counter, state, position, who_changed_state = args
+    elif len(args) == 5:
+        counter, ctime, state, position, who_changed_state = args
     else:
-        return
-
-    try:
-        counter = int(counter)
-    except ValueError:
         return
 
     if not state in ('paused', 'playing'):
@@ -65,13 +60,16 @@ def parse_state(args):
     paused = state == 'paused'
 
     try:
+        counter = int(counter)
+        ctime = int(ctime)
         position = int(position)
     except ValueError:
         return
 
+    ctime /= 1000.0
     position /= 1000.0
 
-    return counter, paused, position, who_changed_state
+    return counter, ctime, paused, position, who_changed_state
 
 def find_exec_path(name):
     if os.access(name, os.X_OK):
