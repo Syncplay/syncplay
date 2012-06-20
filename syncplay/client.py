@@ -1,6 +1,7 @@
 #coding:utf8
 
 import time
+import re
 
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
@@ -169,7 +170,8 @@ class Manager(object):
         self.last_player_update = None
         self.player_speed_fix = False
         self.player_filename = None
-
+        self.player_position_before_last_seek = 0
+        
         self.seek_sent_wait = False
         self.status_ask_sent = 0
         self.status_ask_received = 0
@@ -278,7 +280,23 @@ class Manager(object):
         if self.protocol and self.player_filename:
             self.protocol.send_playing(self.player_filename)
 
-
+    def execute_command(self, data):
+        RE_SEEK = re.compile("^s ?(\d+)(:(\d{1,2}))?$")
+        m = RE_SEEK.match(data)
+        if m :
+            minutes, seconds = m.group(1), m.group(3)
+            minutes = int(minutes) * 60
+            if seconds <> None:
+                seconds = int(seconds)
+            else:
+                seconds = 0
+            self.player_position_before_last_seek = self.player_position
+            self.counter += 1
+            self.protocol.send_seek(self.counter, time.time(), minutes+seconds)
+        elif data == "r":
+            self.counter += 1
+            self.protocol.send_seek(self.counter, time.time(), self.player_position_before_last_seek)
+   
     def update_player_status(self, paused, position):
         self.status_ask_received += 1
         if self.status_ask_received < self.status_ask_sent:
@@ -376,6 +394,7 @@ class Manager(object):
         self.global_position = position
         self.last_global_update = curtime
         if self.player:
+            self.player_position_before_last_seek = self.player_position
             self.player.set_position(position)
             self.ask_player()
 

@@ -72,7 +72,8 @@ class MPCHCPlayer(object):
 
         self.pinged = False
         self.tmp_filename = None
-
+        self.tmp_position = None
+        
         self.agent = Agent(reactor)
 
     def drop(self):
@@ -98,14 +99,17 @@ class MPCHCPlayer(object):
 
     def status_response(self, status, headers, body):
         m = RE_MPC_STATUS.match(body)
-        if not m:
-            return
-        filename, paused, position = m.group(1), m.group(2), m.group(3)
-
-        paused = PLAYING_STATUSES.get(paused)
+        if m:
+            filename, paused, position = m.group(1), m.group(2), m.group(3)
+            paused = PLAYING_STATUSES.get(paused)
+        else:
+            filename, paused, position = self.tmp_filename, True, self.tmp_position
         if paused is None:
-            return
-        position = float(position)/1000
+            paused = True #assume stopped or changing episodes!
+            position = self.tmp_position
+        else:
+            position = float(position)/1000 
+            self.tmp_position = position
         if self.pinged:
             self.manager.update_player_status(paused, position)
         else:
@@ -137,7 +141,6 @@ class MPCHCPlayer(object):
         if self.manager.running:
             print 'Failed to connect to MPC-HC web interface'
         self.manager.stop()
-
 
 def run_mpc(manager, host=None):
     mpc = MPCHCPlayer(manager, host)
