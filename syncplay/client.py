@@ -281,11 +281,14 @@ class Manager(object):
             self.protocol.send_playing(self.player_filename)
 
     def execute_command(self, data):
-        RE_SEEK = re.compile("^s ?(\d+)(:(\d{1,2}))?$")
+        RE_SEEK = re.compile("^s ?(\d+)?(:(\d{1,2}))?$")
         m = RE_SEEK.match(data)
         if m :
             minutes, seconds = m.group(1), m.group(3)
-            minutes = int(minutes) * 60
+            if minutes <> None:
+                minutes = int(minutes) * 60
+            else:
+                minutes = 0
             if seconds <> None:
                 seconds = int(seconds)
             else:
@@ -295,7 +298,9 @@ class Manager(object):
             self.protocol.send_seek(self.counter, time.time(), minutes+seconds)
         elif data == "r":
             self.counter += 1
+            tmp_pos = self.player_position
             self.protocol.send_seek(self.counter, time.time(), self.player_position_before_last_seek)
+            self.player_position_before_last_seek = tmp_pos
    
     def update_player_status(self, paused, position):
         self.status_ask_received += 1
@@ -334,7 +339,9 @@ class Manager(object):
             self.ask_player()
 
     def update_filename(self, filename):
-        self.player_filename = filename
+        filename = unicode(filename, errors='replace')
+        self.player_filename = filename.encode('ascii','replace')
+
         self.send_filename()
 
     def update_global_state(self, counter, ctime, paused, position, name):
