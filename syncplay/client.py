@@ -19,7 +19,6 @@ from .utils import (
 class SyncClientProtocol(CommandProtocol):
     def __init__(self, manager):
         CommandProtocol.__init__(self)
-
         self.manager = manager
 
     def connectionMade(self):
@@ -100,7 +99,6 @@ class SyncClientProtocol(CommandProtocol):
 
     def send_playing(self, filename):
         self.send_message('playing', filename)
-
 
     states = dict(
         init = dict(
@@ -280,22 +278,33 @@ class Manager(object):
         if self.protocol and self.player_filename:
             self.protocol.send_playing(self.player_filename)
 
-    def execute_command(self, data):
-        RE_SEEK = re.compile("^s ?(\d+)?(:(\d{1,2}))?$")
-        m = RE_SEEK.match(data)
-        if m :
-            minutes, seconds = m.group(1), m.group(3)
-            if minutes <> None:
-                minutes = int(minutes) * 60
-            else:
-                minutes = 0
+    def exectue_seek_cmd(self, seek_type, minutes, seconds):
+        self.player_position_before_last_seek = self.player_position
+        if seek_type == 's':
+            self.counter += 1
             if seconds <> None:
                 seconds = int(seconds)
             else:
                 seconds = 0
-            self.player_position_before_last_seek = self.player_position
-            self.counter += 1
-            self.protocol.send_seek(self.counter, time.time(), minutes+seconds)
+            if minutes <> None:
+                seconds += int(minutes) * 60
+            self.protocol.send_seek(self.counter, time.time(), seconds)
+        else: #seek_type s+
+            if seconds <> None:
+                seconds = int(seconds)
+            else:
+                seconds = 20
+            if minutes <> None:
+                seconds += int(minutes) * 60
+            else:
+                seconds += 60
+            self.protocol.send_seek(self.counter, time.time(), self.player_position+seconds)
+
+    def execute_command(self, data):
+        RE_SEEK = re.compile("^(s[+s]?) ?(-?\d+)?([^0-9](\d+))?$")
+        matched_seek = RE_SEEK.match(data)
+        if matched_seek :
+            self.exectue_seek_cmd(matched_seek.group(1), matched_seek.group(2), matched_seek.group(4))
         elif data == "r":
             self.counter += 1
             tmp_pos = self.player_position
