@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 common_info = dict(
     name = 'SyncPlay',
-    version = '0.1',
+    version = '0.2',
     author = 'Tomasz Kowalczyk, Uriziel',
     author_email = 'code@fluxid.pl',
     description = 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
