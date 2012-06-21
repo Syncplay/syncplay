@@ -33,7 +33,7 @@ def get_configuration():
         else:
             name = args.name
     except ConfigParser.NoSectionError:
-        exit("Host or username not specified")        
+        sys.exit("Host or username not specified")        
 
     with open('syncplay.ini', 'wb') as configfile:
         try:
