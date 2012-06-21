@@ -271,26 +271,24 @@ class Manager(object):
         if not (self.running and self.protocol):
             return
         self.counter += 10
-
         self.protocol.send_seek(self.counter, time.time(), self.player_position)
-
+        print 'You seeked to', format_time(self.player_position)
+        
     def send_filename(self):
         if self.protocol and self.player_filename:
             self.protocol.send_playing(self.player_filename)
 
     def exectue_seek_cmd(self, seek_type, minutes, seconds):
-        if not (self.running and self.protocol):
-            return
         self.player_position_before_last_seek = self.player_position
+
         if seek_type == 's':
-            self.counter += 10
             if seconds <> None:
                 seconds = int(seconds)
             else:
                 seconds = 0
             if minutes <> None:
                 seconds += int(minutes) * 60
-            self.protocol.send_seek(self.counter, time.time(), seconds)
+            self.player.set_position(seconds)
         else: #seek_type s+
             if seconds <> None:
                 seconds = int(seconds)
@@ -300,8 +298,8 @@ class Manager(object):
                 seconds += int(minutes) * 60
             else:
                 seconds += 60
-            self.protocol.send_seek(self.counter, time.time(), self.player_position+seconds)
-
+            self.player.set_position(self.player_position+seconds)
+            
     def execute_command(self, data):
         RE_SEEK = re.compile("^(s[+s]?) ?(-?\d+)?([^0-9](\d+))?$")
         matched_seek = RE_SEEK.match(data)
@@ -312,7 +310,9 @@ class Manager(object):
             tmp_pos = self.player_position
             self.protocol.send_seek(self.counter, time.time(), self.player_position_before_last_seek)
             self.player_position_before_last_seek = tmp_pos
-   
+        elif data == "p":
+            self.player.set_paused(not self.player_paused)
+
     def update_player_status(self, paused, position):
         self.status_ask_received += 1
         if self.status_ask_received < self.status_ask_sent:
@@ -322,16 +322,21 @@ class Manager(object):
         self.player_paused = paused
         self.player_position = position
         self.last_player_update = time.time()
-
+        diff = position - self.get_global_position()
         if old_paused and not paused:
             self.player_paused_at = None
         if old_paused != paused and self.global_paused != paused:
             self.send_status(True)
-
+            if paused:
+                print "You have paused"
+                if(diff > 0):
+                    self.player.set_position(self.get_global_position())
+            else:
+                print "You have resumed"
+            
         if not (self.global_paused or self.seek_sent_wait):
-            diff = position - self.get_global_position()
             if (0.4 if self.player_speed_fix else 0.6) <= diff <= 4:
-                #print 'server is %0.2fs ahead of client, slowing down' % diff
+                #print 'client is %0.2fs ahead of server, slowing down' % diff
                 if not self.player_speed_fix:
                     self.player.set_speed(0.75)
                     self.player_speed_fix = True
@@ -340,12 +345,12 @@ class Manager(object):
                     #print 'resetting speed'
                     self.player.set_speed(1)
                     self.player_speed_fix = False
-                if abs(diff) > 8:
-                    self.send_seek()
-                    self.seek_sent_wait = True
+        if abs(diff) > 8:# and not self.seek_sent_wait:
+            self.send_seek()
+            self.seek_sent_wait = True
 
         if not paused and self.player_paused_at is not None and position >= self.player_paused_at:
-            #print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
+            print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
             self.player.set_paused(True)
             self.ask_player()
 
@@ -387,6 +392,8 @@ class Manager(object):
             diff = self.get_player_position() - position
             if abs(diff) > 4:
                 self.player.set_position(position)
+                #self.player.set_paused(True)
+                print "Rewind due to time difference"
                 changed = True
             if self.player_paused and not paused:
                 self.player_paused_at = None
@@ -415,7 +422,6 @@ class Manager(object):
             self.player_position_before_last_seek = self.player_position
             self.player.set_position(position)
             self.ask_player()
-
         print who, 'seeked to', format_time(position)
 
 
