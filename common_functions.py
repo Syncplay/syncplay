@@ -22,7 +22,7 @@ def get_configuration():
     args = parser.parse_args()
 
     config = ConfigParser.RawConfigParser(allow_no_value=True)
-    config.read('syncplay.ini')
+    config.read(os.path.join(os.path.dirname(__file__), 'syncplay.ini'))
     try:
         if(args.host == None):
             host = config.get('sync', 'host')
