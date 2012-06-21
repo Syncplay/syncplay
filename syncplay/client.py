@@ -270,7 +270,7 @@ class Manager(object):
     def send_seek(self):
         if not (self.running and self.protocol):
             return
-        self.counter += 1
+        self.counter += 10
 
         self.protocol.send_seek(self.counter, time.time(), self.player_position)
 
@@ -279,9 +279,11 @@ class Manager(object):
             self.protocol.send_playing(self.player_filename)
 
     def exectue_seek_cmd(self, seek_type, minutes, seconds):
+        if not (self.running and self.protocol):
+            return
         self.player_position_before_last_seek = self.player_position
         if seek_type == 's':
-            self.counter += 1
+            self.counter += 10
             if seconds <> None:
                 seconds = int(seconds)
             else:
