@@ -331,6 +331,7 @@ class Manager(object):
                 print "You have paused"
                 if(diff > 0):
                     self.player.set_position(self.get_global_position())
+                    self.ask_player()
             else:
                 print "You have resumed"
             
@@ -350,7 +351,7 @@ class Manager(object):
             self.seek_sent_wait = True
 
         if not paused and self.player_paused_at is not None and position >= self.player_paused_at:
-            print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
+            #print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
             self.player.set_paused(True)
             self.ask_player()
 
