@@ -213,9 +213,9 @@ class SyncFactory(Factory):
 
     def remove_watcher(self, watcher_proto):
         watcher = self.watchers.pop(watcher_proto, None)
-        self.remove_room_if_empty(watcher.room)
         if not watcher:
             return
+        self.remove_room_if_empty(watcher.room)
         watcher.active = False
         self.broadcast(watcher, lambda receiver: receiver.watcher_proto.send_left(watcher.name))
         
@@ -348,7 +348,10 @@ class SyncFactory(Factory):
     def send_ping_to(self, watcher):
         if not watcher.active:
             return
-
+        if (time.time()-watcher.last_update_sent) > 8:
+            self.remove_watcher(watcher.watcher_proto)
+            return
+        
         chars = None
         while not chars or chars in watcher.pings_sent:
             chars = random_chars()
