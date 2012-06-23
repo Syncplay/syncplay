@@ -17,7 +17,6 @@ from .utils import parse_state
 random.seed()
 
 CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-RE_NAME = re.compile('^(.*?)(\d*)$')
 
 def random_chars():
     return ''.join(random.choice(CHARS) for _ in xrange(10))
@@ -35,12 +34,17 @@ class SyncServerProtocol(CommandProtocol):
         if not len(args) == 1:
             self.drop_with_error('Invalid arguments')
             return
-        name = args[0].strip()
-        if not args:
+        name = re.sub('[^\w]','',args[0])
+        if not name:
             self.drop_with_error('Invalid nickname')
             return
-        self.factory.add_watcher(self, args[0])
+        self.factory.add_watcher(self, name)
         self.change_state('connected')
+
+    @arg_count(1)
+    def handle_connected_room(self, args):
+        watcher = self.factory.watchers.get(self)
+        watcher.room = args[0]
 
     @arg_count(4)
     def handle_connected_state(self, args):
@@ -52,7 +56,12 @@ class SyncServerProtocol(CommandProtocol):
         counter, ctime, paused, position, _ = args
 
         self.factory.update_state(self, counter, ctime, paused, position)
-
+    
+    @arg_count(0)
+    def handle_connected_list(self, args):
+        watcher = self.factory.watchers.get(self)
+        self.factory.broadcast(watcher, lambda receiver: self.send_present(receiver.name, receiver.filename))
+            
     @arg_count(3)
     def handle_connected_seek(self, args):
         counter, ctime, position = args
@@ -130,6 +139,8 @@ class SyncServerProtocol(CommandProtocol):
             iam = 'handle_init_iam',
         ),
         connected = dict(
+            room = 'handle_connected_room',
+            list = 'handle_connected_list',
             state = 'handle_connected_state',
             seek = 'handle_connected_seek',
             pong = 'handle_connected_pong',
@@ -152,6 +163,7 @@ class WatcherInfo(object):
         self.last_update = None
         self.last_update_sent = None
 
+        self.room = 'default'
         self.ping = None
         self.time_offset = 0
         self.time_offset_data = []
@@ -176,25 +188,16 @@ class SyncFactory(Factory):
         return SyncServerProtocol(self)
 
     def add_watcher(self, watcher_proto, name):
-        allnames = (watcher.name.lower() for watcher in self.watchers.itervalues())
+        allnames = []
+        for watcher in self.watchers.itervalues():
+            allnames.append(watcher.name.lower()) 
         while name.lower() in allnames:
-            m = RE_NAME.match(name)
-            name, number = m.group(1), m.group(2)
-            if number:
-                number = str(int(number)+1)
-            else:
-                number = '1'
-            name += number
-
+            name += '_'    
+            
         watcher = WatcherInfo(watcher_proto, name)
         if self.watchers:
             watcher.max_position = min(w.max_position for w in self.watchers.itervalues())
         self.watchers[watcher_proto] = watcher
-        for receiver in self.watchers.itervalues():
-            if receiver == watcher:
-                continue
-            receiver.watcher_proto.send_joined(name)
-            watcher_proto.send_present(receiver.name, receiver.filename)
         watcher_proto.send_hello(name)
         self.send_state_to(watcher)
         self.send_ping_to(watcher)
@@ -363,4 +366,15 @@ class SyncFactory(Factory):
         for receiver in self.watchers.itervalues():
             if receiver != watcher:
                 receiver.watcher_proto.send_playing(watcher.name, filename)
-
+                
+    def broadcast_room(self, sender, what):
+        for receiver in self.watchers.itervalues():
+            if receiver.room == sender.room and receiver != sender:
+                print receiver.room, sender.room
+                what(receiver)
+                
+    def broadcast(self, sender, what):
+        for receiver in self.watchers.itervalues():
+            if receiver != sender:
+                for receiver in self.watchers.itervalues():
+                    what(receiver)

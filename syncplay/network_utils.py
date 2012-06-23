@@ -43,13 +43,14 @@ class CommandProtocol(LineReceiver):
         line = line.strip()
         if not line:
             return
-        #print '>>>', line
+        
         args = split_args(line)
         if not args:
             self.drop_with_error('Malformed line')
             return
         command = args.pop(0)
-
+        if command not in ['ping', 'pong']:
+            print '>>>', line
         if command == 'error':
             self.handle_error(args)
             return
@@ -61,7 +62,6 @@ class CommandProtocol(LineReceiver):
         if not handler:
             self.drop_with_error('Unknown command: `%s`' % command)
             return # TODO log it too
-
         handler(args)
 
     def handle_error(self, args):
@@ -74,7 +74,8 @@ class CommandProtocol(LineReceiver):
 
     def send_message(self, *args):
         line = join_args(args)
-        #print '<<<', line
+        if args[0] not in ['ping', 'pong']:
+            print '<<<', line
         self.sendLine(line)
 
     def drop(self):
@@ -143,7 +144,7 @@ class BodyGetter(Protocol):
         if self.length > 0:
             data = data[:self.length]
             self.body.write(data)
-            self.length -= len(length)
+            self.length -= self.body.len #TODO: need fixing! chuj wie jak to działa :D
 
     def connectionLost(self, reason):
         self.callback(self.body.getvalue())

@@ -20,7 +20,7 @@ class SyncClientProtocol(CommandProtocol):
     def __init__(self, manager):
         CommandProtocol.__init__(self)
         self.manager = manager
-
+        
     def connectionMade(self):
         self.send_message('iam', self.manager.name)
         self.manager.init_protocol(self)
@@ -35,10 +35,13 @@ class SyncClientProtocol(CommandProtocol):
     @arg_count(1)
     def handle_init_hello(self, args):
         print 'Connected as', args[0]
+        self.manager.name = args[0]
         self.change_state('connected')
+        self.send_list()
+        self.manager.schedule_send_status()
 
     @arg_count(1, 2)
-    def handle_init_present(self, args):
+    def handle_connected_present(self, args):
         if len(args) == 2:
             who, what = args
         else:
@@ -90,6 +93,8 @@ class SyncClientProtocol(CommandProtocol):
     def handle_connected_left(self, args):
         print '%s left' % args[0]
 
+    def send_list(self):
+        self.send_message('list')
 
     def send_state(self, counter, ctime, paused, position):
         self.send_message('state', counter, int(ctime*1000), ('paused' if paused else 'playing'), int(position*1000))
@@ -102,10 +107,11 @@ class SyncClientProtocol(CommandProtocol):
 
     states = dict(
         init = dict(
-            present = 'handle_init_present',
             hello = 'handle_init_hello',
         ),
         connected = dict(
+            list = 'handle_connected_list',
+            present = 'handle_connected_present',
             state = 'handle_connected_state',
             seek = 'handle_connected_seek',
             ping = 'handle_connected_ping',
@@ -225,8 +231,6 @@ class Manager(object):
 
     def init_protocol(self, protocol):
         self.protocol = protocol
-        self.schedule_send_status()
-        self.send_filename()
         if self.make_player:
             self.make_player(self)
             self.make_player = None
@@ -278,7 +282,7 @@ class Manager(object):
         if self.protocol and self.player_filename:
             self.protocol.send_playing(self.player_filename)
 
-    def exectue_seek_cmd(self, seek_type, minutes, seconds):
+    def __exectue_seek_cmd(self, seek_type, minutes, seconds):
         self.player_position_before_last_seek = self.player_position
 
         if seek_type == 's':
@@ -302,9 +306,16 @@ class Manager(object):
             
     def execute_command(self, data):
         RE_SEEK = re.compile("^(s[+s]?) ?(-?\d+)?([^0-9](\d+))?$")
+        RE_ROOM = re.compile("^room( (\w+))?")
         matched_seek = RE_SEEK.match(data)
+        matched_room = RE_ROOM.match(data)
         if matched_seek :
-            self.exectue_seek_cmd(matched_seek.group(1), matched_seek.group(2), matched_seek.group(4))
+            self.__exectue_seek_cmd(matched_seek.group(1), matched_seek.group(2), matched_seek.group(4))
+        elif matched_room:
+            room = matched_room.group(2)
+            if room == None:
+                room = 'default'
+            self.protocol.send_room(room)
         elif data == "r":
             self.counter += 1
             tmp_pos = self.player_position
@@ -328,12 +339,12 @@ class Manager(object):
         if old_paused != paused and self.global_paused != paused:
             self.send_status(True)
             if paused:
-                print "You have paused"
+                print '%s paused' % self.name
                 if(diff > 0):
                     self.player.set_position(self.get_global_position())
                     self.ask_player()
             else:
-                print "You have resumed"
+                print '%s resumed' % self.name
             
         if not (self.global_paused or self.seek_sent_wait):
             if (0.4 if self.player_speed_fix else 0.6) <= diff <= 4:
