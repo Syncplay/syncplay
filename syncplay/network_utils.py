@@ -49,8 +49,8 @@ class CommandProtocol(LineReceiver):
             self.drop_with_error('Malformed line')
             return
         command = args.pop(0)
-        if command not in ['ping', 'pong']:
-            print '>>>', line
+        #if command not in ['ping', 'pong']:
+        #    print '>>>', line
         if command == 'error':
             self.handle_error(args)
             return
@@ -74,8 +74,8 @@ class CommandProtocol(LineReceiver):
 
     def send_message(self, *args):
         line = join_args(args)
-        if args[0] not in ['ping', 'pong']:
-            print '<<<', line
+        #if args[0] not in ['ping', 'pong']:
+        #    print '<<<', line
         self.sendLine(line)
 
     def drop(self):

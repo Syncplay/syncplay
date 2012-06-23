@@ -40,16 +40,16 @@ class SyncClientProtocol(CommandProtocol):
         self.send_list()
         self.manager.schedule_send_status()
 
-    @arg_count(1, 2)
+    @arg_count(2, 3)
     def handle_connected_present(self, args):
-        if len(args) == 2:
-            who, what = args
+        if len(args) == 3:
+            who, where, what = args
         else:
-            who, what = args[0], None
+            who, where, what = args[0], args[1], None
         if what:
-            print '%s is present and is playing %s' % (who, what)
+            print '%s is present and is playing \'%s\' in a room %s' % (who, what, where)
         else:
-            print '%s is present' % who
+            print '%s is present in a room %s' % (who, where)
 
     @arg_count(4, 5)
     def handle_connected_state(self, args):
@@ -80,14 +80,18 @@ class SyncClientProtocol(CommandProtocol):
     def handle_connected_ping(self, args):
         self.send_message('pong', args[0], int(time.time()*100000))
 
-    @arg_count(2)
+    @arg_count(3)
     def handle_connected_playing(self, args):
-        who, what = args
-        print '%s is playing %s' % (who, what)
+        who, where, what = args
+        print '%s is playing \'%s\' in a room \'%s\'' % (who, what, where)
 
     @arg_count(1)
     def handle_connected_joined(self, args):
         print '%s joined' % args[0]
+    
+    @arg_count(2)
+    def handle_connected_room(self, args):
+        print '%s entered a room \'%s\'' % (args[0], args[1])
 
     @arg_count(1)
     def handle_connected_left(self, args):
@@ -101,6 +105,9 @@ class SyncClientProtocol(CommandProtocol):
 
     def send_seek(self, counter, ctime, position):
         self.send_message('seek', counter, int(ctime*1000), int(position*1000))
+    
+    def send_room(self, where):
+        self.send_message('room', where)
 
     def send_playing(self, filename):
         self.send_message('playing', filename)
@@ -110,6 +117,7 @@ class SyncClientProtocol(CommandProtocol):
             hello = 'handle_init_hello',
         ),
         connected = dict(
+            room = 'handle_connected_room',
             list = 'handle_connected_list',
             present = 'handle_connected_present',
             state = 'handle_connected_state',
@@ -317,9 +325,8 @@ class Manager(object):
                 room = 'default'
             self.protocol.send_room(room)
         elif data == "r":
-            self.counter += 1
             tmp_pos = self.player_position
-            self.protocol.send_seek(self.counter, time.time(), self.player_position_before_last_seek)
+            self.player.set_position(self.player_position_before_last_seek)
             self.player_position_before_last_seek = tmp_pos
         elif data == "p":
             self.player.set_paused(not self.player_paused)
