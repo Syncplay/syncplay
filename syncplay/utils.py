@@ -104,38 +104,40 @@ def stdin_thread(manager):
 def get_configuration():
     parser = argparse.ArgumentParser(description='Synchronize multiple players over the web.',
                                      epilog='If no options supplied config values will be used')
-    parser.add_argument('host', metavar='host', type=str, nargs='?', help='server\'s address')
-    parser.add_argument('name', metavar='name', type=str, nargs='?', help='desired username')
-    parser.add_argument('args', metavar='opts', type=str, nargs='*', help='player options, if you need to pass options starting with - prepend them with single \'--\' argument') 
+    parser.add_argument('--host', metavar='hostname', type=str, help='server\'s address')
+    parser.add_argument('--name', metavar='username', type=str, help='desired username')
+    parser.add_argument('-m', '--mpc-path', metavar='path', type=str, help='path to mpc-hc.exe (only for sync_mpc_api client)')
+    parser.add_argument('-d','--debug', action='store_true', help='debug mode')
+    parser.add_argument('-n','--no-store', action='store_true', help='don\'t store values in syncplay.ini')
+    parser.add_argument('file', metavar='file', type=str, nargs='?', help='file to play')
+    parser.add_argument('args', metavar='options', type=str, nargs='*', help='player options, if you need to pass options starting with - prepend them with single \'--\' argument') 
     args = parser.parse_args()
 
-    config = ConfigParser.RawConfigParser(allow_no_value=True)
-    config.read(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'syncplay.ini'))
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'syncplay.ini'))
+    section_name = 'sync' if not args.debug else 'debug'
     try:
-        if(args.host == None):
-            host = config.get('sync', 'host')
-        else:
-            host = args.host
-        if(args.name == None):
-            name = config.get('sync', 'name')
-        else:
-            name = args.name
+        if(args.host == None): args.host = config.get(section_name, 'host') 
+        if(args.name == None): args.name = config.get(section_name, 'name')
+        if(args.mpc_path == None): args.mpc_path = config.get(section_name, 'mpc_path')
     except ConfigParser.NoSectionError:
-        sys.exit("Host or username not specified")        
-
-    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'syncplay.ini'), 'wb') as configfile:
-        try:
-            config.set('sync', 'host' ,host)
-            config.set('sync', 'name' ,name)
-        except ConfigParser.NoSectionError:
-            config.add_section('sync')
-            config.set('sync', 'host' ,host)
-            config.set('sync', 'name' ,name)
-        config.write(configfile)
-        
-    if ':' in host:
-        host, port = host.split(':', 1)
-        port = int(port)
+        pass        
+    except ConfigParser.NoOptionError:
+        pass
+    if(args.host == None or args.name == None):
+        sys.exit("You must supply name and host on the first run")
+    
+    if(not args.no_store):
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'syncplay.ini'), 'wb') as configfile:
+            if(not config.has_section(section_name)):
+                config.add_section(section_name)
+            config.set(section_name, 'host', args.host)
+            config.set(section_name, 'name', args.name)
+            config.set(section_name, 'mpc_path', args.mpc_path)
+            config.write(configfile)
+    if ':' in args.host:
+        args.host, port = args.host.split(':', 1)
+        args.port = int(port)
     else:
-        port = 8999
-    return host,port,name,args.args
+        args.port = 8999
+    return args

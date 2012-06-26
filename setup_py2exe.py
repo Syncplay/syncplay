@@ -7,7 +7,7 @@ from setup_common import common_info
 
 info = dict(
     common_info,
-    console = ['sync_mplayer.py', 'sync_mpc.py', 'run_sync_server.py'],
+    console = ['sync_mplayer.py', 'sync_mpc_api.py', 'sync_mpc.py', 'run_sync_server.py'],
 )
 
 setup(**info)

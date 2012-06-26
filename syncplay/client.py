@@ -47,9 +47,9 @@ class SyncClientProtocol(CommandProtocol):
         else:
             who, where, what = args[0], args[1], None
         if what:
-            print '%s is present and is playing \'%s\' in a room %s' % (who, what, where)
+            print '%s is present and is playing \'%s\' in a room \'%s\'' % (who, what, where)
         else:
-            print '%s is present in a room %s' % (who, where)
+            print '%s is present in a room \'%s\'' % (who, where)
 
     @arg_count(4, 5)
     def handle_connected_state(self, args):
@@ -233,8 +233,8 @@ class Manager(object):
     def init_player(self, player):
         self.player = player
         if self.last_global_update:
-            self.player.set_position(self.get_global_position())
-            self.player.set_paused(self.global_paused)
+            self.player.set_position(0)
+            self.player.set_paused(True)
         self.schedule_ask_player()
 
     def init_protocol(self, protocol):
@@ -284,7 +284,7 @@ class Manager(object):
             return
         self.counter += 10
         self.protocol.send_seek(self.counter, time.time(), self.player_position)
-        print 'You seeked to', format_time(self.player_position)
+        print self.name,'seeked to', format_time(self.player_position)
         
     def send_filename(self):
         if self.protocol and self.player_filename:
@@ -413,11 +413,10 @@ class Manager(object):
                 self.player.set_position(position)
                 #self.player.set_paused(True)
                 print "Rewind due to time difference"
-                changed = True
+
             if self.player_paused and not paused:
                 self.player_paused_at = None
                 self.player.set_paused(False)
-                changed = True
                 if self.global_noted_pause_change != paused:
                     print '%s unpaused' % name
             elif paused and not self.player_paused:
@@ -426,9 +425,9 @@ class Manager(object):
                     print '%s paused' % name
                 if diff < 0:
                     self.player.set_paused(True)
-                    changed = True
             self.global_noted_pause_change = paused
-
+            changed = True
+            
         if changed:
             self.ask_player()
 
