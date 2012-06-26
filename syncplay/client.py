@@ -47,9 +47,9 @@ class SyncClientProtocol(CommandProtocol):
         else:
             who, where, what = args[0], args[1], None
         if what:
-            print '%s is present and is playing \'%s\' in a room \'%s\'' % (who, what, where)
+            print '%s is present and is playing \'%s\' in the room: \'%s\'' % (who, what, where)
         else:
-            print '%s is present in a room \'%s\'' % (who, where)
+            print '%s is present in the room: \'%s\'' % (who, where)
 
     @arg_count(4, 5)
     def handle_connected_state(self, args):
@@ -83,7 +83,7 @@ class SyncClientProtocol(CommandProtocol):
     @arg_count(3)
     def handle_connected_playing(self, args):
         who, where, what = args
-        print '%s is playing \'%s\' in a room \'%s\'' % (who, what, where)
+        print '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where)
 
     @arg_count(1)
     def handle_connected_joined(self, args):
@@ -91,7 +91,7 @@ class SyncClientProtocol(CommandProtocol):
     
     @arg_count(2)
     def handle_connected_room(self, args):
-        print '%s entered a room \'%s\'' % (args[0], args[1])
+        print '%s entered the room: \'%s\'' % (args[0], args[1])
 
     @arg_count(1)
     def handle_connected_left(self, args):
@@ -412,7 +412,7 @@ class Manager(object):
             if abs(diff) > 4:
                 self.player.set_position(position)
                 #self.player.set_paused(True)
-                print "Rewind due to time difference"
+                print "Rewinded due to time difference"
 
             if self.player_paused and not paused:
                 self.player_paused_at = None
