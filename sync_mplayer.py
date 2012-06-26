@@ -11,6 +11,7 @@ from syncplay import utils
 if __name__ == '__main__':
     args = utils.get_configuration()
     args.args.extend(('-slave', '-msglevel', 'all=1:global=4'))
+    if(args.file): args.args.extend((args.file,))
     manager = client.Manager(args.host, args.port, args.name, lambda m: mplayer.run_mplayer(m, 'mplayer', args.args))
     thread.start_new_thread(utils.stdin_thread, (manager,))
     manager.start()
