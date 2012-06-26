@@ -114,7 +114,7 @@ def get_configuration():
     args = parser.parse_args()
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'syncplay.ini'))
+    config.read(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'syncplay.ini'))
     section_name = 'sync' if not args.debug else 'debug'
     try:
         if(args.host == None): args.host = config.get(section_name, 'host') 
@@ -128,7 +128,7 @@ def get_configuration():
         sys.exit("You must supply name and host on the first run")
     
     if(not args.no_store):
-        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'syncplay.ini'), 'wb') as configfile:
+        with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'syncplay.ini'), 'wb') as configfile:
             if(not config.has_section(section_name)):
                 config.add_section(section_name)
             config.set(section_name, 'host', args.host)
