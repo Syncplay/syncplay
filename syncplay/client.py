@@ -34,7 +34,8 @@ class SyncClientProtocol(CommandProtocol):
 
     @arg_count(1)
     def handle_init_hello(self, args):
-        print 'Connected as', args[0]
+        message ='Connected as ' + args[0] 
+        print message
         self.manager.name = args[0]
         self.change_state('connected')
         self.send_list()
@@ -47,9 +48,13 @@ class SyncClientProtocol(CommandProtocol):
         else:
             who, where, what = args[0], args[1], None
         if what:
-            print '%s is present and is playing \'%s\' in the room: \'%s\'' % (who, what, where)
+            message = '%s is present and is playing \'%s\' in the room: \'%s\'' % (who, what, where)
+            print message
+            self.manager.player.display_message(message)
         else:
-            print '%s is present in the room: \'%s\'' % (who, where)
+            message = '%s is present in the room: \'%s\'' % (who, where)
+            print message
+            self.manager.player.display_message(message)
 
     @arg_count(4, 5)
     def handle_connected_state(self, args):
@@ -83,19 +88,27 @@ class SyncClientProtocol(CommandProtocol):
     @arg_count(3)
     def handle_connected_playing(self, args):
         who, where, what = args
-        print '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where)
+        message = '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where)
+        print message
+        self.manager.player.display_message(message)
 
     @arg_count(1)
     def handle_connected_joined(self, args):
-        print '%s joined' % args[0]
+        message = '%s joined' % args[0]
+        print message
+        self.manager.player.display_message(message)
     
     @arg_count(2)
     def handle_connected_room(self, args):
-        print '%s entered the room: \'%s\'' % (args[0], args[1])
+        message = '%s entered the room: \'%s\'' % (args[0], args[1])
+        print message
+        self.manager.player.display_message(message)
 
     @arg_count(1)
     def handle_connected_left(self, args):
-        print '%s left' % args[0]
+        message = '%s left' % args[0]
+        print message
+        self.manager.player.display_message(message)
 
     def send_list(self):
         self.send_message('list')
@@ -147,9 +160,17 @@ class SyncClientFactory(ClientFactory):
             print 'Connection lost, reconnecting'
             reactor.callLater(0.1, connector.connect)
         else:
-            print 'Disconnected'
+            if(self.manager.player):
+                message = 'Disconnected'
+                print message
+                self.manager.player.display_message(message)
 
     def clientConnectionFailed(self, connector, reason):
+        if(self.manager.player):
+            message = 'Disconnected'
+            print message
+            self.manager.player.display_message(message)
+
         print 'Connection failed'
         self.manager.stop()
 
@@ -284,7 +305,10 @@ class Manager(object):
             return
         self.counter += 10
         self.protocol.send_seek(self.counter, time.time(), self.player_position)
-        print self.name,'seeked to', format_time(self.player_position)
+        message = self.name +' seeked to ' + format_time(self.player_position)
+        print message
+        self.player.display_message(message)
+
         
     def send_filename(self):
         if self.protocol and self.player_filename:
@@ -346,12 +370,18 @@ class Manager(object):
         if old_paused != paused and self.global_paused != paused:
             self.send_status(True)
             if paused:
-                print '%s paused' % self.name
+                message = '%s paused' % self.name
+                print message
+                self.player.display_message(message)
+
                 if(diff > 0):
                     self.player.set_position(self.get_global_position())
                     self.ask_player()
             else:
-                print '%s resumed' % self.name
+                message = '%s resumed' % self.name
+                print message
+                self.player.display_message(message)
+
             
         if not (self.global_paused or self.seek_sent_wait):
             if (0.4 if self.player_speed_fix else 0.6) <= diff <= 4:
@@ -412,17 +442,26 @@ class Manager(object):
             if abs(diff) > 4:
                 self.player.set_position(position)
                 #self.player.set_paused(True)
-                print "Rewinded due to time difference"
+                message = "Rewinded due to time difference"
+                print message
+                self.player.display_message(message)
+
 
             if self.player_paused and not paused:
                 self.player_paused_at = None
                 self.player.set_paused(False)
                 if self.global_noted_pause_change != paused:
-                    print '%s unpaused' % name
+                    message = '%s unpaused' % name
+                    print message
+                    self.player.display_message(message)
+
             elif paused and not self.player_paused:
                 self.player_paused_at = position
                 if self.global_noted_pause_change != paused:
-                    print '%s paused' % name
+                    message = '%s paused' % name
+                    print message
+                    self.player.display_message(message)
+
                 if diff < 0:
                     self.player.set_paused(True)
             self.global_noted_pause_change = paused
@@ -440,6 +479,9 @@ class Manager(object):
             self.player_position_before_last_seek = self.player_position
             self.player.set_position(position)
             self.ask_player()
-        print who, 'seeked to', format_time(position)
+        message = who + ' seeked to ' + format_time(position)
+        print message
+        self.player.display_message(message)
+
 
 

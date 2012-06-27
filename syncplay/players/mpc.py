@@ -82,6 +82,9 @@ class MPCHCPlayer(object):
     def set_speed(self, value):
         pass
 
+    def display_message(self, message):
+        pass
+    
     def make_ping(self):
         self.ask_for_status()
 

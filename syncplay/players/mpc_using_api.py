@@ -19,6 +19,12 @@ class MPCHCAPIPlayer(object):
     def make_ping(self):
         self.ask_for_status()
 
+    def display_message(self, message):
+        try:
+            self.mpc_api.send_osd(message)
+        except:
+            self.mpc_error()
+
     def set_paused(self, value):
         try:
             if value:
@@ -66,6 +72,6 @@ class MPCHCAPIPlayer(object):
 def run_mpc(manager, mpc_path, file_path, args):
     mpc = MPCHCAPIPlayer(manager)
     mpc.mpc_api.callbacks.on_file_ready = mpc.make_ping
-    mpc.mpc_api.callbacks.on_connected = lambda: mpc.mpc_api.open_file(file_path) if(file_path) else None
+    mpc.mpc_api.callbacks.on_connected = lambda _: mpc.mpc_api.open_file(file_path) if(file_path) else None
     mpc.mpc_api.start_mpc(mpc_path, args)
 
