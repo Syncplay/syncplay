@@ -73,8 +73,8 @@ class MplayerProtocol(LineProcessProtocol):
         self.writeLines('%s %s' % ('get_property', name))
 
     def display_message(self, message):
-        #self.writeLines('%s %s %s %s' % ('osd_show_text', "str(message)", 3000, 1))
-        pass
+        self.writeLines('%s %s %s %s' % ('osd_show_text', '"%s"'% str(message), 3000, 1))
+
     def send_get_filename(self):
         self.send_get_property('filename')
 

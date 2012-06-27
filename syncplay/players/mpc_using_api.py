@@ -62,7 +62,7 @@ class MPCHCAPIPlayer(object):
             self.mpc_error()
     
     def handle_updated_filename(self,filename):
-        self.filename = filename[0]
+        self.filename = str(filename[0])
         self.manager.update_filename(self.filename)
         self.mpc_api.seek(self.manager.get_global_position())
         reactor.callLater(0.7, self.mpc_api.pause)
