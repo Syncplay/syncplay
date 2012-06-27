@@ -388,10 +388,10 @@ class Manager(object):
 
             
         if not (self.global_paused or self.seek_sent_wait):
-            if (0.4 if self.player_speed_fix else 0.6) <= diff <= 4:
+            if (0.4 if self.player_speed_fix else 1.2) <= diff <= 4:
                 #print 'client is %0.2fs ahead of server, slowing down' % diff
                 if not self.player_speed_fix:
-                    self.player.set_speed(0.75)
+                    self.player.set_speed(0.95)
                     self.player_speed_fix = True
             else:
                 if self.player_speed_fix:
