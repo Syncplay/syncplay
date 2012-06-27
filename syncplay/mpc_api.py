@@ -11,9 +11,10 @@ class MPC_API:
         while(self.__listener == None): continue
         self.__position_request_warden = False
         self.__seek_warden = False
-
+        self.__playpause_warden = False
         '''
         List of callbacks that can be set
+        Each callback by default receives a tuple argument, can be empty though
             on_connected
             on_seek
             on_update_filename
@@ -90,9 +91,12 @@ class MPC_API:
     '''    
     def pause(self):
         self.__mpc_ready_in_slave_mode()
-        if(not self.is_paused()):
+        while(self.playstate == None):self.__mpc_ready_in_slave_mode() 
+        if(not self.is_paused() and self.__playpause_warden == False):
+            self.__playpause_warden = True
             self.__listener.SendCommand(MPC_API_COMMANDS.CMD_PLAYPAUSE)
             while(not self.is_paused()): self.__mpc_ready_in_slave_mode()
+            self.__playpause_warden = False
     
     '''
     Play paused file
@@ -100,10 +104,12 @@ class MPC_API:
     '''  
     def unpause(self):
         self.__mpc_ready_in_slave_mode()
-        if(self.is_paused()):
+        while(self.playstate == None):self.__mpc_ready_in_slave_mode() 
+        if(self.is_paused() and  self.__playpause_warden == False):
+            self.__playpause_warden = True
             self.__listener.SendCommand(MPC_API_COMMANDS.CMD_PLAYPAUSE)
             while(self.is_paused()): self.__mpc_ready_in_slave_mode()
-    
+            self.__playpause_warden = False
     '''
     Toggle play/pause
     Throws MPC_API.NoSlaveDetectedException if mpc window is not found    
@@ -111,8 +117,12 @@ class MPC_API:
     def playpause(self):
         self.__mpc_ready_in_slave_mode()
         tmp = self.playstate
-        self.__listener.SendCommand(MPC_API_COMMANDS.CMD_PLAYPAUSE)
-        while(tmp == self.playstate): self.__mpc_ready_in_slave_mode()
+        while(self.playstate == None):self.__mpc_ready_in_slave_mode() 
+        if(self.__playpause_warden == False):
+            self.__playpause_warden = True
+            self.__listener.SendCommand(MPC_API_COMMANDS.CMD_PLAYPAUSE)
+            while(tmp == self.playstate): self.__mpc_ready_in_slave_mode()
+            self.__playpause_warden = False
     
     '''
     Asks mpc for it's current file position, if on_update_position callback is set
@@ -134,7 +144,7 @@ class MPC_API:
         self.__mpc_ready_in_slave_mode()
         self.__seek_warden = True
         self.__listener.SendCommand(MPC_API_COMMANDS.CMD_SETPOSITION, unicode(position))
-        while(self.__seek_warden): continue
+        while(self.__seek_warden): self.__mpc_ready_in_slave_mode()
     
     '''
     @param message: unicode string to display in player
@@ -189,7 +199,7 @@ class MPC_API:
                 if(self.callbacks.on_update_playstate): self.callbacks.on_update_playstate((self.playstate,))
                 
             elif(cmd == MPC_API_COMMANDS.CMD_NOWPLAYING):
-                if(self.callbacks.on_file_ready): self.callbacks.on_file_ready()
+                if(self.callbacks.on_file_ready): self.callbacks.on_file_ready(())
                 self.fileplaying =  value.split('|')[3].split('\\').pop()
                 if(self.callbacks.on_update_filename): self.callbacks.on_update_filename((self.fileplaying,))
                 self.fileduration = int(value.split('|')[4])
@@ -281,10 +291,12 @@ class MPC_API:
       
         def OnCopyData(self, hwnd, msg, wparam, lparam):
             pCDS = ctypes.cast(lparam, self.__PCOPYDATASTRUCT)
+#            print ">>> 0x%X" % int(pCDS.contents.dwData), ctypes.wstring_at(pCDS.contents.lpData)
             self.__mpc_api.handle_command(pCDS.contents.dwData, ctypes.wstring_at(pCDS.contents.lpData))
     
 
         def SendCommand(self, cmd, message = u''):
+#            print "<<< 0x%X" % int(cmd), message
             if not win32gui.IsWindow(self.mpc_handle):
                 raise MPC_API.NoSlaveDetectedException("MPC Slave Window not detected")
             cs = self.__COPYDATASTRUCT()

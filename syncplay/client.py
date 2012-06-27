@@ -251,7 +251,7 @@ class Manager(object):
     def init_player(self, player):
         self.player = player
         if self.last_global_update:
-            self.player.set_position(0)
+            self.player.set_position(self.get_global_position())
             self.player.set_paused(True)
         self.schedule_ask_player()
 
@@ -375,7 +375,7 @@ class Manager(object):
                     self.player.set_position(self.get_global_position())
                     self.ask_player()
             else:
-                message = '%s resumed' % self.name
+                message = '%s unpaused' % self.name
                 print message
                 self.player.display_message(message)
 
