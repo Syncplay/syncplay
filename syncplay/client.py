@@ -50,11 +50,11 @@ class SyncClientProtocol(CommandProtocol):
         if what:
             message = '%s is present and is playing \'%s\' in the room: \'%s\'' % (who, what, where)
             print message
-            self.manager.player.display_message(message)
+            if(self.manager.player): self.manager.player.display_message(message)
         else:
             message = '%s is present in the room: \'%s\'' % (who, where)
             print message
-            self.manager.player.display_message(message)
+            if(self.manager.player): self.manager.player.display_message(message)
 
     @arg_count(4, 5)
     def handle_connected_state(self, args):
@@ -90,25 +90,25 @@ class SyncClientProtocol(CommandProtocol):
         who, where, what = args
         message = '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where)
         print message
-        self.manager.player.display_message(message)
+        if(self.manager.player): self.manager.player.display_message(message)
 
     @arg_count(1)
     def handle_connected_joined(self, args):
         message = '%s joined' % args[0]
         print message
-        self.manager.player.display_message(message)
+        if(self.manager.player): self.manager.player.display_message(message)
     
     @arg_count(2)
     def handle_connected_room(self, args):
         message = '%s entered the room: \'%s\'' % (args[0], args[1])
         print message
-        self.manager.player.display_message(message)
+        if(self.manager.player): self.manager.player.display_message(message)
 
     @arg_count(1)
     def handle_connected_left(self, args):
         message = '%s left' % args[0]
         print message
-        self.manager.player.display_message(message)
+        if(self.manager.player): self.manager.player.display_message(message)
 
     def send_list(self):
         self.send_message('list')
@@ -160,18 +160,15 @@ class SyncClientFactory(ClientFactory):
             print 'Connection lost, reconnecting'
             reactor.callLater(0.1, connector.connect)
         else:
-            if(self.manager.player):
-                message = 'Disconnected'
-                print message
-                self.manager.player.display_message(message)
-
-    def clientConnectionFailed(self, connector, reason):
-        if(self.manager.player):
             message = 'Disconnected'
             print message
-            self.manager.player.display_message(message)
+            if(self.manager.player): self.manager.player.display_message(message)
 
-        print 'Connection failed'
+    def clientConnectionFailed(self, connector, reason):
+        message = 'Connection failed'
+        print message
+        if(self.manager.player): self.manager.player.display_message(message)
+
         self.manager.stop()
 
     def stop_retrying(self):
