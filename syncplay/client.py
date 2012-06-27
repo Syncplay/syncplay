@@ -351,7 +351,14 @@ class Manager(object):
             self.player_position_before_last_seek = tmp_pos
         elif data == "p":
             self.player.set_paused(not self.player_paused)
-
+        elif data == 'help':
+            print "Available commands:"
+            print "\thelp - this help"
+            print "\ts [time] - seek"
+            print "\ts+ [time] - seek to: current position += time"
+            print "\tr - revert last seek"
+            print "\tp - toggle pause"
+            print "\troom [room] - change room, if no supplied go to default"
     def update_player_status(self, paused, position):
         self.status_ask_received += 1
         if self.status_ask_received < self.status_ask_sent:
