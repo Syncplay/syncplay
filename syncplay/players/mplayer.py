@@ -72,7 +72,9 @@ class MplayerProtocol(LineProcessProtocol):
     def send_get_property(self, name):
         self.writeLines('%s %s' % ('get_property', name))
 
-
+    def display_message(self, message):
+        self.writeLines('%s %s' % ('osd_show_text', message))
+   
     def send_get_filename(self):
         self.send_get_property('filename')
 
@@ -128,7 +130,6 @@ def run_mplayer(manager, mplayer_path, args):
 
     args = list(args)
     args.insert(0, mplayer_path)
-    
     process_protocol = MplayerProtocol(manager)
     reactor.spawnProcess(process_protocol, exec_path, args=args, env=None)
 
