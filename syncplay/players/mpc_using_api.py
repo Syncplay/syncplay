@@ -12,7 +12,6 @@ class MPCHCAPIPlayer(object):
         self.tmp_position = None
         
         self.mpc_api.callbacks.on_file_ready = lambda _: reactor.callLater(0.7,self.make_ping)
-        self.mpc_api.callbacks.on_update_filename = self.handle_updated_filename
     def drop(self):
         pass
 
@@ -51,21 +50,26 @@ class MPCHCAPIPlayer(object):
         paused = None
         try:
             if(self.mpc_api.is_file_ready()):
+                if(self.tmp_filename <> self.mpc_api.fileplaying):
+                    self.handle_updated_filename(self.mpc_api.fileplaying)
+                    return
                 position = self.mpc_api.ask_for_current_position()
                 paused = self.mpc_api.is_paused()
                 position = float(position)
                 self.tmp_position = position
                 self.manager.update_player_status(paused, position)
             else:
-                self.manager.update_player_status(True, position)
+                self.manager.update_player_status(True, self.manager.get_global_position())
         except MPC_API.NoSlaveDetectedException: 
             self.mpc_error()
     
     def handle_updated_filename(self,filename):
-        self.filename = str(filename[0])
-        self.manager.update_filename(self.filename)
-        self.mpc_api.seek(self.manager.get_global_position())
-        reactor.callLater(0.7, self.mpc_api.pause)
+        position = self.manager.get_global_position()
+        self.tmp_filename = filename
+        self.manager.update_filename(str(self.tmp_filename))
+        self.mpc_api.seek(position)
+        reactor.callLater(0.7, self.set_paused, True)
+        self.manager.update_player_status(True, position)
         
     def mpc_error(self):
         if self.manager.running:
