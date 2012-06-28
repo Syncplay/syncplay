@@ -377,7 +377,6 @@ class Manager(object):
                 message = '%s paused' % self.name
                 print message
                 self.player.display_message(message)
-
                 if(diff > 0):
                     self.player.set_position(self.get_global_position())
                     self.ask_player()
@@ -465,7 +464,9 @@ class Manager(object):
                     message = '%s paused' % name
                     print message
                     self.player.display_message(message)
-
+                    if(diff > 0):
+                        self.player.set_position(self.get_global_position())
+                        self.ask_player()
                 if diff < 0:
                     self.player.set_paused(True)
             self.global_noted_pause_change = paused
