@@ -2,10 +2,11 @@
 
 import time
 import re
+import threading 
 
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
-
+from syncplay import utils
 from .network_utils import (
     arg_count,
     CommandProtocol,
@@ -208,8 +209,9 @@ class Manager(object):
 
         self.make_player = make_player
         self.running = False
-
-
+        command_handler = threading.Thread(target = utils.stdin_thread, args = (self,), name = "Command handler")
+        command_handler.setDaemon(True)
+        command_handler.start()
     def start(self):
         if self.running:
             return
@@ -261,7 +263,6 @@ class Manager(object):
             self.make_player(self)
             self.make_player = None
 
-
     def schedule_ask_player(self, when=0.2):
         if self.ask_delayed and self.ask_delayed.active():
             self.ask_delayed.reset(when)
@@ -275,7 +276,6 @@ class Manager(object):
             self.status_ask_sent += 1
             self.player.ask_for_status()
         self.schedule_ask_player()
-
 
     def schedule_send_status(self, when=1):
         if self.send_delayed and self.send_delayed.active():
@@ -305,7 +305,6 @@ class Manager(object):
         message = self.name +' seeked to ' + format_time(self.player_position)
         print message
         self.player.display_message(message)
-
         
     def send_filename(self):
         if self.protocol and self.player_filename:
@@ -313,24 +312,13 @@ class Manager(object):
 
     def __exectue_seek_cmd(self, seek_type, minutes, seconds):
         self.player_position_before_last_seek = self.player_position
-
         if seek_type == 's':
-            if seconds <> None:
-                seconds = int(seconds)
-            else:
-                seconds = 0
-            if minutes <> None:
-                seconds += int(minutes) * 60
+            seconds = int(seconds) if seconds <> None else 0
+            seconds += int(minutes) * 60 if minutes <> None else 0 
             self.player.set_position(seconds)
         else: #seek_type s+
-            if seconds <> None:
-                seconds = int(seconds)
-            else:
-                seconds = 20
-            if minutes <> None:
-                seconds += int(minutes) * 60
-            else:
-                seconds += 60
+            seconds = int(seconds) if seconds <> None else 20
+            seconds += int(minutes) * 60 if minutes <> None else 60
             self.player.set_position(self.player_position+seconds)
             
     def execute_command(self, data):
@@ -359,11 +347,11 @@ class Manager(object):
             print "\tr - revert last seek"
             print "\tp - toggle pause"
             print "\troom [room] - change room, if no supplied go to default"
+ 
     def update_player_status(self, paused, position):
         self.status_ask_received += 1
         if self.status_ask_received < self.status_ask_sent:
             return
-
         old_paused = self.player_paused
         self.player_paused = paused
         self.player_position = position
@@ -384,8 +372,6 @@ class Manager(object):
                 message = '%s unpaused' % self.name
                 print message
                 self.player.display_message(message)
-
-            
         if not (self.global_paused or self.seek_sent_wait):
             if (0.4 if self.player_speed_fix else 1.2) <= diff <= 4:
                 #print 'client is %0.2fs ahead of server, slowing down' % diff
@@ -400,7 +386,6 @@ class Manager(object):
         if abs(diff) > 8:# and not self.seek_sent_wait:
             self.send_seek()
             self.seek_sent_wait = True
-
         if not paused and self.player_paused_at is not None and position >= self.player_paused_at:
             #print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
             self.player.set_paused(True)
@@ -409,7 +394,6 @@ class Manager(object):
     def update_filename(self, filename):
         filename = unicode(filename, errors='replace')
         self.player_filename = filename.encode('ascii','replace')
-
         self.send_filename()
 
     def update_global_state(self, counter, ctime, paused, position, name):
