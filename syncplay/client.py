@@ -212,6 +212,7 @@ class Manager(object):
         command_handler = threading.Thread(target = utils.stdin_thread, args = (self,), name = "Command handler")
         command_handler.setDaemon(True)
         command_handler.start()
+    
     def start(self):
         if self.running:
             return

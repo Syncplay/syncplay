@@ -15,7 +15,10 @@ def prepare_args(args):
     args.args.extend(['/open', '/new'])
 
 if __name__ == '__main__':
-    args = utils.get_configuration()  
-    prepare_args(args)
-    manager = client.Manager(args.host, args.port, args.name, lambda m: mpc_using_api.run_mpc(m, args.mpc_path, args.file, args.args))
-    manager.start()
+    try:
+        args = utils.get_configuration()  
+        prepare_args(args)
+        manager = client.Manager(args.host, args.port, args.name, lambda m: mpc_using_api.run_mpc(m, args.mpc_path, args.file, args.args))
+        manager.start()
+    finally:
+        manager.stop()
