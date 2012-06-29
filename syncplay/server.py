@@ -333,7 +333,7 @@ class SyncFactory(Factory):
                     pmax = max(p for p,_ in watcher.time_offset_data) - pmin
                     psum, pweights = 0, 0
                     for ping, offset in watcher.time_offset_data:
-                        ping = 1-((ping-pmin)/pmax) if(pmax <> 0) else 0
+                        ping = 1-((ping-pmin)/pmax) if(pmax <> 0) else 1
                         pweights += ping
                         psum += ping*offset
                     watcher.time_offset = psum/pweights
