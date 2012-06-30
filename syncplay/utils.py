@@ -90,6 +90,19 @@ import sys
 import ConfigParser
 import argparse
 
+def get_working_directory():
+    frozen = getattr(sys, 'frozen', '')
+    if not frozen:
+        # not frozen: in regular python interpreter
+        approot = os.path.dirname(os.path.dirname(__file__))
+    
+    elif frozen in ('dll', 'console_exe', 'windows_exe'):
+        # py2exe:
+        approot = os.path.dirname(sys.executable)
+    else:
+        raise Exception('Working dir not found')
+    return approot
+
 def stdin_thread(manager):
     try:
         fd = sys.stdin.fileno()
@@ -100,9 +113,9 @@ def stdin_thread(manager):
             manager.execute_command(data.rstrip('\n\r'))
     except:
         pass
-    
+
 def get_configuration():
-    parser = argparse.ArgumentParser(description='Synchronize multiple players over the web.',
+    parser = argparse.ArgumentParser(description='Syncplay',
                                      epilog='If no options supplied config values will be used')
     parser.add_argument('--host', metavar='hostname', type=str, help='server\'s address')
     parser.add_argument('--name', metavar='username', type=str, help='desired username')
@@ -112,9 +125,10 @@ def get_configuration():
     parser.add_argument('file', metavar='file', type=str, nargs='?', help='file to play')
     parser.add_argument('args', metavar='options', type=str, nargs='*', help='player options, if you need to pass options starting with - prepend them with single \'--\' argument') 
     args = parser.parse_args()
-
+    
+    working_path = get_working_directory()
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'syncplay.ini'))
+    config.read(os.path.join(working_path, 'syncplay.ini'))
     section_name = 'sync' if not args.debug else 'debug'
     try:
         if(args.host == None): args.host = config.get(section_name, 'host') 
@@ -128,7 +142,8 @@ def get_configuration():
         sys.exit("You must supply name and host on the first run")
     
     if(not args.no_store):
-        with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'syncplay.ini'), 'wb') as configfile:
+        
+        with open(os.path.join(working_path, 'syncplay.ini'), 'wb') as configfile:
             if(not config.has_section(section_name)):
                 config.add_section(section_name)
             config.set(section_name, 'host', args.host)
