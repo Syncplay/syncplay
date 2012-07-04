@@ -132,7 +132,6 @@ class SyncClientProtocol(CommandProtocol):
         ),
         connected = dict(
             room = 'handle_connected_room',
-            list = 'handle_connected_list',
             present = 'handle_connected_present',
             state = 'handle_connected_state',
             seek = 'handle_connected_seek',
