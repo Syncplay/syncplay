@@ -8,7 +8,7 @@ from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 from syncplay import utils
 from .network_utils import (
-    arg_count,
+    argumentCount,
     CommandProtocol,
 )
 from .utils import format_time
@@ -30,7 +30,7 @@ class SyncClientProtocol(CommandProtocol):
         self.manager.stop()
         CommandProtocol.handle_error(self, args)
 
-    @arg_count(1)
+    @argumentCount(1)
     def handle_init_hello(self, args):
         message ='Connected as ' + args[0] 
         print message
@@ -39,7 +39,7 @@ class SyncClientProtocol(CommandProtocol):
         self.send_list()
         self.manager.schedule_send_status()
 
-    @arg_count(2, 3)
+    @argumentCount(2, 3)
     def handle_connected_present(self, args):
         if len(args) == 3:
             who, where, what = args
@@ -54,7 +54,7 @@ class SyncClientProtocol(CommandProtocol):
             print message
             if(self.manager.player): self.manager.player.display_message(message)
 
-    @arg_count(4, 5)
+    @argumentCount(4, 5)
     def handle_connected_state(self, args):
         args = self.__parseState(args)
         if not args:
@@ -65,7 +65,7 @@ class SyncClientProtocol(CommandProtocol):
 
         self.manager.update_global_state(counter, ctime, paused, position, name)
 
-    @arg_count(3)
+    @argumentCount(3)
     def handle_connected_seek(self, args):
         ctime, position, who = args
         try:
@@ -79,30 +79,30 @@ class SyncClientProtocol(CommandProtocol):
 
         self.manager.seek(ctime, position, who)
 
-    @arg_count(1)
+    @argumentCount(1)
     def handle_connected_ping(self, args):
         self.send_message('pong', args[0], int(time.time()*100000))
 
-    @arg_count(3)
+    @argumentCount(3)
     def handle_connected_playing(self, args):
         who, where, what = args
         message = '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where)
         print message
         if(self.manager.player): self.manager.player.display_message(message)
 
-    @arg_count(1)
+    @argumentCount(1)
     def handle_connected_joined(self, args):
         message = '%s joined' % args[0]
         print message
         if(self.manager.player): self.manager.player.display_message(message)
     
-    @arg_count(2)
+    @argumentCount(2)
     def handle_connected_room(self, args):
         message = '%s entered the room: \'%s\'' % (args[0], args[1])
         print message
         if(self.manager.player): self.manager.player.display_message(message)
 
-    @arg_count(1)
+    @argumentCount(1)
     def handle_connected_left(self, args):
         message = '%s left' % args[0]
         print message

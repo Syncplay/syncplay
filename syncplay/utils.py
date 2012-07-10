@@ -1,75 +1,59 @@
 #coding:utf8
 
+import ConfigParser
+import argparse
 import os
 import re
+import sys
 
-RE_ARG = re.compile(r"('(?:[^\\']+|\\\\|\\')*'|[^\s']+)(?:\s+|\Z)")
-RE_NEED_QUOTING = re.compile(r"[\s'\\]")
-RE_QUOTABLE = re.compile(r"['\\]")
-RE_UNQUOTABLE = re.compile(r"\\(['\\])")
-
-class InvalidArgumentException(Exception):
-    pass
-
-def quote_arg(arg):
-    if isinstance(arg, unicode):
-        arg = arg.encode('utf8')
-    elif not isinstance(arg, str):
-        arg = str(arg)
-
-    if not arg or RE_NEED_QUOTING.search(arg):
-        return "'%s'" % RE_QUOTABLE.sub(r'\\\g<0>', arg)
-    return arg
-
-def unqote_arg(arg):
-    if arg.startswith("'") and len(arg) > 1:
-        arg = RE_UNQUOTABLE.sub(r'\1', arg[1:-1])
-    return arg.decode('utf8', 'replace')
-
-def _split_args(args):
-    pos = 0
-    while pos < len(args):
-        match = RE_ARG.match(args, pos)
-        if not match:
-            raise InvalidArgumentException()
-        pos = match.end()
-        yield unqote_arg(match.group(1))
-
-def split_args(args):
-    try:
-        return list(_split_args(args))
-    except InvalidArgumentException:
-        return None
-
-def join_args(args):
-    return ' '.join(quote_arg(arg) for arg in args)
-
-def parse_state(args):
-    if len(args) == 4:
-        counter, ctime, state, position = args
-        who_changed_state = None
-    elif len(args) == 5:
-        counter, ctime, state, position, who_changed_state = args
-    else:
-        return
-
-    if not state in ('paused', 'playing'):
-        return
-
-    paused = state == 'paused'
-
-    try:
-        counter = int(counter)
-        ctime = int(ctime)
-        position = int(position)
-    except ValueError:
-        return
-
-    ctime /= 1000.0
-    position /= 1000.0
-
-    return counter, ctime, paused, position, who_changed_state
-
+class ArgumentParser():
+    RE_ARG = re.compile(r"('(?:[^\\']+|\\\\|\\')*'|[^\s']+)(?:\s+|\Z)")
+    RE_NEED_QUOTING = re.compile(r"[\s'\\]")
+    RE_QUOTABLE = re.compile(r"['\\]")
+    RE_UNQUOTABLE = re.compile(r"\\(['\\])")
+    
+    class InvalidArgumentException(Exception):
+        pass
+    
+    @staticmethod
+    def quoteArgument(arg):
+        if isinstance(arg, unicode):
+            arg = arg.encode('utf8')
+        elif not isinstance(arg, str):
+            arg = str(arg)
+    
+        if not arg or ArgumentParser.RE_NEED_QUOTING.search(arg):
+            return "'%s'" % ArgumentParser.RE_QUOTABLE.sub(r'\\\g<0>', arg)
+        return arg
+    
+    @staticmethod
+    def unqoteArgument(arg):
+        if arg.startswith("'") and len(arg) > 1:
+            arg = ArgumentParser.RE_UNQUOTABLE.sub(r'\1', arg[1:-1])
+        return arg.decode('utf8', 'replace')
+    
+    @staticmethod
+    def __splitArguments(args):
+        pos = 0
+        while pos < len(args):
+            match = ArgumentParser.RE_ARG.match(args, pos)
+            if not match:
+                raise ArgumentParser.InvalidArgumentException()
+            pos = match.end()
+            yield ArgumentParser.unqoteArgument(match.group(1))
+            
+    @staticmethod
+    def splitArguments(args):
+        try:
+            return list(ArgumentParser.__splitArguments(args))
+        except ArgumentParser.InvalidArgumentException:
+            return None
+        
+    @staticmethod
+    def joinArguments(args):
+        return ' '.join(ArgumentParser.quoteArgument(arg) for arg in args)
+    
+    
 def find_exec_path(name):
     if os.access(name, os.X_OK):
         return name
@@ -86,22 +70,13 @@ def format_time(value):
     return '%02d:%02d:%02d.%02d' % (hours, minutes, seconds, mseconds)
 
 
-import sys
-import ConfigParser
-import argparse
 
-def get_working_directory():
-    frozen = getattr(sys, 'frozen', '')
-    if not frozen:
-        # not frozen: in regular python interpreter
-        approot = os.path.dirname(os.path.dirname(__file__))
-    
-    elif frozen in ('dll', 'console_exe', 'windows_exe'):
-        # py2exe:
-        approot = os.path.dirname(sys.executable)
-    else:
-        raise Exception('Working dir not found')
-    return approot
+
+
+
+
+
+
 
 def stdin_thread(manager):
     try:
@@ -114,45 +89,111 @@ def stdin_thread(manager):
     except:
         pass
 
-def get_configuration():
-    parser = argparse.ArgumentParser(description='Syncplay',
-                                     epilog='If no options supplied config values will be used')
-    parser.add_argument('--host', metavar='hostname', type=str, help='server\'s address')
-    parser.add_argument('--name', metavar='username', type=str, help='desired username')
-    parser.add_argument('-m', '--mpc-path', metavar='path', type=str, help='path to mpc-hc.exe (only for sync_mpc_api client)')
-    parser.add_argument('-d','--debug', action='store_true', help='debug mode')
-    parser.add_argument('-n','--no-store', action='store_true', help='don\'t store values in syncplay.ini')
-    parser.add_argument('file', metavar='file', type=str, nargs='?', help='file to play')
-    parser.add_argument('args', metavar='options', type=str, nargs='*', help='player options, if you need to pass options starting with - prepend them with single \'--\' argument') 
-    args = parser.parse_args()
-    
-    working_path = get_working_directory()
-    config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(working_path, 'syncplay.ini'))
-    section_name = 'sync' if not args.debug else 'debug'
-    try:
-        if(args.host == None): args.host = config.get(section_name, 'host') 
-        if(args.name == None): args.name = config.get(section_name, 'name')
-        if(args.mpc_path == None): args.mpc_path = config.get(section_name, 'mpc_path')
-    except ConfigParser.NoSectionError:
-        pass        
-    except ConfigParser.NoOptionError:
-        pass
-    if(args.host == None or args.name == None):
-        sys.exit("You must supply name and host on the first run")
-    
-    if(not args.no_store):
+
+
+class ConfigurationGetter(object):
+    def __init__(self):
+        self._config = None
+        self._args = None
+        self._syncplayClient = None
+        self._workingDir = None
+        self._parser = None
         
-        with open(os.path.join(working_path, 'syncplay.ini'), 'wb') as configfile:
-            if(not config.has_section(section_name)):
-                config.add_section(section_name)
-            config.set(section_name, 'host', args.host)
-            config.set(section_name, 'name', args.name)
-            config.set(section_name, 'mpc_path', args.mpc_path)
-            config.write(configfile)
-    if ':' in args.host:
-        args.host, port = args.host.split(':', 1)
-        args.port = int(port)
-    else:
-        args.port = 8999
-    return args
+    def _findWorkingDirectory(self):
+        frozen = getattr(sys, 'frozen', '')
+        if not frozen:
+            self._workingDir = os.path.dirname(__file__)
+        elif frozen in ('dll', 'console_exe', 'windows_exe'):
+            self._workingDir = os.path.dirname(sys.executable)
+        else:
+            raise Exception('Working dir not found')
+
+    def _prepareArgParser(self):
+        self._parser = argparse.ArgumentParser(description='Syncplay',
+                                         epilog='If no options supplied _config values will be used')
+        self._parser.add_argument('--no-gui', action='store_true', help='show no GUI')
+        self._parser.add_argument('--host', metavar='hostname', type=str, help='server\'s address')
+        self._parser.add_argument('--name', metavar='username', type=str, help='desired username')
+        self._parser.add_argument('-d','--debug', action='store_true', help='debug mode')
+        self._parser.add_argument('--no-store', action='store_true', help='don\'t store values in syncplay.ini')
+        self._parser.add_argument('file', metavar='file', type=str, nargs='?', help='file to play')
+        self._parser.add_argument('_args', metavar='options', type=str, nargs='*', help='player options, if you need to pass options starting with - prepend them with single \'--\' argument') 
+  
+    def _openConfigFile(self):
+        if(not self._config):
+            self._config = ConfigParser.RawConfigParser(allow_no_value=True)
+            self._config.read(os.path.join(self._workingDir, 'syncplay.ini'))      
+    
+    def _getSectionName(self):
+        return 'sync' if not self._args.debug else 'debug'
+
+    def _saveValuesIntoConfigFile(self):
+        self._openConfigFile()
+        section_name = self._getSectionName()
+        if(not self._args.no_store):
+            with open(os.path.join(self._workingDir, 'syncplay.ini'), 'wb') as configfile:
+                if(not self._config.has_section(section_name)):
+                    self._config.add_section(section_name)
+                self._setUpValuesToSave(section_name)
+                self._config.write(configfile)
+    
+    def _setUpValuesToSave(self, section_name):
+        self._config.set(section_name, 'host', self._args.host)
+        self._config.set(section_name, 'name', self._args.name)
+
+    def _readMissingValuesFromConfigFile(self):
+        self._openConfigFile()
+        section_name = self._getSectionName()
+        try:
+            self._valuesToReadFromConfig(section_name)
+        except ConfigParser.NoSectionError:
+            pass
+        except ConfigParser.NoOptionError:
+            pass
+    
+    def _valuesToReadFromConfig(self, section_name):
+        if (self._args.host == None):
+            self._args.host = self._config.get(section_name, 'host')
+        if (self._args.name == None):
+            self._args.name = self._config.get(section_name, 'name')
+            
+    def _splitPortAndHost(self):
+        if ':' in self._args.host:
+            self._args.host, port = self._args.host.split(':', 1)
+            self._args.port = int(port)
+        else:
+            self._args.port = 8999
+    
+    def prepareClientConfiguration(self):
+        self._findWorkingDirectory()
+        self._prepareArgParser()
+        self._args = self._parser.parse_args()
+        self._readMissingValuesFromConfigFile()
+        self._splitPortAndHost()
+        
+    def getClientConfiguration(self):
+        return self._args
+    
+class MPCConfigurationGetter(ConfigurationGetter):
+    def _prepareArgParser(self):
+        ConfigurationGetter._prepareArgParser(self)
+        self._parser.add_argument('--mpc-path', metavar='path', type=str, help='path to mpc-hc.exe (only for sync_mpc_api client)')
+
+    def _setUpValuesToSave(self, section_name):
+        ConfigurationGetter._setUpValuesToSave(self, section_name)
+        self._config.set(section_name, 'mpc_path', self._args.mpc_path)
+
+    def _valuesToReadFromConfig(self, section_name):
+        ConfigurationGetter._valuesToReadFromConfig(self, section_name)
+        if (self._args.mpc_path == None):
+            self._args.mpc_path = self._config.get(section_name, 'mpc_path')
+
+    def __addSpecialMPCFlags(self):
+        return self._args._args.extend(['/open', '/new'])
+
+    def prepareClientConfiguration(self):
+        ConfigurationGetter.prepareClientConfiguration(self)
+        self.__addSpecialMPCFlags()
+
+
+

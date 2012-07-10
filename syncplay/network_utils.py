@@ -18,13 +18,12 @@ from zope.interface import implements
 
 from .utils import ArgumentParser
 
-
-def arg_count(minimum, maximum=None):
+def argumentCount(minimum, maximum=None):
     def decorator(f):
         @wraps(f)
         def wrapper(self, args):
             if ((len(args) != minimum) if maximum is None else not (minimum <= len(args) <= maximum)):
-                self.drop_with_error('Invalid arguments')
+                self.dropWithError('Invalid arguments')
                 return
             return f(self, args)
         return wrapper
