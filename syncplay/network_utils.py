@@ -16,10 +16,7 @@ from twisted.web.iweb import IBodyProducer
 
 from zope.interface import implements
 
-from .utils import (
-    join_args,
-    split_args,
-)
+from .utils import ArgumentParser
 
 
 def arg_count(minimum, maximum=None):
@@ -44,7 +41,7 @@ class CommandProtocol(LineReceiver):
         if not line:
             return
         
-        args = split_args(line)
+        args = ArgumentParser.splitArguments(line)
         if not args:
             self.drop_with_error('Malformed line')
             return
@@ -73,7 +70,7 @@ class CommandProtocol(LineReceiver):
         self._state = new_state
 
     def send_message(self, *args):
-        line = join_args(args)
+        line = ArgumentParser.joinArguments(args)
         #if args[0] not in ['ping', 'pong']:
         #    print '<<<', line
         self.sendLine(line)

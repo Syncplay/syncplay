@@ -11,10 +11,7 @@ from .network_utils import (
     arg_count,
     CommandProtocol,
 )
-from .utils import (
-    format_time,
-    parse_state,
-)
+from .utils import format_time
 
 
 class SyncClientProtocol(CommandProtocol):
@@ -59,7 +56,7 @@ class SyncClientProtocol(CommandProtocol):
 
     @arg_count(4, 5)
     def handle_connected_state(self, args):
-        args = parse_state(args)
+        args = self.__parseState(args)
         if not args:
             self.drop_with_error('Malformed state attributes')
             return
@@ -142,6 +139,32 @@ class SyncClientProtocol(CommandProtocol):
         ),
     )
     initial_state = 'init'
+
+    def __parseState(self, args):
+        if len(args) == 4:
+            counter, ctime, state, position = args
+            who_changed_state = None
+        elif len(args) == 5:
+            counter, ctime, state, position, who_changed_state = args
+        else:
+            return
+    
+        if not state in ('paused', 'playing'):
+            return
+    
+        paused = state == 'paused'
+    
+        try:
+            counter = int(counter)
+            ctime = int(ctime)
+            position = int(position)
+        except ValueError:
+            return
+    
+        ctime /= 1000.0
+        position /= 1000.0
+    
+        return counter, ctime, paused, position, who_changed_state
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, manager):
