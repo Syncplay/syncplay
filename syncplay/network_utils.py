@@ -2,7 +2,7 @@
 
 from .utils import ArgumentParser
 from functools import wraps
-from twisted.internet.protocol import ProcessProtocol
+
 from twisted.protocols.basic import LineReceiver
 
 def argumentCount(minimum, maximum=None):
@@ -68,35 +68,5 @@ class CommandProtocol(LineReceiver):
         self.send_message('error', error)
         self.drop()
 
-
-def parse_lines(leftovers, data):
-    data = leftovers+data
-    lines = data.split('\n')
-    leftovers = lines.pop(-1)
-    return leftovers, lines
-
-class LineProcessProtocol(ProcessProtocol):
-    _leftover_out = ''
-    _leftover_err = ''
-
-    def errLineReceived(self, line):
-        pass
-
-    def outLineReceived(self, line):
-        pass
-
-    def outReceived(self, data):
-        self._leftover_out, lines = parse_lines(self._leftover_out, data)
-        for line in lines:
-            self.outLineReceived(line)
-
-    def errReceived(self, data):
-        self._leftover_err, lines = parse_lines(self._leftover_err, data)
-        for line in lines:
-            self.errLineReceived(line)
-
-    def writeLines(self, *lines):
-        for line in lines:
-            self.transport.write(line+'\n')
 
 

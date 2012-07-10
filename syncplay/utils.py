@@ -53,7 +53,6 @@ class ArgumentParser():
     def joinArguments(args):
         return ' '.join(ArgumentParser.quoteArgument(arg) for arg in args)
     
-    
 def find_exec_path(name):
     if os.access(name, os.X_OK):
         return name
@@ -69,15 +68,6 @@ def format_time(value):
     hours, minutes = divmod(minutes, 60)
     return '%02d:%02d:%02d.%02d' % (hours, minutes, seconds, mseconds)
 
-
-
-
-
-
-
-
-
-
 def stdin_thread(manager):
     try:
         fd = sys.stdin.fileno()
@@ -88,8 +78,6 @@ def stdin_thread(manager):
             manager.execute_command(data.rstrip('\n\r'))
     except:
         pass
-
-
 
 class ConfigurationGetter(object):
     def __init__(self):

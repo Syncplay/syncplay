@@ -1,15 +1,42 @@
 #coding:utf8
 
-import re
-import sys
-from collections import deque
-
-from twisted.internet import reactor
-
-from ..network_utils import LineProcessProtocol
 from ..utils import find_exec_path
+from collections import deque
+from twisted.internet import reactor
+from twisted.internet.protocol import ProcessProtocol
+import re
 
 RE_ANSWER = re.compile('^ANS_([a-zA-Z_]+)=(.+)$')
+
+class LineProcessProtocol(ProcessProtocol):
+    _leftover_out = ''
+    _leftover_err = ''
+    
+    def parse_lines(self, leftovers, data):
+        data = leftovers+data
+        lines = data.split('\n')
+        leftovers = lines.pop(-1)
+        return leftovers, lines
+
+    def errLineReceived(self, line):
+        pass
+
+    def outLineReceived(self, line):
+        pass
+
+    def outReceived(self, data):
+        self._leftover_out, lines = self.parse_lines(self._leftover_out, data)
+        for line in lines:
+            self.outLineReceived(line)
+
+    def errReceived(self, data):
+        self._leftover_err, lines = self.parse_lines(self._leftover_err, data)
+        for line in lines:
+            self.errLineReceived(line)
+
+    def writeLines(self, *lines):
+        for line in lines:
+            self.transport.write(line+'\n')
 
 
 class MplayerProtocol(LineProcessProtocol):
