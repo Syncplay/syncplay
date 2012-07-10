@@ -15,8 +15,8 @@ class ConsoleUI(threading.Thread):
         self._syncplayClient = None
         threading.Thread.__init__(self, name="ConsoleUI")
         
-    def addManager(self, manager):
-        self._syncplayClient = manager
+    def addClient(self, client):
+        self._syncplayClient = client
         
     def run(self):
         try:

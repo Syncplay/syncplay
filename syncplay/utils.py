@@ -90,7 +90,7 @@ class ConfigurationGetter(object):
     def _findWorkingDirectory(self):
         frozen = getattr(sys, 'frozen', '')
         if not frozen:
-            self._workingDir = os.path.dirname(__file__)
+            self._workingDir = os.path.dirname(os.path.dirname(__file__))
         elif frozen in ('dll', 'console_exe', 'windows_exe'):
             self._workingDir = os.path.dirname(sys.executable)
         else:
@@ -115,7 +115,7 @@ class ConfigurationGetter(object):
     def _getSectionName(self):
         return 'sync' if not self._args.debug else 'debug'
 
-    def _saveValuesIntoConfigFile(self):
+    def saveValuesIntoConfigFile(self):
         self._openConfigFile()
         section_name = self._getSectionName()
         if(not self._args.no_store):
@@ -157,6 +157,7 @@ class ConfigurationGetter(object):
         self._prepareArgParser()
         self._args = self._parser.parse_args()
         self._readMissingValuesFromConfigFile()
+        self.saveValuesIntoConfigFile()
         self._splitPortAndHost()
         
     def getClientConfiguration(self):

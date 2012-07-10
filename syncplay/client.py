@@ -2,11 +2,9 @@
 
 from .network_utils import argumentCount, CommandProtocol
 from .utils import ArgumentParser, format_time
-from syncplay import utils
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 import re
-import threading
 import time
 
 class SyncClientProtocol(CommandProtocol):
@@ -163,7 +161,6 @@ class SyncClientProtocol(CommandProtocol):
         def send_playing(self, filename):
             self._protocol.sendMessage('playing', filename)
 
-
 class SyncClientFactory(ClientFactory):
     def __init__(self, manager):
         self._syncplayClient = manager
@@ -195,11 +192,8 @@ class SyncClientFactory(ClientFactory):
     def stop_retrying(self):
         self.retry = False
 
-
-class Manager(object):
-    def __init__(self, host, port, name, make_player, ui, debug):
-        self.host = host
-        self.port = port
+class SyncplayClientManager(object):
+    def __init__(self, name, make_player, ui, debug):
         self.name = name
 
         self.ui = self.UiManager(ui, debug)
@@ -230,15 +224,12 @@ class Manager(object):
 
         self.make_player = make_player
         self.running = False
-        command_handler = threading.Thread(target = utils.stdin_thread, args = (self,), name = "Command handler")
-        command_handler.setDaemon(True)
-        command_handler.start()
     
-    def start(self):
+    def start(self, host, port):
         if self.running:
             return
         self.protocol_factory = SyncClientFactory(self)
-        reactor.connectTCP(self.host, self.port, self.protocol_factory)
+        reactor.connectTCP(host, port, self.protocol_factory)
         self.running = True
         reactor.run()
 

@@ -13,6 +13,6 @@ if __name__ == '__main__':
     args = prepareArguments()
     args.args.extend(('-slave', '-msglevel', 'all=1:global=4'))
     if(args.file): args.args.extend((args.file,))
-    manager = client.Manager(args.host, args.port, args.name, lambda m: mplayer.run_mplayer(m, 'mplayer', args.args))
-    manager.start()
+    manager = client.SyncplayClientManager(args.name, lambda m: mplayer.run_mplayer(m, 'mplayer', args.args))
+    manager.start(args.host, args.port)
 
