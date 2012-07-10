@@ -5,7 +5,7 @@ import time
 
 class MPCHCAPIPlayer(object):
     def __init__(self, manager):
-        self.manager = manager
+        self._syncplayClient = manager
         self.mpc_api = MPC_API()
         
         self.pinged = False
@@ -34,7 +34,7 @@ class MPCHCAPIPlayer(object):
     def make_ping(self):
         self.mpc_api.callbacks.on_file_ready = None
         self.test_mpc_ready()
-        self.manager.init_player(self)
+        self._syncplayClient.init_player(self)
         self.pinged = True
         self.ask_for_status()
 
@@ -83,9 +83,9 @@ class MPCHCAPIPlayer(object):
                 paused = self.mpc_api.is_paused()
                 position = float(position)
                 self.tmp_position = position
-                self.manager.update_player_status(paused, position)
+                self._syncplayClient.update_player_status(paused, position)
             else:
-                self.manager.update_player_status(True, self.manager.get_global_position())
+                self._syncplayClient.update_player_status(True, self._syncplayClient.get_global_position())
         except Exception, err:
             self.mpc_error(err)
 
@@ -105,22 +105,22 @@ class MPCHCAPIPlayer(object):
         self.__force_pause(filename, position)
         
     def handle_updated_filename(self, filename):
-        position = self.manager.get_global_position()
+        position = self._syncplayClient.get_global_position()
         if(self.semaphore_filename): 
-            self.manager.update_player_status(True, position)
+            self._syncplayClient.update_player_status(True, position)
             return 
         self.semaphore_filename = True
         self.__set_up_newly_opened_file(filename, position)
         self.tmp_filename = filename
-        self.manager.update_filename(str(self.tmp_filename))
-        self.manager.update_player_status(True, position)
+        self._syncplayClient.update_filename(str(self.tmp_filename))
+        self._syncplayClient.update_player_status(True, position)
         self.semaphore_filename = False
         
     def mpc_error(self, err=""):
         print "ERROR:", str(err) + ',', "desu"
-        if self.manager.running:
+        if self._syncplayClient.running:
             print 'Failed to connect to MPC-HC API!'
-        self.manager.stop()
+        self._syncplayClient.stop()
 
 def run_mpc(manager, mpc_path, file_path, args):
     mpc = MPCHCAPIPlayer(manager)

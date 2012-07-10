@@ -1,178 +1,176 @@
 #coding:utf8
 
-import time
-import re
-import threading 
-
+from .network_utils import argumentCount, CommandProtocol
+from .utils import ArgumentParser, format_time
+from syncplay import utils
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
-from syncplay import utils
-from .network_utils import (
-    argumentCount,
-    CommandProtocol,
-)
-from .utils import format_time
-
+import re
+import threading
+import time
 
 class SyncClientProtocol(CommandProtocol):
-    def __init__(self, manager):
-        CommandProtocol.__init__(self)
-        self.manager = manager
-        
+    def __init__(self, syncplayClient):
+        self.syncplayClient = syncplayClient
+        self.handler = self._MessagesHandler(syncplayClient)
+        self.sender = self._MessagesSender(self)
+
     def connectionMade(self):
-        self.send_message('iam', self.manager.name)
-        self.manager.init_protocol(self)
+        self.sendMessage('iam', self.syncplayClient.name)
+        self.syncplayClient.initProtocol(self)
 
     def connectionLost(self, reason):
-        self.manager.protocol = None
+        self.syncplayClient.destroyProtocol()
+        self.syncplayClient.ui.showDebugMessage("Connection lost, reason: %s" % reason)
 
-    def handle_error(self, args):
-        self.manager.stop()
-        CommandProtocol.handle_error(self, args)
-
-    @argumentCount(1)
-    def handle_init_hello(self, args):
-        message ='Connected as ' + args[0] 
-        print message
-        self.manager.name = args[0]
-        self.change_state('connected')
-        self.send_list()
-        self.manager.schedule_send_status()
-
-    @argumentCount(2, 3)
-    def handle_connected_present(self, args):
-        if len(args) == 3:
+    def sendMessage(self, *args):
+        line = ArgumentParser.joinArguments(args)
+        self.sendLine(line)
+        self.syncplayClient.ui.showDebugMessage('NETWORK:\t<<' + line)
+    
+    def dropWithError(self, error):
+        self.syncplayClient.ui.showErrorMessage(error)
+        CommandProtocol.dropWithError(self, error)
+    
+    def lineReceived(self, line):
+        self.syncplayClient.ui.showDebugMessage('NETWORK:\t>>%s' % line)
+        CommandProtocol.lineReceived(self, line)
+    
+    class _MessagesHandler(object):
+        def __init__(self, syncplayClient):
+            self._syncplayClient = syncplayClient
+            self._lastServerTimestamp = 0
+        
+        @argumentCount(1)
+        def hello(self, args):
+            message ='Connected as ' + args[0] 
+            print message
+            self._syncplayClient.name = args[0]
+            self._syncplayClient.protocol.sender.send_list()
+            self._syncplayClient.schedule_send_status()
+    
+        @argumentCount(2, 3)
+        def present(self, args):
+            if len(args) == 3:
+                who, where, what = args
+            else:
+                who, where, what = args[0], args[1], None
+            if what:
+                message = '%s is present and is playing \'%s\' in the room: \'%s\'' % (who, what, where)
+                print message
+                if(self._syncplayClient.player): self._syncplayClient.player.display_message(message)
+            else:
+                message = '%s is present in the room: \'%s\'' % (who, where)
+                print message
+                if(self._syncplayClient.player): self._syncplayClient.player.display_message(message)
+    
+        @argumentCount(4, 5)
+        def state(self, args):
+            args = self.__parseState(args)
+            if not args:
+                self.dropWithError('Malformed state attributes')
+                return
+    
+            counter, ctime, paused, position, name = args
+    
+            self._syncplayClient.update_global_state(counter, ctime, paused, position, name)
+    
+        @argumentCount(3)
+        def seek(self, args):
+            ctime, position, who = args
+            try:
+                ctime = int(ctime)
+                position = int(position)
+            except ValueError:
+                self.dropWithError('Invalid arguments')
+    
+            ctime /= 1000.0
+            position /= 1000.0
+    
+            self._syncplayClient.seek(ctime, position, who)
+    
+        @argumentCount(1)
+        def ping(self, args):
+            self._syncplayClient.protocol.sendMessage('pong', args[0], int(time.time()*100000))
+    
+        @argumentCount(3)
+        def playing(self, args):
             who, where, what = args
-        else:
-            who, where, what = args[0], args[1], None
-        if what:
-            message = '%s is present and is playing \'%s\' in the room: \'%s\'' % (who, what, where)
+            message = '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where)
             print message
-            if(self.manager.player): self.manager.player.display_message(message)
-        else:
-            message = '%s is present in the room: \'%s\'' % (who, where)
+            if(self._syncplayClient.player): self._syncplayClient.player.display_message(message)
+    
+        @argumentCount(1)
+        def joined(self, args):
+            message = '%s joined' % args[0]
             print message
-            if(self.manager.player): self.manager.player.display_message(message)
-
-    @argumentCount(4, 5)
-    def handle_connected_state(self, args):
-        args = self.__parseState(args)
-        if not args:
-            self.dropWithError('Malformed state attributes')
-            return
-
-        counter, ctime, paused, position, name = args
-
-        self.manager.update_global_state(counter, ctime, paused, position, name)
-
-    @argumentCount(3)
-    def handle_connected_seek(self, args):
-        ctime, position, who = args
-        try:
-            ctime = int(ctime)
-            position = int(position)
-        except ValueError:
-            self.dropWithError('Invalid arguments')
-
-        ctime /= 1000.0
-        position /= 1000.0
-
-        self.manager.seek(ctime, position, who)
-
-    @argumentCount(1)
-    def handle_connected_ping(self, args):
-        self.send_message('pong', args[0], int(time.time()*100000))
-
-    @argumentCount(3)
-    def handle_connected_playing(self, args):
-        who, where, what = args
-        message = '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where)
-        print message
-        if(self.manager.player): self.manager.player.display_message(message)
-
-    @argumentCount(1)
-    def handle_connected_joined(self, args):
-        message = '%s joined' % args[0]
-        print message
-        if(self.manager.player): self.manager.player.display_message(message)
+            if(self._syncplayClient.player): self._syncplayClient.player.display_message(message)
+        
+        @argumentCount(2)
+        def room(self, args):
+            message = '%s entered the room: \'%s\'' % (args[0], args[1])
+            print message
+            if(self._syncplayClient.player): self._syncplayClient.player.display_message(message)
     
-    @argumentCount(2)
-    def handle_connected_room(self, args):
-        message = '%s entered the room: \'%s\'' % (args[0], args[1])
-        print message
-        if(self.manager.player): self.manager.player.display_message(message)
+        @argumentCount(1)
+        def left(self, args):
+            message = '%s left' % args[0]
+            print message
+            if(self._syncplayClient.player): self._syncplayClient.player.display_message(message)
 
-    @argumentCount(1)
-    def handle_connected_left(self, args):
-        message = '%s left' % args[0]
-        print message
-        if(self.manager.player): self.manager.player.display_message(message)
-
-    def send_list(self):
-        self.send_message('list')
-
-    def send_state(self, counter, ctime, paused, position):
-        self.send_message('state', counter, int(ctime*1000), ('paused' if paused else 'playing'), int(position*1000))
-
-    def send_seek(self, counter, ctime, position):
-        self.send_message('seek', counter, int(ctime*1000), int(position*1000))
+        def __parseState(self, args):
+            if len(args) == 4:
+                counter, ctime, state, position = args
+                who_changed_state = None
+            elif len(args) == 5:
+                counter, ctime, state, position, who_changed_state = args
+            else:
+                return
+        
+            if not state in ('paused', 'playing'):
+                return
+        
+            paused = state == 'paused'
+        
+            try:
+                counter = int(counter)
+                ctime = int(ctime)
+                position = int(position)
+            except ValueError:
+                return
+        
+            ctime /= 1000.0
+            position /= 1000.0
+        
+            return counter, ctime, paused, position, who_changed_state
+        
+    class _MessagesSender(object):
+        def __init__(self, protocol):
+            self._protocol = protocol
+            
+        def send_list(self):
+            self._protocol.sendMessage('list')
     
-    def send_room(self, where):
-        self.send_message('room', where)
+        def send_state(self, counter, ctime, paused, position):
+            self._protocol.sendMessage('state', counter, int(ctime*1000), ('paused' if paused else 'playing'), int(position*1000))
+    
+        def send_seek(self, counter, ctime, position):
+            self._protocol.sendMessage('seek', counter, int(ctime*1000), int(position*1000))
+        
+        def send_room(self, where):
+            self._protocol.sendMessage('room', where)
+    
+        def send_playing(self, filename):
+            self._protocol.sendMessage('playing', filename)
 
-    def send_playing(self, filename):
-        self.send_message('playing', filename)
-
-    states = dict(
-        init = dict(
-            hello = 'handle_init_hello',
-        ),
-        connected = dict(
-            room = 'handle_connected_room',
-            present = 'handle_connected_present',
-            state = 'handle_connected_state',
-            seek = 'handle_connected_seek',
-            ping = 'handle_connected_ping',
-            playing = 'handle_connected_playing',
-            joined = 'handle_connected_joined',
-            left = 'handle_connected_left',
-        ),
-    )
-    initial_state = 'init'
-
-    def __parseState(self, args):
-        if len(args) == 4:
-            counter, ctime, state, position = args
-            who_changed_state = None
-        elif len(args) == 5:
-            counter, ctime, state, position, who_changed_state = args
-        else:
-            return
-    
-        if not state in ('paused', 'playing'):
-            return
-    
-        paused = state == 'paused'
-    
-        try:
-            counter = int(counter)
-            ctime = int(ctime)
-            position = int(position)
-        except ValueError:
-            return
-    
-        ctime /= 1000.0
-        position /= 1000.0
-    
-        return counter, ctime, paused, position, who_changed_state
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, manager):
-        self.manager = manager
+        self._syncplayClient = manager
         self.retry = True
 
     def buildProtocol(self, addr):
-        return SyncClientProtocol(self.manager)
+        return SyncClientProtocol(self._syncplayClient)
 
     def startedConnecting(self, connector):
         destination = connector.getDestination()
@@ -185,25 +183,26 @@ class SyncClientFactory(ClientFactory):
         else:
             message = 'Disconnected'
             print message
-            if(self.manager.player): self.manager.player.display_message(message)
+            if(self._syncplayClient.player): self._syncplayClient.player.display_message(message)
 
     def clientConnectionFailed(self, connector, reason):
         message = 'Connection failed'
         print message
-        if(self.manager.player): self.manager.player.display_message(message)
+        if(self._syncplayClient.player): self._syncplayClient.player.display_message(message)
 
-        self.manager.stop()
+        self._syncplayClient.stop()
 
     def stop_retrying(self):
         self.retry = False
 
 
 class Manager(object):
-    def __init__(self, host, port, name, make_player):
+    def __init__(self, host, port, name, make_player, ui, debug):
         self.host = host
         self.port = port
         self.name = name
 
+        self.ui = self.UiManager(ui, debug)
         self.protocol_factory = None
         self.protocol = None
         self.send_delayed = None
@@ -280,12 +279,17 @@ class Manager(object):
             self.player.set_paused(True)
         self.schedule_ask_player()
 
-    def init_protocol(self, protocol):
+    def initProtocol(self, protocol):
         self.protocol = protocol
         if self.make_player:
             self.make_player(self)
             self.make_player = None
 
+    def destroyProtocol(self):
+        if self.protocol:
+            self.protocol.drop()
+        self.protocol = None
+        
     def schedule_ask_player(self, when=0.2):
         if self.ask_delayed and self.ask_delayed.active():
             self.ask_delayed.reset(when)
@@ -318,20 +322,20 @@ class Manager(object):
         if not self.player_paused:
             position += curtime - self.last_player_update
         if self.protocol:
-            self.protocol.send_state(self.counter, curtime, self.player_paused, self.player_position)
+            self.protocol.sender.send_state(self.counter, curtime, self.player_paused, self.player_position)
 
     def send_seek(self):
         if not (self.running and self.protocol):
             return
         self.counter += 10
-        self.protocol.send_seek(self.counter, time.time(), self.player_position)
+        self.protocol.sender.send_seek(self.counter, time.time(), self.player_position)
         message = self.name +' seeked to ' + format_time(self.player_position)
         print message
         self.player.display_message(message)
         
     def send_filename(self):
         if self.protocol and self.player_filename:
-            self.protocol.send_playing(self.player_filename)
+            self.protocol.sender.send_playing(self.player_filename)
 
     def __exectue_seek_cmd(self, seek_type, minutes, seconds):
         self.player_position_before_last_seek = self.player_position
@@ -355,7 +359,7 @@ class Manager(object):
             room = matched_room.group(2)
             if room == None:
                 room = 'default'
-            self.protocol.send_room(room)
+            self.protocol.sender.send_room(room)
         elif data == "r":
             tmp_pos = self.player_position
             self.player.set_position(self.player_position_before_last_seek)
@@ -482,6 +486,7 @@ class Manager(object):
         if changed:
             self.ask_player()
 
+
     def seek(self, ctime, position, who):
         curtime = time.time()
         position += curtime - ctime
@@ -495,5 +500,22 @@ class Manager(object):
         print message
         self.player.display_message(message)
 
+    class UiManager(object):
+        def __init__(self, ui, debug = False):
+            self.__ui = ui
+            self.debug = debug 
+        
+        def showMessage(self, message):
+            self.__ui.showMessage(message)
+        
+        def showDebugMessage(self, message):
+            if(self.debug):
+                self.__ui.showDebugMessage(message)
+            
+        def showErrorMessage(self, message):
+            self.__ui.showErrorMessage(message)
+
+        def displayListOfPeople(self):
+            pass
 
 

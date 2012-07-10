@@ -43,7 +43,7 @@ class MplayerProtocol(LineProcessProtocol):
     speed_supported = True
 
     def __init__(self, manager):
-        self.manager = manager
+        self._syncplayClient = manager
         self.ignore_end = False
         self.error_lines = deque(maxlen=50)
         self.tmp_paused = None
@@ -52,7 +52,7 @@ class MplayerProtocol(LineProcessProtocol):
         reactor.callLater(0.1, self.prepare_player)
 
     def processEnded(self, reason):
-        self.manager.player = None
+        self._syncplayClient.player = None
         if not self.ignore_end:
             if reason.value.signal is not None:
                 print 'Mplayer interrupted by signal %d.' % reason.value.signal
@@ -64,7 +64,7 @@ class MplayerProtocol(LineProcessProtocol):
                 print 'Up to 50 last lines from its error output below:'
                 for line in self.error_lines:
                     print line
-        self.manager.stop()
+        self._syncplayClient.stop()
 
     def errLineReceived(self, line):
         if line:
@@ -106,8 +106,8 @@ class MplayerProtocol(LineProcessProtocol):
         self.send_get_property('filename')
 
     def mplayer_answer_filename(self, value):
-        self.manager.init_player(self)
-        self.manager.update_filename(value)
+        self._syncplayClient.init_player(self)
+        self._syncplayClient.update_filename(value)
 
 
     def set_paused(self, value):
@@ -130,7 +130,7 @@ class MplayerProtocol(LineProcessProtocol):
 
     def mplayer_answer_time_pos(self, value):
         value = float(value)
-        self.manager.update_player_status(self.tmp_paused, value)
+        self._syncplayClient.update_player_status(self.tmp_paused, value)
 
 
     def set_speed(self, value):
@@ -141,7 +141,7 @@ class MplayerProtocol(LineProcessProtocol):
 
     #def mplayer_answer_speed(self, value):
     #    value = float(value)
-    #    self.manager.update_player_speed(value)
+    #    self._syncplayClient.update_player_speed(value)
 
     
     def drop(self):

@@ -43,3 +43,8 @@ class ConsoleUI(threading.Thread):
     def showMessage(self, message):
         print(message)
 
+    def showDebugMessage(self, message):
+        print(message)
+        
+    def showErrorMessage(self, message):
+        print(message)

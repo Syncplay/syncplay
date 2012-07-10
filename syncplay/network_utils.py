@@ -16,11 +16,10 @@ def argumentCount(minimum, maximum=None):
         return wrapper
     return decorator
 
-class CommandProtocol(LineReceiver):
-    states = None
-
+class CommandProtocol(LineReceiver): 
     def __init__(self):
-        self._state = self.initial_state
+        self.handler = None
+        self.sender = None 
 
     def lineReceived(self, line):
         line = line.strip()
@@ -32,40 +31,21 @@ class CommandProtocol(LineReceiver):
             self.dropWithError('Malformed line')
             return
         command = args.pop(0)
-        #if command not in ['ping', 'pong']:
-        #    print '>>>', line
-        if command == 'error':
-            self.handle_error(args)
-            return
-
-        available_commands = self.states.get(self._state)
-        handler = available_commands.get(command)
-        if handler:
-            handler = getattr(self, handler, None)
+        handler = getattr(self.handler, command, None)
         if not handler:
             self.dropWithError('Unknown command: `%s`' % command)
-            return # TODO log it too
+            return
         handler(args)
 
-    def handle_error(self, args):
-        print 'Error received from other side:', args
-
-    def change_state(self, new_state):
-        if new_state not in self.states:
-            raise RuntimeError('Unknown state: %s' % new_state)
-        self._state = new_state
-
-    def send_message(self, *args):
+    def sendMessage(self, *args):
         line = ArgumentParser.joinArguments(args)
-        #if args[0] not in ['ping', 'pong']:
-        #    print '<<<', line
         self.sendLine(line)
 
     def drop(self):
         self.transport.loseConnection()
 
     def dropWithError(self, error):
-        self.send_message('error', error)
+        self.sendMessage('error', error)
         self.drop()
 
 
