@@ -58,7 +58,7 @@ class SyncClientProtocol(CommandProtocol):
     def handle_connected_state(self, args):
         args = self.__parseState(args)
         if not args:
-            self.drop_with_error('Malformed state attributes')
+            self.dropWithError('Malformed state attributes')
             return
 
         counter, ctime, paused, position, name = args
@@ -72,7 +72,7 @@ class SyncClientProtocol(CommandProtocol):
             ctime = int(ctime)
             position = int(position)
         except ValueError:
-            self.drop_with_error('Invalid arguments')
+            self.dropWithError('Invalid arguments')
 
         ctime /= 1000.0
         position /= 1000.0

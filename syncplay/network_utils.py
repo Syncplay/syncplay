@@ -42,7 +42,7 @@ class CommandProtocol(LineReceiver):
         
         args = ArgumentParser.splitArguments(line)
         if not args:
-            self.drop_with_error('Malformed line')
+            self.dropWithError('Malformed line')
             return
         command = args.pop(0)
         #if command not in ['ping', 'pong']:
@@ -56,7 +56,7 @@ class CommandProtocol(LineReceiver):
         if handler:
             handler = getattr(self, handler, None)
         if not handler:
-            self.drop_with_error('Unknown command: `%s`' % command)
+            self.dropWithError('Unknown command: `%s`' % command)
             return # TODO log it too
         handler(args)
 
@@ -77,7 +77,7 @@ class CommandProtocol(LineReceiver):
     def drop(self):
         self.transport.loseConnection()
 
-    def drop_with_error(self, error):
+    def dropWithError(self, error):
         self.send_message('error', error)
         self.drop()
 
