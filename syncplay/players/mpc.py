@@ -1,151 +1,128 @@
 #coding:utf8
 
-import re
+from ..mpc_api import MPC_API
+import time
 
-from twisted.internet import reactor
-from twisted.web.client import Agent
-from twisted.web.http_headers import Headers
-
-from ..network_utils import (
-    BodyProducer,
-    handle_response,
-    null_response_handler,
-)
-
-#RE_MPC_STATUS = re.compile("^OnStatus\('(.+)', '(Paused|Playing)', (\d+), '\d{2}:\d{2}:\d{2}', \d+, '\d{2}:\d{2}:\d{2}', \d+, \d+, '.+'\)$")
-RE_MPC_STATUS = re.compile(r"^OnStatus\('((?:[^']*(?:\\\\)*\\')*[^']*)', '(.+?)', (\d+),")
-
-PLAYING_STATUSES = {
-    'Playing': False,
-    'Reproduzindo': False,
-    'Прайграванне': False,
-    'Reproduint': False,
-    'Přehrávání': False,
-    'Spiele ab': False,
-    'Reproduciendo': False,
-    'Lecture': False,
-    'מנגן': False,
-    'Lejátszás': False,
-    'Վերարատադրվում է': False,
-    'Riproduzione': False,
-    '再生中': False,
-    '재생중': False,
-    'Afspelen': False,
-    'Odtwarzanie...': False,
-    'Воспроизведение': False,
-    '正在播放': False,
-    'Prehráva sa': False,
-    'Spelar': False,
-    '播放中': False,
-    'Oynatılıyor': False,
-    'Відтворення': False,
-
-    'Paused': True,
-    'Pausado': True,
-    'Паўза': True,
-    'Pausat': True,
-    'Pozastaveno': True,
-    'Angehalten': True,
-    'Pausado': True,
-    'En pause': True,
-    'מושהה': True,
-    'Szünet': True,
-    'Դադար': True,
-    'In pausa': True,
-    '一時停止': True,
-    '일시정지': True,
-    'Gepauzeerd': True,
-    'Wstrzymano': True,
-    'Пауза': True,
-    '已暂停': True,
-    'Pozastavené': True,
-    'Pausad': True,
-    '已暫停': True,
-    'Duraklatıldı': True,
-    'Пауза': True,
-}
-
-class MPCHCPlayer(object):
-    def __init__(self, manager, host = None):
+class MPCHCAPIPlayer(object):
+    def __init__(self, manager):
         self.manager = manager
-        self.host = 'localhost:13579'
-
+        self.mpc_api = MPC_API()
+        
         self.pinged = False
         self.tmp_filename = None
         self.tmp_position = None
         
-        self.agent = Agent(reactor)
-
+        self.mpc_api.callbacks.on_file_ready = lambda: self.make_ping()
+        self.mpc_api.callbacks.on_mpc_closed = lambda: self.mpc_error("MPC closed")
+    
+        self.semaphore_filename = False
+ 
     def drop(self):
         pass
 
     def set_speed(self, value):
         pass
 
-    def display_message(self, message):
-        pass
-    
+    def test_mpc_ready(self):
+        try:
+            self.mpc_api.ask_for_current_position()
+        except MPC_API.PlayerNotReadyException:
+            time.sleep(0.1)
+            self.test_mpc_ready()
+            return
+
     def make_ping(self):
+        self.mpc_api.callbacks.on_file_ready = None
+        self.test_mpc_ready()
+        self.manager.init_player(self)
+        self.pinged = True
         self.ask_for_status()
 
+    def display_message(self, message):
+        try:
+            self.mpc_api.send_osd(message)
+        except Exception, err:
+            self.mpc_error(err)
+
     def set_paused(self, value):
-        self.send_post_request('wm_command=%d' % (888 if value else 887))
+        try:
+            if value:
+                self.mpc_api.pause()
+            else:
+                self.mpc_api.unpause()
+        except MPC_API.PlayerNotReadyException:
+            time.sleep(0.2)
+            self.set_paused(value)
+            return
+        except Exception, err:
+            self.mpc_error(err)
 
     def set_position(self, value):
-        value = int(value*1000)
-        seconds, mseconds = divmod(value, 1000)
-        minutes, seconds = divmod(seconds, 60)
-        hours, minutes = divmod(minutes, 60)
-        self.send_post_request('wm_command=-1&position=%d.%d.%d.%d' % (
-            hours, minutes, seconds, mseconds
-        ))
-
-    def status_response(self, status, headers, body):
-        m = RE_MPC_STATUS.match(body)
-        if m:
-            filename, paused, position = m.group(1), m.group(2), m.group(3)
-            paused = PLAYING_STATUSES.get(paused)
-        else:
-            filename, paused, position = self.tmp_filename, True, self.tmp_position
-        if paused is None:
-            paused = True #assume stopped or changing episodes!
-            position = self.tmp_position
-        else:
-            position = float(position)/1000 
-            self.tmp_position = position
-        if self.pinged:
-            self.manager.update_player_status(paused, position)
-        else:
-            self.pinged = True
-            self.manager.init_player(self)
-        if filename != self.tmp_filename:
-            self.tmp_filename = filename
-            self.manager.update_filename(filename)
+        try:
+            self.mpc_api.seek(value)
+        except MPC_API.PlayerNotReadyException:
+            self.set_position(value)
+            return
+        except Exception, err:
+            self.mpc_error(err)
 
     def ask_for_status(self):
-        request = self.agent.request(
-            'GET',
-            'http://localhost:13579/status.html',
-            Headers(),
-            None,
-        )
-        request.addCallbacks(handle_response(self.status_response), self.mpc_error)
+        position = self.tmp_position if self.tmp_position else 0
+        paused = None
+        try:
+            if(self.mpc_api.is_file_ready() and not self.semaphore_filename):
+                try:
+                    position = self.mpc_api.ask_for_current_position()
+                except MPC_API.PlayerNotReadyException:
+                    time.sleep(0.1)
+                    self.ask_for_status()
+                    return
+                if(self.tmp_filename <> self.mpc_api.fileplaying):
+                    self.handle_updated_filename(self.mpc_api.fileplaying)
+                    return
+                paused = self.mpc_api.is_paused()
+                position = float(position)
+                self.tmp_position = position
+                self.manager.update_player_status(paused, position)
+            else:
+                self.manager.update_player_status(True, self.manager.get_global_position())
+        except Exception, err:
+            self.mpc_error(err)
 
-    def send_post_request(self, body):
-        request = self.agent.request(
-            'POST',
-            'http://%s/command.html' % self.host,
-            Headers({'Content-Type': ['application/x-www-form-urlencoded']}),
-            BodyProducer(body),
-        )
-        request.addCallbacks(handle_response(null_response_handler), self.mpc_error)
+    def __force_pause(self, filename, position):
+        self.set_paused(True)
+        time.sleep(0.1)
+        if (not self.mpc_api.is_paused()):
+            self.__set_up_newly_opened_file(filename, position)
 
-    def mpc_error(self, error):
+    def __set_up_newly_opened_file(self, filename, position):
+        self.test_mpc_ready()
+        try:
+            self.mpc_api.seek(position)
+        except MPC_API.PlayerNotReadyException:
+            time.sleep(0.1)
+            self.__set_up_newly_opened_file(filename, position)
+        self.__force_pause(filename, position)
+        
+    def handle_updated_filename(self, filename):
+        position = self.manager.get_global_position()
+        if(self.semaphore_filename): 
+            self.manager.update_player_status(True, position)
+            return 
+        self.semaphore_filename = True
+        self.__set_up_newly_opened_file(filename, position)
+        self.tmp_filename = filename
+        self.manager.update_filename(str(self.tmp_filename))
+        self.manager.update_player_status(True, position)
+        self.semaphore_filename = False
+        
+    def mpc_error(self, err=""):
+        print "ERROR:", str(err) + ',', "desu"
         if self.manager.running:
-            print 'Failed to connect to MPC-HC web interface'
+            print 'Failed to connect to MPC-HC API!'
         self.manager.stop()
 
-def run_mpc(manager, host=None):
-    mpc = MPCHCPlayer(manager, host)
-    mpc.make_ping()
-
+def run_mpc(manager, mpc_path, file_path, args):
+    mpc = MPCHCAPIPlayer(manager)
+    mpc.mpc_api.callbacks.on_connected = lambda: mpc.mpc_api.open_file(file_path) if(file_path) else None
+    mpc.mpc_api.start_mpc(mpc_path, args)
