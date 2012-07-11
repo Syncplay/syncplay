@@ -7,7 +7,8 @@ from syncplay import utils
 class SyncplayMPC:
     def runClient(self):
         self._prepareArguments()
-        self.interface = ui.getUi(graphical = not self.args.no_gui)
+#        self.interface = ui.getUi(graphical = not self.args.no_gui)
+        self.interface = ui.getUi(graphical = False) #TODO: add gui
         self._promptForMissingArguments()
         syncplayClient = client.SyncplayClientManager(self.args.name, lambda m: mpc.run_mpc(m, self.args.mpc_path, self.args.file, self.args._args), self.interface, self.args.debug)
         self.interface.addClient(syncplayClient)

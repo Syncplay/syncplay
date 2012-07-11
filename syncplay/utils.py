@@ -75,7 +75,7 @@ def stdin_thread(manager):
             data = os.read(fd, 1024)
             if not data:
                 break   
-            manager.execute_command(data.rstrip('\n\r'))
+            manager.executeCommand(data.rstrip('\n\r'))
     except:
         pass
 
@@ -97,7 +97,7 @@ class ConfigurationGetter(object):
             raise Exception('Working dir not found')
 
     def _prepareArgParser(self):
-        self._parser = argparse.ArgumentParser(description='Syncplay',
+        self._parser = argparse.ArgumentParser(description='Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
                                          epilog='If no options supplied _config values will be used')
         self._parser.add_argument('--no-gui', action='store_true', help='show no GUI')
         self._parser.add_argument('--host', metavar='hostname', type=str, help='server\'s address')
@@ -126,6 +126,7 @@ class ConfigurationGetter(object):
                 self._config.write(configfile)
     
     def _setUpValuesToSave(self, section_name):
+        self._splitPortAndHost()
         self._config.set(section_name, 'host', self._args.host)
         self._config.set(section_name, 'name', self._args.name)
 
@@ -146,11 +147,12 @@ class ConfigurationGetter(object):
             self._args.name = self._config.get(section_name, 'name')
             
     def _splitPortAndHost(self):
-        if ':' in self._args.host:
-            self._args.host, port = self._args.host.split(':', 1)
-            self._args.port = int(port)
-        else:
-            self._args.port = 8999
+        if(self._args.host):
+            if ':' in self._args.host:
+                self._args.host, port = self._args.host.split(':', 1)
+                self._args.port = int(port)
+            else:
+                self._args.port = 8999
     
     def prepareClientConfiguration(self):
         self._findWorkingDirectory()

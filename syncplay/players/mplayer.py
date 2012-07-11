@@ -106,8 +106,8 @@ class MplayerProtocol(LineProcessProtocol):
         self.send_get_property('filename')
 
     def mplayer_answer_filename(self, value):
-        self._syncplayClient.init_player(self)
-        self._syncplayClient.update_filename(value)
+        self._syncplayClient.initPlayer(self)
+        self._syncplayClient.updateFilename(value)
 
 
     def set_paused(self, value):
@@ -130,7 +130,7 @@ class MplayerProtocol(LineProcessProtocol):
 
     def mplayer_answer_time_pos(self, value):
         value = float(value)
-        self._syncplayClient.update_player_status(self.tmp_paused, value)
+        self._syncplayClient.updatePlayerStatus(self.tmp_paused, value)
 
 
     def set_speed(self, value):

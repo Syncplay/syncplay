@@ -45,7 +45,7 @@ class SyncClientProtocol(CommandProtocol):
             print message
             self._syncplayClient.name = args[0]
             self._syncplayClient.protocol.sender.send_list()
-            self._syncplayClient.schedule_send_status()
+            self._syncplayClient.scheduleSendStatus()
     
         @argumentCount(2, 3)
         def present(self, args):
@@ -71,7 +71,7 @@ class SyncClientProtocol(CommandProtocol):
     
             counter, ctime, paused, position, name = args
     
-            self._syncplayClient.update_global_state(counter, ctime, paused, position, name)
+            self._syncplayClient.updateGlobalState(counter, ctime, paused, position, name)
     
         @argumentCount(3)
         def seek(self, args):
@@ -152,7 +152,7 @@ class SyncClientProtocol(CommandProtocol):
         def send_state(self, counter, ctime, paused, position):
             self._protocol.sendMessage('state', counter, int(ctime*1000), ('paused' if paused else 'playing'), int(position*1000))
     
-        def send_seek(self, counter, ctime, position):
+        def sendSeek(self, counter, ctime, position):
             self._protocol.sendMessage('seek', counter, int(ctime*1000), int(position*1000))
         
         def send_room(self, where):
@@ -246,7 +246,7 @@ class SyncplayClientManager(object):
         reactor.callLater(0.1, reactor.stop)
 
 
-    def get_player_position(self):
+    def getPlayerPosition(self):
         if not self.last_player_update:
             return 0.0
         position = self.player_position
@@ -254,7 +254,7 @@ class SyncplayClientManager(object):
             position += time.time() - self.last_player_update
         return position
 
-    def get_global_position(self):
+    def getGlobalPosition(self):
         if not self.last_global_update:
             return 0.0
         position = self.global_position
@@ -263,12 +263,12 @@ class SyncplayClientManager(object):
         return position
 
 
-    def init_player(self, player):
+    def initPlayer(self, player):
         self.player = player
         if self.last_global_update:
-            self.player.set_position(self.get_global_position())
+            self.player.set_position(self.getGlobalPosition())
             self.player.set_paused(True)
-        self.schedule_ask_player()
+        self.scheduleAskPlayer()
 
     def initProtocol(self, protocol):
         self.protocol = protocol
@@ -281,30 +281,30 @@ class SyncplayClientManager(object):
             self.protocol.drop()
         self.protocol = None
         
-    def schedule_ask_player(self, when=0.2):
+    def scheduleAskPlayer(self, when=0.2):
         if self.ask_delayed and self.ask_delayed.active():
             self.ask_delayed.reset(when)
         else:
-            self.ask_delayed = reactor.callLater(when, self.ask_player)
+            self.ask_delayed = reactor.callLater(when, self.askPlayer)
 
-    def ask_player(self):
+    def askPlayer(self):
         if not self.running:
             return
         if self.player:
             self.status_ask_sent += 1
             self.player.ask_for_status()
-        self.schedule_ask_player()
+        self.scheduleAskPlayer()
 
-    def schedule_send_status(self, when=1):
+    def scheduleSendStatus(self, when=1):
         if self.send_delayed and self.send_delayed.active():
             self.send_delayed.reset(when)
         else:
-            self.send_delayed = reactor.callLater(when, self.send_status)
+            self.send_delayed = reactor.callLater(when, self.sendStatus)
 
-    def send_status(self, force = False):
+    def sendStatus(self, force = False):
         if not (self.running and self.protocol):
             return
-        self.schedule_send_status()
+        self.scheduleSendStatus()
         if self.counter > self.counter_recv and not force:
             return
         self.counter += 1
@@ -315,20 +315,20 @@ class SyncplayClientManager(object):
         if self.protocol:
             self.protocol.sender.send_state(self.counter, curtime, self.player_paused, self.player_position)
 
-    def send_seek(self):
+    def sendSeek(self):
         if not (self.running and self.protocol):
             return
         self.counter += 10
-        self.protocol.sender.send_seek(self.counter, time.time(), self.player_position)
+        self.protocol.sender.sendSeek(self.counter, time.time(), self.player_position)
         message = self.name +' seeked to ' + format_time(self.player_position)
         print message
         self.player.display_message(message)
         
-    def send_filename(self):
+    def sendFilename(self):
         if self.protocol and self.player_filename:
             self.protocol.sender.send_playing(self.player_filename)
 
-    def __exectue_seek_cmd(self, seek_type, minutes, seconds):
+    def __exectueSeekCmd(self, seek_type, minutes, seconds):
         self.player_position_before_last_seek = self.player_position
         if seek_type == 's':
             seconds = int(seconds) if seconds <> None else 0
@@ -339,13 +339,13 @@ class SyncplayClientManager(object):
             seconds += int(minutes) * 60 if minutes <> None else 60
             self.player.set_position(self.player_position+seconds)
             
-    def execute_command(self, data):
+    def executeCommand(self, data):
         RE_SEEK = re.compile("^(s[+s]?) ?(-?\d+)?([^0-9](\d+))?$")
         RE_ROOM = re.compile("^room( (\w+))?")
         matched_seek = RE_SEEK.match(data)
         matched_room = RE_ROOM.match(data)
         if matched_seek :
-            self.__exectue_seek_cmd(matched_seek.group(1), matched_seek.group(2), matched_seek.group(4))
+            self.__exectueSeekCmd(matched_seek.group(1), matched_seek.group(2), matched_seek.group(4))
         elif matched_room:
             room = matched_room.group(2)
             if room == None:
@@ -366,7 +366,7 @@ class SyncplayClientManager(object):
             print "\tp - toggle pause"
             print "\troom [room] - change room, if no supplied go to default"
  
-    def update_player_status(self, paused, position):
+    def updatePlayerStatus(self, paused, position):
         self.status_ask_received += 1
         if self.status_ask_received < self.status_ask_sent:
             return
@@ -374,18 +374,18 @@ class SyncplayClientManager(object):
         self.player_paused = paused
         self.player_position = position
         self.last_player_update = time.time()
-        diff = position - self.get_global_position()
+        diff = position - self.getGlobalPosition()
         if old_paused and not paused:
             self.player_paused_at = None
         if old_paused != paused and self.global_paused != paused:
-            self.send_status(True)
+            self.sendStatus(True)
             if paused:
                 message = '%s paused' % self.name
                 print message
                 self.player.display_message(message)
                 if(diff > 0):
-                    self.player.set_position(self.get_global_position())
-                    self.ask_player()
+                    self.player.set_position(self.getGlobalPosition())
+                    self.askPlayer()
             else:
                 message = '%s unpaused' % self.name
                 print message
@@ -402,19 +402,19 @@ class SyncplayClientManager(object):
                     self.player.set_speed(1)
                     self.player_speed_fix = False
         if abs(diff) > 8:# and not self.seek_sent_wait:
-            self.send_seek()
+            self.sendSeek()
             self.seek_sent_wait = True
         if not paused and self.player_paused_at is not None and position >= self.player_paused_at:
             #print 'Pausing %0.2fs after pause point' % (position - self.player_paused_at)
             self.player.set_paused(True)
-            self.ask_player()
+            self.askPlayer()
 
-    def update_filename(self, filename):
+    def updateFilename(self, filename):
         filename = unicode(filename, errors='replace')
         self.player_filename = filename.encode('ascii','replace')
-        self.send_filename()
+        self.sendFilename()
 
-    def update_global_state(self, counter, ctime, paused, position, name):
+    def updateGlobalState(self, counter, ctime, paused, position, name):
         self.counter_recv = max(self.counter_recv, counter)
         counter_valid = self.counter and counter >= self.counter
 
@@ -443,7 +443,7 @@ class SyncplayClientManager(object):
             changed = True
 
         if counter_valid:
-            diff = self.get_player_position() - position
+            diff = self.getPlayerPosition() - position
             if abs(diff) > 4:
                 self.player.set_position(position)
                 #self.player.set_paused(True)
@@ -467,15 +467,15 @@ class SyncplayClientManager(object):
                     print message
                     self.player.display_message(message)
                     if(diff > 0):
-                        self.player.set_position(self.get_global_position())
-                        self.ask_player()
+                        self.player.set_position(self.getGlobalPosition())
+                        self.askPlayer()
                 if diff < 0:
                     self.player.set_paused(True)
             self.global_noted_pause_change = paused
             changed = True
             
         if changed:
-            self.ask_player()
+            self.askPlayer()
 
 
     def seek(self, ctime, position, who):
@@ -486,7 +486,7 @@ class SyncplayClientManager(object):
         if self.player:
             self.player_position_before_last_seek = self.player_position
             self.player.set_position(position)
-            self.ask_player()
+            self.askPlayer()
         message = who + ' seeked to ' + format_time(position)
         print message
         self.player.display_message(message)

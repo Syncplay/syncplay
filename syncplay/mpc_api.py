@@ -5,6 +5,7 @@ import win32con, win32api, win32gui, ctypes, ctypes.wintypes
 
 class MPC_API:
     def __init__(self, enforce_custom_handler = False):
+        self.enforce_custom_handler = enforce_custom_handler
         '''
         List of callbacks that can be set
             on_connected (0 args)
@@ -15,8 +16,7 @@ class MPC_API:
             on_update_playstate (playstate)
             on_file_ready (filename)
             custom_handler (cmd, value)
-        '''        
-        self.enforce_custom_handler = enforce_custom_handler
+        '''    
         self.callbacks = self.__CALLBACKS()
         self.loadstate = None
         self.playstate = None
@@ -50,7 +50,6 @@ class MPC_API:
 
     '''
     Checks if api is ready to receive commands
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found
     '''
     def is_api_ready(self):
         file_state_ok = self.loadstate == self.__MPC_LOADSTATE.MLS_CLOSED or self.loadstate == self.__MPC_LOADSTATE.MLS_LOADED or self.loadstate == None
@@ -59,28 +58,28 @@ class MPC_API:
     
     '''
     Checks if file is loaded in player
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found    
+
     '''
     def is_file_ready(self):
         return (self.loadstate == self.__MPC_LOADSTATE.MLS_LOADED and self.fileplaying and self.playstate <> None)
     
     '''
     Opens a file given in an argument in player
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found    
+
     '''
     def open_file(self, file_path):
         self.__listener.SendCommand(MPC_API_COMMANDS.CMD_OPENFILE, file_path)
     
     '''
     Is player paused (Stop is considered pause)
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found    
+
     '''
     def is_paused(self):
         return (self.playstate <> self.__MPC_PLAYSTATE.PS_PLAY and self.playstate <> None)
     
     '''
     Pause playing file
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found    
+
     '''    
     def pause(self):
         if(not self.is_file_ready()): raise MPC_API.PlayerNotReadyException("Playstate change on no file")
@@ -88,7 +87,7 @@ class MPC_API:
             self.playpause()
     '''
     Play paused file
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found    
+
     '''  
     def unpause(self):
         if(not self.is_file_ready()): raise MPC_API.PlayerNotReadyException("Playstate change on no file")
@@ -96,7 +95,7 @@ class MPC_API:
             self.playpause()
     '''
     Toggle play/pause
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found    
+
     '''  
     def playpause(self):
         if(not self.is_file_ready()): raise MPC_API.PlayerNotReadyException("Playstate change on no file")
@@ -112,7 +111,7 @@ class MPC_API:
     '''
     Asks mpc for it's current file position, if on_update_position callback is set
     developers should rather rely on that rather than on a return value
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found    
+
     '''
     def ask_for_current_position(self):
         if(not self.is_file_ready()):
@@ -125,7 +124,7 @@ class MPC_API:
         return self.lastfileposition
     '''
     Given a position in seconds will ask client to seek there
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found    
+
     '''  
     def seek(self, position):
         self.__locks.seek.clear()
@@ -136,7 +135,7 @@ class MPC_API:
     @param message: unicode string to display in player
     @param MsgPos: Either 1, left top corner or 2, right top corner, defaults to 2
     @param DurationMs: Duration of osd display, defaults to 3000 
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found    
+
     '''  
     def send_osd(self, message, MsgPos = 2, DurationMs = 3000):
         class __OSDDATASTRUCT(ctypes.Structure):
@@ -155,7 +154,7 @@ class MPC_API:
     Send raw cmd and value to mpc
     Commands are available in MPC_API_COMMANDS class
     Value has to be either ctype.Structure or unicode string
-    Throws MPC_API.NoSlaveDetectedException if mpc window is not found
+
     '''
     def send_raw_command(self, cmd, value):
         self.__listener.SendCommand(cmd, value)
@@ -178,6 +177,7 @@ class MPC_API:
                     
             elif(cmd == MPC_API_COMMANDS.CMD_STATE):
                 self.loadstate = int(value)
+                if(self.callbacks.on_fileStateChange): thread.start_new_thread(self.callbacks.on_fileStateChange, (self.loadstate,))
                 
             elif(cmd == MPC_API_COMMANDS.CMD_PLAYMODE):
                 self.playstate = int(value)
@@ -188,7 +188,6 @@ class MPC_API:
                 if(self.callbacks.on_update_filename): thread.start_new_thread(self.callbacks.on_update_filename,(self.fileplaying,))
                 self.fileduration = int(value.split('|')[4])
                 if(self.callbacks.on_update_file_duration): thread.start_new_thread(self.callbacks.on_update_file_duration,(self.fileplaying,))
-                if(self.callbacks.on_file_ready): thread.start_new_thread(self.callbacks.on_file_ready, ())
                 
             elif(cmd == MPC_API_COMMANDS.CMD_CURRENTPOSITION):
                 self.lastfileposition = float(value)
@@ -211,7 +210,6 @@ class MPC_API:
         def __init__(self, message):
             Exception.__init__(self, message)
     
-    
     class __CALLBACKS:
         def __init__(self):
             self.on_connected = None
@@ -220,7 +218,7 @@ class MPC_API:
             self.on_update_file_duration = None
             self.on_update_position = None
             self.on_update_playstate = None
-            self.on_file_ready = None
+            self.on_fileStateChange = None
             self.custom_handler = None       
             self.on_mpc_closed = None
             
@@ -295,12 +293,11 @@ class MPC_API:
       
         def OnCopyData(self, hwnd, msg, wparam, lparam):
             pCDS = ctypes.cast(lparam, self.__PCOPYDATASTRUCT)
-#            print ">>> 0x%X" % int(pCDS.contents.dwData), ctypes.wstring_at(pCDS.contents.lpData)
+            #print "API:\tin>\t 0x%X\t" % int(pCDS.contents.dwData), ctypes.wstring_at(pCDS.contents.lpData)
             self.__mpc_api.handle_command(pCDS.contents.dwData, ctypes.wstring_at(pCDS.contents.lpData))
     
-
         def SendCommand(self, cmd, message = u''):
-#            print "<<< 0x%X" % int(cmd), message
+            #print "API:\t<out\t 0x%X\t" % int(cmd), message
             if not win32gui.IsWindow(self.mpc_handle):
                 raise MPC_API.NoSlaveDetectedException("MPC Slave Window not detected")
             cs = self.__COPYDATASTRUCT()
@@ -316,7 +313,7 @@ class MPC_API:
             cs.cbData = ctypes.sizeof(message)
             ptr= ctypes.addressof(cs)
             win32api.SendMessage(self.mpc_handle, win32con.WM_COPYDATA, self.hwnd, ptr)    
-
+            
         class __COPYDATASTRUCT(ctypes.Structure):
             _fields_ = [
                 ('dwData', ctypes.wintypes.LPARAM),

@@ -29,7 +29,7 @@ class ConsoleUI(threading.Thread):
                     self.PromptResult = data
                     self.promptMode.set()
                 elif(self._syncplayClient):
-                    self._syncplayClient.execute_command(data)
+                    self._syncplayClient.executeCommand(data)
         except:
             raise
         
