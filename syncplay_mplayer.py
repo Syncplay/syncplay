@@ -4,11 +4,6 @@ from syncplay.players import mplayer
 from syncplay import ui
 from syncplay import utils
 
-def prepareArguments():
-    args = utils.ConfigurationGetter()
-    args.prepareClientConfiguration()
-    return args.getClientConfiguration()
-
 class SyncplayMplayer:
     def runClient(self):
         self._prepareArguments()
@@ -16,7 +11,7 @@ class SyncplayMplayer:
         self.interface = ui.getUi(graphical = False) #TODO: add gui
         self._promptForMissingArguments()
         self.args._args.extend(('-slave', '-msglevel', 'all=1:global=4'))
-        if(self.args.file): self.args.args.extend((self.args.file,))
+        if(self.args.file): self.args._args.extend((self.args.file,))
         syncplayClient = client.SyncplayClientManager(self.args.name, lambda m: mplayer.run_mplayer(m, 'mplayer', self.args._args), self.interface, self.args.debug)
         self.interface.addClient(syncplayClient)
         syncplayClient.start(self.args.host, self.args.port)
