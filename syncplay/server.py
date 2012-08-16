@@ -1,6 +1,5 @@
 #coding:utf8
 
-from collections import deque
 import re
 import time
 import random
@@ -8,11 +7,7 @@ import random
 from twisted.internet import reactor
 from twisted.internet.protocol import Factory
 
-from .network_utils import (
-    arg_count,
-    CommandProtocol,
-)
-from .utils import parse_state
+from .network_utils import argumentCount, CommandProtocol
 
 random.seed()
 
@@ -41,7 +36,7 @@ class SyncServerProtocol(CommandProtocol):
         self.factory.add_watcher(self, name)
         self.change_state('connected')
 
-    @arg_count(1)
+    @argumentCount(1)
     def handle_connected_room(self, args):
         watcher = self.factory.watchers.get(self)
         old_room = watcher.room
@@ -52,16 +47,16 @@ class SyncServerProtocol(CommandProtocol):
         self.factory.remove_room_if_empty(old_room)
         watcher = self.factory.watchers.get(self)
 
-    @arg_count(4)
+    @argumentCount(4)
     def handle_connected_state(self, args):
-        args = parse_state(args)
+        args = self.__parse_state(args)
         if not args:
             self.drop_with_error('Malformed state attributes')
             return
         counter, ctime, paused, position, _ = args
         self.factory.update_state(self, counter, ctime, paused, position)
     
-    @arg_count(0)
+    @argumentCount(0)
     def handle_connected_list(self, args):
         watcher = self.factory.watchers.get(self)
         for w in self.factory.watchers.itervalues():
@@ -69,7 +64,7 @@ class SyncServerProtocol(CommandProtocol):
                     continue
                 self.send_present(w.name, w.room, w.filename)
             
-    @arg_count(3)
+    @argumentCount(3)
     def handle_connected_seek(self, args):
         counter, ctime, position = args
         try:
@@ -84,7 +79,7 @@ class SyncServerProtocol(CommandProtocol):
 
         self.factory.seek(self, counter, ctime, position)
 
-    @arg_count(2)
+    @argumentCount(2)
     def handle_connected_pong(self, args):
         value, ctime = args
         try:
@@ -96,7 +91,7 @@ class SyncServerProtocol(CommandProtocol):
 
         self.factory.pong_received(self, value, ctime)
 
-    @arg_count(1)
+    @argumentCount(1)
     def handle_connected_playing(self, args):
         self.factory.playing_received(self, args[0])
 
@@ -158,7 +153,32 @@ class SyncServerProtocol(CommandProtocol):
         ),
     )
     initial_state = 'init'
-
+    
+    def __parseState(self, args):
+        if len(args) == 4:
+            counter, ctime, state, position = args
+            who_changed_state = None
+        elif len(args) == 5:
+            counter, ctime, state, position, who_changed_state = args
+        else:
+            return
+    
+        if not state in ('paused', 'playing'):
+            return
+    
+        paused = state == 'paused'
+    
+        try:
+            counter = int(counter)
+            ctime = int(ctime)
+            position = int(position)
+        except ValueError:
+            return
+    
+        ctime /= 1000.0
+        position /= 1000.0
+    
+        return counter, ctime, paused, position, who_changed_state
 
 class WatcherInfo(object):
     def __init__(self, watcher_proto, name):
@@ -357,7 +377,7 @@ class SyncFactory(Factory):
             chars = random_chars()
 
         curtime = time.time()
-        if curtime - watcher.last_ping_received > 60:
+        if curtime - watcher.last_ping_received > 8:
             watcher.watcher_proto.drop()
             return
 
