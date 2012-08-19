@@ -10,7 +10,7 @@ class SyncplayMPC:
 #        self.interface = ui.getUi(graphical = not self.args.no_gui)
         self.interface = ui.getUi(graphical = False) #TODO: add gui
         self._promptForMissingArguments()
-        syncplayClient = client.SyncplayClientManager(self.args.name, lambda m: mpc.run_mpc(m, self.args.mpc_path, self.args.file, self.args._args), self.interface, self.args.debug)
+        syncplayClient = client.SyncplayClient(self.args.name, lambda m: mpc.run_mpc(m, self.args.mpc_path, self.args.file, self.args._args), self.interface, self.args.debug)
         self.interface.addClient(syncplayClient)
         syncplayClient.start(self.args.host, self.args.port)
     def _prepareArguments(self):
