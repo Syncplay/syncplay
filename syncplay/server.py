@@ -105,7 +105,7 @@ class SyncServerProtocol(CommandProtocol):
         @state('connected')
         @argumentCount(1)
         def playing(self, args):
-            self.factory.playing_received(self, args[0])
+            self.factory.playing_received(self.__protocol, args[0])
 
         
         @state('connected')
@@ -118,12 +118,12 @@ class SyncServerProtocol(CommandProtocol):
             if not watcher.room in self.factory.paused: 
                 self.factory.paused[watcher.room] = True
             self.factory.remove_room_if_empty(old_room)
-            watcher = self.factory.watchers.get(self)
+            watcher = self.factory.watchers.get(self.__protocol)
         
         @state('connected') 
         @argumentCount(0)
         def list(self, args):
-            watcher = self.factory.watchers.get(self)
+            watcher = self.factory.watchers.get(self.__protocol)
             for w in self.factory.watchers.itervalues():
                     if w == watcher:
                         continue
