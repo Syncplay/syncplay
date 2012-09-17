@@ -204,7 +204,7 @@ class WatcherInfo(object):
         self.counter = 0
 
 class SyncFactory(Factory):
-    def __init__(self, min_pause_lock = 1, update_time_limit = 1):
+    def __init__(self, min_pause_lock = 2, update_time_limit = 1):
         self.watchers = dict()
         self.paused = {}
         self.paused['default'] = True
