@@ -10,7 +10,7 @@ import itertools
 class SyncClientProtocol(CommandProtocol):
     def __init__(self, syncplayClient):
         self.syncplayClient = syncplayClient
-        self.handler = self._MessagesHandler(syncplayClient)
+        self.handler = self._MessagesHandler(self, syncplayClient)
         self.sender = self._MessagesSender(self)
 
     def connectionMade(self):
@@ -35,7 +35,8 @@ class SyncClientProtocol(CommandProtocol):
         CommandProtocol.lineReceived(self, line)
     
     class _MessagesHandler(object):
-        def __init__(self, syncplayClient):
+        def __init__(self, protocol, syncplayClient):
+            self.__protocol = protocol
             self.__syncplayClient = syncplayClient
             self._lastServerTimestamp = 0
         
@@ -46,6 +47,8 @@ class SyncClientProtocol(CommandProtocol):
             self.__syncplayClient.users.currentUser.name = args[0]
             self.__syncplayClient.protocol.sender.send_list()
             self.__syncplayClient.scheduleSendStatus()
+            if(self.__syncplayClient.users.currentUser.filename <> None):
+                self.__protocol.sendMessage('playing', self.__syncplayClient.users.currentUser.filename)
     
         @argumentCount(2, 3)
         def present(self, args):
@@ -174,7 +177,8 @@ class SyncClientFactory(ClientFactory):
     def clientConnectionLost(self, connector, reason):
         if self.retry:
             message = 'Connection lost, reconnecting'
-            self.__syncplayClient.ui.showMessage('Connection lost, reconnecting')
+            self.__syncplayClient.ui.showMessage(message)
+            self.__syncplayClient.counter = 0
             reactor.callLater(0.1, connector.connect)
         else:
             message = 'Disconnected'
@@ -269,9 +273,6 @@ class SyncplayClient(object):
 
     def initPlayer(self, player):
         self.player = player
-        if self.last_global_update:
-            self.player.set_position(self.getGlobalPosition())
-            self.player.set_paused(True)
         self.scheduleAskPlayer()
 
     def initProtocol(self, protocol):

@@ -6,56 +6,54 @@ import threading
 
 class MPCHCAPIPlayer(object):
     def __init__(self, manager):
-        self._syncplayClient = manager
+        self.__syncplayClient = manager
         self.mpc_api = MPC_API()
-        
-        self.pinged = False
-
         self.mpc_api.callbacks.on_update_filename = lambda _: self.make_ping()
-        self.mpc_api.callbacks.on_mpc_closed = lambda: self.mpc_error("MPC closed")
-    
-        self.mpc_api.callbacks.on_fileStateChange = self.lockAsking
-        self.mpc_api.callbacks.on_update_playstate = self.unlockAsking
-    
-        self.askSemaphore = False
+        self.mpc_api.callbacks.on_mpc_closed = lambda: self.__syncplayClient.stop()
+        self.mpc_api.callbacks.on_fileStateChange = lambda _: self.lockAsking()
+        self.mpc_api.callbacks.on_update_playstate = lambda _: self.unlockAsking()
+        self.preventAsking = False
         self.askLock = threading.RLock()
-        
+        self.playerStateChangeLock = threading.RLock()
+           
     def drop(self):
         pass
 
-    def lockAsking(self, state):
-        self.askSemaphore = True
+    def lockAsking(self):
+        self.preventAsking = True
         
-    def unlockAsking(self, state):
-        self.askSemaphore = False
+    def unlockAsking(self):
+        self.preventAsking = False
     
     def set_speed(self, value):
         pass
 
-    def test_mpc_ready(self):
+    def testMpcReady(self):
         try:
+            self.playerStateChangeLock.acquire()
             self.mpc_api.ask_for_current_position()
         except MPC_API.PlayerNotReadyException:
             time.sleep(0.1)
-            self.test_mpc_ready()
-            return
+            self.testMpcReady()
+        finally:
+            self.playerStateChangeLock.release()
 
     def make_ping(self):
-        self.test_mpc_ready()
-        self.mpc_api.callbacks.on_update_filename = self.handle_updated_filename
-        self._syncplayClient.initPlayer(self)
-        self.handle_updated_filename(self.mpc_api.fileplaying)
-        self.pinged = True
+        self.testMpcReady()
+        self.mpc_api.callbacks.on_update_filename = self.handleUpdatedFilename
+        self.__syncplayClient.initPlayer(self)
+        self.handleUpdatedFilename(self.mpc_api.fileplaying)
         self.ask_for_status()
 
     def display_message(self, message):
         try:
-            self.mpc_api.send_osd(message)
+            self.mpc_api.send_osd(message, 2, 3000)
         except Exception, err:
             self.mpc_error(err)
 
     def set_paused(self, value):
         try:
+            self.playerStateChangeLock.acquire()
             if value:
                 self.mpc_api.pause()
             else:
@@ -66,17 +64,25 @@ class MPCHCAPIPlayer(object):
             return
         except Exception, err:
             self.mpc_error(err)
+        finally:
+            self.playerStateChangeLock.release()
 
     def set_position(self, value):
         try:
+            self.playerStateChangeLock.acquire()
             self.mpc_api.seek(value)
         except MPC_API.PlayerNotReadyException:
             self.set_position(value)
             return
         except Exception, err:
             self.mpc_error(err)
+        finally:
+            self.playerStateChangeLock.release()
+
 
     def __askForPositionUntilPlayerReady(self):
+        if(self.__syncplayClient.running == False):
+            return 0
         try:
             return self.mpc_api.ask_for_current_position()
         except MPC_API.PlayerNotReadyException:
@@ -85,55 +91,72 @@ class MPCHCAPIPlayer(object):
 
     def ask_for_status(self):
         try:
-            self.askLock.acquire()
-            if(self.mpc_api.is_file_ready() and not self.askSemaphore):
-                position = self.__askForPositionUntilPlayerReady()
-                paused = self.mpc_api.is_paused()
-                position = float(position)
-                if(not self.askSemaphore):
-                    self._syncplayClient.updatePlayerStatus(paused, position)
-                    return
-            self._syncplayClient.updatePlayerStatus(True, self._syncplayClient.getGlobalPosition())
+            if(not self.preventAsking and self.mpc_api.is_file_ready() and self.askLock.acquire(0)):
+                try:
+                    position = self.mpc_api.ask_for_current_position()
+                    paused = self.mpc_api.is_paused()
+                    position = float(position)
+                    if(not self.preventAsking and self.mpc_api.is_file_ready()):
+                        self.__syncplayClient.updatePlayerStatus(paused, position)
+                    else:
+                        self._echoGlobalStatus()
+                finally:
+                    self.askLock.release()    
+            else:
+                self._echoGlobalStatus()
+        except MPC_API.PlayerNotReadyException:
+            self.ask_for_status()
         except Exception, err:
             self.mpc_error(err)
-        finally:
-            self.askLock.release()
-   
+            
+    def _echoGlobalStatus(self):
+        self.__syncplayClient.updatePlayerStatus(self.__syncplayClient.global_paused, self.__syncplayClient.getGlobalPosition())
+        
     def __pauseChangeCheckLoop(self, i, changeFrom):
-        time.sleep(0.1)
-        if(i < 10):
-            if(self.mpc_api.is_paused() <> changeFrom):
-                return
-            else:
-                self.__pauseChangeCheckLoop(i+1, True)
-                
-    def __force_pause(self):
-        self.__pauseChangeCheckLoop(0, True)
-        self.set_paused(True)
-
-    def __set_up_newly_opened_file(self, filename, position):
         try:
-            self.__force_pause()
+            self.playerStateChangeLock.acquire()
+            if(i < 10):
+                if(self.mpc_api.is_paused() <> changeFrom):
+                    return
+                else:
+                    time.sleep(0.1)
+                    self.__pauseChangeCheckLoop(i+1, changeFrom)
+        finally:
+            self.playerStateChangeLock.release()
+                
+    def __forcePause(self):
+        try:
+            self.playerStateChangeLock.acquire()
+            self.__pauseChangeCheckLoop(0, True)
+            self.set_paused(True)
+        finally:
+            self.playerStateChangeLock.release()
+
+    def __setUpStateForNewlyOpenedFile(self, position):
+        try:
+            self.playerStateChangeLock.acquire()
+            self.__forcePause()
             self.mpc_api.seek(position)
         except MPC_API.PlayerNotReadyException:
             time.sleep(0.1)
-            self.__set_up_newly_opened_file(filename, position)
-
+            self.__setUpStateForNewlyOpenedFile(position)
+        finally:
+            self.playerStateChangeLock.release()
         
-    def handle_updated_filename(self, filename):
+    def handleUpdatedFilename(self, filename):
         try:
             self.askLock.acquire()
-            position = self._syncplayClient.getGlobalPosition()
-            self.__set_up_newly_opened_file(filename, position)
-            self._syncplayClient.updateFilename(str(filename))
+            position = self.__syncplayClient.getGlobalPosition()
+            self.__setUpStateForNewlyOpenedFile(position)
+            self.__syncplayClient.updateFilename(str(filename))
         finally:
             self.askLock.release()
         
     def mpc_error(self, err=""):
         print "ERROR:", str(err) + ',', "desu"
-        if self._syncplayClient.running:
+        if self.__syncplayClient.running:
             print 'Failed to connect to MPC-HC API!'
-        self._syncplayClient.stop()
+        self.__syncplayClient.stop()
 
 def run_mpc(manager, mpc_path, file_path, args):
     mpc = MPCHCAPIPlayer(manager)

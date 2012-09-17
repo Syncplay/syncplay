@@ -50,7 +50,7 @@ class ConsoleUI(threading.Thread):
         print("ERROR desu!:\t" + message)
         
     def __exectueSeekCmd(self, seek_type, minutes, seconds):
-        self.player_position_before_last_seek = self.player_position
+        self._syncplayClient.player_position_before_last_seek = self._syncplayClient.player_position
         if seek_type == 's':
             seconds = int(seconds) if seconds <> None else 0
             seconds += int(minutes) * 60 if minutes <> None else 0 
@@ -76,7 +76,7 @@ class ConsoleUI(threading.Thread):
             #self._syncplayClient.protocol.sender.send_room(room)
         elif data == "r":
             tmp_pos = self._syncplayClient.player_position
-            self._syncplayClient.player.set_position(self.player_position_before_last_seek)
+            self._syncplayClient.player.set_position(self._syncplayClient.player_position_before_last_seek)
             self._syncplayClient.player_position_before_last_seek = tmp_pos
         elif data == "p":
             self._syncplayClient.player.set_paused(not self._syncplayClient.player_paused)
