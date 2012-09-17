@@ -321,6 +321,7 @@ class SyncplayClient(object):
         if not (self.running and self.protocol):
             return
         self.counter += 10
+        self.player_position_before_last_seek = self.getGlobalPosition()
         self.protocol.sender.sendSeek(self.counter, time.time(), self.player_position)
         message = self.users.currentUser.name +' jumped to ' + format_time(self.player_position)
         self.ui.showMessage(message)
