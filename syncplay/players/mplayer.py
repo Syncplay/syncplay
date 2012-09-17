@@ -47,8 +47,8 @@ class MplayerProtocol(LineProcessProtocol):
         self.ignore_end = False
         self.error_lines = deque(maxlen=50)
         self.tmp_paused = None
-        if self.manager.last_global_update:
-            self.set_position(self.manager.getGlobalPosition())
+        if self.__syncplayClient.last_global_update:
+            self.set_position(self.__syncplayClient.getGlobalPosition())
             self.set_paused(True)
 
     def connectionMade(self):

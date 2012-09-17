@@ -12,7 +12,7 @@ class SyncplayMplayer:
         self._promptForMissingArguments()
         self.args._args.extend(('-slave', '-msglevel', 'all=1:global=4'))
         if(self.args.file): self.args._args.extend((self.args.file,))
-        syncplayClient = client.SyncplayClientManager(self.args.name, lambda m: mplayer.run_mplayer(m, 'mplayer', self.args._args), self.interface, self.args.debug)
+        syncplayClient = client.SyncplayClient(self.args.name, lambda m: mplayer.run_mplayer(m, 'mplayer', self.args._args), self.interface, self.args.debug)
         self.interface.addClient(syncplayClient)
         syncplayClient.start(self.args.host, self.args.port)
     def _prepareArguments(self):
