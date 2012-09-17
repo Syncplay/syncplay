@@ -3,7 +3,7 @@
 import re
 import time
 import random
-
+from functools import wraps
 
 from twisted.internet import reactor
 from twisted.internet.protocol import Factory
@@ -17,169 +17,190 @@ CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 def random_chars():
     return ''.join(random.choice(CHARS) for _ in xrange(10))
 
+def state(state):
+    def decorator(f):
+        @wraps(f)
+        def wrapper(self, args):
+            if (not self.compareState(state)):
+                self.dropWithError('Invalid watcher state')
+                return
+            return f(self, args)
+        return wrapper
+    return decorator
+
 class SyncServerProtocol(CommandProtocol):
     def __init__(self, factory):
         CommandProtocol.__init__(self)
-
+        self.handler = self._MessagesHandler(self, factory)
+        self.sender = self._MessagesSender(self)
         self.factory = factory
-
+        self.state = 'init'
+        
     def connectionLost(self, reason):
         self.factory.remove_watcher(self)
-
-    def handle_init_iam(self, args):
-        if not len(args) == 1:
-            self.dropWithError('Invalid arguments')
-            return
-        name = re.sub('[^\w]','',args[0])
-        if not name:
-            self.dropWithError('Invalid nickname')
-            return
-        self.factory.add_watcher(self, name)
-        self.change_state('connected')
-
-    @argumentCount(1)
-    def handle_connected_room(self, args):
-        watcher = self.factory.watchers.get(self)
-        old_room = watcher.room
-        watcher.room = str(re.sub('[^\w]','',args[0]))
-        self.factory.broadcast(watcher, lambda receiver: receiver.watcher_proto.send_room(watcher.name,watcher.room))
-        if not watcher.room in self.factory.paused: 
-            self.factory.paused[watcher.room] = True
-        self.factory.remove_room_if_empty(old_room)
-        watcher = self.factory.watchers.get(self)
-
-    @argumentCount(4)
-    def handle_connected_state(self, args):
-        args = self.__parse_state(args)
-        if not args:
-            self.dropWithError('Malformed state attributes')
-            return
-        counter, ctime, paused, position, _ = args
-        self.factory.update_state(self, counter, ctime, paused, position)
+        
+    def change_state(self, state):
+        self.state = state
     
-    @argumentCount(0)
-    def handle_connected_list(self, args):
-        watcher = self.factory.watchers.get(self)
-        for w in self.factory.watchers.itervalues():
-                if w == watcher:
-                    continue
-                self.send_present(w.name, w.room, w.filename)
+    class _MessagesHandler(object):
+        def __init__(self, protocol, factory):
+            self.__protocol = protocol
+            self.factory = factory
             
-    @argumentCount(3)
-    def handle_connected_seek(self, args):
-        counter, ctime, position = args
-        try:
-            counter = int(counter)
-            ctime = int(ctime)
-            position = int(position)
-        except ValueError:
-            self.dropWithError('Invalid arguments')
+        def dropWithError(self, error):
+            self.__protocol.dropWithError(error)
+        
+        def compareState(self, state):
+            if state != self.__protocol.state:
+                return False
+            else:
+                return True
+        
+        @state('init')
+        @argumentCount(1)    
+        def iam(self, args):
+                name = re.sub('[^\w]','',args[0])
+                if not name:
+                    self.dropWithError('Invalid nickname')
+                    return
+                self.factory.add_watcher(self.__protocol, name)
+                self.__protocol.change_state('connected')
+    
+        
+        @state('connected')        
+        @argumentCount(3)
+        def seek(self, args):
+            counter, ctime, position = args
+            try:
+                counter = int(counter)
+                ctime = int(ctime)
+                position = int(position)
+            except ValueError:
+                self.dropWithError('Invalid arguments')
+    
+            ctime /= 1000.0
+            position /= 1000.0
+    
+            self.factory.seek(self, counter, ctime, position)
+    
+        @state('connected')
+        @argumentCount(2)
+        def pong(self, args):
+            value, ctime = args
+            try:
+                ctime = int(ctime)
+            except ValueError:
+                self.dropWithError('Invalid arguments')
+    
+            ctime /= 100000.0
+    
+            self.factory.pong_received(self, value, ctime)
+    
+        @state('connected')
+        @argumentCount(1)
+        def playing(self, args):
+            self.factory.playing_received(self, args[0])
 
-        ctime /= 1000.0
-        position /= 1000.0
+        
+        @state('connected')
+        @argumentCount(1)
+        def room(self, args):
+            watcher = self.factory.watchers.get(self)
+            old_room = watcher.room
+            watcher.room = str(re.sub('[^\w]','',args[0]))
+            self.factory.broadcast(watcher, lambda receiver: receiver.watcher_proto.send_room(watcher.name,watcher.room))
+            if not watcher.room in self.factory.paused: 
+                self.factory.paused[watcher.room] = True
+            self.factory.remove_room_if_empty(old_room)
+            watcher = self.factory.watchers.get(self)
+        
+        @state('connected') 
+        @argumentCount(0)
+        def list(self, args):
+            watcher = self.factory.watchers.get(self)
+            for w in self.factory.watchers.itervalues():
+                    if w == watcher:
+                        continue
+                    self.__protocol.sender.send_present(w.name, w.room, w.filename)
+        
+        @state('connected')    
+        @argumentCount(4)
+        def state(self, args):
+            args = self.__parseState(args)
+            if not args:
+                self.dropWithError('Malformed state attributes')
+                return
+            counter, ctime, paused, position, _ = args
+            self.factory.update_state(self, counter, ctime, paused, position)
 
-        self.factory.seek(self, counter, ctime, position)
-
-    @argumentCount(2)
-    def handle_connected_pong(self, args):
-        value, ctime = args
-        try:
-            ctime = int(ctime)
-        except ValueError:
-            self.dropWithError('Invalid arguments')
-
-        ctime /= 100000.0
-
-        self.factory.pong_received(self, value, ctime)
-
-    @argumentCount(1)
-    def handle_connected_playing(self, args):
-        self.factory.playing_received(self, args[0])
-
+        def __parseState(self, args):
+            if len(args) == 4:
+                counter, ctime, state, position = args
+                who_changed_state = None
+            elif len(args) == 5:
+                counter, ctime, state, position, who_changed_state = args
+            else:
+                return
+            if not state in ('paused', 'playing'):
+                return 
+            paused = state == 'paused'
+            try:
+                counter = int(counter)
+                ctime = int(ctime)
+                position = int(position)
+            except ValueError:
+                return
+            ctime /= 1000.0
+            position /= 1000.0
+            return counter, ctime, paused, position, who_changed_state
+        
     def __hash__(self):
         return hash('|'.join((
             self.transport.getPeer().host,
             str(id(self)),
         )))
 
+    class _MessagesSender(object):
+        def __init__(self, protocol):
+            self.__protocol = protocol
 
-    def send_state(self, counter, ctime, paused, position, who_last_changed):
-        ctime = int(ctime*1000)
-        paused = 'paused' if paused else 'playing'
-        position = int(position*1000)
-        if who_last_changed is None:
-            self.send_message('state', counter, ctime, paused, position)
-        else:
-            self.send_message('state', counter, ctime, paused, position, who_last_changed)
-
-    def send_seek(self, ctime, position, who_seeked):
-        self.send_message('seek', int(ctime*1000), int(position*1000), who_seeked)
-
-    def send_ping(self, value):
-        self.send_message('ping', value)
-
-    def send_playing(self, who, where, what):
-        self.send_message('playing', who, where, what)
-
-    def send_room(self, who, where):
-        self.send_message('room', who, where)
-
-    def send_present(self, who, where, what):
-        if what:
-            self.send_message('present', who, where, what)
-        else:
-            self.send_message('present', who, where)
-
-    def send_joined(self, who):
-        self.send_message('joined', who)
-
-    def send_left(self, who):
-        self.send_message('left', who)
-
-    def send_hello(self, name):
-        self.send_message('hello', name)
-
-
-    states = dict(
-        init = dict(
-            iam = 'handle_init_iam',
-        ),
-        connected = dict(
-            room = 'handle_connected_room',
-            list = 'handle_connected_list',
-            state = 'handle_connected_state',
-            seek = 'handle_connected_seek',
-            pong = 'handle_connected_pong',
-            playing = 'handle_connected_playing',
-        ),
-    )
-    initial_state = 'init'
+        def send_state(self, counter, ctime, paused, position, who_last_changed):
+            ctime = int(ctime*1000)
+            paused = 'paused' if paused else 'playing'
+            position = int(position*1000)
+            if who_last_changed is None:
+                self.__protocol.sendMessage('state', counter, ctime, paused, position)
+            else:
+                self.__protocol.sendMessage('state', counter, ctime, paused, position, who_last_changed)
     
-    def __parseState(self, args):
-        if len(args) == 4:
-            counter, ctime, state, position = args
-            who_changed_state = None
-        elif len(args) == 5:
-            counter, ctime, state, position, who_changed_state = args
-        else:
-            return
+        def send_seek(self, ctime, position, who_seeked):
+            self.__protocol.sendMessage('seek', int(ctime*1000), int(position*1000), who_seeked)
     
-        if not state in ('paused', 'playing'):
-            return
+        def send_ping(self, value):
+            self.__protocol.sendMessage('ping', value)
     
-        paused = state == 'paused'
+        def send_playing(self, who, where, what):
+            self.__protocol.sendMessage('playing', who, where, what)
     
-        try:
-            counter = int(counter)
-            ctime = int(ctime)
-            position = int(position)
-        except ValueError:
-            return
+        def send_room(self, who, where):
+            self.__protocol.sendMessage('room', who, where)
     
-        ctime /= 1000.0
-        position /= 1000.0
+        def send_present(self, who, where, what):
+            if what:
+                self.__protocol.sendMessage('present', who, where, what)
+            else:
+                self.__protocol.sendMessage('present', who, where)
     
-        return counter, ctime, paused, position, who_changed_state
+        def send_joined(self, who):
+            self.__protocol.sendMessage('joined', who)
+    
+        def send_left(self, who):
+            self.__protocol.sendMessage('left', who)
+    
+        def send_hello(self, name):
+            self.__protocol.sendMessage('hello', name)
+        
+
 
 class WatcherInfo(object):
     def __init__(self, watcher_proto, name):
@@ -204,7 +225,7 @@ class WatcherInfo(object):
         self.counter = 0
 
 class SyncFactory(Factory):
-    def __init__(self, min_pause_lock = 2, update_time_limit = 1):
+    def __init__(self, min_pause_lock = 2   , update_time_limit = 1):
         self.watchers = dict()
         self.paused = {}
         self.paused['default'] = True
@@ -228,7 +249,7 @@ class SyncFactory(Factory):
         if self.watchers:
             watcher.max_position = min(w.max_position for w in self.watchers.itervalues())
         self.watchers[watcher_proto] = watcher
-        watcher_proto.send_hello(name)
+        watcher_proto.sender.send_hello(name)
         self.send_state_to(watcher)
         self.send_ping_to(watcher)
 
@@ -238,7 +259,7 @@ class SyncFactory(Factory):
             return
         self.remove_room_if_empty(watcher.room)
         watcher.active = False
-        self.broadcast(watcher, lambda receiver: receiver.watcher_proto.send_left(watcher.name))
+        self.broadcast(watcher, lambda receiver: receiver.watcher_proto.sender.send_left(watcher.name))
         
         if self.pause_change_by == watcher:
             self.pause_change_time = None
@@ -305,7 +326,7 @@ class SyncFactory(Factory):
     
     def __do_seek(self, receiver, position, watcher, curtime):
         receiver.max_position = position
-        receiver.watcher_proto.send_seek(curtime-receiver.time_offset, position, watcher.name)
+        receiver.watcher_proto.sender.send_seek(curtime-receiver.time_offset, position, watcher.name)
         
     def send_state_to(self, watcher, position=None, curtime=None):
         if position is None:
@@ -316,9 +337,9 @@ class SyncFactory(Factory):
         ctime = curtime - watcher.time_offset
 
         if self.pause_change_by:
-            watcher.watcher_proto.send_state(watcher.counter, ctime, self.paused[watcher.room], position, self.pause_change_by.name)
+            watcher.watcher_proto.sender.send_state(watcher.counter, ctime, self.paused[watcher.room], position, self.pause_change_by.name)
         else:
-            watcher.watcher_proto.send_state(watcher.counter, ctime, self.paused[watcher.room], position, None)
+            watcher.watcher_proto.sender.send_state(watcher.counter, ctime, self.paused[watcher.room], position, None)
 
         watcher.last_update_sent = curtime
 
@@ -382,7 +403,7 @@ class SyncFactory(Factory):
             watcher.watcher_proto.drop()
             return
 
-        watcher.watcher_proto.send_ping(chars)
+        watcher.watcher_proto.sender.send_ping(chars)
         watcher.pings_sent[chars] = time.time()
 
         if len(watcher.pings_sent) > 30:
@@ -397,7 +418,7 @@ class SyncFactory(Factory):
         if not watcher:
             return
         watcher.filename = filename
-        self.broadcast(watcher, lambda receiver: receiver.watcher_proto.send_playing(watcher.name, watcher.room, filename))
+        self.broadcast(watcher, lambda receiver: receiver.watcher_proto.sender.send_playing(watcher.name, watcher.room, filename))
                 
     def broadcast_room(self, sender, what):
         for receiver in self.watchers.itervalues():

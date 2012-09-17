@@ -6,6 +6,7 @@ from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 import time
 import itertools
+import syncplay
 
 class SyncClientProtocol(CommandProtocol):
     def __init__(self, syncplayClient):
@@ -28,6 +29,7 @@ class SyncClientProtocol(CommandProtocol):
     
     def dropWithError(self, error):
         self.syncplayClient.ui.showErrorMessage(error)
+        self.syncplayClient.protocol_factory.retry = False
         CommandProtocol.dropWithError(self, error)
     
     def lineReceived(self, line):
@@ -40,6 +42,9 @@ class SyncClientProtocol(CommandProtocol):
             self.__syncplayClient = syncplayClient
             self._lastServerTimestamp = 0
         
+        def dropWithError(self, error):
+            self.__protocol.dropWithError(error)
+            
         @argumentCount(1)
         def hello(self, args):
             message ='Connected as ' + args[0] 
@@ -90,6 +95,13 @@ class SyncClientProtocol(CommandProtocol):
         def ping(self, args):
             self.__syncplayClient.protocol.sendMessage('pong', args[0], int(time.time()*100000))
     
+        @argumentCount(2)
+        def error(self, args):
+            self.__protocol.dropWithError(args[1])
+            self.__syncplayClient.ui.showMessage("Mismatch between client and server versions detected")
+            self.__syncplayClient.ui.showMessage("Your version is %s against server's %s" % (syncplay.version, args[0]))
+            self.__syncplayClient.ui.showMessage("Please use latest version of client and server")
+        
         @argumentCount(3)
         def playing(self, args):
             who, where, what = args
