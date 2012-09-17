@@ -35,6 +35,12 @@ class SyncServerProtocol(CommandProtocol):
         self.sender = self._MessagesSender(self)
         self.factory = factory
         self.state = 'init'
+    
+    def __hash__(self):
+        return hash('|'.join((
+            self.transport.getPeer().host,
+            str(id(self)),
+        )))
         
     def connectionLost(self, reason):
         self.factory.remove_watcher(self)
@@ -81,7 +87,7 @@ class SyncServerProtocol(CommandProtocol):
             ctime /= 1000.0
             position /= 1000.0
     
-            self.factory.seek(self, counter, ctime, position)
+            self.factory.seek(self.__protocol, counter, ctime, position)
     
         @state('connected')
         @argumentCount(2)
@@ -94,7 +100,7 @@ class SyncServerProtocol(CommandProtocol):
     
             ctime /= 100000.0
     
-            self.factory.pong_received(self, value, ctime)
+            self.factory.pong_received(self.__protocol, value, ctime)
     
         @state('connected')
         @argumentCount(1)
@@ -131,7 +137,7 @@ class SyncServerProtocol(CommandProtocol):
                 self.dropWithError('Malformed state attributes')
                 return
             counter, ctime, paused, position, _ = args
-            self.factory.update_state(self, counter, ctime, paused, position)
+            self.factory.update_state(self.__protocol, counter, ctime, paused, position)
 
         def __parseState(self, args):
             if len(args) == 4:
@@ -154,12 +160,6 @@ class SyncServerProtocol(CommandProtocol):
             position /= 1000.0
             return counter, ctime, paused, position, who_changed_state
         
-    def __hash__(self):
-        return hash('|'.join((
-            self.transport.getPeer().host,
-            str(id(self)),
-        )))
-
     class _MessagesSender(object):
         def __init__(self, protocol):
             self.__protocol = protocol
@@ -244,7 +244,6 @@ class SyncFactory(Factory):
             allnames.append(watcher.name.lower()) 
         while name.lower() in allnames:
             name += '_'    
-            
         watcher = WatcherInfo(watcher_proto, name)
         if self.watchers:
             watcher.max_position = min(w.max_position for w in self.watchers.itervalues())
@@ -291,7 +290,6 @@ class SyncFactory(Factory):
         watcher.counter = counter
         
         pause_changed = paused != self.paused[watcher.room]
-
         if pause_changed and (
             not self.pause_change_by or
             self.pause_change_by == watcher or
@@ -307,7 +305,7 @@ class SyncFactory(Factory):
         
         self.send_state_to(watcher, position, curtime)
         self.broadcast_room(watcher, lambda receiver: self.send_state_to(receiver, position, curtime) if pause_changed or (curtime-receiver.last_update_sent) > self.update_time_limit else False)
-
+        
     def seek(self, watcher_proto, counter, ctime, position):
         watcher = self.watchers.get(watcher_proto)
         if not watcher:
