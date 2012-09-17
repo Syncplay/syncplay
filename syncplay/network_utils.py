@@ -2,6 +2,7 @@
 
 from .utils import ArgumentParser
 from functools import wraps
+import syncplay
 
 from twisted.protocols.basic import LineReceiver
 
@@ -45,7 +46,7 @@ class CommandProtocol(LineReceiver):
         self.transport.loseConnection()
 
     def dropWithError(self, error):
-        self.sendMessage('error', error)
+        self.sendMessage('error', syncplay.version, error)
         self.drop()
 
 

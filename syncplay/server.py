@@ -4,6 +4,7 @@ import re
 import time
 import random
 
+
 from twisted.internet import reactor
 from twisted.internet.protocol import Factory
 
@@ -27,11 +28,11 @@ class SyncServerProtocol(CommandProtocol):
 
     def handle_init_iam(self, args):
         if not len(args) == 1:
-            self.drop_with_error('Invalid arguments')
+            self.dropWithError('Invalid arguments')
             return
         name = re.sub('[^\w]','',args[0])
         if not name:
-            self.drop_with_error('Invalid nickname')
+            self.dropWithError('Invalid nickname')
             return
         self.factory.add_watcher(self, name)
         self.change_state('connected')
@@ -51,7 +52,7 @@ class SyncServerProtocol(CommandProtocol):
     def handle_connected_state(self, args):
         args = self.__parse_state(args)
         if not args:
-            self.drop_with_error('Malformed state attributes')
+            self.dropWithError('Malformed state attributes')
             return
         counter, ctime, paused, position, _ = args
         self.factory.update_state(self, counter, ctime, paused, position)
@@ -72,7 +73,7 @@ class SyncServerProtocol(CommandProtocol):
             ctime = int(ctime)
             position = int(position)
         except ValueError:
-            self.drop_with_error('Invalid arguments')
+            self.dropWithError('Invalid arguments')
 
         ctime /= 1000.0
         position /= 1000.0
@@ -85,7 +86,7 @@ class SyncServerProtocol(CommandProtocol):
         try:
             ctime = int(ctime)
         except ValueError:
-            self.drop_with_error('Invalid arguments')
+            self.dropWithError('Invalid arguments')
 
         ctime /= 100000.0
 

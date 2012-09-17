@@ -7,6 +7,7 @@ from __future__ import print_function
 import threading
 import re
 import time 
+import syncplay
 class ConsoleUI(threading.Thread):
     def __init__(self):
         self.promptMode = threading.Event()
@@ -87,4 +88,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage( "\ts+ [time] - seek to: current position += time" )
             self.showMessage( "\tr - revert last seek" )
             self.showMessage( "\tp - toggle pause" )
-            self.showMessage( "\troom [room] - change room, if unspecified go to default" )
+            self.showMessage("Syncplay version: %s" % syncplay.version)
+            self.showMessage("More info available on: %s" % syncplay.projectURL)
+        else:
+            self.showMessage( "Unrecognized command, type 'help' for list of available ones" )    
