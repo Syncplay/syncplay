@@ -7,5 +7,5 @@ from syncplay import utils
  
 argsGetter = utils.ServerConfigurationGetter()
 args = argsGetter.getConfiguration()
-reactor.listenTCP(8999, SyncFactory(args.password, args.banlist, args.isolate_rooms))
+reactor.listenTCP(args.port, SyncFactory(args.password, args.isolate_rooms))
 reactor.run()
