@@ -130,7 +130,6 @@ class ConfigurationGetter(object):
                 self._config.write(configfile)
     
     def _setUpValuesToSave(self, section_name):
-        self._splitPortAndHost()
         self._config.set(section_name, 'host', self._args.host)
         self._config.set(section_name, 'name', self._args.name)
         self._config.set(section_name, 'room', self._args.room)
@@ -208,13 +207,15 @@ class ServerConfigurationGetter(ConfigurationGetter):
     def getConfiguration(self):
         self._prepareArgParser()
         self._args = self._parser.parse_args()
+        if(self._args.port == None):
+            self._args.port = 8999
         return self._args
            
     def _prepareArgParser(self):
         self._parser = argparse.ArgumentParser(description='Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network. Server instance',
                                          epilog='If no options supplied _config values will be used')
+        self._parser.add_argument('--port', metavar='port', type=str, nargs='?', help='server TCP port')
         self._parser.add_argument('--password', metavar='password', type=str, nargs='?', help='server password')
-        self._parser.add_argument('--banlist', metavar='banlist', type=str, nargs='?', help='server banlist file')
         self._parser.add_argument('--isolate-rooms', action='store_true', help='should rooms be isolated?')
         
     
