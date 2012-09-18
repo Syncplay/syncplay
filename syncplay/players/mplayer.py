@@ -47,9 +47,6 @@ class MplayerProtocol(LineProcessProtocol):
         self.ignore_end = False
         self.error_lines = deque(maxlen=50)
         self.tmp_paused = None
-        if self.__syncplayClient.last_global_update:
-            self.set_position(self.__syncplayClient.getGlobalPosition())
-            self.set_paused(True)
 
     def connectionMade(self):
         reactor.callLater(0.1, self.prepare_player)
@@ -111,7 +108,10 @@ class MplayerProtocol(LineProcessProtocol):
     def mplayer_answer_filename(self, value):
         self.__syncplayClient.initPlayer(self)
         self.__syncplayClient.updateFilename(value)
-
+        if self.__syncplayClient.last_global_update:
+            self.set_position(self.__syncplayClient.getGlobalPosition())
+            self.set_paused(True)
+            
 
     def set_paused(self, value):
         # docs say i can't set "pause" property, but it works...
