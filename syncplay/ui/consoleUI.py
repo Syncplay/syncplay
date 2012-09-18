@@ -74,7 +74,7 @@ class ConsoleUI(threading.Thread):
                 room = 'default'
             self._syncplayClient.users.currentUser.room = room
             self._syncplayClient.checkIfFileMatchesOthers()
-            #self._syncplayClient.protocol.sender.send_room(room)
+            self._syncplayClient.protocol.sender.send_room(room)
         elif data == "r":
             tmp_pos = self._syncplayClient.player_position
             self._syncplayClient.player.set_position(self._syncplayClient.player_position_before_last_seek)

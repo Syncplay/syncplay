@@ -127,15 +127,14 @@ class SyncServerProtocol(CommandProtocol):
         @state('connected')
         @argumentCount(1)
         def room(self, args):
-            watcher = self.factory.watchers.get(self)
+            watcher = self.factory.watchers.get(self._protocol)
             old_room = watcher.room
             watcher.room = str(re.sub('[^\w]','',args[0]))
             self.factory.broadcast(watcher, lambda receiver: receiver.watcher_proto.send_room(watcher.name,watcher.room))
             if not watcher.room in self.factory.paused: 
                 self.factory.paused[watcher.room] = True
             self.factory.remove_room_if_empty(old_room)
-            watcher = self.factory.watchers.get(self.__protocol)
-        
+            
         @state('connected') 
         @argumentCount(0)
         def list(self, args):
@@ -446,5 +445,4 @@ class SyncFactory(Factory):
         if(self.isolate_rooms):
             self.broadcast_room(sender, what)
         for receiver in self.watchers.itervalues():
-            #if receiver != sender:
             what(receiver)
