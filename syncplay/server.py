@@ -130,7 +130,7 @@ class SyncServerProtocol(CommandProtocol):
             watcher = self.factory.watchers.get(self.__protocol)
             old_room = watcher.room
             watcher.room = str(re.sub('[^\w]','',args[0]))
-            self.factory.broadcast(watcher, lambda receiver: receiver.watcher_proto.send_room(watcher.name,watcher.room))
+            self.factory.broadcast(watcher, lambda receiver: receiver.watcher_proto.sender.send_room(watcher.name,watcher.room))
             if not watcher.room in self.factory.paused: 
                 self.factory.paused[watcher.room] = True
             self.factory.remove_room_if_empty(old_room)
