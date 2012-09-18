@@ -127,7 +127,7 @@ class SyncServerProtocol(CommandProtocol):
         @state('connected')
         @argumentCount(1)
         def room(self, args):
-            watcher = self.factory.watchers.get(self._protocol)
+            watcher = self.factory.watchers.get(self.__protocol)
             old_room = watcher.room
             watcher.room = str(re.sub('[^\w]','',args[0]))
             self.factory.broadcast(watcher, lambda receiver: receiver.watcher_proto.send_room(watcher.name,watcher.room))
