@@ -4,7 +4,7 @@ import re
 import time
 import random
 from functools import wraps
-
+import hashlib
 from twisted.internet import reactor
 from twisted.internet.protocol import Factory
 
@@ -36,6 +36,10 @@ class SyncServerProtocol(CommandProtocol):
         self.factory = factory
         self.state = 'init'
     
+    def dropWithError(self, error):
+        CommandProtocol.dropWithError(self, error)
+        print "Client drop: %s -- %s" % (self.transport.getPeer().host, error)
+        
     def __hash__(self):
         return hash('|'.join((
             self.transport.getPeer().host,
@@ -63,13 +67,25 @@ class SyncServerProtocol(CommandProtocol):
                 return True
         
         @state('init')
-        @argumentCount(1)    
+        @argumentCount(2, 3)    
         def iam(self, args):
-                name = re.sub('[^\w]','',args[0])
+                name = re.sub('[^\w]','',args.pop(0))
                 if not name:
                     self.dropWithError('Invalid nickname')
                     return
-                self.factory.add_watcher(self.__protocol, name)
+                room = re.sub('[^\w]','',args.pop(0))
+                if not room:
+                    self.dropWithError('Invalid room')
+                    return
+                if(self.factory.password):
+                    if(len(args)):
+                        password = args.pop(0)
+                        if(self.factory.password <> password):
+                            self.dropWithError('Wrong server password specified')
+                    else:
+                        self.dropWithError('No password specified')
+                        return
+                self.factory.add_watcher(self.__protocol, name, room)
                 self.__protocol.change_state('connected')
     
         
@@ -203,7 +219,7 @@ class SyncServerProtocol(CommandProtocol):
 
 
 class WatcherInfo(object):
-    def __init__(self, watcher_proto, name):
+    def __init__(self, watcher_proto, name, room):
         self.watcher_proto = watcher_proto
         self.name = name
         self.active = True
@@ -215,7 +231,7 @@ class WatcherInfo(object):
         self.last_update = None
         self.last_update_sent = None
 
-        self.room = 'default'
+        self.room = room
         self.ping = None
         self.time_offset = 0
         self.time_offset_data = []
@@ -225,26 +241,32 @@ class WatcherInfo(object):
         self.counter = 0
 
 class SyncFactory(Factory):
-    def __init__(self, min_pause_lock = 2   , update_time_limit = 1):
+    def __init__(self, password = '', banlist = None , isolate_rooms = False, min_pause_lock = 2 , update_time_limit = 1):
         self.watchers = dict()
         self.paused = {}
-        self.paused['default'] = True
         self.pause_change_time = None
         self.pause_change_by = None
-
+        if(password):
+            password = hashlib.md5(password).hexdigest()
+        self.password = password
+        self.banlsit = banlist
+        self.isolate_rooms = isolate_rooms
+        
         self.min_pause_lock = min_pause_lock
         self.update_time_limit = update_time_limit
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
 
-    def add_watcher(self, watcher_proto, name):
+    def add_watcher(self, watcher_proto, name, room):
         allnames = []
         for watcher in self.watchers.itervalues():
             allnames.append(watcher.name.lower()) 
         while name.lower() in allnames:
-            name += '_'    
-        watcher = WatcherInfo(watcher_proto, name)
+            name += '_'  
+        if(not self.paused.has_key(room)):
+            self.paused[room] = True  
+        watcher = WatcherInfo(watcher_proto, name, room)
         if self.watchers:
             watcher.max_position = min(w.max_position for w in self.watchers.itervalues())
         self.watchers[watcher_proto] = watcher
@@ -267,10 +289,7 @@ class SyncFactory(Factory):
     def remove_room_if_empty(self, room):
         room_user_count = sum(1 if watcher.room == room else 0 for watcher in self.watchers.itervalues())
         if not room_user_count:
-            if room == 'default':
-                self.paused['default'] = True
-            else:
-                self.paused.pop(room) 
+            self.paused.pop(room) 
 
     
     def update_state(self, watcher_proto, counter, ctime, paused, position):
@@ -424,6 +443,8 @@ class SyncFactory(Factory):
                 what(receiver)
                 
     def broadcast(self, sender, what):
+        if(self.isolate_rooms):
+            self.broadcast_room(sender, what)
         for receiver in self.watchers.itervalues():
             #if receiver != sender:
             what(receiver)

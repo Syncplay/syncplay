@@ -7,6 +7,7 @@ from twisted.internet.protocol import ClientFactory
 import time
 import itertools
 import syncplay
+import hashlib
 
 class SyncClientProtocol(CommandProtocol):
     def __init__(self, syncplayClient):
@@ -15,7 +16,7 @@ class SyncClientProtocol(CommandProtocol):
         self.sender = self._MessagesSender(self)
 
     def connectionMade(self):
-        self.sendMessage('iam', self.syncplayClient.users.currentUser.name)
+        self.sendMessage('iam', self.syncplayClient.users.currentUser.name, self.syncplayClient.users.currentUser.room, self.syncplayClient.serverPassword)
         self.syncplayClient.initProtocol(self)
 
     def connectionLost(self, reason):
@@ -98,9 +99,10 @@ class SyncClientProtocol(CommandProtocol):
         @argumentCount(2)
         def error(self, args):
             self.__protocol.dropWithError(args[1])
-            self.__syncplayClient.ui.showMessage("Mismatch between client and server versions detected")
-            self.__syncplayClient.ui.showMessage("Your version is %s against server's %s" % (syncplay.version, args[0]))
-            self.__syncplayClient.ui.showMessage("Please use latest version of client and server")
+            if(syncplay.version <> args[0]):
+                self.__syncplayClient.ui.showMessage("Mismatch between client and server versions detected")
+                self.__syncplayClient.ui.showMessage("Your version is %s against server's %s" % (syncplay.version, args[0]))
+                self.__syncplayClient.ui.showMessage("Please use latest version of client and server")
         
         @argumentCount(3)
         def playing(self, args):
@@ -205,10 +207,15 @@ class SyncClientFactory(ClientFactory):
         self.retry = False
 
 class SyncplayClient(object):
-    def __init__(self, name, make_player, ui, debug):
+    def __init__(self, name, make_player, ui, debug, room, password = None):
         self.users = self.UserList()
         self.users.currentUser.name = name
-        self.users.currentUser.room = 'default'
+        if(room == None):
+            room = 'default'
+        self.users.currentUser.room = room
+        if(password):
+            password = hashlib.md5(password).hexdigest()
+        self.serverPassword = password
         self.ui = self.UiManager(self, ui, debug)
         self.protocol_factory = None
         self.protocol = None

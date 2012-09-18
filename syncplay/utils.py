@@ -5,6 +5,7 @@ import argparse
 import os
 import re
 import sys
+import itertools
 
 class ArgumentParser():
     RE_ARG = re.compile(r"('(?:[^\\']+|\\\\|\\')*'|[^\s']+)(?:\s+|\Z)")
@@ -51,6 +52,7 @@ class ArgumentParser():
         
     @staticmethod
     def joinArguments(args):
+        args = list(itertools.ifilterfalse(lambda x: None == x, args))
         return ' '.join(ArgumentParser.quoteArgument(arg) for arg in args)
     
 def find_exec_path(name):
@@ -104,6 +106,8 @@ class ConfigurationGetter(object):
         self._parser.add_argument('--name', metavar='username', type=str, help='desired username')
         self._parser.add_argument('-d','--debug', action='store_true', help='debug mode')
         self._parser.add_argument('--no-store', action='store_true', help='don\'t store values in syncplay.ini')
+        self._parser.add_argument('--room', metavar='room', type=str, nargs='?', help='default room')
+        self._parser.add_argument('--password', metavar='password', type=str, nargs='?', help='server password')
         self._parser.add_argument('file', metavar='file', type=str, nargs='?', help='file to play')
         self._parser.add_argument('_args', metavar='options', type=str, nargs='*', help='player options, if you need to pass options starting with - prepend them with single \'--\' argument') 
   
@@ -129,7 +133,15 @@ class ConfigurationGetter(object):
         self._splitPortAndHost()
         self._config.set(section_name, 'host', self._args.host)
         self._config.set(section_name, 'name', self._args.name)
-
+        self._config.set(section_name, 'room', self._args.room)
+        self._config.set(section_name, 'password', self._args.password)
+        
+    def _readConfigValue(self, section_name, name):
+        try:
+            return self._config.get(section_name, name)
+        except ConfigParser.NoOptionError:
+            return None 
+        
     def _readMissingValuesFromConfigFile(self):
         self._openConfigFile()
         section_name = self._getSectionName()
@@ -137,15 +149,20 @@ class ConfigurationGetter(object):
             self._valuesToReadFromConfig(section_name)
         except ConfigParser.NoSectionError:
             pass
-        except ConfigParser.NoOptionError:
-            pass
+
     
     def _valuesToReadFromConfig(self, section_name):
         if (self._args.host == None):
-            self._args.host = self._config.get(section_name, 'host')
+            self._args.host = self._readConfigValue(section_name, 'host')
         if (self._args.name == None):
-            self._args.name = self._config.get(section_name, 'name')
-            
+            self._args.name = self._readConfigValue(section_name, 'name')
+        if (self._args.room == None):
+            self._args.room = self._readConfigValue(section_name, 'room')
+        if (self._args.password == None):
+            self._args.password = self._readConfigValue(section_name, 'password')  
+    
+    
+              
     def _splitPortAndHost(self):
         if(self._args.host):
             if ':' in self._args.host:
@@ -154,16 +171,15 @@ class ConfigurationGetter(object):
             else:
                 self._args.port = 8999
     
-    def prepareClientConfiguration(self):
+    def getConfiguration(self):
         self._findWorkingDirectory()
         self._prepareArgParser()
         self._args = self._parser.parse_args()
         self._readMissingValuesFromConfigFile()
         self.saveValuesIntoConfigFile()
         self._splitPortAndHost()
-        
-    def getClientConfiguration(self):
         return self._args
+
     
 class MPCConfigurationGetter(ConfigurationGetter):
     def _prepareArgParser(self):
@@ -177,14 +193,28 @@ class MPCConfigurationGetter(ConfigurationGetter):
     def _valuesToReadFromConfig(self, section_name):
         ConfigurationGetter._valuesToReadFromConfig(self, section_name)
         if (self._args.mpc_path == None):
-            self._args.mpc_path = self._config.get(section_name, 'mpc_path')
+            self._args.mpc_path = self._readConfigValue(section_name, 'mpc_path')
 
     def __addSpecialMPCFlags(self):
-        return self._args._args.extend(['/open', '/new'])
+        self._args._args.extend(['/open', '/new'])
 
-    def prepareClientConfiguration(self):
-        ConfigurationGetter.prepareClientConfiguration(self)
+    def getConfiguration(self):
+        ConfigurationGetter.getConfiguration(self)
         self.__addSpecialMPCFlags()
+        return self._args 
 
 
-
+class ServerConfigurationGetter(ConfigurationGetter):
+    def getConfiguration(self):
+        self._prepareArgParser()
+        self._args = self._parser.parse_args()
+        return self._args
+           
+    def _prepareArgParser(self):
+        self._parser = argparse.ArgumentParser(description='Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network. Server instance',
+                                         epilog='If no options supplied _config values will be used')
+        self._parser.add_argument('--password', metavar='password', type=str, nargs='?', help='server password')
+        self._parser.add_argument('--banlist', metavar='banlist', type=str, nargs='?', help='server banlist file')
+        self._parser.add_argument('--isolate-rooms', action='store_true', help='should rooms be isolated?')
+        
+    

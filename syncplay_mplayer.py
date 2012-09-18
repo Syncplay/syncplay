@@ -12,19 +12,18 @@ class SyncplayMplayer:
         self._promptForMissingArguments()
         self.args._args.extend(('-slave', '-msglevel', 'all=1:global=4'))
         if(self.args.file): self.args._args.extend((self.args.file,))
-        syncplayClient = client.SyncplayClient(self.args.name, lambda m: mplayer.run_mplayer(m, 'mplayer', self.args._args), self.interface, self.args.debug)
+        syncplayClient = client.SyncplayClient(self.args.name, lambda m: mplayer.run_mplayer(m, 'mplayer', self.args._args), self.interface, self.args.debug, self.args.room, self.args.password)
         self.interface.addClient(syncplayClient)
         syncplayClient.start(self.args.host, self.args.port)
     def _prepareArguments(self):
         self.argsGetter = utils.ConfigurationGetter()
-        self.argsGetter.prepareClientConfiguration()
-        self.args = self.argsGetter.getClientConfiguration()
+        self.args = self.argsGetter.getConfiguration()
     
     def _promptForMissingArguments(self):
         if (self.args.host == None):
-            self.args.host = self.interface.promptFor(promptName = "Hostname", message = "You must supply hostname on the first run, it's easier trough command line arguments.")
+            self.args.host = self.interface.promptFor(promptName = "Hostname", message = "You must supply hostname on the first run, it's easier through command line arguments.")
         if (self.args.name == None):
-            self.args.name = self.interface.promptFor(promptName = "Username", message = "You must supply username on the first run, it's easier trough command line arguments.")
+            self.args.name = self.interface.promptFor(promptName = "Username", message = "You must supply username on the first run, it's easier through command line arguments.")
         self.argsGetter.saveValuesIntoConfigFile()   
 
 if __name__ == '__main__':
