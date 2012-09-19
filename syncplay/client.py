@@ -62,7 +62,7 @@ class SyncClientProtocol(CommandProtocol):
                 who, where, what = args
             else:
                 who, where, what = args[0], args[1], None
-            self.__syncplayClient.users.addUser(SyncplayClient.SyncplayUser(who, what, where))
+            self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(who, what, where))
             if what:
                 message = '%s is present and is playing \'%s\' in the room: \'%s\'' % (who, what, where)
                 self.__syncplayClient.ui.showMessage(message)
@@ -206,7 +206,7 @@ class SyncClientFactory(ClientFactory):
     def stop_retrying(self):
         self.retry = False
 
-class SyncplayClient(object):
+class SyncplayClientManager(object):
     def __init__(self, name, make_player, ui, debug, room, password = None):
         self.users = self.UserList()
         self.users.currentUser.name = name
@@ -490,16 +490,16 @@ class SyncplayClient(object):
     class UserList(object):
         def __init__(self):
             self.users = []
-            self.currentUser = SyncplayClient.SyncplayUser()
+            self.currentUser = SyncplayClientManager.SyncplayUser()
             
         def addUser(self, user):
-            if(not isinstance(user,SyncplayClient.SyncplayUser)):
-                user = SyncplayClient.SyncplayUser(user)
+            if(not isinstance(user,SyncplayClientManager.SyncplayUser)):
+                user = SyncplayClientManager.SyncplayUser(user)
             self.users.append(user)
             
         def removeUser(self, user):
-            if(not isinstance(user,SyncplayClient.SyncplayUser)):
-                user = SyncplayClient.SyncplayUser(user) 
+            if(not isinstance(user,SyncplayClientManager.SyncplayUser)):
+                user = SyncplayClientManager.SyncplayUser(user) 
             self.users[:] = list(itertools.ifilterfalse(lambda x: user.name == x.name, self.users))
     
         def getUsersWithNotMatchingFilenames(self):
@@ -514,7 +514,7 @@ class SyncplayClient(object):
                     u.room = room
                     break
             #did not find a user, add
-            self.users.append(SyncplayClient.SyncplayUser(username, None, room))
+            self.users.append(SyncplayClientManager.SyncplayUser(username, None, room))
                 
         def setUsersFilename(self, username, filename):
             for u in self.users:
@@ -522,4 +522,25 @@ class SyncplayClient(object):
                     u.filename = filename
                     break
             #did not find a user, add
-            self.users.append(SyncplayClient.SyncplayUser(username, filename, None))
+            self.users.append(SyncplayClientManager.SyncplayUser(username, filename, None))
+
+from syncplay import ui
+from syncplay import utils   
+      
+class SyncplayClient(object):
+    def __init__(self):
+        self._prepareArguments()
+        self.interface = ui.getUi(graphical = not self.args.no_gui)
+        self._promptForMissingArguments()
+        self.argsGetter.saveValuesIntoConfigFile() 
+        
+    def _prepareArguments(self):
+        self.argsGetter = utils.ConfigurationGetter()
+        self.args = self.argsGetter.getConfiguration()
+
+    def _promptForMissingArguments(self):
+        #if(self.args.no_gui)
+        if (self.args.host == None):
+            self.args.host = self.interface.promptFor(promptName = "Hostname", message = "You must supply hostname on the first run, it's easier through command line arguments.")
+        if (self.args.name == None):
+            self.args.name = self.interface.promptFor(promptName = "Username", message = "You must supply username on the first run, it's easier through command line arguments.")

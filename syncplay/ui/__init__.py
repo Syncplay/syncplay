@@ -1,7 +1,7 @@
 from syncplay.ui.gui import GraphicalUI
 from syncplay.ui.consoleUI import ConsoleUI
 def getUi(graphical = True):
-    if(graphical):
+    if(False): #graphical): #TODO: Add graphical ui
         return GraphicalUI()
     else:
         ui = ConsoleUI()
