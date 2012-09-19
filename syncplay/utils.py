@@ -2,7 +2,6 @@
 
 import os
 import re
-import sys
 import itertools
 
 class ArgumentParser():
@@ -67,15 +66,3 @@ def format_time(value):
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     return '%02d:%02d:%02d.%02d' % (hours, minutes, seconds, mseconds)
-
-def stdin_thread(manager):
-    try:
-        fd = sys.stdin.fileno()
-        while True:
-            data = os.read(fd, 1024)
-            if not data:
-                break   
-            manager.executeCommand(data.rstrip('\n\r'))
-    except:
-        pass
-
