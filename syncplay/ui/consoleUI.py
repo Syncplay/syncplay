@@ -7,7 +7,7 @@ from __future__ import print_function
 import threading
 import re
 import time 
-import syncplay
+
 class ConsoleUI(threading.Thread):
     def __init__(self):
         self.promptMode = threading.Event()
@@ -48,7 +48,7 @@ class ConsoleUI(threading.Thread):
         print(message)
         
     def showErrorMessage(self, message):
-        print("ERROR desu!:\t" + message)
+        print("ERROR:\t" + message)
         
     def __exectueSeekCmd(self, seek_type, minutes, seconds):
         self._syncplayClient.player_position_before_last_seek = self._syncplayClient.player_position

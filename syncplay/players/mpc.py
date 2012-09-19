@@ -153,7 +153,7 @@ class MPCHCAPIPlayer(object):
             self.askLock.release()
         
     def mpc_error(self, err=""):
-        print "ERROR:", str(err) + ',', "desu"
+        print "ERROR:", str(err) #TODO: wyrzucić do interface'u
         if self.__syncplayClient.running:
             print 'Failed to connect to MPC-HC API!'
         self.__syncplayClient.stop()
