@@ -6,6 +6,5 @@ def getUi(graphical = True):
         ui = GraphicalUI()
     else:
         ui = ConsoleUI()
-    ui.setDaemon()
     ui.start()
     return ui 
