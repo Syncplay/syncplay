@@ -2,7 +2,7 @@ from syncplay.client import SyncplayClient
 from syncplay.client import SyncplayClientManager
 
 from syncplay.players import mpc
-from syncplay import utils
+from syncplay.ConfigurationGetter import MPCConfigurationGetter
 
 class SyncplayMPC(SyncplayClient):
     def __init__(self):
@@ -12,7 +12,7 @@ class SyncplayMPC(SyncplayClient):
         syncplayClient.start(self.args.host, self.args.port)
     
     def _prepareArguments(self):
-        self.argsGetter = utils.MPCConfigurationGetter()
+        self.argsGetter = MPCConfigurationGetter()
         self.args = self.argsGetter.getConfiguration()
         self.argsGetter.saveValuesIntoConfigFile() 
     

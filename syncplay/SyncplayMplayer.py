@@ -2,7 +2,7 @@ from syncplay.client import SyncplayClient
 from syncplay.client import SyncplayClientManager
 
 from syncplay.players import mplayer
-from syncplay import utils
+from syncplay.ConfigurationGetter import ConfigurationGetter
 
 class SyncplayMplayer(SyncplayClient):
     def __init__(self):
@@ -12,7 +12,7 @@ class SyncplayMplayer(SyncplayClient):
         syncplayClient.start(self.args.host, self.args.port)
     
     def _prepareArguments(self):
-        self.argsGetter = utils.ConfigurationGetter()
+        self.argsGetter = ConfigurationGetter()
         self.args = self.argsGetter.getConfiguration()
     
     def _promptForMissingArguments(self):
