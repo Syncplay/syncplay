@@ -7,6 +7,7 @@ from __future__ import print_function
 import threading
 import re
 import time 
+import syncplay
 
 class ConsoleUI(threading.Thread):
     def __init__(self):
