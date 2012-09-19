@@ -3,9 +3,9 @@
 from twisted.internet import reactor
 
 from syncplay.server import SyncFactory
-from syncplay import utils
+from syncplay.ConfigurationGetter import ServerConfigurationGetter
  
-argsGetter = utils.ServerConfigurationGetter()
+argsGetter = ServerConfigurationGetter()
 args = argsGetter.getConfiguration()
 reactor.listenTCP(args.port, SyncFactory(args.password, args.isolate_rooms))
 reactor.run()

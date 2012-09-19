@@ -7,7 +7,8 @@ from syncplay.ConfigurationGetter import ConfigurationGetter
 class SyncplayMplayer(SyncplayClient):
     def __init__(self):
         SyncplayClient.__init__(self)
-        syncplayClient = SyncplayClientManager(self.args.name, lambda m: mplayer.run_mplayer(m, 'mplayer', self.args._args), self.interface, self.args.debug, self.args.room, self.args.password)
+        run_mplayer = lambda m: mplayer.run_mplayer(m, 'mplayer', self.args._args)
+        syncplayClient = SyncplayClientManager(self.args.name, run_mplayer, self.interface, self.args.debug, self.args.room, self.args.password)
         self.interface.addClient(syncplayClient)
         syncplayClient.start(self.args.host, self.args.port)
     

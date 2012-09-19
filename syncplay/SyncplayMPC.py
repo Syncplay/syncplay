@@ -7,7 +7,8 @@ from syncplay.ConfigurationGetter import MPCConfigurationGetter
 class SyncplayMPC(SyncplayClient):
     def __init__(self):
         SyncplayClient.__init__(self)
-        syncplayClient = SyncplayClientManager(self.args.name, lambda m: mpc.run_mpc(m, self.args.mpc_path, self.args.file, self.args._args), self.interface, self.args.debug, self.args.room, self.args.password)
+        run_mpc = lambda m: mpc.run_mpc(m, self.args.mpc_path, self.args.file, self.args._args)
+        syncplayClient = SyncplayClientManager(self.args.name, run_mpc, self.interface, self.args.debug, self.args.room, self.args.password)
         self.interface.addClient(syncplayClient)
         syncplayClient.start(self.args.host, self.args.port)
     
