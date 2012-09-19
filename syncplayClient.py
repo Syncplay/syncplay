@@ -2,7 +2,7 @@ import os
 
 class Syncplay(object):
     def __init__(self):
-        if(os.name == 'posix'):
+        if(os.name <> 'nt'):
             from syncplay.SyncplayMplayer import SyncplayMplayer
             SyncplayMplayer()
         else:
