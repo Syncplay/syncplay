@@ -90,6 +90,6 @@ class ConsoleUI(threading.Thread):
             self.showMessage( "\tr - revert last seek" )
             self.showMessage( "\tp - toggle pause" )
             self.showMessage("Syncplay version: %s" % syncplay.version)
-            self.showMessage("More info available on: %s" % syncplay.projectURL)
+            self.showMessage("More info available at: %s" % syncplay.projectURL)
         else:
-            self.showMessage( "Unrecognized command, type 'help' for list of available ones" )    
+            self.showMessage( "Unrecognized command, type 'help' for list of available commands" )    
