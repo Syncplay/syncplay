@@ -525,7 +525,7 @@ class SyncplayClientManager(object):
             self.users.append(SyncplayClientManager.SyncplayUser(username, filename, None))
 
 from syncplay import ui
-from syncplay import utils   
+from syncplay.ConfigurationGetter import ConfigurationGetter   
       
 class SyncplayClient(object):
     def __init__(self):
@@ -535,7 +535,7 @@ class SyncplayClient(object):
         self.argsGetter.saveValuesIntoConfigFile() 
         
     def _prepareArguments(self):
-        self.argsGetter = utils.ConfigurationGetter()
+        self.argsGetter = ConfigurationGetter()
         self.args = self.argsGetter.getConfiguration()
 
     def _promptForMissingArguments(self):
