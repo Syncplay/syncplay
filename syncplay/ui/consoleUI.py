@@ -33,7 +33,7 @@ class ConsoleUI(threading.Thread):
                 elif(self._syncplayClient):
                     self._executeCommand(data)
         except:
-            raise
+            pass
         
     def promptFor(self, promptName = ">", message = ""):
         print(message)
