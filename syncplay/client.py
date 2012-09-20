@@ -547,7 +547,7 @@ class SyncplayClient(object):
         self.args = self.argsGetter.getConfiguration()
         
     def _guiPromptForMissingArguments(self):
-        self.args = GuiConfiguration(self.args).getProcessedConfiguration()
+        self.args = GuiConfiguration(self.args, self.args.force_gui_prompt).getProcessedConfiguration()
         
     def _promptForMissingArguments(self):
         if(self.args.no_gui):

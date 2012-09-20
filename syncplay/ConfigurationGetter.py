@@ -24,12 +24,13 @@ class ConfigurationGetter(object):
         self._parser = argparse.ArgumentParser(description='Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
                                          epilog='If no options supplied _config values will be used')
         self._parser.add_argument('--no-gui', action='store_true', help='show no GUI')
-        self._parser.add_argument('--host', metavar='hostname', type=str, help='server\'s address')
-        self._parser.add_argument('--name', metavar='username', type=str, help='desired username')
+        self._parser.add_argument('-a', '--host', metavar='hostname', type=str, help='server\'s address')
+        self._parser.add_argument('-n', '--name', metavar='username', type=str, help='desired username')
         self._parser.add_argument('-d','--debug', action='store_true', help='debug mode')
+        self._parser.add_argument('-g','--force-gui-prompt', action='store_true', help='make configuration prompt appear')
         self._parser.add_argument('--no-store', action='store_true', help='don\'t store values in syncplay.ini')
-        self._parser.add_argument('--room', metavar='room', type=str, nargs='?', help='default room')
-        self._parser.add_argument('--password', metavar='password', type=str, nargs='?', help='server password')
+        self._parser.add_argument('-r', '--room', metavar='room', type=str, nargs='?', help='default room')
+        self._parser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help='server password')
         self._parser.add_argument('file', metavar='file', type=str, nargs='?', help='file to play')
         self._parser.add_argument('_args', metavar='options', type=str, nargs='*', help='player options, if you need to pass options starting with - prepend them with single \'--\' argument') 
   

@@ -18,7 +18,7 @@ class SyncplayMPC(SyncplayClient):
         self.args = self.argsGetter.getConfiguration()
 
     def _guiPromptForMissingArguments(self):
-        self.args = GuiConfigurationForMPC(self.args).getProcessedConfiguration()
+        self.args = GuiConfigurationForMPC(self.args, self.args.force_gui_prompt).getProcessedConfiguration()
 
     def _promptForMissingArguments(self):
         SyncplayClient._promptForMissingArguments(self)
