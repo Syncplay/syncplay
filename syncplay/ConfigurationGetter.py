@@ -1,8 +1,11 @@
 import ConfigParser
 import argparse
-import sys
 import os
 
+class InvalidConfigValue(Exception):
+    def __init__(self, message):
+        Exception.__init__(self, message)
+        
 class ConfigurationGetter(object):
     def __init__(self):
         self._config = None
@@ -11,14 +14,11 @@ class ConfigurationGetter(object):
         self._workingDir = None
         self._parser = None
         
-    def _findWorkingDirectory(self):
-        frozen = getattr(sys, 'frozen', '')
-        if not frozen:
-            self._workingDir = os.path.dirname(os.path.dirname(__file__))
-        elif frozen in ('dll', 'console_exe', 'windows_exe'):
-            self._workingDir = os.path.dirname(sys.executable)
+    def _getConfigurationFilePath(self):
+        if(os.name <> 'nt'):
+            self._workingDir = os.getenv('HOME', '.')
         else:
-            raise Exception('Working dir not found')
+            self._workingDir = os.getenv('APPDATA', '.')
 
     def _prepareArgParser(self):
         self._parser = argparse.ArgumentParser(description='Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
@@ -36,26 +36,36 @@ class ConfigurationGetter(object):
     def _openConfigFile(self):
         if(not self._config):
             self._config = ConfigParser.RawConfigParser(allow_no_value=True)
-            self._config.read(os.path.join(self._workingDir, 'syncplay.ini'))      
+            self._config.read(os.path.join(self._workingDir, '.syncplay'))      
     
     def _getSectionName(self):
         return 'sync' if not self._args.debug else 'debug'
 
     def saveValuesIntoConfigFile(self):
+        self._splitPortAndHost()
         self._openConfigFile()
         section_name = self._getSectionName()
         if(not self._args.no_store):
-            with open(os.path.join(self._workingDir, 'syncplay.ini'), 'wb') as configfile:
+            with open(os.path.join(self._workingDir, '.syncplay'), 'wb') as configfile:
                 if(not self._config.has_section(section_name)):
                     self._config.add_section(section_name)
                 self._setUpValuesToSave(section_name)
                 self._config.write(configfile)
     
     def _setUpValuesToSave(self, section_name):
-        self._config.set(section_name, 'host', self._args.host)
-        self._config.set(section_name, 'name', self._args.name)
+        if(self._args.host <> "" and self._args.host is not None):
+            self._config.set(section_name, 'host', self._args.host)
+        else:
+            self._args.host = None
+            raise InvalidConfigValue("Hostname can't be empty")
+        if(self._args.name <> "" and self._args.name is not None):
+            self._config.set(section_name, 'name', self._args.name)
+        else:
+            self._args.name = None
+            raise InvalidConfigValue("Username can't be empty")         
         self._config.set(section_name, 'room', self._args.room)
         self._config.set(section_name, 'password', self._args.password)
+
         
     def _readConfigValue(self, section_name, name):
         try:
@@ -81,8 +91,6 @@ class ConfigurationGetter(object):
             self._args.room = self._readConfigValue(section_name, 'room')
         if (self._args.password == None):
             self._args.password = self._readConfigValue(section_name, 'password')  
-    
-    
               
     def _splitPortAndHost(self):
         if(self._args.host):
@@ -92,15 +100,16 @@ class ConfigurationGetter(object):
             else:
                 self._args.port = 8999
     
+    def setConfiguration(self, args):
+        self._args = args
+        
     def getConfiguration(self):
-        self._findWorkingDirectory()
+        self._getConfigurationFilePath()
         self._prepareArgParser()
         self._args = self._parser.parse_args()
         self._readMissingValuesFromConfigFile()
-        self.saveValuesIntoConfigFile()
         self._splitPortAndHost()
         return self._args
-
     
 class MPCConfigurationGetter(ConfigurationGetter):
     def _prepareArgParser(self):
@@ -109,7 +118,34 @@ class MPCConfigurationGetter(ConfigurationGetter):
 
     def _setUpValuesToSave(self, section_name):
         ConfigurationGetter._setUpValuesToSave(self, section_name)
+        if(not self.mpc_pathValid()):
+            self._args.mpc_path = None
+            raise InvalidConfigValue('Path to mpc is not valid')
         self._config.set(section_name, 'mpc_path', self._args.mpc_path)
+    
+    def _tryToFillUpMpcPath(self):
+        if(self._args.mpc_path == None):
+            paths = ["C:\Program Files (x86)\MPC-HC\mpc-hc.exe", 
+                     "C:\Program Files\MPC-HC\mpc-hc.exe",
+                     "C:\Program Files\MPC-HC\mpc-hc64.exe",
+                     "C:\Program Files\Media Player Classic - Home Cinema\mpc-hc.exe",
+                     "C:\Program Files\Media Player Classic - Home Cinema\mpc-hc64.exe",
+                     "C:\Program Files (x86)\Media Player Classic - Home Cinema\mpc-hc.exe",
+                     "C:\Program Files (x86)\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
+                     "C:\Program Files\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
+                     "C:\Program Files (x86)\Combined Community Codec Pack\MPC\mpc-hc.exe",
+                     "C:\Program Files\MPC HomeCinema (x64)\mpc-hc64.exe",
+                     ]
+            for path in paths:
+                if(os.path.isfile(path)):
+                    self._args.mpc_path = path
+                    return
+                
+    def mpc_pathValid(self):
+        if(os.path.isfile(self._args.mpc_path)):
+            if(self._args.mpc_path[-10:] == 'mpc-hc.exe' or self._args.mpc_path[-12:] == 'mpc-hc64.exe'):
+                return True
+        return False
 
     def _valuesToReadFromConfig(self, section_name):
         ConfigurationGetter._valuesToReadFromConfig(self, section_name)
@@ -122,6 +158,7 @@ class MPCConfigurationGetter(ConfigurationGetter):
     def getConfiguration(self):
         ConfigurationGetter.getConfiguration(self)
         self.__addSpecialMPCFlags()
+        self._tryToFillUpMpcPath()
         return self._args 
 
 
@@ -139,5 +176,3 @@ class ServerConfigurationGetter(ConfigurationGetter):
         self._parser.add_argument('--port', metavar='port', type=str, nargs='?', help='server TCP port')
         self._parser.add_argument('--password', metavar='password', type=str, nargs='?', help='server password')
         self._parser.add_argument('--isolate-rooms', action='store_true', help='should rooms be isolated?')
-        
-    
