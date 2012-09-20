@@ -24,8 +24,6 @@ class ConsoleUI(threading.Thread):
         try:
             while True:
                 data = raw_input()
-                if not data:
-                    break
                 data = data.rstrip('\n\r')
                 if(not self.promptMode.isSet()):
                     self.PromptResult = data

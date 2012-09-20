@@ -210,7 +210,7 @@ class SyncplayClientManager(object):
     def __init__(self, name, make_player, ui, debug, room, password = None):
         self.users = self.UserList()
         self.users.currentUser.name = name
-        if(room == None):
+        if(room == None or room == ''):
             room = 'default'
         self.users.currentUser.room = room
         if(password):
@@ -526,21 +526,34 @@ class SyncplayClientManager(object):
 
 from syncplay import ui
 from syncplay.ConfigurationGetter import ConfigurationGetter   
+from syncplay.ui.GuiConfiguration import GuiConfiguration
+      
       
 class SyncplayClient(object):
     def __init__(self):
         self._prepareArguments()
         self.interface = ui.getUi(graphical = not self.args.no_gui)
-        self._promptForMissingArguments()
-        self.argsGetter.saveValuesIntoConfigFile() 
-        
+        self._checkAndSaveConfiguration()
+
+    def _checkAndSaveConfiguration(self):
+        try:
+            self._promptForMissingArguments()
+            self.argsGetter.saveValuesIntoConfigFile()
+        except:
+            self._checkAndSaveConfiguration()
+
     def _prepareArguments(self):
         self.argsGetter = ConfigurationGetter()
         self.args = self.argsGetter.getConfiguration()
-
+        
+    def _guiPromptForMissingArguments(self):
+        self.args = GuiConfiguration(self.args).getProcessedConfiguration()
+        
     def _promptForMissingArguments(self):
-        #if(self.args.no_gui)
-        if (self.args.host == None):
-            self.args.host = self.interface.promptFor(promptName = "Hostname", message = "You must supply hostname on the first run, it's easier through command line arguments.")
-        if (self.args.name == None):
-            self.args.name = self.interface.promptFor(promptName = "Username", message = "You must supply username on the first run, it's easier through command line arguments.")
+        if(self.args.no_gui):
+            if (self.args.host == None):
+                self.args.host = self.interface.promptFor(promptName = "Hostname", message = "You must supply hostname on the first run, it's easier through command line arguments.")
+            if (self.args.name == None):
+                self.args.name = self.interface.promptFor(promptName = "Username", message = "You must supply username on the first run, it's easier through command line arguments.")
+        else:
+            self._guiPromptForMissingArguments()
