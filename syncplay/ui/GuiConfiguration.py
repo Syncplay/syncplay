@@ -3,7 +3,7 @@ import os
 pygtk.require('2.0')
 import gtk
 gtk.set_interactive(False)
-import cairo, gio, pango, atk, pangocairo, gobject
+import cairo, gio, pango, atk, pangocairo, gobject #@UnusedImport
 
 class GuiConfiguration:
     def __init__(self, args, force = False):
