@@ -5,3 +5,4 @@ venv
 /SyncPlay.egg-info
 /build
 /dist
+dist.7z
