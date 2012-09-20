@@ -30,7 +30,7 @@ class SyncClientProtocol(CommandProtocol):
     
     def dropWithError(self, error):
         self.syncplayClient.ui.showErrorMessage(error)
-        self.syncplayClient.protocol_factory.retry = False
+        self.syncplayClient.protocol_factory.stop_retrying()
         CommandProtocol.dropWithError(self, error)
     
     def lineReceived(self, line):
@@ -177,9 +177,9 @@ class SyncClientProtocol(CommandProtocol):
             self._protocol.sendMessage('playing', filename)
 
 class SyncClientFactory(ClientFactory):
-    def __init__(self, manager):
+    def __init__(self, manager, retry = 10):
         self.__syncplayClient = manager
-        self.retry = True
+        self.retry = retry
 
     def buildProtocol(self, addr):
         return SyncClientProtocol(self.__syncplayClient)
@@ -190,6 +190,7 @@ class SyncClientFactory(ClientFactory):
 
     def clientConnectionLost(self, connector, reason):
         if self.retry:
+            self.retry -= 1
             message = 'Connection lost, reconnecting'
             self.__syncplayClient.ui.showMessage(message)
             self.__syncplayClient.counter = 0
@@ -204,7 +205,7 @@ class SyncClientFactory(ClientFactory):
         self.__syncplayClient.stop()
 
     def stop_retrying(self):
-        self.retry = False
+        self.retry = 0
 
 class SyncplayClientManager(object):
     def __init__(self, name, make_player, ui, debug, room, password = None):
