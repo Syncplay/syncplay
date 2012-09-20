@@ -18,6 +18,5 @@ class SyncplayMplayer(SyncplayClient):
     
     def _promptForMissingArguments(self):
         SyncplayClient._promptForMissingArguments(self)
-        
         self.args._args.extend(('-slave', '-msglevel', 'all=1:global=4'))
         if(self.args.file): self.args._args.extend((self.args.file,))
