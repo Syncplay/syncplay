@@ -33,6 +33,7 @@ class ConsoleUI(threading.Thread):
                 elif(self._syncplayClient):
                     self._executeCommand(data)
         except:
+            self._syncplayClient.protocol_factory.retry = False
             pass
         
     def promptFor(self, promptName = ">", message = ""):
