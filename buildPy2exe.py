@@ -20,9 +20,11 @@ info = dict(
     common_info,
     console = [{"script":"syncplayClient.py","icon_resources":[(1,"icon.ico")]}, 'syncplayServer.py'],
     options = {'py2exe': {
-                      'packages':'encodings',
-                      'includes': 'cairo, pango, pangocairo, atk, gobject',
-                      }
+                         'includes': 'cairo, pango, pangocairo, atk, gobject',
+                         'optimize': 2,
+                         'compressed': 1
+                         }
+                          
           },
 
 )
