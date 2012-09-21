@@ -8,6 +8,7 @@ import time
 import itertools
 import syncplay
 import hashlib
+import os
 
 class SyncClientProtocol(CommandProtocol):
     def __init__(self, syncplayClient):
@@ -391,6 +392,8 @@ class SyncplayClientManager(object):
     def updateFile(self, filename, duration, path):
         filename = unicode(filename, errors='replace')
         self.users.currentUser.filename = filename.encode('ascii','replace')
+        self.users.currentUser.fileduration = duration
+        self.users.currentUser.filesize = os.path.getsize(path)
         self.sendPlaying()
 
     def updateGlobalState(self, counter, ctime, paused, position, name):
@@ -483,10 +486,12 @@ class SyncplayClientManager(object):
             self.__ui.showErrorMessage(message)
     
     class SyncplayUser(object):
-        def __init__(self, name = None, filename = None, room = None):
+        def __init__(self, name = None, filename = None, room = None, filesize = None, fileduration = None):
             self.name = name
-            self.filename = filename
             self.room = room
+            self.filename = filename
+            self.filesize = filesize
+            self.fileduration = fileduration
             
     class UserList(object):
         def __init__(self):
