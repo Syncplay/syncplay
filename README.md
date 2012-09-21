@@ -136,6 +136,6 @@ When all interested people join, you can just unpause in and it will just start 
 
 ## How to report bugs
 
-Please use https://github.com/Uriziel/syncplay/issues to see if your bug is already reported. If it is not then please report it.
+You can report bugs through https://github.com/Uriziel/syncplay/issues but first please check to see if your problem has already been reported.
 
-You may also be able to discuss your problem through Internet Relay Chat (IRC). The #Syncplay room is on the irc.rizon.net server.
+You might also be able to discuss your problem through Internet Relay Chat (IRC). The #Syncplay channel is on the irc.rizon.net server.
