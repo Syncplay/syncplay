@@ -14,7 +14,7 @@ Syncplay does not provide video streaming, nor does it syncronise player configu
 
 ## Requirements
 
-On Windows: You need the Media Player Classic Home Cinema (MPC) media player.
+On Windows: You need the Media Player Classic Home Cinema (MPC-HC) media player.
 
 On Linux: You need Python 2.7, Twisted and the MPlayer media player.
 
