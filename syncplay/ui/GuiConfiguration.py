@@ -8,10 +8,11 @@ import cairo, gio, pango, atk, pangocairo, gobject #@UnusedImport
 class GuiConfiguration:
     def __init__(self, args, force = False):
         self.args = args
+        self.closedAndNotSaved = False
         if(args.host == None or args.name == None or force):
             self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
             self.window.set_title("Syncplay Configuration")  
-            self.window.connect("delete_event", lambda w, e: gtk.main_quit())
+            self.window.connect("delete_event", lambda w, e: self._windowClosed())
             vbox = gtk.VBox(False, 0)
             self.window.add(vbox)
             vbox.show()
@@ -26,6 +27,11 @@ class GuiConfiguration:
             button.show()
             self.window.show()
             gtk.main()
+     
+    def _windowClosed(self):
+        self.window.destroy()
+        gtk.main_quit()
+        self.closedAndNotSaved = True
         
     def _addLabeledEntries(self, args, vbox):  
         self.hostEntry = self._addLabeledEntryToVbox('Host: ', args.host, vbox, self._focusNext)
@@ -34,6 +40,8 @@ class GuiConfiguration:
         self.passEntry = self._addLabeledEntryToVbox('Server password (optional): ', args.password, vbox, self._focusNext)
         
     def getProcessedConfiguration(self):
+        if(self.closedAndNotSaved):
+            raise self.WindowClosed
         return self.args
                     
     def _saveDataAndLeave(self):
@@ -70,6 +78,10 @@ class GuiConfiguration:
         hbox.show()
         return entry
 
+    class WindowClosed(Exception):
+        def __init__(self):
+            Exception.__init__(self)
+            
 class GuiConfigurationForMPC(GuiConfiguration):
     def __init__(self, args, force = False):
         force = (args.mpc_path == None) or force

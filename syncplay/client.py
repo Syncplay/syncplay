@@ -527,9 +527,10 @@ class SyncplayClientManager(object):
 
 from syncplay import ui
 from syncplay.ConfigurationGetter import ConfigurationGetter   
+from syncplay.ConfigurationGetter import InvalidConfigValue 
 from syncplay.ui.GuiConfiguration import GuiConfiguration
-      
-      
+import sys
+
 class SyncplayClient(object):
     def __init__(self):
         self._prepareArguments()
@@ -540,9 +541,11 @@ class SyncplayClient(object):
         try:
             self._promptForMissingArguments()
             self.argsGetter.saveValuesIntoConfigFile()
-        except:
+        except InvalidConfigValue:
             self._checkAndSaveConfiguration()
-
+        except GuiConfiguration.WindowClosed:
+            sys.exit()
+        
     def _prepareArguments(self):
         self.argsGetter = ConfigurationGetter()
         self.args = self.argsGetter.getConfiguration()
