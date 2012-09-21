@@ -105,21 +105,19 @@ Within the Syncplay commandline you can enter the following commaands (and then 
 
 ### Instructions on how to use Syncplay for the first time
 
-1. Ensure you have the latest version of MPC-HC on Windows of MPlayer on Linux.
+1. Ensure that you have the latest version of MPC-HC on Windows or MPlayer on Linux.
 
-2. Download Syncplay from https://github.com/Uriziel/syncplay/downloads
+2. Download Syncplay from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
 
-3. Extract Syncplay to a folder of your choosing.
+3. If you are running your own server then open `syncplayServer.exe` (see "How to use the server", below)
 
-4. If you are using a private server then ensure the server is running `syncplayServer.exe` (see "How to use the server", below)
+4. Open `syncplayClient.exe` (or open the media file you wish to play with `syncplayClient.exe`, e.g. using "Open with")
 
-5. Open `syncplayClient.exe` (or open the media file you wish to play with `syncplayClient.exe`, e.g. using "Open with")
+5. Enter configuration settings (see "Configuration window", above).
 
-6. Enter configuration settings (see "Configuration window", above).
+6. If your fellow viewers are not in the same 'room' as you then use the room command (see "Syncplay Commands", above)
 
-7. If your friends are not in the same room as you then use the room command (see "Syncplay Commands", above)
-
-8. If you don't have the file you want to play open then open it from within your media player.
+7. If you don't have the file you want to play open in your media player then open it from within your media player.
 
 ### Error messages and notifications
 
