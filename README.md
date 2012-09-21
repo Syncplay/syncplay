@@ -39,14 +39,23 @@ If you open a file with `syncplayClient.exe` then it will automatically load tha
 ## Command-line switches
 
 You can run `syncplayClient.exe` with the following command-line arguments to alter the settings:
+
 `--no-gui` - Do not display graphical user interface (GUI)
+
 `--host [address]` - Specify address of server to connect to (can be address:port)
+
 `--name [name]` / `-n [name]` - Specify username to use
+
 `--debug' / `-d` - Enable debug mode
+
 `--force-gui-prompt` / `-g` - Force the configuration prompt to appear when Syncplay starts
+
 `--no-store` - Disable the storing of configuration data (in .syncplay file)
+
 `--room [room]` / `-r [room]` - Specify default room to join upon connection
+
 `--password [password]` / `-p [password]` - Specify server password
+
 `[file]` - File to play upon start
         
 
