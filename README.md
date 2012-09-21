@@ -4,7 +4,7 @@ Solution to synchronize video playback across many instances of MPlayer and Medi
 
 ## What does it do
 
-Syncplay synchronizes the position and playback state of multiple media players so that the viewers can watch the same thing at the same time.
+Syncplay synchronizes the position and play state of multiple media players so that the viewers can watch the same thing at the same time.
 When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room'.
 When one person seeks, all players seek to the same position. When a new person joins (or someone reconnects) they will be syncronised with their fellow viewers.
 
