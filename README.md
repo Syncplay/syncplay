@@ -32,7 +32,7 @@ will be printed (at most 50 last lines).
 
 ### Media Player Classic Home Cinema (MPC-HC) on Windows
 
-On Windows simply running `syncplayClient.exe` opens a command-line window for communication and an instance of MPC-HC for synbcronised video playback.
+On Windows simply running `syncplayClient.exe` opens a Syncplay command-line window for communication and an instance of MPC-HC for synchronised video playback. This instance of MPC-HC is controlled by Syncplay through the associated command-line window, but other instances of MPC-HC will be unaffected.
 
 ## Using Syncplay
 
