@@ -8,7 +8,7 @@ Syncplay synchronizes the position and play state of multiple media players so t
 When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room'.
 When one person seeks, all players seek to the same position. When a new person joins (or someone reconnects) they will be syncronised with their fellow viewers.
 
-## What it doesn't do
+## What does it not do
 
 Syncplay does not provide video streaming, nor does it syncronise player configuration, selected audio or subtitle track, playback rate, volume or filters. Furthermore, the user must manually choose what file to play as Syncplay does not syncrhonise which file is open.
 
@@ -120,7 +120,11 @@ Within the Syncplay commandline you can enter the following commaands (and then 
 7. If your friends are not in the same room as you then use the room command (see "Syncplay Commands", above)
 
 8. If you don't have the file you want to play open then open it from within your media player.
-        
+
+### Error messages and notifications
+
+"Rewinded due to time difference" - This means that your media player ended up too far in front of at least one other viewer and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly.
+       
 ## How to use the server
 
 <TO UPDATE>
