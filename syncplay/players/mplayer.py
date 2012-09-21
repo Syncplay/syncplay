@@ -123,7 +123,7 @@ class MplayerProtocol(LineProcessProtocol):
     def setUpFileInPlayer(self):
         self.fileupdatesteps = 0
         self.__syncplayClient.initPlayer(self)
-        self.__syncplayClient.updateFile(self.filename, self.duration, self.filespath)
+        self.__syncplayClient.updateFile(self.filename, self.duration, self.filepath)
         if self.__syncplayClient.last_global_update:
             self.set_position(self.__syncplayClient.getGlobalPosition())
             self.set_paused(True)
