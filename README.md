@@ -61,7 +61,7 @@ You can run `syncplayClient.exe` with the following command-line arguments to al
 
 ## How to use the server
 
-You need to run `rsyncplayServer.exe` somewhere. If you have public IP, you can try to launch server on your computer
+You need to run `syncplayServer.exe` somewhere. If you have public IP, you can try to launch server on your computer
 and give your friends your IP number, so they can connect to it. It will listen at port 8999, you
 might need to allow connections to it in your firewall/router.
 
