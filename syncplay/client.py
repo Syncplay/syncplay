@@ -512,9 +512,16 @@ class SyncplayClientManager(object):
         def getUsersWithNotMatchingFilenames(self):
             if(self.currentUser.filename == None):
                 return []
-            matchingFilename = lambda x: (x.filename == None or x.filename == self.currentUser.filename) or x.room <> self.currentUser.room
+            matchingFilename = lambda x: self._areUsersFilesSame(x)
             return list(itertools.ifilterfalse(matchingFilename, self.users))
             
+        def _areUsersFilesSame(self, user):
+            filenameCheck = (user.filename == None or user.filename == self.currentUser.filename)
+            sizeCheck = (user.filesize == None or user.filesize == self.currentUser.filesize)
+            durationCheck = (user.fileduration == None or user.fileduration == self.currentUser.fileduration)
+            roomCheck = user.room <> self.currentUser.room
+            return (filenameCheck and sizeCheck and durationCheck) or roomCheck
+        
         def setUsersRoom(self, username, room):
             for u in self.users:
                 if(u.name == username):
