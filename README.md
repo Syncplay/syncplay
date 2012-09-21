@@ -57,7 +57,7 @@ The settings to be configured are as follows:
 
 `Username` - Name that the server and other viewers know you by
 
-`Default room (optional)` - Room to join upon connection. You will only be syncronised with others on the same room on the same server. Default room is `default`.
+`Default room (optional)` - Room to join upon connection. You will only be syncronised with others in the same room on the same server. Default room is `default`.
 
 `Server password (optional)` - Password for server. Servers that are not password protected have a blank password.
 
@@ -71,7 +71,7 @@ Within the Syncplay commandline you can enter the following commaands (and then 
 
 `help` - Displays list of commands and other information.
 
-`room [room]` - Leaves current room and joins specified room. You are only syncronised with others on the same room on the same server.
+`room [room]` - Leaves current room and joins specified room. You are only syncronised with others in the same room on the same server. If no room is specified then it will use the filename of the currently playing file, or alternatively will join the default room if no file is playing.
 
 `s [time]` - Seek (jump) to specified time. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
 
@@ -113,7 +113,7 @@ You can run `syncplayClient.exe` with the following command-line switches to alt
 
 `--no-store` - Disable the storing of configuration data (in .syncplay file)
 
-`--room [room]` / `-r [room]` - Specify default room to join upon connection. If no room is specified then it will use the filename of the currently playing file, or alternatively will join the default room if no file is playing.
+`--room [room]` / `-r [room]` - Specify default room to join upon connection.
 
 `--password [password]` / `-p [password]` - Specify server password
 
