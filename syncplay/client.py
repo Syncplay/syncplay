@@ -388,7 +388,7 @@ class SyncplayClientManager(object):
             self.player.set_paused(True)
             self.askPlayer()
 
-    def updateFilename(self, filename):
+    def updateFile(self, filename):
         filename = unicode(filename, errors='replace')
         self.users.currentUser.filename = filename.encode('ascii','replace')
         self.sendFilename()

@@ -107,7 +107,7 @@ class MplayerProtocol(LineProcessProtocol):
 
     def mplayer_answer_filename(self, value):
         self.__syncplayClient.initPlayer(self)
-        self.__syncplayClient.updateFilename(value)
+        self.__syncplayClient.updateFile(value)
         if self.__syncplayClient.last_global_update:
             self.set_position(self.__syncplayClient.getGlobalPosition())
             self.set_paused(True)
