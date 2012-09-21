@@ -47,6 +47,11 @@ class MplayerProtocol(LineProcessProtocol):
         self.ignore_end = False
         self.error_lines = deque(maxlen=50)
         self.tmp_paused = None
+        
+        self.duration = None
+        self.filename = None
+        self.filepath = None
+        self.fileupdatesteps = 0
 
     def connectionMade(self):
         reactor.callLater(0.1, self.prepare_player)
@@ -105,17 +110,40 @@ class MplayerProtocol(LineProcessProtocol):
     def send_get_filename(self):
         self.send_get_property('filename')
 
-    def mplayer_answer_filename(self, value):
+    def send_get_length(self):
+        self.send_get_property('length')
+
+    def send_get_filepath(self):
+        self.send_get_property('path')
+
+    def setUpFileInPlayer(self):
         self.__syncplayClient.initPlayer(self)
-        self.__syncplayClient.updateFile(value)
+        self.__syncplayClient.updateFile(self.filename, self.duration, self.filespath)
         if self.__syncplayClient.last_global_update:
             self.set_position(self.__syncplayClient.getGlobalPosition())
             self.set_paused(True)
-            
 
+    def mplayer_answer_filename(self, value):
+        self.filename = value
+        self.fileupdatesteps += 1
+        if(self.fileupdatesteps == 3):
+            self.setUpFileInPlayer()
+            
+    def mplayer_answer_path(self, value):
+        self.filepath = value
+        self.fileupdatesteps += 1
+        if(self.fileupdatesteps == 3):
+            self.setUpFileInPlayer()
+
+    def mplayer_answer_length(self, value):
+        self.duration = value
+        self.fileupdatesteps += 1
+        if(self.fileupdatesteps == 3):
+            self.setUpFileInPlayer()
+   
     def set_paused(self, value):
         # docs say i can't set "pause" property, but it works...
-        self.send_set_property('pause', 'yes' if value else 'no')
+        self.send_set_property('pause', 'yes' if value else 'no') #TODO: change it to just pause -.-, so it will work correctly on windows
 
     def send_get_paused(self):
         self.send_get_property('pause')
