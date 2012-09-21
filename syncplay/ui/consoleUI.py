@@ -88,6 +88,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage( "\ts+ [time] - seek to: current position += time" )
             self.showMessage( "\tr - revert last seek" )
             self.showMessage( "\tp - toggle pause" )
+            self.showMessage( "\troom [name] - change room" )
             self.showMessage("Syncplay version: %s" % syncplay.version)
             self.showMessage("More info available at: %s" % syncplay.projectURL)
         else:
