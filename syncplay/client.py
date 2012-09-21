@@ -346,7 +346,7 @@ class SyncplayClientManager(object):
         message = self.users.currentUser.name +' jumped to ' + format_time(self.player_position)
         self.ui.showMessage(message)
         
-    def sendFilename(self):
+    def sendPlaying(self):
         if self.protocol and self.users.currentUser.filename:
             self.protocol.sender.send_playing(self.users.currentUser.filename)
 
@@ -388,10 +388,10 @@ class SyncplayClientManager(object):
             self.player.set_paused(True)
             self.askPlayer()
 
-    def updateFile(self, filename):
+    def updateFile(self, filename, duration = None, path = None):
         filename = unicode(filename, errors='replace')
         self.users.currentUser.filename = filename.encode('ascii','replace')
-        self.sendFilename()
+        self.sendPlaying()
 
     def updateGlobalState(self, counter, ctime, paused, position, name):
         self.counter_recv = max(self.counter_recv, counter)

@@ -148,7 +148,7 @@ class MPCHCAPIPlayer(object):
             self.askLock.acquire()
             position = self.__syncplayClient.getGlobalPosition()
             self.__setUpStateForNewlyOpenedFile(position)
-            self.__syncplayClient.updateFile(str(filename.encode('ascii','replace')))
+            self.__syncplayClient.updateFile(str(filename.encode('ascii','replace')), self.mpc_api.fileduration, self.mpc_api.filepath)
         finally:
             self.askLock.release()
         
