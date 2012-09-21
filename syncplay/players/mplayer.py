@@ -47,6 +47,7 @@ class MplayerProtocol(LineProcessProtocol):
         self.ignore_end = False
         self.error_lines = deque(maxlen=50)
         self.tmp_paused = None
+        self.set_pause = False
         
         self.duration = None
         self.filename = None
@@ -90,6 +91,7 @@ class MplayerProtocol(LineProcessProtocol):
     
     def prepare_player(self):
         self.set_paused(True)
+        
         self.set_position(0)
         self.send_get_filename()
 
@@ -117,6 +119,7 @@ class MplayerProtocol(LineProcessProtocol):
         self.send_get_property('path')
 
     def setUpFileInPlayer(self):
+        self.fileupdatesteps = 0
         self.__syncplayClient.initPlayer(self)
         self.__syncplayClient.updateFile(self.filename, self.duration, self.filespath)
         if self.__syncplayClient.last_global_update:
@@ -142,17 +145,19 @@ class MplayerProtocol(LineProcessProtocol):
             self.setUpFileInPlayer()
    
     def set_paused(self, value):
-        # docs say i can't set "pause" property, but it works...
-        self.send_set_property('pause', 'yes' if value else 'no') #TODO: change it to just pause -.-, so it will work correctly on windows
+        self.set_pause = value
+        self.send_get_paused()
 
     def send_get_paused(self):
         self.send_get_property('pause')
 
     def mplayer_answer_pause(self, value):
         value = value == 'yes'
+        if(self.set_pause <> None and self.set_pause <> value):
+            self.writeLines('pause')
+            self.set_pause = None
         self.tmp_paused = value
-
-
+    
     def set_position(self, value):
         self.send_set_property('time_pos', '%0.2f'%value)
 
