@@ -103,7 +103,7 @@ Within the Syncplay commandline you can enter the following commaands (and then 
 
 `p` - Toggle play/pause.
 
-## Instructions on how to use Syncplay for the first time
+### Instructions on how to use Syncplay for the first time
 
 1. Ensure you have the latest version of MPC-HC on Windows of MPlayer on Linux.
 
