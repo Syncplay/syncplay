@@ -501,7 +501,8 @@ class SyncplayClientManager(object):
         def addUser(self, user):
             if(not isinstance(user,SyncplayClientManager.SyncplayUser)):
                 user = SyncplayClientManager.SyncplayUser(user)
-            self.users.append(user)
+            if(not user.name == self.currentUser.name):
+                self.users.append(user)
             
         def removeUser(self, user):
             if(not isinstance(user,SyncplayClientManager.SyncplayUser)):
@@ -520,7 +521,7 @@ class SyncplayClientManager(object):
                     u.room = room
                     break
             #did not find a user, add
-            self.users.append(SyncplayClientManager.SyncplayUser(username, None, room))
+            self.addUser(SyncplayClientManager.SyncplayUser(username, None, room))
                 
         def setUsersFilename(self, username, filename, room):
             for u in self.users:
@@ -528,7 +529,7 @@ class SyncplayClientManager(object):
                     u.filename = filename
                     break
             #did not find a user, add
-            self.users.append(SyncplayClientManager.SyncplayUser(username, filename, room))
+            self.addUser(SyncplayClientManager.SyncplayUser(username, filename, room))
 
 from syncplay import ui
 from syncplay.ConfigurationGetter import ConfigurationGetter   
