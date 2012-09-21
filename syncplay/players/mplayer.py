@@ -94,7 +94,9 @@ class MplayerProtocol(LineProcessProtocol):
         
         self.set_position(0)
         self.send_get_filename()
-
+        self.send_get_length()
+        self.send_get_filepath()
+        
     def ask_for_status(self):
         self.send_get_paused()
         self.send_get_position()
@@ -145,17 +147,15 @@ class MplayerProtocol(LineProcessProtocol):
             self.setUpFileInPlayer()
    
     def set_paused(self, value):
-        self.set_pause = value
-        self.send_get_paused()
+        # docs say i can't set "pause" property, but it works...
+        # no, Fluxid, it doesn't on Windows, fuck you. TODO:
+        self.send_set_property('pause', 'yes' if value else 'no') 
 
     def send_get_paused(self):
         self.send_get_property('pause')
 
     def mplayer_answer_pause(self, value):
         value = value == 'yes'
-        if(self.set_pause <> None and self.set_pause <> value):
-            self.writeLines('pause')
-            self.set_pause = None
         self.tmp_paused = value
     
     def set_position(self, value):
