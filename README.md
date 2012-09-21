@@ -46,7 +46,7 @@ You can run `syncplayClient.exe` with the following command-line arguments to al
 
 `--name [name]` / `-n [name]` - Specify username to use
 
-`--debug' / `-d` - Enable debug mode
+`--debug` / `-d` - Enable debug mode
 
 `--force-gui-prompt` / `-g` - Force the configuration prompt to appear when Syncplay starts
 
