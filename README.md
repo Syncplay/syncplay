@@ -117,7 +117,7 @@ Within the Syncplay commandline you can enter the following commaands (and then 
 
 6. Enter configuration settings (see "Configuration window", above).
 
-7. If your friends are not in the same room as you then use the `room` command (see "Syncplay Commands")
+7. If your friends are not in the same room as you then use the room command (see "Syncplay Commands", above)
 
 8. If you don't have the file you want to play open then open it from within your media player.
         
