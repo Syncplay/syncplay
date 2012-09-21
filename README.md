@@ -1,6 +1,6 @@
 # Syncplay
 
-Solution to synchronize video playback across many instances of MPlayer and Media Player Classic (MPC-HC) over a network.
+Solution to synchronize video playback across many instances of MPlayer and Media Player Classic (MPC-HC) over a network such as the Internet.
 
 ## What does it do
 
