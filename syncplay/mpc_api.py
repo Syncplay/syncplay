@@ -22,6 +22,7 @@ class MPC_API:
         self.playstate = None
         self.fileplaying = None
         self.fileduration = None
+        self.filepath = None
         '''
         Most likely won't be up to date unless you ask API to refresh it
         '''
@@ -184,10 +185,11 @@ class MPC_API:
                 if(self.callbacks.on_update_playstate):  thread.start_new_thread(self.callbacks.on_update_playstate,(self.playstate,))
                 
             elif(cmd == MPC_API_COMMANDS.CMD_NOWPLAYING):
+                self.filepath = value.split('|')[3]
                 self.fileplaying =  value.split('|')[3].split('\\').pop()
-                if(self.callbacks.on_update_filename): thread.start_new_thread(self.callbacks.on_update_filename,(self.fileplaying,))
                 self.fileduration = int(value.split('|')[4])
-                if(self.callbacks.on_update_file_duration): thread.start_new_thread(self.callbacks.on_update_file_duration,(self.fileplaying,))
+                if(self.callbacks.on_update_filename): thread.start_new_thread(self.callbacks.on_update_filename,(self.fileplaying,))
+                if(self.callbacks.on_update_file_duration): thread.start_new_thread(self.callbacks.on_update_file_duration,(self.fileduration,))
                 
             elif(cmd == MPC_API_COMMANDS.CMD_CURRENTPOSITION):
                 self.lastfileposition = float(value)
