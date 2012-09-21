@@ -1,56 +1,67 @@
-# SyncPlay
+# Syncplay
 
-Solution to synchronize video playback across many instances of mplayer and Media Player Classic (MPC-HC) over the network.
-
-## Motivation
-
-1. Watching videos with friends and commenting them live on IRC or Mumble
-1. Do something for lulz and to learn new stuff
+Solution to synchronize video playback across many instances of MPlayer and Media Player Classic (MPC-HC) over a network.
 
 ## What does it do
 
-It synchronizes many media players, so many people can watch the same movie at the same moment.
-When one person pauses playback, it gets paused in all players. When one person seeks,
-all players seek to the same position. When new person joins to the watching session which
-runs for a while, his player starts playback at the moment where other people are.
+Syncplay synchronizes the position and playback state of multiple media players so that the viewers can watch the same thing at the same time.
+When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room'.
+When one person seeks, all players seek to the same position. When a new person joins (or someone reconnects) they will be syncronised with their fellow viewers.
+
+## What it doesn't do
+
+Syncplay does not provide video streaming, nor does it syncronise player configuration, selected audio or subtitle track, playback rate, volume or filters. Furthermore, the user must manually choose what file to play as Syncplay does not syncrhonise which file is open.
 
 ## Requirements
 
-All you need is Python 2.7 and Twisted to run python scripts.
+On Windows: You need the Media Player Classic Home Cinema (MPC) media player.
 
-### Windows
-
-Because setting up Python and installing requirements under Windows is a bit hard,
-I'll provide download links to "ready to use" package when it gets stable.
-
-If you still want to run it from sources, apart from Python and Twisted you'll
-probably need to instal manually setuptools and zope.interface packages. Additionaly
-you can install py2exe to make "all in one" redistributable package.
+On Linux: You need Python 2.7, Twisted and the MPlayer media player.
 
 ## Supported players
+### MPlayer on Linux
 
-### Mplayer
-
-`sync_mplayer` acts as a wrapper for mplayer. First two arguments are host and nickname.
+On Linux `syncplayClient.exe` acts as a wrapper for MPlayer. First two arguments are host and nickname.
 The rest are arguments to be given to mplayer (at least filename). It launches mplayer
 which behaves just like normal (it reacts to keyboard shortcuts etc).
 
 Default mplayer output is suppressed, but if mplayer quits with errors, those errors
 will be printed (at most 50 last lines).
 
-### Media Player Classic Home Cinema (MPC-HC)
+### Media Player Classic Home Cinema (MPC-HC) on Windows
 
-`sync_mpc` connects to MPC via its Web Interface. You need to enable it first in settings
-(check "Listen on port" with default port which is 13579 and to be more secure check
-"Allow access from localhost only"). You need to run MPC and open the file first, then launch syncplay.
+On Windows simply running `syncplayClient.exe` opens a command-line window for communication and an instance of MPC-HC for synbcronised video playback.
 
-You need to provide two argument to `sync_mpc`: hostname to conect to and nickname.
-If hostname and nickname doesn not change, you can create shortcut to executable somewhere, edit it
-and append those two arguments to command.
+### Opening a file with Syncplay
 
-## How to use it
+If you open a file with `syncplayClient.exe` then it will automatically load that file in Syncplay/MPC-HC.
 
-You need to run `run_sync_server` somewhere. If you have public IP, you can try to launch server on your computer
+## Command-line switches
+
+You can run `syncplayClient.exe` with the following command-line arguments to alter the settings:
+
+`--no-gui` - Do not display graphical user interface (GUI)
+
+`--host [address]` - Specify address of server to connect to (can be address:port)
+
+`--name [name]` / `-n [name]` - Specify username to use
+
+`--debug` / `-d` - Enable debug mode
+
+`--force-gui-prompt` / `-g` - Force the configuration prompt to appear when Syncplay starts
+
+`--no-store` - Disable the storing of configuration data (in .syncplay file)
+
+`--room [room]` / `-r [room]` - Specify default room to join upon connection
+
+`--password [password]` / `-p [password]` - Specify server password
+
+`[file]` - File to play upon start
+        
+
+## How to use the server
+
+You need to run `syncplayServer.exe` somewhere. If you have public IP, you can try to launch server on your computer
 and give your friends your IP number, so they can connect to it. It will listen at port 8999, you
 might need to allow connections to it in your firewall/router.
 
