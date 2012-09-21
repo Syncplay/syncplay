@@ -69,7 +69,7 @@ The window will appear if you:
 
 1. Run `syncplayClient.exe`  without settings being configured, e.g. on first boot,
 
-2. run `syncplayClient.exe` with the `--force-gui-prompt` or `-g` commandline swtiches, or
+2. Run `syncplayClient.exe` with the `--force-gui-prompt` or `-g` commandline swtiches, or
 
 3. Run `syncplayClientForceConfiguration.exe`.
 
