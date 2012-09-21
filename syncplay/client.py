@@ -111,7 +111,7 @@ class SyncClientProtocol(CommandProtocol):
             message = '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where)
             self.__syncplayClient.ui.showMessage(message)
             self.__syncplayClient.users.setUsersRoom(who, where)
-            self.__syncplayClient.users.setUsersFilename(who, what)
+            self.__syncplayClient.users.setUsersFilename(who, what, where)
             self.__syncplayClient.checkIfFileMatchesOthers()
     
         @argumentCount(1)
@@ -522,13 +522,13 @@ class SyncplayClientManager(object):
             #did not find a user, add
             self.users.append(SyncplayClientManager.SyncplayUser(username, None, room))
                 
-        def setUsersFilename(self, username, filename):
+        def setUsersFilename(self, username, filename, room):
             for u in self.users:
                 if(u.name == username):
                     u.filename = filename
                     break
             #did not find a user, add
-            self.users.append(SyncplayClientManager.SyncplayUser(username, filename, None))
+            self.users.append(SyncplayClientManager.SyncplayUser(username, filename, room))
 
 from syncplay import ui
 from syncplay.ConfigurationGetter import ConfigurationGetter   
