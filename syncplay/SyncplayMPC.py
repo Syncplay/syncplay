@@ -21,7 +21,7 @@ class SyncplayMPC(SyncplayClient):
         try:
             from syncplay.ui.GuiConfiguration import GuiConfigurationForMPC
             self.args = GuiConfigurationForMPC(self.args, self.args.force_gui_prompt).getProcessedConfiguration()
-        except: 
+        except ImportError: 
             pass
 
     def _promptForMissingArguments(self):

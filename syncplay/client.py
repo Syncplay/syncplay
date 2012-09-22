@@ -543,7 +543,8 @@ class SyncplayClient(object):
             self.argsGetter.saveValuesIntoConfigFile()
         except InvalidConfigValue:
             self._checkAndSaveConfiguration()
-        except:
+        except Exception, e:
+            print e.message
             sys.exit()
         
     def _prepareArguments(self):
