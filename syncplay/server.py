@@ -119,9 +119,9 @@ class SyncServerProtocol(CommandProtocol):
             self.factory.pong_received(self.__protocol, value, ctime)
     
         @state('connected')
-        @argumentCount(1)
+        @argumentCount(3)
         def playing(self, args):
-            self.factory.playing_received(self.__protocol, args[0])
+            self.factory.playing_received(self.__protocol, args[0], args[1], args[2])
 
         
         @state('connected')
@@ -142,7 +142,7 @@ class SyncServerProtocol(CommandProtocol):
             for w in self.factory.watchers.itervalues():
                     if w == watcher:
                         continue
-                    self.__protocol.sender.send_present(w.name, w.room, w.filename)
+                    self.__protocol.sender.send_present(w.name, w.room, w.filename, w.duration, w.size)
         
         @state('connected')    
         @argumentCount(4)
@@ -194,15 +194,15 @@ class SyncServerProtocol(CommandProtocol):
         def send_ping(self, value):
             self.__protocol.sendMessage('ping', value)
     
-        def send_playing(self, who, where, what):
-            self.__protocol.sendMessage('playing', who, where, what)
+        def send_playing(self, who, where, what, duration, size):
+            self.__protocol.sendMessage('playing', who, where, what, duration, size)
     
         def send_room(self, who, where):
             self.__protocol.sendMessage('room', who, where)
     
-        def send_present(self, who, where, what):
+        def send_present(self, who, where, what, duration, size):
             if what:
-                self.__protocol.sendMessage('present', who, where, what)
+                self.__protocol.sendMessage('present', who, where, what, duration, size)
             else:
                 self.__protocol.sendMessage('present', who, where)
     
@@ -222,7 +222,9 @@ class WatcherInfo(object):
         self.watcher_proto = watcher_proto
         self.name = name
         self.active = True
-
+        self.duration = None
+        self.size = None
+        
         self.paused = True
         self.position = 0
         self.filename = None
@@ -429,12 +431,14 @@ class SyncFactory(Factory):
     def schedule_send_ping(self, watcher, when=1):
         reactor.callLater(when, self.send_ping_to, watcher)
 
-    def playing_received(self, watcher_proto, filename):
+    def playing_received(self, watcher_proto, filename, duration, size):
         watcher = self.watchers.get(watcher_proto)
         if not watcher:
             return
         watcher.filename = filename
-        self.broadcast(watcher, lambda receiver: receiver.watcher_proto.sender.send_playing(watcher.name, watcher.room, filename))
+        watcher.duration = duration
+        watcher.size = size
+        self.broadcast(watcher, lambda receiver: receiver.watcher_proto.sender.send_playing(watcher.name, watcher.room, filename, duration, size))
                 
     def broadcast_room(self, sender, what):
         for receiver in self.watchers.itervalues():

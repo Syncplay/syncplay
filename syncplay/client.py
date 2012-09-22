@@ -55,17 +55,17 @@ class SyncClientProtocol(CommandProtocol):
             self.__syncplayClient.protocol.sender.send_list()
             self.__syncplayClient.scheduleSendStatus()
             if(self.__syncplayClient.users.currentUser.filename <> None):
-                self.__protocol.sendMessage('playing', self.__syncplayClient.users.currentUser.filename)
+                self.__syncplayClient.sendPlaying()
     
-        @argumentCount(2, 3)
+        @argumentCount(2, 5)
         def present(self, args):
-            if len(args) == 3:
-                who, where, what = args
+            if len(args) == 5:
+                who, where, what, duration, size = args
             else:
-                who, where, what = args[0], args[1], None
-            self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(who, what, where))
+                who, where, what, duration, size = args[0], args[1], None, None, None
+            self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(who, what, where, duration, size))
             if what:
-                message = '%s is present and is playing \'%s\' in the room: \'%s\'' % (who, what, where)
+                message = '%s is present and is playing \'%s\' in the room: \'%s\'' % (who, what, where) #TODO: add duration to message
                 self.__syncplayClient.ui.showMessage(message)
                 self.__syncplayClient.checkIfFileMatchesOthers()
             else:
@@ -105,12 +105,12 @@ class SyncClientProtocol(CommandProtocol):
                 self.__syncplayClient.ui.showMessage("Your version is %s against server's %s" % (syncplay.version, args[0]))
                 self.__syncplayClient.ui.showMessage("Please use latest version of client and server")
         
-        @argumentCount(3)
+        @argumentCount(5)
         def playing(self, args):
-            who, where, what = args
-            message = '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where)
+            who, where, what, duration, size = args
+            message = '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where) #TODO: add duration to message
             self.__syncplayClient.ui.showMessage(message)
-            self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(who, what, where))
+            self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(who, what, where, duration, size))
             self.__syncplayClient.checkIfFileMatchesOthers()
     
         @argumentCount(1)
@@ -139,19 +139,15 @@ class SyncClientProtocol(CommandProtocol):
                 counter, ctime, state, position, who_changed_state = args
             else:
                 return
-        
             if not state in ('paused', 'playing'):
                 return
-        
             paused = state == 'paused'
-        
             try:
                 counter = int(counter)
                 ctime = int(ctime)
                 position = int(position)
             except ValueError:
                 return
-        
             ctime /= 1000.0
             position /= 1000.0
         
@@ -173,13 +169,13 @@ class SyncClientProtocol(CommandProtocol):
         def send_room(self, where):
             self._protocol.sendMessage('room', where)
     
-        def send_playing(self, filename):
-            self._protocol.sendMessage('playing', filename)
+        def send_playing(self, filename, duration, size):
+            self._protocol.sendMessage('playing', filename, duration, size)
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, manager, retry = 10):
         self.__syncplayClient = manager
-        self.retry = retry
+        self.retry = retry #add incremental wait
 
     def buildProtocol(self, addr):
         return SyncClientProtocol(self.__syncplayClient)
@@ -348,7 +344,7 @@ class SyncplayClientManager(object):
         
     def sendPlaying(self):
         if self.protocol and self.users.currentUser.filename:
-            self.protocol.sender.send_playing(self.users.currentUser.filename)
+            self.protocol.sender.send_playing(self.users.currentUser.filename, self.users.currentUser.fileduration, self.users.currentUser.filesize)
 
     def updatePlayerStatus(self, paused, position):
         self.status_ask_received += 1
@@ -391,8 +387,8 @@ class SyncplayClientManager(object):
     def updateFile(self, filename, duration, path):
         filename = unicode(filename, errors='replace')
         self.users.currentUser.filename = filename.encode('ascii','replace')
-        self.users.currentUser.fileduration = duration
-        self.users.currentUser.filesize = os.path.getsize(path)
+        self.users.currentUser.fileduration = unicode(duration)
+        self.users.currentUser.filesize = unicode(os.path.getsize(path))
         self.sendPlaying()
 
     def updateGlobalState(self, counter, ctime, paused, position, name):
@@ -485,7 +481,7 @@ class SyncplayClientManager(object):
             self.__ui.showErrorMessage(message)
     
     class SyncplayUser(object):
-        def __init__(self, name = None, filename = None, room = None, filesize = None, fileduration = None):
+        def __init__(self, name = None, filename = None, room = None, fileduration = None, filesize = None):
             self.name = name
             self.room = room
             self.filename = filename
