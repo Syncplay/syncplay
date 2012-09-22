@@ -13,13 +13,15 @@ When one person seeks, all players seek to the same position. When a new person 
 Syncplay does not provide video streaming, nor does it synchronise player configuration, selected audio or subtitle track, playback rate, volume or filters. Furthermore, the user must manually choose what file to play as Syncplay does not synchronise which file is open. Finally, Syncplay does not provide a voice or text-based chat platform to allow for discussion during playback as Syncplay is intended to be used in conjunction with third-party communication software such as IRC, Mumble or Skype.
 
 ## Requirements
-Frozen Windows executables are available on download page - https://github.com/Uriziel/syncplay/downloads
+Frozen Windows executables are available on the download page - https://github.com/Uriziel/syncplay/downloads
 
 On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`.
 
 On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
 
-For running python script you need (not needed if using frozen executable package from download page):
+If you are not using the frozen executable package from the download page then you will need to be able to run python scripts.
+
+To run python scripts you will need the following:
 
 `pygtk` >= `2.0.0` (unless started with `--no-gui`)
 
