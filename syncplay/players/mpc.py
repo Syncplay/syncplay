@@ -10,7 +10,7 @@ class MPCHCAPIPlayer(object):
         self.__syncplayClient = manager
         self.mpc_api = MPC_API()
         self.mpc_api.callbacks.on_update_filename = lambda _: self.make_ping()
-        self.mpc_api.callbacks.on_mpc_closed = lambda: self.__syncplayClient.stop()
+        self.mpc_api.callbacks.on_mpc_closed = lambda: self.__syncplayClient.stop(False)
         self.mpc_api.callbacks.on_fileStateChange = lambda _: self.lockAsking()
         self.mpc_api.callbacks.on_update_playstate = lambda _: self.unlockAsking()
         self.preventAsking = False
@@ -154,8 +154,8 @@ class MPCHCAPIPlayer(object):
             self.askLock.release()
         
     def mpc_error(self, err=""):
-        self.__syncplayClient.stop(False)
-        sys.exit()
+        self.__syncplayClient.stop()
+
 
 def run_mpc(manager, mpc_path, file_path, args):
     mpc = MPCHCAPIPlayer(manager)
