@@ -47,7 +47,7 @@ The window will appear if you:
 
 1. Run `syncplayClient.exe`  without settings being configured, e.g. on first boot,
 
-2. Run `syncplayClient.exe` with the `--force-gui-prompt` or `-g` commandline swtiches, or
+2. Run `syncplayClient.exe` with the `--force-gui-prompt` or `-g` commandline switches, or
 
 3. Run `syncplayClientForceConfiguration.exe`.
 
@@ -67,11 +67,11 @@ Pressing "Save" will save the settings and continue Syncplay start-up.
 
 ### Syncplay Commands
 
-Within the Syncplay commandline you can enter the following commaands (and then press enter) to access features:
+Within the Syncplay command-line you can enter the following commands (and then press enter) to access features:
 
 `help` - Displays list of commands and other information.
 
-`room [room]` - Leaves current room and joins specified room. You are only syncronised with others in the same room on the same server. If no room is specified then it will use the filename of the currently playing file, or alternatively will join the default room if no file is playing.
+`room [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then it will use the filename of the currently playing file, or alternatively will join the default room if no file is playing.
 
 `s [time]` - Seek (jump) to specified time. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
 
