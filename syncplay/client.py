@@ -110,8 +110,7 @@ class SyncClientProtocol(CommandProtocol):
             who, where, what = args
             message = '%s is playing \'%s\' in the room: \'%s\'' % (who, what, where)
             self.__syncplayClient.ui.showMessage(message)
-            self.__syncplayClient.users.setUsersRoom(who, where)
-            self.__syncplayClient.users.setUsersFilename(who, what, where)
+            self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(who, what, where))
             self.__syncplayClient.checkIfFileMatchesOthers()
     
         @argumentCount(1)
@@ -122,7 +121,7 @@ class SyncClientProtocol(CommandProtocol):
         @argumentCount(2)
         def room(self, args):
             message = '%s entered the room: \'%s\'' % (args[0], args[1])
-            self.__syncplayClient.users.setUsersRoom(args[0], args[1])
+            self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(args[0], None, args[1]))
             self.__syncplayClient.checkIfFileMatchesOthers()
             self.__syncplayClient.ui.showMessage(message)
     
@@ -495,25 +494,32 @@ class SyncplayClientManager(object):
             
     class UserList(object):
         def __init__(self):
-            self.users = []
+            self.users = dict()
             self.currentUser = SyncplayClientManager.SyncplayUser()
             
         def addUser(self, user):
             if(not isinstance(user,SyncplayClientManager.SyncplayUser)):
                 user = SyncplayClientManager.SyncplayUser(user)
             if(not user.name == self.currentUser.name):
-                self.users.append(user)
+                if(self.users.has_key(user.name)):
+                    self.users[user.name].room = user.room if user.room <> None else self.users[user.name].room
+                    self.users[user.name].filename = user.filename if user.filename <> None else self.users[user.name].filename
+                    self.users[user.name].filesize = user.filesize if user.filesize <> None else self.users[user.name].filesize
+                    self.users[user.name].fileduration = user.fileduration if user.fileduration <> None else self.users[user.name].fileduration
+                else:   
+                    self.users[user.name] = user
             
         def removeUser(self, user):
             if(not isinstance(user,SyncplayClientManager.SyncplayUser)):
                 user = SyncplayClientManager.SyncplayUser(user) 
-            self.users[:] = list(itertools.ifilterfalse(lambda x: user.name == x.name, self.users))
+            if(self.users.has_key(user.name)):
+                self.users.pop(user.name)
     
         def getUsersWithNotMatchingFilenames(self):
             if(self.currentUser.filename == None):
                 return []
             matchingFilename = lambda x: self._areUsersFilesSame(x)
-            return list(itertools.ifilterfalse(matchingFilename, self.users))
+            return list(itertools.ifilterfalse(matchingFilename, self.users.itervalues()))
             
         def _areUsersFilesSame(self, user):
             filenameCheck = (user.filename == None or user.filename == self.currentUser.filename)
@@ -521,22 +527,7 @@ class SyncplayClientManager(object):
             durationCheck = (user.fileduration == None or user.fileduration == self.currentUser.fileduration)
             roomCheck = user.room <> self.currentUser.room
             return (filenameCheck and sizeCheck and durationCheck) or roomCheck
-        
-        def setUsersRoom(self, username, room):
-            for u in self.users:
-                if(u.name == username):
-                    u.room = room
-                    break
-            #did not find a user, add
-            self.addUser(SyncplayClientManager.SyncplayUser(username, None, room))
-                
-        def setUsersFilename(self, username, filename, room):
-            for u in self.users:
-                if(u.name == username):
-                    u.filename = filename
-                    break
-            #did not find a user, add
-            self.addUser(SyncplayClientManager.SyncplayUser(username, filename, room))
+
 
 from syncplay import ui
 from syncplay.ConfigurationGetter import ConfigurationGetter   
