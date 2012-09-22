@@ -19,7 +19,7 @@ On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`.
 
 On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
 
-### Python scripts (for those not using frozen executable package)
+### Python scripts (for those not using the frozen executable package)
 
 If you are using the frozen executable package avaiable from the download page then you will not need to be able to run python scripts.
 
