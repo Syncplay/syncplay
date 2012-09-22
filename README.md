@@ -21,8 +21,6 @@ On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not suppor
 
 ### Python scripts (for those not using the frozen executable package)
 
-If you are using the frozen executable package avaiable from the download page then you will not need to be able to run python scripts.
-
 If you are not using the frozen executable package then you will need the following to run python scripts:
 
 `pygtk` >= `2.0.0` (unless started with `--no-gui`)
@@ -32,6 +30,8 @@ If you are not using the frozen executable package then you will need the follow
 `pywin32` >= `r217` (mpc-hc, Windows only)
 
 `twisted` >= `12.1.0`
+
+If you are using the frozen executable package avaiable from the download page then you will not need to be able to run python scripts.
 
 ## Supported players
 ### MPlayer on Linux
