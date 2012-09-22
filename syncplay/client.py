@@ -65,7 +65,7 @@ class SyncClientProtocol(CommandProtocol):
                 who, where, what, duration, size = args[0], args[1], None, None, None
             self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(who, what, where, duration, size))
             if what:
-                message = '%s is present and is playing \'%s\' (%s) in the room: \'%s\'' % (who, what, format_time(int(duration)), where)
+                message = '%s is present and is playing \'%s\' (%s) in the room: \'%s\'' % (who, what, format_time(float(duration)), where)
                 self.__syncplayClient.ui.showMessage(message)
                 self.__syncplayClient.checkIfFileMatchesOthers()
             else:
