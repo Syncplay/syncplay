@@ -154,7 +154,7 @@ class MPCHCAPIPlayer(object):
             self.askLock.release()
         
     def mpc_error(self, err=""):
-        self.__syncplayClient.stop()
+        self.__syncplayClient.stop(False)
         sys.exit()
 
 def run_mpc(manager, mpc_path, file_path, args):

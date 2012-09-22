@@ -252,7 +252,7 @@ class SyncplayClientManager(object):
         self.running = True
         reactor.run()
 
-    def stop(self):
+    def stop(self, promptForAction = True):
         if not self.running:
             return
         self.running = False
@@ -263,7 +263,8 @@ class SyncplayClientManager(object):
         if self.player:
             self.player.drop()
         reactor.callLater(0.1, reactor.stop)
-        self.ui.promptFor("Press enter to exit")
+        if(promptForAction):
+            self.ui.promptFor("Press enter to exit")
 
     def checkIfFileMatchesOthers(self):
         notMatchingList = self.users.getUsersWithNotMatchingFilenames()
