@@ -35,7 +35,8 @@ class ConsoleUI(threading.Thread):
             pass
         
     def promptFor(self, prompt = ">", message = ""):
-        print(message)
+        if message <> "":
+            print(message)
         self.promptMode.clear()
         print(prompt, end='')
         self.promptMode.wait()
