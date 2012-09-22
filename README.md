@@ -55,7 +55,7 @@ The settings to be configured are as follows:
 
 `Host` - Address (hostname / IP) of server to connect to (optionally with port), e.g. `localhost:2734` or `192.168.0.1`. Default port is `8999`.
 
-`Username` - Name that the server and other viewers know you by
+`Username` - Name that the server and other viewers know you by.
 
 `Default room (optional)` - Room to join upon connection. You will only be synchronised with others in the same room on the same server. Default room is `default`.
 
