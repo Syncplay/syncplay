@@ -3,7 +3,6 @@
 from ..mpc_api import MPC_API
 import time
 import threading
-import sys
 
 class MPCHCAPIPlayer(object):
     def __init__(self, manager):
