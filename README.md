@@ -20,9 +20,13 @@ On Windows: You need Media Player Classic - Home Cinema (MPC-HC) >= `1.6.3`.
 On Linux: mplayer >= `1.1`.
 
 For running python script you need (not needed if using frozen executable package from download page):
+
 `pygtk` >= `2.0.0` (unless started with `--no-gui`)
+
 `argparse` >= `1.1`
+
 `pywin32` >= `r217` (mpc-hc, Windows only)
+
 `twisted` >= `12.1.0`
 
 ## Supported players
