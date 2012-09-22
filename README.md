@@ -4,13 +4,13 @@ Solution to synchronize video playback across multiple instances of MPlayer and/
 
 ## What does it do
 
-Syncplay synchronizes the position and play state of multiple media players so that the viewers can watch the same thing at the same time.
+Syncplay synchronises the position and play state of multiple media players so that the viewers can watch the same thing at the same time.
 When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room' (viewing session).
-When one person seeks, all players seek to the same position. When a new person joins they will be syncronised with their fellow viewers.
+When one person seeks, all players seek to the same position. When a new person joins they will be synchronised with their fellow viewers.
 
 ## What does it not do
 
-Syncplay does not provide video streaming, nor does it syncronise player configuration, selected audio or subtitle track, playback rate, volume or filters. Furthermore, the user must manually choose what file to play as Syncplay does not syncrhonise which file is open. Finally, Syncplay does not provide a voice or text-based chat platform to allow for discussion during playback as Syncplay is intended to be used in conjunction with third-party communication software such as IRC, Mumble or Skype.
+Syncplay does not provide video streaming, nor does it synchronise player configuration, selected audio or subtitle track, playback rate, volume or filters. Furthermore, the user must manually choose what file to play as Syncplay does not synchronise which file is open. Finally, Syncplay does not provide a voice or text-based chat platform to allow for discussion during playback as Syncplay is intended to be used in conjunction with third-party communication software such as IRC, Mumble or Skype.
 
 ## Requirements
 
@@ -41,7 +41,7 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 If you open a file with `syncplayClient.exe` then it will automatically open Syncplay and load the file through MPC-HC on Windows and MPlayer on Linux.
 
 ### Configuration window
-The configuration window allows for various settings to be configured prior to Syncplsy starting.
+The configuration window allows for various settings to be configured prior to Syncplay starting.
 
 The window will appear if you:
 
@@ -57,7 +57,7 @@ The settings to be configured are as follows:
 
 `Username` - Name that the server and other viewers know you by
 
-`Default room (optional)` - Room to join upon connection. You will only be syncronised with others in the same room on the same server. Default room is `default`.
+`Default room (optional)` - Room to join upon connection. You will only be synchronised with others in the same room on the same server. Default room is `default`.
 
 `Server password (optional)` - Password for server. Servers that are not password protected have a blank password.
 
