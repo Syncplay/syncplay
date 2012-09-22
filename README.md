@@ -17,7 +17,7 @@ Frozen Windows executables are available on download page - https://github.com/U
 
 On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`.
 
-On Linux: `mplayer` >= `1.1`.
+On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
 
 For running python script you need (not needed if using frozen executable package from download page):
 
