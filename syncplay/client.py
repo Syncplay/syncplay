@@ -108,7 +108,7 @@ class SyncClientProtocol(CommandProtocol):
         @argumentCount(5)
         def playing(self, args):
             who, where, what, duration, size = args
-            message = '%s is playing \'%s\' (%s) in the room: \'%s\'' % (who, what, format_time(int(duration)), where)
+            message = '%s is playing \'%s\' (%s) in the room: \'%s\'' % (who, what, format_time(float(duration)), where)
             self.__syncplayClient.ui.showMessage(message)
             self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(who, what, where, duration, size))
             self.__syncplayClient.checkIfFileMatchesOthers()
