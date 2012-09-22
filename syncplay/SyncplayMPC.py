@@ -3,7 +3,7 @@ from syncplay.client import SyncplayClientManager
 
 from syncplay.players import mpc
 from syncplay.ConfigurationGetter import MPCConfigurationGetter
-from syncplay.ui.GuiConfiguration import GuiConfigurationForMPC
+
       
 class SyncplayMPC(SyncplayClient):
     def __init__(self):
@@ -18,7 +18,11 @@ class SyncplayMPC(SyncplayClient):
         self.args = self.argsGetter.getConfiguration()
 
     def _guiPromptForMissingArguments(self):
-        self.args = GuiConfigurationForMPC(self.args, self.args.force_gui_prompt).getProcessedConfiguration()
+        try:
+            from syncplay.ui.GuiConfiguration import GuiConfigurationForMPC
+            self.args = GuiConfigurationForMPC(self.args, self.args.force_gui_prompt).getProcessedConfiguration()
+        except: 
+            pass
 
     def _promptForMissingArguments(self):
         SyncplayClient._promptForMissingArguments(self)
