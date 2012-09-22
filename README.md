@@ -15,9 +15,9 @@ Syncplay does not provide video streaming, nor does it synchronise player config
 ## Requirements
 Frozen Windows executables are available on download page - https://github.com/Uriziel/syncplay/downloads
 
-On Windows: You need Media Player Classic - Home Cinema (MPC-HC) >= `1.6.3`.
+On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`.
 
-On Linux: mplayer >= `1.1`.
+On Linux: `mplayer` >= `1.1`.
 
 For running python script you need (not needed if using frozen executable package from download page):
 
@@ -32,35 +32,32 @@ For running python script you need (not needed if using frozen executable packag
 ## Supported players
 ### MPlayer on Linux
 
-<TO UPDATE>
+On Linux `syncplayClient.py` acts as a wrapper for MPlayer. 
+You're expected to pass filename as the first positional argument, if you wish to pass more arguments to mplayer prepend them with -- arugment, it's treated as the last argument for wrapper.
+It launches mplayer which behaves just like normal (it reacts to keyboard shortcuts etc).
 
-On Linux `syncplayClient.exe` acts as a wrapper for MPlayer. First two arguments are host and nickname.
-The rest are arguments to be given to mplayer (at least filename). It launches mplayer
-which behaves just like normal (it reacts to keyboard shortcuts etc).
-
-Default mplayer output is suppressed, but if mplayer quits with errors, those errors
-will be printed (at most 50 last lines).
+Default mplayer output is suppressed, but if mplayer quits with errors, those errors will be printed (at most 50 last lines).
 
 ### Media Player Classic Home Cinema (MPC-HC) on Windows
 
-On Windows simply running `syncplayClient.exe` opens a Syncplay command-line window for communication and an instance of MPC-HC for synchronised video playback. This instance of MPC-HC is controlled by Syncplay through the associated command-line window, but other instances of MPC-HC will be unaffected.
+On Windows simply running `syncplayClient.exe` opens a Syncplay command-line window for communication and a new instance of MPC-HC for synchronised video playback. This instance of MPC-HC is controlled by Syncplay through the associated command-line window, but other instances of MPC-HC will be unaffected.
 
 ## Using Syncplay
 
 ### Opening a media file with Syncplay
 
-If you open a file with `syncplayClient.exe` then it will automatically open Syncplay and load the file through MPC-HC on Windows and MPlayer on Linux.
+If you open a file with `syncplayClient` then it will automatically open Syncplay and load the file through MPC-HC on Windows and MPlayer on Linux.
 
 ### Configuration window
 The configuration window allows for various settings to be configured prior to Syncplay starting.
 
 The window will appear if you:
 
-1. Run `syncplayClient.exe`  without settings being configured, e.g. on first boot,
+1. Run `syncplayClient`  without settings being configured, e.g. on first boot,
 
-2. Run `syncplayClient.exe` with the `--force-gui-prompt` or `-g` commandline switches, or
+2. Run `syncplayClient` with the `--force-gui-prompt` or `-g` commandline switches, or
 
-3. Run `syncplayClientForceConfiguration.exe`.
+3. Run `syncplayClientForceConfiguration`.
 
 The settings to be configured are as follows:
 
@@ -72,7 +69,7 @@ The settings to be configured are as follows:
 
 `Server password (optional)` - Password for server. Servers that are not password protected have a blank password.
 
-`Path to mpc-hc.exe [Windows only]` - Location of the MPC-HC executable (mpc-hc.exe or mpc-hc64.exe). If this is in a common location then it will be filled in by default.
+`Path to mpc-hc.exe [Windows only]` - Location of the MPC-HC executable (mpc-hc.exe or mpc-hc64.exe). If this is in a common location then it will be filled in by default. Users are adviced to check it though, if it's chosen their desired instalation.
 
 Pressing "Save" will save the settings and continue Syncplay start-up.
 
@@ -98,9 +95,9 @@ Within the Syncplay command-line you can enter the following commands (and then 
 
 2. Download Syncplay from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
 
-3. If you are running your own server then open `syncplayServer.exe` (see "How to use the server", below)
+3. If you are running your own server then open `syncplayServer` (see "How to use the server", below)
 
-4. Open `syncplayClient.exe` (or open the media file you wish to play with `syncplayClient.exe`, e.g. using "Open with")
+4. Open `syncplayClient` (or open the media file you wish to play with `syncplayClient`, e.g. using "Open with")
 
 5. Enter configuration settings (see "Configuration window", above).
 
@@ -110,7 +107,7 @@ Within the Syncplay command-line you can enter the following commands (and then 
 
 ### Command-line switches
 
-You can run `syncplayClient.exe` with the following command-line switches to alter Syncplay settings or behaviour:
+You can run `syncplayClient` with the following command-line switches to alter Syncplay settings or behaviour:
 
 `--no-gui` - Do not display graphical user interface (GUI)
 
@@ -130,20 +127,27 @@ You can run `syncplayClient.exe` with the following command-line switches to alt
 
 `[file]` - File to play upon start
 
+`--` - used as a last argument for syncplayClient, used to prepend arguments that are meant to be passed to player
+
 ### Error messages and notifications
 
-"Rewinded due to time difference" - This means that your media player ended up too far in front of at least one other viewer and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly.
+`Rewinded due to time difference` - This means that your media player ended up too far in front of at least one other viewer and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly.
        
 ## How to use the server
 
-<TO UPDATE>
-
-You need to run `syncplayServer.exe`. If you have a public IP then you can try to launch server on your computer
-and give your friends your IP number, so they can connect to it. It will listen at port `8999`, you
+You need to run `syncplayServer`. If you have a public IP then you can try to launch server on your computer
+and give your friends your IP number, so they can connect to it. It will listen at port `8999`, unless stated otherwise, you
 might need to allow connections to it in your firewall/router.
 
-Then you launch player synchronization. When it connects and doesn't print errors about player, you are ready.
-When all interested people join, you can just unpause in and it will just start to play everywhere.
+Pass the IP or hostnam to people you want to watch with and you're ready to go.
+
+### Server command-line switches
+
+`--port [port]` - use stated port instead of the default one.
+
+`--isolate-room` - if stated you won't be able to see users in rooms different for your.
+
+`--password` - server pasword used for private servers.
 
 ## How to report bugs
 
