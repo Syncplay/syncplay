@@ -33,7 +33,7 @@ For running python script you need (not needed if using frozen executable packag
 ### MPlayer on Linux
 
 On Linux `syncplayClient.py` acts as a wrapper for MPlayer. 
-You're expected to pass filename as the first positional argument, if you wish to pass more arguments to mplayer prepend them with -- arugment, it's treated as the last argument for wrapper.
+You're expected to pass filename as the first positional argument, if you wish to pass more arguments to mplayer prepend them with -- argument, it's treated as the last argument for wrapper.
 It launches mplayer which behaves just like normal (it reacts to keyboard shortcuts etc).
 
 Default mplayer output is suppressed, but if mplayer quits with errors, those errors will be printed (at most 50 last lines).
@@ -69,7 +69,7 @@ The settings to be configured are as follows:
 
 `Server password (optional)` - Password for server. Servers that are not password protected have a blank password.
 
-`Path to mpc-hc.exe [Windows only]` - Location of the MPC-HC executable (mpc-hc.exe or mpc-hc64.exe). If this is in a common location then it will be filled in by default. Users are adviced to check it though, if it's chosen their desired instalation.
+`Path to mpc-hc.exe [Windows only]` - Location of the MPC-HC executable (mpc-hc.exe or mpc-hc64.exe). If this is in a common location then it will be filled in by default. Users are adviced to check it though, if it's chosen their desired installation.
 
 Pressing "Save" will save the settings and continue Syncplay start-up.
 
@@ -139,7 +139,7 @@ You need to run `syncplayServer`. If you have a public IP then you can try to la
 and give your friends your IP number, so they can connect to it. It will listen at port `8999`, unless stated otherwise, you
 might need to allow connections to it in your firewall/router.
 
-Pass the IP or hostnam to people you want to watch with and you're ready to go.
+Pass the IP or hostname to people you want to watch with and you're ready to go.
 
 ### Server command-line switches
 
@@ -147,7 +147,7 @@ Pass the IP or hostnam to people you want to watch with and you're ready to go.
 
 `--isolate-room` - if stated you won't be able to see users in rooms different for your.
 
-`--password` - server pasword used for private servers.
+`--password` - server password used for private servers.
 
 ## How to report bugs
 
