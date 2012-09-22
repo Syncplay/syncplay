@@ -263,6 +263,7 @@ class SyncplayClientManager(object):
         if self.player:
             self.player.drop()
         reactor.callLater(0.1, reactor.stop)
+        self.ui.promptFor("Press enter to exit")
 
     def checkIfFileMatchesOthers(self):
         notMatchingList = self.users.getUsersWithNotMatchingFilenames()
@@ -480,6 +481,9 @@ class SyncplayClientManager(object):
         def showErrorMessage(self, message):
             self.__ui.showErrorMessage(message)
     
+        def promptFor(self, prompt):
+            return self.__ui.promptFor(prompt)
+            
     class SyncplayUser(object):
         def __init__(self, name = None, filename = None, room = None, fileduration = None, filesize = None):
             self.name = name
@@ -561,8 +565,8 @@ class SyncplayClient(object):
     def _promptForMissingArguments(self):
         if(self.args.no_gui):
             if (self.args.host == None):
-                self.args.host = self.interface.promptFor(promptName = "Hostname", message = "You must supply hostname on the first run, it's easier through command line arguments.")
+                self.args.host = self.interface.promptFor(prompt = "Hostname: ", message = "You must supply hostname on the first run, it's easier through command line arguments.")
             if (self.args.name == None):
-                self.args.name = self.interface.promptFor(promptName = "Username", message = "You must supply username on the first run, it's easier through command line arguments.")
+                self.args.name = self.interface.promptFor(prompt = "Username: ", message = "You must supply username on the first run, it's easier through command line arguments.")
         else:
             self._guiPromptForMissingArguments()

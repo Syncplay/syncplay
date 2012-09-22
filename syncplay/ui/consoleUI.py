@@ -34,10 +34,10 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.protocol_factory.stop_retrying()
             pass
         
-    def promptFor(self, promptName = ">", message = ""):
+    def promptFor(self, prompt = ">", message = ""):
         print(message)
         self.promptMode.clear()
-        print(promptName+": ", end='')
+        print(prompt, end='')
         self.promptMode.wait()
         return self.PromptResult
 

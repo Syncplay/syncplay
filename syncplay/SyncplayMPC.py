@@ -27,6 +27,6 @@ class SyncplayMPC(SyncplayClient):
     def _promptForMissingArguments(self):
         SyncplayClient._promptForMissingArguments(self)
         if (self.args.mpc_path == None):
-            self.args.mpc_path = self.interface.promptFor(promptName = "Path to mpc-hc.exe", message = "You must supply path to mpc on the first run, it's easier through command line arguments.")
+            self.args.mpc_path = self.interface.promptFor(prompt = "Path to mpc-hc.exe: ", message = "You must supply path to mpc on the first run, it's easier through command line arguments.")
       
     
