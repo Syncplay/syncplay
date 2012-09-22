@@ -141,7 +141,7 @@ class MplayerProtocol(LineProcessProtocol):
             self.setUpFileInPlayer()
 
     def mplayer_answer_length(self, value):
-        self.duration = value
+        self.duration = int(value)
         self.fileupdatesteps += 1
         if(self.fileupdatesteps == 3):
             self.setUpFileInPlayer()
