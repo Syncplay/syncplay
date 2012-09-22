@@ -1,7 +1,7 @@
 #coding:utf8
 
 import threading,time,thread
-import win32con, win32api, win32gui, ctypes, ctypes.wintypes
+import win32con, win32api, win32gui, ctypes, ctypes.wintypes #@UnresolvedImport @UnusedImport
 
 class MPC_API:
     def __init__(self, enforce_custom_handler = False):
