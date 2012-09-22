@@ -1,16 +1,16 @@
 # Syncplay
 
-Solution to synchronize video playback across multiple instances of MPlayer and/or Media Player Classic (MPC-HC) over a network such as the Internet.
+Solution to synchronize video playback across multiple instances of MPlayer and/or Media Player Classic (MPC-HC) over the Internet.
 
 ## What does it do
 
 Syncplay synchronizes the position and play state of multiple media players so that the viewers can watch the same thing at the same time.
-When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room'.
+When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room' (viewing session).
 When one person seeks, all players seek to the same position. When a new person joins (or someone reconnects) they will be syncronised with their fellow viewers.
 
 ## What does it not do
 
-Syncplay does not provide video streaming, nor does it syncronise player configuration, selected audio or subtitle track, playback rate, volume or filters. Furthermore, the user must manually choose what file to play as Syncplay does not syncrhonise which file is open.
+Syncplay does not provide video streaming, nor does it syncronise player configuration, selected audio or subtitle track, playback rate, volume or filters. Furthermore, the user must manually choose what file to play as Syncplay does not syncrhonise which file is open. Finally, Syncplay does not provide a voice or text-based chat platform to allow for discussion during playback as Syncplay is intended to be used in conjunction with third-party communication software such as IRC, Mumble or Skype.
 
 ## Requirements
 
@@ -40,28 +40,6 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 If you open a file with `syncplayClient.exe` then it will automatically open Syncplay and load the file through MPC-HC on Windows and MPlayer on Linux.
 
-### Command-line switches
-
-You can run `syncplayClient.exe` with the following command-line arguments to alter the settings:
-
-`--no-gui` - Do not display graphical user interface (GUI)
-
-`--host [address]` - Specify address of server to connect to (can be address:port)
-
-`--name [name]` / `-n [name]` - Specify username to use
-
-`--debug` / `-d` - Enable debug mode
-
-`--force-gui-prompt` / `-g` - Force the configuration window to appear when Syncplay starts
-
-`--no-store` - Disable the storing of configuration data (in .syncplay file)
-
-`--room [room]` / `-r [room]` - Specify default room to join upon connection. If no room is specified then it will use the filename of the currently playing file, or alternatively will join the default room if no file is playing.
-
-`--password [password]` / `-p [password]` - Specify server password
-
-`[file]` - File to play upon start
-
 ### Configuration window
 The configuration window allows for various settings to be configured prior to Syncplsy starting.
 
@@ -79,7 +57,7 @@ The settings to be configured are as follows:
 
 `Username` - Name that the server and other viewers know you by
 
-`Default room (optional)` - Room to join upon connection. You will only be syncronised with others on the same room on the same server. Default room is `default`.
+`Default room (optional)` - Room to join upon connection. You will only be syncronised with others in the same room on the same server. Default room is `default`.
 
 `Server password (optional)` - Password for server. Servers that are not password protected have a blank password.
 
@@ -93,7 +71,7 @@ Within the Syncplay commandline you can enter the following commaands (and then 
 
 `help` - Displays list of commands and other information.
 
-`room [room]` - Leaves current room and joins specified room. You are only syncronised with others on the same room on the same server.
+`room [room]` - Leaves current room and joins specified room. You are only syncronised with others in the same room on the same server. If no room is specified then it will use the filename of the currently playing file, or alternatively will join the default room if no file is playing.
 
 `s [time]` - Seek (jump) to specified time. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
 
@@ -118,6 +96,28 @@ Within the Syncplay commandline you can enter the following commaands (and then 
 6. If your fellow viewers are not in the same 'room' as you then use the room command (see "Syncplay Commands", above)
 
 7. If you don't have the file you want to play open in your media player then open it from within your media player.
+
+### Command-line switches
+
+You can run `syncplayClient.exe` with the following command-line switches to alter Syncplay settings or behaviour:
+
+`--no-gui` - Do not display graphical user interface (GUI)
+
+`--host [address]` - Specify address of server to connect to (can be address:port)
+
+`--name [name]` / `-n [name]` - Specify username to use
+
+`--debug` / `-d` - Enable debug mode
+
+`--force-gui-prompt` / `-g` - Force the configuration window to appear when Syncplay starts
+
+`--no-store` - Disable the storing of configuration data (in .syncplay file)
+
+`--room [room]` / `-r [room]` - Specify default room to join upon connection.
+
+`--password [password]` / `-p [password]` - Specify server password
+
+`[file]` - File to play upon start
 
 ### Error messages and notifications
 
