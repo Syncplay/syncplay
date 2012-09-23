@@ -44,7 +44,7 @@ Default mplayer output is suppressed, but if mplayer quits with errors, those er
 
 ### Media Player Classic - Home Cinema (MPC-HC) on Windows
 
-On Windows simply running `syncplayClient.exe` opens a Syncplay command-line window for communication and a new instance of MPC-HC for synchronised video playback. This instance of MPC-HC is controlled by Syncplay through the associated command-line window, but other instances of MPC-HC will be unaffected.
+On Windows simply running `syncplayClient.exe` opens a Syncplay command-line window for communication/control and a new instance of MPC-HC for synchronised video playback. This instance of MPC-HC is controlled by Syncplay through the associated command-line window, but other instances of MPC-HC will be unaffected.
 
 ## Using Syncplay
 
