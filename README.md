@@ -8,7 +8,7 @@ Syncplay synchronises the position and play state of multiple media players so t
 When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room' (viewing session).
 When one person seeks, all players seek to the same position. When a new person joins they will be synchronised with their fellow viewers.
 
-## What does it not do
+## What it doesn't do
 
 Syncplay does not use video streaming or file sharing so each user must have their own copy of the media to be played. Syncplay does not synchronise player configuration, selected audio or subtitle track, playback rate, volume or filters. Furthermore, the user must manually choose what file to play as Syncplay does not synchronise which file is open. Finally, Syncplay does not provide a voice or text-based chat platform to allow for discussion during playback as Syncplay is intended to be used in conjunction with third-party communication solutions such as IRC or Mumble.
 
