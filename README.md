@@ -31,7 +31,7 @@ If you are not using the frozen executable package then you will need the follow
 
 `twisted` >= `12.1.0`
 
-If you are using the frozen executable package avaiable from the download page then you will not need to be able to run python scripts.
+If you are using the frozen executable package available from the download page then you will not need to be able to run python scripts.
 
 ## Supported players
 ### mplayer2 on Linux
