@@ -1,6 +1,6 @@
 # Syncplay
 
-Solution to synchronize video playback across multiple instances of MPlayer and/or Media Player Classic (MPC-HC) over the Internet.
+Solution to synchronize video playback across multiple instances of mplayer2 and/or Media Player Classic (MPC-HC) over the Internet.
 
 ## What does it do
 
@@ -34,9 +34,9 @@ If you are not using the frozen executable package then you will need the follow
 If you are using the frozen executable package avaiable from the download page then you will not need to be able to run python scripts.
 
 ## Supported players
-### MPlayer on Linux
+### mplayer2 on Linux
 
-On Linux `syncplayClient.py` acts as a wrapper for MPlayer. 
+On Linux `syncplayClient.py` acts as a wrapper for mplayer. 
 You're expected to pass filename as the first positional argument. If you wish to pass more arguments to mplayer prepend them with -- argument, it's treated as the last argument for wrapper.
 It launches mplayer which behaves just like normal (it reacts to keyboard shortcuts etc).
 
@@ -50,7 +50,7 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ### Opening a media file with Syncplay
 
-If you open a file with `syncplayClient` then it will automatically open Syncplay and load the file through MPC-HC on Windows and MPlayer on Linux.
+If you open a file with `syncplayClient` then it will automatically open Syncplay and load the file through MPC-HC on Windows and mplayer on Linux.
 
 ### Configuration window
 The configuration window allows for various settings to be configured prior to Syncplay starting.
@@ -95,7 +95,7 @@ Within the Syncplay command-line you can enter the following commands (and then 
 
 ### Instructions on how to use Syncplay for the first time
 
-1. Ensure that you have the latest version of MPC-HC on Windows or MPlayer on Linux.
+1. Ensure that you have the latest version of MPC-HC on Windows or mplayer2 on Linux.
 
 2. Download Syncplay from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
 
