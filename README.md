@@ -37,7 +37,7 @@ If you are using the frozen executable package avaiable from the download page t
 ### MPlayer on Linux
 
 On Linux `syncplayClient.py` acts as a wrapper for MPlayer. 
-You're expected to pass filename as the first positional argument, if you wish to pass more arguments to mplayer prepend them with -- argument, it's treated as the last argument for wrapper.
+You're expected to pass filename as the first positional argument. If you wish to pass more arguments to mplayer prepend them with -- argument, it's treated as the last argument for wrapper.
 It launches mplayer which behaves just like normal (it reacts to keyboard shortcuts etc).
 
 Default mplayer output is suppressed, but if mplayer quits with errors, those errors will be printed (at most 50 last lines).
@@ -73,7 +73,7 @@ The settings to be configured are as follows:
 
 `Server password (optional)` - Password for server. Servers that are not password protected have a blank password.
 
-`Path to mpc-hc.exe [Windows only]` - Location of the MPC-HC executable (mpc-hc.exe or mpc-hc64.exe). If this is in a common location then it will be filled in by default. Users are adviced to check it though, if it's chosen their desired installation.
+`Path to mpc-hc.exe [Windows only]` - Location of the MPC-HC executable (mpc-hc.exe or mpc-hc64.exe). If this is in a common location then it will be filled in by default. Users are advised to check that it points to their desired installation.
 
 Pressing "Save" will save the settings and continue Syncplay start-up.
 
@@ -99,15 +99,15 @@ Within the Syncplay command-line you can enter the following commands (and then 
 
 2. Download Syncplay from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
 
-3. If you are running your own server then open `syncplayServer` (see "How to use the server", below)
+3. If you are running your own server then open `syncplayServer` (see "How to use the server", below).
 
-4. Open `syncplayClient` (or open the media file you wish to play with `syncplayClient`, e.g. using "Open with")
+4. Open `syncplayClient` (or open the media file you wish to play with `syncplayClient`, e.g. using "Open with").
 
-5. Enter configuration settings (see "Configuration window", above).
+5. Enter configuration settings (see "Configuration window", above). Ensure that you are on the same server and room as your fellow viewers.
 
-6. If your fellow viewers are not in the same 'room' as you then use the room command (see "Syncplay Commands", above)
+6. If you don't have the file you want to play open then open it from within your media player.
 
-7. If you don't have the file you want to play open in your media player then open it from within your media player.
+7. Playing, pausing and seeking should now be synchronised with everyone else in the same 'room'.
 
 ### Command-line switches
 
@@ -139,19 +139,18 @@ You can run `syncplayClient` with the following command-line switches to alter S
        
 ## How to use the server
 
-You need to run `syncplayServer`. If you have a public IP then you can try to launch server on your computer
-and give your friends your IP number, so they can connect to it. It will listen at port `8999`, unless stated otherwise, you
-might need to allow connections to it in your firewall/router.
+Run `syncplayServer` to host a Syncplay server. If you have a public IP then you can try to launch the server on your computer
+and give your friends your IP number so that they can connect to it. The server software will listen on port `8999` by default, but you can specify a different port. You might need to specifically allow connections to `syncplyServer` in your firewall/router. If that is the case then please consult your firewall/router instructions or contact your network administrator.
 
-Pass the IP or hostname to people you want to watch with and you're ready to go.
+Pass the IP or hostname to people you want to watch with and you're ready to go. There are various online services that will tell you what your IP address is.
 
 ### Server command-line switches
 
-`--port [port]` - use stated port instead of the default one.
+`--port [port]` - Use stated port instead of the default one.
 
-`--isolate-room` - if stated you won't be able to see users in rooms different for your.
+`--isolate-room` - If specified then 'room isolation' is enabled. This means that viewers will not be able to see information about users who are in rooms other than the one they are in. This feature is reccommended for a public server, but not for a small private server.
 
-`--password` - server password used for private servers.
+`--password` - Restrict access to the Syncplay server to only those who use this password when they connect to the server. This feature is recommended for a private server but is not needed for a public server. By default the password is blank (i.e. there is no password restriction).
 
 ## How to report bugs
 
