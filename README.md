@@ -140,7 +140,7 @@ You can run `syncplayClient` with the following command-line switches to alter S
 ## How to use the server
 
 Run `syncplayServer` to host a Syncplay server. If you have a public IP then you can try to launch the server on your computer
-and give your friends your IP number so that they can connect to it. The server software will listen on port `8999` by default, but you can specify a different port. You might need to specifically allow connections to `syncplyServer` in your firewall/router. If that is the case then please consult your firewall/router instructions or contact your network administrator.
+and give your friends your IP number so that they can connect to it. The server software will listen on port `8999` by default, but you can specify a different port. You might need to specifically allow connections to `syncplayServer` in your firewall/router. If that is the case then please consult your firewall/router instructions or contact your network administrator.
 
 Pass the IP or hostname to people you want to watch with and you're ready to go. There are various online services that will tell you what your IP address is.
 
