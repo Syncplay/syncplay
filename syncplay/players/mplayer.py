@@ -70,7 +70,7 @@ class MplayerProtocol(LineProcessProtocol):
                 print 'Up to 50 last lines from its error output below:'
                 for line in self.error_lines:
                     print line
-        self.__syncplayClient.stop(True)
+        self.__syncplayClient.stop(False)
 
     def errLineReceived(self, line):
         if line:
