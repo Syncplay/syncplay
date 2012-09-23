@@ -15,7 +15,7 @@ Syncplay does not use video streaming or file sharing so each user must have the
 ## Requirements
 Frozen Windows executables are available on the download page - https://github.com/Uriziel/syncplay/downloads
 
-On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`. Primary focus is `MPC-HC 32bit (x86)`, but `MPC-HC 64bit (x64)` should be compatible.
+On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3` (`x86` / `x64`).
 
 On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
 
