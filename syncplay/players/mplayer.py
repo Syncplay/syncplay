@@ -5,6 +5,7 @@ from collections import deque
 from twisted.internet import reactor
 from twisted.internet.protocol import ProcessProtocol
 import re
+import math
 
 RE_ANSWER = re.compile('^ANS_([a-zA-Z_]+)=(.+)$')
 
@@ -141,7 +142,7 @@ class MplayerProtocol(LineProcessProtocol):
             self.setUpFileInPlayer()
 
     def mplayer_answer_length(self, value):
-        self.duration = int(float(value))
+        self.duration = int(math.floor(float(value))) #TODO: return float as it is once mpc is updated 
         self.fileupdatesteps += 1
         if(self.fileupdatesteps == 3):
             self.setUpFileInPlayer()
