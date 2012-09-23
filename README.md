@@ -10,12 +10,12 @@ When one person seeks, all players seek to the same position. When a new person 
 
 ## What it doesn't do
 
-Syncplay does not use video streaming or file sharing so each user must have their own copy of the media to be played. Syncplay does not synchronise player configuration, selected audio or subtitle track, playback rate, volume or filters. Furthermore, the user must manually choose what file to play as Syncplay does not synchronise which file is open. Finally, Syncplay does not provide a voice or text-based chat platform to allow for discussion during playback as Syncplay is intended to be used in conjunction with third-party communication solutions such as IRC or Mumble.
+Syncplay does not use video streaming or file sharing so each user must have their own copy of the media to be played. Syncplay does not synchronise player configuration, audio or subtitle track choice, playback rate, volume or filters. Furthermore, users must manually choose what file to play as Syncplay does not synchronise which file is open. Finally, Syncplay does not provide a voice or text-based chat platform to allow for discussion during playback as Syncplay is intended to be used in conjunction with third-party communication solutions such as IRC or Mumble.
 
 ## Requirements
 Frozen Windows executables are available on the download page - https://github.com/Uriziel/syncplay/downloads
 
-On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`.
+On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`. Primary focus is `MPC-HC 32bit (x86)`, but `MPC-HC 64bit (x64)` should be compatible.
 
 On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
 
@@ -42,7 +42,7 @@ It launches mplayer which behaves just like normal (it reacts to keyboard shortc
 
 Default mplayer output is suppressed, but if mplayer quits with errors, those errors will be printed (at most 50 last lines).
 
-### Media Player Classic Home Cinema (MPC-HC) on Windows
+### Media Player Classic - Home Cinema (MPC-HC) on Windows
 
 On Windows simply running `syncplayClient.exe` opens a Syncplay command-line window for communication and a new instance of MPC-HC for synchronised video playback. This instance of MPC-HC is controlled by Syncplay through the associated command-line window, but other instances of MPC-HC will be unaffected.
 
