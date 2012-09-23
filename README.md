@@ -27,7 +27,7 @@ If you are not using the frozen executable package then you will need the follow
 
 `argparse` >= `1.1`
 
-`pywin32` >= `r217` (mpc-hc, Windows only)
+`pywin32` >= `r217` (MPC-HC, Windows only)
 
 `twisted` >= `12.1.0`
 
