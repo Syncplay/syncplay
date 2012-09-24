@@ -72,7 +72,7 @@ class ConsoleUI(threading.Thread):
         elif matched_room:
             room = matched_room.group(2)
             if room == None:
-                room = 'default'
+                room = self._syncplayClient.users.currentUser.filename
             self._syncplayClient.users.currentUser.room = room
             self._syncplayClient.checkIfFileMatchesOthers()
             self._syncplayClient.protocol.sender.send_room(room)
