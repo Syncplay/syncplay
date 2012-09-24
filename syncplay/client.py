@@ -354,7 +354,7 @@ class SyncplayClientManager(object):
         self.counter += 10
         self.player_position_before_last_seek = self.getGlobalPosition()
         self.protocol.sender.sendSeek(self.counter, time.time(), self.player_position)
-        message = self.users.currentUser.name +' jumped to ' + format_time(self.player_position)
+        message = self.users.currentUser.name +' jumped from ' + format_time(self.player_position_before_last_seek) + ' to ' + format_time(self.player_position)
         self.ui.showMessage(message)
         
     def sendPlaying(self):
@@ -475,7 +475,7 @@ class SyncplayClientManager(object):
             self.player_position_before_last_seek = self.player_position
             self.player.set_position(position)
             self.askPlayer()
-        message = who + ' jumped to ' + format_time(position)
+        message = who +' jumped from ' + format_time(self.player_position_before_last_seek) + ' to ' + format_time(self.player_position)
         self.ui.showMessage(message)
 
     class UiManager(object):
