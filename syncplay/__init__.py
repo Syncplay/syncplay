@@ -1,3 +1,3 @@
-version = '0.6.4'
+version = '0.6.5'
 milestone = 'Clara'
-projectURL = 'http://droptable.co.cc'
+projectURL = 'http://uriziel.github.com/syncplay/'
