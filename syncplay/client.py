@@ -54,8 +54,14 @@ class SyncClientProtocol(CommandProtocol):
             self.__syncplayClient.users.currentUser.name = args[0]
             self.__syncplayClient.protocol.sender.send_list()
             self.__syncplayClient.scheduleSendStatus()
-            if(self.__syncplayClient.users.currentUser.filename <> None):
-                self.__syncplayClient.sendPlaying()
+            if(self.__syncplayClient.reconnecting):
+                self.__syncplayClient.reconnecting = False
+                self.__syncplayClient.protocol_factory.reset_retrying()
+                self.__syncplayClient.counter = 0
+                if(self.__syncplayClient.player):
+                    self.__syncplayClient.player.set_paused(True)
+                if(self.__syncplayClient.users.currentUser.filename <> None):
+                    self.__syncplayClient.sendPlaying()
     
         @argumentCount(2, 5)
         def present(self, args):
@@ -175,8 +181,9 @@ class SyncClientProtocol(CommandProtocol):
 class SyncClientFactory(ClientFactory):
     def __init__(self, manager, retry = 10):
         self.__syncplayClient = manager
-        self.retry = retry #add incremental wait
-
+        self.retry = retry
+        self._timesTried = 0
+    
     def buildProtocol(self, addr):
         return SyncClientProtocol(self.__syncplayClient)
 
@@ -185,23 +192,27 @@ class SyncClientFactory(ClientFactory):
         self.__syncplayClient.ui.showMessage('Connecting to %s:%d' % (destination.host, destination.port))
 
     def clientConnectionLost(self, connector, reason):
-        if self.retry:
-            self.retry -= 1
+        if self._timesTried < self.retry:
+            self._timesTried += 1
             message = 'Connection lost, reconnecting'
             self.__syncplayClient.ui.showMessage(message)
-            self.__syncplayClient.counter = 0
-            reactor.callLater(0.1, connector.connect)
+            self.__syncplayClient.reconnecting = True
+            reactor.callLater(0.1*(2**self._timesTried), connector.connect)
         else:
             message = 'Disconnected'
             self.__syncplayClient.ui.showMessage(message)
 
     def clientConnectionFailed(self, connector, reason):
-        message = 'Connection failed'
-        self.__syncplayClient.ui.showMessage(message)
-        self.__syncplayClient.stop()
+        if not self.__syncplayClient.reconnecting:
+            message = 'Connection failed'
+            self.__syncplayClient.ui.showMessage(message)
+            self.__syncplayClient.stop()
+
+    def reset_retrying(self):
+        self._timesTried = 0
 
     def stop_retrying(self):
-        self.retry = 0
+        self._timesTried = self.retry
 
 class SyncplayClientManager(object):
     def __init__(self, name, make_player, ui, debug, room, password = None):
@@ -240,7 +251,9 @@ class SyncplayClientManager(object):
 
         self.make_player = make_player
         self.running = False
-    
+        
+        self.reconnecting = False
+        
     def start(self, host, port):
         if self.running:
             return
