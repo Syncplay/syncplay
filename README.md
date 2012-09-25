@@ -112,7 +112,7 @@ You can run `syncplayClient` with the following command-line switches to alter S
 ### Error messages and notifications
 
 * `Rewinded due to time difference` - This means that your media player ended up too far in front of at least one other viewer and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly.
-* `File you're playing is different from [user]'s` - This means that the name, length or duration of the file they are playing is different from the file you are playing. This is for information only and is not an error.
+* `File you're playing is different from [user]'s` - This means that the name, length and/or duration of the file they are playing is different from the file you are playing. This is for information only and is not an error.
        
 ## How to use the server
 
