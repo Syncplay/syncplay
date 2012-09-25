@@ -135,8 +135,8 @@ The following information is sent from the client to the server:
 * Syncplay version, server password and current 'room'.
 
 The server has the ability to control the following aspects of the media player:
-* Current position (e.g. seek commands).
-* Current play state (e.g. pause and unpause commands).
+* Current position (seek commands).
+* Current play state (pause and unpause commands).
 
 The client affects the following files:
 * Modifying .syncplay file in %appdata% folder to store configuration information.
