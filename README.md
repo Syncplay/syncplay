@@ -133,6 +133,7 @@ The following information is sent from the client to the server:
 * Media position, play state, and any seek/pause/unpause commands.
 * Size, length, and optionally filename of currently open media.
 * Syncplay version, server password and current 'room'.
+* Ping responses to assess latency.
 
 The server has the ability to control the following aspects of the media player:
 * Current position (seek commands).
