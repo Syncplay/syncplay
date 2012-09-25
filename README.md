@@ -131,7 +131,7 @@ The following information is sent from the client to the server:
 * Public IP address of client and other necessary routing information (as per TCP/IP standards).
 * Media position, play state, and any seek/pause/unpause commands (associated with the instance of the media player created by Syncplay).
 * Size, length, and optionally filename of currently open media (associated with the instance of the media player created by Syncplay).
-* Syncplay version, server password and current 'room'.
+* Syncplay version, username, server password and current 'room'.
 * Ping responses to assess latency.
 
 Note: The current official build of the Syncplay server does not store any of this information. However, some of the information (not the IP address) is passed on to other users connected to the server (or just to those in the same room if 'isolation' mode is enabled).
