@@ -15,21 +15,17 @@ Syncplay does not use video streaming or file sharing so each user must have the
 ## Requirements
 Frozen Windows executables are available on the download page - https://github.com/Uriziel/syncplay/downloads
 
-On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`.
-
-On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
+* On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`.
+* On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
 
 ### Python scripts (for those not using the frozen executable package)
 
 If you are not using the frozen executable package then you will need the following to run python scripts:
 
-`pygtk` >= `2.0.0` (unless started with `--no-gui`)
-
-`argparse` >= `1.1`
-
-`pywin32` >= `r217` (MPC-HC, Windows only)
-
-`twisted` >= `12.1.0`
+* `pygtk` >= `2.0.0` (unless started with `--no-gui`)
+* `argparse` >= `1.1`
+* `pywin32` >= `r217` (MPC-HC, Windows only)
+* `twisted` >= `12.1.0`
 
 If you are using the frozen executable package available from the download page then you will not need to be able to run python scripts.
 
@@ -58,22 +54,16 @@ The configuration window allows for various settings to be configured prior to S
 The window will appear if you:
 
 1. Run `syncplayClient`  without settings being configured, e.g. on first boot,
-
 2. Run `syncplayClient` with the `--force-gui-prompt` or `-g` commandline switches, or
-
 3. Run `syncplayClientForceConfiguration`.
 
 The settings to be configured are as follows:
 
-`Host` - Address (hostname / IP) of server to connect to (optionally with port), e.g. `localhost:2734` or `192.168.0.1`. Default port is `8999`.
-
-`Username` - Name that the server and other viewers know you by.
-
-`Default room (optional)` - Room to join upon connection. You will only be synchronised with others in the same room on the same server. Default room is `default`.
-
-`Server password (optional)` - Password for server. Servers that are not password protected have a blank password.
-
-`Path to mpc-hc.exe [Windows only]` - Location of the MPC-HC executable (mpc-hc.exe or mpc-hc64.exe). If this is in a common location then it will be filled in by default. Users are advised to check that it points to their desired installation.
+* `Host` - Address (hostname / IP) of server to connect to (optionally with port), e.g. `localhost:2734` or `192.168.0.1`. Default port is `8999`.
+* `Username` - Name that the server and other viewers know you by.
+* `Default room (optional)` - Room to join upon connection. You will only be synchronised with others in the same room on the same server. Default room is `default`.
+* `Server password (optional)` - Password for server. Servers that are not password protected have a blank password.
+* `Path to mpc-hc.exe [Windows only]` - Location of the MPC-HC executable (mpc-hc.exe or mpc-hc64.exe). If this is in a common location then it will be filled in by default. Users are advised to check that it points to their desired installation.
 
 Pressing "Save" will save the settings and continue Syncplay start-up.
 
@@ -81,17 +71,12 @@ Pressing "Save" will save the settings and continue Syncplay start-up.
 
 Within the Syncplay command-line you can enter the following commands (and then press enter) to access features:
 
-`help` - Displays list of commands and other information.
-
-`room [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then it will use the filename of the currently playing file, or alternatively will join the default room if no file is playing.
-
-`s [time]` - Seek (jump) to specified time. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
-
-`s+ [time]` - Jumps [time] forward. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
-
-`r` - Revert last seek. Seeks to where you were before the most recent seek.
-
-`p` - Toggle play/pause.
+* `help` - Displays list of commands and other information.
+* `room [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then it will use the filename of the currently playing file, or alternatively will join the default room if no file is playing.
+* `s [time]` - Seek (jump) to specified time. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
+* `s+ [time]` - Jumps [time] forward. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
+* `r` - Revert last seek. Seeks to where you were before the most recent seek.
+* `p` - Toggle play/pause.
 
 ### Instructions on how to use Syncplay for the first time
 
@@ -113,29 +98,21 @@ Within the Syncplay command-line you can enter the following commands (and then 
 
 You can run `syncplayClient` with the following command-line switches to alter Syncplay settings or behaviour:
 
-`--no-gui` - Do not display graphical user interface (GUI)
-
-`--host [address]` - Specify address of server to connect to (can be address:port)
-
-`--name [name]` / `-n [name]` - Specify username to use
-
-`--debug` / `-d` - Enable debug mode
-
-`--force-gui-prompt` / `-g` - Force the configuration window to appear when Syncplay starts
-
-`--no-store` - Disable the storing of configuration data (in .syncplay file)
-
-`--room [room]` / `-r [room]` - Specify default room to join upon connection.
-
-`--password [password]` / `-p [password]` - Specify server password
-
-`[file]` - File to play upon start
+* `--no-gui` - Do not display graphical user interface (GUI)
+* `--host [address]` - Specify address of server to connect to (can be address:port)
+* `--name [name]` / `-n [name]` - Specify username to use
+* `--debug` / `-d` - Enable debug mode
+* `--force-gui-prompt` / `-g` - Force the configuration window to appear when Syncplay starts
+* `--no-store` - Disable the storing of configuration data (in .syncplay file)
+* `--room [room]` / `-r [room]` - Specify default room to join upon connection.
+* `--password [password]` / `-p [password]` - Specify server password
+* `[file]` - File to play upon start
 
 `--` - used as a last argument for syncplayClient, used to prepend arguments that are meant to be passed to player
 
 ### Error messages and notifications
 
-`Rewinded due to time difference` - This means that your media player ended up too far in front of at least one other viewer and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly.
+* `Rewinded due to time difference` - This means that your media player ended up too far in front of at least one other viewer and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly.
        
 ## How to use the server
 
@@ -146,11 +123,9 @@ Pass the IP or hostname (and password / port if necessary) to people you want to
 
 ### Server command-line switches
 
-`--port [port]` - Use stated port instead of the default one.
-
-`--isolate-room` - If specified then 'room isolation' is enabled. This means that viewers will not be able to see information about users who are in rooms other than the one they are in. This feature is reccommended for a public server, but not for a small private server.
-
-`--password` - Restrict access to the Syncplay server to only those who use this password when they connect to the server. This feature is recommended for a private server but is not needed for a public server. By default the password is blank (i.e. there is no password restriction).
+* `--port [port]` - Use stated port instead of the default one.
+* `--isolate-room` - If specified then 'room isolation' is enabled. This means that viewers will not be able to see information about users who are in rooms other than the one they are in. This feature is reccommended for a public server, but not for a small private server.
+* `--password` - Restrict access to the Syncplay server to only those who use this password when they connect to the server. This feature is recommended for a private server but is not needed for a public server. By default the password is blank (i.e. there is no password restriction).
 
 ## How to report bugs
 
