@@ -107,8 +107,7 @@ You can run `syncplayClient` with the following command-line switches to alter S
 * `--room [room]` / `-r [room]` - Specify default room to join upon connection.
 * `--password [password]` / `-p [password]` - Specify server password
 * `[file]` - File to play upon start
-
-`--` - used as a last argument for syncplayClient, used to prepend arguments that are meant to be passed to player
+* `--` - used as a last argument for syncplayClient, used to prepend arguments that are meant to be passed to player
 
 ### Error messages and notifications
 
