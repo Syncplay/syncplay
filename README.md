@@ -127,6 +127,20 @@ Pass the IP or hostname (and password / port if necessary) to people you want to
 * `--isolate-room` - If specified then 'room isolation' is enabled. This means that viewers will not be able to see information about users who are in rooms other than the one they are in. This feature is reccommended for a public server, but not for a small private server.
 * `--password` - Restrict access to the Syncplay server to only those who use this password when they connect to the server. This feature is recommended for a private server but is not needed for a public server. By default the password is blank (i.e. there is no password restriction).
 
+## Information on Syncplay behaviour
+The following information is sent from the client to the server:
+* IP address of client.
+* Media position, play state, and any seek/pause/unpause commands.
+* Size, length, and optionally filename of currently open media.
+* Syncplay version, server password and current 'room'.
+
+The server has the ability to control the following aspects of the media player:
+* Current position (e.g. seek commands).
+* Current play state (e.g. pause and unpause commands).
+
+The client affects the following files:
+* Modifying .syncplay file in %appdata% folder to store configuration information.
+
 ## How to report bugs
 
 You can report bugs through https://github.com/Uriziel/syncplay/issues but first please check to see if your problem has already been reported.
