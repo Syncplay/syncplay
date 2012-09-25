@@ -112,7 +112,7 @@ You can run `syncplayClient` with the following command-line switches to alter S
 ### Notification messages
 
 * `Rewinded due to time difference` - This means that your media player ended up too far in front of at least one other viewer and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly.
-* `File you're playing is different from [user]'s` - This means that the name, length and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
+* `File you're playing is different from [user]'s` - This means that the filename, length and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
        
 ## How to use the server
 
@@ -125,7 +125,7 @@ Pass the IP or hostname (and password / port if necessary) to people you want to
 
 * `--port [port]` - Use stated port instead of the default one.
 * `--isolate-room` - If specified then 'room isolation' is enabled. This means that viewers will not be able to see information about users who are in rooms other than the one they are in. This feature is recommended for a public server, but not for a small private server.
-* `--password` - Restrict access to the Syncplay server to only those who use this password when they connect to the server. This feature is recommended for a private server but is not needed for a public server. By default the password is blank (i.e. there is no password restriction).
+* `--password [password]` - Restrict access to the Syncplay server to only those who use this password when they connect to the server. This feature is recommended for a private server but is not needed for a public server. By default the password is blank (i.e. there is no password restriction).
 
 ## Syncplay behaviour
 The following information is sent from the client to the server:
