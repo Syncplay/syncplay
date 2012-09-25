@@ -126,7 +126,7 @@ Pass the IP or hostname (and password / port if necessary) to people you want to
 * `--isolate-room` - If specified then 'room isolation' is enabled. This means that viewers will not be able to see information about users who are in rooms other than the one they are in. This feature is reccommended for a public server, but not for a small private server.
 * `--password` - Restrict access to the Syncplay server to only those who use this password when they connect to the server. This feature is recommended for a private server but is not needed for a public server. By default the password is blank (i.e. there is no password restriction).
 
-## Information on Syncplay behaviour
+## Syncplay behaviour
 The following information is sent from the client to the server:
 * Public IP address of client and other necessary routing information (as per TCP/IP standards).
 * Media position, play state, and any seek/pause/unpause commands (associated with the instance of the media player created by Syncplay).
