@@ -143,6 +143,8 @@ The server has the ability to control the following aspects of the instance of t
 The client affects the following files:
 * Modifying .syncplay file in %APPDATA% (or $HOME on Linux version) folder to store configuration information.
 
+Note: This behaviour can be disabled by using the `--no-store` command-line switch (see "Command-line switches", above)
+
 ## How to report bugs
 
 You can report bugs through https://github.com/Uriziel/syncplay/issues but first please check to see if your problem has already been reported.
