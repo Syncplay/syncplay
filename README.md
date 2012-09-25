@@ -135,12 +135,14 @@ The following information is sent from the client to the server:
 * Syncplay version, server password and current 'room'.
 * Ping responses to assess latency.
 
+None of them is currently stored.
+
 The server has the ability to control the following aspects of the media player:
 * Current position (seek commands).
 * Current play state (pause and unpause commands).
 
 The client affects the following files:
-* Modifying .syncplay file in %appdata% folder to store configuration information.
+* Modifying .syncplay file in %APPDATA% (or $HOME on Linux version) folder to store configuration information.
 
 ## How to report bugs
 
