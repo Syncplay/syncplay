@@ -134,7 +134,7 @@ The following information is sent from the client to the server:
 * Syncplay version, server password and current 'room'.
 * Ping responses to assess latency.
 
-Note: None of this information is currently stored in the official server build.
+Note: The current official build of the Syncplay server does not store any of this information. However, some of the information (not the IP address) is passed on to other users connected to the server (or just to those in the same room if 'isolation' mode is enabled).
 
 The server has the ability to control the following aspects of the media player:
 * Current position (seek commands).
