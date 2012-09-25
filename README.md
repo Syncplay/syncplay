@@ -109,7 +109,7 @@ You can run `syncplayClient` with the following command-line switches to alter S
 * `[file]` - File to play upon start
 * `--` - used as a last argument for syncplayClient, used to prepend arguments that are meant to be passed to player
 
-### Error messages and notifications
+### Notification messages
 
 * `Rewinded due to time difference` - This means that your media player ended up too far in front of at least one other viewer and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly.
 * `File you're playing is different from [user]'s` - This means that the name, length and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
