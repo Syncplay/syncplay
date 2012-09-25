@@ -135,7 +135,7 @@ The following information is sent from the client to the server:
 * Syncplay version, server password and current 'room'.
 * Ping responses to assess latency.
 
-None of them is currently stored.
+None of this information is currently stored in the official server build.
 
 The server has the ability to control the following aspects of the media player:
 * Current position (seek commands).
