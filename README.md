@@ -123,7 +123,7 @@ Pass the IP or hostname (and password / port if necessary) to people you want to
 ### Server command-line switches
 
 * `--port [port]` - Use stated port instead of the default one.
-* `--isolate-room` - If specified then 'room isolation' is enabled. This means that viewers will not be able to see information about users who are in rooms other than the one they are in. This feature is reccommended for a public server, but not for a small private server.
+* `--isolate-room` - If specified then 'room isolation' is enabled. This means that viewers will not be able to see information about users who are in rooms other than the one they are in. This feature is recommended for a public server, but not for a small private server.
 * `--password` - Restrict access to the Syncplay server to only those who use this password when they connect to the server. This feature is recommended for a private server but is not needed for a public server. By default the password is blank (i.e. there is no password restriction).
 
 ## Syncplay behaviour
