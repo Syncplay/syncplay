@@ -44,15 +44,15 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ## Using Syncplay
 
-### Instructions on how to use Syncplay for the first time
+### Getting started with Syncplay on Windows
 
-1. Ensure that you have the latest version of MPC-HC on Windows or mplayer2 on Linux (see "Requirements", above).
+1. Ensure that you have the latest version of `Media Player Classic - Home Cinema (MPC-HC)` installed. The most recent stable build is `1.6.3`.
 
-2. Download Syncplay from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
+2. Download the Syncplay frozen executable package from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
 
 3. If you are running your own server then open `syncplayServer` (see "How to use the server", below).
 
-4. Open `syncplayClient` (or open the media file you wish to play with `syncplayClient`, e.g. using "Open with").
+4. Open `syncplayClient.exe` (or open the media file you wish to play with `syncplayClient.exe`, e.g. using "Open with").
 
 5. Enter configuration settings (see "Configuration window", below). Ensure that you are on the same server and room as your fellow viewers.
 
