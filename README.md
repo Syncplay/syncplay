@@ -1,4 +1,4 @@
-#  MPC-HCy
+#  Syncplay
 
 Solution to synchronize video playback across multiple instances of mplayer2 and/or Media Player Classic (MPC-HC) over the Internet.
 
