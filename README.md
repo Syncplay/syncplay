@@ -58,7 +58,7 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 6. If you don't have the file you want to play open then open it from within the MPC-HC instance initiated by Syncplay.
 
-7. Playing, pausing and seeking from within the MPC-HC instance initiated by Syncplay should now be synchronised with everyone else in the same 'room'.
+7. Playing, pausing and seeking from within the MPC-HC instance should now be synchronised with everyone else in the same 'room'.
 
 ### Opening a media file with Syncplay
 
