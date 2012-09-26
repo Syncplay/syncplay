@@ -1,11 +1,11 @@
-# Syncplay
+#  MPC-HCy
 
 Solution to synchronize video playback across multiple instances of mplayer2 and/or Media Player Classic (MPC-HC) over the Internet.
 
 ## What does it do
 
 Syncplay synchronises the position and play state of multiple media players so that the viewers can watch the same thing at the same time without video streaming.
-When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room' (viewing session).
+When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room' MPC-HC.
 When one person seeks, all players seek to the same position. When a new person joins they will be synchronised with their fellow viewers.
 
 ## What it doesn't do
@@ -15,7 +15,7 @@ Syncplay does not use video streaming or file sharing so each user must have the
 ## Requirements
 Frozen Windows executables are available on the download page - https://github.com/Uriziel/syncplay/downloads
 
-* On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`.
+* On Windows: `Media Player Classic - Home Cinema (M MPC-HC.
 * On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
 
 ### Python scripts (for those not using the frozen executable package)
@@ -56,9 +56,9 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 5. Enter configuration settings (see "Configuration window", below). Ensure that you are on the same server and room as your fellow viewers.
 
-6. If you don't have the file you want to play open then open it from within your media player.
+6. If you don't have the file you want to play open then open it from within the MPC-HC instance initiated by Syncplay.
 
-7. Playing, pausing and seeking should now be synchronised with everyone else in the same 'room'.
+7. Playing, pausing and seeking from within the MPC-HC instance initiated by Syncplay should now be synchronised with everyone else in the same 'room'.
 
 ### Opening a media file with Syncplay
 
@@ -130,14 +130,14 @@ Pass the IP or hostname (and password / port if necessary) to people you want to
 ## Syncplay behaviour
 The following information is sent from the client to the server:
 * Public IP address of client and other necessary routing information (as per TCP/IP standards).
-* Media position, play state, and any seek/pause/unpause commands (associated with the instance of the media player created by Syncplay).
-* Size, length, and optionally filename of currently open media (associated with the instance of the media player created by Syncplay).
+* Media position, play state, and any seek/pause/unpause commands (associated with the instance of the media player initiated by Syncplay).
+* Size, length, and optionally filename of currently open media (associated with the instance of the media player initiated by Syncplay).
 * Syncplay version, username, server password and current 'room'.
 * Ping responses to assess latency.
 
 Note: The current official build of the Syncplay server does not store any of this information. However, some of the information (not the IP address) is passed on to other users connected to the server (or just to those in the same room if 'isolation' mode is enabled).
 
-The server has the ability to control the following aspects of the instance of the media player created by Syncplay:
+The server has the ability to control the following aspects of the instance of the media player initiated by Syncplay:
 * Current position (seek commands).
 * Current play state (pause and unpause commands).
 
