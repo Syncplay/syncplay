@@ -103,7 +103,7 @@ Within the Syncplay command-line you can enter the following commands (and then 
 You can run `syncplayClient` with the following command-line switches to alter Syncplay settings or behaviour:
 
 * `--no-gui` - Do not display graphical user interface (GUI)
-* `--host [address]` - Specify address of server to connect to (can be address:port)
+* `--host [address]` - Specify address of server to connect to (can be `address:port`)
 * `--name [name]` / `-n [name]` - Specify username to use
 * `--debug` / `-d` - Enable debug mode
 * `--force-gui-prompt` / `-g` - Force the configuration window to appear when Syncplay starts
