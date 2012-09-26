@@ -50,7 +50,7 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 2. Download Syncplay frozen executable package from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
 
-3. If you are running your own server then open `syncplayServer` (see "How to use the server", below).
+3. If you are running your own server then open `syncplayServer.exe` (see "How to use the server", below).
 
 4. Open `syncplayClient.exe` (or open the media file you wish to play with `syncplayClient.exe`, e.g. using "Open with").
 
