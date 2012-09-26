@@ -60,6 +60,10 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 7. Playing, pausing and seeking from within the MPC-HC instance should now be synchronised with everyone else in the same 'room'.
 
+### Getting started with Syncplay on Linux
+
+* [Instructions not written yet. Blame JAXA.]
+
 ### Opening a media file with Syncplay
 
 If you open a file with `syncplayClient` then it will automatically open Syncplay and load the file through MPC-HC on Windows and mplayer on Linux.
