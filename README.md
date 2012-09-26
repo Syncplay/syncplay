@@ -44,6 +44,22 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ## Using Syncplay
 
+### Instructions on how to use Syncplay for the first time
+
+1. Ensure that you have the latest version of MPC-HC on Windows or mplayer2 on Linux (see "Requirements", above).
+
+2. Download Syncplay from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
+
+3. If you are running your own server then open `syncplayServer` (see "How to use the server", below).
+
+4. Open `syncplayClient` (or open the media file you wish to play with `syncplayClient`, e.g. using "Open with").
+
+5. Enter configuration settings (see "Configuration window", below). Ensure that you are on the same server and room as your fellow viewers.
+
+6. If you don't have the file you want to play open then open it from within your media player.
+
+7. Playing, pausing and seeking should now be synchronised with everyone else in the same 'room'.
+
 ### Opening a media file with Syncplay
 
 If you open a file with `syncplayClient` then it will automatically open Syncplay and load the file through MPC-HC on Windows and mplayer on Linux.
@@ -77,22 +93,6 @@ Within the Syncplay command-line you can enter the following commands (and then 
 * `s+ [time]` - Jumps [time] forward. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
 * `r` - Revert last seek. Seeks to where you were before the most recent seek.
 * `p` - Toggle play/pause.
-
-### Instructions on how to use Syncplay for the first time
-
-1. Ensure that you have the latest version of MPC-HC on Windows or mplayer2 on Linux.
-
-2. Download Syncplay from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
-
-3. If you are running your own server then open `syncplayServer` (see "How to use the server", below).
-
-4. Open `syncplayClient` (or open the media file you wish to play with `syncplayClient`, e.g. using "Open with").
-
-5. Enter configuration settings (see "Configuration window", above). Ensure that you are on the same server and room as your fellow viewers.
-
-6. If you don't have the file you want to play open then open it from within your media player.
-
-7. Playing, pausing and seeking should now be synchronised with everyone else in the same 'room'.
 
 ### Command-line switches
 
