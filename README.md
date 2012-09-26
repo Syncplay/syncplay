@@ -1,12 +1,12 @@
-# Syncplay
+#  Syncplay
 
 Solution to synchronize video playback across multiple instances of mplayer2 and/or Media Player Classic (MPC-HC) over the Internet.
 
 ## What does it do
 
-Syncplay synchronises the position and play state of multiple media players so that the viewers can watch the same thing at the same time without video streaming.
-When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room' (viewing session).
-When one person seeks, all players seek to the same position. When a new person joins they will be synchronised with their fellow viewers.
+Syncplay synchronises the position and play state of multiple media players so that the viewers can watch the same thing at the same time.
+This means that when one person pauses/unpauses playback or seeks (jumps position) within their media player then this will be replicated across all media players connected to the same server and in the same 'room' (viewing session).
+When a new person joins they will also be synchronised.
 
 ## What it doesn't do
 
@@ -20,14 +20,14 @@ Frozen Windows executables are available on the download page - https://github.c
 
 ### Python scripts (for those not using the frozen executable package)
 
-If you are not using the frozen executable package then you will need the following to run python scripts:
+If you are not using the frozen executable package then you will need the following to run Python scripts:
 
 * `pygtk` >= `2.0.0` (unless started with `--no-gui`)
 * `argparse` >= `1.1`
 * `pywin32` >= `r217` (MPC-HC, Windows only)
 * `twisted` >= `12.1.0`
 
-If you are using the frozen executable package available from the download page then you will not need to be able to run python scripts.
+If you are using the frozen executable package available from the download page then you will not need to be able to run Python scripts.
 
 ## Supported players
 ### mplayer2 on Linux
@@ -44,9 +44,29 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ## Using Syncplay
 
+### Getting started with Syncplay on Windows
+
+1. Ensure that you have the latest version of `Media Player Classic - Home Cinema (MPC-HC)` installed. The latest stable build is `1.6.3`.
+
+2. Download Syncplay frozen executable package from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
+
+3. If you are running your own server then open `syncplayServer.exe` (see "How to use the server", below).
+
+4. Open `syncplayClient.exe` (or open the media file you wish to play with `syncplayClient.exe`, e.g. using "Open with").
+
+5. Enter configuration settings (see "Configuration window", below). Ensure that you are on the same server and room as your fellow viewers.
+
+6. If you don't have the file you want to play open then open it from within the MPC-HC instance initiated by Syncplay.
+
+7. Playing, pausing and seeking from within the MPC-HC instance should now be synchronised with everyone else in the same 'room'.
+
+### Getting started with Syncplay on Linux
+
+* [Instructions not written yet.]
+
 ### Opening a media file with Syncplay
 
-If you open a file with `syncplayClient` then it will automatically open Syncplay and load the file through MPC-HC on Windows and mplayer on Linux.
+Opening a file with `syncplayClient` will automatically run Syncplay and load the file through MPC-HC on Windows or mplayer on Linux.
 
 ### Configuration window
 The configuration window allows for various settings to be configured prior to Syncplay starting.
@@ -72,34 +92,18 @@ Pressing "Save" will save the settings and continue Syncplay start-up.
 Within the Syncplay command-line you can enter the following commands (and then press enter) to access features:
 
 * `help` - Displays list of commands and other information.
-* `room [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then it will use the filename of the currently playing file, or alternatively will join the default room if no file is playing.
+* `room [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then this command will use the filename of the currently open file, or alternatively will join the room `default`.
 * `s [time]` - Seek (jump) to specified time. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
 * `s+ [time]` - Jumps [time] forward. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
 * `r` - Revert last seek. Seeks to where you were before the most recent seek.
 * `p` - Toggle play/pause.
-
-### Instructions on how to use Syncplay for the first time
-
-1. Ensure that you have the latest version of MPC-HC on Windows or mplayer2 on Linux.
-
-2. Download Syncplay from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
-
-3. If you are running your own server then open `syncplayServer` (see "How to use the server", below).
-
-4. Open `syncplayClient` (or open the media file you wish to play with `syncplayClient`, e.g. using "Open with").
-
-5. Enter configuration settings (see "Configuration window", above). Ensure that you are on the same server and room as your fellow viewers.
-
-6. If you don't have the file you want to play open then open it from within your media player.
-
-7. Playing, pausing and seeking should now be synchronised with everyone else in the same 'room'.
 
 ### Command-line switches
 
 You can run `syncplayClient` with the following command-line switches to alter Syncplay settings or behaviour:
 
 * `--no-gui` - Do not display graphical user interface (GUI)
-* `--host [address]` - Specify address of server to connect to (can be address:port)
+* `--host [address]` - Specify address of server to connect to (can be `address:port`)
 * `--name [name]` / `-n [name]` - Specify username to use
 * `--debug` / `-d` - Enable debug mode
 * `--force-gui-prompt` / `-g` - Force the configuration window to appear when Syncplay starts
@@ -109,9 +113,10 @@ You can run `syncplayClient` with the following command-line switches to alter S
 * `[file]` - File to play upon start
 * `--` - used as a last argument for syncplayClient, used to prepend arguments that are meant to be passed to player
 
-### Error messages and notifications
+### Notification messages
 
 * `Rewinded due to time difference` - This means that your media player ended up too far in front of at least one other viewer and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly.
+* `File you're playing is different from [user]'s` - This means that the filename, length and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
        
 ## How to use the server
 
@@ -123,25 +128,27 @@ Pass the IP or hostname (and password / port if necessary) to people you want to
 ### Server command-line switches
 
 * `--port [port]` - Use stated port instead of the default one.
-* `--isolate-room` - If specified then 'room isolation' is enabled. This means that viewers will not be able to see information about users who are in rooms other than the one they are in. This feature is reccommended for a public server, but not for a small private server.
-* `--password` - Restrict access to the Syncplay server to only those who use this password when they connect to the server. This feature is recommended for a private server but is not needed for a public server. By default the password is blank (i.e. there is no password restriction).
+* `--isolate-room` - If specified then 'room isolation' is enabled. This means that viewers will not be able to see information about users who are in rooms other than the one they are in. This feature is recommended for a public server, but not for a small private server.
+* `--password [password]` - Restrict access to the Syncplay server to only those who use this password when they connect to the server. This feature is recommended for a private server but is not needed for a public server. By default the password is blank (i.e. there is no password restriction).
 
 ## Syncplay behaviour
 The following information is sent from the client to the server:
 * Public IP address of client and other necessary routing information (as per TCP/IP standards).
-* Media position, play state, and any seek/pause/unpause commands (associated with the instance of the media player created by Syncplay).
-* Size, length, and optionally filename of currently open media (associated with the instance of the media player created by Syncplay).
+* Media position, play state, and any seek/pause/unpause commands (associated with the instance of the media player initiated by Syncplay).
+* Size, length, and optionally filename of currently open media (associated with the instance of the media player initiated by Syncplay).
 * Syncplay version, username, server password and current 'room'.
 * Ping responses to assess latency.
 
 Note: The current official build of the Syncplay server does not store any of this information. However, some of the information (not the IP address) is passed on to other users connected to the server (or just to those in the same room if 'isolation' mode is enabled).
 
-The server has the ability to control the following aspects of the instance of the media player created by Syncplay:
+The server has the ability to control the following aspects of the instance of the media player initiated by Syncplay:
 * Current position (seek commands).
 * Current play state (pause and unpause commands).
 
 The client affects the following files:
 * Modifying .syncplay file in %APPDATA% (or $HOME on Linux version) folder to store configuration information.
+
+Note: This behaviour can be disabled by using the `--no-store` command-line switch (see "Command-line switches", above)
 
 ## How to report bugs
 
