@@ -92,7 +92,7 @@ Pressing "Save" will save the settings and continue Syncplay start-up.
 Within the Syncplay command-line you can enter the following commands (and then press enter) to access features:
 
 * `help` - Displays list of commands and other information.
-* `room [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then it will use the filename of the currently playing file, or alternatively will join the default room if no file is playing.
+* `room [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then this command will use the filename of the currently open file, or alternatively will join the room `default`.
 * `s [time]` - Seek (jump) to specified time. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
 * `s+ [time]` - Jumps [time] forward. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
 * `r` - Revert last seek. Seeks to where you were before the most recent seek.
