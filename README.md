@@ -4,9 +4,9 @@ Solution to synchronize video playback across multiple instances of mplayer2 and
 
 ## What does it do
 
-Syncplay synchronises the position and play state of multiple media players so that the viewers can watch the same thing at the same time without video streaming.
-When one person pauses playback, the media player is paused for all users who are connected to the same server and are in the same 'room' MPC-HC.
-When one person seeks, all players seek to the same position. When a new person joins they will be synchronised with their fellow viewers.
+Syncplay synchronises the position and play state of multiple media players so that the viewers can watch the same thing at the same time.
+This means that when one person pauses/unpauses playback or seeks (jumps position) within their media player then this will be replicated across all media players connected to the same server and in the same 'room' (viewing session).
+When a new person joins they will also be synchronised.
 
 ## What it doesn't do
 
