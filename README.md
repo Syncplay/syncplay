@@ -66,7 +66,7 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ### Opening a media file with Syncplay
 
-If you open a file with `syncplayClient` then it will automatically open Syncplay and load the file through MPC-HC on Windows and mplayer on Linux.
+Opening a file with `syncplayClient` will automatically run Syncplay and load the file through MPC-HC on Windows or mplayer on Linux.
 
 ### Configuration window
 The configuration window allows for various settings to be configured prior to Syncplay starting.
