@@ -1,6 +1,5 @@
 #coding:utf8
 
-import re
 import time
 import random
 from functools import wraps
