@@ -62,7 +62,7 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ### Getting started with Syncplay on Linux
 
-* [Instructions not written yet. Blame JAXA.]
+* [Instructions not written yet.]
 
 ### Opening a media file with Syncplay
 
