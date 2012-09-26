@@ -439,7 +439,7 @@ class SyncplayClientManager(object):
             if abs(diff) > 4:
                 self.player.set_position(position)
                 #self.player.set_paused(True)
-                message = "Rewinded due to time difference"
+                message = "Rewinded due to time difference with %s" % name
                 self.ui.showMessage(message)
 
             if self.player_paused and not paused:

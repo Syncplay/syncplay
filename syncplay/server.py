@@ -12,10 +12,9 @@ from .network_utils import argumentCount, CommandProtocol
 
 random.seed()
 
-CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-
 def random_chars():
-    return ''.join(random.choice(CHARS) for _ in xrange(10))
+    chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    return ''.join(random.choice(chars) for _ in xrange(10))
 
 def state(state):
     def decorator(f):
@@ -47,7 +46,7 @@ class SyncServerProtocol(CommandProtocol):
         )))
         
     def connectionLost(self, reason):
-        self.factory.remove_watcher(self)
+        self.factory.removeWatcher(self)
         
     def change_state(self, state):
         self.state = state
@@ -69,11 +68,11 @@ class SyncServerProtocol(CommandProtocol):
         @state('init')
         @argumentCount(2, 3)    
         def iam(self, args):
-                name = re.sub('[^\w]','',args.pop(0))
+                name = str(args.pop(0).encode('ascii','replace'))
                 if not name:
                     self.dropWithError('Invalid nickname')
                     return
-                room = re.sub('[^\w]','',args.pop(0))
+                room = str(args.pop(0).encode('ascii','replace'))
                 if not room:
                     self.dropWithError('Invalid room')
                     return
@@ -82,10 +81,11 @@ class SyncServerProtocol(CommandProtocol):
                         password = args.pop(0)
                         if(self.factory.password <> password):
                             self.dropWithError('Wrong server password specified')
+                            return
                     else:
                         self.dropWithError('No password specified')
                         return
-                self.factory.add_watcher(self.__protocol, name, room)
+                self.factory.addWatcher(self.__protocol, name, room)
                 self.__protocol.change_state('connected')
     
         
@@ -99,10 +99,8 @@ class SyncServerProtocol(CommandProtocol):
                 position = int(position)
             except ValueError:
                 self.dropWithError('Invalid arguments')
-    
             ctime /= 1000.0
             position /= 1000.0
-    
             self.factory.seek(self.__protocol, counter, ctime, position)
     
         @state('connected')
@@ -112,17 +110,14 @@ class SyncServerProtocol(CommandProtocol):
             try:
                 ctime = int(ctime)
             except ValueError:
-                self.dropWithError('Invalid arguments')
-    
+                self.dropWithError('Invalid arguments')  
             ctime /= 100000.0
-    
             self.factory.pong_received(self.__protocol, value, ctime)
     
         @state('connected')
         @argumentCount(3)
         def playing(self, args):
             self.factory.playing_received(self.__protocol, args[0], args[1], args[2])
-
         
         @state('connected')
         @argumentCount(1)
@@ -133,7 +128,7 @@ class SyncServerProtocol(CommandProtocol):
             self.factory.broadcast(watcher, lambda receiver: receiver.watcher_proto.sender.send_room(watcher.name,watcher.room))
             if not watcher.room in self.factory.paused: 
                 self.factory.paused[watcher.room] = True
-            self.factory.remove_room_if_empty(old_room)
+            self.factory.removeRoomIfEmpty(old_room)
             
         @state('connected') 
         @argumentCount(0)
@@ -259,7 +254,7 @@ class SyncFactory(Factory):
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
 
-    def add_watcher(self, watcher_proto, name, room):
+    def addWatcher(self, watcher_proto, name, room):
         allnames = []
         for watcher in self.watchers.itervalues():
             allnames.append(watcher.name.lower()) 
@@ -275,11 +270,11 @@ class SyncFactory(Factory):
         self.send_state_to(watcher)
         self.send_ping_to(watcher)
 
-    def remove_watcher(self, watcher_proto):
+    def removeWatcher(self, watcher_proto):
         watcher = self.watchers.pop(watcher_proto, None)
         if not watcher:
             return
-        self.remove_room_if_empty(watcher.room)
+        self.removeRoomIfEmpty(watcher.room)
         watcher.active = False
         self.broadcast(watcher, lambda receiver: receiver.watcher_proto.sender.send_left(watcher.name))
         
@@ -287,28 +282,24 @@ class SyncFactory(Factory):
             self.pause_change_time = None
             self.pause_change_by = None
             
-    def remove_room_if_empty(self, room):
+    def removeRoomIfEmpty(self, room):
         room_user_count = sum(1 if watcher.room == room else 0 for watcher in self.watchers.itervalues())
         if not room_user_count:
             self.paused.pop(room) 
 
-    
     def update_state(self, watcher_proto, counter, ctime, paused, position):
         watcher = self.watchers.get(watcher_proto)
         if not watcher:
             return
-
         curtime = time.time()
         ctime += watcher.time_offset
         if not paused:
             position += curtime - ctime
-
         watcher.paused = paused
         watcher.position = position
         watcher.max_position = max(position, watcher.max_position)
         watcher.last_update = curtime
         watcher.counter = counter
-        
         pause_changed = paused != self.paused[watcher.room]
         if pause_changed and (
             not self.pause_change_by or
@@ -320,26 +311,20 @@ class SyncFactory(Factory):
             self.pause_change_by = watcher
         else:
             pause_changed = False
-
-        position = self.find_position(watcher.room)
-        
-        self.send_state_to(watcher, position, curtime)
+        position, _ = self.find_position(watcher.room)   
+        self.send_state_to(watcher, position, curtime) # To jest kurwa bez sensu
         self.broadcast_room(watcher, lambda receiver: self.send_state_to(receiver, position, curtime) if pause_changed or (curtime-receiver.last_update_sent) > self.update_time_limit else False)
         
     def seek(self, watcher_proto, counter, ctime, position):
         watcher = self.watchers.get(watcher_proto)
         if not watcher:
             return
-
-        #print watcher.name, 'seeked to', position
         curtime = time.time()
         ctime += watcher.time_offset
         position += curtime - ctime
-        watcher.counter = counter
-        
+        watcher.counter = counter     
         watcher.max_position = position
         self.send_state_to(watcher, position, curtime)
-        
         self.broadcast_room(watcher, lambda receiver: self.__do_seek(receiver, position, watcher, curtime))
     
     def __do_seek(self, receiver, position, watcher, curtime):
@@ -347,31 +332,30 @@ class SyncFactory(Factory):
         receiver.watcher_proto.sender.send_seek(curtime-receiver.time_offset, position, watcher.name)
         
     def send_state_to(self, watcher, position=None, curtime=None):
+        minWatcher = None
         if position is None:
-            position = self.find_position(watcher.room)
+            position, minWatcher = self.find_position(watcher.room)
+            minWatcher = minWatcher.name if minWatcher else None
         if curtime is None:
             curtime = time.time()
-
         ctime = curtime - watcher.time_offset
-
         if self.pause_change_by:
             watcher.watcher_proto.sender.send_state(watcher.counter, ctime, self.paused[watcher.room], position, self.pause_change_by.name)
         else:
-            watcher.watcher_proto.sender.send_state(watcher.counter, ctime, self.paused[watcher.room], position, None)
-
+            watcher.watcher_proto.sender.send_state(watcher.counter, ctime, self.paused[watcher.room], position, minWatcher)
         watcher.last_update_sent = curtime
 
     def find_position(self, room):
         curtime = time.time()
-        try:
-            return min(
-                max(watcher.max_position, watcher.position + (0 if self.paused[watcher.room] else curtime-watcher.last_update))
-                for watcher in self.watchers.itervalues()
-                if watcher.last_update and watcher.room == room
-            )
-        except ValueError:
-            #min() arg is an empty sequence
-            return 0.0
+        minPos = 0.0
+        minWatcher = None
+        for watcher in self.watchers.itervalues():
+            if watcher.last_update and watcher.room == room:
+                watcherPos = max(watcher.max_position, watcher.position + (0 if self.paused[watcher.room] else curtime-watcher.last_update))
+                minPos =  watcherPos if watcherPos < min else min
+                minWatcher = watcher
+        return minPos, minWatcher
+                    
 
     def pong_received(self, watcher_proto, value, ctime):
         watcher = self.watchers.get(watcher_proto)
@@ -409,7 +393,7 @@ class SyncFactory(Factory):
         if not watcher.active:
             return
         if (time.time()-watcher.last_update_sent) > 8:
-            self.remove_watcher(watcher.watcher_proto)
+            self.removeWatcher(watcher.watcher_proto)
             return
         
         chars = None
