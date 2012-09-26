@@ -20,14 +20,14 @@ Frozen Windows executables are available on the download page - https://github.c
 
 ### Python scripts (for those not using the frozen executable package)
 
-If you are not using the frozen executable package then you will need the following to run python scripts:
+If you are not using the frozen executable package then you will need the following to run Python scripts:
 
 * `pygtk` >= `2.0.0` (unless started with `--no-gui`)
 * `argparse` >= `1.1`
 * `pywin32` >= `r217` (MPC-HC, Windows only)
 * `twisted` >= `12.1.0`
 
-If you are using the frozen executable package available from the download page then you will not need to be able to run python scripts.
+If you are using the frozen executable package available from the download page then you will not need to be able to run Python scripts.
 
 ## Supported players
 ### mplayer2 on Linux
