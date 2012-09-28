@@ -149,8 +149,6 @@ class MplayerProtocol(LineProcessProtocol):
             self.setUpFileInPlayer()
    
     def set_paused(self, value):
-        # docs say i can't set "pause" property, but it works...
-        # no, Fluxid, it doesn't on Windows, fuck you. TODO:
         self.send_set_property('pause', 'yes' if value else 'no') 
 
     def send_get_paused(self):
