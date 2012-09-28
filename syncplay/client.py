@@ -469,7 +469,7 @@ class SyncplayClientManager(object):
             self.player_position_before_last_seek = self.player_position
             self.player.set_position(position)
             self.askPlayer()
-        message = who +' jumped from ' + format_time(self.player_position_before_last_seek) + ' to ' + format_time(self.player_position)
+        message = who +' jumped from ' + format_time(self.player_position_before_last_seek) + ' to ' + format_time(position)
         self.ui.showMessage(message)
 
     class UiManager(object):
