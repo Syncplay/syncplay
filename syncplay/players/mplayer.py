@@ -28,6 +28,7 @@ class LineProcessProtocol(ProcessProtocol):
     def outReceived(self, data):
         self._leftover_out, lines = self.parse_lines(self._leftover_out, data)
         for line in lines:
+            line = line.replace('\r', "")
             self.outLineReceived(line)
 
     def errReceived(self, data):
