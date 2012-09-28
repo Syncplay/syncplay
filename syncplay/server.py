@@ -308,7 +308,7 @@ class SyncFactory(Factory):
             self.pause_change_by = watcher
         else:
             pause_changed = False
-        self.send_state_to(watcher) # To jest kurwa bez sensu
+        self.send_state_to(watcher)
         self.broadcast_room(watcher, lambda receiver: self.send_state_to(receiver, position) if pause_changed or (curtime-receiver.last_update_sent) > self.update_time_limit else False)
         
     def seek(self, watcher_proto, counter, ctime, position):
