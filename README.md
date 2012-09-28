@@ -157,5 +157,5 @@ You can report bugs through https://github.com/Uriziel/syncplay/issues but first
 You might also be able to discuss your problem through Internet Relay Chat (IRC). The #Syncplay channel is on the irc.rizon.net server.
 
 ### Known issues
-1. PROTIP: Don't change your system time while Syncplay is playing as it confuses the sync. It is known.
+1. PROTIP: Don't change your system time while Syncplay is running as it confuses the sync. It is known.
 2. PROTIP: Don't try to jump less than 8 seconds as it won't register properly. It is known.
