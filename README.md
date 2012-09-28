@@ -155,3 +155,7 @@ Note: This behaviour can be disabled by using the `--no-store` command-line swit
 You can report bugs through https://github.com/Uriziel/syncplay/issues but first please check to see if your problem has already been reported.
 
 You might also be able to discuss your problem through Internet Relay Chat (IRC). The #Syncplay channel is on the irc.rizon.net server.
+
+### Known issues
+1. PROTIP: Don't change your system time while Syncplay is playing as it confuses the sync. It is known.
+2. PROTIP: Don't try to jump less than 8 seconds as it won't register properly. It is known.
