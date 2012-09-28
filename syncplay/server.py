@@ -199,10 +199,7 @@ class SyncServerProtocol(CommandProtocol):
                 self.__protocol.sendMessage('present', who, where, what, duration, size)
             else:
                 self.__protocol.sendMessage('present', who, where)
-    
-        def send_joined(self, who):
-            self.__protocol.sendMessage('joined', who)
-    
+
         def send_left(self, who):
             self.__protocol.sendMessage('left', who)
     
@@ -268,7 +265,8 @@ class SyncFactory(Factory):
         watcher_proto.sender.send_hello(name)
         self.send_state_to(watcher)
         self.send_ping_to(watcher)
-
+        self.broadcast(watcher, lambda receiver: receiver.watcher_proto.sender.send_room(watcher.name, watcher.room))
+        
     def removeWatcher(self, watcher_proto):
         watcher = self.watchers.pop(watcher_proto, None)
         if not watcher:
@@ -353,24 +351,20 @@ class SyncFactory(Factory):
                 watcherPos = max(watcher.max_position, watcher.position + (0 if self.paused[watcher.room] else curtime-watcher.last_update))
                 minPos =  watcherPos if watcherPos < min else min
                 minWatcher = watcher
-        return minPos, minWatcher
-                    
+        return minPos, minWatcher           
 
     def pong_received(self, watcher_proto, value, ctime):
         watcher = self.watchers.get(watcher_proto)
         if not watcher:
             return
-
         ping_time = watcher.pings_sent.pop(value, None)
         if ping_time is not None:
             curtime = time.time()
             watcher.last_ping_received = curtime
             watcher.ping = ping = (curtime - ping_time)/2
-
             if watcher.time_offset_data is not None:
                 time_offset = curtime - (ctime + ping)
                 watcher.time_offset_data.append((ping, time_offset))
-
                 if len(watcher.time_offset_data) > 1:
                     pmin = min(p for p,_ in watcher.time_offset_data)
                     pmax = max(p for p,_ in watcher.time_offset_data) - pmin
@@ -386,27 +380,21 @@ class SyncFactory(Factory):
                 if len(watcher.time_offset_data) > 20:
                     watcher.time_offset_data = None
 
-            #print watcher.name, 'last ping', watcher.ping, 'time offset %.6f' % watcher.time_offset
-
     def send_ping_to(self, watcher):
         if not watcher.active:
             return
         if (time.time()-watcher.last_update_sent) > 8:
             self.removeWatcher(watcher.watcher_proto)
             return
-        
         chars = None
         while not chars or chars in watcher.pings_sent:
             chars = random_chars()
-
         curtime = time.time()
         if curtime - watcher.last_ping_received > 8:
             watcher.watcher_proto.drop()
             return
-
         watcher.watcher_proto.sender.send_ping(chars)
         watcher.pings_sent[chars] = time.time()
-
         if len(watcher.pings_sent) > 30:
             watcher.pings_sent.pop(min((time, key) for key, time in watcher.pings_sent.iteritems())[1])
         self.schedule_send_ping(watcher)

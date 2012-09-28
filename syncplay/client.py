@@ -71,7 +71,7 @@ class SyncClientProtocol(CommandProtocol):
                 who, where, what, duration, size = args[0], args[1], None, None, None
             self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(who, what, where, duration, size))
             if what:
-                message = '%s is present and is playing \'%s\' (%s) in the room: \'%s\'' % (who, what, format_time(float(duration)), where)
+                message = '%s is present and is playing \'%s\' (%s) in the room: \'%s\'' % (who, what, format_time(float(duration)), where) # TODO: move to "add User"
                 self.__syncplayClient.ui.showMessage(message)
                 self.__syncplayClient.checkIfFileMatchesOthers()
             else:
@@ -114,15 +114,10 @@ class SyncClientProtocol(CommandProtocol):
         @argumentCount(5)
         def playing(self, args):
             who, where, what, duration, size = args
-            message = '%s is playing \'%s\' (%s) in the room: \'%s\'' % (who, what, format_time(float(duration)), where)
+            message = '%s is playing \'%s\' (%s) in the room: \'%s\'' % (who, what, format_time(float(duration)), where) # TODO: move to "add User"
             self.__syncplayClient.ui.showMessage(message)
             self.__syncplayClient.users.addUser(SyncplayClientManager.SyncplayUser(who, what, where, duration, size))
             self.__syncplayClient.checkIfFileMatchesOthers()
-    
-        @argumentCount(1)
-        def joined(self, args):
-            message = '%s joined' % args[0]
-            self.__syncplayClient.ui.showMessage(message)
         
         @argumentCount(2)
         def room(self, args):
@@ -155,8 +150,7 @@ class SyncClientProtocol(CommandProtocol):
             except ValueError:
                 return
             ctime /= 1000.0
-            position /= 1000.0
-        
+            position /= 1000.0     
             return counter, ctime, paused, position, who_changed_state
         
     class _MessagesSender(object):
