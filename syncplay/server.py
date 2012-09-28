@@ -308,9 +308,8 @@ class SyncFactory(Factory):
             self.pause_change_by = watcher
         else:
             pause_changed = False
-        position, _ = self.find_position(watcher.room)   
-        self.send_state_to(watcher, position, curtime) # To jest kurwa bez sensu
-        self.broadcast_room(watcher, lambda receiver: self.send_state_to(receiver, position, curtime) if pause_changed or (curtime-receiver.last_update_sent) > self.update_time_limit else False)
+        self.send_state_to(watcher) # To jest kurwa bez sensu
+        self.broadcast_room(watcher, lambda receiver: self.send_state_to(receiver, position) if pause_changed or (curtime-receiver.last_update_sent) > self.update_time_limit else False)
         
     def seek(self, watcher_proto, counter, ctime, position):
         watcher = self.watchers.get(watcher_proto)
@@ -328,13 +327,12 @@ class SyncFactory(Factory):
         receiver.max_position = position
         receiver.watcher_proto.sender.send_seek(curtime-receiver.time_offset, position, watcher.name)
         
-    def send_state_to(self, watcher, position=None, curtime=None):
+    def send_state_to(self, watcher, position=None):
         minWatcher = None
         if position is None:
             position, minWatcher = self.find_position(watcher.room)
             minWatcher = minWatcher.name if minWatcher else None
-        if curtime is None:
-            curtime = time.time()
+        curtime = time.time()
         ctime = curtime - watcher.time_offset
         if self.pause_change_by:
             watcher.watcher_proto.sender.send_state(watcher.counter, ctime, self.paused[watcher.room], position, self.pause_change_by.name)
