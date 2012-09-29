@@ -5,7 +5,7 @@ ICON_PATH         = /usr/share/icons
 
 install:
 	touch $(BIN_PATH)/syncplay
-	echo '#!/bin/sh\npython $(LIB_PATH)/syncplay/syncplayClient.py $$@' > $(BIN_PATH)/syncplay
+	echo '#!/bin/sh\npython $(LIB_PATH)/syncplay/syncplayClient.py "$$@"' > $(BIN_PATH)/syncplay
 	chmod a+x $(BIN_PATH)/syncplay
 	mkdir $(LIB_PATH)/syncplay/
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
