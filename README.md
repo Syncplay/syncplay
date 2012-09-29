@@ -32,11 +32,10 @@ If you are using the frozen executable package available from the download page 
 ## Supported players
 ### mplayer2 on Linux
 
-On Linux `syncplayClient.py` acts as a wrapper for mplayer. 
-You're expected to pass filename as the first positional argument. If you wish to pass more arguments to mplayer prepend them with -- argument, it's treated as the last argument for wrapper.
-It launches mplayer which behaves just like normal (it reacts to keyboard shortcuts etc).
+On Linux `syncplay` acts as a front-end for mplayer2. 
+To use it select "Open with..." in context menu and choose `Syncplay` or from command line: "syncplay video_filename". If you wish to pass more arguments to mplayer2 prepend them with -- argument, it's treated as the last argument for wrapper.
 
-Default mplayer output is suppressed, but if mplayer quits with errors, those errors will be printed (at most 50 last lines).
+Default mplayer2 output is suppressed, but if mplayer2 quits with errors, those errors will be printed (at most 50 last lines).
 
 ### Media Player Classic - Home Cinema (MPC-HC) on Windows
 
@@ -62,11 +61,19 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ### Getting started with Syncplay on Linux
 
-* [Instructions not written yet.]
+1. Ensure that you have up to date version of `mplayer2` installed.
+
+2. Download Syncplay tarball from https://github.com/Uriziel/syncplay/downloads and run "make install".
+
+3. Open the media file you wish to play with `syncplay`, e.g. using "Open with...")
+
+4. Enter configuration settings (see "Configuration window", below). Ensure that you are on the same server and room as your fellow viewers.
+
+5. Playing, pausing and seeking from within the MPC-HC instance should now be synchronised with everyone else in the same 'room'.
 
 ### Opening a media file with Syncplay
 
-Opening a file with `syncplayClient` will automatically run Syncplay and load the file through MPC-HC on Windows or mplayer on Linux.
+Opening a file with `syncplayClient` (`Syncplay` on Linux) will automatically run Syncplay and load the file through MPC-HC on Windows or mplayer2 on Linux.
 
 ### Configuration window
 The configuration window allows for various settings to be configured prior to Syncplay starting.
