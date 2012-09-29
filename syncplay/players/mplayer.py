@@ -92,8 +92,7 @@ class MplayerProtocol(LineProcessProtocol):
 
     
     def prepare_player(self):
-        self.set_paused(True)
-        
+        self.set_paused(True) 
         self.set_position(0)
         self.send_get_filename()
         self.send_get_length()
