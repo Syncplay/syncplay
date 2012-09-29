@@ -61,15 +61,15 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ### Getting started with Syncplay on Linux
 
-1. Ensure that you have up to date version of `mplayer2` installed.
+1. Ensure that you have an up to date version of `mplayer2` installed.
 
-2. Download Syncplay tarball from https://github.com/Uriziel/syncplay/downloads and run "make install".
+2. Download Syncplay tarball from https://github.com/Uriziel/syncplay/downloads and run `make install`.
 
-3. Open the media file you wish to play with `syncplay`, e.g. using "Open with...")
+3. Open the media file you wish to play with `syncplay` (e.g. using "Open with...").
 
 4. Enter configuration settings (see "Configuration window", below). Ensure that you are on the same server and room as your fellow viewers.
 
-5. Playing, pausing and seeking from within the MPC-HC instance should now be synchronised with everyone else in the same 'room'.
+5. Playing, pausing and seeking from within the mplayer2 instance should now be synchronised with everyone else in the same 'room'.
 
 ### Opening a media file with Syncplay
 
