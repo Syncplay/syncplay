@@ -128,6 +128,12 @@ class MPCConfigurationGetter(ConfigurationGetter):
         if(os.path.isfile(self._args.mpc_path)):
             if(self._args.mpc_path[-10:] == 'mpc-hc.exe' or self._args.mpc_path[-12:] == 'mpc-hc64.exe'):
                 return True
+        if(os.path.isfile(self._args.mpc_path + "\\mpc-hc.exe")):
+            self._args.mpc_path += "\\mpc-hc.exe"
+            return True
+        if(os.path.isfile(self._args.mpc_path + "\\mpc-hc64.exe")):
+            self._args.mpc_path += "\\mpc-hc64.exe"
+            return True
         return False
 
     def _valuesToReadFromConfig(self, section_name):
