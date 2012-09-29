@@ -12,7 +12,7 @@ class MPCHCAPIPlayer(object):
         self.mpc_api.callbacks.on_mpc_closed = lambda: self.__syncplayClient.stop(False)
         self.mpc_api.callbacks.on_fileStateChange = lambda _: self.lockAsking()
         self.mpc_api.callbacks.on_update_playstate = lambda _: self.unlockAsking()
-        self.preventAsking = False
+        self.preventAsking = True
         self.askLock = threading.RLock()
         self.playerStateChangeLock = threading.RLock()
            
@@ -27,24 +27,27 @@ class MPCHCAPIPlayer(object):
     
     def set_speed(self, value):
         pass
-
-    def testMpcReady(self):
-        try:
-            self.playerStateChangeLock.acquire()
-            self.mpc_api.ask_for_current_position()
-        except MPC_API.PlayerNotReadyException:
+    
+    def __testMpcReady(self):
+        i = 0
+        while self.preventAsking:
+            if(i >= 100):
+                raise Exception("Player failed opening file")
+            i+=1
             time.sleep(0.1)
-            self.testMpcReady()
-        finally:
-            self.playerStateChangeLock.release()
 
     def make_ping(self):
-        self.testMpcReady()
-        self.mpc_api.callbacks.on_update_filename = self.handleUpdatedFilename
-        self.__syncplayClient.initPlayer(self)
-        self.handleUpdatedFilename(self.mpc_api.fileplaying)
-        self.ask_for_status()
-
+        try:
+            self.__testMpcReady()
+            self.mpc_api.callbacks.on_update_filename = self.handleUpdatedFilename
+            self.__syncplayClient.initPlayer(self)
+            self.handleUpdatedFilename(self.mpc_api.fileplaying)
+            self.ask_for_status()
+        except Exception, err:
+            self.__syncplayClient.ui.showMessage(err.message)
+            self.__syncplayClient.stop()
+            
+            
     def display_message(self, message):
         try:
             self.mpc_api.send_osd(message, 2, 3000)
@@ -79,15 +82,6 @@ class MPCHCAPIPlayer(object):
         finally:
             self.playerStateChangeLock.release()
 
-
-    def __askForPositionUntilPlayerReady(self):
-        if(self.__syncplayClient.running == False):
-            return 0
-        try:
-            return self.mpc_api.ask_for_current_position()
-        except MPC_API.PlayerNotReadyException:
-            time.sleep(0.1)
-            return self.__askForPositionUntilPlayerReady()
 
     def ask_for_status(self):
         try:

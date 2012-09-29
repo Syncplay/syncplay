@@ -28,6 +28,7 @@ class LineProcessProtocol(ProcessProtocol):
     def outReceived(self, data):
         self._leftover_out, lines = self.parse_lines(self._leftover_out, data)
         for line in lines:
+            line = line.replace('\r', "")
             self.outLineReceived(line)
 
     def errReceived(self, data):
@@ -91,8 +92,7 @@ class MplayerProtocol(LineProcessProtocol):
 
     
     def prepare_player(self):
-        self.set_paused(True)
-        
+        self.set_paused(True) 
         self.set_position(0)
         self.send_get_filename()
         self.send_get_length()
@@ -148,8 +148,6 @@ class MplayerProtocol(LineProcessProtocol):
             self.setUpFileInPlayer()
    
     def set_paused(self, value):
-        # docs say i can't set "pause" property, but it works...
-        # no, Fluxid, it doesn't on Windows, fuck you. TODO:
         self.send_set_property('pause', 'yes' if value else 'no') 
 
     def send_get_paused(self):
