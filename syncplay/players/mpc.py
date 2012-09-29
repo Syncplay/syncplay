@@ -43,9 +43,11 @@ class MPCHCAPIPlayer(object):
             self.__syncplayClient.initPlayer(self)
             self.handleUpdatedFilename(self.mpc_api.fileplaying)
             self.ask_for_status()
-        except:
-            pass
-        
+        except Exception, err:
+            self.__syncplayClient.ui.showMessage(err.message)
+            self.__syncplayClient.stop()
+            
+            
     def display_message(self, message):
         try:
             self.mpc_api.send_osd(message, 2, 3000)
