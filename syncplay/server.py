@@ -322,7 +322,7 @@ class SyncFactory(Factory):
         watcher.counter = counter     
         watcher.max_position = position
         self.send_state_to(watcher, position)
-        self.broadcast_room(watcher, lambda receiver: self.__do_seek(receiver, position, watcher))
+        self.broadcast_room(watcher, lambda receiver: self.__do_seek(receiver, position, watcher, curtime))
     
     def __do_seek(self, receiver, position, watcher, curtime):
         receiver.max_position = position
