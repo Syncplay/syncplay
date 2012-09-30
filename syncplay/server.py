@@ -232,7 +232,7 @@ class WatcherInfo(object):
 
 class SyncFactory(Factory):
     def __init__(self, password = '', banlist = None , isolate_rooms = False, min_pause_lock = 2 , update_time_limit = 1):
-        print "Welcome to Syncplay server, ver. {}".format(syncplay.version)
+        print "Welcome to Syncplay server, ver. {0}".format(syncplay.version)
         self.watchers = dict()
         self.paused = {}
         self.pause_change_time = None
@@ -262,7 +262,7 @@ class SyncFactory(Factory):
             watcher.max_position = min(w.max_position for w in self.watchers.itervalues())
         self.watchers[watcher_proto] = watcher
         watcher_proto.sender.send_hello(name)
-        print "{} connected to room '{}'".format(name, room)
+        print "{0} connected to room '{1}'".format(name, room)
         self.send_state_to(watcher)
         self.send_ping_to(watcher)
         self.broadcast(watcher, lambda receiver: receiver.watcher_proto.sender.send_room(watcher.name, watcher.room))
@@ -271,7 +271,7 @@ class SyncFactory(Factory):
         watcher = self.watchers.pop(watcher_proto, None)
         if not watcher:
             return
-        print "{} left server".format(watcher.name)
+        print "{0} left server".format(watcher.name)
         self.removeRoomIfEmpty(watcher.room)
         watcher.active = False
         self.broadcast(watcher, lambda receiver: receiver.watcher_proto.sender.send_left(watcher.name))
