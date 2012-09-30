@@ -173,14 +173,11 @@ class SyncServerProtocol(CommandProtocol):
         def __init__(self, protocol):
             self.__protocol = protocol
 
-        def send_state(self, counter, ctime, paused, position, who_last_changed):
+        def send_state(self, counter, ctime, paused, position, whosLagging, who_last_changed):
             ctime = int(ctime*1000)
             paused = 'paused' if paused else 'playing'
             position = int(position*1000)
-            if who_last_changed is None:
-                self.__protocol.sendMessage('state', counter, ctime, paused, position)
-            else:
-                self.__protocol.sendMessage('state', counter, ctime, paused, position, who_last_changed)
+            self.__protocol.sendMessage('state', counter, ctime, paused, position, whosLagging, who_last_changed)
     
         def send_seek(self, ctime, position, who_seeked):
             self.__protocol.sendMessage('seek', int(ctime*1000), int(position*1000), who_seeked)
@@ -332,12 +329,14 @@ class SyncFactory(Factory):
         if position is None:
             position, minWatcher = self.find_position(watcher.room)
             minWatcher = minWatcher.name if minWatcher else None
+        if minWatcher is None and self.pause_change_by is not None:
+            minWatcher = self.pause_change_by.name
         curtime = time.time()
         ctime = curtime - watcher.time_offset
         if self.pause_change_by:
-            watcher.watcher_proto.sender.send_state(watcher.counter, ctime, self.paused[watcher.room], position, self.pause_change_by.name)
+            watcher.watcher_proto.sender.send_state(watcher.counter, ctime, self.paused[watcher.room], position, minWatcher, self.pause_change_by.name)
         else:
-            watcher.watcher_proto.sender.send_state(watcher.counter, ctime, self.paused[watcher.room], position, minWatcher)
+            watcher.watcher_proto.sender.send_state(watcher.counter, ctime, self.paused[watcher.room], position, minWatcher, None)
         watcher.last_update_sent = curtime
 
     def find_position(self, room):

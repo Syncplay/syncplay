@@ -78,14 +78,14 @@ class SyncClientProtocol(CommandProtocol):
                 message = '%s is present in the room: \'%s\'' % (who, where)
                 self.__syncplayClient.ui.showMessage(message)
     
-        @argumentCount(4, 5)
+        @argumentCount(4, 6)
         def state(self, args):
             args = self.__parseState(args)
             if not args:
                 self.dropWithError('Malformed state attributes')
                 return
-            counter, ctime, paused, position, name = args
-            self.__syncplayClient.updateGlobalState(counter, ctime, paused, position, name)
+            counter, ctime, paused, position, lagger, name = args
+            self.__syncplayClient.updateGlobalState(counter, ctime, paused, position, lagger, name)
     
         @argumentCount(3)
         def seek(self, args):
@@ -136,10 +136,12 @@ class SyncClientProtocol(CommandProtocol):
             if len(args) == 4:
                 counter, ctime, state, position = args
                 who_changed_state = None
+                lagger = None
             elif len(args) == 5:
-                counter, ctime, state, position, who_changed_state = args
+                counter, ctime, state, position, lagger = args
+                who_changed_state = None
             else:
-                return
+                counter, ctime, state, position, lagger, who_changed_state = args
             if not state in ('paused', 'playing'):
                 return
             paused = state == 'paused'
@@ -151,7 +153,7 @@ class SyncClientProtocol(CommandProtocol):
                 return
             ctime /= 1000.0
             position /= 1000.0     
-            return counter, ctime, paused, position, who_changed_state
+            return counter, ctime, paused, position, lagger, who_changed_state
         
     class _MessagesSender(object):
         def __init__(self, protocol):
@@ -400,7 +402,7 @@ class SyncplayClientManager(object):
         self.users.currentUser.filesize = unicode(os.path.getsize(path))
         self.sendPlaying()
 
-    def updateGlobalState(self, counter, ctime, paused, position, name):
+    def updateGlobalState(self, counter, ctime, paused, position, lagger, name):
         self.counter_recv = max(self.counter_recv, counter)
         counter_valid = self.counter and counter >= self.counter
 
@@ -432,8 +434,10 @@ class SyncplayClientManager(object):
             diff = self.getPlayerPosition() - position
             if abs(diff) > 4:
                 self.player.set_position(position)
-                #self.player.set_paused(True)
-                message = "Rewinded due to time difference with %s" % name
+                if lagger <> self.users.currentUser.name:
+                    message = "Rewinded due to time difference with %s" % lagger
+                else:
+                    message = "You can't seek closer than 8 seconds from where you are"
                 self.ui.showMessage(message)
 
             if self.player_paused and not paused:
