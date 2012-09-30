@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Syncplay server
+Comment=Synchronize video playback over network
+Exec=/usr/bin/syncplay-server %u
+Terminal=true
+Type=Application
+Icon=/usr/share/icons/icon.ico
+Categories=AudioVideo;Audio;Video;
