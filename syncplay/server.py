@@ -321,8 +321,8 @@ class SyncFactory(Factory):
         position += curtime - ctime
         watcher.counter = counter     
         watcher.max_position = position
-        self.send_state_to(watcher, position, curtime)
-        self.broadcast_room(watcher, lambda receiver: self.__do_seek(receiver, position, watcher, curtime))
+        self.send_state_to(watcher, position)
+        self.broadcast_room(watcher, lambda receiver: self.__do_seek(receiver, position, watcher))
     
     def __do_seek(self, receiver, position, watcher, curtime):
         receiver.max_position = position
@@ -345,13 +345,15 @@ class SyncFactory(Factory):
 
     def find_position(self, room):
         curtime = time.time()
-        minPos = 0.0
+        minPos = None
         minWatcher = None
         for watcher in self.watchers.itervalues():
             if watcher.last_update and watcher.room == room:
                 watcherPos = max(watcher.max_position, watcher.position + (0 if self.paused[watcher.room] else curtime-watcher.last_update))
-                minPos =  watcherPos if watcherPos < min else min
-                minWatcher = watcher
+                if minPos is None or watcherPos < minPos:
+                    minPos = watcherPos
+                    minWatcher = watcher
+        minPos = 0.0 if not minPos else minPos
         return minPos, minWatcher           
 
     def pong_received(self, watcher_proto, value, ctime):
