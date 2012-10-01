@@ -5,7 +5,6 @@ from collections import deque
 from twisted.internet import reactor
 from twisted.internet.protocol import ProcessProtocol
 import re
-import math
 
 RE_ANSWER = re.compile('^ANS_([a-zA-Z_]+)=(.+)$')
 
