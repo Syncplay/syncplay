@@ -15,7 +15,7 @@ Syncplay does not use video streaming or file sharing so each user must have the
 ## Requirements
 Frozen Windows executables are available on the download page - https://github.com/Uriziel/syncplay/downloads
 
-* On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.3`.
+* On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.4`.
 * On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
 
 ### Python scripts (for those not using the frozen executable package)
@@ -45,7 +45,7 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ### Getting started with Syncplay on Windows
 
-1. Ensure that you have the latest version of `Media Player Classic - Home Cinema (MPC-HC)` installed. The latest stable build is `1.6.3`.
+1. Ensure that you have the latest version of `Media Player Classic - Home Cinema (MPC-HC)` installed. The latest stable build is `1.6.4`.
 
 2. Download Syncplay frozen executable package from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
 
