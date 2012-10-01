@@ -187,7 +187,7 @@ class MPC_API:
             elif(cmd == MPC_API_COMMANDS.CMD_NOWPLAYING):
                 self.filepath = value.split('|')[3]
                 self.fileplaying =  value.split('|')[3].split('\\').pop()
-                self.fileduration = int(value.split('|')[4])
+                self.fileduration = value.split('|')[4]
                 if(self.callbacks.on_update_filename): thread.start_new_thread(self.callbacks.on_update_filename,(self.fileplaying,))
                 if(self.callbacks.on_update_file_duration): thread.start_new_thread(self.callbacks.on_update_file_duration,(self.fileduration,))
                 
