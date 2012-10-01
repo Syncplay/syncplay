@@ -154,3 +154,4 @@ def run_mpc(manager, mpc_path, file_path, args):
     mpc = MPCHCAPIPlayer(manager)
     mpc.mpc_api.callbacks.on_connected = lambda: mpc.mpc_api.open_file(file_path) if(file_path) else None
     mpc.mpc_api.start_mpc(mpc_path, args)
+    return mpc
