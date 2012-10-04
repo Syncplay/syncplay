@@ -217,6 +217,7 @@ class SyncplayClientManager(object):
         if(room == None or room == ''):
             room = 'default'
         self.users.currentUser.room = room
+        self.defaultRoom = room
         if(password):
             password = hashlib.md5(password).hexdigest()
         self.serverPassword = password
