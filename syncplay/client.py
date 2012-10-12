@@ -52,7 +52,7 @@ class SyncplayClient(object):
         self.userlist = SyncplayUserlist(self.ui)
         if(args.room == None or args.room == ''):
             room = 'default'
-        self.defaultRoom = room
+        self.defaultRoom = args.room
         self.playerPositionBeforeLastSeek = 0.0
         self.setUsername(args.name)
         self.setRoom(room)
