@@ -22,7 +22,7 @@ class ConfigurationGetter(object):
         if not frozen:
             path = os.path.dirname(os.path.dirname(__file__))
         elif frozen in ('dll', 'console_exe', 'windows_exe'):
-            path = os.path.dirname(os.path.dirname(__file__))
+            path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
         else:
             path = ""
         return path
