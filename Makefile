@@ -1,27 +1,63 @@
-BIN_PATH          = /usr/bin
-LIB_PATH          = /usr/lib
-APP_SHORTCUT_PATH = /usr/share/applications
-ICON_PATH         = /usr/share/icons
+SINGLE_USER	= true
 
-install:
+BASE_PATH	= /usr
+LOCAL_PATH	= ~/.local
+
+ifeq ($(SINGLE_USER),false)
+	BIN_PATH          = $(BASE_PATH)/bin
+	LIB_PATH          = $(BASE_PATH)/lib
+	APP_SHORTCUT_PATH = $(BASE_PATH)/share/applications
+	ICON_PATH         = $(BASE_PATH)/share/icons
+else
+	BIN_PATH          = $(LOCAL_PATH)/syncplay
+	LIB_PATH          = $(LOCAL_PATH)/syncplay
+	APP_SHORTCUT_PATH = $(LOCAL_PATH)/share/applications
+	ICON_PATH         = $(LOCAL_PATH)/share/icons
+endif
+
+common:
+	mkdir -p $(LIB_PATH)/syncplay/
+	cp -r syncplay $(LIB_PATH)/syncplay/
+	cp resources/icon.ico $(ICON_PATH)/
+
+u-common:
+	rm -rf $(LIB_PATH)/syncplay
+	rm $(ICON_PATH)/icon.ico
+
+client:
+	mkdir -p $(BIN_PATH)
 	touch $(BIN_PATH)/syncplay
 	echo '#!/bin/sh\npython $(LIB_PATH)/syncplay/syncplayClient.py "$$@"' > $(BIN_PATH)/syncplay
 	chmod a+x $(BIN_PATH)/syncplay
+	cp syncplayClient.py $(LIB_PATH)/syncplay/
+	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
+
+u-client:
+	rm $(BIN_PATH)/syncplay
+	rm $(LIB_PATH)/syncplay/syncplayClient.py
+	rm $(APP_SHORTCUT_PATH)/syncplay.desktop
+
+server:
+	mkdir -p $(BIN_PATH)
 	touch $(BIN_PATH)/syncplay-server
 	echo '#!/bin/sh\npython $(LIB_PATH)/syncplay/syncplayServer.py "$$@"' > $(BIN_PATH)/syncplay-server
 	chmod a+x $(BIN_PATH)/syncplay-server
-	mkdir $(LIB_PATH)/syncplay/
-	cp syncplayClient.py $(LIB_PATH)/syncplay/
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
-	cp -r syncplay $(LIB_PATH)/syncplay/
-	cp syncplay.desktop $(APP_SHORTCUT_PATH)/
-	cp syncplay-server.desktop $(APP_SHORTCUT_PATH)/
-	cp icon.ico $(ICON_PATH)/
+	cp resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
 
-uninstall:
-	rm $(BIN_PATH)/syncplay
+u-server:
 	rm $(BIN_PATH)/syncplay-server
-	rm -rf $(LIB_PATH)/syncplay
-	rm $(APP_SHORTCUT_PATH)/syncplay.desktop
+	rm $(LIB_PATH)/syncplay/syncplayServer.py
 	rm $(APP_SHORTCUT_PATH)/syncplay-server.desktop
-	rm $(ICON_PATH)/icon.ico
+
+install-client: common client
+
+uninstall-client: u-client u-common
+
+install-server: common server
+
+uninstall-server: u-server u-common
+
+install-all: common client server
+
+uninstall-all: u-client u-server u-common
