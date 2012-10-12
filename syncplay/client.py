@@ -161,7 +161,7 @@ class SyncplayClient(object):
             madeChangeOnPlayer = True
         else:
             madeChangeOnPlayer = False
-        message = '<{}> jumped from {} to {}'.format(setBy, self.ui.formatTime(self.playerPositionBeforeLastSeek), self.ui.formatTime(position))
+        message = '<{}> jumped to {} from {}'.format(setBy, self.ui.formatTime(position), self.ui.formatTime(self.playerPositionBeforeLastSeek))
         self.ui.showMessage(message)
         return madeChangeOnPlayer
 
