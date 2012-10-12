@@ -1,0 +1,9 @@
+*.py[co]
+.*.sw[po]
+venv
+
+/SyncPlay.egg-info
+/build
+/dist
+dist.7z
+.*
