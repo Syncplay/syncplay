@@ -18,7 +18,7 @@ common_info = dict(
 
 info = dict(
     common_info,
-    console = [{"script":"syncplayClient.py","icon_resources":[(1,"icon.ico")]}, 'syncplayServer.py'],
+    console = [{"script":"syncplayClient.py","icon_resources":[(1,"resources\\icon.ico")]}, 'syncplayServer.py'],
     options = {'py2exe': {
                          'includes': 'cairo, pango, pangocairo, atk, gobject',
                          'optimize': 2,
