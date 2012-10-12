@@ -18,9 +18,6 @@ class MPCHCAPIPlayer(BasePlayer):
         self._mpcApi.callbacks.onUpdatePlaystate = lambda _: self.__unlockAsking()
         self._mpcApi.callbacks.onGetCurrentPosition = lambda _: self.__onGetPosition()
         self._mpcApi.callbacks.onVersion = lambda _: self.__versionUpdate.set()
-        self._mpcApi.callbacks.onSeek = None
-        self._mpcApi.callbacks.onUpdatePath = None
-        self._mpcApi.callbacks.onUpdateFileDuration = None
         self.__switchPauseCalls = False
         self.__preventAsking = threading.Event()
         self.__positionUpdate = threading.Event()
