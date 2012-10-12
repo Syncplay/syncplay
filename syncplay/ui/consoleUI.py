@@ -3,6 +3,7 @@ import threading
 import re
 import time 
 import syncplay
+import os
 
 class ConsoleUI(threading.Thread):
     def __init__(self):
@@ -27,7 +28,7 @@ class ConsoleUI(threading.Thread):
                     self._executeCommand(data)
         except:
             self._syncplayClient.protocolFactory.stopRetrying()
-            pass
+          
         
     def promptFor(self, prompt = ">", message = ""):
         if message <> "":
@@ -38,6 +39,8 @@ class ConsoleUI(threading.Thread):
         return self.PromptResult
 
     def showMessage(self, message, noTimestamp):
+        if(os.name == "nt"):
+            message = message.encode('ascii','replace') 
         if(noTimestamp):
             print(message)
         else:
@@ -48,33 +51,18 @@ class ConsoleUI(threading.Thread):
         
     def showErrorMessage(self, message):
         print("ERROR:\t" + message)
-        
-    def __exectueSeekCmd(self, seek_type, minutes, seconds):
-        self._syncplayClient.playerPositionBeforeLastSeek = self._syncplayClient.player_position
-        if seek_type == 's':
-            seconds = int(seconds) if seconds <> None else 0
-            seconds += int(minutes) * 60 if minutes <> None else 0 
-            self._syncplayClient.setPosition(seconds)
-        else: #seek_type s+
-            seconds = int(seconds) if seconds <> None and minutes <> None else 20
-            seconds += int(minutes) * 60 if minutes <> None else 60
-            self._syncplayClient.setPosition(self.player_position+seconds)
-            
+                
     def _executeCommand(self, data):
-        RE_SEEK = re.compile("^([\+\-s]+) ?(-?\d+)?([^0-9](\d+))?$")
         RE_ROOM = re.compile("^room( (\w+))?")
-        matched_seek = RE_SEEK.match(data)
         matched_room = RE_ROOM.match(data)
-        if matched_seek :
-            self.__exectueSeekCmd(matched_seek.group(1), matched_seek.group(2), matched_seek.group(4))
-        elif matched_room:
+        if matched_room:
             room = matched_room.group(2)
             if room == None:
-                if  self._syncplayClient.users.currentUser._filename <> None:
-                    room = self._syncplayClient.users.currentUser._filename
+                if  self._syncplayClient.userlist.currentUser.file:
+                    room = self._syncplayClient.userlist.currentUser.file["name"]
                 else:
                     room = self._syncplayClient.defaultRoom
-            self._syncplayClient.protocol.sendRoomSetting(room)
+            self._syncplayClient.setRoom(room)
         elif data == "r":
             tmp_pos = self._syncplayClient.getPlayerPosition()
             self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
@@ -86,8 +74,6 @@ class ConsoleUI(threading.Thread):
         elif data == 'help':
             self.showMessage( "Available commands:" )
             self.showMessage( "\thelp - this help" )
-            self.showMessage( "\ts [time] - seek" )
-            self.showMessage( "\ts+ [time] - seek to: current position += time" )
             self.showMessage( "\tr - revert last seek" )
             self.showMessage( "\tp - toggle pause" )
             self.showMessage( "\troom [name] - change room" )
