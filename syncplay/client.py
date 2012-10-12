@@ -394,17 +394,17 @@ class SyncplayUserlist(object):
         return message
 
     def __displayFileWatchersInRoomList(self, key, users):
-        self.ui.showMessage("\t\tFile: {} is being played by:".format(key), True, True)
+        self.ui.showMessage("File: {} is being played by:".format(key), True, True)
         for user in sorted(users.itervalues()):
             message = user.username
             message = self.__addDifferentFileMessageIfNecessary(user, message)
-            self.ui.showMessage("\t\t\t<" + message + ">", True, True)
+            self.ui.showMessage("\t<" + message + ">", True, True)
 
     def __displayPeopleInRoomWithNoFile(self, noFileList):
         if (noFileList):
-            self.ui.showMessage("\t\tPeople who are not playing any file:",  True, True)
+            self.ui.showMessage("People who are not playing any file:",  True, True)
             for user in sorted(noFileList.itervalues()):
-                self.ui.showMessage("\t\t\t<" + user.username + ">", True, True)
+                self.ui.showMessage("\t<" + user.username + ">", True, True)
 
     def __displayListOfPeople(self, rooms):
         for roomName in sorted(rooms.iterkeys()):
