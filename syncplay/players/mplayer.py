@@ -13,7 +13,7 @@ class MplayerPlayer(BasePlayer):
         self._filename = None
         self._filepath = None
         
-        _process = subprocess.Popen([playerPath, filePath, '-slave', '-msglevel', 'all=1:global=4'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+        _process = subprocess.Popen([playerPath, filePath, '-slave', '-msglevel', 'all=1:global=4'], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
         self._listener = self.__Listener(self, _process)
         self._listener.setDaemon(True)
         self._listener.start()
