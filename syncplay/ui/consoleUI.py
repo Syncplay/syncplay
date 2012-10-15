@@ -17,18 +17,14 @@ class ConsoleUI(threading.Thread):
         self._syncplayClient = client
         
     def run(self):
-        try:
-            while True:
-                data = raw_input()
-                data = data.rstrip('\n\r')
-                if(not self.promptMode.isSet()):
-                    self.PromptResult = data
-                    self.promptMode.set()
-                elif(self._syncplayClient):
-                    self._executeCommand(data)
-        except:
-            self._syncplayClient.protocolFactory.stopRetrying()
-          
+        while True:
+            data = raw_input()
+            data = data.rstrip('\n\r')
+            if(not self.promptMode.isSet()):
+                self.PromptResult = data
+                self.promptMode.set()
+            elif(self._syncplayClient):
+                self._executeCommand(data)
         
     def promptFor(self, prompt = ">", message = ""):
         if message <> "":
@@ -38,7 +34,7 @@ class ConsoleUI(threading.Thread):
         self.promptMode.wait()
         return self.PromptResult
 
-    def showMessage(self, message, noTimestamp):
+    def showMessage(self, message, noTimestamp = False):
         if(os.name == "nt"):
             message = message.encode('ascii','replace') 
         if(noTimestamp):
@@ -63,21 +59,20 @@ class ConsoleUI(threading.Thread):
                 else:
                     room = self._syncplayClient.defaultRoom
             self._syncplayClient.setRoom(room)
+            self._syncplayClient.sendRoom()
         elif data == "r":
             tmp_pos = self._syncplayClient.getPlayerPosition()
             self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
         elif data == "p":
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
-        elif data == "k": #TODO: remove?
-            self._syncplayClient.stop()
         elif data == 'help':
-            self.showMessage( "Available commands:" )
-            self.showMessage( "\thelp - this help" )
-            self.showMessage( "\tr - revert last seek" )
-            self.showMessage( "\tp - toggle pause" )
-            self.showMessage( "\troom [name] - change room" )
-            self.showMessage("Syncplay version: %s" % syncplay.version)
-            self.showMessage("More info available at: %s" % syncplay.projectURL)
+            self.showMessage( "Available commands:", True)
+            self.showMessage( "\thelp - this help", True )
+            self.showMessage( "\tr - revert last seek", True )
+            self.showMessage( "\tp - toggle pause", True )
+            self.showMessage( "\troom [name] - change room", True )
+            self.showMessage("Syncplay version: {}".format(syncplay.version), True)
+            self.showMessage("More info available at: {}".format(syncplay.projectURL), True)
         else:
             self.showMessage( "Unrecognized command, type 'help' for list of available commands" )    
