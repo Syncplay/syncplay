@@ -6,7 +6,7 @@ gtk.set_interactive(False)
 import cairo, gio, pango, atk, pangocairo, gobject #@UnusedImport
 
 class GuiConfiguration:
-    def __init__(self, args, force = False):
+    def __init__(self, args, force=False):
         self.args = args
         self.closedAndNotSaved = False
         if(args.player_path == None or args.host == None or args.name == None or force):
@@ -43,7 +43,7 @@ class GuiConfiguration:
  
     def _tryToFillUpMpcPath(self):
         if(self.args.player_path == None):
-            paths = ["C:\Program Files (x86)\MPC-HC\mpc-hc.exe", 
+            paths = ["C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
                      "C:\Program Files\MPC-HC\mpc-hc.exe",
                      "C:\Program Files\MPC-HC\mpc-hc64.exe",
                      "C:\Program Files\Media Player Classic - Home Cinema\mpc-hc.exe",

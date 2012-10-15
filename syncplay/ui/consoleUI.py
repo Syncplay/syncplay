@@ -26,7 +26,7 @@ class ConsoleUI(threading.Thread):
             elif(self._syncplayClient):
                 self._executeCommand(data)
         
-    def promptFor(self, prompt = ">", message = ""):
+    def promptFor(self, prompt=">", message=""):
         if message <> "":
             print(message)
         self.promptMode.clear()
@@ -34,9 +34,9 @@ class ConsoleUI(threading.Thread):
         self.promptMode.wait()
         return self.PromptResult
 
-    def showMessage(self, message, noTimestamp = False):
+    def showMessage(self, message, noTimestamp=False):
         if(os.name == "nt"):
-            message = message.encode('ascii','replace') 
+            message = message.encode('ascii', 'replace') 
         if(noTimestamp):
             print(message)
         else:
@@ -50,7 +50,7 @@ class ConsoleUI(threading.Thread):
 
     def __doSeek(self, m):
         if (m.group(4)):
-            t = int(m.group(5))*60 + int(m.group(6))
+            t = int(m.group(5)) * 60 + int(m.group(6))
         else:
             t = int(m.group(2))
         if(m.group(1)):
@@ -58,7 +58,7 @@ class ConsoleUI(threading.Thread):
                 sign = -1
             else:
                 sign = 1
-            t = self._syncplayClient.getGlobalPosition() + sign*t 
+            t = self._syncplayClient.getGlobalPosition() + sign * t 
         self._syncplayClient.setPosition(t)
         
     def _executeCommand(self, data):
@@ -81,13 +81,13 @@ class ConsoleUI(threading.Thread):
         elif data == "p":
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
         elif data == 'help':
-            self.showMessage( "Available commands:", True)
-            self.showMessage( "\thelp - this help", True )
-            self.showMessage( "\tr - revert last seek", True )
-            self.showMessage( "\tp - toggle pause", True )
-            self.showMessage( "\troom [name] - change room", True )
-            self.showMessage( "\t[s][+-][time] - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True )
+            self.showMessage("Available commands:", True)
+            self.showMessage("\thelp - this help", True)
+            self.showMessage("\tr - revert last seek", True)
+            self.showMessage("\tp - toggle pause", True)
+            self.showMessage("\troom [name] - change room", True)
+            self.showMessage("\t[s][+-][time] - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True)
             self.showMessage("Syncplay version: {}".format(syncplay.version), True)
             self.showMessage("More info available at: {}".format(syncplay.projectURL), True)
         else:
-            self.showMessage( "Unrecognized command, type 'help' for list of available commands" )    
+            self.showMessage("Unrecognized command, type 'help' for list of available commands")    

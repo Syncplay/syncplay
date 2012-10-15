@@ -15,7 +15,7 @@ except ImportError:
 class SyncplayClientManager(object):
     def __init__(self):
         self._prepareArguments()
-        self.interface = ui.getUi(graphical = not self.args.no_gui)
+        self.interface = ui.getUi(graphical=not self.args.no_gui)
         self._checkAndSaveConfiguration()
         syncplayClient = None
         if(self.argsGetter.playerType == "mpc"):
@@ -49,11 +49,11 @@ class SyncplayClientManager(object):
     def _promptForMissingArguments(self):
         if(self.args.no_gui):
             if (self.args.host == None):
-                self.args.host = self.interface.promptFor(prompt = "Hostname: ", message = "You must supply hostname on the first run, it's easier through command line arguments.")
+                self.args.host = self.interface.promptFor(prompt="Hostname: ", message="You must supply hostname on the first run, it's easier through command line arguments.")
             if (self.args.name == None):
-                self.args.name = self.interface.promptFor(prompt = "Username: ", message = "You must supply username on the first run, it's easier through command line arguments.")
+                self.args.name = self.interface.promptFor(prompt="Username: ", message="You must supply username on the first run, it's easier through command line arguments.")
             if (self.args.player_path == None):
-                self.args.player_path = self.interface.promptFor(prompt = "Player executable: ", message = "You must supply path to your player on the first run, it's easier through command line arguments.")
+                self.args.player_path = self.interface.promptFor(prompt="Player executable: ", message="You must supply path to your player on the first run, it's easier through command line arguments.")
         else:
             self._guiPromptForMissingArguments()
             

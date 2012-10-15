@@ -7,19 +7,19 @@ from setuptools import find_packages
 import syncplay
 
 common_info = dict(
-    name = 'Syncplay',
-    version = syncplay.version,
-    author = 'Tomasz Kowalczyk, Uriziel',
-    author_email = 'code@fluxid.pl, urizieli@gmail.com',
-    description = 'Syncplay',
-    packages = find_packages(exclude=['venv']),
-    install_requires = ['Twisted>=11.1'],
+    name='Syncplay',
+    version=syncplay.version,
+    author='Tomasz Kowalczyk, Uriziel',
+    author_email='code@fluxid.pl, urizieli@gmail.com',
+    description='Syncplay',
+    packages=find_packages(exclude=['venv']),
+    install_requires=['Twisted>=11.1'],
 )
 
 info = dict(
     common_info,
-    console = [{"script":"syncplayClient.py","icon_resources":[(1,"resources\\icon.ico")]}, 'syncplayServer.py'],
-    options = {'py2exe': {
+    console=[{"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")]}, 'syncplayServer.py'],
+    options={'py2exe': {
                          'includes': 'cairo, pango, pangocairo, atk, gobject',
                          'optimize': 2,
                          'compressed': 1

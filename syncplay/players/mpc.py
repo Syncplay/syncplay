@@ -122,9 +122,9 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__client.updatePlayerStatus(self.__client.getGlobalPaused(), self.__client.getGlobalPosition())
 
     def __forcePause(self, paused):
-        i =  0
+        i = 0
         while(paused <> self._mpcApi.isPaused() and i < 15):
-            i+=1
+            i += 1
             self.setPaused(paused)
             time.sleep(0.1)
         time.sleep(0.1)
@@ -161,7 +161,7 @@ class MpcHcApi:
         self.version = None
         self.__playpause_warden = False
         self.__locks = self.__Locks()
-        self.__mpcExistenceChecking = threading.Thread(target = self.__mpcReadyInSlaveMode, name ="Check MPC window")
+        self.__mpcExistenceChecking = threading.Thread(target=self.__mpcReadyInSlaveMode, name="Check MPC window")
         self.__mpcExistenceChecking.setDaemon(True)
         self.__listener = self.__Listener(self, self.__locks)
         self.__listener.setDaemon(True)
@@ -176,7 +176,7 @@ class MpcHcApi:
             return f(self, *args, **kwds)
         return wrapper
             
-    def startMpc(self, path, args = ()):
+    def startMpc(self, path, args=()):
         args = "%s /slave %s" % (" ".join(args), str(self.__listener.hwnd))
         win32api.ShellExecute(0, "open", path, args, None, 1)
         if(not self.__locks.mpcStart.wait(10)):
@@ -208,12 +208,12 @@ class MpcHcApi:
     def seek(self, position):
         self.__listener.SendCommand(self.CMD_SETPOSITION, unicode(position))
 
-    def sendOsd(self, message, MsgPos = 2, DurationMs = 3000):
+    def sendOsd(self, message, MsgPos=2, DurationMs=3000):
         class __OSDDATASTRUCT(ctypes.Structure):
             _fields_ = [
                 ('nMsgPos', ctypes.c_int32),
                 ('nDurationMS', ctypes.c_int32),
-                ('strMsg', ctypes.c_wchar * (len(message)+1))
+                ('strMsg', ctypes.c_wchar * (len(message) + 1))
             ]    
         cmessage = __OSDDATASTRUCT() 
         cmessage.nMsgPos = MsgPos 
@@ -224,7 +224,7 @@ class MpcHcApi:
     def sendRawCommand(self, cmd, value):
         self.__listener.SendCommand(cmd, value)
 
-    def handleCommand(self,cmd, value):
+    def handleCommand(self, cmd, value):
         if (cmd == self.CMD_CONNECT): 
             self.__listener.mpcHandle = int(value)
             self.__locks.mpcStart.set()
@@ -245,39 +245,39 @@ class MpcHcApi:
         elif(cmd == self.CMD_PLAYMODE):
             self.playState = int(value)
             if(self.callbacks.onUpdatePlaystate):  
-                thread.start_new_thread(self.callbacks.onUpdatePlaystate,(self.playState,))
+                thread.start_new_thread(self.callbacks.onUpdatePlaystate, (self.playState,))
             
         elif(cmd == self.CMD_NOWPLAYING):
             value = value.split('|')
             self.filePath = value[3]
-            self.filePlaying =  value[3].split('\\').pop()
+            self.filePlaying = value[3].split('\\').pop()
             self.fileDuration = float(value[4])
             if(self.callbacks.onUpdatePath): 
-                thread.start_new_thread(self.callbacks.onUpdatePath,(self.onUpdatePath,))
+                thread.start_new_thread(self.callbacks.onUpdatePath, (self.onUpdatePath,))
             if(self.callbacks.onUpdateFilename): 
-                thread.start_new_thread(self.callbacks.onUpdateFilename,(self.filePlaying,))
+                thread.start_new_thread(self.callbacks.onUpdateFilename, (self.filePlaying,))
             if(self.callbacks.onUpdateFileDuration): 
-                thread.start_new_thread(self.callbacks.onUpdateFileDuration,(self.fileDuration,))
+                thread.start_new_thread(self.callbacks.onUpdateFileDuration, (self.fileDuration,))
             
         elif(cmd == self.CMD_CURRENTPOSITION):
             self.lastFilePosition = float(value)
             if(self.callbacks.onGetCurrentPosition): 
-                thread.start_new_thread(self.callbacks.onGetCurrentPosition,(self.lastFilePosition,))
+                thread.start_new_thread(self.callbacks.onGetCurrentPosition, (self.lastFilePosition,))
         
         elif(cmd == self.CMD_NOTIFYSEEK):
             if(self.lastFilePosition <> float(value)): #Notify seek is sometimes sent twice
                 self.lastFilePosition = float(value)
                 if(self.callbacks.onSeek): 
-                    thread.start_new_thread(self.callbacks.onSeek,(self.lastFilePosition,))
+                    thread.start_new_thread(self.callbacks.onSeek, (self.lastFilePosition,))
         
         elif(cmd == self.CMD_DISCONNECT):
             if(self.callbacks.onMpcClosed): 
-                thread.start_new_thread(self.callbacks.onMpcClosed,(None,))
+                thread.start_new_thread(self.callbacks.onMpcClosed, (None,))
     
         elif(cmd == self.CMD_VERSION):
             if(self.callbacks.onVersion): 
                 self.version = value
-                thread.start_new_thread(self.callbacks.onVersion,(value,))
+                thread.start_new_thread(self.callbacks.onVersion, (value,))
             
     class PlayerNotReadyException(Exception):
         pass
@@ -360,9 +360,9 @@ class MpcHcApi:
         MLS_CLOSING = 3
     
     class __MPC_PLAYSTATE:
-        PS_PLAY   = 0
-        PS_PAUSE  = 1
-        PS_STOP   = 2
+        PS_PLAY = 0
+        PS_PAUSE = 1
+        PS_STOP = 2
         PS_UNUSED = 3
 
     class __Listener(threading.Thread):
@@ -387,13 +387,13 @@ class MpcHcApi:
                 classAtom,
                 "ListenerGUI",
                 0,
-                0, 
                 0,
-                win32con.CW_USEDEFAULT, 
+                0,
                 win32con.CW_USEDEFAULT,
-                0, 
+                win32con.CW_USEDEFAULT,
                 0,
-                hinst, 
+                0,
+                hinst,
                 None
             )
             self.locks.listenerStart.set()
@@ -405,7 +405,7 @@ class MpcHcApi:
             #print "API:\tin>\t 0x%X\t" % int(pCDS.contents.dwData), ctypes.wstring_at(pCDS.contents.lpData)
             self.__mpcApi.handleCommand(pCDS.contents.dwData, ctypes.wstring_at(pCDS.contents.lpData))
     
-        def SendCommand(self, cmd, message = u''):
+        def SendCommand(self, cmd, message=u''):
             #print "API:\t<out\t 0x%X\t" % int(cmd), message
             if not win32gui.IsWindow(self.mpcHandle):
                 if(self.__mpcApi.callbacks.onMpcClosed):
@@ -414,14 +414,14 @@ class MpcHcApi:
             cs.dwData = cmd;
 
             if(isinstance(message, (unicode, str))):
-                message = ctypes.create_unicode_buffer(message, len(message)+1)
+                message = ctypes.create_unicode_buffer(message, len(message) + 1)
             elif(isinstance(message, ctypes.Structure)):
                 pass
             else:
                 raise TypeError
             cs.lpData = ctypes.addressof(message)
             cs.cbData = ctypes.sizeof(message)
-            ptr= ctypes.addressof(cs)
+            ptr = ctypes.addressof(cs)
             win32api.SendMessage(self.mpcHandle, win32con.WM_COPYDATA, self.hwnd, ptr)    
             
         class __COPYDATASTRUCT(ctypes.Structure):
