@@ -129,7 +129,9 @@ class MplayerPlayer(BasePlayer):
         self._pathAsk.set()
         self._positionAsk.set()
         self._pausedAsk.set()
-        self._client.stop()
+        self._client.stop(False)
+        for line in self._listener.readStderrLine():
+            self._client.ui.showMessage(line, True, True)
     
     class __Listener(threading.Thread):
         def __init__(self, playerController, playerProcess):
@@ -150,4 +152,8 @@ class MplayerPlayer(BasePlayer):
             except IOError:
                 pass
 
+        def readStderrLine(self):
+            for line in self.__process.stderr.readlines():
+                yield line
+            
             

@@ -35,7 +35,7 @@ class SyncClientFactory(ClientFactory):
         if not self.reconnecting:
             message = 'Connection failed'
             self._client.ui.showMessage(message)
-            self._client.stop()
+            self._client.stop(True)
         else:
             self.clientConnectionLost(connector, reason)
         
@@ -279,7 +279,7 @@ class SyncplayClient(object):
         self._running = True
         reactor.run()
 
-    def stop(self, promptForAction = True):
+    def stop(self, promptForAction = False):
         if not self._running:
             return
         self._running = False
