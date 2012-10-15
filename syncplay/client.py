@@ -335,7 +335,7 @@ class SyncplayUserlist(object):
         elif (room and file_):
             duration = self.ui.formatTime(file_['duration'])
             message = "<{}> is playing '{}' ({})".format(username, file_['name'], duration)
-            if(self.currentUser.room <> room):
+            if(self.currentUser.room <> room or self.currentUser.username == username):
                 message += " in room: '{}'".format(room)
             self.ui.showMessage(message)
             if(self.currentUser.file and not self.currentUser.isFileSame(file_)):
@@ -362,11 +362,14 @@ class SyncplayUserlist(object):
         elif (room and room != user.room):
             self.__showUserChangeMessage(username, room, None)
 
-    def modUser(self, username, room, file_, noMessage = False):
+    def modUser(self, username, room, file_):
         if(self._users.has_key(username)):
             user = self._users[username]
-            if(not noMessage):
-                self.__displayModUserMessage(username, room, file_, user)
+            self.__displayModUserMessage(username, room, file_, user)
+            user.room = room
+            user.file = file_
+        elif(username == self.currentUser.username):
+            self.__showUserChangeMessage(username, room, file_)
         else:
             self.addUser(username, room, file_)
 
@@ -401,9 +404,9 @@ class SyncplayUserlist(object):
     def __displayFileWatchersInRoomList(self, key, users):
         self.ui.showMessage("File: {} is being played by:".format(key), True, True)
         for user in sorted(users.itervalues()):
-            message = user.username
+            message = "<"+user.username+">"
             message = self.__addDifferentFileMessageIfNecessary(user, message)
-            self.ui.showMessage("\t<" + message + ">", True, True)
+            self.ui.showMessage("\t" + message, True, True)
 
     def __displayPeopleInRoomWithNoFile(self, noFileList):
         if (noFileList):

@@ -6,6 +6,8 @@ import syncplay
 import os
 
 class ConsoleUI(threading.Thread):
+    RE_ROOM = re.compile("^room( (.+))?")
+    
     def __init__(self):
         self.promptMode = threading.Event()
         self.PromptResult = ""
@@ -49,8 +51,7 @@ class ConsoleUI(threading.Thread):
         print("ERROR:\t" + message)
                 
     def _executeCommand(self, data):
-        RE_ROOM = re.compile("^room( (\w+))?")
-        matched_room = RE_ROOM.match(data)
+        matched_room = self.RE_ROOM.match(data)
         if matched_room:
             room = matched_room.group(2)
             if room == None:

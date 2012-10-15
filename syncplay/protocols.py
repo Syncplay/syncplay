@@ -87,8 +87,6 @@ class SyncClientProtocol(JSONCommandProtocol):
         else:    
             self._client.setUsername(username)
             self._client.setRoom(roomName)
-            message = "You have joined room {} as <{}>".format(roomName, username)
-            self._client.ui.showMessage(message)
         self.logged = True
         self._client.sendFile()
     
