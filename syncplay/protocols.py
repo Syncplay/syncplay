@@ -82,7 +82,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         username, roomName, version = self._extractHelloArguments(hello)
         if(not username or not roomName or not version):
             self.dropWithError("Not enough Hello arguments")
-        elif(version <> syncplay.version): #TODO: change to check only subversion
+        elif(version.split(".")[0:2] != syncplay.version.split(".")[0:2]):
             self.dropWithError("Mismatch between versions of client and server")
         else:    
             self._client.setUsername(username)
@@ -266,7 +266,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         username, serverPassword, roomName, roomPassword, version = self._extractHelloArguments(hello)
         if(not username or not roomName or not version):
             self.dropWithError("Not enough Hello arguments")
-        elif(version <> syncplay.version): #TODO: change to check only major release
+        elif(version.split(".")[0:2] != syncplay.version.split(".")[0:2]):
             self.dropWithError("Mismatch between versions of client and server")
         else:
             if(not self._checkPassword(serverPassword)):
