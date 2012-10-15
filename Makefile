@@ -1,4 +1,4 @@
-SINGLE_USER	= true
+SINGLE_USER	= false
 
 BASE_PATH	= /usr
 LOCAL_PATH	= ~/.local
