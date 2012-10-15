@@ -70,11 +70,11 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine('osd_show_text "{!s}" {} {}'.format(message, 3000, 1))
  
     def setSpeed(self, value):        
-        self._setProperty('speed', "{:.2}".format(value))
+        self._setProperty('speed', "{:.2f}".format(value))
 
     def setPosition(self, value):
         self._position = value
-        self._setProperty('time_pos', "{:.2}".format(value))
+        self._setProperty('time_pos', "{}".format(value))
     
     def setPaused(self, value):
         self._paused = value
