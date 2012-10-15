@@ -3,6 +3,7 @@ import threading
 import time 
 import syncplay
 import os
+import re
 
 class ConsoleUI(threading.Thread):
     def __init__(self):
@@ -45,10 +46,26 @@ class ConsoleUI(threading.Thread):
         print(message)
         
     def showErrorMessage(self, message):
-        print("ERROR:\t" + message)
-                
+        print("ERROR:\t" + message)            
+
+    def __doSeek(self, m):
+        if (m.group(4)):
+            t = int(m.group(5))*60 + int(m.group(6))
+        else:
+            t = int(m.group(2))
+        if(m.group(1)):
+            if(m.group(1) == "-"):
+                sign = -1
+            else:
+                sign = 1
+            t = self._syncplayClient.getGlobalPosition() + sign*t 
+        self._syncplayClient.setPosition(t)
+        
     def _executeCommand(self, data):
-        if data[0:4] == "room":
+        m = re.match(r"^s? ?([+-])?((\d+)|((\d+)\D(\d+)))$", data)
+        if(m):
+            self.__doSeek(m)
+        elif data[0:4] == "room":
             room = data[5:]
             if room == "":
                 if  self._syncplayClient.userlist.currentUser.file:
@@ -69,6 +86,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage( "\tr - revert last seek", True )
             self.showMessage( "\tp - toggle pause", True )
             self.showMessage( "\troom [name] - change room", True )
+            self.showMessage( "\t[s][+-][time] - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True )
             self.showMessage("Syncplay version: {}".format(syncplay.version), True)
             self.showMessage("More info available at: {}".format(syncplay.projectURL), True)
         else:
