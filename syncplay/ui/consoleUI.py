@@ -1,13 +1,10 @@
 from __future__ import print_function
 import threading
-import re
 import time 
 import syncplay
 import os
 
 class ConsoleUI(threading.Thread):
-    RE_ROOM = re.compile("^room( (.+))?")
-    
     def __init__(self):
         self.promptMode = threading.Event()
         self.PromptResult = ""
@@ -51,10 +48,9 @@ class ConsoleUI(threading.Thread):
         print("ERROR:\t" + message)
                 
     def _executeCommand(self, data):
-        matched_room = self.RE_ROOM.match(data)
-        if matched_room:
-            room = matched_room.group(2)
-            if room == None:
+        if data[0:4] == "room":
+            room = data[5:]
+            if room == "":
                 if  self._syncplayClient.userlist.currentUser.file:
                     room = self._syncplayClient.userlist.currentUser.file["name"]
                 else:
