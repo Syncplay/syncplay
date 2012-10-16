@@ -396,7 +396,7 @@ class SyncplayUserlist(object):
 
     def __addDifferentFileMessageIfNecessary(self, user, message):
         if(self.currentUser.file):
-            fileHasSameSizeAsYour = user.file['size'] != self.currentUser.file['size']
+            fileHasSameSizeAsYour = user.file['size'] == self.currentUser.file['size']
             differentFileMessage = " (but their file size is different from yours!)"
             message += differentFileMessage if not fileHasSameSizeAsYour else ""
         return message
@@ -426,7 +426,10 @@ class SyncplayUserlist(object):
         rooms = {} 
         self.__createListOfPeople(rooms)
         self.__displayListOfPeople(rooms)
-                                       
+    
+    def clearList(self):
+        self._users = {}
+                              
 class UiManager(object):
     def __init__(self, client, ui):
         self._client = client

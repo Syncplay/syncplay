@@ -89,6 +89,7 @@ class SyncClientProtocol(JSONCommandProtocol):
             self._client.setRoom(roomName)
         self.logged = True
         self._client.sendFile()
+        self.sendList()
     
     def sendHello(self):
         hello = {}
@@ -136,6 +137,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         self.sendSet({"file": file_})
 
     def handleList(self, userList):
+        self._client.userlist.clearList()
         for room in userList.iteritems():
             roomName = room[0]
             for user in room[1].iteritems():
@@ -274,8 +276,7 @@ class SyncServerProtocol(JSONCommandProtocol):
             self._factory.addWatcher(self, username, roomName, roomPassword)
             self._logged = True
             self.sendHello()
-            self.sendList()
-    
+
     def sendHello(self):
         hello = {}
         hello["username"] = self._factory.watcherGetUsername(self)  
