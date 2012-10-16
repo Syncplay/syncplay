@@ -316,7 +316,7 @@ class SyncplayUser(object):
             return False
         sameName = self.file['name'] == file_['name']
         sameSize = self.file['size'] == file_['size']
-        sameDuration = self.file['duration'] == file_['duration']
+        sameDuration = int(self.file['duration']) - int(file_['duration']) < 1
         return sameName and sameSize and sameDuration
       
     def __lt__(self, other):
