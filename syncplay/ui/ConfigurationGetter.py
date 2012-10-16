@@ -20,7 +20,7 @@ class ConfigurationGetter(object):
     def _findWorkingDir(self):
         frozen = getattr(sys, 'frozen', '')
         if not frozen:
-            path = os.path.dirname(os.path.dirname(__file__))
+            path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         elif frozen in ('dll', 'console_exe', 'windows_exe'):
             path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
         else:
