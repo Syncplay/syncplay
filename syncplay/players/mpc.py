@@ -48,7 +48,7 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__positionUpdate.set()
     
     def setSpeed(self, value):
-        pass
+        self._mpcApi.setSpeed(value)
     
     def __dropIfNotSufficientVersion(self):
         self._mpcApi.askForVersion()
@@ -75,6 +75,8 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__mpcVersion = self._mpcApi.version.split('.')
         if(self.__mpcVersion[0:3] == ['1', '6', '4']):
             self.__switchPauseCalls = True
+        if(self.__mpcVersion[0:3] >= ['1', '6', '5']):
+            self.speedSupported = True            
         if(filePath):
             self._mpcApi.openFile(filePath)
         
@@ -149,6 +151,9 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__client.ui.showErrorMessage(err)
         self.__client.stop()
 
+    def sendCustomCommand(self, cmd, val):
+        self._mpcApi.sendRawCommand(cmd, val)
+        
 class MpcHcApi:
     def __init__(self):
         self.callbacks = self.__Callbacks()
@@ -207,6 +212,10 @@ class MpcHcApi:
     @waitForFileStateReady
     def seek(self, position):
         self.__listener.SendCommand(self.CMD_SETPOSITION, unicode(position))
+
+    @waitForFileStateReady
+    def setSpeed(self, rate):
+        self.__listener.SendCommand(self.CMD_SETSPEED, unicode(rate))
 
     def sendOsd(self, message, MsgPos=2, DurationMs=3000):
         class __OSDDATASTRUCT(ctypes.Structure):
@@ -352,6 +361,7 @@ class MpcHcApi:
     CMD_PLAY = 0xA0000004
     CMD_PAUSE = 0xA0000005
     CMD_GETVERSION = 0xA0003006
+    CMD_SETSPEED = 0xA0004008
     
     class __MPC_LOADSTATE:
         MLS_CLOSED = 0
