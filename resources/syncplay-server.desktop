@@ -5,5 +5,5 @@ Comment=Synchronize video playback over network
 Exec=/usr/bin/syncplay-server %u
 Terminal=true
 Type=Application
-Icon=/usr/share/icons/icon.ico
+Icon=syncplay
 Categories=AudioVideo;Audio;Video;
