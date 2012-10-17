@@ -13,8 +13,7 @@ class MplayerPlayer(BasePlayer):
         self._filename = None
         self._filepath = None
         
-        _process = subprocess.Popen([playerPath, filePath, '-slave', '-msglevel', 'all=1:global=4'], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-        self._listener = self.__Listener(self, _process)
+        self._listener = self.__Listener(self, playerPath, filePath)
         self._listener.setDaemon(True)
         self._listener.start()
         
@@ -134,9 +133,9 @@ class MplayerPlayer(BasePlayer):
             self._client.ui.showMessage(line, True, True)
     
     class __Listener(threading.Thread):
-        def __init__(self, playerController, playerProcess):
+        def __init__(self, playerController, playerPath, filePath):
             self.__playerController = playerController
-            self.__process = playerProcess
+            self.__process = subprocess.Popen([playerPath, filePath, '-slave', '-msglevel', 'all=1:global=4'], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             threading.Thread.__init__(self, name="MPlayer Listener")
 
         def run(self):
