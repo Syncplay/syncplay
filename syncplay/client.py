@@ -445,13 +445,13 @@ class UiManager(object):
     def promptFor(self, prompt):
         return self.__ui.promptFor(prompt)
 
-    def formatTime(self, value):
-        value = round(value)
-        weeks = value // 604800
-        days = (value % 604800) // 86400
-        hours = (value % 86400) // 3600
-        minutes = (value % 3600) // 60
-        seconds = value % 60
+    def formatTime(self, timeInSeconds):
+        value = round(timeInSeconds)
+        weeks = timeInSeconds // 604800
+        days = (timeInSeconds % 604800) // 86400
+        hours = (timeInSeconds % 86400) // 3600
+        minutes = (timeInSeconds % 3600) // 60
+        seconds = timeInSeconds % 60
         if(weeks > 0):
             return '{0:.0f}w, {1:.0f}d, {2:02.0f}:{3:02.0f}:{4:02.0f}'.format(weeks, days, hours, minutes, seconds)
         elif(days > 0):
