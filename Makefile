@@ -7,22 +7,26 @@ ifeq ($(SINGLE_USER),false)
 	BIN_PATH          = $(BASE_PATH)/bin
 	LIB_PATH          = $(BASE_PATH)/lib
 	APP_SHORTCUT_PATH = $(BASE_PATH)/share/applications
-	ICON_PATH         = $(BASE_PATH)/share/icons
+	ICON_PATH         = $(BASE_PATH)/share
 else
 	BIN_PATH          = $(LOCAL_PATH)/syncplay
 	LIB_PATH          = $(LOCAL_PATH)/syncplay
 	APP_SHORTCUT_PATH = $(LOCAL_PATH)/share/applications
-	ICON_PATH         = $(LOCAL_PATH)/share/icons
+	ICON_PATH         = $(LOCAL_PATH)/share
 endif
 
 common:
 	mkdir -p $(LIB_PATH)/syncplay/
 	cp -r syncplay $(LIB_PATH)/syncplay/
-	cp resources/icon.ico $(ICON_PATH)/
+	cp -r resources/hicolor $(ICON_PATH)/icons/
+	cp resources/hicolor/48x48/apps/syncplay.png $(ICON_PATH)/app-install/icons/
+	cp resources/hicolor/48x48/apps/syncplay.png $(ICON_PATH)/pixmaps/
 
 u-common:
 	rm -rf $(LIB_PATH)/syncplay
-	rm $(ICON_PATH)/icon.ico
+	rm $(ICON_PATH)/icons/hicolor/*/apps/syncplay.png
+	rm $(ICON_PATH)/app-install/icons/syncplay.png
+	rm $(ICON_PATH)/pixmaps/syncplay.png
 
 client:
 	mkdir -p $(BIN_PATH)

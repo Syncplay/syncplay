@@ -64,13 +64,13 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ### Getting started with Syncplay on Linux
 
-1. Ensure that you have an up to date version of `mplayer2` installed.
+1. Ensure that you have an up to date version of `mplayer2` and relevant python libraries (see "Python scripts", above) installed.
 
-2. Download Syncplay tarball from https://github.com/Uriziel/syncplay/downloads and run `make install`.
+2. Download Syncplay tarball from https://github.com/Uriziel/syncplay/downloads and run `make install-client` (or `make install-all` if you also want server).
 
 3. Open the media file you wish to play with `syncplay` (e.g. using "Open with...").
 
-4. Enter configuration settings (see "Configuration window", below). Ensure that you are on the same server and room as your fellow viewers.
+4. Enter configuration settings (see "Configuration window", below). Ensure that you are on the same server and room as your fellow viewers. This is done only once, configuration is kept in `~/.syncplay` file.
 
 5. Playing, pausing and seeking from within the mplayer2 instance should now be synchronised with everyone else in the same 'room'.
 
@@ -91,7 +91,7 @@ The settings to be configured are as follows:
 
 * `Host` - Address (hostname / IP) of server to connect to (optionally with port), e.g. `localhost:2734` or `192.168.0.1`. Default port is `8999`.
 * `Username` - Name that the server and other viewers know you by.
-* `Default room (optional)` - Room to join upon connection. You will only be synchronised with others in the same room on the same server. Default room is `default`.
+* `Default room (optional)` - Room to join upon connection. You will only be synchronised with others in the same room on the same server. Default room is `default` by default.
 * `Server password (optional)` - Password for server. Servers that are not password protected have a blank password.
 * `Path to mpc-hc.exe [Windows only]` - Location of the MPC-HC executable (mpc-hc.exe or mpc-hc64.exe). If this is in a common location then it will be filled in by default. Users are advised to check that it points to their desired installation.
 
@@ -103,8 +103,7 @@ Within the Syncplay command-line you can enter the following commands (and then 
 
 * `help` - Displays list of commands and other information.
 * `room [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then this command will use the filename of the currently open file, or alternatively will join the room `default`.
-* `s [time]` - Seek (jump) to specified time. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
-* `s+ [time]` - Jumps [time] forward. Can be `seconds`, `minutes:seconds` or `hours:minutes:seconds`.
+* `[s][+-][time]` - Seek (jump) to specified time. Optional `+` or `-` denotes relative time forward and backward respectively. Time can be given in seconds or min:sec format.
 * `r` - Revert last seek. Seeks to where you were before the most recent seek.
 * `p` - Toggle play/pause.
 
@@ -125,7 +124,7 @@ You can run `syncplayClient` with the following command-line switches to alter S
 
 ### Notification messages
 
-* `Rewinded due to time difference  with [user]` - This means that your media player ended up too far in front of the specified user and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly.
+* `Rewinded due to time difference  with [user]` - This means that your media player ended up too far in front of the specified user and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly. If someone is only a small amount in front then their playback rate will be reduced to 95% for a short amount of time to bring them back into sync.
 * `File you're playing is different from [user]'s` - This means that the filename, length and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
        
 ## How to use the server
@@ -168,4 +167,3 @@ You might also be able to discuss your problem through Internet Relay Chat (IRC)
 
 ### Known issues
 1. Changing your system time while Syncplay is running confuses the sync. PROTIP: Don't do it.
-2. Syncplay cannot properly handle a seek that is within 8 seconds of the current position. PROTIP: Don't do it.
