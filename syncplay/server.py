@@ -66,7 +66,8 @@ class SyncFactory(Factory):
     def _removeWatcherFromTheRoom(self, watcherProtocol):
         for room in self._rooms.itervalues():
             watcher = room.pop(watcherProtocol, None)
-            return watcher
+            if(watcher):
+                return watcher
 
     def _deleteRoomIfEmpty(self, room):
         if (self._rooms[room] == {}):
@@ -227,7 +228,8 @@ class Watcher(object):
     
     def resetStateTimer(self):
         if(self._sendStateTimer):
-            self._sendStateTimer.reset()
+            self._sendStateTimer.stop()
+            self._sendStateTimer.start(1)
             
     def deactivate(self):
         if(self._sendStateTimer):
