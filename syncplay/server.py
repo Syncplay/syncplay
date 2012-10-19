@@ -6,8 +6,6 @@ from twisted.internet.protocol import Factory
 import syncplay
 from syncplay.protocols import SyncServerProtocol
 import time
-import threading
-
 
 class SyncFactory(Factory):
     def __init__(self, password = '', banlist = None , isolateRooms = False):
@@ -18,8 +16,6 @@ class SyncFactory(Factory):
         self._rooms = {}
         self._roomStates = {}
         self.isolateRooms = isolateRooms
-        self.roomUpdateLock = threading.RLock()
-        self.roomUsersLock = threading.RLock()
         
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)        
@@ -50,36 +46,31 @@ class SyncFactory(Factory):
         self.broadcast(watcherProtocol, l)
 
     def getWatcher(self, watcherProtocol):
-        with self.roomUsersLock:
-            for room in self._rooms.itervalues():
-                if(room.has_key(watcherProtocol)):
-                    return room[watcherProtocol]
+        for room in self._rooms.itervalues():
+            if(room.has_key(watcherProtocol)):
+                return room[watcherProtocol]
 
     def getAllWatchers(self, watcherProtocol):
-        with self.roomUsersLock:
-            if(self.isolateRooms):
-                room = self.getWatcher(watcherProtocol).room
-                return self._rooms[room]
-            else:
-                watchers = {}
-                for room in self._rooms.itervalues():
-                    for watcher in room.itervalues():
-                        watchers[watcher.watcherProtocol] = watcher
-                return watchers
-    
-    def _removeWatcherFromTheRoom(self, watcherProtocol):
-        with self.roomUsersLock:
+        if(self.isolateRooms):
+            room = self.getWatcher(watcherProtocol).room
+            return self._rooms[room]
+        else:
+            watchers = {}
             for room in self._rooms.itervalues():
-                watcher = room.pop(watcherProtocol, None)
-                return watcher
+                for watcher in room.itervalues():
+                    watchers[watcher.watcherProtocol] = watcher
+            return watchers
+
+    def _removeWatcherFromTheRoom(self, watcherProtocol):
+        for room in self._rooms.itervalues():
+            watcher = room.pop(watcherProtocol, None)
+            return watcher
 
     def _deleteRoomIfEmpty(self, room):
-        with self.roomUpdateLock:
-            with self.roomUsersLock:
-                if (self._rooms[room] == {}):
-                    self._rooms.pop(room)
-                    self._roomStates.pop(room)
-            
+        if (self._rooms[room] == {}):
+            self._rooms.pop(room)
+            self._roomStates.pop(room)
+    
     def sendState(self, watcherProtocol, doSeek = False, senderLatency = 0, forcedUpdate = False):
         watcher = self.getWatcher(watcherProtocol)
         if(not watcher):
@@ -132,28 +123,26 @@ class SyncFactory(Factory):
         watcher = self.getWatcher(watcherProtocol)
         self.__updateWatcherPing(latencyCalculation, watcher)
         watcher.lastUpdate = time.time()
-        with self.roomUpdateLock:
-            if(watcher.file):
-                if(position is not None):
-                    self.__updatePositionState(position, doSeek, watcher)
-                pauseChanged = False
-                if(paused is not None):
-                    pauseChanged = self.__updatePausedState(paused, watcher)
-                forceUpdate = self.__shouldServerForceUpdateOnRoom(pauseChanged, doSeek)
-                if(forceUpdate):
-                    l = lambda w: self.sendState(w, doSeek, watcher.latency, forceUpdate)
-                    self.broadcastRoom(watcher, l)
+        if(watcher.file):
+            if(position is not None):
+                self.__updatePositionState(position, doSeek, watcher)
+            pauseChanged = False
+            if(paused is not None):
+                pauseChanged = self.__updatePausedState(paused, watcher)
+            forceUpdate = self.__shouldServerForceUpdateOnRoom(pauseChanged, doSeek)
+            if(forceUpdate):
+                l = lambda w: self.sendState(w, doSeek, watcher.latency, forceUpdate)
+                self.broadcastRoom(watcher, l)
 
     def removeWatcher(self, watcherProtocol):
-        with self.roomUsersLock:
-            watcher = self._removeWatcherFromTheRoom(watcherProtocol)
-            if(not watcher):
-                return
-            watcher.deactivate()
-            print "{0} left server".format(watcher.name) 
-            self._deleteRoomIfEmpty(watcher.room)
-            l = lambda w: w.sendUserSetting(watcher.name, watcher.room, None, {"left": True})
-            self.broadcast(watcherProtocol, l)
+        watcher = self._removeWatcherFromTheRoom(watcherProtocol)
+        if(not watcher):
+            return
+        watcher.deactivate()
+        print "{0} left server".format(watcher.name) 
+        self._deleteRoomIfEmpty(watcher.room)
+        l = lambda w: w.sendUserSetting(watcher.name, watcher.room, None, {"left": True})
+        self.broadcast(watcherProtocol, l)
 
     def watcherGetUsername(self, watcherProtocol):
         return self.getWatcher(watcherProtocol).name
@@ -162,21 +151,20 @@ class SyncFactory(Factory):
         return self.getWatcher(watcherProtocol).room
     
     def watcherSetRoom(self, watcherProtocol, room):
-        with self.roomUsersLock:
-            watcher = self._removeWatcherFromTheRoom(watcherProtocol)
-            if(not watcher):
-                return
-            watcher.resetStateTimer()
-            oldRoom = watcher.room
-            self._createRoomIfDoesntExist(room)
-            self._rooms[room][watcherProtocol] = watcher
-            self._deleteRoomIfEmpty(oldRoom)
-            if(self.isolateRooms): #this is trick to inform old room about leaving
-                l = lambda w: w.sendUserSetting(watcher.name, room, watcher.file, None)
-                self.broadcast(watcherProtocol, l)
-            watcher.room = room
-            l = lambda w: w.sendUserSetting(watcher.name, watcher.room, watcher.file, None)
+        watcher = self._removeWatcherFromTheRoom(watcherProtocol)
+        if(not watcher):
+            return
+        watcher.resetStateTimer()
+        oldRoom = watcher.room
+        self._createRoomIfDoesntExist(room)
+        self._rooms[room][watcherProtocol] = watcher
+        self._deleteRoomIfEmpty(oldRoom)
+        if(self.isolateRooms): #this is trick to inform old room about leaving
+            l = lambda w: w.sendUserSetting(watcher.name, room, watcher.file, None)
             self.broadcast(watcherProtocol, l)
+        watcher.room = room
+        l = lambda w: w.sendUserSetting(watcher.name, watcher.room, watcher.file, None)
+        self.broadcast(watcherProtocol, l)
                 
     def watcherSetFile(self, watcherProtocol, file_):
         watcher = self.getWatcher(watcherProtocol)
