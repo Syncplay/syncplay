@@ -446,7 +446,7 @@ class UiManager(object):
         return self.__ui.promptFor(prompt)
 
     def formatTime(self, timeInSeconds):
-        value = round(timeInSeconds)
+        timeInSeconds = round(timeInSeconds)
         weeks = timeInSeconds // 604800
         days = (timeInSeconds % 604800) // 86400
         hours = (timeInSeconds % 86400) // 3600
