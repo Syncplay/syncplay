@@ -64,7 +64,7 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ### Getting started with Syncplay on Linux
 
-1. Ensure that you have an up to date version of `mplayer2` installed.
+1. Ensure that you have an up to date version of `mplayer2` and relevant python libraries (see "Python scripts", above) installed.
 
 2. Download Syncplay tarball from https://github.com/Uriziel/syncplay/downloads and run `make install-client` (or `make install-all` if you also want server).
 
