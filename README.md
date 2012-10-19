@@ -91,7 +91,7 @@ The settings to be configured are as follows:
 
 * `Host` - Address (hostname / IP) of server to connect to (optionally with port), e.g. `localhost:2734` or `192.168.0.1`. Default port is `8999`.
 * `Username` - Name that the server and other viewers know you by.
-* `Default room (optional)` - Room to join upon connection. You will only be synchronised with others in the same room on the same server. Default room is `default`.
+* `Default room (optional)` - Room to join upon connection. You will only be synchronised with others in the same room on the same server. Default room is `default` by default.
 * `Server password (optional)` - Password for server. Servers that are not password protected have a blank password.
 * `Path to mpc-hc.exe [Windows only]` - Location of the MPC-HC executable (mpc-hc.exe or mpc-hc64.exe). If this is in a common location then it will be filled in by default. Users are advised to check that it points to their desired installation.
 
