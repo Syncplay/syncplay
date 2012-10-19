@@ -16,7 +16,9 @@ class SyncFactory(Factory):
         self._rooms = {}
         self._roomStates = {}
         self.isolateRooms = isolateRooms
-        
+        self._usersCheckupTimer = task.LoopingCall(self._checkUsers)
+        self._usersCheckupTimer.start(4, True)
+
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)        
         
@@ -87,6 +89,7 @@ class SyncFactory(Factory):
         watcherProtocol.sendState(position, paused, doSeek, setBy, senderLatency, watcher.latency, forcedUpdate)
         if(time.time() - watcher.lastUpdate > 4.1):
             watcherProtocol.drop()
+            self.removeWatcher(watcherProtocol)
         
     def __updateWatcherPing(self, latencyCalculation, watcher):
         if (latencyCalculation):
@@ -184,6 +187,14 @@ class SyncFactory(Factory):
         for room in self._rooms.itervalues():
             for receiver in room:
                 what(receiver)
+    
+    def _checkUsers(self):
+        for room in self._rooms.itervalues():
+            for watcher in room.itervalues():
+                if(time.time() - watcher.lastUpdate > 4.1):
+                    watcher.watcherProtocol.drop()
+                    self.removeWatcher(watcher.watcherProtocol)
+                
     
 class Watcher(object):
     def __init__(self, factory, watcherProtocol, name, room):
