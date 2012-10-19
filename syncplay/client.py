@@ -268,10 +268,12 @@ class SyncplayClient(object):
         return self._serverPassword
     
     def setPosition(self, position):
-        self._player.setPosition(position)
+        if(self._player):
+            self._player.setPosition(position)
     
     def setPaused(self, paused):
-        self._player.setPaused(paused)
+        if(self._player):
+            self._player.setPaused(paused)
     
     def start(self, host, port):
         if self._running:
