@@ -167,3 +167,4 @@ You might also be able to discuss your problem through Internet Relay Chat (IRC)
 
 ### Known issues
 1. Changing your system time while Syncplay is running confuses the sync. PROTIP: Don't do it.
+2. In MPC-HC the 'Remember File position' feature will not work as expected if you are using Syncplay. If you want to save/load the file position when using Syncplay then use MPC-HC's built in Favorites feature.
