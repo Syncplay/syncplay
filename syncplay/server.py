@@ -194,6 +194,8 @@ class SyncFactory(Factory):
                 if(time.time() - watcher.lastUpdate > 4.1):
                     watcher.watcherProtocol.drop()
                     self.removeWatcher(watcher.watcherProtocol)
+                    self._checkUsers() #restart
+                    return             #end loop
                 
     
 class Watcher(object):
