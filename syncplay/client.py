@@ -111,17 +111,17 @@ class SyncplayClient(object):
         self._playerPaused = paused
         if(self._lastGlobalUpdate):
             self._lastPlayerUpdate = time.time()
-            if(pauseChange or seeked):
-                self.playerPositionBeforeLastSeek = self.getGlobalPosition()
-                if(self._protocol):
-                    self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)        
+            if(pauseChange or seeked and self._protocol):
+                if(seeked):
+                    self.playerPositionBeforeLastSeek = self.getGlobalPosition()
+                self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)        
 
     def getLocalState(self):
         paused = self.getPlayerPaused()
         position = self.getPlayerPosition()
-        pauseChange, seeked = self._determinePlayerStateChange(paused, position)  
+        pauseChange, _ = self._determinePlayerStateChange(paused, position)  
         if(self._lastGlobalUpdate):
-            return position, paused, seeked, pauseChange
+            return position, paused, _, pauseChange
         else:
             return None, None, None, None
     
@@ -166,10 +166,10 @@ class SyncplayClient(object):
         return madeChangeOnPlayer
 
     def _slowDownToCoverTimeDifference(self, diff):
-        if(0.5 < diff):
+        if(1.0 < diff and not self._speedChanged):
             self._player.setSpeed(0.95)
             self._speedChanged = True
-        elif(self._speedChanged and diff < 0.2 ):
+        elif(self._speedChanged and diff < 0.1 ):
             self._player.setSpeed(1.00)
             self._speedChanged = False
         madeChangeOnPlayer = True

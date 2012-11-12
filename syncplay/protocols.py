@@ -20,7 +20,7 @@ class JSONCommandProtocol(LineReceiver):
             elif command == "Error":
                 self.handleState(message[1])
             else:
-                self.dropWithError("Unknown Command") #TODO: log, not drop
+                self.dropWithError("Unknown Command\n" + message[1]) #TODO: log, not drop
 
     def printReceived(self, line): #TODO: remove
 #        print ">>i", line
@@ -38,7 +38,7 @@ class JSONCommandProtocol(LineReceiver):
         try:
             messages = json.loads(line)
         except:
-            self.dropWithError("Not a json encoded string")
+            self.dropWithError("Not a json encoded string\n" + line)
             return
         self.handleMessages(messages) 
     
@@ -68,6 +68,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         self._client.destroyProtocol()
         
     def dropWithError(self, error):
+        print error
         self._client.ui.showErrorMessage(error)
         self._client.protocolFactory.stopRetrying()
         self.drop()
@@ -81,9 +82,9 @@ class SyncClientProtocol(JSONCommandProtocol):
     def handleHello(self, hello):
         username, roomName, version = self._extractHelloArguments(hello)
         if(not username or not roomName or not version):
-            self.dropWithError("Not enough Hello arguments")
+            self.dropWithError("Not enough Hello arguments\n" + hello)
         elif(version.split(".")[0:2] != syncplay.version.split(".")[0:2]):
-            self.dropWithError("Mismatch between versions of client and server")
+            self.dropWithError("Mismatch between versions of client and server\n" + hello)
         else:    
             self._client.setUsername(username)
             self._client.setRoom(roomName)
