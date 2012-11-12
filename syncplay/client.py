@@ -213,7 +213,9 @@ class SyncplayClient(object):
                 return 0.0
         position = self._playerPosition
         if(not self._playerPaused):
-            position += time.time() - self._lastPlayerUpdate
+            diff = time.time() - self._lastPlayerUpdate
+            if diff < 0.5:
+                position += diff 
         return position
 
     def getPlayerPaused(self):

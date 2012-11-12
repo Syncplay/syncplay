@@ -1,3 +1,3 @@
-version = '1.1.4'
+version = '1.1.5'
 milestone = 'Tequila'
 projectURL = 'http://uriziel.github.com/syncplay/'
