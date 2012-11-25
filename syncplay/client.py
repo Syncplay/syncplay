@@ -111,7 +111,7 @@ class SyncplayClient(object):
         self._playerPaused = paused
         if(self._lastGlobalUpdate):
             self._lastPlayerUpdate = time.time()
-            if(pauseChange or seeked and self._protocol):
+            if((pauseChange or seeked) and self._protocol):
                 if(seeked):
                     self.playerPositionBeforeLastSeek = self.getGlobalPosition()
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)        
@@ -345,6 +345,14 @@ class SyncplayUserlist(object):
             if(self.currentUser.file and not self.currentUser.isFileSame(file_)):
                 message = "File you are playing appears to be different from <{}>'s".format(username)
                 self.ui.showMessage(message)
+                if(self.currentUser.file['name'] <> file_['name']):
+                    message = "Filename is different"
+                if(self.currentUser.file['size'] <> file_['size']):
+                    message = "Size is different"
+                if(self.currentUser.file['duration'] <> file_['duration']):
+                    message = "Duration is different"
+                self.ui.showMessage(message)
+                
 
     def addUser(self, username, room, file_, noMessage = False):
         if(username == self.currentUser.username):
@@ -401,8 +409,9 @@ class SyncplayUserlist(object):
     def __addDifferentFileMessageIfNecessary(self, user, message):
         if(self.currentUser.file):
             fileHasSameSizeAsYour = user.file['size'] == self.currentUser.file['size']
+            fileHasSameNameYour = user.file['name'] == self.currentUser.file['name']
             differentFileMessage = " (but their file size is different from yours!)"
-            message += differentFileMessage if not fileHasSameSizeAsYour else ""
+            message += differentFileMessage if not fileHasSameSizeAsYour and fileHasSameNameYour else ""
         return message
 
     def __displayFileWatchersInRoomList(self, key, users):
