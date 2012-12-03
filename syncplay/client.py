@@ -347,12 +347,13 @@ class SyncplayUserlist(object):
                 self.ui.showMessage(message)
                 if(self.currentUser.file['name'] <> file_['name']):
                     message = "Filename is different"
+                    self.ui.showMessage(message)
                 if(self.currentUser.file['size'] <> file_['size']):
                     message = "Size is different"
+                    self.ui.showMessage(message)
                 if(self.currentUser.file['duration'] <> file_['duration']):
                     message = "Duration is different"
-                self.ui.showMessage(message)
-                
+                    self.ui.showMessage(message)
 
     def addUser(self, username, room, file_, noMessage = False):
         if(username == self.currentUser.username):
