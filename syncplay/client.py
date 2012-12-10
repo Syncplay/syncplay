@@ -5,7 +5,6 @@ import time
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
-import traceback
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry = 10):
@@ -22,10 +21,9 @@ class SyncClientFactory(ClientFactory):
         self._client.ui.showMessage('Attempting to connect to {}:{}'.format(destination.host, destination.port))
 
     def clientConnectionLost(self, connector, reason):
-        traceback.print_stack()
         if self._timesTried < self.retry:
             self._timesTried += 1
-            message = 'Connection with server lost, attempting to reconnecting'
+            message = 'Connection with server lost, attempting to reconnect'
             self._client.ui.showMessage(message)
             self.reconnecting = True
             reactor.callLater(0.1*(2**self._timesTried), connector.connect)
