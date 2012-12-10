@@ -400,6 +400,8 @@ class SyncplayUserlist(object):
         rooms[user.room]["__noFile__"][user.username] = user
 
     def __createListOfPeople(self, rooms):
+        if(not rooms.has_key(self.currentUser.room)):
+            rooms[self.currentUser.room] = {}
         for user in self._users.itervalues():
             if (not rooms.has_key(user.room)):
                 rooms[user.room] = {}
@@ -407,6 +409,7 @@ class SyncplayUserlist(object):
                 self.__addUserWithFileToList(rooms, user)
             else:
                 self.__addUserWithoutFileToList(rooms, user)
+        self.__addUserWithFileToList(rooms, self.currentUser)
         return rooms
 
     def __addDifferentFileMessageIfNecessary(self, user, message):
