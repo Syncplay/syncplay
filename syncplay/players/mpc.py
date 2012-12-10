@@ -52,7 +52,7 @@ class MPCHCAPIPlayer(BasePlayer):
     
     def __dropIfNotSufficientVersion(self):
         self._mpcApi.askForVersion()
-        if(not self.__versionUpdate.wait(0.1)):
+        if(not self.__versionUpdate.wait(0.1) and self._mpcApi.version):
             self.__mpcError("MPC version not sufficient, please use `mpc-hc` >= `1.6.4`")
 
     def __testMpcReady(self):
