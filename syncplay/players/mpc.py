@@ -124,9 +124,7 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__client.updatePlayerStatus(self.__client.getGlobalPaused(), self.__client.getGlobalPosition())
 
     def __forcePause(self, paused):
-        i = 0
-        while(paused <> self._mpcApi.isPaused() and i < 35):
-            i += 1
+        while(paused <> self._mpcApi.isPaused()):
             self.setPaused(paused)
             time.sleep(0.1)
         time.sleep(0.1)

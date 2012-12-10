@@ -18,16 +18,16 @@ class JSONCommandProtocol(LineReceiver):
             elif command == "State":
                 self.handleState(message[1])
             elif command == "Error":
-                self.handleState(message[1])
+                self.handleError(message[1])
             else:
                 self.dropWithError("Unknown Command\n" + message[1]) #TODO: log, not drop
 
     def printReceived(self, line): #TODO: remove
-#        print ">>i", line
+        #print ">>i", line
         pass
         
     def printSent(self, line):
-#        print "o<<", line
+        #print "o<<", line
         pass
 
     def lineReceived(self, line):
@@ -68,7 +68,6 @@ class SyncClientProtocol(JSONCommandProtocol):
         self._client.destroyProtocol()
         
     def dropWithError(self, error):
-        print error
         self._client.ui.showErrorMessage(error)
         self._client.protocolFactory.stopRetrying()
         self.drop()
@@ -89,6 +88,7 @@ class SyncClientProtocol(JSONCommandProtocol):
             self._client.setUsername(username)
             self._client.setRoom(roomName)
         self.logged = True
+        self._client.ui.showMessage("Successfully connected to server")
         self._client.sendFile()
     
     def sendHello(self):
@@ -237,6 +237,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         
     def dropWithError(self, error):
         print "Client drop: %s -- %s" % (self.transport.getPeer().host, error)
+        self.sendError(error)
         self.drop()
         
     def connectionLost(self, reason):

@@ -5,6 +5,7 @@ import time
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
+import traceback
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry = 10):
@@ -18,22 +19,23 @@ class SyncClientFactory(ClientFactory):
 
     def startedConnecting(self, connector):
         destination = connector.getDestination()
-        self._client.ui.showMessage('Connecting to {}:{}'.format(destination.host, destination.port))
+        self._client.ui.showMessage('Attempting to connect to {}:{}'.format(destination.host, destination.port))
 
     def clientConnectionLost(self, connector, reason):
+        traceback.print_stack()
         if self._timesTried < self.retry:
             self._timesTried += 1
-            message = 'Connection lost, reconnecting'
+            message = 'Connection with server lost, attempting to reconnecting'
             self._client.ui.showMessage(message)
             self.reconnecting = True
             reactor.callLater(0.1*(2**self._timesTried), connector.connect)
         else:
-            message = 'Disconnected'
+            message = 'Disconnected from server'
             self._client.ui.showMessage(message)
 
     def clientConnectionFailed(self, connector, reason):
         if not self.reconnecting:
-            message = 'Connection failed'
+            message = 'Connection with server failed'
             self._client.ui.showMessage(message)
             self._client.stop(True)
         else:
@@ -411,7 +413,7 @@ class SyncplayUserlist(object):
         if(self.currentUser.file):
             fileHasSameSizeAsYour = user.file['size'] == self.currentUser.file['size']
             fileHasSameNameYour = user.file['name'] == self.currentUser.file['name']
-            differentFileMessage = " (but their file size is different from yours!)"
+            differentFileMessage = " (their file size is different from yours!)"
             message += differentFileMessage if not fileHasSameSizeAsYour and fileHasSameNameYour else ""
         return message
 
