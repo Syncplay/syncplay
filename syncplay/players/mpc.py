@@ -191,7 +191,6 @@ class MpcHcApi:
         self.__listener.SendCommand(self.CMD_OPENFILE, filePath)
     
     def isPaused(self):
-        print self.playState
         return (self.playState <> self.__MPC_PLAYSTATE.PS_PLAY and self.playState <> None)
  
     def askForVersion(self):
