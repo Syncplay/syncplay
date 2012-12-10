@@ -132,9 +132,11 @@ class MPCHCAPIPlayer(BasePlayer):
         try:
             self.__forcePause(self.__client.getGlobalPaused())
             self._mpcApi.seek(self.__client.getGlobalPosition())
-            time.sleep(0.1)
             if(self._mpcApi.isPaused() <> self.__client.getGlobalPaused()):
-                self.__setUpStateForNewlyOpenedFile()
+                time.sleep(0.1)
+                self._mpcApi.playPause()
+                if(self._mpcApi.isPaused() <> self.__client.getGlobalPaused()):
+                    self.__setUpStateForNewlyOpenedFile()
         except MpcHcApi.PlayerNotReadyException:
             time.sleep(0.1)
             self.__setUpStateForNewlyOpenedFile()
@@ -189,6 +191,7 @@ class MpcHcApi:
         self.__listener.SendCommand(self.CMD_OPENFILE, filePath)
     
     def isPaused(self):
+        print self.playState
         return (self.playState <> self.__MPC_PLAYSTATE.PS_PLAY and self.playState <> None)
  
     def askForVersion(self):
@@ -197,7 +200,11 @@ class MpcHcApi:
     @waitForFileStateReady
     def pause(self):
         self.__listener.SendCommand(self.CMD_PAUSE)
-    
+ 
+    @waitForFileStateReady
+    def playPause(self):
+        self.__listener.SendCommand(self.CMD_PLAYPAUSE)
+     
     @waitForFileStateReady
     def unpause(self):
         self.__listener.SendCommand(self.CMD_PLAY)
