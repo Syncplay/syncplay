@@ -101,11 +101,12 @@ Pressing "Save" will save the settings and continue Syncplay start-up.
 
 Within the Syncplay command-line you can enter the following commands (and then press enter) to access features:
 
-* `help` - Displays list of commands and other information.
+* `help` / `h` - Displays list of commands and other information.
+* `u` - Undo last seek. Seeks to where you were before the most recent seek.
+* `p` - Toggle play/pause.
+* `l` - Displays list of users and what they are playing.
 * `room [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then this command will use the filename of the currently open file, or alternatively will join the room `default`.
 * `[s][+-][time]` - Seek (jump) to specified time. Optional `+` or `-` denotes relative time forward and backward respectively. Time can be given in seconds or min:sec format.
-* `r` - Revert last seek. Seeks to where you were before the most recent seek.
-* `p` - Toggle play/pause.
 
 ### Command-line switches
 
@@ -125,7 +126,7 @@ You can run `syncplayClient` with the following command-line switches to alter S
 ### Notification messages
 
 * `Rewinded due to time difference  with [user]` - This means that your media player ended up too far in front of the specified user and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly. If someone is only a small amount in front then their playback rate will be reduced to 95% for a short amount of time to bring them back into sync.
-* `File you're playing is different from [user]'s` - This means that the filename, length and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
+* `File you are playing appears to be different from [user]'s` - This means that the filename, length and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
        
 ## How to use the server
 
