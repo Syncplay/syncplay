@@ -49,7 +49,7 @@ class SyncplayClient(object):
     def __init__(self, playerClass, ui, args):
         self.protocolFactory = SyncClientFactory(self)
         self.ui = UiManager(self, ui)
-        self.userlist = SyncplayUserlist(self.ui)
+        self.userlist = SyncplayUserlist(self.ui, self)
         if(args.room == None or args.room == ''):
             args.room = 'default'
         self.defaultRoom = args.room
@@ -266,6 +266,10 @@ class SyncplayClient(object):
     def getRoom(self):
         return self.userlist.currentUser.room
     
+    def getUserList(self):
+        if(self._protocol and self._protocol.logged):
+            self._protocol.sendList()
+    
     def getPassword(self):
         return self._serverPassword
     
@@ -302,11 +306,12 @@ class SyncplayClient(object):
             self.ui.promptFor("Press enter to exit\n")
 
 class SyncplayUser(object):
-    def __init__(self, username = None, room = None, file_ = None):
+    def __init__(self, username = None, room = None, file_ = None, position = 0):
         self.username = username
         self.room = room
         self.file = file_
-    
+        self.lastPosition = position
+        
     def setFile(self, filename, duration, size):
         file_ = {
                  "name": filename,
@@ -327,10 +332,11 @@ class SyncplayUser(object):
         return self.username < other.username
       
 class SyncplayUserlist(object):
-    def __init__(self, ui):
+    def __init__(self, ui, client):
         self.currentUser = SyncplayUser()
         self._users = {}
-        self.ui = ui  
+        self.ui = ui
+        self._client = client
 
     def __showUserChangeMessage(self, username, room, file_):
         if (room and not file_):
@@ -355,10 +361,10 @@ class SyncplayUserlist(object):
                 message = "Your file differs in the following way(s): " + ", ".join(differences)
                 self.ui.showMessage(message)
 
-    def addUser(self, username, room, file_, noMessage = False):
+    def addUser(self, username, room, file_, position = 0, noMessage = False):
         if(username == self.currentUser.username):
             return
-        user = SyncplayUser(username, room, file_)
+        user = SyncplayUser(username, room, file_, position)
         self._users[username] = user
         if(not noMessage):
             self.__showUserChangeMessage(username, room, file_)
@@ -387,7 +393,11 @@ class SyncplayUserlist(object):
             self.addUser(username, room, file_)
 
     def __addUserWithFileToList(self, rooms, user):
-        file_key = '\'{}\' ({})'.format(user.file['name'], self.ui.formatTime(user.file['duration']))
+        if(self.currentUser.username == user.username):
+            currentPosition = self.ui.formatTime(self._client.getGlobalPosition())
+        else:
+            currentPosition = self.ui.formatTime(user.lastPosition)
+        file_key = '\'{}\' ({}/{})'.format(user.file['name'], currentPosition, self.ui.formatTime(user.file['duration']))
         if (not rooms[user.room].has_key(file_key)):
             rooms[user.room][file_key] = {}
         rooms[user.room][file_key][user.username] = user
@@ -407,7 +417,10 @@ class SyncplayUserlist(object):
                 self.__addUserWithFileToList(rooms, user)
             else:
                 self.__addUserWithoutFileToList(rooms, user)
-        self.__addUserWithFileToList(rooms, self.currentUser)
+        if(self.currentUser.file):                
+            self.__addUserWithFileToList(rooms, self.currentUser)
+        else:
+            self.__addUserWithoutFileToList(rooms, self.currentUser)
         return rooms
 
     def __addDifferentFileMessageIfNecessary(self, user, message):

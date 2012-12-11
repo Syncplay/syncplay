@@ -79,7 +79,7 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
         elif data == "l":
-            self._syncplayClient.userlist.showUserList()
+            self._syncplayClient.getUserList()
         elif data == "p":
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
         elif data == 'help':

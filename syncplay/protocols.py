@@ -143,8 +143,9 @@ class SyncClientProtocol(JSONCommandProtocol):
             roomName = room[0]
             for user in room[1].iteritems():
                 userName = user[0]
-                file_ = user[1] if user[1] <> {} else None
-                self._client.userlist.addUser(userName, roomName, file_, noMessage=True)
+                file_ = user[1]['file'] if user[1]['file'] <> {} else None
+                position = user[1]['position']
+                self._client.userlist.addUser(userName, roomName, file_, position, noMessage=True)
         self._client.userlist.showUserList()
      
     def sendList(self):   
@@ -314,16 +315,20 @@ class SyncServerProtocol(JSONCommandProtocol):
             user[username]["event"] = event
         self.sendSet({"user": user})
  
-    def _addUserOnList(self, userlist, watcher):
+    def _addUserOnList(self, userlist, roomPositions, watcher):
         if (not userlist.has_key(watcher.room)):
             userlist[watcher.room] = {}
-        userlist[watcher.room][watcher.name] = watcher.file if watcher.file else {}
-         
+            roomPositions[watcher.room] = watcher.getRoomPosition()
+        userlist[watcher.room][watcher.name] = {
+                                                "file": watcher.file if watcher.file else {},
+                                                "position": roomPositions[watcher.room] if roomPositions[watcher.room] else 0
+                                                } 
     def sendList(self):
         userlist = {}
+        roomPositions = {}
         watchers = self._factory.getAllWatchers(self)
         for watcher in watchers.itervalues():
-            self._addUserOnList(userlist, watcher)
+            self._addUserOnList(userlist, roomPositions, watcher)
         self.sendMessage({"List": userlist})
     
     @requireLogged

@@ -74,16 +74,20 @@ class SyncFactory(Factory):
             self._rooms.pop(room)
             self._roomStates.pop(room)
     
+    def getRoomPausedAndPosition(self, room):
+        position = self._roomStates[room]["position"]
+        paused = self._roomStates[room]["paused"]
+        if (not paused):
+            timePassedSinceSet = time.time() - self._roomStates[room]["lastUpdate"]
+            position += timePassedSinceSet
+        return paused, position
+
     def sendState(self, watcherProtocol, doSeek = False, senderLatency = 0, forcedUpdate = False):
         watcher = self.getWatcher(watcherProtocol)
         if(not watcher):
             return
         room = watcher.room
-        position = self._roomStates[room]["position"]
-        paused = self._roomStates[room]["paused"]
-        if(not paused):
-            timePassedSinceSet = time.time() - self._roomStates[room]["lastUpdate"]
-            position += timePassedSinceSet
+        paused, position = self.getRoomPausedAndPosition(room)
         setBy = self._roomStates[room]["setBy"]
         watcher.paused = paused
         watcher.position = position
@@ -219,6 +223,10 @@ class Watcher(object):
         else:
             return self.position < b.position
 
+    def getRoomPosition(self):
+        _, position = self.factory.getRoomPausedAndPosition(self.room)
+        return position
+    
     def scheduleSendState(self, when=1):
         self._sendStateTimer = task.LoopingCall(self.sendState)
         self._sendStateTimer.start(when, True)
