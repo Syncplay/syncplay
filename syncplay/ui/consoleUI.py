@@ -63,11 +63,12 @@ class ConsoleUI(threading.Thread):
         
     def _executeCommand(self, data):
         m = re.match(r"^s? ?([+-])? ?((\d+)|((\d+)\D(\d+)))$", data)
+        r = re.match(r"^(r|room)( (.+))?$", data)
         if(m):
             self.__doSeek(m)
-        elif data[0:4] == "room":
-            room = data[5:]
-            if room == "":
+        elif r:
+            room = r.group(3)
+            if room == None:
                 if  self._syncplayClient.userlist.currentUser.file:
                     room = self._syncplayClient.userlist.currentUser.file["name"]
                 else:
@@ -88,7 +89,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage("\tu - undo last seek", True)
             self.showMessage("\tp - toggle pause", True)
             self.showMessage("\tl - show user list", True)
-            self.showMessage("\troom [name] - change room", True)
+            self.showMessage("\tr [name] - change room", True)
             self.showMessage("\t[s][+-][time] - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True)
             self.showMessage("Syncplay version: {}".format(syncplay.version), True)
             self.showMessage("More info available at: {}".format(syncplay.projectURL), True)
