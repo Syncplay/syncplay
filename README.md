@@ -145,7 +145,7 @@ Pass the IP or hostname (and password / port if necessary) to people you want to
 The following information is sent from the client to the server:
 * Public IP address of client and other necessary routing information (as per TCP/IP standards).
 * Media position, play state, and any seek/pause/unpause commands (associated with the instance of the media player initiated by Syncplay).
-* Size, length, and optionally filename of currently open media (associated with the instance of the media player initiated by Syncplay).
+* Size, length, and filename of currently open media (associated with the instance of the media player initiated by Syncplay).
 * Syncplay version, username, server password and current 'room'.
 * Ping responses to assess latency.
 
