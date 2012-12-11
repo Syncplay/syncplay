@@ -62,7 +62,7 @@ class ConsoleUI(threading.Thread):
         self._syncplayClient.setPosition(t)
         
     def _executeCommand(self, data):
-        m = re.match(r"^s? ?([+-])?((\d+)|((\d+)\D(\d+)))$", data)
+        m = re.match(r"^s? ?([+-])? ?((\d+)|((\d+)\D(\d+)))$", data)
         if(m):
             self.__doSeek(m)
         elif data[0:4] == "room":
@@ -74,7 +74,7 @@ class ConsoleUI(threading.Thread):
                     room = self._syncplayClient.defaultRoom
             self._syncplayClient.setRoom(room)
             self._syncplayClient.sendRoom()
-        elif data == "r":
+        elif data == "u":
             tmp_pos = self._syncplayClient.getPlayerPosition()
             self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
@@ -82,10 +82,10 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.getUserList()
         elif data == "p":
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
-        elif data == 'help':
+        elif data == 'help' or data == 'h':
             self.showMessage("Available commands:", True)
-            self.showMessage("\thelp - this help", True)
-            self.showMessage("\tr - revert last seek", True)
+            self.showMessage("\th - this help", True)
+            self.showMessage("\tu - undo last seek", True)
             self.showMessage("\tp - toggle pause", True)
             self.showMessage("\tl - show user list", True)
             self.showMessage("\troom [name] - change room", True)
