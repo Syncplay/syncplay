@@ -133,8 +133,10 @@ class MPCHCAPIPlayer(BasePlayer):
             self.__forcePause(self.__client.getGlobalPaused())
             self._mpcApi.seek(self.__client.getGlobalPosition())
             if(self._mpcApi.isPaused() <> self.__client.getGlobalPaused()):
-                time.sleep(0.1)
                 self._mpcApi.playPause()
+                time.sleep(0.001)
+                self._mpcApi.playPause()
+                time.sleep(0.001)
                 if(self._mpcApi.isPaused() <> self.__client.getGlobalPaused()):
                     self.__setUpStateForNewlyOpenedFile()
         except MpcHcApi.PlayerNotReadyException:
