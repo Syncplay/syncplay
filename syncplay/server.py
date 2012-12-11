@@ -166,6 +166,9 @@ class SyncFactory(Factory):
         oldRoom = watcher.room
         self._createRoomIfDoesntExist(room)
         self._rooms[room][watcherProtocol] = watcher
+        self._roomStates[room]["position"] = watcher.position
+        self._roomStates[room]["setBy"] = watcher.name
+        self._roomStates[room]["lastUpdate"] = time.time()
         self._deleteRoomIfEmpty(oldRoom)
         if(self.isolateRooms): #this is trick to inform old room about leaving
             l = lambda w: w.sendUserSetting(watcher.name, room, watcher.file, None)
