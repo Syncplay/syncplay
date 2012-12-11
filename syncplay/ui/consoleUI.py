@@ -78,6 +78,8 @@ class ConsoleUI(threading.Thread):
             tmp_pos = self._syncplayClient.getPlayerPosition()
             self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
+        elif data == "l":
+            self._syncplayClient.userlist.showUserList()
         elif data == "p":
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
         elif data == 'help':
@@ -85,6 +87,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage("\thelp - this help", True)
             self.showMessage("\tr - revert last seek", True)
             self.showMessage("\tp - toggle pause", True)
+            self.showMessage("\tl - show user list", True)
             self.showMessage("\troom [name] - change room", True)
             self.showMessage("\t[s][+-][time] - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True)
             self.showMessage("Syncplay version: {}".format(syncplay.version), True)

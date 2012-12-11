@@ -345,15 +345,15 @@ class SyncplayUserlist(object):
             if(self.currentUser.file and not self.currentUser.isFileSame(file_)):
                 message = "File you are playing appears to be different from <{}>'s".format(username)
                 self.ui.showMessage(message)
+                differences = []
                 if(self.currentUser.file['name'] <> file_['name']):
-                    message = "Filename is different"
-                    self.ui.showMessage(message)
+                    differences.append("filename") 
                 if(self.currentUser.file['size'] <> file_['size']):
-                    message = "Size is different"
-                    self.ui.showMessage(message)
+                    differences.append("size")
                 if(self.currentUser.file['duration'] <> file_['duration']):
-                    message = "Duration is different"
-                    self.ui.showMessage(message)
+                    differences.append("duration")
+                message = "Your file differs in the following way(s): " + ", ".join(differences)
+                self.ui.showMessage(message)
 
     def addUser(self, username, room, file_, noMessage = False):
         if(username == self.currentUser.username):
@@ -422,6 +422,8 @@ class SyncplayUserlist(object):
         self.ui.showMessage("File: {} is being played by:".format(key), True, True)
         for user in sorted(users.itervalues()):
             message = "<"+user.username+">"
+            if(self.currentUser.username == user.username):
+                message = "*" + message + "*"
             message = self.__addDifferentFileMessageIfNecessary(user, message)
             self.ui.showMessage("\t" + message, True, True)
 
