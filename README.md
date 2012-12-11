@@ -126,7 +126,7 @@ You can run `syncplayClient` with the following command-line switches to alter S
 ### Notification messages
 
 * `Rewinded due to time difference  with [user]` - This means that your media player ended up too far in front of the specified user and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly. If someone is only a small amount in front then their playback rate will be reduced to 95% for a short amount of time to bring them back into sync.
-* `File you are playing appears to be different from [user]'s` - This means that the filename, length and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
+* `File you are playing appears to be different from [user]'s` - This means that the filename, size and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
        
 ## How to use the server
 
@@ -145,7 +145,7 @@ Pass the IP or hostname (and password / port if necessary) to people you want to
 The following information is sent from the client to the server:
 * Public IP address of client and other necessary routing information (as per TCP/IP standards).
 * Media position, play state, and any seek/pause/unpause commands (associated with the instance of the media player initiated by Syncplay).
-* Size, length, and filename of currently open media (associated with the instance of the media player initiated by Syncplay).
+* Size, duration, and filename of currently open media (associated with the instance of the media player initiated by Syncplay).
 * Syncplay version, username, server password and current 'room'.
 * Ping responses to assess latency.
 
