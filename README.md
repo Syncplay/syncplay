@@ -106,7 +106,7 @@ Within the Syncplay command-line you can enter the following commands (and then 
 * `u` - Undo last seek. Seeks to where you were before the most recent seek.
 * `p` - Toggle play/pause.
 * `[s][+-][time]` - Seek (jump) to specified time. Optional `+` or `-` denotes relative time forward and backward respectively. Time can be given in seconds or min:sec format.
-* * `h` - Displays list of commands and other information.
+* `h` - Displays list of commands and other information.
 
 ### Command-line switches
 
