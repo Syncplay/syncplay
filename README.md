@@ -99,14 +99,14 @@ Pressing "Save" will save the settings and continue Syncplay start-up.
 
 ### Syncplay Commands
 
-Within the Syncplay command-line you can enter the following commands (and then press enter) to access features:
+Within the Syncplay command-line you can enter the following commands (and then press enter) to access features of Syncplay:
 
-* `help` / `h` - Displays list of commands and other information.
+* `r [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then this command will use the filename of the currently open file, or alternatively will join the room `default`.
+* `l` - Displays list of users and what they are playing.
 * `u` - Undo last seek. Seeks to where you were before the most recent seek.
 * `p` - Toggle play/pause.
-* `l` - Displays list of users and what they are playing.
-* `room [room]` - Leaves current room and joins specified room. You are only synchronised with others in the same room on the same server. If no room is specified then this command will use the filename of the currently open file, or alternatively will join the room `default`.
 * `[s][+-][time]` - Seek (jump) to specified time. Optional `+` or `-` denotes relative time forward and backward respectively. Time can be given in seconds or min:sec format.
+* `h` - Displays list of commands and other information.
 
 ### Command-line switches
 
@@ -169,3 +169,4 @@ You might also be able to discuss your problem through Internet Relay Chat (IRC)
 ### Known issues
 1. Changing your system time while Syncplay is running confuses the sync. PROTIP: Don't do it.
 2. In MPC-HC the 'Remember File position' feature will not work as expected if you are using Syncplay. If you want to save/load the file position when using Syncplay then use MPC-HC's built in Favorites feature.
+3. Connecting to port 8999 is disallowed in some firewall configurations. Check your firewall settings if you are experiencing problems connecting to a server.
