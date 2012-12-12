@@ -50,6 +50,7 @@ class SyncplayClient(object):
         self.protocolFactory = SyncClientFactory(self)
         self.ui = UiManager(self, ui)
         self.userlist = SyncplayUserlist(self.ui, self)
+        self._protocol = None
         if(args.room == None or args.room == ''):
             args.room = 'default'
         self.defaultRoom = args.room
@@ -59,7 +60,6 @@ class SyncplayClient(object):
         if(args.password):
             args.password = hashlib.md5(args.password).hexdigest()
         self._serverPassword = args.password
-        self._protocol = None
         self._player = None
         self._playerClass = playerClass
         self._startupArgs = args
@@ -257,6 +257,7 @@ class SyncplayClient(object):
     
     def setRoom(self, roomName):
         self.userlist.currentUser.room = roomName
+        self.getUserList()
     
     def sendRoom(self):
         room = self.userlist.currentUser.room
