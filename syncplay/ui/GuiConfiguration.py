@@ -42,12 +42,12 @@ class GuiConfiguration:
             host = args.host+":"+str(args.port)
         else:
             host = args.host 
-        self.hostEntry = self._addLabeledEntryToVbox('Host: ', host, vbox, self._focusNext)
-        self.userEntry = self._addLabeledEntryToVbox('Username: ', args.name, vbox, self._focusNext)
-        self.roomEntry = self._addLabeledEntryToVbox('Default room (optional): ', args.room, vbox, self._focusNext)
-        self.passEntry = self._addLabeledEntryToVbox('Server password (optional): ', args.password, vbox, self._focusNext)
+        self.hostEntry = self._addLabeledEntryToVbox('Host: ', host, vbox, lambda __, _: self._saveDataAndLeave())
+        self.userEntry = self._addLabeledEntryToVbox('Username: ', args.name, vbox, lambda __, _: self._saveDataAndLeave())
+        self.roomEntry = self._addLabeledEntryToVbox('Default room (optional): ', args.room, vbox, lambda __, _: self._saveDataAndLeave())
+        self.passEntry = self._addLabeledEntryToVbox('Server password (optional): ', args.password, vbox, lambda __, _: self._saveDataAndLeave())
         self._tryToFillUpMpcPath()
-        self.mpcEntry = self._addLabeledEntryToVbox('Path to player executable: ', self.args.player_path, vbox, self._focusNext)
+        self.mpcEntry = self._addLabeledEntryToVbox('Path to player executable: ', self.args.player_path, vbox, lambda __, _: self._saveDataAndLeave())
  
     def _tryToFillUpMpcPath(self):
         if(self.args.player_path == None):
@@ -82,9 +82,6 @@ class GuiConfiguration:
         self.window.destroy()
         gtk.main_quit()
         
-    def _focusNext(self, widget, entry):
-        self.window.get_toplevel().child_focus(gtk.DIR_TAB_FORWARD) 
-
     def _addLabeledEntryToVbox(self, label, initialEntryValue, vbox, callback):
         hbox = gtk.HBox(False, 0)
         hbox.set_border_width(3)
