@@ -72,7 +72,7 @@ class ConfigurationGetter(object):
             with open(self._configFile, 'wb') as configfile:
                 if(not self._config.has_section(section_name)):
                     self._config.add_section(section_name)
-                self._config.set(section_name, 'host', self._args.host)
+                self._config.set(section_name, 'host', self._args.host+":"+str(self._args.port))
                 self._config.set(section_name, 'name', self._args.name)       
                 self._config.set(section_name, 'room', self._args.room)
                 self._config.set(section_name, 'password', self._args.password)
@@ -152,7 +152,7 @@ class ConfigurationGetter(object):
             if ':' in self._args.host:
                 self._args.host, port = self._args.host.split(':', 1)
                 self._args.port = int(port)
-            else:
+            elif("port" not in self._args):
                 self._args.port = 8999
     
     def setConfiguration(self, args):

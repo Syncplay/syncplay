@@ -34,7 +34,15 @@ class GuiConfiguration:
         self.closedAndNotSaved = True
         
     def _addLabeledEntries(self, args, vbox):  
-        self.hostEntry = self._addLabeledEntryToVbox('Host: ', args.host, vbox, self._focusNext)
+        if(args.host == None):
+            host = ""
+        elif(":" in args.host):
+            host = args.host
+        elif("port" in args):
+            host = args.host+":"+str(args.port)
+        else:
+            host = args.host 
+        self.hostEntry = self._addLabeledEntryToVbox('Host: ', host, vbox, self._focusNext)
         self.userEntry = self._addLabeledEntryToVbox('Username: ', args.name, vbox, self._focusNext)
         self.roomEntry = self._addLabeledEntryToVbox('Default room (optional): ', args.room, vbox, self._focusNext)
         self.passEntry = self._addLabeledEntryToVbox('Server password (optional): ', args.password, vbox, self._focusNext)
