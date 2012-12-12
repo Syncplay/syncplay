@@ -8,7 +8,7 @@ from syncplay.protocols import SyncServerProtocol
 import time
 
 class SyncFactory(Factory):
-    def __init__(self, password = '', banlist = None , isolateRooms = False):
+    def __init__(self, password = '', isolateRooms = False):
         print "Welcome to Syncplay server, ver. {0}".format(syncplay.version)
         if(password):
             password = hashlib.md5(password).hexdigest()
@@ -55,7 +55,10 @@ class SyncFactory(Factory):
     def getAllWatchers(self, watcherProtocol):
         if(self.isolateRooms):
             room = self.getWatcher(watcherProtocol).room
-            return self._rooms[room]
+            if(self._rooms.has_key(room)):
+                return self._rooms[room]
+            else:
+                return {}
         else:
             watchers = {}
             for room in self._rooms.itervalues():
@@ -140,7 +143,7 @@ class SyncFactory(Factory):
             forceUpdate = self.__shouldServerForceUpdateOnRoom(pauseChanged, doSeek)
             if(forceUpdate):
                 l = lambda w: self.sendState(w, doSeek, watcher.latency, forceUpdate)
-                self.broadcastRoom(watcher, l)
+                self.broadcastRoom(watcher.watcherProtocol, l)
 
     def removeWatcher(self, watcherProtocol):
         watcher = self._removeWatcherFromTheRoom(watcherProtocol)
@@ -171,7 +174,7 @@ class SyncFactory(Factory):
         self._roomStates[room]["lastUpdate"] = time.time()
         self._deleteRoomIfEmpty(oldRoom)
         if(self.isolateRooms): #this is trick to inform old room about leaving
-            l = lambda w: w.sendUserSetting(watcher.name, room, watcher.file, None)
+            l = lambda w: w.sendUserSetting(watcher.name, oldRoom, None, {"left": True})
             self.broadcast(watcherProtocol, l)
         watcher.room = room
         l = lambda w: w.sendUserSetting(watcher.name, watcher.room, watcher.file, None)
@@ -184,7 +187,7 @@ class SyncFactory(Factory):
         self.broadcast(watcherProtocol, l)
     
     def broadcastRoom(self, sender, what):
-        room = self._rooms[self.watcherGetRoom(sender.watcherProtocol)]
+        room = self._rooms[self.watcherGetRoom(sender)]
         if(room):
             for receiver in room:
                 what(receiver)
@@ -192,6 +195,7 @@ class SyncFactory(Factory):
     def broadcast(self, sender, what):
         if(self.isolateRooms):
             self.broadcastRoom(sender, what)
+            return
         for room in self._rooms.itervalues():
             for receiver in room:
                 what(receiver)
