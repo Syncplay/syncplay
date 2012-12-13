@@ -2,10 +2,13 @@
 
 from twisted.internet import reactor
 
-from syncplay.server import SyncFactory
+from syncplay.server import SyncFactory, SyncIsolatedFactory
 from syncplay.ui.ConfigurationGetter import ServerConfigurationGetter
  
 argsGetter = ServerConfigurationGetter()
 args = argsGetter.getConfiguration()
-reactor.listenTCP(int(args.port), SyncFactory(args.password, args.isolate_rooms))
+if(not args.isolate_rooms):
+    reactor.listenTCP(int(args.port), SyncFactory(args.password))
+else:
+    reactor.listenTCP(int(args.port), SyncIsolatedFactory(args.password))
 reactor.run()
