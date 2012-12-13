@@ -60,6 +60,10 @@ class SyncplayClient(object):
         if(args.password):
             args.password = hashlib.md5(args.password).hexdigest()
         self._serverPassword = args.password
+        if(not args.file):
+            self.__getUserlistOnLogon = True
+        else:
+            self.__getUserlistOnLogon = False
         self._player = None
         self._playerClass = playerClass
         self._startupArgs = args
@@ -197,6 +201,9 @@ class SyncplayClient(object):
         return madeChangeOnPlayer
 
     def updateGlobalState(self, position, paused, doSeek, setBy, latency):
+        if(self.__getUserlistOnLogon):
+            self.__getUserlistOnLogon = False
+            self.getUserList()
         madeChangeOnPlayer = False
         if(not paused):
             position += latency
