@@ -350,7 +350,7 @@ class SyncplayUserlist(object):
         if (room and not file_):
             message = "<{}> has joined the room: '{}'".format(username, room)
             self.ui.showMessage(message)
-        elif (room and file_):
+        elif (room and file_ and username != self.currentUser.username):
             duration = self.ui.formatTime(file_['duration'])
             message = "<{}> is playing '{}' ({})".format(username, file_['name'], duration)
             if(self.currentUser.room <> room or self.currentUser.username == username):
