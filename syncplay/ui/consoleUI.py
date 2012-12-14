@@ -83,15 +83,16 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.getUserList()
         elif data == "p":
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
-        elif data == 'help' or data == 'h':
+        else:
+            if data not in ['help', 'h', '?', '/?', '\?']:
+                self.showMessage("Unrecognized command")
             self.showMessage("Available commands:", True)
-            self.showMessage("\th - this help", True)
+            self.showMessage("\tr [name] - change room", True)
+            self.showMessage("\tl - show user list", True)
             self.showMessage("\tu - undo last seek", True)
             self.showMessage("\tp - toggle pause", True)
-            self.showMessage("\tl - show user list", True)
-            self.showMessage("\tr [name] - change room", True)
             self.showMessage("\t[s][+-][time] - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True)
+            self.showMessage("\th - this help", True)
             self.showMessage("Syncplay version: {}".format(syncplay.version), True)
             self.showMessage("More info available at: {}".format(syncplay.projectURL), True)
-        else:
-            self.showMessage("Unrecognized command, type 'help' for list of available commands")    
+            
