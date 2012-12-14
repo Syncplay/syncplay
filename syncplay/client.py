@@ -371,6 +371,7 @@ class SyncplayUserlist(object):
 
     def addUser(self, username, room, file_, position = 0, noMessage = False):
         if(username == self.currentUser.username):
+            self.currentUser.lastPosition = position
             return
         user = SyncplayUser(username, room, file_, position)
         self._users[username] = user
@@ -401,10 +402,7 @@ class SyncplayUserlist(object):
             self.addUser(username, room, file_)
 
     def __addUserWithFileToList(self, rooms, user):
-        if(self.currentUser.username == user.username):
-            currentPosition = self.ui.formatTime(self._client.getGlobalPosition())
-        else:
-            currentPosition = self.ui.formatTime(user.lastPosition)
+        currentPosition = self.ui.formatTime(user.lastPosition)
         file_key = '\'{}\' ({}/{})'.format(user.file['name'], currentPosition, self.ui.formatTime(user.file['duration']))
         if (not rooms[user.room].has_key(file_key)):
             rooms[user.room][file_key] = {}
