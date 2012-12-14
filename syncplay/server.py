@@ -138,15 +138,16 @@ class SyncFactory(Factory):
                 self.broadcastRoom(watcher.watcherProtocol, l)
 
     def removeWatcher(self, watcherProtocol):
-        watcher = self._removeWatcherFromTheRoom(watcherProtocol)
+        watcher = self.getWatcher(watcherProtocol)
         if(not watcher):
             return
-        watcher.deactivate()
-        print "{0} left server".format(watcher.name) 
-        self._deleteRoomIfEmpty(watcher.room)
         l = lambda w: w.sendUserSetting(watcher.name, watcher.room, None, {"left": True})
         self.broadcast(watcherProtocol, l)
-
+        self._removeWatcherFromTheRoom(watcherProtocol)
+        watcher.deactivate()
+        self._deleteRoomIfEmpty(watcher.room)
+        print "{0} left server".format(watcher.name) 
+        
     def watcherGetUsername(self, watcherProtocol):
         return self.getWatcher(watcherProtocol).name
     
