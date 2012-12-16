@@ -124,22 +124,28 @@ class MPCHCAPIPlayer(BasePlayer):
     def __echoGlobalStatus(self):
         self.__client.updatePlayerStatus(self.__client.getGlobalPaused(), self.__client.getGlobalPosition())
 
-    def __forcePause(self, paused):
-        for _ in xrange(25):
-            self.setPaused(paused)
-            time.sleep(0.005)
+    def __forcePause(self):
+        for _ in xrange(10):
+            self.setPaused(True)
+            time.sleep(0.01)
         
+    def __refreshMpcPlayState(self):
+        for _ in xrange(2): 
+            self._mpcApi.playPause()
+            time.sleep(0.05)
+
+    def _setPausedAccordinglyToServer(self):
+        self.__forcePause()
+        self.setPaused(self.__client.getGlobalPaused())
+        if(self._mpcApi.isPaused() <> self.__client.getGlobalPaused()):
+            self.__refreshMpcPlayState()
+            if(self._mpcApi.isPaused() <> self.__client.getGlobalPaused()):
+                self.__setUpStateForNewlyOpenedFile()
+                
     def __setUpStateForNewlyOpenedFile(self):
         try:
-            self.__forcePause(self.__client.getGlobalPaused())
+            self._setPausedAccordinglyToServer()
             self._mpcApi.seek(self.__client.getGlobalPosition())
-            if(self._mpcApi.isPaused() <> self.__client.getGlobalPaused()):
-                self._mpcApi.playPause()
-                time.sleep(0.001)
-                self._mpcApi.playPause()
-                time.sleep(0.001)
-                if(self._mpcApi.isPaused() <> self.__client.getGlobalPaused()):
-                    self.__setUpStateForNewlyOpenedFile()
         except MpcHcApi.PlayerNotReadyException:
             time.sleep(0.1)
             self.__setUpStateForNewlyOpenedFile()
