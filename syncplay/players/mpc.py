@@ -5,6 +5,7 @@ import thread
 import win32con, win32api, win32gui, ctypes, ctypes.wintypes #@UnresolvedImport @UnusedImport
 from functools import wraps
 from syncplay.players.basePlayer import BasePlayer
+import re
 
 class MPCHCAPIPlayer(BasePlayer):
     speedSupported = False
@@ -262,7 +263,7 @@ class MpcHcApi:
                 thread.start_new_thread(self.callbacks.onUpdatePlaystate, (self.playState,))
             
         elif(cmd == self.CMD_NOWPLAYING):
-            value = value.split('|')
+            value = re.split(r'(?<!\\)\|', value)
             self.filePath = value[3]
             self.filePlaying = value[3].split('\\').pop()
             self.fileDuration = float(value[4])
