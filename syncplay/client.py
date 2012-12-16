@@ -356,7 +356,7 @@ class SyncplayUserlist(object):
             if(self.currentUser.room <> room or self.currentUser.username == username):
                 message += " in room: '{}'".format(room)
             self.ui.showMessage(message)
-            if(self.currentUser.file and not self.currentUser.isFileSame(file_)):
+            if(self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room):
                 message = "File you are playing appears to be different from <{}>'s".format(username)
                 self.ui.showMessage(message)
                 differences = []
