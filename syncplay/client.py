@@ -170,7 +170,7 @@ class SyncplayClient(object):
         return madeChangeOnPlayer
 
     def _slowDownToCoverTimeDifference(self, diff):
-        if(1.0 < diff and not self._speedChanged):
+        if(1.5 < diff and not self._speedChanged):
             self._player.setSpeed(0.95)
             self._speedChanged = True
         elif(self._speedChanged and diff < 0.1 ):

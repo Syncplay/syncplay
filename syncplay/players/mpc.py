@@ -76,7 +76,7 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__mpcVersion = self._mpcApi.version.split('.')
         if(self.__mpcVersion[0:3] == ['1', '6', '4']):
             self.__switchPauseCalls = True
-        if(False and self.__mpcVersion[0:3] >= ['1', '6', '5']): #disabled!
+        if(self.__mpcVersion[0:3] >= ['1', '6', '5']):
             self.speedSupported = True            
         if(filePath):
             self._mpcApi.openFile(filePath)
