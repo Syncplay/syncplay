@@ -49,8 +49,11 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__positionUpdate.set()
     
     def setSpeed(self, value):
-        self._mpcApi.setSpeed(value)
-    
+        try:
+            self._mpcApi.setSpeed(value)
+        except MpcHcApi.PlayerNotReadyException:
+            self.setSpeed(value)
+            
     def __dropIfNotSufficientVersion(self):
         self._mpcApi.askForVersion()
         if(not self.__versionUpdate.wait(0.1) and self._mpcApi.version):
