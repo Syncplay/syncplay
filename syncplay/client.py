@@ -101,6 +101,15 @@ class SyncplayClient(object):
             return
         if(self._player):
             self._player.askForStatus()
+        self.checkIfConnected()
+
+    def checkIfConnected(self):
+        if(self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > 2.5):
+            self._lastGlobalUpdate = None
+            self.ui.showErrorMessage("Connection with server timeouted")
+            self._protocol.drop()
+            return False
+        return True
 
     def _determinePlayerStateChange(self, paused, position):
         pauseChange = self.getPlayerPaused() != paused and self.getGlobalPaused() != paused
@@ -123,7 +132,7 @@ class SyncplayClient(object):
     def getLocalState(self):
         paused = self.getPlayerPaused()
         position = self.getPlayerPosition()
-        pauseChange, _ = self._determinePlayerStateChange(paused, position)  
+        pauseChange, _ = self._determinePlayerStateChange(paused, position)
         if(self._lastGlobalUpdate):
             return position, paused, _, pauseChange
         else:
