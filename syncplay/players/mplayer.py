@@ -6,14 +6,14 @@ from syncplay.players.basePlayer import BasePlayer
 class MplayerPlayer(BasePlayer):
     speedSupported = True
     RE_ANSWER = re.compile('^ANS_([a-zA-Z_]+)=(.+)$')
-    def __init__(self, client, playerPath, filePath):
+    def __init__(self, client, playerPath, filePath, args):
         self._client = client
         self._paused = None
         self._duration = None
         self._filename = None
         self._filepath = None
         try:
-            self._listener = self.__Listener(self, playerPath, filePath)
+            self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:
             self._client.ui.showMessage("Syncplay using mplayer requires you to provide file when starting")
             self._client.ui.showMessage("Usage example: syncplay [options] [url|path/]filename")
@@ -123,7 +123,7 @@ class MplayerPlayer(BasePlayer):
         
     @staticmethod
     def run(client, playerPath, filePath, args):
-        mplayer = MplayerPlayer(client, playerPath, filePath)
+        mplayer = MplayerPlayer(client, playerPath, filePath, args)
         return mplayer
 
     def drop(self):
@@ -138,11 +138,14 @@ class MplayerPlayer(BasePlayer):
             self._client.ui.showMessage(line, True, True)
     
     class __Listener(threading.Thread):
-        def __init__(self, playerController, playerPath, filePath):
+        def __init__(self, playerController, playerPath, filePath, args):
             self.__playerController = playerController
             if(not filePath):
                 raise ValueError
-            self.__process = subprocess.Popen([playerPath, filePath, '-slave', '-msglevel', 'all=1:global=4'], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+            call = [playerPath, filePath, '-slave', '-msglevel', 'all=1:global=4']
+            if(args):
+                call.extend(args)
+            self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             threading.Thread.__init__(self, name="MPlayer Listener")
 
         def run(self):
