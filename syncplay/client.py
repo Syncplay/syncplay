@@ -301,12 +301,12 @@ class SyncplayClient(object):
     def start(self, host, port):
         if self._running:
             return
+        self._running = True
         if self._playerClass:
             self._playerClass.run(self, self._startupArgs.player_path, self._startupArgs.file, self._startupArgs._args)
             self._playerClass = None
         self.protocolFactory = SyncClientFactory(self)
         reactor.connectTCP(host, port, self.protocolFactory)
-        self._running = True
         reactor.run()
 
     def stop(self, promptForAction = False):
