@@ -12,8 +12,13 @@ class MplayerPlayer(BasePlayer):
         self._duration = None
         self._filename = None
         self._filepath = None
-        
-        self._listener = self.__Listener(self, playerPath, filePath)
+        try:
+            self._listener = self.__Listener(self, playerPath, filePath)
+        except ValueError:
+            self._client.ui.showMessage("Syncplay using mplayer requires you to provide file when starting")
+            self._client.ui.showMessage("Usage example: syncplay [options] [url|path/]filename")
+            self._client.stop(True)
+            return 
         self._listener.setDaemon(True)
         self._listener.start()
         
@@ -135,6 +140,8 @@ class MplayerPlayer(BasePlayer):
     class __Listener(threading.Thread):
         def __init__(self, playerController, playerPath, filePath):
             self.__playerController = playerController
+            if(not filePath):
+                raise ValueError
             self.__process = subprocess.Popen([playerPath, filePath, '-slave', '-msglevel', 'all=1:global=4'], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             threading.Thread.__init__(self, name="MPlayer Listener")
 
