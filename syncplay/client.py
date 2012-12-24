@@ -308,6 +308,7 @@ class SyncplayClient(object):
         if(self._player):
             if(position < 0):
                 position = 0
+                self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), True, None, True) 
             self._player.setPosition(position)
     
     def setPaused(self, paused):
