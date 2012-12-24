@@ -59,8 +59,8 @@ class ConsoleUI(threading.Thread):
             return None
         
     def _tryAdvancedCommands(self, data):
-        o = re.match(r"^(?:o|offset)\ ([+-])?\ ?(.+)$", data)
-        s = re.match(r"^(?:s|seek)?\ ?([+-])?\ ?(.+)$", data) #careful! s will match o as well
+        o = re.match(r"^(?:o|offset)\ ([+-])?\ ?(\d+[:\.]?)+$", data)
+        s = re.match(r"^(?:s|seek)?\ ?([+-])?\ ?(\d+[:\.]?)+$", data) #careful! s will match o as well
         if(o):
             sign = self._extractRegexSign(o)
             t = utils.parseTime(o.group(2))
