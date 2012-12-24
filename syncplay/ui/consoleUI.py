@@ -64,7 +64,7 @@ class ConsoleUI(threading.Thread):
         if(o):
             sign = self._extractRegexSign(o)
             t = utils.parseTime(o.group(2))
-            if(not t):
+            if(t is None):
                 return
             if(sign):
                 t = self._syncplayClient.getUserOffset() + sign * t 
