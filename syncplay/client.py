@@ -108,7 +108,7 @@ class SyncplayClient(object):
     def checkIfConnected(self):
         if(self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > 4.1):
             self._lastGlobalUpdate = None
-            self.ui.showErrorMessage("Connection with server timeouted")
+            self.ui.showErrorMessage("Connection with server timed out")
             self._protocol.drop()
             return False
         return True
