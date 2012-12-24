@@ -5,6 +5,7 @@ import time
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
+from syncplay import utils
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry = 10):
@@ -78,6 +79,7 @@ class SyncplayClient(object):
         self._lastGlobalUpdate = None
         self._globalPosition = 0.0
         self._globalPaused = 0.0
+        self._userOffset = 0.0
         self._speedChanged = False
         
     def initProtocol(self, protocol):
@@ -119,7 +121,8 @@ class SyncplayClient(object):
         return pauseChange, seeked
 
     def updatePlayerStatus(self, paused, position):
-        pauseChange, seeked = self._determinePlayerStateChange(paused, position)     
+        position -= self.getUserOffset()
+        pauseChange, seeked = self._determinePlayerStateChange(paused, position)
         self._playerPosition = position
         self._playerPaused = paused
         if(self._lastGlobalUpdate):
@@ -139,13 +142,13 @@ class SyncplayClient(object):
             return None, None, None, None
     
     def _initPlayerState(self, position, paused):
-        self._player.setPosition(position)
+        self.setPosition(position)
         self._player.setPaused(paused)
         madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
     def _rewindPlayerDueToTimeDifference(self, position, setBy):
-        self._player.setPosition(position)
+        self.setPosition(position)
         message = "Rewinded due to time difference with <{}>".format(setBy)
         self.ui.showMessage(message)
         madeChangeOnPlayer = True
@@ -160,7 +163,7 @@ class SyncplayClient(object):
 
     def _serverPaused(self, setBy, diff):
         if (diff > 0):
-            self._player.setPosition(self.getGlobalPosition())
+            self.setPosition(self.getGlobalPosition())
         self._player.setPaused(True)
         madeChangeOnPlayer = True
         message = '<{}> paused'.format(setBy)
@@ -170,11 +173,11 @@ class SyncplayClient(object):
     def _serverSeeked(self, position, setBy):
         if(self.getUsername() <> setBy):
             self.playerPositionBeforeLastSeek = self.getPlayerPosition()
-            self._player.setPosition(position)
+            self.setPosition(position)
             madeChangeOnPlayer = True
         else:
             madeChangeOnPlayer = False
-        message = '<{}> jumped from {} to {}'.format(setBy, self.ui.formatTime(self.playerPositionBeforeLastSeek), self.ui.formatTime(position))
+        message = '<{}> jumped from {} to {}'.format(setBy, utils.formatTime(self.playerPositionBeforeLastSeek), utils.formatTime(position))
         self.ui.showMessage(message)
         return madeChangeOnPlayer
 
@@ -214,12 +217,22 @@ class SyncplayClient(object):
             self.__getUserlistOnLogon = False
             self.getUserList()
         madeChangeOnPlayer = False
+
         if(not paused):
             position += latency
         if(self._player):
             madeChangeOnPlayer = self._changePlayerStateAccordingToGlobalState(position, paused, doSeek, setBy)
         if(madeChangeOnPlayer):
             self.askPlayer()
+    
+    def getUserOffset(self):
+        return self._userOffset
+     
+    def setUserOffset(self, time):
+        self._userOffset = time
+        message = "Current offset: {} seconds".format(self._userOffset)
+        self.setPosition(self.getGlobalPosition())
+        self.ui.showMessage(message)
         
     def getPlayerPosition(self):
         if(not self._lastPlayerUpdate):
@@ -291,7 +304,10 @@ class SyncplayClient(object):
         return self._serverPassword
     
     def setPosition(self, position):
+        position += self.getUserOffset() 
         if(self._player):
+            if(position < 0):
+                position = 0
             self._player.setPosition(position)
     
     def setPaused(self, paused):
@@ -360,7 +376,7 @@ class SyncplayUserlist(object):
             message = "<{}> has joined the room: '{}'".format(username, room)
             self.ui.showMessage(message)
         elif (room and file_ and username != self.currentUser.username):
-            duration = self.ui.formatTime(file_['duration'])
+            duration = utils.formatTime(file_['duration'])
             message = "<{}> is playing '{}' ({})".format(username, file_['name'], duration)
             if(self.currentUser.room <> room or self.currentUser.username == username):
                 message += " in room: '{}'".format(room)
@@ -411,8 +427,8 @@ class SyncplayUserlist(object):
             self.addUser(username, room, file_)
 
     def __addUserWithFileToList(self, rooms, user):
-        currentPosition = self.ui.formatTime(user.lastPosition)
-        file_key = '\'{}\' ({}/{})'.format(user.file['name'], currentPosition, self.ui.formatTime(user.file['duration']))
+        currentPosition = utils.formatTime(user.lastPosition)
+        file_key = '\'{}\' ({}/{})'.format(user.file['name'], currentPosition, utils.formatTime(user.file['duration']))
         if (not rooms[user.room].has_key(file_key)):
             rooms[user.room][file_key] = {}
         rooms[user.room][file_key][user.username] = user
@@ -491,20 +507,4 @@ class UiManager(object):
 
     def promptFor(self, prompt):
         return self.__ui.promptFor(prompt)
-
-    def formatTime(self, timeInSeconds):
-        timeInSeconds = round(timeInSeconds)
-        weeks = timeInSeconds // 604800
-        days = (timeInSeconds % 604800) // 86400
-        hours = (timeInSeconds % 86400) // 3600
-        minutes = (timeInSeconds % 3600) // 60
-        seconds = timeInSeconds % 60
-        if(weeks > 0):
-            return '{0:.0f}w, {1:.0f}d, {2:02.0f}:{3:02.0f}:{4:02.0f}'.format(weeks, days, hours, minutes, seconds)
-        elif(days > 0):
-            return '{0:.0f}d, {1:02.0f}:{2:02.0f}:{3:02.0f}'.format(days, hours, minutes, seconds)
-        elif(hours > 0):
-            return '{0:02.0f}:{1:02.0f}:{2:02.0f}'.format(hours, minutes, seconds)
-        else:
-            return '{0:02.0f}:{1:02.0f}'.format(minutes, seconds)
 

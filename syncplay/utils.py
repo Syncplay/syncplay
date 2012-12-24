@@ -1,4 +1,6 @@
 import time
+import re
+import datetime
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -40,3 +42,34 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
             return
         return f_retry  # true decorator
     return deco_retry
+
+def parseTime(timeStr):
+    regex = re.compile(r'(:?(?:(?P<hours>\d+?)[^\d\.])?(?:(?P<minutes>\d+?))?[^\d\.])?(?P<seconds>\d+?)(?:\.(?P<miliseconds>\d+?))?$')
+    parts = regex.match(timeStr)
+    if not parts:
+        return
+    parts = parts.groupdict()
+    time_params = {}
+    for (name, param) in parts.iteritems():
+        if param:
+            if(name == "miliseconds"):
+                time_params["microseconds"] = int(param) * 1000
+            else:
+                time_params[name] = int(param)
+    return datetime.timedelta(**time_params).total_seconds()
+    
+def formatTime(timeInSeconds):
+    timeInSeconds = round(timeInSeconds)
+    weeks = timeInSeconds // 604800
+    days = (timeInSeconds % 604800) // 86400
+    hours = (timeInSeconds % 86400) // 3600
+    minutes = (timeInSeconds % 3600) // 60
+    seconds = timeInSeconds % 60
+    if(weeks > 0):
+        return '{0:.0f}w, {1:.0f}d, {2:02.0f}:{3:02.0f}:{4:02.0f}'.format(weeks, days, hours, minutes, seconds)
+    elif(days > 0):
+        return '{0:.0f}d, {1:02.0f}:{2:02.0f}:{3:02.0f}'.format(days, hours, minutes, seconds)
+    elif(hours > 0):
+        return '{0:02.0f}:{1:02.0f}:{2:02.0f}'.format(hours, minutes, seconds)
+    else:
+        return '{0:02.0f}:{1:02.0f}'.format(minutes, seconds)

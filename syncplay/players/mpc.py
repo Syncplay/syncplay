@@ -6,7 +6,7 @@ import win32con, win32api, win32gui, ctypes, ctypes.wintypes #@UnresolvedImport 
 from functools import wraps
 from syncplay.players.basePlayer import BasePlayer
 import re
-from syncplay.util import retry
+from syncplay.utils import retry
 
         
 class MpcHcApi:

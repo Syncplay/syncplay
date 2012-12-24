@@ -4,6 +4,7 @@ import time
 import syncplay
 import os
 import re
+from syncplay import utils
 
 class ConsoleUI(threading.Thread):
     def __init__(self):
@@ -48,26 +49,52 @@ class ConsoleUI(threading.Thread):
     def showErrorMessage(self, message):
         print("ERROR:\t" + message)            
 
-    def __doSeek(self, m):
-        if (m.group(4)):
-            t = int(m.group(5)) * 60 + int(m.group(6))
-        else:
-            t = int(m.group(2))
+    def _extractRegexSign(self, m):
         if(m.group(1)):
             if(m.group(1) == "-"):
-                sign = -1
+                return -1
             else:
-                sign = 1
-            t = self._syncplayClient.getGlobalPosition() + sign * t 
-        self._syncplayClient.setPosition(t)
+                return 1
+        else:
+            return None
         
+    def _tryAdvancedCommands(self, data):
+        o = re.match(r"^(?:o|offset)\ ([+-])?\ ?(.+)$", data)
+        s = re.match(r"^(?:s|seek)?\ ?([+-])?\ ?(.+)$", data) #careful! s will match o as well
+        if(o):
+            sign = self._extractRegexSign(o)
+            t = utils.parseTime(o.group(2))
+            if(not t):
+                return
+            if(sign):
+                t = self._syncplayClient.getUserOffset() + sign * t 
+            self._syncplayClient.setUserOffset(t)
+            return True
+        elif s:
+            sign = self._extractRegexSign(s)
+            t = utils.parseTime(s.group(2))
+            if(t is None):
+                return
+            if(sign):
+                t = self._syncplayClient.getGlobalPosition() + sign * t 
+            self._syncplayClient.setPosition(t)
+            return True
+        return False 
+     
     def _executeCommand(self, data):
-        m = re.match(r"^s? ?([+-])? ?((\d+)|((\d+)\D(\d+)))$", data)
-        r = re.match(r"^(r|room)( (.+))?$", data)
-        if(m):
-            self.__doSeek(m)
-        elif r:
-            room = r.group(3)
+        command = re.match(r"^(.+)(?:\ (.+))?", data)
+        if(not command):
+            return
+        if(command.group(1) in ["u", "undo", "revert"]):
+            tmp_pos = self._syncplayClient.getPlayerPosition()
+            self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
+            self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
+        elif (command.group(1) in ["l", "list", "users"]):
+            self._syncplayClient.getUserList()
+        elif (command.group(1) in ["p", "play", "pause"]):
+            self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
+        elif (command.group(1) in ["r", "room"]):
+            room = command.group(1)
             if room == None:
                 if  self._syncplayClient.userlist.currentUser.file:
                     room = self._syncplayClient.userlist.currentUser.file["name"]
@@ -75,16 +102,10 @@ class ConsoleUI(threading.Thread):
                     room = self._syncplayClient.defaultRoom
             self._syncplayClient.setRoom(room)
             self._syncplayClient.sendRoom()
-        elif data == "u":
-            tmp_pos = self._syncplayClient.getPlayerPosition()
-            self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
-            self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
-        elif data == "l":
-            self._syncplayClient.getUserList()
-        elif data == "p":
-            self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
         else:
-            if data not in ['help', 'h', '?', '/?', '\?']:
+            if(self._tryAdvancedCommands(data)):
+                return
+            if (command.group(1) not in ['help', 'h', '?', '/?', '\?']):
                 self.showMessage("Unrecognized command")
             self.showMessage("Available commands:", True)
             self.showMessage("\tr [name] - change room", True)
@@ -95,4 +116,4 @@ class ConsoleUI(threading.Thread):
             self.showMessage("\th - this help", True)
             self.showMessage("Syncplay version: {}".format(syncplay.version), True)
             self.showMessage("More info available at: {}".format(syncplay.projectURL), True)
-            
+    
