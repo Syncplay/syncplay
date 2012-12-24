@@ -6,6 +6,7 @@ import py2exe #@UnusedImport
 from setuptools import find_packages
 import syncplay
 
+sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource'])
 common_info = dict(
     name='Syncplay',
     version=syncplay.version,
