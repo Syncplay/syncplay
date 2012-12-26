@@ -181,13 +181,17 @@ class SyncplayClient(object):
         self.ui.showMessage(message)
         return madeChangeOnPlayer
 
-    def _slowDownToCoverTimeDifference(self, diff):
+    def _slowDownToCoverTimeDifference(self, diff, setBy):
         if(1.5 < diff and not self._speedChanged):
             self._player.setSpeed(0.95)
             self._speedChanged = True
+            message = "Slowing down to cover difference with <{}>".format(setBy)
+            self.ui.showMessage(message)
         elif(self._speedChanged and diff < 0.1 ):
             self._player.setSpeed(1.00)
             self._speedChanged = False
+            message = "Reverting speed back to normal"
+            self.ui.showMessage(message)
         madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
@@ -205,7 +209,7 @@ class SyncplayClient(object):
         if (diff > 4 and not doSeek):
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
         if (self._player.speedSupported and not doSeek and not paused):
-            madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff)
+            madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
         if (paused == False and pauseChanged):
             madeChangeOnPlayer = self._serverUnpaused(setBy)
         elif (paused == True and pauseChanged):
