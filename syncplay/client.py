@@ -185,7 +185,7 @@ class SyncplayClient(object):
         if(1.5 < diff and not self._speedChanged):
             self._player.setSpeed(0.95)
             self._speedChanged = True
-            message = "Slowing down to cover difference with <{}>".format(setBy)
+            message = "Slowing down due to time difference with <{}>".format(setBy)
             self.ui.showMessage(message)
         elif(self._speedChanged and diff < 0.1 ):
             self._player.setSpeed(1.00)
