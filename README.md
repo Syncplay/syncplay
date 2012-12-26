@@ -171,3 +171,8 @@ You might also be able to discuss your problem through Internet Relay Chat (IRC)
 1. Changing your system time while Syncplay is running confuses the sync. PROTIP: Don't do it.
 2. In MPC-HC the 'Remember File position' feature will not work as expected if you are using Syncplay. If you want to save/load the file position when using Syncplay then use MPC-HC's built in Favorites feature.
 3. Connecting to port 8999 is disallowed in some firewall configurations. Check your firewall settings if you are experiencing problems connecting to a server.
+
+## Authors
+* *Concept and principal developer* - Uriziel.
+* *Original code* - Tomasz Kowalczyk (Fluxid), who developed it at https://github.com/fluxid/syncplay - Fluxid's contributions to Syncplay ended in February 2012, and it is understood that he passed away shortly after.
+* *Other coders* - daniel-123, Et0h.
