@@ -173,6 +173,6 @@ You might also be able to discuss your problem through Internet Relay Chat (IRC)
 3. Connecting to port 8999 is disallowed in some firewall configurations. Check your firewall settings if you are experiencing problems connecting to a server.
 
 ## Authors
-* *Concept and principal developer* - Uriziel.
-* *Original code* - Tomasz Kowalczyk (Fluxid), who developed it at https://github.com/fluxid/syncplay - Fluxid's contributions to Syncplay ended in February 2012, and it is understood that he passed away shortly after.
-* *Other coders* - daniel-123, Et0h.
+* *Concept and principal Syncplay developer* - Uriziel.
+* *Other Syncplay coders* - daniel-123, Et0h.
+* *Original SyncPlay code* - Tomasz Kowalczyk (Fluxid), who developed SyncPlay at https://github.com/fluxid/syncplay - Fluxid's contributions to SyncPlay ended in February 2012, and it is understood that he passed away shortly after.
