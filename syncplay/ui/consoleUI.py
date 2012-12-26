@@ -82,7 +82,7 @@ class ConsoleUI(threading.Thread):
         return False 
      
     def _executeCommand(self, data):
-        command = re.match(r"^(.+)(?:\ (.+))?", data)
+        command = re.match(r"^([^\ ]+)(?:\ (.+))?", data)
         if(not command):
             return
         if(command.group(1) in ["u", "undo", "revert"]):
@@ -94,12 +94,13 @@ class ConsoleUI(threading.Thread):
         elif (command.group(1) in ["p", "play", "pause"]):
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
         elif (command.group(1) in ["r", "room"]):
-            room = command.group(1)
+            room = command.group(2)
             if room == None:
                 if  self._syncplayClient.userlist.currentUser.file:
                     room = self._syncplayClient.userlist.currentUser.file["name"]
                 else:
                     room = self._syncplayClient.defaultRoom
+
             self._syncplayClient.setRoom(room)
             self._syncplayClient.sendRoom()
         else:
