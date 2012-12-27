@@ -62,7 +62,7 @@ class ConsoleUI(threading.Thread):
         o = re.match(r"^(?:o|offset)\ ?(?P<sign>[+-])?(?P<time>\d+(?:[^\d\.](?:\d+)){0,2}(?:\.(?:\d+))?)$", data)
         s = re.match(r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d+(?:[^\d\.](?:\d+)){0,2}(?:\.(?:\d+))?)$", data)
         if(o):
-            sign = self._extractRegexSign(o.group('sign'))
+            sign = self._extractSign(o.group('sign'))
             t = utils.parseTime(o.group('time'))
             if(t is None):
                 return
@@ -71,7 +71,7 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.setUserOffset(t)
             return True
         elif s:
-            sign = self._extractRegexSign(s)
+            sign = self._extractSign(s)
             t = utils.parseTime(s.group('time'))
             if(t is None):
                 return
