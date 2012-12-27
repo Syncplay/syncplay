@@ -67,7 +67,10 @@ class ConsoleUI(threading.Thread):
             if(t is None):
                 return
             if(sign):
-                t = self._syncplayClient.getUserOffset() + sign * t 
+                if (o.group('sign') == "/"):
+                    t = t - self._syncplayClient.getPlayerPosition()
+                else:
+                    t = self._syncplayClient.getUserOffset() + sign * t
             self._syncplayClient.setUserOffset(t)
             return True
         elif s:
