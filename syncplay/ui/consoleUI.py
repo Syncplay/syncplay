@@ -49,7 +49,7 @@ class ConsoleUI(threading.Thread):
     def showErrorMessage(self, message):
         print("ERROR:\t" + message)            
 
-    def _extractRegexSign(self, m):
+    def _extractSign(self, m):
         if(m.group(1)):
             if(m.group(1) == "-"):
                 return -1
