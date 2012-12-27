@@ -115,7 +115,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage("\tl - show user list", True)
             self.showMessage("\tu - undo last seek", True)
             self.showMessage("\tp - toggle pause", True)
-            self.showMessage("\t[s][+-][time] - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True)
+            self.showMessage("\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True)
             self.showMessage("\th - this help", True)
             self.showMessage("Syncplay version: {}".format(syncplay.version), True)
             self.showMessage("More info available at: {}".format(syncplay.projectURL), True)
