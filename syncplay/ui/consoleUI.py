@@ -82,19 +82,19 @@ class ConsoleUI(threading.Thread):
         return False 
      
     def _executeCommand(self, data):
-        command = re.match(r"^([^\ ]+)(?:\ (.+))?", data)
+        command = re.match(r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?", data)
         if(not command):
             return
-        if(command.group(1) in ["u", "undo", "revert"]):
+        if(command.group('command') in ["u", "undo", "revert"]):
             tmp_pos = self._syncplayClient.getPlayerPosition()
             self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
-        elif (command.group(1) in ["l", "list", "users"]):
+        elif (command.group('command') in ["l", "list", "users"]):
             self._syncplayClient.getUserList()
-        elif (command.group(1) in ["p", "play", "pause"]):
+        elif (command.group('command') in ["p", "play", "pause"]):
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
-        elif (command.group(1) in ["r", "room"]):
-            room = command.group(2)
+        elif (command.group('command') in ["r", "room"]):
+            room = command.group('parameter')
             if room == None:
                 if  self._syncplayClient.userlist.currentUser.file:
                     room = self._syncplayClient.userlist.currentUser.file["name"]
@@ -106,7 +106,7 @@ class ConsoleUI(threading.Thread):
         else:
             if(self._tryAdvancedCommands(data)):
                 return
-            if (command.group(1) not in ['help', 'h', '?', '/?', '\?']):
+            if (command.group('command') not in ['help', 'h', '?', '/?', '\?']):
                 self.showMessage("Unrecognized command")
             self.showMessage("Available commands:", True)
             self.showMessage("\tr [name] - change room", True)
