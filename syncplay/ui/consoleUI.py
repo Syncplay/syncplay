@@ -50,8 +50,8 @@ class ConsoleUI(threading.Thread):
         print("ERROR:\t" + message)            
 
     def _extractSign(self, m):
-        if(m.group(1)):
-            if(m.group(1) == "-"):
+        if(m):
+            if(m == "-"):
                 return -1
             else:
                 return 1
