@@ -74,7 +74,7 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.setUserOffset(t)
             return True
         elif s:
-            sign = self._extractSign(s)
+            sign = self._extractSign(s.group('sign'))
             t = utils.parseTime(s.group('time'))
             if(t is None):
                 return
