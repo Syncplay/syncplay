@@ -62,7 +62,7 @@ class ConsoleUI(threading.Thread):
         o = re.match(r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d+(?::(?:\d+)){0,2}(?:\.(?:\d+))?)$", data)
         s = re.match(r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d+(?::(?:\d+)){0,2}(?:\.(?:\d+))?)$", data)
         if(o):
-            sign = self._extractRegexSign('sign')
+            sign = self._extractRegexSign(o.group('sign'))
             t = utils.parseTime(o.group('time'))
             if(t is None):
                 return
