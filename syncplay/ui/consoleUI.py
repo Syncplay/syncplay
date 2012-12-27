@@ -49,9 +49,9 @@ class ConsoleUI(threading.Thread):
     def showErrorMessage(self, message):
         print("ERROR:\t" + message)            
 
-    def _extractRegexSign(self, m):
-        if(m.group(1)):
-            if(m.group(1) == "-"):
+    def _extractSign(self, m):
+        if(m):
+            if(m == "-"):
                 return -1
             else:
                 return 1
@@ -59,20 +59,22 @@ class ConsoleUI(threading.Thread):
             return None
         
     def _tryAdvancedCommands(self, data):
-        o = re.match(r"^(?:o|offset)\ ([+-])?\ ?(\d+[:\.]?)+$", data)
-        s = re.match(r"^(?:s|seek)?\ ?([+-])?\ ?(\d+[:\.]?)+$", data) #careful! s will match o as well
+        o = re.match(r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d+(?:[^\d\.](?:\d+)){0,2}(?:\.(?:\d+))?)$", data)
+        s = re.match(r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d+(?:[^\d\.](?:\d+)){0,2}(?:\.(?:\d+))?)$", data)
         if(o):
-            sign = self._extractRegexSign(o)
-            t = utils.parseTime(o.group(2))
+            sign = self._extractSign(o.group('sign'))
+            t = utils.parseTime(o.group('time'))
             if(t is None):
                 return
-            if(sign):
-                t = self._syncplayClient.getUserOffset() + sign * t 
+            if (o.group('sign') == "/"):
+                    t =  self._syncplayClient.getPlayerPosition() - t
+            elif(sign):
+                    t = self._syncplayClient.getUserOffset() + sign * t
             self._syncplayClient.setUserOffset(t)
             return True
         elif s:
-            sign = self._extractRegexSign(s)
-            t = utils.parseTime(s.group(2))
+            sign = self._extractSign(s.group('sign'))
+            t = utils.parseTime(s.group('time'))
             if(t is None):
                 return
             if(sign):
@@ -82,19 +84,19 @@ class ConsoleUI(threading.Thread):
         return False 
      
     def _executeCommand(self, data):
-        command = re.match(r"^([^\ ]+)(?:\ (.+))?", data)
+        command = re.match(r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?", data)
         if(not command):
             return
-        if(command.group(1) in ["u", "undo", "revert"]):
+        if(command.group('command') in ["u", "undo", "revert"]):
             tmp_pos = self._syncplayClient.getPlayerPosition()
             self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
-        elif (command.group(1) in ["l", "list", "users"]):
+        elif (command.group('command') in ["l", "list", "users"]):
             self._syncplayClient.getUserList()
-        elif (command.group(1) in ["p", "play", "pause"]):
+        elif (command.group('command') in ["p", "play", "pause"]):
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
-        elif (command.group(1) in ["r", "room"]):
-            room = command.group(2)
+        elif (command.group('command') in ["r", "room"]):
+            room = command.group('parameter')
             if room == None:
                 if  self._syncplayClient.userlist.currentUser.file:
                     room = self._syncplayClient.userlist.currentUser.file["name"]
@@ -106,7 +108,7 @@ class ConsoleUI(threading.Thread):
         else:
             if(self._tryAdvancedCommands(data)):
                 return
-            if (command.group(1) not in ['help', 'h', '?', '/?', '\?']):
+            if (command.group('command') not in ['help', 'h', '?', '/?', '\?']):
                 self.showMessage("Unrecognized command")
             self.showMessage("Available commands:", True)
             self.showMessage("\tr [name] - change room", True)
