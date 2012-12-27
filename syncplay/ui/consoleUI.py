@@ -66,10 +66,9 @@ class ConsoleUI(threading.Thread):
             t = utils.parseTime(o.group('time'))
             if(t is None):
                 return
-            if(sign):
-                if (o.group('sign') == "/"):
+            if (o.group('sign') == "/"):
                     t =  self._syncplayClient.getPlayerPosition() - t
-                else:
+            elif(sign):
                     t = self._syncplayClient.getUserOffset() + sign * t
             self._syncplayClient.setUserOffset(t)
             return True
