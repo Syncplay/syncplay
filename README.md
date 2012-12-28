@@ -18,7 +18,7 @@ Syncplay does not use video streaming or file sharing so each user must have the
 ## Requirements
 Frozen Windows executables are available on the download page - https://github.com/Uriziel/syncplay/downloads
 
-* On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.4`.
+* On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.4` or `mplayer2`.
 * On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
 
 ### Python scripts (for those not using the frozen executable package)
@@ -33,9 +33,9 @@ If you are not using the frozen executable package then you will need the follow
 If you are using the frozen executable package available from the download page then you will not need to be able to run Python scripts.
 
 ## Supported players
-### mplayer2 on Linux
+### mplayer2 on Linux and Windows
 
-On Linux `syncplay` acts as a front-end for mplayer2. 
+On Linux and Windows `syncplay` acts as a front-end for mplayer2. 
 To use it select "Open with..." in context menu and choose `Syncplay` or from command line: "syncplay video_filename". If you wish to pass more arguments to mplayer2 prepend them with -- argument, it's treated as the last argument for wrapper.
 
 Default mplayer2 output is suppressed, but if mplayer2 quits with errors, those errors will be printed (at most 50 last lines).
@@ -48,19 +48,17 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ### Getting started with Syncplay on Windows
 
-1. Ensure that you have the latest version of `Media Player Classic - Home Cinema (MPC-HC)` installed. The latest stable build is `1.6.4`.
+1. Ensure that you have the latest version of `Media Player Classic - Home Cinema (MPC-HC)` and/or `mplayer2` installed. The latest stable build of MPC-HC is `1.6.4`.
 
-2. Download Syncplay frozen executable package from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
+2. Download Syncplay frozen executable package from the link provided in the topic of the #syncplay channel on irc.rizon.net and extract to a folder of your choosing.
 
 3. If you are running your own server then open `syncplayServer.exe` (see "How to use the server", below).
 
-4. Open `syncplayClient.exe` (or open the media file you wish to play with `syncplayClient.exe`, e.g. using "Open with").
+4. Open the media file you wish to play with `syncplayClient.exe` (e.g. using "Open with"). If you are using `MPC-HC`, you can alternatively open `syncplayClient.exe` directly and then load the file later.
 
 5. Enter configuration settings (see "Configuration window", below). Ensure that you are on the same server and room as your fellow viewers.
 
-6. If you don't have the file you want to play open then open it from within the MPC-HC instance initiated by Syncplay.
-
-7. Playing, pausing and seeking from within the MPC-HC instance should now be synchronised with everyone else in the same 'room'.
+6. Playing, pausing and seeking from within the media player instance should now be synchronised with everyone else in the same 'room'.
 
 ### Getting started with Syncplay on Linux
 
