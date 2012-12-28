@@ -123,7 +123,9 @@ You can run `syncplayClient` with the following command-line switches to alter S
 
 ### Notification messages
 
-* `Rewinded due to time difference with [user]` - This means that your media player ended up too far in front of the specified user and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly. If someone is only a small amount in front then their playback rate will be reduced to 95% for a short amount of time to bring them back into sync.
+* `Rewinded due to time difference with [user]` - This means that your media player ended up too far in front of the specified user and has jumped back to help keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly - it might be helpful for them to close unnecessary applications.
+* `Slowing down due to time difference with [user]` - This means that your media player ended up too far in front of the specified user and has temporarily slowed down playback on your player to help keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly - it might be helpful for them to close unnecessary applications.
+* `Reverting speed back to normal` - Slowing down due to time difference with user has ended (see above).
 * `File you are playing appears to be different from [user]'s` - This means that the filename, size and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
 * `[User] has left` - This means that the user is no longer connected to the server. If room isolation is enabled on the server then this could also mean that the user moved to a different room.
        
