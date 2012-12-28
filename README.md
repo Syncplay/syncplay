@@ -123,7 +123,7 @@ You can run `syncplayClient` with the following command-line switches to alter S
 
 ### Notification messages
 
-* `Rewinded due to time difference  with [user]` - This means that your media player ended up too far in front of the specified user and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly. If someone is only a small amount in front then their playback rate will be reduced to 95% for a short amount of time to bring them back into sync.
+* `Rewinded due to time difference with [user]` - This means that your media player ended up too far in front of the specified user and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly. If someone is only a small amount in front then their playback rate will be reduced to 95% for a short amount of time to bring them back into sync.
 * `File you are playing appears to be different from [user]'s` - This means that the filename, size and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
 * `[User] has left` - This means that the user is no longer connected to the server. If room isolation is enabled on the server then this could also mean that the user moved to a different room.
        
@@ -169,6 +169,7 @@ You might also be able to discuss your problem through Internet Relay Chat (IRC)
 1. Changing your system time while Syncplay is running confuses the sync. PROTIP: Don't do it.
 2. In MPC-HC the 'Remember File position' feature will not work as expected if you are using Syncplay. If you want to save/load the file position when using Syncplay then use MPC-HC's built in Favorites feature.
 3. Connecting to port 8999 is disallowed in some firewall configurations. Check your firewall settings if you are experiencing problems connecting to a server.
+4. Manually setting the playback rate may cause problems. Syncplay generally assumes a playback rate of 1.0 and in some instances sets the playback rate to help get everyone more in sync.
 
 ## Authors
 * *Concept and principal Syncplay developer* - Uriziel.
