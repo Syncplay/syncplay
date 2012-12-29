@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #coding:utf8
 
 from twisted.internet import reactor
