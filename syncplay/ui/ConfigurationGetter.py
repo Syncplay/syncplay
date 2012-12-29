@@ -29,6 +29,10 @@ class ConfigurationGetter(object):
                         "playerArgs": [],
                         "playerType": None,
                         }
+        
+        #
+        #Custom validation in self._validateArguments
+        #
         self._required = [
                           "host",
                           "port",
@@ -42,6 +46,9 @@ class ConfigurationGetter(object):
                         "client_settings": ["name", "room", "playerPath"]
                         }
 
+        #
+        #Watch out for the method self._overrideConfigWithArgs when you're adding custom multi-word command line arguments
+        #
         self._argparser = argparse.ArgumentParser(description='Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
                                          epilog='If no options supplied values from configuration file will be used')
         self._argparser.add_argument('--no-gui', action='store_true', help='show no GUI')
