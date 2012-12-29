@@ -117,8 +117,8 @@ class SyncplayClient(object):
         pauseChange = self.getPlayerPaused() != paused and self.getGlobalPaused() != paused
         _playerDiff = abs(self.getPlayerPosition() - position)
         _globalDiff = abs(self.getGlobalPosition() - position)
-        seeked = _playerDiff > constants.SEEK_BOUNDARY and _globalDiff > constants.SEEK_BOUNDARY
-        return pauseChange, seeked
+        seeked = _playerDiff > constants.SEEK_THRESHOLD and _globalDiff > constants.SEEK_THRESHOLD
+        return pauseChange, seeked 
 
     def updatePlayerStatus(self, paused, position):
         position -= self.getUserOffset()
@@ -182,12 +182,12 @@ class SyncplayClient(object):
         return madeChangeOnPlayer
 
     def _slowDownToCoverTimeDifference(self, diff, setBy):
-        if(constants.SLOWDOWN_KICKIN_BOUNDARY < diff and not self._speedChanged):
+        if(constants.SLOWDOWN_KICKIN_THRESHOLD < diff and not self._speedChanged):
             self._player.setSpeed(constants.SLOWDOWN_RATE)
             self._speedChanged = True
             message = "Slowing down due to time difference with <{}>".format(setBy)
             self.ui.showMessage(message)
-        elif(self._speedChanged and diff < constants.SLOWDOWN_RESET_BOUNDARY):
+        elif(self._speedChanged and diff < constants.SLOWDOWN_RESET_THRESHOLD):
             self._player.setSpeed(1.00)
             self._speedChanged = False
             message = "Reverting speed back to normal"
@@ -206,7 +206,7 @@ class SyncplayClient(object):
         self._lastGlobalUpdate = time.time()
         if (doSeek):
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
-        if (diff > 4 and not doSeek):
+        if (diff > constants.REWIND_THRESHOLD and not doSeek):
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
         if (self._player.speedSupported and not doSeek and not paused):
             madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
@@ -247,8 +247,7 @@ class SyncplayClient(object):
         position = self._playerPosition
         if(not self._playerPaused):
             diff = time.time() - self._lastPlayerUpdate
-            if diff < 0.5:
-                position += diff 
+            position += diff 
         return position
 
     def getPlayerPaused(self):
@@ -363,7 +362,7 @@ class SyncplayUser(object):
             return False
         sameName = self.file['name'] == file_['name']
         sameSize = self.file['size'] == file_['size']
-        sameDuration = int(self.file['duration']) - int(file_['duration']) < constants.DIFFFERENT_DURATION_BOUNDARY
+        sameDuration = int(self.file['duration']) - int(file_['duration']) < constants.DIFFFERENT_DURATION_THRESHOLD
         return sameName and sameSize and sameDuration
       
     def __lt__(self, other):
