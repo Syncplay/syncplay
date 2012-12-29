@@ -27,7 +27,7 @@ en = {
       "file-differences-notification" : "Your file differs in the following way(s): ",
       
       "different-filesize-notification" : " (their file size is different from yours!)",
-      "file-played-by-notification" : "File: {} is being played by:", #User
+      "file-played-by-notification" : "File: {} is being played by:", #File
       "notplaying-notification" : "People who are not playing any file:",
       "userlist-room-notification" :  "In room '{}':", #Room
       
@@ -65,7 +65,7 @@ pl = {
       "file-differences-notification" : "Twój plik różni się następującymi parametrami: ",
       
       "different-filesize-notification" : " (inny rozmiar pliku!)",
-      "file-played-by-notification" : "Plik: {} jest odtwarzany przez:", #User
+      "file-played-by-notification" : "Plik: {} jest odtwarzany przez:", #File
       "notplaying-notification" : "Osoby, które nie odtwarzają żadnych plików:",
       "userlist-room-notification" :  "W pokoju '{}':", #Room
       # Client prompts
