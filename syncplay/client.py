@@ -47,27 +47,27 @@ class SyncClientFactory(ClientFactory):
         self._timesTried = self.retry
     
 class SyncplayClient(object):
-    def __init__(self, playerClass, ui, args):
+    def __init__(self, playerClass, ui, config):
         self.protocolFactory = SyncClientFactory(self)
         self.ui = UiManager(self, ui)
         self.userlist = SyncplayUserlist(self.ui, self)
         self._protocol = None
-        if(args.room == None or args.room == ''):
-            args.room = constants.DEFAULT_ROOM
-        self.defaultRoom = args.room
+        if(config['room'] == None or config['room'] == ''):
+            config['room'] = constants.DEFAULT_ROOM
+        self.defaultRoom = config['room']
         self.playerPositionBeforeLastSeek = 0.0
-        self.setUsername(args.name)
-        self.setRoom(args.room)
-        if(args.password):
-            args.password = hashlib.md5(args.password).hexdigest()
-        self._serverPassword = args.password
-        if(not args.file):
+        self.setUsername(config['name'])
+        self.setRoom(config['room'])
+        if(config['password']):
+            config['password'] = hashlib.md5(config['password']).hexdigest()
+        self._serverPassword = config['password']
+        if(not config['file']):
             self.__getUserlistOnLogon = True
         else:
             self.__getUserlistOnLogon = False
         self._player = None
         self._playerClass = playerClass
-        self._startupArgs = args
+        self._config = config
         
         self._running = False
         self._askPlayerTimer = None
@@ -324,7 +324,7 @@ class SyncplayClient(object):
             return
         self._running = True
         if self._playerClass:
-            self._playerClass.run(self, self._startupArgs.player_path, self._startupArgs.file, self._startupArgs._args)
+            self._playerClass.run(self, self._config['playerPath'], self._config['file'], self._config['playerArgs'])
             self._playerClass = None
         self.protocolFactory = SyncClientFactory(self)
         reactor.connectTCP(host, port, self.protocolFactory)

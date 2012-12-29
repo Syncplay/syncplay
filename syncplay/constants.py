@@ -5,6 +5,7 @@ MPC_OSD_POSITION = 2 #Right corner, 1 for left
 MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "
 DEFAULT_ROOM = 'default'
+DEFAULT_CONFIG_NAME = ".syncplay"
 
 #Changing these might be ok
 SEEK_BOUNDARY = 1

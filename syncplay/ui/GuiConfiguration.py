@@ -7,68 +7,64 @@ gtk.set_interactive(False)
 import cairo, gio, pango, atk, pangocairo, gobject #@UnusedImport
 
 class GuiConfiguration:
-    def __init__(self, args, force=False):
-        self.args = args
+    def __init__(self, config):
+        self.config = config
         self.closedAndNotSaved = False
-        if(args.player_path == None or args.host == None or args.name == None or force):
-            self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-            self.window.set_title("Syncplay Configuration")  
-            self.window.connect("delete_event", lambda w, e: self._windowClosed())
-            vbox = gtk.VBox(False, 0)
-            self.window.add(vbox)
-            vbox.show()
-            self._addLabeledEntries(args, vbox)
-    
-            self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
-            button = gtk.Button(stock=gtk.STOCK_SAVE)
-            button.connect("clicked", lambda w: self._saveDataAndLeave())
-            vbox.pack_start(button, True, True, 0)
-            button.set_flags(gtk.CAN_DEFAULT)
-            button.grab_default()
-            button.show()
-            self.window.show()
-            gtk.main()
+        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.window.set_title("Syncplay Configuration")  
+        self.window.connect("delete_event", lambda w, e: self._windowClosed())
+        vbox = gtk.VBox(False, 0)
+        self.window.add(vbox)
+        vbox.show()
+        self._addLabeledEntries(config, vbox)
+
+        self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
+        button = gtk.Button(stock=gtk.STOCK_SAVE)
+        button.connect("clicked", lambda w: self._saveDataAndLeave())
+        vbox.pack_start(button, True, True, 0)
+        button.set_flags(gtk.CAN_DEFAULT)
+        button.grab_default()
+        button.show()
+        self.window.show()
+        gtk.main()
      
     def _windowClosed(self):
         self.window.destroy()
         gtk.main_quit()
         self.closedAndNotSaved = True
         
-    def _addLabeledEntries(self, args, vbox):  
-        if(args.host == None):
+    def _addLabeledEntries(self, config, vbox):  
+        if(config['host'] == None):
             host = ""
-        elif(":" in args.host):
-            host = args.host
-        elif("port" in args):
-            host = args.host+":"+str(args.port)
+        elif(":" in config['host']):
+            host = config['host']
         else:
-            host = args.host 
-        self.hostEntry = self._addLabeledEntryToVbox('Host: ', host, vbox, lambda __, _: self._saveDataAndLeave())
-        self.userEntry = self._addLabeledEntryToVbox('Username: ', args.name, vbox, lambda __, _: self._saveDataAndLeave())
-        self.roomEntry = self._addLabeledEntryToVbox('Default room (optional): ', args.room, vbox, lambda __, _: self._saveDataAndLeave())
-        self.passEntry = self._addLabeledEntryToVbox('Server password (optional): ', args.password, vbox, lambda __, _: self._saveDataAndLeave())
-        self._tryToFillUpMpcPath()
-        self.mpcEntry = self._addLabeledEntryToVbox('Path to player executable: ', self.args.player_path, vbox, lambda __, _: self._saveDataAndLeave())
+            host = config['host']+":"+str(config['port'])
  
-    def _tryToFillUpMpcPath(self):
-        if(self.args.player_path == None):
+        self.hostEntry = self._addLabeledEntryToVbox('Host: ', host, vbox, lambda __, _: self._saveDataAndLeave())
+        self.userEntry = self._addLabeledEntryToVbox('Username: ', config['name'], vbox, lambda __, _: self._saveDataAndLeave())
+        self.roomEntry = self._addLabeledEntryToVbox('Default room (optional): ', config['room'], vbox, lambda __, _: self._saveDataAndLeave())
+        self.passEntry = self._addLabeledEntryToVbox('Server password (optional): ', config['password'], vbox, lambda __, _: self._saveDataAndLeave())
+        self.mpcEntry = self._addLabeledEntryToVbox('Path to player executable: ', self._tryToFillUpMpcPath(config['playerPath']), vbox, lambda __, _: self._saveDataAndLeave())
+ 
+    def _tryToFillUpMpcPath(self, playerPath):
+        if(playerPath == None):
             for path in constants.MPC_PATHS:
                 if(os.path.isfile(path)):
-                    self.args.player_path = path
-                    return
+                    return path
+        return playerPath
                  
-           
     def getProcessedConfiguration(self):
         if(self.closedAndNotSaved):
             raise self.WindowClosed
-        return self.args
+        return self.config
                     
     def _saveDataAndLeave(self):
-        self.args.host = self.hostEntry.get_text()
-        self.args.name = self.userEntry.get_text()
-        self.args.room = self.roomEntry.get_text()
-        self.args.password = self.passEntry.get_text()
-        self.args.player_path = self.mpcEntry.get_text()
+        self.config['host'] = self.hostEntry.get_text()
+        self.config['name'] = self.userEntry.get_text()
+        self.config['room'] = self.roomEntry.get_text()
+        self.config['password'] = self.passEntry.get_text()
+        self.config['playerPath'] = self.mpcEntry.get_text()
         self.window.destroy()
         gtk.main_quit()
         
