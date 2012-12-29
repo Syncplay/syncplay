@@ -5,10 +5,10 @@ import time
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
-from syncplay import utils
+from syncplay import utils, constants
 
 class SyncClientFactory(ClientFactory):
-    def __init__(self, client, retry = 10):
+    def __init__(self, client, retry = constants.RECONNECT_RETRIES):
         self._client = client
         self.retry = retry
         self._timesTried = 0
@@ -53,7 +53,7 @@ class SyncplayClient(object):
         self.userlist = SyncplayUserlist(self.ui, self)
         self._protocol = None
         if(args.room == None or args.room == ''):
-            args.room = 'default'
+            args.room = constants.DEFAULT_ROOM
         self.defaultRoom = args.room
         self.playerPositionBeforeLastSeek = 0.0
         self.setUsername(args.name)
@@ -94,7 +94,7 @@ class SyncplayClient(object):
         self._player = player
         self.scheduleAskPlayer()
     
-    def scheduleAskPlayer(self, when=0.1):
+    def scheduleAskPlayer(self, when=constants.PLAYER_ASK_DELAY):
         self._askPlayerTimer = task.LoopingCall(self.askPlayer)
         self._askPlayerTimer.start(when)
         
@@ -106,7 +106,7 @@ class SyncplayClient(object):
         self.checkIfConnected()
 
     def checkIfConnected(self):
-        if(self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > 4.1):
+        if(self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > constants.PROTOCOL_TIMEOUT):
             self._lastGlobalUpdate = None
             self.ui.showErrorMessage("Connection with server timed out")
             self._protocol.drop()
@@ -117,7 +117,7 @@ class SyncplayClient(object):
         pauseChange = self.getPlayerPaused() != paused and self.getGlobalPaused() != paused
         _playerDiff = abs(self.getPlayerPosition() - position)
         _globalDiff = abs(self.getGlobalPosition() - position)
-        seeked = _playerDiff > 1 and _globalDiff > 1
+        seeked = _playerDiff > constants.SEEK_BOUNDARY and _globalDiff > constants.SEEK_BOUNDARY
         return pauseChange, seeked
 
     def updatePlayerStatus(self, paused, position):
@@ -182,12 +182,12 @@ class SyncplayClient(object):
         return madeChangeOnPlayer
 
     def _slowDownToCoverTimeDifference(self, diff, setBy):
-        if(1.5 < diff and not self._speedChanged):
-            self._player.setSpeed(0.95)
+        if(constants.SLOWDOWN_KICKIN_BOUNDARY < diff and not self._speedChanged):
+            self._player.setSpeed(constants.SLOWDOWN_RATE)
             self._speedChanged = True
             message = "Slowing down due to time difference with <{}>".format(setBy)
             self.ui.showMessage(message)
-        elif(self._speedChanged and diff < 0.1 ):
+        elif(self._speedChanged and diff < constants.SLOWDOWN_RESET_BOUNDARY):
             self._player.setSpeed(1.00)
             self._speedChanged = False
             message = "Reverting speed back to normal"
@@ -363,7 +363,7 @@ class SyncplayUser(object):
             return False
         sameName = self.file['name'] == file_['name']
         sameSize = self.file['size'] == file_['size']
-        sameDuration = int(self.file['duration']) - int(file_['duration']) < 1
+        sameDuration = int(self.file['duration']) - int(file_['duration']) < constants.DIFFFERENT_DURATION_BOUNDARY
         return sameName and sameSize and sameDuration
       
     def __lt__(self, other):

@@ -2,10 +2,11 @@ import subprocess
 import re
 import threading
 from syncplay.players.basePlayer import BasePlayer
+from syncplay import constants
 
 class MplayerPlayer(BasePlayer):
     speedSupported = True
-    RE_ANSWER = re.compile('^ANS_([a-zA-Z_]+)=(.+)$')
+    RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
     def __init__(self, client, playerPath, filePath, args):
         self._client = client
         self._paused = None
@@ -71,7 +72,7 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine("get_property {}".format(property_))
     
     def displayMessage(self, message):
-        self._listener.sendLine('osd_show_text "{!s}" {} {}'.format(message, 3000, 1))
+        self._listener.sendLine('osd_show_text "{!s}" {} {}'.format(message, constants.OSD_DURATION, constants.MPLAYER_OSD_LEVEL))
  
     def setSpeed(self, value):        
         self._setProperty('speed', "{:.2f}".format(value))
@@ -142,7 +143,8 @@ class MplayerPlayer(BasePlayer):
             self.__playerController = playerController
             if(not filePath):
                 raise ValueError
-            call = [playerPath, filePath, '-slave', '-msglevel', 'all=1:global=4']
+            call = [playerPath, filePath]
+            call.extend(constants.MPLAYER_SLAVE_ARGS)
             if(args):
                 call.extend(args)
             self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)

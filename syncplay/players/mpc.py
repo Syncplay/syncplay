@@ -7,7 +7,7 @@ from functools import wraps
 from syncplay.players.basePlayer import BasePlayer
 import re
 from syncplay.utils import retry
-
+from syncplay import constants  
         
 class MpcHcApi:
     def __init__(self):
@@ -31,7 +31,7 @@ class MpcHcApi:
     def waitForFileStateReady(f): #@NoSelf
         @wraps(f)
         def wrapper(self, *args, **kwds):
-            if(not self.__locks.fileReady.wait(0.2)):
+            if(not self.__locks.fileReady.wait(constants.MPC_LOCK_WAIT_TIME)):
                 raise self.PlayerNotReadyException()
             return f(self, *args, **kwds)
         return wrapper
@@ -39,7 +39,7 @@ class MpcHcApi:
     def startMpc(self, path, args=()):
         args = "%s /slave %s" % (" ".join(args), str(self.__listener.hwnd))
         win32api.ShellExecute(0, "open", path, args, None, 1)
-        if(not self.__locks.mpcStart.wait(10)):
+        if(not self.__locks.mpcStart.wait(constants.MPC_OPEN_MAX_WAIT_TIME)):
             raise self.NoSlaveDetectedException("Unable to start MPC in slave mode!")
         self.__mpcExistenceChecking.start() 
 
@@ -76,7 +76,7 @@ class MpcHcApi:
     def setSpeed(self, rate):
         self.__listener.SendCommand(self.CMD_SETSPEED, unicode(rate))
 
-    def sendOsd(self, message, MsgPos=2, DurationMs=3000):
+    def sendOsd(self, message, MsgPos=constants.MPC_OSD_POSITION, DurationMs=constants.OSD_DURATION):
         class __OSDDATASTRUCT(ctypes.Structure):
             _fields_ = [
                 ('nMsgPos', ctypes.c_int32),
@@ -300,11 +300,6 @@ class MpcHcApi:
                 ('lpData', ctypes.c_void_p)
             ]
 
-       
-
-    
-
-
 class MPCHCAPIPlayer(BasePlayer):
     speedSupported = False
     
@@ -383,9 +378,9 @@ class MPCHCAPIPlayer(BasePlayer):
             self._mpcApi.openFile(filePath)
         
     def displayMessage(self, message):
-        self._mpcApi.sendOsd(message, 2, 3000)
+        self._mpcApi.sendOsd(message)
 
-    @retry(MpcHcApi.PlayerNotReadyException, 30, 0.01, 1)
+    @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
     def setPaused(self, value):
         if self.__switchPauseCalls:
             value = not value
@@ -394,17 +389,17 @@ class MPCHCAPIPlayer(BasePlayer):
         else:
             self._mpcApi.unpause()
             
-    @retry(MpcHcApi.PlayerNotReadyException, 30, 0.01, 1)    
+    @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
     def setPosition(self, value):
         self._mpcApi.seek(value)
         
     def __getPosition(self):
         self.__positionUpdate.clear()
         self._mpcApi.askForCurrentPosition()
-        self.__positionUpdate.wait(0.2)
+        self.__positionUpdate.wait(constants.MPC_LOCK_WAIT_TIME)
         return self._mpcApi.lastFilePosition
     
-    @retry(MpcHcApi.PlayerNotReadyException, 30, 0.01, 1)
+    @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
     def askForStatus(self):
         if(self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0)):
             self.__fileUpdate.release()
@@ -421,14 +416,14 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__client.updatePlayerStatus(self.__client.getGlobalPaused(), self.__client.getGlobalPosition())
 
     def __forcePause(self):
-        for _ in xrange(30):
+        for _ in xrange(constants.MPC_MAX_RETRIES):
             self.setPaused(True)
-            time.sleep(0.01)
+            time.sleep(constants.MPC_RETRY_WAIT_TIME)
         
     def __refreshMpcPlayState(self):
         for _ in xrange(2): 
             self._mpcApi.playPause()
-            time.sleep(0.05)
+            time.sleep(constants.MPC_PAUSE_TOGGLE_DELAY)
 
     def _setPausedAccordinglyToServer(self):
         self.__forcePause()
@@ -438,7 +433,7 @@ class MPCHCAPIPlayer(BasePlayer):
             if(self._mpcApi.isPaused() <> self.__client.getGlobalPaused()):
                 self.__setUpStateForNewlyOpenedFile()
     
-    @retry(MpcHcApi.PlayerNotReadyException, 30, 0.1, 1)                
+    @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)                
     def __setUpStateForNewlyOpenedFile(self):
         self._setPausedAccordinglyToServer()
         self._mpcApi.seek(self.__client.getGlobalPosition())

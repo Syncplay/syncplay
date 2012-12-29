@@ -1,6 +1,7 @@
 import time
 import re
 import datetime
+from syncplay import constants
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -44,7 +45,7 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     return deco_retry
 
 def parseTime(timeStr):
-    regex = re.compile(r'(:?(?:(?P<hours>\d+?)[^\d\.])?(?:(?P<minutes>\d+?))?[^\d\.])?(?P<seconds>\d+?)(?:\.(?P<miliseconds>\d+?))?$')
+    regex = re.compile(constants.PARSE_TIME_REGEX)
     parts = regex.match(timeStr)
     if not parts:
         return
