@@ -27,6 +27,7 @@ en = {
       "different-filesize-notification" : " (their file size is different from yours!)",
       "file-played-by-notification" : "File: {} is being played by:", #User
       "notplaying-notification" : "People who are not playing any file:",
+      "userlist-room-notification" :  "In room '{}':", #Room
       
       # Client prompts
       "enter-to-exit-prompt" : "Press enter to exit\n",

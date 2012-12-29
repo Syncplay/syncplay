@@ -6,6 +6,7 @@ from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants
+from syncplay.messages import getMessage
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry = constants.RECONNECT_RETRIES):
@@ -19,23 +20,22 @@ class SyncClientFactory(ClientFactory):
 
     def startedConnecting(self, connector):
         destination = connector.getDestination()
-        self._client.ui.showMessage('Attempting to connect to {}:{}'.format(destination.host, destination.port))
+        message = getMessage("en", "connection-attempt-notification").format(destination.host, destination.port)
+        self._client.ui.showMessage(message)
 
     def clientConnectionLost(self, connector, reason):
         if self._timesTried < self.retry:
             self._timesTried += 1
-            message = 'Connection with server lost, attempting to reconnect'
-            self._client.ui.showMessage(message)
+            self._client.ui.showMessage(getMessage("en", "reconnection-attempt-notification"))
             self.reconnecting = True
             reactor.callLater(0.1*(2**self._timesTried), connector.connect)
         else:
-            message = 'Disconnected from server'
+            message = getMessage("en", "disconnection-notification")
             self._client.ui.showMessage(message)
 
     def clientConnectionFailed(self, connector, reason):
         if not self.reconnecting:
-            message = 'Connection with server failed'
-            self._client.ui.showMessage(message)
+            self._client.ui.showMessage(getMessage("en", "connection-failed-notification"))
             self._client.stop(True)
         else:
             self.clientConnectionLost(connector, reason)
@@ -108,7 +108,7 @@ class SyncplayClient(object):
     def checkIfConnected(self):
         if(self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > constants.PROTOCOL_TIMEOUT):
             self._lastGlobalUpdate = None
-            self.ui.showErrorMessage("Connection with server timed out")
+            self.ui.showErrorMessage(getMessage("en", "server-timeout-error"))
             self._protocol.drop()
             return False
         return True
@@ -149,16 +149,14 @@ class SyncplayClient(object):
 
     def _rewindPlayerDueToTimeDifference(self, position, setBy):
         self.setPosition(position)
-        message = "Rewinded due to time difference with <{}>".format(setBy)
-        self.ui.showMessage(message)
+        self.ui.showMessage(getMessage("en", "rewind-notification").format(setBy))
         madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
     def _serverUnpaused(self, setBy):
         self._player.setPaused(False)
         madeChangeOnPlayer = True
-        message = '<{}> unpaused'.format(setBy)
-        self.ui.showMessage(message)
+        self.ui.showMessage(getMessage("en", "unpause-notification").format(setBy))
         return madeChangeOnPlayer
 
     def _serverPaused(self, setBy, diff):
@@ -166,8 +164,7 @@ class SyncplayClient(object):
             self.setPosition(self.getGlobalPosition())
         self._player.setPaused(True)
         madeChangeOnPlayer = True
-        message = '<{}> paused'.format(setBy)
-        self.ui.showMessage(message)
+        self.ui.showMessage(getMessage("en", "pause-notification").format(setBy))
         return madeChangeOnPlayer
 
     def _serverSeeked(self, position, setBy):
@@ -177,7 +174,7 @@ class SyncplayClient(object):
             madeChangeOnPlayer = True
         else:
             madeChangeOnPlayer = False
-        message = '<{}> jumped from {} to {}'.format(setBy, utils.formatTime(self.playerPositionBeforeLastSeek), utils.formatTime(position))
+        message = getMessage("en", "seek-notification").format(setBy, utils.formatTime(self.playerPositionBeforeLastSeek), utils.formatTime(position))
         self.ui.showMessage(message)
         return madeChangeOnPlayer
 
@@ -185,13 +182,11 @@ class SyncplayClient(object):
         if(constants.SLOWDOWN_KICKIN_THRESHOLD < diff and not self._speedChanged):
             self._player.setSpeed(constants.SLOWDOWN_RATE)
             self._speedChanged = True
-            message = "Slowing down due to time difference with <{}>".format(setBy)
-            self.ui.showMessage(message)
+            self.ui.showMessage(getMessage("en", "slowdown-notification").format(setBy))
         elif(self._speedChanged and diff < constants.SLOWDOWN_RESET_THRESHOLD):
             self._player.setSpeed(1.00)
             self._speedChanged = False
-            message = "Reverting speed back to normal"
-            self.ui.showMessage(message)
+            self.ui.showMessage(getMessage("en", "revert-notification"))
         madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
@@ -234,9 +229,8 @@ class SyncplayClient(object):
      
     def setUserOffset(self, time):
         self._userOffset = time
-        message = "Current offset: {} seconds".format(self._userOffset)
         self.setPosition(self.getGlobalPosition())
-        self.ui.showMessage(message)
+        self.ui.showMessage(getMessage("en", "current-offset-notification").format(self._userOffset))
         
     def getPlayerPosition(self):
         if(not self._lastPlayerUpdate):
@@ -340,7 +334,7 @@ class SyncplayClient(object):
             self._player.drop()
         reactor.callLater(0.1, reactor.stop)
         if(promptForAction):
-            self.ui.promptFor("Press enter to exit\n")
+            self.ui.promptFor(getMessage("en", "enter-to-exit-prompt"))
 
 class SyncplayUser(object):
     def __init__(self, username = None, room = None, file_ = None, position = 0):
@@ -377,16 +371,16 @@ class SyncplayUserlist(object):
 
     def __showUserChangeMessage(self, username, room, file_):
         if (room and not file_):
-            message = "<{}> has joined the room: '{}'".format(username, room)
+            message = getMessage("en", "room-join-notification").format(username, room)
             self.ui.showMessage(message)
         elif (room and file_ and username != self.currentUser.username):
             duration = utils.formatTime(file_['duration'])
-            message = "<{}> is playing '{}' ({})".format(username, file_['name'], duration)
+            message = getMessage("en", "playing-notification").format(username, file_['name'], duration)
             if(self.currentUser.room <> room or self.currentUser.username == username):
-                message += " in room: '{}'".format(room)
+                message += getMessage("en", "playing-notification/room-addendum").format(room)
             self.ui.showMessage(message)
             if(self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room):
-                message = "File you are playing appears to be different from <{}>'s".format(username)
+                message = getMessage("en", "file-different-notification").format(username)
                 self.ui.showMessage(message)
                 differences = []
                 if(self.currentUser.file['name'] <> file_['name']):
@@ -395,7 +389,7 @@ class SyncplayUserlist(object):
                     differences.append("size")
                 if(self.currentUser.file['duration'] <> file_['duration']):
                     differences.append("duration")
-                message = "Your file differs in the following way(s): " + ", ".join(differences)
+                message = getMessage("en", "file-differences-notification") + ", ".join(differences)
                 self.ui.showMessage(message)
 
     def addUser(self, username, room, file_, position = 0, noMessage = False):
@@ -410,7 +404,7 @@ class SyncplayUserlist(object):
     def removeUser(self, username):
         if(self._users.has_key(username)):
             self._users.pop(username)
-            message = "<{}> has left".format(username)
+            message = getMessage("en", "left-notification").format(username)
             self.ui.showMessage(message)
             
     def __displayModUserMessage(self, username, room, file_, user):
@@ -462,12 +456,12 @@ class SyncplayUserlist(object):
         if(self.currentUser.file):
             fileHasSameSizeAsYour = user.file['size'] == self.currentUser.file['size']
             fileHasSameNameYour = user.file['name'] == self.currentUser.file['name']
-            differentFileMessage = " (their file size is different from yours!)"
+            differentFileMessage = getMessage("en", "different-filesize-notification")
             message += differentFileMessage if not fileHasSameSizeAsYour and fileHasSameNameYour else ""
         return message
 
     def __displayFileWatchersInRoomList(self, key, users):
-        self.ui.showMessage("File: {} is being played by:".format(key), True, True)
+        self.ui.showMessage(getMessage("en", "file-played-by-notification").format(key), True, True)
         for user in sorted(users.itervalues()):
             message = "<"+user.username+">"
             if(self.currentUser.username == user.username):
@@ -477,13 +471,13 @@ class SyncplayUserlist(object):
 
     def __displayPeopleInRoomWithNoFile(self, noFileList):
         if (noFileList):
-            self.ui.showMessage("People who are not playing any file:",  True, True)
+            self.ui.showMessage(getMessage("en", "notplaying-notification"), True, True)
             for user in sorted(noFileList.itervalues()):
                 self.ui.showMessage("\t<" + user.username + ">", True, True)
 
     def __displayListOfPeople(self, rooms):
         for roomName in sorted(rooms.iterkeys()):
-            self.ui.showMessage("In room '{}':".format(roomName), True, False)
+            self.ui.showMessage(getMessage("en", "userlist-room-notification").format(roomName), True, False)
             noFileList = rooms[roomName].pop("__noFile__") if (rooms[roomName].has_key("__noFile__")) else None
             for key in sorted(rooms[roomName].iterkeys()):
                 self.__displayFileWatchersInRoomList(key, rooms[roomName][key])
