@@ -56,7 +56,7 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('-n', '--name', metavar='username', type=str, help='desired username')
         self._argparser.add_argument('-d', '--debug', action='store_true', help='debug mode')
         self._argparser.add_argument('-g', '--force-gui-prompt', action='store_true', help='make configuration prompt appear')
-        self._argparser.add_argument('--no-store', action='store_true', help='don\'t store values in syncplay.ini')
+        self._argparser.add_argument('--no-store', action='store_true', help='don\'t store values in .syncplay')
         self._argparser.add_argument('-r', '--room', metavar='room', type=str, nargs='?', help='default room')
         self._argparser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help='server password')
         self._argparser.add_argument('--player-path', metavar='path', type=str, help='path to your player executable')
@@ -182,6 +182,8 @@ class ConfigurationGetter(object):
             return GuiConfiguration(self._config).getProcessedConfiguration()
 
     def _saveConfig(self, iniPath):
+        if(self._config['noStore']):
+            return
         parser = SafeConfigParser()
         for section, options in self._iniStructure.items():
             if(not parser.has_section(section)):
