@@ -2,6 +2,7 @@ import ConfigParser
 import argparse
 import os
 import sys
+from syncplay import constants
 
 class InvalidConfigValue(Exception):
     def __init__(self, message):
@@ -153,7 +154,7 @@ class ConfigurationGetter(object):
                 self._args.host, port = self._args.host.split(':', 1)
                 self._args.port = int(port)
             elif("port" not in self._args):
-                self._args.port = 8999
+                self._args.port = constants.DEFAULT_PORT
     
     def setConfiguration(self, args):
         self._args = args
@@ -171,7 +172,7 @@ class ServerConfigurationGetter(ConfigurationGetter):
         self._prepareArgParser()
         self._args = self._parser.parse_args()
         if(self._args.port == None):
-            self._args.port = 8999
+            self._args.port = constants.DEFAULT_PORT
         return self._args
            
     def _prepareArgParser(self):

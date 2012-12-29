@@ -5,7 +5,7 @@ import syncplay
 import os
 import re
 from syncplay import utils
-
+from syncplay import constants
 class ConsoleUI(threading.Thread):
     def __init__(self):
         self.promptMode = threading.Event()
@@ -41,7 +41,7 @@ class ConsoleUI(threading.Thread):
         if(noTimestamp):
             print(message)
         else:
-            print(time.strftime("[%X] ", time.localtime()) + message)
+            print(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message)
 
     def showDebugMessage(self, message):
         print(message)
@@ -59,8 +59,8 @@ class ConsoleUI(threading.Thread):
             return None
         
     def _tryAdvancedCommands(self, data):
-        o = re.match(r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d+(?:[^\d\.](?:\d+)){0,2}(?:\.(?:\d+))?)$", data)
-        s = re.match(r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d+(?:[^\d\.](?:\d+)){0,2}(?:\.(?:\d+))?)$", data)
+        o = re.match(constants.UI_OFFSET_REGEX, data)
+        s = re.match(constants.UI_SEEK_REGEX, data)
         if(o):
             sign = self._extractSign(o.group('sign'))
             t = utils.parseTime(o.group('time'))
@@ -84,18 +84,18 @@ class ConsoleUI(threading.Thread):
         return False 
      
     def _executeCommand(self, data):
-        command = re.match(r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?", data)
+        command = re.match(constants.UI_COMMAND_REGEX, data)
         if(not command):
             return
-        if(command.group('command') in ["u", "undo", "revert"]):
+        if(command.group('command') in constants.COMMANDS_UNDO):
             tmp_pos = self._syncplayClient.getPlayerPosition()
             self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
-        elif (command.group('command') in ["l", "list", "users"]):
+        elif (command.group('command') in constants.COMMANDS_LIST):
             self._syncplayClient.getUserList()
-        elif (command.group('command') in ["p", "play", "pause"]):
+        elif (command.group('command') in constants.COMMANDS_PAUSE):
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
-        elif (command.group('command') in ["r", "room"]):
+        elif (command.group('command') in constants.COMMANDS_ROOM):
             room = command.group('parameter')
             if room == None:
                 if  self._syncplayClient.userlist.currentUser.file:
@@ -108,14 +108,14 @@ class ConsoleUI(threading.Thread):
         else:
             if(self._tryAdvancedCommands(data)):
                 return
-            if (command.group('command') not in ['help', 'h', '?', '/?', '\?']):
+            if (command.group('command') not in constants.COMMANDS_HELP):
                 self.showMessage("Unrecognized command")
             self.showMessage("Available commands:", True)
             self.showMessage("\tr [name] - change room", True)
             self.showMessage("\tl - show user list", True)
             self.showMessage("\tu - undo last seek", True)
             self.showMessage("\tp - toggle pause", True)
-            self.showMessage("\t[s][+-][time] - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True)
+            self.showMessage("\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True)
             self.showMessage("\th - this help", True)
             self.showMessage("Syncplay version: {}".format(syncplay.version), True)
             self.showMessage("More info available at: {}".format(syncplay.projectURL), True)

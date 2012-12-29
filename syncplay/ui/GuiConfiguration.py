@@ -1,5 +1,6 @@
 import pygtk
 import os
+from syncplay import constants
 pygtk.require('2.0')
 import gtk
 gtk.set_interactive(False)
@@ -51,18 +52,7 @@ class GuiConfiguration:
  
     def _tryToFillUpMpcPath(self):
         if(self.args.player_path == None):
-            paths = ["C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
-                     "C:\Program Files\MPC-HC\mpc-hc.exe",
-                     "C:\Program Files\MPC-HC\mpc-hc64.exe",
-                     "C:\Program Files\Media Player Classic - Home Cinema\mpc-hc.exe",
-                     "C:\Program Files\Media Player Classic - Home Cinema\mpc-hc64.exe",
-                     "C:\Program Files (x86)\Media Player Classic - Home Cinema\mpc-hc.exe",
-                     "C:\Program Files (x86)\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
-                     "C:\Program Files\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
-                     "C:\Program Files (x86)\Combined Community Codec Pack\MPC\mpc-hc.exe",
-                     "C:\Program Files\MPC HomeCinema (x64)\mpc-hc64.exe",
-                     ]
-            for path in paths:
+            for path in constants.MPC_PATHS:
                 if(os.path.isfile(path)):
                     self.args.player_path = path
                     return

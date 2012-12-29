@@ -6,6 +6,7 @@ from twisted.internet.protocol import Factory
 import syncplay
 from syncplay.protocols import SyncServerProtocol
 import time
+from syncplay import constants
 
 class SyncFactory(Factory):
     def __init__(self, password = ''):
@@ -87,7 +88,7 @@ class SyncFactory(Factory):
         watcher.paused = paused
         watcher.position = position
         watcherProtocol.sendState(position, paused, doSeek, setBy, senderLatency, watcher.latency, forcedUpdate)
-        if(time.time() - watcher.lastUpdate > 4.1):
+        if(time.time() - watcher.lastUpdate > constants.PROTOCOL_TIMEOUT):
             watcherProtocol.drop()
             self.removeWatcher(watcherProtocol)
         
@@ -95,7 +96,7 @@ class SyncFactory(Factory):
         if (latencyCalculation):
             ping = (time.time() - latencyCalculation) / 2
             if (watcher.latency):
-                watcher.latency = watcher.latency * (0.85) + ping * (0.15) #Exponential moving average 
+                watcher.latency = watcher.latency * (constants.PING_MOVING_AVERAGE_WEIGHT) + ping * (1-constants.PING_MOVING_AVERAGE_WEIGHT) #Exponential moving average 
             else:
                 watcher.latency = ping
 
@@ -190,7 +191,7 @@ class SyncFactory(Factory):
     def _checkUsers(self):
         for room in self._rooms.itervalues():
             for watcher in room.itervalues():
-                if(time.time() - watcher.lastUpdate > 4.1):
+                if(time.time() - watcher.lastUpdate > constants.PROTOCOL_TIMEOUT):
                     watcher.watcherProtocol.drop()
                     self.removeWatcher(watcher.watcherProtocol)
                     self._checkUsers() #restart

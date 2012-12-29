@@ -18,7 +18,7 @@ Syncplay does not use video streaming or file sharing so each user must have the
 ## Requirements
 Frozen Windows executables are available on the download page - https://github.com/Uriziel/syncplay/downloads
 
-* On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.4`.
+* On Windows: `Media Player Classic - Home Cinema (MPC-HC)` >= `1.6.4` or `mplayer2`.
 * On Linux: `mplayer2`. `MPlayer` >= `1.1` should be compatible, but is not supported.
 
 ### Python scripts (for those not using the frozen executable package)
@@ -33,9 +33,9 @@ If you are not using the frozen executable package then you will need the follow
 If you are using the frozen executable package available from the download page then you will not need to be able to run Python scripts.
 
 ## Supported players
-### mplayer2 on Linux
+### mplayer2 on Linux and Windows
 
-On Linux `syncplay` acts as a front-end for mplayer2. 
+On Linux and Windows `syncplay` acts as a front-end for mplayer2. 
 To use it select "Open with..." in context menu and choose `Syncplay` or from command line: "syncplay video_filename". If you wish to pass more arguments to mplayer2 prepend them with -- argument, it's treated as the last argument for wrapper.
 
 Default mplayer2 output is suppressed, but if mplayer2 quits with errors, those errors will be printed (at most 50 last lines).
@@ -48,19 +48,17 @@ On Windows simply running `syncplayClient.exe` opens a Syncplay command-line win
 
 ### Getting started with Syncplay on Windows
 
-1. Ensure that you have the latest version of `Media Player Classic - Home Cinema (MPC-HC)` installed. The latest stable build is `1.6.4`.
+1. Ensure that you have the latest version of `Media Player Classic - Home Cinema (MPC-HC)` and/or `mplayer2` installed. The latest stable build of MPC-HC is `1.6.4`.
 
-2. Download Syncplay frozen executable package from https://github.com/Uriziel/syncplay/downloads and extract to a folder of your choosing.
+2. Download Syncplay frozen executable package from the link provided in the topic of the #syncplay channel on irc.rizon.net and extract to a folder of your choosing.
 
 3. If you are running your own server then open `syncplayServer.exe` (see "How to use the server", below).
 
-4. Open `syncplayClient.exe` (or open the media file you wish to play with `syncplayClient.exe`, e.g. using "Open with").
+4. Open the media file you wish to play with `syncplayClient.exe` (e.g. using "Open with"). If you are using `MPC-HC`, you can alternatively open `syncplayClient.exe` directly and then load the file later.
 
 5. Enter configuration settings (see "Configuration window", below). Ensure that you are on the same server and room as your fellow viewers.
 
-6. If you don't have the file you want to play open then open it from within the MPC-HC instance initiated by Syncplay.
-
-7. Playing, pausing and seeking from within the MPC-HC instance should now be synchronised with everyone else in the same 'room'.
+6. Playing, pausing and seeking from within the media player instance should now be synchronised with everyone else in the same 'room'.
 
 ### Getting started with Syncplay on Linux
 
@@ -125,7 +123,9 @@ You can run `syncplayClient` with the following command-line switches to alter S
 
 ### Notification messages
 
-* `Rewinded due to time difference  with [user]` - This means that your media player ended up too far in front of the specified user and has jumped back to keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly. If someone is only a small amount in front then their playback rate will be reduced to 95% for a short amount of time to bring them back into sync.
+* `Rewinded due to time difference with [user]` - This means that your media player ended up too far in front of the specified user and has jumped back to help keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly - it might be helpful for them to close unnecessary applications.
+* `Slowing down due to time difference with [user]` - This means that your media player ended up too far in front of the specified user and has temporarily slowed down playback on your player to help keep you in sync. This is usually because someone's computer isn't powerful enough to play the file smoothly - it might be helpful for them to close unnecessary applications.
+* `Reverting speed back to normal` - Slowing down due to time difference with user has ended (see above).
 * `File you are playing appears to be different from [user]'s` - This means that the filename, size and/or duration of the file that the user is playing is different from the file that you are playing. This is for information only and is not an error.
 * `[User] has left` - This means that the user is no longer connected to the server. If room isolation is enabled on the server then this could also mean that the user moved to a different room.
        
@@ -171,6 +171,7 @@ You might also be able to discuss your problem through Internet Relay Chat (IRC)
 1. Changing your system time while Syncplay is running confuses the sync. PROTIP: Don't do it.
 2. In MPC-HC the 'Remember File position' feature will not work as expected if you are using Syncplay. If you want to save/load the file position when using Syncplay then use MPC-HC's built in Favorites feature.
 3. Connecting to port 8999 is disallowed in some firewall configurations. Check your firewall settings if you are experiencing problems connecting to a server.
+4. Manually setting the playback rate may cause problems. Syncplay generally assumes a playback rate of 1.0 and in some instances sets the playback rate to help get everyone more in sync.
 
 ## Authors
 * *Concept and principal Syncplay developer* - Uriziel.
