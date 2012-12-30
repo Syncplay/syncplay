@@ -35,8 +35,8 @@ If you are using the frozen executable package available from the download page 
 ## Supported players
 ### mplayer2 on Linux and Windows
 
-On Linux and Windows `syncplay` acts as a front-end for mplayer2. 
-To use it select "Open with..." in context menu and choose `Syncplay` or from command line: "syncplay video_filename". If you wish to pass more arguments to mplayer2 prepend them with -- argument, it's treated as the last argument for wrapper.
+On Linux `syncplay` acts as a front-end for mplayer2, and on Windows `syncplayClient.exe` acts as a front-end for mplayer2.
+To use either you should select "Open with..." in context menu and choose Syncplay, or from Linux command line: "syncplay video_filename". If you wish to pass more arguments to mplayer2 prepend them with -- argument, it's treated as the last argument for wrapper.
 
 Default mplayer2 output is suppressed, but if mplayer2 quits with errors, those errors will be printed (at most 50 last lines).
 
