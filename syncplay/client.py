@@ -53,7 +53,7 @@ class SyncplayClient(object):
         self.userlist = SyncplayUserlist(self.ui, self)
         self._protocol = None
         if(config['room'] == None or config['room'] == ''):
-            config['room'] = constants.DEFAULT_ROOM
+            config['room'] = config['name'] # ticket #58
         self.defaultRoom = config['room']
         self.playerPositionBeforeLastSeek = 0.0
         self.setUsername(config['name'])
