@@ -22,7 +22,7 @@ class ConfigurationGetter(object):
                         "forceGuiPrompt": False,
                         "noGui": False,
                         "noStore": False,
-                        "room": constants.DEFAULT_ROOM,
+                        "room": "",
                         "password": None,
                         "playerPath": None,
                         "file": None,
