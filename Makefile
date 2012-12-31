@@ -16,20 +16,20 @@ else
 endif
 
 common:
-	mkdir -p $(LIB_PATH)/syncplay/
+	-mkdir -p $(LIB_PATH)/syncplay/
 	cp -r syncplay $(LIB_PATH)/syncplay/
 	cp -r resources/hicolor $(ICON_PATH)/icons/
 	cp resources/hicolor/48x48/apps/syncplay.png $(ICON_PATH)/app-install/icons/
 	cp resources/hicolor/48x48/apps/syncplay.png $(ICON_PATH)/pixmaps/
 
 u-common:
-	rm -rf $(LIB_PATH)/syncplay
-	rm $(ICON_PATH)/icons/hicolor/*/apps/syncplay.png
-	rm $(ICON_PATH)/app-install/icons/syncplay.png
-	rm $(ICON_PATH)/pixmaps/syncplay.png
+	-rm -rf $(LIB_PATH)/syncplay
+	-rm $(ICON_PATH)/icons/hicolor/*/apps/syncplay.png
+	-rm $(ICON_PATH)/app-install/icons/syncplay.png
+	-rm $(ICON_PATH)/pixmaps/syncplay.png
 
 client:
-	mkdir -p $(BIN_PATH)
+	-mkdir -p $(BIN_PATH)
 	touch $(BIN_PATH)/syncplay
 	echo '#!/bin/sh\npython $(LIB_PATH)/syncplay/syncplayClient.py "$$@"' > $(BIN_PATH)/syncplay
 	chmod a+x $(BIN_PATH)/syncplay
@@ -37,12 +37,12 @@ client:
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
 
 u-client:
-	rm $(BIN_PATH)/syncplay
-	rm $(LIB_PATH)/syncplay/syncplayClient.py
-	rm $(APP_SHORTCUT_PATH)/syncplay.desktop
+	-rm $(BIN_PATH)/syncplay
+	-rm $(LIB_PATH)/syncplay/syncplayClient.py
+	-rm $(APP_SHORTCUT_PATH)/syncplay.desktop
 
 server:
-	mkdir -p $(BIN_PATH)
+	-mkdir -p $(BIN_PATH)
 	touch $(BIN_PATH)/syncplay-server
 	echo '#!/bin/sh\npython $(LIB_PATH)/syncplay/syncplayServer.py "$$@"' > $(BIN_PATH)/syncplay-server
 	chmod a+x $(BIN_PATH)/syncplay-server
@@ -50,9 +50,9 @@ server:
 	cp resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
 
 u-server:
-	rm $(BIN_PATH)/syncplay-server
-	rm $(LIB_PATH)/syncplay/syncplayServer.py
-	rm $(APP_SHORTCUT_PATH)/syncplay-server.desktop
+	-rm $(BIN_PATH)/syncplay-server
+	-rm $(LIB_PATH)/syncplay/syncplayServer.py
+	-rm $(APP_SHORTCUT_PATH)/syncplay-server.desktop
 
 install-client: common client
 
