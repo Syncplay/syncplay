@@ -1,6 +1,7 @@
 from syncplay.client import SyncplayClient
 from syncplay.ui.ConfigurationGetter import ConfigurationGetter
 from syncplay import ui
+from syncplay.messages import getMessage
 try:
     from syncplay.players.mpc import MPCHCAPIPlayer
 except ImportError:
@@ -20,7 +21,7 @@ class SyncplayClientManager(object):
             interface.addClient(syncplayClient)
             syncplayClient.start(config['host'], config['port'])
         else:
-            interface.showErrorMessage("Unable to start client")
+            interface.showErrorMessage(getMessage("en", "unable-to-start-client-error"))
         
 
         

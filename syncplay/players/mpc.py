@@ -8,6 +8,7 @@ from syncplay.players.basePlayer import BasePlayer
 import re
 from syncplay.utils import retry
 from syncplay import constants  
+from syncplay.messages import getMessage
         
 class MpcHcApi:
     def __init__(self):
@@ -40,7 +41,7 @@ class MpcHcApi:
         args = "%s /slave %s" % (" ".join(args), str(self.__listener.hwnd))
         win32api.ShellExecute(0, "open", path, args, None, 1)
         if(not self.__locks.mpcStart.wait(constants.MPC_OPEN_MAX_WAIT_TIME)):
-            raise self.NoSlaveDetectedException("Unable to start MPC in slave mode!")
+            raise self.NoSlaveDetectedException(getMessage("en", "mpc-slave-error"))
         self.__mpcExistenceChecking.start() 
 
     def openFile(self, filePath):
@@ -350,12 +351,12 @@ class MPCHCAPIPlayer(BasePlayer):
     def __dropIfNotSufficientVersion(self):
         self._mpcApi.askForVersion()
         if(not self.__versionUpdate.wait(0.1) or not self._mpcApi.version):
-            self.__mpcError("MPC version not sufficient, please use `mpc-hc` >= `1.6.4`")
+            self.__mpcError(getMessage("en", "mpc-version-insufficient-error"))
             self.__client.stop(True)
             
     def __testMpcReady(self):
         if(not self.__preventAsking.wait(10)):
-            raise Exception("Player failed opening file")
+            raise Exception(getMessage("en", "player-file-open-error"))
         
     def __makePing(self):
         try:

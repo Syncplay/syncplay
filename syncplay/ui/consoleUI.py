@@ -6,6 +6,7 @@ import os
 import re
 from syncplay import utils
 from syncplay import constants
+from syncplay.messages import getMessage
 class ConsoleUI(threading.Thread):
     def __init__(self):
         self.promptMode = threading.Event()
@@ -109,14 +110,14 @@ class ConsoleUI(threading.Thread):
             if(self._tryAdvancedCommands(data)):
                 return
             if (command.group('command') not in constants.COMMANDS_HELP):
-                self.showMessage("Unrecognized command")
-            self.showMessage("Available commands:", True)
-            self.showMessage("\tr [name] - change room", True)
-            self.showMessage("\tl - show user list", True)
-            self.showMessage("\tu - undo last seek", True)
-            self.showMessage("\tp - toggle pause", True)
-            self.showMessage("\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec", True)
-            self.showMessage("\th - this help", True)
+                self.showMessage(getMessage("en", "unrecognized-command-notification"))
+            self.showMessage(getMessage("en", "commandlist-notification"), True)
+            self.showMessage(getMessage("en", "commandlist-notification/room"), True)
+            self.showMessage(getMessage("en", "commandlist-notification/list"), True)
+            self.showMessage(getMessage("en", "commandlist-notification/undo"), True)
+            self.showMessage(getMessage("en", "commandlist-notification/pause"), True)
+            self.showMessage(getMessage("en", "commandlist-notification/seek"), True)
+            self.showMessage(getMessage("en", "commandlist-notification/help"), True)
             self.showMessage("Syncplay version: {}".format(syncplay.version), True)
             self.showMessage("More info available at: {}".format(syncplay.projectURL), True)
     
