@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Name=Syncplay
 Comment=Synchronize video playback over network
-Exec=/usr/bin/syncplay %u
+Exec=syncplay %u
 Terminal=true
 Type=Application
 Icon=syncplay
