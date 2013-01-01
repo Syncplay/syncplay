@@ -16,8 +16,6 @@ class SyncFactory(Factory):
         self.password = password
         self._rooms = {}
         self._roomStates = {}
-        self._usersCheckupTimer = task.LoopingCall(self._checkUsers)
-        self._usersCheckupTimer.start(4, True)
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)        
@@ -188,15 +186,6 @@ class SyncFactory(Factory):
             for receiver in room:
                 what(receiver)
     
-    def _checkUsers(self):
-        for room in self._rooms.itervalues():
-            for watcher in room.itervalues():
-                if(time.time() - watcher.lastUpdate > constants.PROTOCOL_TIMEOUT):
-                    watcher.watcherProtocol.drop()
-                    self.removeWatcher(watcher.watcherProtocol)
-                    self._checkUsers() #restart
-                    return             #end loop
-
 class SyncIsolatedFactory(SyncFactory):
     def broadcast(self, sender, what):
         self.broadcastRoom(sender, what)
