@@ -7,6 +7,8 @@ en = {
       "reconnection-attempt-notification" : "Connection with server lost, attempting to reconnect",
       "disconnection-notification" : "Disconnected from server",
       "connection-failed-notification" : "Connection with server failed",
+      "connected-successful-notification" : "Successfully connected to server",
+      "retrying-notification" : "%s, Retrying in %d seconds...", #Seconds
       
       "rewind-notification" : "Rewinded due to time difference with <{}>", #User
       "slowdown-notification" : "Slowing down due to time difference with <{}>", #User
@@ -31,11 +33,85 @@ en = {
       "notplaying-notification" : "People who are not playing any file:",
       "userlist-room-notification" :  "In room '{}':", #Room
       
+      "mplayer-file-required-notification" : "Syncplay using mplayer requires you to provide file when starting",
+      "mplayer-file-required-notification/example" : "Usage example: syncplay [options] [url|path/]filename",
+      
+      "unrecognized-command-notification" : "Unrecognized command",
+      "commandlist-notification" : "Available commands:",
+      "commandlist-notification/room" : "\tr [name] - change room",
+      "commandlist-notification/list" : "\tl - show user list",
+      "commandlist-notification/undo" : "\tu - undo last seek",
+      "commandlist-notification/pause" : "\tp - toggle pause",
+      "commandlist-notification/seek" : "\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec",
+      "commandlist-notification/help" : "\th - this help",
+      "syncplay-version-notification" : "Syncplay version: {}",    #syncplay.version
+      "more-info-notification" : "More info available at: {}",    #projectURL)
+
       # Client prompts
       "enter-to-exit-prompt" : "Press enter to exit\n",
       
       # Client errors
-      "server-timeout-error" : "Connection with server timed out"
+      "server-timeout-error" : "Connection with server timed out",
+       "mpc-slave-error" : "Unable to start MPC in slave mode!",
+       "mpc-version-insufficient-error" : "MPC version not sufficient, please use `mpc-hc` >= `1.6.4`",
+       "player-file-open-error" : "Player failed opening file",
+       "player-path-error" : "Player path is not set properly",
+       "hostname-empty-error" : "Hostname can't be empty",
+       "empty-error" : "{} can't be empty", #Configuration
+       
+       "arguments-missing-error" : "Some necessary arguments are missing, refer to --help",
+       
+       "unable-to-start-client-error" : "Unable to start client",
+       
+       "not-json-error" : "Not a json encoded string\n",
+       "hello-arguments-error" : "Not enough Hello arguments\n",
+       "version-mismatch-error" : "Mismatch between versions of client and server\n",
+      
+      # Client arguments
+      "argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
+      "argument-epilog" : 'If no options supplied _config values will be used',
+      "nogui-argument" : 'show no GUI',
+      "host-argument" : 'server\'s address',
+      "name-argument" : 'desired username',
+      "debug-argument" : 'debug mode',
+      "force-gui-prompt-argument" : 'make configuration prompt appear',
+      "no-store-argument" : 'don\'t store values in .syncplay',
+      "room-argument" : 'default room',
+      "password-argument" : 'server password',
+      "player-path-argument" : 'path to your player executable',
+      "file-argument" : 'file to play',
+      "args-argument" : 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
+      
+      # Client labels
+      "host-label" : 'Host: ',
+      "username-label" :  'Username: ',
+      "room-label" : 'Default room (optional): ',
+      "password-label" :  'Server password (optional): ',
+      "path-label" : 'Path to player executable: ',
+      
+      # Server notifications
+      "-welcome-server-notification" : "Welcome to Syncplay server, ver. {0}", #version
+      "client-connected-room-server-notification" : "{0}({2}) connected to room '{1}'", #username, host, room
+      "client-left-server-notification" : "{0} left server", #name
+      
+      
+      #Server arguments
+      "server-argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network. Server instance',
+      "server-argument-epilog" : 'If no options supplied _config values will be used',
+      "server-port-argument" : 'server TCP port',
+      "server-password-argument" : 'server password',
+      "server-isolate-room-argument" : 'should rooms be isolated?',
+      
+      #Server errors
+      "not-known-server-error" : "You must be known to server before sending this command",
+      "client-drop-server-error" : "Client drop: %s -- %s", #host, error
+      "password-required-server-error" : "Password required",
+      "wrong-password-server-error" : "Wrong password supplied",
+      "hello-server-error" : "Not enough Hello arguments",
+      "version-mismatch-server-error" : "Mismatch between versions of client and server",
+      "wrong-password-server-error" : "Wrong password supplied"
+     
+      
       }
 
 pl = {
