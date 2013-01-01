@@ -238,9 +238,9 @@ class Watcher(object):
         _, position = self.factory.getRoomPausedAndPosition(self.room)
         return position
     
-    def scheduleSendState(self, when=1):
+    def scheduleSendState(self):
         self._sendStateTimer = task.LoopingCall(self.sendState)
-        self._sendStateTimer.start(when, True)
+        self._sendStateTimer.start(constants.SERVER_STATE_INTERVAL, True)
 
     def sendState(self):
         self.factory.sendState(self.watcherProtocol)
@@ -248,7 +248,7 @@ class Watcher(object):
     def resetStateTimer(self):
         if(self._sendStateTimer):
             self._sendStateTimer.stop()
-            self._sendStateTimer.start(1)
+            self._sendStateTimer.start(constants.SERVER_STATE_INTERVAL) 
             
     def deactivate(self):
         if(self._sendStateTimer):
