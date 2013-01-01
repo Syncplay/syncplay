@@ -7,6 +7,7 @@ import syncplay
 from syncplay.protocols import SyncServerProtocol
 import time
 from syncplay import constants
+import threading
 
 class SyncFactory(Factory):
     def __init__(self, password = ''):
@@ -16,19 +17,21 @@ class SyncFactory(Factory):
         self.password = password
         self._rooms = {}
         self._roomStates = {}
+        self._roomUpdate = threading.RLock()
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)        
         
     def _createRoomIfDoesntExist(self, roomName):
         if (not self._rooms.has_key(roomName)):
-            self._rooms[roomName] = {}
-            self._roomStates[roomName] = {
-                                          "position": 0.0,
-                                          "paused": True,
-                                          "setBy": None,
-                                          "lastUpdate": time.time()
-                                         }
+            with self._roomUpdate:
+                self._rooms[roomName] = {}
+                self._roomStates[roomName] = {
+                                              "position": 0.0,
+                                              "paused": True,
+                                              "setBy": None,
+                                              "lastUpdate": time.time()
+                                             }
 
     def addWatcher(self, watcherProtocol, username, roomName, roomPassword):
         allnames = []
@@ -39,7 +42,8 @@ class SyncFactory(Factory):
             username += '_'
         self._createRoomIfDoesntExist(roomName)
         watcher = Watcher(self, watcherProtocol, username, roomName)
-        self._rooms[roomName][watcherProtocol] = watcher
+        with self._roomUpdate:
+            self._rooms[roomName][watcherProtocol] = watcher
         print "{0}({2}) connected to room '{1}'".format(username, roomName, watcherProtocol.transport.getPeer().host)    
         reactor.callLater(0.1, watcher.scheduleSendState)
         l = lambda w: w.sendUserSetting(username, roomName, None, {"joined": True})
@@ -50,7 +54,7 @@ class SyncFactory(Factory):
             if(room.has_key(watcherProtocol)):
                 return room[watcherProtocol]
 
-    def getAllWatchers(self, watcherProtocol):
+    def getAllWatchers(self, watcherProtocol): #TODO: Optimize me
         watchers = {}
         for room in self._rooms.itervalues():
             for watcher in room.itervalues():
@@ -59,14 +63,16 @@ class SyncFactory(Factory):
 
     def _removeWatcherFromTheRoom(self, watcherProtocol):
         for room in self._rooms.itervalues():
-            watcher = room.pop(watcherProtocol, None)
+            with self._roomUpdate:
+                watcher = room.pop(watcherProtocol, None)
             if(watcher):
                 return watcher
 
     def _deleteRoomIfEmpty(self, room):
         if (self._rooms[room] == {}):
-            self._rooms.pop(room)
-            self._roomStates.pop(room)
+            with self._roomUpdate:
+                self._rooms.pop(room)
+                self._roomStates.pop(room)
     
     def getRoomPausedAndPosition(self, room):
         position = self._roomStates[room]["position"]
@@ -160,7 +166,8 @@ class SyncFactory(Factory):
         watcher.resetStateTimer()
         oldRoom = watcher.room
         self._createRoomIfDoesntExist(room)
-        self._rooms[room][watcherProtocol] = watcher
+        with self._roomUpdate:
+            self._rooms[room][watcherProtocol] = watcher
         self._roomStates[room]["position"] = watcher.position
         self._roomStates[room]["setBy"] = watcher.name
         self._roomStates[room]["lastUpdate"] = time.time()
@@ -178,13 +185,15 @@ class SyncFactory(Factory):
     def broadcastRoom(self, sender, what):
         room = self._rooms[self.watcherGetRoom(sender)]
         if(room):
-            for receiver in room:
-                what(receiver)
+            with self._roomUpdate:
+                for receiver in room:
+                    what(receiver)
                 
     def broadcast(self, sender, what):
-        for room in self._rooms.itervalues():
-            for receiver in room:
-                what(receiver)
+        with self._roomUpdate:
+            for room in self._rooms.itervalues():
+                    for receiver in room:
+                        what(receiver)
     
 class SyncIsolatedFactory(SyncFactory):
     def broadcast(self, sender, what):
