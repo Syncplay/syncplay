@@ -182,15 +182,24 @@ class ConfigurationGetter(object):
             return GuiConfiguration(self._config).getProcessedConfiguration()
 
     def _saveConfig(self, iniPath):
+        changed = False
         if(self._config['noStore']):
             return
         parser = SafeConfigParser()
+        parser.read(iniPath)
         for section, options in self._iniStructure.items():
-            if(not parser.has_section(section)):
+            if(not parser.has_section(section)): #TODO: refactor me
                 parser.add_section(section)
+                changed = True
             for option in options:
+                if(parser.has_option(section, option)):
+                    if(parser.get(section, option) != str(self._config[option])):
+                        changed = True
+                else:
+                    changed = True
                 parser.set(section, option, str(self._config[option]))
-        parser.write(file(iniPath, "w"))
+        if(changed):
+            parser.write(file(iniPath, "w"))
         
     def getConfiguration(self):
         iniPath = self._getConfigurationFilePath()
