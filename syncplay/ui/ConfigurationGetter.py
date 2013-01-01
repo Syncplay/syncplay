@@ -181,6 +181,13 @@ class ConfigurationGetter(object):
         elif(GuiConfiguration):
             return GuiConfiguration(self._config).getProcessedConfiguration()
 
+    def __wasOptionChanged(self, parser, section, option):
+        if (parser.has_option(section, option)):
+            if (parser.get(section, option) != str(self._config[option])):
+                return True
+        else:
+            return True
+
     def _saveConfig(self, iniPath):
         changed = False
         if(self._config['noStore']):
@@ -188,14 +195,11 @@ class ConfigurationGetter(object):
         parser = SafeConfigParser()
         parser.read(iniPath)
         for section, options in self._iniStructure.items():
-            if(not parser.has_section(section)): #TODO: refactor me
+            if(not parser.has_section(section)):
                 parser.add_section(section)
                 changed = True
             for option in options:
-                if(parser.has_option(section, option)):
-                    if(parser.get(section, option) != str(self._config[option])):
-                        changed = True
-                else:
+                if(self.__wasOptionChanged(parser, section, option)):
                     changed = True
                 parser.set(section, option, str(self._config[option]))
         if(changed):
