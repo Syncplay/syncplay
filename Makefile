@@ -31,7 +31,7 @@ u-common:
 client:
 	-mkdir -p $(BIN_PATH)
 	touch $(BIN_PATH)/syncplay
-	echo '#!/bin/sh\npython $(LIB_PATH)/syncplay/syncplayClient.py "$$@"' > $(BIN_PATH)/syncplay
+	echo '#!/bin/sh\npython -OO $(LIB_PATH)/syncplay/syncplayClient.py "$$@"' > $(BIN_PATH)/syncplay
 	chmod a+x $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
@@ -44,7 +44,7 @@ u-client:
 server:
 	-mkdir -p $(BIN_PATH)
 	touch $(BIN_PATH)/syncplay-server
-	echo '#!/bin/sh\npython $(LIB_PATH)/syncplay/syncplayServer.py "$$@"' > $(BIN_PATH)/syncplay-server
+	echo '#!/bin/sh\npython -OO $(LIB_PATH)/syncplay/syncplayServer.py "$$@"' > $(BIN_PATH)/syncplay-server
 	chmod a+x $(BIN_PATH)/syncplay-server
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
