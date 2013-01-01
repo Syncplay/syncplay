@@ -349,9 +349,10 @@ class MPCHCAPIPlayer(BasePlayer):
             
     def __dropIfNotSufficientVersion(self):
         self._mpcApi.askForVersion()
-        if(not self.__versionUpdate.wait(0.1) and self._mpcApi.version):
+        if(not self.__versionUpdate.wait(0.1) or not self._mpcApi.version):
             self.__mpcError("MPC version not sufficient, please use `mpc-hc` >= `1.6.4`")
-
+            self.__client.stop(True)
+            
     def __testMpcReady(self):
         if(not self.__preventAsking.wait(10)):
             raise Exception("Player failed opening file")
@@ -369,6 +370,8 @@ class MPCHCAPIPlayer(BasePlayer):
             
     def initPlayer(self, filePath): 
         self.__dropIfNotSufficientVersion()
+        if(not self._mpcApi.version):
+            return
         self.__mpcVersion = self._mpcApi.version.split('.')
         if(self.__mpcVersion[0:3] == ['1', '6', '4']):
             self.__switchPauseCalls = True
