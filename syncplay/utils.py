@@ -2,6 +2,7 @@ import time
 import re
 import datetime
 from syncplay import constants
+from syncplay.messages import getMessage
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -33,7 +34,7 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
                     break
                 except ExceptionToCheck, e:
                     if logger:
-                        msg = "%s, Retrying in %d seconds..." % (str(e), mdelay)
+                        msg = getMessage("en", "retrying-notification") % (str(e), mdelay)
                         logger.warning(msg)
                     time.sleep(mdelay)
                     mtries -= 1

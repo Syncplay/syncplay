@@ -45,7 +45,7 @@ en = {
       "commandlist-notification/seek" : "\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec",
       "commandlist-notification/help" : "\th - this help",
       "syncplay-version-notification" : "Syncplay version: {}",    #syncplay.version
-      "more-info-notification" : "More info available at: {}",    #projectURL)
+      "more-info-notification" : "More info available at: {}",    #projectURL
 
       # Client prompts
       "enter-to-exit-prompt" : "Press enter to exit\n",
@@ -90,7 +90,7 @@ en = {
       "path-label" : 'Path to player executable: ',
       
       # Server notifications
-      "-welcome-server-notification" : "Welcome to Syncplay server, ver. {0}", #version
+      "welcome-server-notification" : "Welcome to Syncplay server, ver. {0}", #version
       "client-connected-room-server-notification" : "{0}({2}) connected to room '{1}'", #username, host, room
       "client-left-server-notification" : "{0} left server", #name
       

@@ -1,6 +1,7 @@
 import pygtk
 import os
 from syncplay import constants
+from syncplay.messages import getMessage
 pygtk.require('2.0')
 import gtk
 gtk.set_interactive(False)
@@ -41,11 +42,11 @@ class GuiConfiguration:
         else:
             host = config['host']+":"+str(config['port'])
  
-        self.hostEntry = self._addLabeledEntryToVbox('Host: ', host, vbox, lambda __, _: self._saveDataAndLeave())
-        self.userEntry = self._addLabeledEntryToVbox('Username: ', config['name'], vbox, lambda __, _: self._saveDataAndLeave())
-        self.roomEntry = self._addLabeledEntryToVbox('Default room (optional): ', config['room'], vbox, lambda __, _: self._saveDataAndLeave())
-        self.passEntry = self._addLabeledEntryToVbox('Server password (optional): ', config['password'], vbox, lambda __, _: self._saveDataAndLeave())
-        self.mpcEntry = self._addLabeledEntryToVbox('Path to player executable: ', self._tryToFillUpMpcPath(config['playerPath']), vbox, lambda __, _: self._saveDataAndLeave())
+        self.hostEntry = self._addLabeledEntryToVbox(getMessage("en", "host-label"), host, vbox, lambda __, _: self._saveDataAndLeave())
+        self.userEntry = self._addLabeledEntryToVbox(getMessage("en", "username-label"), config['name'], vbox, lambda __, _: self._saveDataAndLeave())
+        self.roomEntry = self._addLabeledEntryToVbox(getMessage("en", "room-label"), config['room'], vbox, lambda __, _: self._saveDataAndLeave())
+        self.passEntry = self._addLabeledEntryToVbox(getMessage("en", "password-label"), config['password'], vbox, lambda __, _: self._saveDataAndLeave())
+        self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillUpMpcPath(config['playerPath']), vbox, lambda __, _: self._saveDataAndLeave())
  
     def _tryToFillUpMpcPath(self, playerPath):
         if(playerPath == None):
