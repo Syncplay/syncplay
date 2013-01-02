@@ -1,3 +1,7 @@
+1.2.5
+
+*  Installation support for Windows
+
 1.2.4
 
 *  Config file is not saved again unless needed
