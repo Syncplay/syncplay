@@ -33,7 +33,7 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
                     break
                 except ExceptionToCheck, e:
                     if logger:
-                        msg = "%s, Retrying in %d seconds..." % (str(e), mdelay)
+                        msg = getMessage("en", "retrying-notification").format(str(e), mdelay)
                         logger.warning(msg)
                     time.sleep(mdelay)
                     mtries -= 1

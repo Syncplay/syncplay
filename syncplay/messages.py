@@ -52,6 +52,7 @@ en = {
       "enter-to-exit-prompt" : "Press enter to exit\n",
       
       # Client errors
+      "missing-arguments-error" : "Some necessary arguments are missing, refer to --help",
       "server-timeout-error" : "Connection with server timed out",
        "mpc-slave-error" : "Unable to start MPC in slave mode!",
        "mpc-version-insufficient-error" : "MPC version not sufficient, please use `mpc-hc` >= `{}`",

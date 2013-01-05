@@ -23,6 +23,7 @@ COMMANDS_LIST = ["l", "list", "users"]
 COMMANDS_PAUSE = ["p", "play", "pause"]
 COMMANDS_ROOM = ["r", "room"]
 COMMANDS_HELP = ['help', 'h', '?', '/?', '\?']
+MPC_MIN_VER = "1.6.4"
 MPC_PATHS = [
              "C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
              "C:\Program Files\MPC-HC\mpc-hc.exe",

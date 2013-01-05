@@ -3,6 +3,7 @@ import re
 import threading
 from syncplay.players.basePlayer import BasePlayer
 from syncplay import constants
+from syncplay.messages import getMessage
 
 class MplayerPlayer(BasePlayer):
     speedSupported = True
@@ -16,8 +17,8 @@ class MplayerPlayer(BasePlayer):
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:
-            self._client.ui.showMessage("Syncplay using mplayer requires you to provide file when starting")
-            self._client.ui.showMessage("Usage example: syncplay [options] [url|path/]filename")
+            self._client.ui.showMessage(getMessage("en", "mplayer-file-required-notification"))
+            self._client.ui.showMessage(getMessage("en", "mplayer-file-required-notification/example"))
             self._client.stop(True)
             return 
         self._listener.setDaemon(True)

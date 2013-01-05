@@ -3,6 +3,7 @@ import argparse
 import os
 import sys
 from syncplay import constants
+from syncplay.messages import getMessage
 try: 
     from syncplay.ui.GuiConfiguration import GuiConfiguration
 except ImportError:
@@ -49,19 +50,19 @@ class ConfigurationGetter(object):
         #
         #Watch out for the method self._overrideConfigWithArgs when you're adding custom multi-word command line arguments
         #
-        self._argparser = argparse.ArgumentParser(description='Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
-                                         epilog='If no options supplied values from configuration file will be used')
-        self._argparser.add_argument('--no-gui', action='store_true', help='show no GUI')
-        self._argparser.add_argument('-a', '--host', metavar='hostname', type=str, help='server\'s address')
-        self._argparser.add_argument('-n', '--name', metavar='username', type=str, help='desired username')
-        self._argparser.add_argument('-d', '--debug', action='store_true', help='debug mode')
-        self._argparser.add_argument('-g', '--force-gui-prompt', action='store_true', help='make configuration prompt appear')
-        self._argparser.add_argument('--no-store', action='store_true', help='don\'t store values in .syncplay')
-        self._argparser.add_argument('-r', '--room', metavar='room', type=str, nargs='?', help='default room')
-        self._argparser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help='server password')
-        self._argparser.add_argument('--player-path', metavar='path', type=str, help='path to your player executable')
-        self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help='file to play')
-        self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help='player options, if you need to pass options starting with - prepend them with single \'--\' argument') 
+        self._argparser = argparse.ArgumentParser(description=getMessage("en", "argument-description"),
+                                         epilog=getMessage("en", "argument-epilog"))
+        self._argparser.add_argument('--no-gui', action='store_true', help=getMessage("en", "nogui-argument"))
+        self._argparser.add_argument('-a', '--host', metavar='hostname', type=str, help=getMessage("en", "host-argument"))
+        self._argparser.add_argument('-n', '--name', metavar='username', type=str, help=getMessage("en", "name-argument"))
+        self._argparser.add_argument('-d', '--debug', action='store_true', help=getMessage("en", "debug-argument"))
+        self._argparser.add_argument('-g', '--force-gui-prompt', action='store_true', help=getMessage("en", "force-gui-prompt-argument"))
+        self._argparser.add_argument('--no-store', action='store_true', help=getMessage("en", "no-store-argument"))
+        self._argparser.add_argument('-r', '--room', metavar='room', type=str, nargs='?', help=getMessage("en", "room-argument"))
+        self._argparser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help=getMessage("en", "password-argument"))
+        self._argparser.add_argument('--player-path', metavar='path', type=str, help=getMessage("en", "player-path-argument"))
+        self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("en", "file-argument"))
+        self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("en", "args-argument"))
   
     def _validateArguments(self):
         for key in self._required:
@@ -176,7 +177,7 @@ class ConfigurationGetter(object):
 
     def _promptForMissingArguments(self):
         if(self._config['noGui']):
-            print "Some necessary arguments are missing, refer to --help"
+            print getMessage("en", "missing-arguments-error")
             sys.exit()
         elif(GuiConfiguration):
             return GuiConfiguration(self._config).getProcessedConfiguration()
@@ -228,8 +229,8 @@ class ServerConfigurationGetter(object):
         return self._args
            
     def _prepareArgParser(self):
-        self._argparser = argparse.ArgumentParser(description='Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network. Server instance',
-                                         epilog='If no options supplied _config values will be used')
-        self._argparser.add_argument('--port', metavar='port', type=str, nargs='?', help='server TCP port')
-        self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help='server password')
-        self._argparser.add_argument('--isolate-rooms', action='store_true', help='should rooms be isolated?')
+        self._argparser = argparse.ArgumentParser(description=getMessage("en", "server-argument-description"),
+                                         epilog=getMessage("en", "server-argument-epilog"))
+        self._argparser.add_argument('--port', metavar='port', type=str, nargs='?', help=getMessage("en", "server-port-argument"))
+        self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("en", "server-password-argument"))
+        self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("en", "server-isolate-room-argument"))

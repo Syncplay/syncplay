@@ -8,10 +8,11 @@ from syncplay.protocols import SyncServerProtocol
 import time
 from syncplay import constants
 import threading
+from syncplay.messages import getMessage
 
 class SyncFactory(Factory):
     def __init__(self, password = ''):
-        print "Welcome to Syncplay server, ver. {0}".format(syncplay.version)
+        print getMessage("en", "welcome-server-notification").format(syncplay.version)
         if(password):
             password = hashlib.md5(password).hexdigest()
         self.password = password
@@ -44,7 +45,7 @@ class SyncFactory(Factory):
         watcher = Watcher(self, watcherProtocol, username, roomName)
         with self._roomUpdate:
             self._rooms[roomName][watcherProtocol] = watcher
-        print "{0}({2}) connected to room '{1}'".format(username, roomName, watcherProtocol.transport.getPeer().host)    
+        print getMessage("en", "client-connected-room-server-notification").format(username, roomName, watcherProtocol.transport.getPeer().host)    
         reactor.callLater(0.1, watcher.scheduleSendState)
         l = lambda w: w.sendUserSetting(username, roomName, None, {"joined": True})
         self.broadcast(watcherProtocol, l)
@@ -151,7 +152,7 @@ class SyncFactory(Factory):
         self._removeWatcherFromTheRoom(watcherProtocol)
         watcher.deactivate()
         self._deleteRoomIfEmpty(watcher.room)
-        print "{0} left server".format(watcher.name) 
+        print getMessage("en", "client-left-server-notification").format(watcher.name) 
         
     def watcherGetUsername(self, watcherProtocol):
         return self.getWatcher(watcherProtocol).name
