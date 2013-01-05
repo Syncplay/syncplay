@@ -82,6 +82,8 @@ class SyncplayClient(object):
         self._userOffset = 0.0
         self._speedChanged = False
         
+        self._differentFileMessagesTimesShown = 0
+        
     def initProtocol(self, protocol):
         self._protocol = protocol
         
@@ -190,6 +192,17 @@ class SyncplayClient(object):
         madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
+
+    def _checkRoomForSameFiles(self, paused):
+        roomFilesDiffer = not self.userlist.areAllFilesInRoomSameOnFirstUnpause()
+        messageShouldBeKept = self._differentFileMessagesTimesShown and self._differentFileMessagesTimesShown < 5
+        if ((paused == False and roomFilesDiffer) or messageShouldBeKept):
+            self.userlist.roomCheckedForDifferentFiles()
+            self._differentFileMessagesTimesShown += 1
+            self.ui.showMessage(getMessage("en", "room-files-not-same"))
+        else:
+            self._differentFileMessagesTimesShown = 0
+
     def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy):
         madeChangeOnPlayer = False
         pauseChanged = paused != self.getGlobalPaused()
@@ -209,6 +222,7 @@ class SyncplayClient(object):
             madeChangeOnPlayer = self._serverUnpaused(setBy)
         elif (paused == True and pauseChanged):
             madeChangeOnPlayer = self._serverPaused(setBy, diff)
+        self._checkRoomForSameFiles(paused)
         return madeChangeOnPlayer
 
     def updateGlobalState(self, position, paused, doSeek, setBy, latency):
@@ -368,6 +382,7 @@ class SyncplayUserlist(object):
         self._users = {}
         self.ui = ui
         self._client = client
+        self._wasChangeInRoomSinceLastRoomCheck = True
 
     def __showUserChangeMessage(self, username, room, file_):
         if (room and not file_):
@@ -393,6 +408,7 @@ class SyncplayUserlist(object):
                 self.ui.showMessage(message)
 
     def addUser(self, username, room, file_, position = 0, noMessage = False):
+        self._wasChangeInRoomSinceLastRoomCheck = True
         if(username == self.currentUser.username):
             self.currentUser.lastPosition = position
             return
@@ -402,6 +418,7 @@ class SyncplayUserlist(object):
             self.__showUserChangeMessage(username, room, file_)
             
     def removeUser(self, username):
+        self._wasChangeInRoomSinceLastRoomCheck = True
         if(self._users.has_key(username)):
             self._users.pop(username)
             message = getMessage("en", "left-notification").format(username)
@@ -414,6 +431,7 @@ class SyncplayUserlist(object):
             self.__showUserChangeMessage(username, room, None)
 
     def modUser(self, username, room, file_):
+        self._wasChangeInRoomSinceLastRoomCheck = True
         if(self._users.has_key(username)):
             user = self._users[username]
             self.__displayModUserMessage(username, room, file_, user)
@@ -483,6 +501,16 @@ class SyncplayUserlist(object):
                 self.__displayFileWatchersInRoomList(key, rooms[roomName][key])
             self.__displayPeopleInRoomWithNoFile(noFileList)
             
+    def areAllFilesInRoomSameOnFirstUnpause(self):
+        if(self._wasChangeInRoomSinceLastRoomCheck):
+            for user in self._users.itervalues():
+                if(user.room == self.currentUser.room and user.file and not self.currentUser.isFileSame(user.file)):
+                    return False
+        return True
+    
+    def roomCheckedForDifferentFiles(self):
+        self._wasChangeInRoomSinceLastRoomCheck = False
+        
     def showUserList(self):
         rooms = {} 
         self.__createListOfPeople(rooms)
