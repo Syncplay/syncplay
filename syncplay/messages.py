@@ -27,6 +27,7 @@ en = {
       
       "file-different-notification" : "File you are playing appears to be different from <{}>'s", #User
       "file-differences-notification" : "Your file differs in the following way(s): ",
+      "room-files-not-same" : "Not all files played in the room are the same",
       
       "different-filesize-notification" : " (their file size is different from yours!)",
       "file-played-by-notification" : "File: {} is being played by:", #File
@@ -53,7 +54,7 @@ en = {
       # Client errors
       "server-timeout-error" : "Connection with server timed out",
        "mpc-slave-error" : "Unable to start MPC in slave mode!",
-       "mpc-version-insufficient-error" : "MPC version not sufficient, please use `mpc-hc` >= `1.6.4`",
+       "mpc-version-insufficient-error" : "MPC version not sufficient, please use `mpc-hc` >= `{}`",
        "player-file-open-error" : "Player failed opening file",
        "player-path-error" : "Player path is not set properly",
        "hostname-empty-error" : "Hostname can't be empty",
@@ -83,6 +84,7 @@ en = {
       "args-argument" : 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
       
       # Client labels
+      "config-window-title" : 'Syncplay Configuration',
       "host-label" : 'Host: ',
       "username-label" :  'Username: ',
       "room-label" : 'Default room (optional): ',
@@ -103,6 +105,8 @@ en = {
       "server-isolate-room-argument" : 'should rooms be isolated?',
       
       #Server errors
+      "unknown-command-server-error" : "Unknown command\n%s", #message
+      "not-json-server-error" : "Not a json encoded string\n%s", #message
       "not-known-server-error" : "You must be known to server before sending this command",
       "client-drop-server-error" : "Client drop: %s -- %s", #host, error
       "password-required-server-error" : "Password required",
