@@ -351,7 +351,7 @@ class MPCHCAPIPlayer(BasePlayer):
     def __dropIfNotSufficientVersion(self):
         self._mpcApi.askForVersion()
         if(not self.__versionUpdate.wait(0.1) or not self._mpcApi.version):
-            self.__mpcError(getMessage("en", "mpc-version-insufficient-error").format(MPC_MIN_VER))
+            self.__mpcError(getMessage("en", "mpc-version-insufficient-error").format(constants.MPC_MIN_VER))
             self.__client.stop(True)
             
     def __testMpcReady(self):
