@@ -1,6 +1,7 @@
 #You might want to change these
 DEFAULT_PORT = 8999
 OSD_DURATION = 3000
+DIFFERENT_FILE_MESSAGE_DURATION = 15000
 MPC_OSD_POSITION = 2 #Right corner, 1 for left
 MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "

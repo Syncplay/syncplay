@@ -82,8 +82,6 @@ class SyncplayClient(object):
         self._userOffset = 0.0
         self._speedChanged = False
         
-        self._differentFileMessagesTimesShown = 0
-        
     def initProtocol(self, protocol):
         self._protocol = protocol
         
@@ -192,16 +190,11 @@ class SyncplayClient(object):
         madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
-
     def _checkRoomForSameFiles(self, paused):
         roomFilesDiffer = not self.userlist.areAllFilesInRoomSameOnFirstUnpause()
-        messageShouldBeKept = self._differentFileMessagesTimesShown and self._differentFileMessagesTimesShown < 5
-        if ((paused == False and roomFilesDiffer) or messageShouldBeKept):
+        if (paused == False and roomFilesDiffer):
             self.userlist.roomCheckedForDifferentFiles()
-            self._differentFileMessagesTimesShown += 1
-            self.ui.showMessage(getMessage("en", "room-files-not-same"))
-        else:
-            self._differentFileMessagesTimesShown = 0
+            self._player.displayMessage(getMessage("en", "room-files-not-same"), constants.DIFFERENT_FILE_MESSAGE_DURATION)
 
     def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy):
         madeChangeOnPlayer = False
