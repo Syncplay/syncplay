@@ -6,6 +6,8 @@ import os
 import re
 from syncplay import utils
 from syncplay import constants
+from syncplay.messages import getMessage
+
 class ConsoleUI(threading.Thread):
     def __init__(self):
         self.promptMode = threading.Event()

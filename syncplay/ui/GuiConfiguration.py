@@ -5,6 +5,7 @@ pygtk.require('2.0')
 import gtk
 gtk.set_interactive(False)
 import cairo, gio, pango, atk, pangocairo, gobject #@UnusedImport
+from syncplay.messages import getMessage
 
 class GuiConfiguration:
     def __init__(self, config):

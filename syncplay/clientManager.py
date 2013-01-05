@@ -1,6 +1,8 @@
 from syncplay.client import SyncplayClient
 from syncplay.ui.ConfigurationGetter import ConfigurationGetter
 from syncplay import ui
+from syncplay.messages import getMessage
+
 try:
     from syncplay.players.mpc import MPCHCAPIPlayer
 except ImportError:
