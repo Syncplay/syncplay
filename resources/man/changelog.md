@@ -1,6 +1,12 @@
+1.2.6
+
+*  `Not alll files in the room are same` message is displayed after first unpause if that's the case
+*  All messages exported to messages.py 
+
 1.2.5
 
 *  Installation support for Windows
+*   First official release.
 
 1.2.4
 
@@ -9,6 +15,4 @@
 *  Server optimized to handle many users at the same time
 *  #58 - Default room always assumed your username now. 
 
-1.2.X
 
-*   First official release.

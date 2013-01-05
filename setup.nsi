@@ -1,7 +1,7 @@
   !include LogicLib.nsh
   !include nsDialogs.nsh
-  !define VERSION "1.2.5.0"
-  !define SYNCPLAY "syncplay v1.2.5"
+  !define VERSION "1.2.6.0"
+  !define SYNCPLAY "syncplay v1.2.6"
   
   LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
   LoadLanguageFile "${NSISDIR}\Contrib\Language files\Polish.nlf"
