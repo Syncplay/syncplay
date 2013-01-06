@@ -76,85 +76,12 @@
     WriteRegStr HKLM SOFTWARE\Syncplay "Install_Dir" "$INSTDIR"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "DisplayName" "Syncplay"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "UninstallString" '"$INSTDIR\uninstall.exe"'
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "DisplayIcon" "$INSTDIR\lib\icon.ico"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "Publisher" "Syncplay"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "URLInfoAbout" "http://syncplay.pl/"
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "NoModify" 1
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "NoRepair" 1
   FunctionEnd
-     
-   Function WriteFiles
-    File "${SYNCPLAY}\Syncplay.exe"
-    File "${SYNCPLAY}\syncplayClientForceConfiguration.bat"
-    File "${SYNCPLAY}\syncplayServer.exe"
-    File "${SYNCPLAY}\w9xpopen.exe"
-    File "${SYNCPLAY}\python27.dll"
-   FunctionEnd
-   
-   Function WriteFilesLib
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-Debug-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-DelayLoad-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-ErrorHandling-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-File-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-Handle-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-Heap-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-IO-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-Interlocked-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-LibraryLoader-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-LocalRegistry-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-Localization-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-Misc-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-ProcessEnvironment-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-ProcessThreads-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-ProFile-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-String-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-Synch-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\API-MS-Win-Core-SysInfo-L1-1-0.dll"
-    File "${SYNCPLAY}\lib\DNSAPI.DLL"
-    File "${SYNCPLAY}\lib\MSIMG32.DLL"
-    File "${SYNCPLAY}\lib\NSI.dll"
-    File "${SYNCPLAY}\lib\USP10.DLL"
-    File "${SYNCPLAY}\lib\_ctypes.pyd"
-    File "${SYNCPLAY}\lib\_hashlib.pyd"
-    File "${SYNCPLAY}\lib\_socket.pyd"
-    File "${SYNCPLAY}\lib\_win32sysloader.pyd"
-    File "${SYNCPLAY}\lib\atk.pyd"
-    File "${SYNCPLAY}\lib\bz2.pyd"
-    File "${SYNCPLAY}\lib\cairo._cairo.pyd"
-    File "${SYNCPLAY}\lib\freetype6.dll"
-    File "${SYNCPLAY}\lib\gio._gio.pyd"
-    File "${SYNCPLAY}\lib\glib._glib.pyd"
-    File "${SYNCPLAY}\lib\gobject._gobject.pyd"
-    File "${SYNCPLAY}\lib\gtk._gtk.pyd"
-    File "${SYNCPLAY}\lib\intl.dll"
-    File "${SYNCPLAY}\lib\libatk-1.0-0.dll"
-    File "${SYNCPLAY}\lib\libcairo-2.dll"
-    File "${SYNCPLAY}\lib\libexpat-1.dll"
-    File "${SYNCPLAY}\lib\libfontconfig-1.dll"
-    File "${SYNCPLAY}\lib\libgdk-win32-2.0-0.dll"
-    File "${SYNCPLAY}\lib\libgdk_pixbuf-2.0-0.dll"
-    File "${SYNCPLAY}\lib\libgio-2.0-0.dll"
-    File "${SYNCPLAY}\lib\libglib-2.0-0.dll"
-    File "${SYNCPLAY}\lib\libgmodule-2.0-0.dll"
-    File "${SYNCPLAY}\lib\libgobject-2.0-0.dll"
-    File "${SYNCPLAY}\lib\libgthread-2.0-0.dll"
-    File "${SYNCPLAY}\lib\libgtk-win32-2.0-0.dll"
-    File "${SYNCPLAY}\lib\libpango-1.0-0.dll"
-    File "${SYNCPLAY}\lib\libpangocairo-1.0-0.dll"
-    File "${SYNCPLAY}\lib\libpangoft2-1.0-0.dll"
-    File "${SYNCPLAY}\lib\libpangowin32-1.0-0.dll"
-    File "${SYNCPLAY}\lib\libpng14-14.dll"
-    File "${SYNCPLAY}\lib\libsync"
-    File "${SYNCPLAY}\lib\pango.pyd"
-    File "${SYNCPLAY}\lib\pangocairo.pyd"
-    File "${SYNCPLAY}\lib\pyexpat.pyd"
-    File "${SYNCPLAY}\lib\pythoncom27.dll"
-    File "${SYNCPLAY}\lib\pywintypes27.dll"
-    File "${SYNCPLAY}\lib\select.pyd"
-    File "${SYNCPLAY}\lib\twisted.python._initgroups.pyd"
-    File "${SYNCPLAY}\lib\unicodedata.pyd"
-    File "${SYNCPLAY}\lib\win32api.pyd"
-    File "${SYNCPLAY}\lib\win32gui.pyd"
-    File "${SYNCPLAY}\lib\zlib1.dll"
-    File "${SYNCPLAY}\lib\zope.interface._zope_interface_coptimizations.pyd"
-   FunctionEnd
     
   Function un.AssociateDel
     !insertmacro APP_UNASSOCIATE "mkv" "Syncplay.mkv"
@@ -241,8 +168,12 @@
     Delete "$INSTDIR\lib\zope.interface._zope_interface_coptimizations.pyd"
     Delete "$INSTDIR\lib\API-MS-Win-Core-File-L1-1-0.dll"
     Delete "$INSTDIR\lib\API-MS-Win-Core-Profile-L1-1-0.dll"
+    Delete "${SYNCPLAY}\lib\winsound.pyd"
+    Delete "$INSTDIR\resources\icon.ico"
+    Delete "$INSTDIR\resources\buzzer.wav"
     RMDir "$INSTDIR\lib"
     RMDir "$INSTDIR\pyt"
+    RMDir "$INSTDIR\resources"
   FunctionEnd
   
   ;Prevents from running more than one instance of installer
@@ -275,9 +206,87 @@
     WriteUninstaller uninstall.exe
     Call Associate
     Call WriteRegistry
-    Call WriteFiles
+    
+    File "${SYNCPLAY}\Syncplay.exe"
+    File "${SYNCPLAY}\syncplayClientForceConfiguration.bat"
+    File "${SYNCPLAY}\syncplayServer.exe"
+    File "${SYNCPLAY}\w9xpopen.exe"
+    File "${SYNCPLAY}\python27.dll"
+    
     SetOutPath $INSTDIR\lib
-    Call WriteFilesLib
+    
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-Debug-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-DelayLoad-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-ErrorHandling-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-File-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-Handle-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-Heap-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-IO-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-Interlocked-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-LibraryLoader-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-LocalRegistry-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-Localization-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-Misc-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-ProcessEnvironment-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-ProcessThreads-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-ProFile-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-String-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-Synch-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\API-MS-Win-Core-SysInfo-L1-1-0.dll"
+    File "${SYNCPLAY}\lib\DNSAPI.DLL"
+    File "${SYNCPLAY}\lib\MSIMG32.DLL"
+    File "${SYNCPLAY}\lib\NSI.dll"
+    File "${SYNCPLAY}\lib\USP10.DLL"
+    File "${SYNCPLAY}\lib\_ctypes.pyd"
+    File "${SYNCPLAY}\lib\_hashlib.pyd"
+    File "${SYNCPLAY}\lib\_socket.pyd"
+    File "${SYNCPLAY}\lib\_win32sysloader.pyd"
+    File "${SYNCPLAY}\lib\atk.pyd"
+    File "${SYNCPLAY}\lib\bz2.pyd"
+    File "${SYNCPLAY}\lib\cairo._cairo.pyd"
+    File "${SYNCPLAY}\lib\freetype6.dll"
+    File "${SYNCPLAY}\lib\gio._gio.pyd"
+    File "${SYNCPLAY}\lib\glib._glib.pyd"
+    File "${SYNCPLAY}\lib\gobject._gobject.pyd"
+    File "${SYNCPLAY}\lib\gtk._gtk.pyd"
+    File "${SYNCPLAY}\lib\intl.dll"
+    File "${SYNCPLAY}\lib\libatk-1.0-0.dll"
+    File "${SYNCPLAY}\lib\libcairo-2.dll"
+    File "${SYNCPLAY}\lib\libexpat-1.dll"
+    File "${SYNCPLAY}\lib\libfontconfig-1.dll"
+    File "${SYNCPLAY}\lib\libgdk-win32-2.0-0.dll"
+    File "${SYNCPLAY}\lib\libgdk_pixbuf-2.0-0.dll"
+    File "${SYNCPLAY}\lib\libgio-2.0-0.dll"
+    File "${SYNCPLAY}\lib\libglib-2.0-0.dll"
+    File "${SYNCPLAY}\lib\libgmodule-2.0-0.dll"
+    File "${SYNCPLAY}\lib\libgobject-2.0-0.dll"
+    File "${SYNCPLAY}\lib\libgthread-2.0-0.dll"
+    File "${SYNCPLAY}\lib\libgtk-win32-2.0-0.dll"
+    File "${SYNCPLAY}\lib\libpango-1.0-0.dll"
+    File "${SYNCPLAY}\lib\libpangocairo-1.0-0.dll"
+    File "${SYNCPLAY}\lib\libpangoft2-1.0-0.dll"
+    File "${SYNCPLAY}\lib\libpangowin32-1.0-0.dll"
+    File "${SYNCPLAY}\lib\libpng14-14.dll"
+    File "${SYNCPLAY}\lib\libsync"
+    File "${SYNCPLAY}\lib\pango.pyd"
+    File "${SYNCPLAY}\lib\pangocairo.pyd"
+    File "${SYNCPLAY}\lib\pyexpat.pyd"
+    File "${SYNCPLAY}\lib\pythoncom27.dll"
+    File "${SYNCPLAY}\lib\pywintypes27.dll"
+    File "${SYNCPLAY}\lib\select.pyd"
+    File "${SYNCPLAY}\lib\twisted.python._initgroups.pyd"
+    File "${SYNCPLAY}\lib\unicodedata.pyd"
+    File "${SYNCPLAY}\lib\win32api.pyd"
+    File "${SYNCPLAY}\lib\win32gui.pyd"
+    File "${SYNCPLAY}\lib\zlib1.dll"
+    File "${SYNCPLAY}\lib\zope.interface._zope_interface_coptimizations.pyd"
+    File "${SYNCPLAY}\lib\winsound.pyd"
+    
+    SetOutPath $INSTDIR\resources
+    
+    File "${SYNCPLAY}\resources\icon.ico"
+    File "${SYNCPLAY}\resources\buzzer.wav"
+    
   SectionEnd
      
   Section "Uninstall"
@@ -286,7 +295,5 @@
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay"
     DeleteRegKey HKLM SOFTWARE\Syncplay
     Delete $INSTDIR\uninstall.exe
-    RMDir $INSTDIR\lib
-    RMDir $INSTDIR\pyt
     RMDir $INSTDIR
   SectionEnd
