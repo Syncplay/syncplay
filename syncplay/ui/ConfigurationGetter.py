@@ -2,7 +2,7 @@ from ConfigParser import SafeConfigParser
 import argparse
 import os
 import sys
-from syncplay import constants
+from syncplay import constants, utils
 from syncplay.messages import getMessage
 try: 
     from syncplay.ui.GuiConfiguration import GuiConfiguration
@@ -131,18 +131,8 @@ class ConfigurationGetter(object):
                 host, port = host.split(':', 1)
         return host, int(port)
         
-    def _findWorkingDir(self):
-        frozen = getattr(sys, 'frozen', '')
-        if not frozen:
-            path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        elif frozen in ('dll', 'console_exe', 'windows_exe'):
-            path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
-        else:
-            path = ""
-        return path
-
     def _checkForPortableFile(self):
-        path = self._findWorkingDir()
+        path = utils.findWorkingDir()
         if(os.path.isfile(os.path.join(path, constants.DEFAULT_CONFIG_NAME))):
             return os.path.join(path, constants.DEFAULT_CONFIG_NAME) 
         

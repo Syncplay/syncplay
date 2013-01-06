@@ -3,6 +3,8 @@ import re
 import datetime
 from syncplay import constants
 from syncplay.messages import getMessage
+import sys
+import os
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -75,3 +77,14 @@ def formatTime(timeInSeconds):
         return '{0:02.0f}:{1:02.0f}:{2:02.0f}'.format(hours, minutes, seconds)
     else:
         return '{0:02.0f}:{1:02.0f}'.format(minutes, seconds)
+    
+def findWorkingDir():
+    frozen = getattr(sys, 'frozen', '')
+    if not frozen:
+        path = os.path.dirname(os.path.dirname(__file__))
+    elif frozen in ('dll', 'console_exe', 'windows_exe'):
+        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    else:
+        path = ""
+    return path
+

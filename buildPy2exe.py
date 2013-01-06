@@ -27,6 +27,7 @@ info = dict(
                          'compressed': 1
                          }
              },
+    data_files = [("resources", ["resources/buzzer.wav",]), ("", ["resources/syncplayClientForceConfiguration.bat",])],
     zipfile = "lib/libsync",
                 
 )
