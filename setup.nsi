@@ -168,7 +168,7 @@
     Delete "$INSTDIR\lib\zope.interface._zope_interface_coptimizations.pyd"
     Delete "$INSTDIR\lib\API-MS-Win-Core-File-L1-1-0.dll"
     Delete "$INSTDIR\lib\API-MS-Win-Core-Profile-L1-1-0.dll"
-    Delete "${SYNCPLAY}\lib\winsound.pyd"
+    Delete "$INSTDIR\lib\winsound.pyd"
     Delete "$INSTDIR\resources\icon.ico"
     Delete "$INSTDIR\resources\buzzer.wav"
     RMDir "$INSTDIR\lib"
