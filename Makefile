@@ -34,11 +34,14 @@ client:
 	echo '#!/bin/sh\npython -OO $(LIB_PATH)/syncplay/syncplayClient.py "$$@"' > $(BIN_PATH)/syncplay
 	chmod a+x $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
+	-mkdir -p $(LIB_PATH)/syncplay/resources
+	cp resources/buzzer.wav $(LIB_PATH)/syncplay/resources/
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
 
 u-client:
 	-rm $(BIN_PATH)/syncplay
 	-rm $(LIB_PATH)/syncplay/syncplayClient.py
+	-rm -rf $(LIB_PATH)/syncplay/resources
 	-rm $(APP_SHORTCUT_PATH)/syncplay.desktop
 
 server:
