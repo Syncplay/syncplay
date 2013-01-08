@@ -2,6 +2,9 @@
 
 Solution to synchronize video playback across multiple instances of mplayer2 and/or Media Player Classic (MPC-HC) over the Internet.
 
+## Official website
+http://syncplay.pl
+
 ## Notice
 No official builds of Syncplay have been released yet. If you want the current beta then compile it yourself from the official branch or check out the #syncplay IRC channel on irc.rizon.net.
 
