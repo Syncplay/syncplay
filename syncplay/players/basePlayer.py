@@ -1,8 +1,9 @@
+from syncplay import constants
 class BasePlayer(object):
     def askForStatus(self):
         raise NotImplementedError()
 
-    def displayMessage(self):
+    def displayMessage(self, message, duration = constants.OSD_DURATION):
         raise NotImplementedError()
 
     def drop(self):
@@ -12,11 +13,11 @@ class BasePlayer(object):
     def run(client, playerPath, filePath, args):
         raise NotImplementedError()
 
-    def setPaused(self):
+    def setPaused(self, value):
         raise NotImplementedError()
 
-    def setPosition(self):
+    def setPosition(self, value):
         raise NotImplementedError()
 
-    def setSpeed(self):
+    def setSpeed(self, value):
         raise NotImplementedError()
