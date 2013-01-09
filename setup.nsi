@@ -170,7 +170,6 @@
     Delete "$INSTDIR\lib\API-MS-Win-Core-Profile-L1-1-0.dll"
     Delete "$INSTDIR\lib\winsound.pyd"
     Delete "$INSTDIR\resources\icon.ico"
-    Delete "$INSTDIR\resources\buzzer.wav"
     RMDir "$INSTDIR\lib"
     RMDir "$INSTDIR\pyt"
     RMDir "$INSTDIR\resources"
@@ -285,7 +284,6 @@
     SetOutPath $INSTDIR\resources
     
     File "${SYNCPLAY}\resources\icon.ico"
-    File "${SYNCPLAY}\resources\buzzer.wav"
     
   SectionEnd
      

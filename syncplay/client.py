@@ -6,7 +6,6 @@ from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants
-from syncplay.ui import sound
 from syncplay.messages import getMessage
 
 class SyncClientFactory(ClientFactory):
@@ -196,8 +195,7 @@ class SyncplayClient(object):
         if (paused == False and roomFilesDiffer):
             self.userlist.roomCheckedForDifferentFiles()
             self._player.displayMessage(getMessage("en", "room-files-not-same"), constants.DIFFERENT_FILE_MESSAGE_DURATION)
-            sound.doBuzz()
-            
+
     def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy):
         madeChangeOnPlayer = False
         pauseChanged = paused != self.getGlobalPaused()
