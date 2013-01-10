@@ -45,3 +45,28 @@ class BasePlayer(object):
     '''
     def setSpeed(self, value):
         raise NotImplementedError()
+    
+    '''
+    @return: list of strings
+    '''
+    @staticmethod
+    def getDefaultPlayerPathsList():
+        raise NotImplementedError()
+    
+    '''
+    @type path: string
+    '''
+    @staticmethod
+    def isValidPlayerPath(path):
+        raise NotImplementedError()
+    
+    
+class DummyPlayer(BasePlayer):
+
+    @staticmethod
+    def getDefaultPlayerPathsList():
+        return []
+    
+    @staticmethod
+    def isValidPlayerPath(path):
+        return False

@@ -1,6 +1,5 @@
 import pygtk
 import os
-from syncplay import constants
 pygtk.require('2.0')
 import gtk
 gtk.set_interactive(False)
@@ -10,6 +9,7 @@ from syncplay.messages import getMessage
 class GuiConfiguration:
     def __init__(self, config):
         self.config = config
+        self._availablePlayerPaths = []
         self.closedAndNotSaved = False
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_title(getMessage("en", "config-window-title"))
@@ -46,14 +46,13 @@ class GuiConfiguration:
         self.userEntry = self._addLabeledEntryToVbox(getMessage("en", "username-label"), config['name'], vbox, lambda __, _: self._saveDataAndLeave())
         self.roomEntry = self._addLabeledEntryToVbox(getMessage("en", "room-label"), config['room'], vbox, lambda __, _: self._saveDataAndLeave())
         self.passEntry = self._addLabeledEntryToVbox(getMessage("en", "password-label"), config['password'], vbox, lambda __, _: self._saveDataAndLeave())
-        self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillUpMpcPath(config['playerPath']), vbox, lambda __, _: self._saveDataAndLeave())
+        self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillPlayerPath(), vbox, lambda __, _: self._saveDataAndLeave())
  
-    def _tryToFillUpMpcPath(self, playerPath):
-        if(playerPath == None):
-            for path in constants.MPC_PATHS:
-                if(os.path.isfile(path)):
-                    return path
-        return playerPath
+    def _tryToFillPlayerPath(self):
+        for path in self._availablePlayerPaths:
+            if(os.path.isfile(path)):
+                return path
+        return self.config["playerPath"]
                  
     def getProcessedConfiguration(self):
         if(self.closedAndNotSaved):
@@ -91,10 +90,12 @@ class GuiConfiguration:
         vbox.add(hbox)
         hbox.show()
         return entry
-
+    
+    def setAvailablePaths(self, paths):
+        self._availablePlayerPaths = paths
+    
     class WindowClosed(Exception):
-        def __init__(self):
-            Exception.__init__(self)
+        pass
 
 
                 

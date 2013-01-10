@@ -4,6 +4,7 @@ import os
 import sys
 from syncplay import constants, utils
 from syncplay.messages import getMessage
+from syncplay.players.playerFactory import PlayerFactory
 try: 
     from syncplay.ui.GuiConfiguration import GuiConfiguration
 except ImportError:
@@ -28,7 +29,7 @@ class ConfigurationGetter(object):
                         "playerPath": None,
                         "file": None,
                         "playerArgs": [],
-                        "playerType": None,
+                        "playerClass": None,
                         }
         
         #
@@ -39,7 +40,7 @@ class ConfigurationGetter(object):
                           "port",
                           "name",
                           "playerPath",
-                          "playerType",
+                          "playerClass",
                          ]
 
         self._iniStructure = {
@@ -64,14 +65,15 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("en", "file-argument"))
         self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("en", "args-argument"))
   
+  
+        self._playerFactory = PlayerFactory()
+        
     def _validateArguments(self):
         for key in self._required:
             if(key == "playerPath"):
-                if(self._isPlayerMPCAndValid(self._config["playerPath"])):
-                    self._config["playerType"] = "mpc"
-                    self.__addSpecialMPCFlags()
-                elif(self._isMplayerPathAndValid(self._config["playerPath"])):
-                    self._config["playerType"] = "mplayer"
+                player = self._playerFactory.getPlayerByPath(self._config["playerPath"])
+                if(player):
+                    self._config["playerClass"] = player
                 else:
                     raise InvalidConfigValue("Player path is not set properly")
             elif(key == "host"):
@@ -98,32 +100,6 @@ class ConfigurationGetter(object):
                     key = "noGui"
                 self._config[key] = val
             
-    def _isPlayerMPCAndValid(self, path):
-        if(os.path.isfile(path)):
-            if(path[-10:] == 'mpc-hc.exe' or path[-12:] == 'mpc-hc64.exe'):
-                return True
-        if(os.path.isfile(path + "\\mpc-hc.exe")):
-            path += "\\mpc-hc.exe"
-            return True
-        if(os.path.isfile(path + "\\mpc-hc64.exe")):
-            path += "\\mpc-hc64.exe"
-            return True
-        return False
-
-    def __addSpecialMPCFlags(self):
-        self._config['playerArgs'].extend(['/open', '/new'])
-
-    def _isMplayerPathAndValid(self, playerPath):
-        if("mplayer" in playerPath):
-            if os.access(playerPath, os.X_OK):
-                return True
-            for path in os.environ['PATH'].split(':'):
-                path = os.path.join(os.path.realpath(path), playerPath)
-                if os.access(path, os.X_OK):
-                    self._config['playerPath'] = path
-                    return True
-        return False
-    
     def _splitPortAndHost(self, host):
         port = constants.DEFAULT_PORT if not self._config["port"] else self._config["port"]
         if(host):
@@ -170,7 +146,9 @@ class ConfigurationGetter(object):
             print getMessage("en", "missing-arguments-error")
             sys.exit()
         elif(GuiConfiguration):
-            return GuiConfiguration(self._config).getProcessedConfiguration()
+            gc = GuiConfiguration(self._config)
+            gc.setAvailablePaths(self._playerFactory.getAvailablePlayerPaths())
+            return gc.getProcessedConfiguration()
 
     def __wasOptionChanged(self, parser, section, option):
         if (parser.has_option(section, option)):

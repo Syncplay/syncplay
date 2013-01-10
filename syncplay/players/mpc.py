@@ -9,7 +9,8 @@ import re
 from syncplay.utils import retry
 from syncplay import constants  
 from syncplay.messages import getMessage
-        
+import os.path
+
 class MpcHcApi:
     def __init__(self):
         self.callbacks = self.__Callbacks()
@@ -328,9 +329,10 @@ class MPCHCAPIPlayer(BasePlayer):
 
     @staticmethod
     def run(client, playerPath, filePath, args):
+        args.extend(['/open', '/new'])
         mpc = MPCHCAPIPlayer(client)
         mpc._mpcApi.callbacks.onConnected = lambda: mpc.initPlayer(filePath if(filePath) else None)
-        mpc._mpcApi.startMpc(playerPath, args)
+        mpc._mpcApi.startMpc(MPCHCAPIPlayer.getExpandedPath(playerPath), args)
         return mpc
 
     def __lockAsking(self):
@@ -453,3 +455,25 @@ class MPCHCAPIPlayer(BasePlayer):
 
     def sendCustomCommand(self, cmd, val):
         self._mpcApi.sendRawCommand(cmd, val)
+        
+    @staticmethod
+    def getDefaultPlayerPathsList():
+        return constants.MPC_PATHS
+    
+    @staticmethod
+    def isValidPlayerPath(path):
+        if(MPCHCAPIPlayer.getExpandedPath(path)):
+            return True
+        return False
+
+    @staticmethod
+    def getExpandedPath(path):
+        if(os.path.isfile(path)):
+            if(path[-10:] == 'mpc-hc.exe' or path[-12:] == 'mpc-hc64.exe'):
+                return path
+        if(os.path.isfile(path + "\\mpc-hc.exe")):
+            path += "\\mpc-hc.exe"
+            return path
+        if(os.path.isfile(path + "\\mpc-hc64.exe")):
+            path += "\\mpc-hc64.exe"
+            return path

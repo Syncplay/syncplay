@@ -4,6 +4,7 @@ import threading
 from syncplay.players.basePlayer import BasePlayer
 from syncplay import constants
 from syncplay.messages import getMessage
+import os
 
 class MplayerPlayer(BasePlayer):
     speedSupported = True
@@ -125,8 +126,32 @@ class MplayerPlayer(BasePlayer):
         
     @staticmethod
     def run(client, playerPath, filePath, args):
-        mplayer = MplayerPlayer(client, playerPath, filePath, args)
+        mplayer = MplayerPlayer(client, MplayerPlayer.getExpandedPath(playerPath), filePath, args)
         return mplayer
+    
+    @staticmethod
+    def getDefaultPlayerPathsList():
+        l = []
+        for path in constants.MPLAYER_PATHS:
+            p = MplayerPlayer.getExpandedPath(path)
+            if p:
+                l.append(p) 
+        return l
+    
+    @staticmethod
+    def isValidPlayerPath(path):
+        if("mplayer" in path and MplayerPlayer.getExpandedPath(path)):
+            return True
+        return False
+    
+    @staticmethod
+    def getExpandedPath(path):
+        if os.access(path, os.X_OK):
+            return path
+        for path in os.environ['PATH'].split(':'):
+            path = os.path.join(os.path.realpath(path), path)
+            if os.access(path, os.X_OK):
+                return path
 
     def drop(self):
         self._listener.sendLine('quit')

@@ -37,7 +37,7 @@ MPC_PATHS = [
              "C:\Program Files (x86)\Combined Community Codec Pack\MPC\mpc-hc.exe",
              "C:\Program Files\MPC HomeCinema (x64)\mpc-hc64.exe",
              ]
-
+MPLAYER_PATHS = ["mplayer2", "mplayer"]
 #Changing these is usually not something you're looking for
 PLAYER_ASK_DELAY = 0.1
 PING_MOVING_AVERAGE_WEIGHT = 0.85
