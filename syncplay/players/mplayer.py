@@ -9,6 +9,7 @@ import os
 class MplayerPlayer(BasePlayer):
     speedSupported = True
     RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
+    SLAVE_ARGS = constants.MPLAYER_SLAVE_ARGS
     def __init__(self, client, playerPath, filePath, args):
         self._client = client
         self._paused = None
@@ -145,11 +146,11 @@ class MplayerPlayer(BasePlayer):
         return False
     
     @staticmethod
-    def getExpandedPath(path):
-        if os.access(path, os.X_OK):
-            return path
+    def getExpandedPath(playerPath):
+        if os.access(playerPath, os.X_OK):
+            return playerPath
         for path in os.environ['PATH'].split(':'):
-            path = os.path.join(os.path.realpath(path), path)
+            path = os.path.join(os.path.realpath(path), playerPath)
             if os.access(path, os.X_OK):
                 return path
 
@@ -170,7 +171,7 @@ class MplayerPlayer(BasePlayer):
             if(not filePath):
                 raise ValueError
             call = [playerPath, filePath]
-            call.extend(constants.MPLAYER_SLAVE_ARGS)
+            call.extend(playerController.SLAVE_ARGS)
             if(args):
                 call.extend(args)
             self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
