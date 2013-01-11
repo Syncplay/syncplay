@@ -24,7 +24,7 @@ local notimplemented = "not-implemented"
 local unknowncommand = "unknown-command"
 
 function get_args (argument, argcount)
-  local argarray = {}
+	local argarray = {}
 	local index
 	local i
 	local argbuffer
@@ -188,11 +188,12 @@ end
 
 function playfile()
 	local errormsg
-
-	if input then
-		common.hotkey("key-pause")
-	else
-		errormsg = noinput
+	local input = vlc.object.input()
+	local playstate
+	playstate, errormsg = get_play_state()
+	
+	if playstate == "paused" then
+		vlc.playlist.pause()
 	end
 	
 	return errormsg
@@ -201,11 +202,12 @@ end
 
 function pausefile()
 	local errormsg
-
-	if input then
-		common.hotkey("key-play")
-	else
-		errormsg = noinput
+	local input = vlc.object.input()
+	local playstate
+	playstate, errormsg = get_play_state()
+	
+	if playstate == "playing" then
+		vlc.playlist.pause()
 	end
 	
 	return errormsg
@@ -213,6 +215,7 @@ end
 
 function playpausefile()
 	local errormsg
+	local input = vlc.object.input()
 
 	if input then
 		vlc.playlist.pause()
