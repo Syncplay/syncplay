@@ -1,4 +1,5 @@
 from syncplay.players.mplayer import MplayerPlayer
+from syncplay.players.mpv import MpvPlayer
 try:
     from syncplay.players.mpc import MPCHCAPIPlayer
 except ImportError:
@@ -6,4 +7,4 @@ except ImportError:
     MPCHCAPIPlayer = DummyPlayer
     
 def getAvailablePlayers():
-    return [MPCHCAPIPlayer, MplayerPlayer]
+    return [MPCHCAPIPlayer, MplayerPlayer, MpvPlayer]
