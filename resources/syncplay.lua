@@ -8,7 +8,7 @@
 require "common"
 require "host"
 
-local connectorversion = "0.0.1"
+local connectorversion = "0.0.2"
 
 local port
 
@@ -33,7 +33,11 @@ function get_args (argument, argcount)
 
 	for i = 1, argcount,1 do
 		if i == argcount  then
+			if argbuffer == nil then
+				argarray[i] = ""
+			else
 				argarray[i] = argbuffer
+			end
 		else
 			if string.find(argbuffer, argseperator) then
 				index = string.find(argbuffer, argseperator)
@@ -135,9 +139,14 @@ end
 function display_osd ( argument )
 	local errormsg
 	local osdarray
-	osdarray = get_args(argument,3)
-	--position, duration ms, message
-	vlc.osd.message(osdarray[3],channel1,osdarray[1],osdarray[2])
+	local input = vlc.object.input()
+	if input then
+		osdarray = get_args(argument,3)
+		--position, duration, message -> message, , position, duration
+		vlc.osd.message(osdarray[3],channel1,osdarray[1],tonumber(osdarray[2]))
+	else
+		errormsg = noinput
+	end
 	return errormsg
 end
 
