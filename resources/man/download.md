@@ -1,1 +1,0 @@
-No official builds of Syncplay have been released yet. If you want the current beta then compile it yourself from the official branch or check out the #syncplay IRC channel on irc.rizon.net.
