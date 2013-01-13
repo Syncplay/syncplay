@@ -168,7 +168,6 @@
     Delete "$INSTDIR\lib\zope.interface._zope_interface_coptimizations.pyd"
     Delete "$INSTDIR\lib\API-MS-Win-Core-File-L1-1-0.dll"
     Delete "$INSTDIR\lib\API-MS-Win-Core-Profile-L1-1-0.dll"
-    Delete "$INSTDIR\lib\winsound.pyd"
     Delete "$INSTDIR\resources\icon.ico"
     RMDir "$INSTDIR\lib"
     RMDir "$INSTDIR\pyt"
@@ -279,7 +278,6 @@
     File "${SYNCPLAY}\lib\win32gui.pyd"
     File "${SYNCPLAY}\lib\zlib1.dll"
     File "${SYNCPLAY}\lib\zope.interface._zope_interface_coptimizations.pyd"
-    File "${SYNCPLAY}\lib\winsound.pyd"
     
     SetOutPath $INSTDIR\resources
     
