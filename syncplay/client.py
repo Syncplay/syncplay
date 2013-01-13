@@ -193,7 +193,6 @@ class SyncplayClient(object):
     def _checkRoomForSameFiles(self, paused):
         roomFilesDiffer = not self.userlist.areAllFilesInRoomSameOnFirstUnpause()
         if (paused == False and roomFilesDiffer):
-            self.userlist.roomCheckedForDifferentFiles()
             self.ui.showMessage(getMessage("en", "room-files-not-same"), True)
             self.__scheduleDifferentFilesWarningOSDDisplay()
 
@@ -209,7 +208,25 @@ class SyncplayClient(object):
         else:
             self.__differentFileMessageDisplayedFor = 0
             self.__differentFileMessageTimer.stop()
+   
+    def _checkIfYouReAloneInTheRoom(self, paused):
+        aloneInRoom = self.userlist.areYouAloneInRoomOnFirstUnpause()
+        if (paused == False and aloneInRoom):
+            self.ui.showMessage(getMessage("en", "alone-in-the-room"), True)
+            self.__scheduleAloneInTheRoomWarningOSDDisplay()
 
+    def __scheduleAloneInTheRoomWarningOSDDisplay(self): #TODO: refactor
+        self.__aloneInTheRoomMessageTimer = task.LoopingCall(self.__displayAloneInTheRoomMessageOnOSD)
+        self.__aloneInTheRoomMessageDisplayedFor = 0
+        self.__aloneInTheRoomMessageTimer.start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
+        
+    def __displayAloneInTheRoomMessageOnOSD(self):
+        if (constants.DIFFERENT_FILE_MESSAGE_DURATION > self.__aloneInTheRoomMessageDisplayedFor):
+            self._player.displayMessage(getMessage("en", "alone-in-the-room"))
+            self.__aloneInTheRoomMessageDisplayedFor += constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL
+        else:
+            self.__aloneInTheRoomMessageDisplayedFor = 0
+            self.__aloneInTheRoomMessageTimer.stop()
 
     def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy):
         madeChangeOnPlayer = False
@@ -231,6 +248,9 @@ class SyncplayClient(object):
         elif (paused == True and pauseChanged):
             madeChangeOnPlayer = self._serverPaused(setBy, diff)
         self._checkRoomForSameFiles(paused)
+        self._checkIfYouReAloneInTheRoom(paused)
+        if(paused == False):
+            self.userlist.roomCheckedOnFirstUnpause()
         return madeChangeOnPlayer
 
     def updateGlobalState(self, position, paused, doSeek, setBy, latency):
@@ -238,7 +258,6 @@ class SyncplayClient(object):
             self.__getUserlistOnLogon = False
             self.getUserList()
         madeChangeOnPlayer = False
-
         if(not paused):
             position += latency
         if(self._player):
@@ -516,7 +535,15 @@ class SyncplayUserlist(object):
                     return False
         return True
     
-    def roomCheckedForDifferentFiles(self):
+    def areYouAloneInRoomOnFirstUnpause(self):
+        if(self._wasChangeInRoomSinceLastRoomCheck):
+            for user in self._users.itervalues():
+                if(user.room == self.currentUser.room):
+                    return False
+            return True
+        return False
+    
+    def roomCheckedOnFirstUnpause(self):
         self._wasChangeInRoomSinceLastRoomCheck = False
         
     def showUserList(self):

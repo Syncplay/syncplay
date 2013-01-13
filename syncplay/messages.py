@@ -28,6 +28,7 @@ en = {
       "file-different-notification" : "File you are playing appears to be different from <{}>'s", #User
       "file-differences-notification" : "Your file differs in the following way(s): ",
       "room-files-not-same" : "Not all files played in the room are the same",
+      "alone-in-the-room": "You're alone in the room",
       
       "different-filesize-notification" : " (their file size is different from yours!)",
       "file-played-by-notification" : "File: {} is being played by:", #File
