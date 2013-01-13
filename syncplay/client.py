@@ -365,13 +365,15 @@ class SyncplayClient(object):
             roomFilesDiffer = not self._userlist.areAllFilesInRoomSameOnFirstUnpause()
             if (paused == False and roomFilesDiffer):
                 self._ui.showMessage(getMessage("en", "room-files-not-same"), True)
-                self._warnings["room-files-not-same"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
+                if(not self._warnings["room-files-not-same"]['timer'].running):
+                    self._warnings["room-files-not-same"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
 
         def _checkIfYouReAloneInTheRoom(self, paused):
             aloneInRoom = self._userlist.areYouAloneInRoomOnFirstUnpause()
             if (paused == False and aloneInRoom):
                 self._ui.showMessage(getMessage("en", "alone-in-the-room"), True)
-                self._warnings["alone-in-the-room"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
+                if(not self._warnings["alone-in-the-room"]['timer'].running):
+                    self._warnings["alone-in-the-room"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
 
         def __displayMessageOnOSD(self, warningName):
             if (constants.OSD_WARNING_MESSAGE_DURATION > self._warnings[warningName]["displayedFor"]):
