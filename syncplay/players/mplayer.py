@@ -69,13 +69,13 @@ class MplayerPlayer(BasePlayer):
         self._client.updatePlayerStatus(self._paused, self._position)
     
     def _setProperty(self, property_, value):
-        self._listener.sendLine("pausing_keep_force set_property {} {}".format(property_, value))
+        self._listener.sendLine("set_property {} {}".format(property_, value))
     
     def _getProperty(self, property_):
-        self._listener.sendLine("pausing_keep_force get_property {}".format(property_))
+        self._listener.sendLine("get_property {}".format(property_))
     
     def displayMessage(self, message, duration = (constants.OSD_DURATION*1000)):
-        self._listener.sendLine('pausing_keep_force osd_show_text "{!s}" {} {}'.format(message, duration, constants.MPLAYER_OSD_LEVEL))
+        self._listener.sendLine('osd_show_text "{!s}" {} {}'.format(message, duration, constants.MPLAYER_OSD_LEVEL))
  
     def setSpeed(self, value):        
         self._setProperty('speed', "{:.2f}".format(value))
