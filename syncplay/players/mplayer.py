@@ -85,8 +85,8 @@ class MplayerPlayer(BasePlayer):
         self._setProperty('time_pos', "{}".format(value))
     
     def setPaused(self, value):
-        self._paused = value
-        self._setProperty('pause', 'yes' if value else 'no') 
+        if self._paused <> value:
+            self._listener.sendLine('pause')
     
     def _getFilename(self):
         self._getProperty('filename')
