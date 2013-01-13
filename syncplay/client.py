@@ -194,7 +194,22 @@ class SyncplayClient(object):
         roomFilesDiffer = not self.userlist.areAllFilesInRoomSameOnFirstUnpause()
         if (paused == False and roomFilesDiffer):
             self.userlist.roomCheckedForDifferentFiles()
-            self._player.displayMessage(getMessage("en", "room-files-not-same"), constants.DIFFERENT_FILE_MESSAGE_DURATION)
+            self.ui.showMessage(getMessage("en", "room-files-not-same"), True)
+            self.__scheduleDifferentFilesWarningOSDDisplay()
+
+    def __scheduleDifferentFilesWarningOSDDisplay(self):
+        self.__differentFileMessageTimer = task.LoopingCall(self.__displayDifferentFileMessageOnOSD)
+        self.__differentFileMessageDisplayedFor = 0
+        self.__differentFileMessageTimer.start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
+        
+    def __displayDifferentFileMessageOnOSD(self):
+        if (constants.DIFFERENT_FILE_MESSAGE_DURATION > self.__differentFileMessageDisplayedFor):
+            self._player.displayMessage(getMessage("en", "room-files-not-same"))
+            self.__differentFileMessageDisplayedFor += constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL
+        else:
+            self.__differentFileMessageDisplayedFor = 0
+            self.__differentFileMessageTimer.stop()
+
 
     def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy):
         madeChangeOnPlayer = False

@@ -12,7 +12,7 @@ class BasePlayer(object):
     '''
     Display given message on player's OSD or similar means
     '''
-    def displayMessage(self, message, duration = constants.OSD_DURATION):
+    def displayMessage(self, message, duration = (constants.OSD_DURATION*1000)):
         raise NotImplementedError()
 
     '''

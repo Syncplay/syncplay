@@ -78,7 +78,7 @@ class MpcHcApi:
     def setSpeed(self, rate):
         self.__listener.SendCommand(self.CMD_SETSPEED, unicode(rate))
 
-    def sendOsd(self, message, MsgPos=constants.MPC_OSD_POSITION, DurationMs=constants.OSD_DURATION):
+    def sendOsd(self, message, MsgPos=constants.MPC_OSD_POSITION, DurationMs=(constants.OSD_DURATION*1000)):
         class __OSDDATASTRUCT(ctypes.Structure):
             _fields_ = [
                 ('nMsgPos', ctypes.c_int32),
@@ -383,7 +383,7 @@ class MPCHCAPIPlayer(BasePlayer):
         if(filePath):
             self._mpcApi.openFile(filePath)
         
-    def displayMessage(self, message, duration = constants.OSD_DURATION):
+    def displayMessage(self, message, duration = (constants.OSD_DURATION*1000)):
         self._mpcApi.sendOsd(message, constants.MPC_OSD_POSITION, duration)
 
     @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
