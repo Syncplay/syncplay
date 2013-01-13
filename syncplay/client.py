@@ -82,6 +82,8 @@ class SyncplayClient(object):
         self._userOffset = 0.0
         self._speedChanged = False
         
+        self._warnings = self._WarningManager(self._player, self.userlist, self.ui)
+        
     def initProtocol(self, protocol):
         self._protocol = protocol
         
@@ -190,44 +192,6 @@ class SyncplayClient(object):
         madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
-    def _checkRoomForSameFiles(self, paused):
-        roomFilesDiffer = not self.userlist.areAllFilesInRoomSameOnFirstUnpause()
-        if (paused == False and roomFilesDiffer):
-            self.ui.showMessage(getMessage("en", "room-files-not-same"), True)
-            self.__scheduleDifferentFilesWarningOSDDisplay()
-
-    def __scheduleDifferentFilesWarningOSDDisplay(self):
-        self.__differentFileMessageTimer = task.LoopingCall(self.__displayDifferentFileMessageOnOSD)
-        self.__differentFileMessageDisplayedFor = 0
-        self.__differentFileMessageTimer.start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
-        
-    def __displayDifferentFileMessageOnOSD(self):
-        if (constants.DIFFERENT_FILE_MESSAGE_DURATION > self.__differentFileMessageDisplayedFor):
-            self._player.displayMessage(getMessage("en", "room-files-not-same"))
-            self.__differentFileMessageDisplayedFor += constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL
-        else:
-            self.__differentFileMessageDisplayedFor = 0
-            self.__differentFileMessageTimer.stop()
-   
-    def _checkIfYouReAloneInTheRoom(self, paused):
-        aloneInRoom = self.userlist.areYouAloneInRoomOnFirstUnpause()
-        if (paused == False and aloneInRoom):
-            self.ui.showMessage(getMessage("en", "alone-in-the-room"), True)
-            self.__scheduleAloneInTheRoomWarningOSDDisplay()
-
-    def __scheduleAloneInTheRoomWarningOSDDisplay(self): #TODO: refactor
-        self.__aloneInTheRoomMessageTimer = task.LoopingCall(self.__displayAloneInTheRoomMessageOnOSD)
-        self.__aloneInTheRoomMessageDisplayedFor = 0
-        self.__aloneInTheRoomMessageTimer.start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
-        
-    def __displayAloneInTheRoomMessageOnOSD(self):
-        if (constants.DIFFERENT_FILE_MESSAGE_DURATION > self.__aloneInTheRoomMessageDisplayedFor):
-            self._player.displayMessage(getMessage("en", "alone-in-the-room"))
-            self.__aloneInTheRoomMessageDisplayedFor += constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL
-        else:
-            self.__aloneInTheRoomMessageDisplayedFor = 0
-            self.__aloneInTheRoomMessageTimer.stop()
-
     def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy):
         madeChangeOnPlayer = False
         pauseChanged = paused != self.getGlobalPaused()
@@ -247,8 +211,7 @@ class SyncplayClient(object):
             madeChangeOnPlayer = self._serverUnpaused(setBy)
         elif (paused == True and pauseChanged):
             madeChangeOnPlayer = self._serverPaused(setBy, diff)
-        self._checkRoomForSameFiles(paused)
-        self._checkIfYouReAloneInTheRoom(paused)
+        self._warnings.checkWarnings(paused)
         if(paused == False):
             self.userlist.roomCheckedOnFirstUnpause()
         return madeChangeOnPlayer
@@ -376,6 +339,49 @@ class SyncplayClient(object):
         reactor.callLater(0.1, reactor.stop)
         if(promptForAction):
             self.ui.promptFor(getMessage("en", "enter-to-exit-prompt"))
+
+    class _WarningManager(object):
+        def __init__(self, player, userlist, ui):
+            self._player = player
+            self._userlist = userlist
+            self._ui = ui
+            self._warnings = {
+                            "room-files-not-same": {
+                                                     "timer": task.LoopingCall(self.__displayMessageOnOSD, ("room-files-not-same"),),
+                                                     "displayedFor": 0,
+                                                     "tester": self._checkRoomForSameFiles
+                                                    },
+                            "alone-in-the-room": {
+                                                     "timer": task.LoopingCall(self.__displayMessageOnOSD, ("alone-in-the-room"),),
+                                                     "displayedFor": 0,
+                                                     "tester": self._checkIfYouReAloneInTheRoom
+                                                    },
+                            }
+        def checkWarnings(self, paused):
+            for w in self._warnings.itervalues():
+                w["tester"](paused)
+                
+        def _checkRoomForSameFiles(self, paused):
+            roomFilesDiffer = not self._userlist.areAllFilesInRoomSameOnFirstUnpause()
+            if (paused == False and roomFilesDiffer):
+                self._ui.showMessage(getMessage("en", "room-files-not-same"), True)
+                self._warnings["room-files-not-same"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
+
+        def _checkIfYouReAloneInTheRoom(self, paused):
+            aloneInRoom = self._userlist.areYouAloneInRoomOnFirstUnpause()
+            if (paused == False and aloneInRoom):
+                self._ui.showMessage(getMessage("en", "alone-in-the-room"), True)
+                self._warnings["alone-in-the-room"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
+
+        def __displayMessageOnOSD(self, warningName):
+            if (constants.OSD_WARNING_MESSAGE_DURATION > self._warnings[warningName]["displayedFor"]):
+                self._ui.showOSDMessage(getMessage("en", warningName ), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL)
+                self._warnings[warningName]["displayedFor"] += constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL
+            else:
+                self._warnings[warningName]["displayedFor"] = 0
+                self._warnings[warningName]["timer"].stop()
+            
+
 
 class SyncplayUser(object):
     def __init__(self, username = None, room = None, file_ = None, position = 0):
@@ -553,15 +559,19 @@ class SyncplayUserlist(object):
     
     def clearList(self):
         self._users = {}
-                              
+              
 class UiManager(object):
     def __init__(self, client, ui):
         self._client = client
         self.__ui = ui
     
     def showMessage(self, message, noPlayer = False, noTimestamp = False):
-        if(self._client._player and not noPlayer): self._client._player.displayMessage(message)
+        if(not noPlayer): self.showOSDMessage(message)
         self.__ui.showMessage(message, noTimestamp)
+    
+    def showOSDMessage(self, message, duration = constants.OSD_DURATION):
+        if(self._client._player):
+            self._client._player.displayMessage(message, duration * 1000)
     
     def showErrorMessage(self, message):
         self.__ui.showErrorMessage(message)
