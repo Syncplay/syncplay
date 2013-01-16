@@ -11,14 +11,15 @@ class GuiConfiguration:
         self.config = config
         self._availablePlayerPaths = []
         self.closedAndNotSaved = False
+        
+    def run(self):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_title(getMessage("en", "config-window-title"))
         self.window.connect("delete_event", lambda w, e: self._windowClosed())
         vbox = gtk.VBox(False, 0)
         self.window.add(vbox)
         vbox.show()
-        self._addLabeledEntries(config, vbox)
-
+        self._addLabeledEntries(self.config, vbox)
         self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
         button = gtk.Button(stock=gtk.STOCK_SAVE)
         button.connect("clicked", lambda w: self._saveDataAndLeave())

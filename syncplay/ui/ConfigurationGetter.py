@@ -148,6 +148,7 @@ class ConfigurationGetter(object):
         elif(GuiConfiguration):
             gc = GuiConfiguration(self._config)
             gc.setAvailablePaths(self._playerFactory.getAvailablePlayerPaths())
+            gc.run()
             return gc.getProcessedConfiguration()
 
     def __wasOptionChanged(self, parser, section, option):
