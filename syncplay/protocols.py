@@ -39,7 +39,11 @@ class JSONCommandProtocol(LineReceiver):
         try:
             messages = json.loads(line)
         except:
-            self.dropWithError(getMessage("en", "not-json-server-error").format(line))
+            if ("GET / HTTP/1." in line):
+                self.handleHttpRequest(line)
+                self.drop()
+            else:
+                self.dropWithError(getMessage("en", "not-json-server-error").format(line))
             return
         self.handleMessages(messages) 
     
@@ -189,6 +193,9 @@ class SyncClientProtocol(JSONCommandProtocol):
             self._client.updateGlobalState(position, paused, doSeek, setBy, latency)
         position, paused, doSeek, stateChange = self._client.getLocalState()
         self.sendState(position, paused, doSeek, latencyCalculation, stateChange)
+
+    def handleHttpRequest(self, request):
+        pass
     
     def sendState(self, position, paused, doSeek, latencyCalculation, stateChange = False):
         state = {}
@@ -241,7 +248,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         return wrapper
         
     def dropWithError(self, error):
-        print getMessage("en", "client-drop-server-error").format((self.transport.getPeer().host, error))
+        print getMessage("en", "client-drop-server-error").format(self.transport.getPeer().host, error)
         self.sendError(error)
         self.drop()
         
@@ -394,6 +401,9 @@ class SyncServerProtocol(JSONCommandProtocol):
         if(self.serverIgnoringOnTheFly == 0):
             self._factory.updateWatcherState(self, position, paused, doSeek, latencyCalculation)
    
+    def handleHttpRequest(self, request):
+        self.sendLine(self._factory.gethttpRequestReply())
+    
     def handleError(self, error):
         self.dropWithError(error["message"]) #TODO: more processing and fallbacking
         

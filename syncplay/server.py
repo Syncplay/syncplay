@@ -14,12 +14,13 @@ import os
 from string import Template
 
 class SyncFactory(Factory):
-    def __init__(self, password = '', motdFilePath = None):
+    def __init__(self, password = '', motdFilePath = None, httpReplyFilePath= None):
         print getMessage("en", "welcome-server-notification").format(syncplay.version)
         if(password):
             password = hashlib.md5(password).hexdigest()
         self.password = password
         self._motdFilePath = motdFilePath
+        self._httpReplyFilePath = httpReplyFilePath
         self._rooms = {}
         self._roomStates = {}
         self._roomUpdate = threading.RLock()
@@ -98,6 +99,13 @@ class SyncFactory(Factory):
                 return ""
         else:
             return ""
+
+    def gethttpRequestReply(self):
+        if(self._httpReplyFilePath and os.path.isfile(self._httpReplyFilePath)):
+            tmpl = codecs.open(self._httpReplyFilePath, "r", "utf-8-sig").read()
+            return tmpl
+        else:
+            return getMessage("en", "server-default-http-reply")
 
     def sendState(self, watcherProtocol, doSeek = False, senderLatency = 0, forcedUpdate = False):
         watcher = self.getWatcher(watcherProtocol)

@@ -107,12 +107,14 @@ en = {
       "server-isolate-room-argument" : 'should rooms be isolated?',
       "server-motd-argument": "path to file from which motd will be fetched",
       "server-messed-up-motd": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
+      "server-http-reply-argument": "path to file from which http reply will be fetched",
+      "server-default-http-reply": "This server should not be requested with your browser, but Syncplay software available from http://syncplay.pl",
       
       #Server errors
-      "unknown-command-server-error" : "Unknown command\n%s", #message
-      "not-json-server-error" : "Not a json encoded string\n%s", #message
+      "unknown-command-server-error" : "Unknown command {}", #message
+      "not-json-server-error" : "Not a json encoded string {}", #message
       "not-known-server-error" : "You must be known to server before sending this command",
-      "client-drop-server-error" : "Client drop: %s -- %s", #host, error
+      "client-drop-server-error" : "Client drop: {} -- {}", #host, error
       "password-required-server-error" : "Password required",
       "wrong-password-server-error" : "Wrong password supplied",
       "hello-server-error" : "Not enough Hello arguments",
