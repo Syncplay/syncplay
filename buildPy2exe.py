@@ -9,17 +9,14 @@ import sys
 import os
 import subprocess
 
-fixed_path = "C:\\Program Files (x86)\\NSIS\\makensis.exe" #TODO: how to move that into proper place, huh
-NSIS_COMPILE = fixed_path if os.path.isfile(fixed_path) else "makensis.exe"
-del fixed_path
-
+p = "C:\\Program Files (x86)\\NSIS\\makensis.exe" #TODO: how to move that into proper place, huh
+NSIS_COMPILE = p if os.path.isfile(p) else "makensis.exe"
+OUT_DIR = "syncplay v{}".format(syncplay.version)
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
 NSIS_SCRIPT_TEMPLATE = r"""
   !include LogicLib.nsh
   !include nsDialogs.nsh
-  !define VERSION "$version.0"
-  !define SYNCPLAY "syncplay v$version"
-  
+
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\English.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Polish.nlf"
   
@@ -31,14 +28,14 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Icon resources\icon.ico ;Change DIR
   SetCompressor /SOLID lzma
      
-  VIProductVersion "$${VERSION}"
+  VIProductVersion "$version.0"
   VIAddVersionKey /LANG=$${LANG_ENGLISH} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_ENGLISH} "FileVersion" "$${VERSION}"
+  VIAddVersionKey /LANG=$${LANG_ENGLISH} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_ENGLISH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_ENGLISH} "FileDescription" "Syncplay"
   
   VIAddVersionKey /LANG=$${LANG_POLISH} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_POLISH} "FileVersion" "$${VERSION}"
+  VIAddVersionKey /LANG=$${LANG_POLISH} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_POLISH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_POLISH} "FileDescription" "Syncplay"  
   
@@ -63,7 +60,6 @@ NSIS_SCRIPT_TEMPLATE = r"""
     ; Backup the previously associated File class
     ReadRegStr $$R0 HKCR ".$${EXT}" `$${FileCLASS}_backup`
     WriteRegStr HKCR ".$${EXT}" "" "$$R0"
- 
     DeleteRegKey HKCR `$${FileCLASS}`
   !macroend
   
@@ -113,82 +109,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   FunctionEnd
   
   Function un.DeleteFiles
-    Delete "$$INSTDIR\Syncplay.exe"
-    Delete "$$INSTDIR\syncplayClientForceConfiguration.bat"
-    Delete "$$INSTDIR\syncplayServer.exe "
-    Delete "$$INSTDIR\w9xpopen.exe"
-    Delete "$$INSTDIR\python27.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-Debug-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-DelayLoad-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-ErrorHandling-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-Delete-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-Handle-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-Heap-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-IO-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-Interlocked-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-LibraryLoader-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-LocalRegistry-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-Localization-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-Misc-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-ProcessEnvironment-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-ProcessThreads-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-ProDelete-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-String-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-Synch-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-SysInfo-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\DNSAPI.DLL"
-    Delete "$$INSTDIR\lib\MSIMG32.DLL"
-    Delete "$$INSTDIR\lib\NSI.dll"
-    Delete "$$INSTDIR\lib\USP10.DLL"
-    Delete "$$INSTDIR\lib\_ctypes.pyd"
-    Delete "$$INSTDIR\lib\_hashlib.pyd"
-    Delete "$$INSTDIR\lib\_socket.pyd"
-    Delete "$$INSTDIR\lib\_win32sysloader.pyd"
-    Delete "$$INSTDIR\lib\atk.pyd"
-    Delete "$$INSTDIR\lib\bz2.pyd"
-    Delete "$$INSTDIR\lib\cairo._cairo.pyd"
-    Delete "$$INSTDIR\lib\freetype6.dll"
-    Delete "$$INSTDIR\lib\gio._gio.pyd"
-    Delete "$$INSTDIR\lib\glib._glib.pyd"
-    Delete "$$INSTDIR\lib\gobject._gobject.pyd"
-    Delete "$$INSTDIR\lib\gtk._gtk.pyd"
-    Delete "$$INSTDIR\lib\intl.dll"
-    Delete "$$INSTDIR\lib\libatk-1.0-0.dll"
-    Delete "$$INSTDIR\lib\libcairo-2.dll"
-    Delete "$$INSTDIR\lib\libexpat-1.dll"
-    Delete "$$INSTDIR\lib\libfontconfig-1.dll"
-    Delete "$$INSTDIR\lib\libgdk-win32-2.0-0.dll"
-    Delete "$$INSTDIR\lib\libgdk_pixbuf-2.0-0.dll"
-    Delete "$$INSTDIR\lib\libgio-2.0-0.dll"
-    Delete "$$INSTDIR\lib\libglib-2.0-0.dll"
-    Delete "$$INSTDIR\lib\libgmodule-2.0-0.dll"
-    Delete "$$INSTDIR\lib\libgobject-2.0-0.dll"
-    Delete "$$INSTDIR\lib\libgthread-2.0-0.dll"
-    Delete "$$INSTDIR\lib\libgtk-win32-2.0-0.dll"
-    Delete "$$INSTDIR\lib\libpango-1.0-0.dll"
-    Delete "$$INSTDIR\lib\libpangocairo-1.0-0.dll"
-    Delete "$$INSTDIR\lib\libpangoft2-1.0-0.dll"
-    Delete "$$INSTDIR\lib\libpangowin32-1.0-0.dll"
-    Delete "$$INSTDIR\lib\libpng14-14.dll"
-    Delete "$$INSTDIR\lib\libsync"
-    Delete "$$INSTDIR\lib\pango.pyd"
-    Delete "$$INSTDIR\lib\pangocairo.pyd"
-    Delete "$$INSTDIR\lib\pyexpat.pyd"
-    Delete "$$INSTDIR\lib\pythoncom27.dll"
-    Delete "$$INSTDIR\lib\pywintypes27.dll"
-    Delete "$$INSTDIR\lib\select.pyd"
-    Delete "$$INSTDIR\lib\twisted.python._initgroups.pyd"
-    Delete "$$INSTDIR\lib\unicodedata.pyd"
-    Delete "$$INSTDIR\lib\win32api.pyd"
-    Delete "$$INSTDIR\lib\win32gui.pyd"
-    Delete "$$INSTDIR\lib\zlib1.dll"
-    Delete "$$INSTDIR\lib\zope.interface._zope_interface_coptimizations.pyd"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-File-L1-1-0.dll"
-    Delete "$$INSTDIR\lib\API-MS-Win-Core-Profile-L1-1-0.dll"
-    Delete "$$INSTDIR\resources\icon.ico"
-    RMDir "$$INSTDIR\lib"
-    RMDir "$$INSTDIR\pyt"
-    RMDir "$$INSTDIR\resources"
+    $uninstallFiles
   FunctionEnd
   
   ;Prevents from running more than one instance of installer
@@ -222,84 +143,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Call Associate
     Call WriteRegistry
     
-    File "$${SYNCPLAY}\Syncplay.exe"
-    File "$${SYNCPLAY}\syncplayClientForceConfiguration.bat"
-    File "$${SYNCPLAY}\syncplayServer.exe"
-    File "$${SYNCPLAY}\w9xpopen.exe"
-    File "$${SYNCPLAY}\python27.dll"
-    
-    SetOutPath $$INSTDIR\lib
-    
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-Debug-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-DelayLoad-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-ErrorHandling-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-File-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-Handle-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-Heap-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-IO-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-Interlocked-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-LibraryLoader-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-LocalRegistry-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-Localization-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-Misc-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-ProcessEnvironment-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-ProcessThreads-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-ProFile-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-String-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-Synch-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\API-MS-Win-Core-SysInfo-L1-1-0.dll"
-    File "$${SYNCPLAY}\lib\DNSAPI.DLL"
-    File "$${SYNCPLAY}\lib\MSIMG32.DLL"
-    File "$${SYNCPLAY}\lib\NSI.dll"
-    File "$${SYNCPLAY}\lib\USP10.DLL"
-    File "$${SYNCPLAY}\lib\_ctypes.pyd"
-    File "$${SYNCPLAY}\lib\_hashlib.pyd"
-    File "$${SYNCPLAY}\lib\_socket.pyd"
-    File "$${SYNCPLAY}\lib\_win32sysloader.pyd"
-    File "$${SYNCPLAY}\lib\atk.pyd"
-    File "$${SYNCPLAY}\lib\bz2.pyd"
-    File "$${SYNCPLAY}\lib\cairo._cairo.pyd"
-    File "$${SYNCPLAY}\lib\freetype6.dll"
-    File "$${SYNCPLAY}\lib\gio._gio.pyd"
-    File "$${SYNCPLAY}\lib\glib._glib.pyd"
-    File "$${SYNCPLAY}\lib\gobject._gobject.pyd"
-    File "$${SYNCPLAY}\lib\gtk._gtk.pyd"
-    File "$${SYNCPLAY}\lib\intl.dll"
-    File "$${SYNCPLAY}\lib\libatk-1.0-0.dll"
-    File "$${SYNCPLAY}\lib\libcairo-2.dll"
-    File "$${SYNCPLAY}\lib\libexpat-1.dll"
-    File "$${SYNCPLAY}\lib\libfontconfig-1.dll"
-    File "$${SYNCPLAY}\lib\libgdk-win32-2.0-0.dll"
-    File "$${SYNCPLAY}\lib\libgdk_pixbuf-2.0-0.dll"
-    File "$${SYNCPLAY}\lib\libgio-2.0-0.dll"
-    File "$${SYNCPLAY}\lib\libglib-2.0-0.dll"
-    File "$${SYNCPLAY}\lib\libgmodule-2.0-0.dll"
-    File "$${SYNCPLAY}\lib\libgobject-2.0-0.dll"
-    File "$${SYNCPLAY}\lib\libgthread-2.0-0.dll"
-    File "$${SYNCPLAY}\lib\libgtk-win32-2.0-0.dll"
-    File "$${SYNCPLAY}\lib\libpango-1.0-0.dll"
-    File "$${SYNCPLAY}\lib\libpangocairo-1.0-0.dll"
-    File "$${SYNCPLAY}\lib\libpangoft2-1.0-0.dll"
-    File "$${SYNCPLAY}\lib\libpangowin32-1.0-0.dll"
-    File "$${SYNCPLAY}\lib\libpng14-14.dll"
-    File "$${SYNCPLAY}\lib\libsync"
-    File "$${SYNCPLAY}\lib\pango.pyd"
-    File "$${SYNCPLAY}\lib\pangocairo.pyd"
-    File "$${SYNCPLAY}\lib\pyexpat.pyd"
-    File "$${SYNCPLAY}\lib\pythoncom27.dll"
-    File "$${SYNCPLAY}\lib\pywintypes27.dll"
-    File "$${SYNCPLAY}\lib\select.pyd"
-    File "$${SYNCPLAY}\lib\twisted.python._initgroups.pyd"
-    File "$${SYNCPLAY}\lib\unicodedata.pyd"
-    File "$${SYNCPLAY}\lib\win32api.pyd"
-    File "$${SYNCPLAY}\lib\win32gui.pyd"
-    File "$${SYNCPLAY}\lib\zlib1.dll"
-    File "$${SYNCPLAY}\lib\zope.interface._zope_interface_coptimizations.pyd"
-    
-    SetOutPath $$INSTDIR\resources
-    
-    File "$${SYNCPLAY}\resources\icon.ico"
-    
+    $installFiles
   SectionEnd
      
   Section "Uninstall"
@@ -314,9 +158,17 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
 class NSISScript(object):
     def create(self):
+        fileList = self.getBuildDirContents(OUT_DIR)
+        installFiles = self.prepareInstallListTemplate(fileList) 
+        uninstallFiles = self.prepareDeleteListTemplate(fileList)
+        
         if(os.path.isfile(SETUP_SCRIPT_PATH)):
             raise RuntimeError("Cannot create setup script, file exists at {}".format(SETUP_SCRIPT_PATH))
-        contents =  Template(NSIS_SCRIPT_TEMPLATE).substitute(version=syncplay.version)
+        contents =  Template(NSIS_SCRIPT_TEMPLATE).substitute(
+                                                              version = syncplay.version,
+                                                              uninstallFiles = uninstallFiles,
+                                                              installFiles = installFiles,
+                                                              )
         with open(SETUP_SCRIPT_PATH, "w") as outfile:
             outfile.write(contents)
         
@@ -327,8 +179,34 @@ class NSISScript(object):
         os.remove(SETUP_SCRIPT_PATH)
         if retcode:
             raise RuntimeError("NSIS compilation return code: %d" % retcode)
-           
-
+   
+    def getBuildDirContents(self, path):
+        fileList = {}
+        for root, _, files in os.walk(path):
+            for file_ in files:
+                new_root = root.replace(OUT_DIR, "").strip("\\")
+                if(not fileList.has_key(new_root)):
+                    fileList[new_root] = []
+                fileList[new_root].append(file_)
+        return fileList           
+    
+    
+    def prepareInstallListTemplate(self, fileList):
+        create = []
+        for dir_ in fileList.iterkeys():
+            create.append('SetOutPath "$INSTDIR\\{}"'.format(dir_))
+            for file_ in fileList[dir_]:
+                create.append('FILE "{}\\{}\\{}"'.format(OUT_DIR, dir_, file_))
+        return "\n".join(create)
+    
+    def prepareDeleteListTemplate(self, fileList):
+        delete = []
+        for dir_ in fileList.iterkeys():
+            for file_ in fileList[dir_]:
+                delete.append('DELETE "$INSTDIR\\{}\\{}"'.format(dir_, file_))
+            delete.append('RMdir "$INSTDIR\\{}"'.format(file_))    
+        return "\n".join(delete)
+    
 class build_installer(py2exe):
     def run(self):
         py2exe.run(self)
@@ -351,7 +229,7 @@ info = dict(
     common_info,
     console=[{"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")], 'dest_base': "Syncplay"}, 'syncplayServer.py'],
     options={'py2exe': {
-                         'dist_dir': "syncplay v%s" % syncplay.version,
+                         'dist_dir': OUT_DIR,
                          'includes': 'cairo, pango, pangocairo, atk, gobject, twisted',
                          'excludes': 'venv, _ssl, doctest, pdb, unittest, difflib, win32clipboard, win32event, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process',
                          'dll_excludes': 'msvcr71.dll',
@@ -359,7 +237,7 @@ info = dict(
                          'compressed': 1
                          }
              },
-    data_files = [("resources", ["resources/icon.ico",]), ("", ["resources/syncplayClientForceConfiguration.bat",])],
+    data_files = [("resources", ["resources/icon.ico",])],
     zipfile = "lib/libsync",
     cmdclass = {"py2exe": build_installer},               
 )
