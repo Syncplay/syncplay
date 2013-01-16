@@ -105,6 +105,8 @@ en = {
       "server-port-argument" : 'server TCP port',
       "server-password-argument" : 'server password',
       "server-isolate-room-argument" : 'should rooms be isolated?',
+      "server-motd-argument": "path to file from which motd will be fetched",
+      "server-messed-up-motd": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
       
       #Server errors
       "unknown-command-server-error" : "Unknown command\n%s", #message

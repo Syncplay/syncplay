@@ -9,13 +9,17 @@ import time
 from syncplay import constants
 import threading
 from syncplay.messages import getMessage
+import codecs
+import os
+from string import Template
 
 class SyncFactory(Factory):
-    def __init__(self, password = ''):
+    def __init__(self, password = '', motdFilePath = None):
         print getMessage("en", "welcome-server-notification").format(syncplay.version)
         if(password):
             password = hashlib.md5(password).hexdigest()
         self.password = password
+        self._motdFilePath = motdFilePath
         self._rooms = {}
         self._roomStates = {}
         self._roomUpdate = threading.RLock()
@@ -82,6 +86,18 @@ class SyncFactory(Factory):
             timePassedSinceSet = time.time() - self._roomStates[room]["lastUpdate"]
             position += timePassedSinceSet
         return paused, position
+
+    def getMotd(self, userIp, username, room):
+        if(self._motdFilePath and os.path.isfile(self._motdFilePath)):
+            tmpl = codecs.open(self._motdFilePath, "r", "utf-8-sig").read()
+            args = dict(version=syncplay.version, userIp=userIp, username=username, room=room)
+            try:
+                return Template(tmpl).substitute(args)
+            except ValueError: 
+                print getMessage("en", "server-messed-up-motd")
+                return ""
+        else:
+            return ""
 
     def sendState(self, watcherProtocol, doSeek = False, senderLatency = 0, forcedUpdate = False):
         watcher = self.getWatcher(watcherProtocol)

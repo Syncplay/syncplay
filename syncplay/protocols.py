@@ -77,10 +77,11 @@ class SyncClientProtocol(JSONCommandProtocol):
         username = hello["username"] if hello.has_key("username") else None
         roomName = hello["room"]["name"] if hello.has_key("room") else None
         version = hello["version"] if hello.has_key("version") else None
-        return username, roomName, version
+        motd = hello["motd"] if hello.has_key("motd") else None
+        return username, roomName, version, motd
 
     def handleHello(self, hello):
-        username, roomName, version = self._extractHelloArguments(hello)
+        username, roomName, version, motd = self._extractHelloArguments(hello)
         if(not username or not roomName or not version):
             self.dropWithError(getMessage("en", "hello-server-error").format(hello))
         elif(version.split(".")[0:2] != syncplay.version.split(".")[0:2]):
@@ -89,6 +90,8 @@ class SyncClientProtocol(JSONCommandProtocol):
             self._client.setUsername(username)
             self._client.setRoom(roomName)
         self.logged = True
+        if(motd):
+            self._client.ui.showMessage(motd, True, True)
         self._client.ui.showMessage(getMessage("en", "connected-successful-notification"))
         self._client.sendFile()
     
@@ -283,10 +286,13 @@ class SyncServerProtocol(JSONCommandProtocol):
 
     def sendHello(self):
         hello = {}
-        hello["username"] = self._factory.watcherGetUsername(self)  
+        username = self._factory.watcherGetUsername(self)
+        hello["username"] = username
+        userIp = self.transport.getPeer().host
         room = self._factory.watcherGetRoom(self)
         if(room): hello["room"] = {"name": room}
         hello["version"] = syncplay.version
+        hello["motd"] = self._factory.getMotd(userIp, username, room)
         self.sendMessage({"Hello": hello})
             
     @requireLogged
