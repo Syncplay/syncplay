@@ -3,6 +3,7 @@
 *  `Not all files in the room are same` message is displayed after first unpause if that's the case
 *  `You're alone in the room' message is displayed after first unpause if that's the case
 *  All messages exported to messages.py 
+*  Full UTF-8 support for configs and user input
 
 
 1.2.5
