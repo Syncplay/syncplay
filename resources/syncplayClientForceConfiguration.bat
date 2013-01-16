@@ -1,1 +1,0 @@
-Syncplay.exe -g
