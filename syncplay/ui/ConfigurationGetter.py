@@ -5,6 +5,7 @@ import sys
 from syncplay import constants, utils
 from syncplay.messages import getMessage
 from syncplay.players.playerFactory import PlayerFactory
+import codecs
 try: 
     from syncplay.ui.GuiConfiguration import GuiConfiguration
 except ImportError:
@@ -123,7 +124,9 @@ class ConfigurationGetter(object):
 
     def _parseConfigFile(self, iniPath):
         parser = SafeConfigParser()
-        parser.read(iniPath)
+        if(not os.path.isfile(iniPath)):
+            open(iniPath, 'w').close()
+        parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in self._iniStructure.items():
             if(parser.has_section(section)):
                 for option in options:
@@ -163,7 +166,7 @@ class ConfigurationGetter(object):
         if(self._config['noStore']):
             return
         parser = SafeConfigParser()
-        parser.read(iniPath)
+        parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in self._iniStructure.items():
             if(not parser.has_section(section)):
                 parser.add_section(section)
@@ -173,7 +176,7 @@ class ConfigurationGetter(object):
                     changed = True
                 parser.set(section, option, str(self._config[option]))
         if(changed):
-            parser.write(file(iniPath, "w"))
+            parser.write(codecs.open(iniPath, "wb", "utf_8_sig"))
         
     def getConfiguration(self):
         iniPath = self._getConfigurationFilePath()

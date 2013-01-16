@@ -2,11 +2,11 @@ from __future__ import print_function
 import threading
 import time 
 import syncplay
-import os
 import re
 from syncplay import utils
 from syncplay import constants
 from syncplay.messages import getMessage
+import sys
 
 class ConsoleUI(threading.Thread):
     def __init__(self):
@@ -20,14 +20,17 @@ class ConsoleUI(threading.Thread):
         self._syncplayClient = client
         
     def run(self):
-        while True:
-            data = raw_input()
-            data = data.rstrip('\n\r')
-            if(not self.promptMode.isSet()):
-                self.PromptResult = data
-                self.promptMode.set()
-            elif(self._syncplayClient):
-                self._executeCommand(data)
+        try:
+            while True:
+                data = raw_input().decode(sys.stdin.encoding)
+                data = data.rstrip('\n\r')
+                if(not self.promptMode.isSet()):
+                    self.PromptResult = data
+                    self.promptMode.set()
+                elif(self._syncplayClient):
+                    self._executeCommand(data)
+        except EOFError:
+            pass
         
     def promptFor(self, prompt=">", message=""):
         if message <> "":
@@ -38,8 +41,7 @@ class ConsoleUI(threading.Thread):
         return self.PromptResult
 
     def showMessage(self, message, noTimestamp=False):
-        if(os.name == "nt"):
-            message = message.encode('ascii', 'replace') 
+        message = message.encode(sys.stdout.encoding, 'replace')
         if(noTimestamp):
             print(message)
         else:
