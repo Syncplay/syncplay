@@ -40,6 +40,7 @@ MPC_PATHS = [
              ]
 MPLAYER_PATHS = ["mplayer2"]
 MPV_PATHS = ["mpv", "/opt/mpv/mpv"]
+VLC_PATHS = ["C:\Program Files (x86)\VideoLAN\VLC\vlc.exe", "C:\Program Files\VideoLAN\VLC\vlc.exe"]
 #Changing these is usually not something you're looking for
 PLAYER_ASK_DELAY = 0.1
 PING_MOVING_AVERAGE_WEIGHT = 0.85

@@ -76,8 +76,7 @@ function detectchanges()
         
             if newfilepath ~= oldfilepath then
                 oldfilepath = newfilepath
-                notificationbuffer = notificationbuffer .. "filepath-change"..msgseperator..tostring(newfilepath)..msgterminator
-                notificationbuffer = notificationbuffer .. "file-length-change"..msgseperator..get_var("length")..msgterminator
+                notificationbuffer = notificationbuffer .. "filepath-change"..notificationmarker..msgterminator
             end
             
             notificationbuffer = notificationbuffer .. "playstate"..msgseperator..tostring(get_play_state())..msgterminator
@@ -90,7 +89,7 @@ function detectchanges()
         
         if newinputstate ~= oldinputstate then
             oldinputstate = newinputstate
-            notificationbuffer = "inputstate-change"..msgseperator..tostring(newinputstate)..msgterminator..notificationbuffer
+            notificationbuffer = notificationbuffer.."inputstate-change"..msgseperator..tostring(newinputstate)..msgterminator
         end
         
     return notificationbuffer
@@ -166,7 +165,7 @@ function set_var(vartoset, varvalue)
     return  errormsg
 end
 
-h:listen( "localhost:"..port)
+  h:listen( "localhost:"..port)
 --    h:listen( "*console" )
     
 function get_play_state()
@@ -194,6 +193,14 @@ function get_filepath ()
             local item = vlc.input.item()
             if item then
                 response = vlc.strings.decode_uri(item:uri())
+                
+                if (string.sub(response, 1, 8) == "file:///") then
+                    response = string.gsub(response, "file:///","")
+                    response = string.gsub(response, "/","\\")
+                else
+                    response = ""
+                    errormsg = noinput
+                end
             else
                 errormsg = noinput
             end
@@ -205,14 +212,34 @@ function get_filepath ()
 end
 
 function get_filename ()
+
+    local response
+    local index
+    local filename
+    filename = errormerge(get_filepath())
+    
+    if(filename ~= nil) and (filename ~= "") and (filename ~= noinput) then
+        index = string.len(tostring(string.match(filename, ".*\\")))
+        if index then
+            response = string.sub(tostring(filename), index+1)
+        end
+    else
+          response = noinput
+    end
+    
+    return response
+end
+
+function get_duration ()
     local response
     local errormsg
+    local item
     local input = vlc.object.input()
     
         if input then
             local item = vlc.input.item()
             if item then
-                response = item:name()
+                response = vlc.input.item():duration()
             else
                 errormsg = noinput
             end
@@ -222,6 +249,7 @@ function get_filename ()
         
     return response, errormsg
 end
+    
 
 function display_osd ( argument )
     local errormsg
@@ -246,27 +274,34 @@ function do_command ( command, argument)
     local command = tostring(command)
     local argument = tostring(argument)
     local errormsg = ""
-    local response = ""
-
-    local input = vlc.object.input()
-    
-     
+    local response = ""    
 
     if     command == "get-interface-version" then response           = "interface-version"..msgseperator..connectorversion..msgterminator
+    elseif command == "get-duration"          then response           = "duration"..msgseperator..errormerge(get_duration())..msgterminator
+    elseif command == "get-filepath"          then response           = "filepath"..msgseperator..errormerge(get_filepath())..msgterminator
+    elseif command == "get-filename"          then response           = "filename"..msgseperator..errormerge(get_filename())..msgterminator
     elseif command == "set-position"          then           errormsg = set_var("time", tonumber(argument))
     elseif command == "set-playstate"         then           errormsg = set_playstate(argument)
     elseif command == "set-rate"              then           errormsg = set_var("rate", tonumber(argument))
     elseif command == "display-osd"           then           errormsg = display_osd(argument) 
-    elseif command == "close-vlc"             then                      misc.quit()
+    elseif command == "close-vlc"             then                      vlc.misc.quit()
     else                                                     errormsg = unknowncommand
     end
     
-    if (tostring(errormsg) ~= nil) and (errormsg ~= "") then
+    if (errormsg ~= nil) and (errormsg ~= "") then
         response = command..errormarker..msgseperator..tostring(errormsg)..msgterminator
     end
 
     return response
     
+end
+
+function errormerge(argument, errormsg)
+    if (errormsg ~= nil) and (errormsg ~= "") then
+        do return errormsg end
+    end
+    
+    return argument
 end
 
 function set_playstate(argument)
@@ -302,9 +337,7 @@ while not vlc.misc.should_die() do
         local responsebuffer
         if not str then break end
         
-        
         local safestr = string.gsub(tostring(str), "\r", "")
-        
         if client.inputbuffer == nil then client.inputbuffer = "" end
         
         client.inputbuffer = client.inputbuffer .. safestr
