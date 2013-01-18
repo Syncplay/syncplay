@@ -100,15 +100,19 @@ class VlcPlayer(BasePlayer):
         match, name, value = self.RE_ANSWER.match(line), "", ""
         if match:
             name, value = match.group('command'), match.group('argument')
-
-        if (name == "filepath" and value != "no-input"):
+  
+        if(line == "filepath-change-notification"):
+            t = threading.Thread(target=self._onFileUpdate)
+            t.setDaemon(True)
+            t.start()
+        elif (name == "filepath" and value != "no-input"):
             self._filepath = value
             self._pathAsk.set()
         elif(name == "duration" and (value != "no-input")):
             self._duration = float(value)
             self._durationAsk.set()
         elif(name == "playstate"):
-            self._paused = bool(value == 'paused') if(value != "no-input") else self._client.getGlobalPaused()
+            self._paused = bool(value != 'playing') if(value != "no-input") else self._client.getGlobalPaused()
             self._pausedAsk.set()
         elif(name == "position"):
             self._position = float(value) if (value != "no-input") else self._client.getGlobalPosition()
@@ -118,10 +122,6 @@ class VlcPlayer(BasePlayer):
             self._filenameAsk.set()
         elif (line[:16] == "VLC media player"):
             self._vlcready.set()
-        elif(line == "filepath-change-notification"):
-            t = threading.Thread(target=self._onFileUpdate)
-            t.setDaemon(True)
-            t.start()
 
 
     @staticmethod
