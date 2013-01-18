@@ -26,6 +26,13 @@ class VlcPlayer(BasePlayer):
         self._filename = None
         self._filepath = None
         self._playerReady = True
+        
+        self._durationAsk = threading.Event()
+        self._filenameAsk = threading.Event()
+        self._pathAsk = threading.Event()
+        self._positionAsk = threading.Event()
+        self._pausedAsk = threading.Event()
+        self._vlcready = threading.Event()
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:
@@ -34,12 +41,6 @@ class VlcPlayer(BasePlayer):
             return 
         self._listener.setDaemon(True)
         self._listener.start()
-        self._durationAsk = threading.Event()
-        self._filenameAsk = threading.Event()
-        self._pathAsk = threading.Event()
-        self._positionAsk = threading.Event()
-        self._pausedAsk = threading.Event()
-        self._vlcready = threading.Event()
         self._vlcready.wait()
         self._preparePlayer()
         
@@ -103,10 +104,6 @@ class VlcPlayer(BasePlayer):
         if (name == "filepath" and value != "no-input"):
             self._filepath = value
             self._pathAsk.set()
-        if(line == "filepath-change-notification"):
-            t = threading.Thread(target=self._onFileUpdate)
-            t.setDaemon(True)
-            t.start()
         elif(name == "duration" and (value != "no-input")):
             self._duration = float(value)
             self._durationAsk.set()
@@ -121,6 +118,10 @@ class VlcPlayer(BasePlayer):
             self._filenameAsk.set()
         elif (line[:16] == "VLC media player"):
             self._vlcready.set()
+        elif(line == "filepath-change-notification"):
+            t = threading.Thread(target=self._onFileUpdate)
+            t.setDaemon(True)
+            t.start()
 
 
     @staticmethod
