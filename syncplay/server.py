@@ -93,17 +93,17 @@ class SyncFactory(Factory):
             tmpl = codecs.open(self._motdFilePath, "r", "utf-8-sig").read()
             args = dict(version=syncplay.version, userIp=userIp, username=username, room=room)
             try:
-                return Template(tmpl).substitute(args)
+                motd = Template(tmpl).substitute(args)
+                return motd if len(motd) < constants.SERVER_MAX_TEMPLATE_LENGTH else getMessage("en", "server-messed-up-motd-too-long").format(constants.SERVER_MAX_TEMPLATE_LENGTH, len(motd))
             except ValueError: 
-                print getMessage("en", "server-messed-up-motd")
-                return ""
+                return getMessage("en", "server-messed-up-motd-unescaped-placeholders")
         else:
             return ""
 
     def gethttpRequestReply(self):
         if(self._httpReplyFilePath and os.path.isfile(self._httpReplyFilePath)):
             tmpl = codecs.open(self._httpReplyFilePath, "r", "utf-8-sig").read()
-            return tmpl
+            return tmpl.encode('utf-8')
         else:
             return getMessage("en", "server-default-http-reply")
 
