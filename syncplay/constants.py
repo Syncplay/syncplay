@@ -51,7 +51,7 @@ MPC_MAX_RETRIES = 30
 MPC_PAUSE_TOGGLE_DELAY = 0.05
 
 #These are not changes you're looking for
-MPLAYER_SLAVE_ARGS = [ '-slave', '-msglevel', 'all=1:global=4']
+MPLAYER_SLAVE_ARGS = [ '-slave', '-msglevel', '-nomsgcolor', 'all=1:global=4']
 MPV_SLAVE_ARGS = [ '--slave-broken', '-msglevel', 'all=1:global=4']
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_]+)=(.+)$"
 UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
