@@ -24,23 +24,26 @@ COMMANDS_UNDO = ["u", "undo", "revert"]
 COMMANDS_LIST = ["l", "list", "users"]
 COMMANDS_PAUSE = ["p", "play", "pause"]
 COMMANDS_ROOM = ["r", "room"]
-COMMANDS_HELP = ['help', 'h', '?', '/?', '\?']
+COMMANDS_HELP = ['help', 'h', '?', '/?', r'\?']
 MPC_MIN_VER = "1.6.4"
 MPC_PATHS = [
-             "C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
-             "C:\Program Files\MPC-HC\mpc-hc.exe",
-             "C:\Program Files\MPC-HC\mpc-hc64.exe",
-             "C:\Program Files\Media Player Classic - Home Cinema\mpc-hc.exe",
-             "C:\Program Files\Media Player Classic - Home Cinema\mpc-hc64.exe",
-             "C:\Program Files (x86)\Media Player Classic - Home Cinema\mpc-hc.exe",
-             "C:\Program Files (x86)\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
-             "C:\Program Files\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
-             "C:\Program Files (x86)\Combined Community Codec Pack\MPC\mpc-hc.exe",
-             "C:\Program Files\MPC HomeCinema (x64)\mpc-hc64.exe",
+             r"C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
+             r"C:\Program Files\MPC-HC\mpc-hc.exe",
+             r"C:\Program Files\MPC-HC\mpc-hc64.exe",
+             r"C:\Program Files\Media Player Classic - Home Cinema\mpc-hc.exe",
+             r"C:\Program Files\Media Player Classic - Home Cinema\mpc-hc64.exe",
+             r"C:\Program Files (x86)\Media Player Classic - Home Cinema\mpc-hc.exe",
+             r"C:\Program Files (x86)\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
+             r"C:\Program Files\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
+             r"C:\Program Files (x86)\Combined Community Codec Pack\MPC\mpc-hc.exe",
+             r"C:\Program Files\MPC HomeCinema (x64)\mpc-hc64.exe",
              ]
 MPLAYER_PATHS = ["mplayer2"]
 MPV_PATHS = ["mpv", "/opt/mpv/mpv"]
-VLC_PATHS = ["C:\Program Files (x86)\VideoLAN\VLC\vlc.exe", "C:\Program Files\VideoLAN\VLC\vlc.exe"]
+VLC_PATHS = [
+             r"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
+             r"C:\Program Files\VideoLAN\VLC\vlc.exe"
+            ]
 #Changing these is usually not something you're looking for
 PLAYER_ASK_DELAY = 0.1
 PING_MOVING_AVERAGE_WEIGHT = 0.85
