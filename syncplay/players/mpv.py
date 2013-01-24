@@ -1,5 +1,3 @@
-import subprocess
-import threading
 from syncplay.players.mplayer import MplayerPlayer
 from syncplay import constants
 
