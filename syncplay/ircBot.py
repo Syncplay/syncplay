@@ -128,7 +128,7 @@ class Bot(object):
 							if time == None: time = 0
 							for u in users:
 								if u['length'] == None: continue
-								out += ' [' + time + '/' + utils.formatTime(u['length']) + '] '
+								out += ' [' + utils.formatTime(time) + '/' + utils.formatTime(u['length']) + '] '
 								break
 							else:
 								out += ' '
