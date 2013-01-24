@@ -12,9 +12,10 @@ from syncplay.messages import getMessage
 import codecs
 import os
 from string import Template
+from ircBot import Bot as IRCBot
 
 class SyncFactory(Factory):
-    def __init__(self, password = '', motdFilePath = None, httpReplyFilePath= None):
+    def __init__(self, password = '', motdFilePath = None, httpReplyFilePath= None, ircConfig = None, ircVerbose = False):
         print getMessage("en", "welcome-server-notification").format(syncplay.version)
         if(password):
             password = hashlib.md5(password).hexdigest()
@@ -24,6 +25,45 @@ class SyncFactory(Factory):
         self._rooms = {}
         self._roomStates = {}
         self._roomUpdate = threading.RLock()
+        self.ircVerbose = ircVerbose,
+        ircConnectionData = self.readIrcConfig(ircConfig)
+        if(ircConnectionData):
+            self.setupIRCBot(ircConnectionData)
+    
+    def readIrcConfig(self, ircConfig): #TODO:
+        if(ircConfig and os.path.isfile(ircConfig)):
+            cfg = codecs.open(ircConfig, "r", "utf-8-sig").read()
+            cfg = cfg.splitlines()
+            if(len(cfg) == 7):
+                ircConnectionData = {}
+                ircConnectionData['server'] = cfg[0]
+                ircConnectionData['serverPassword'] = cfg[1]
+                ircConnectionData['port'] = int(cfg[2])
+                ircConnectionData['nick'] = cfg[3]
+                ircConnectionData['nickservPass'] = cfg[4]
+                ircConnectionData['channelPassword'] = cfg[5] 
+                ircConnectionData['channel'] = cfg[6]
+                return ircConnectionData
+        
+    def setupIRCBot(self, ircConnectionData):
+            botFunctions = [
+                    self.ircPauseRoom,
+                    self.getRooms,
+                    self.getRoomPosition,
+                    self.ircSetRoomPosition,
+                    self.getRoomUsernames,
+                    self.isRoomPaused,                            
+                    ]
+            self.ircBot = IRCBot(
+                   ircConnectionData['server'],
+                   ircConnectionData['serverPassword'],
+                   ircConnectionData['port'],
+                   ircConnectionData['nick'],
+                   ircConnectionData['nickservPass'],
+                   ircConnectionData['channel'],
+                   ircConnectionData['channelPassword'],
+                   botFunctions,
+                   )
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)        
@@ -54,6 +94,8 @@ class SyncFactory(Factory):
         reactor.callLater(0.1, watcher.scheduleSendState)
         l = lambda w: w.sendUserSetting(username, roomName, None, {"joined": True})
         self.broadcast(watcherProtocol, l)
+        if(self.ircVerbose):
+            self.ircBot.sp_joined(username, roomName)
 
     def getWatcher(self, watcherProtocol):
         for room in self._rooms.itervalues():
@@ -157,6 +199,7 @@ class SyncFactory(Factory):
         self.__updateWatcherPing(latencyCalculation, watcher)
         watcher.lastUpdate = time.time()
         if(watcher.file):
+            oldPosition = self._roomStates[watcher.room]["position"]
             if(position is not None):
                 self.__updatePositionState(position, doSeek, watcher)
             pauseChanged = False
@@ -164,6 +207,13 @@ class SyncFactory(Factory):
                 pauseChanged = self.__updatePausedState(paused, watcher)
             forceUpdate = self.__shouldServerForceUpdateOnRoom(pauseChanged, doSeek)
             if(forceUpdate):
+                if(self.ircVerbose):
+                    if(paused and pauseChanged):
+                        self.ircBot.sp_paused(watcher.name, watcher.room)
+                    elif(not paused and pauseChanged):
+                        self.ircBot.sp_unpaused(watcher.name, watcher.room)
+                    if(doSeek and position):
+                        self.ircBot.sp_seek(watcher.name, watcher.room, oldPosition, position)
                 l = lambda w: self.sendState(w, doSeek, watcher.latency, forceUpdate)
                 self.broadcastRoom(watcher.watcherProtocol, l)
 
@@ -177,7 +227,9 @@ class SyncFactory(Factory):
         watcher.deactivate()
         self._deleteRoomIfEmpty(watcher.room)
         print getMessage("en", "client-left-server-notification").format(watcher.name) 
-        
+        if(self.ircVerbose):
+            self.ircBot.sp_left(watcher.name, watcher.room)
+            
     def watcherGetUsername(self, watcherProtocol):
         return self.getWatcher(watcherProtocol).name
     
@@ -206,6 +258,8 @@ class SyncFactory(Factory):
         watcher.file = file_
         l = lambda w: w.sendUserSetting(watcher.name, watcher.room, watcher.file, None)
         self.broadcast(watcherProtocol, l)
+        if(self.ircVerbose):
+            self.ircBot.sp_fileplaying(watcher.name, watcher.file['name'], watcher.room)
     
     def broadcastRoom(self, sender, what):
         room = self._rooms[self.watcherGetRoom(sender)]
@@ -220,6 +274,54 @@ class SyncFactory(Factory):
                     for receiver in room:
                         what(receiver)
     
+    def _findUserByUsername(self, username):
+        with self._roomUpdate:
+            for room in self._rooms.itervalues():
+                for user in room.itervalues():
+                    if user.name == username:
+                        return user
+    
+    def ircPauseRoom(self, setBy, paused):
+        user = self._findUserByUsername(setBy)
+        if(user):
+            with self._roomUpdate:
+                self._roomStates[user.room]['paused'] = paused
+                self._roomStates[user.room]['setBy'] = "IRC: " + setBy
+            l = lambda w: self.sendState(w, False, user.latency, True)
+            self.broadcastRoom(user.watcherProtocol, l)
+  
+    
+    def getRooms(self):
+        return self._rooms.keys()
+    
+    def getRoomPosition(self, room):
+        with self._roomUpdate:
+            if room in self._roomStates:
+                return self._roomStates[room]["position"]
+            
+    def ircSetRoomPosition(self, setBy, time):
+        user = self._findUserByUsername(setBy)
+        if(user):
+            with self._roomUpdate:
+                self._roomStates[user.room]['paused'] = time
+                self._roomStates[user.room]['setBy'] = "IRC: " + setBy 
+            l = lambda w: self.sendState(w, True, user.latency, True)
+            self.broadcastRoom(user.watcherProtocol, l)
+  
+    
+    def getRoomUsernames(self, room):
+        l = []
+        with self._roomUpdate:
+            if room in self._rooms:
+                for user in self._rooms[room].itervalues():
+                    l.append({'nick': user.name, 'file': user.file['name'], "length": user.file['duration']})
+        return l
+            
+    def isRoomPaused(self, room):
+        with self._roomUpdate:
+            if room in self._roomStates:
+                return self._roomStates[room]["paused"]
+   
 class SyncIsolatedFactory(SyncFactory):
     def broadcast(self, sender, what):
         self.broadcastRoom(sender, what)

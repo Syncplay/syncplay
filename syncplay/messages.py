@@ -110,6 +110,8 @@ en = {
       "server-messed-up-motd-too-long": "Message of the Day is too long - maximum of {} chars, {} given.",
       "server-http-reply-argument": "path to file from which http reply will be fetched",
       "server-default-http-reply": "This server should not be requested with your browser, but with Syncplay software available from http://syncplay.pl",
+      "server-irc-verbose": "Should server actively report changes in rooms",
+      "server-irc-config": "Path to irc bot config files",
       
       #Server errors
       "unknown-command-server-error" : "Unknown command {}", #message

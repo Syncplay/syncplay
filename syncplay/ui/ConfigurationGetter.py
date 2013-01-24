@@ -208,3 +208,5 @@ class ServerConfigurationGetter(object):
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("en", "server-isolate-room-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("en", "server-motd-argument"))
         self._argparser.add_argument('--http-reply-file', metavar='file', type=str, nargs='?', help=getMessage("en", "server-http-reply-argument"))
+        self._argparser.add_argument('--irc-verbose', action='store_true', help=getMessage("en", "server-irc-verbose"))
+        self._argparser.add_argument('--irc-config-file', metavar='file', type=str, nargs='?', help=getMessage("en", "server-irc-config"))
