@@ -105,8 +105,7 @@ class SyncFactory(Factory):
         self._createRoomIfDoesntExist(roomName)
         watcher = Watcher(self, watcherProtocol, username, roomName)
         with self._roomUpdate:
-            self._rooms[roomName][watcherProtocol] = watcher
-        print getMessage("en", "client-connected-room-server-notification").format(username, roomName, watcherProtocol.transport.getPeer().host)    
+            self._rooms[roomName][watcherProtocol] = watcher  
         reactor.callLater(0.1, watcher.scheduleSendState)
         l = lambda w: w.sendUserSetting(username, roomName, None, {"joined": True})
         self.broadcast(watcherProtocol, l)
@@ -242,7 +241,6 @@ class SyncFactory(Factory):
         self._removeWatcherFromTheRoom(watcherProtocol)
         watcher.deactivate()
         self._deleteRoomIfEmpty(watcher.room)
-        print getMessage("en", "client-left-server-notification").format(watcher.name) 
         if(self.ircVerbose):
             self.ircBot.sp_left(watcher.name, watcher.room)
             
