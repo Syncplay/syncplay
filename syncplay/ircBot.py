@@ -175,8 +175,9 @@ def handlingThread(sock, bot):
 
 			lsplit = line.split(':')
 			if len(lsplit) >= 2:
-				if lsplit[1].split(' ')[1] == '404':
-					bot.join(bot.channel, bot.channelPassword)
+				if lsplit[1].split(' ') > 1:
+					if lsplit[1].split(' ')[1] == '404':
+						bot.join(bot.channel, bot.channelPassword)
 
 				if 'PRIVMSG' in lsplit[1] or 'NOTICE' in lsplit[1]:
 					# ---BEGIN WTF BLOCK---
