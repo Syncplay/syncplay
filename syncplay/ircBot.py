@@ -5,6 +5,7 @@
 import socket
 import threading
 from syncplay import utils
+from time import sleep
 
 class Bot(object):
 	def __init__(self, server='irc.rizon.net', serverPassword='', port=6667, nick='SyncBot', nickservPass='', channel='', channelPassword='', functions=[]):
@@ -17,10 +18,10 @@ class Bot(object):
 		#	channel 		- channel to autojoin and interact with
 		#	channelPassword		- if channel is +k
 		#	functions		- list/tuple of functions that can be used from the bot:
-		#		* pause(setBy, room, state=bool)
+		#		* pause(setBy, state=bool)
 		#		* getRooms() -> list
 		#		* getPosition(room) -> int
-		#		* setPosition(setBy, room, seconds)
+		#		* setPosition(setBy, seconds)
 		#		* getUsers(room) -> list of {'nick': str, 'file': str, 'length': int}
 		#		* isPaused(room) -> bool		
 
@@ -64,6 +65,8 @@ class Bot(object):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has paused (room ' + room + ')')
 	def sp_fileplaying(self, who, filename, room): #for when syncplay knows what filename is being played
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' is playing "' + filename + '" (room ' + room + ')')
+	def sp_seek(self, who, fromTime, toTime, room):
+		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has jumped from ' + utils.formatTime(fromTime) + ' to ' + utils.formatTime(toTime) +' (room ' + room + ')')
 	##################################
 
 	def sockSend(self, s):
@@ -83,6 +86,7 @@ class Bot(object):
 		self.sockSend('NICK ' + newnick)
 		self.nick = newnick
 	def irc_onMsg(self, nickFrom, host, to, msg):
+		sleep(0.5)
 		if to[0] == '#': #channel
 			split = msg.split(' ')
 
@@ -123,45 +127,33 @@ class Bot(object):
 								else:
 									out += chr(3) + '2' + user['nick'] + chr(15) + ', '
 								i += 1
-							self.msg(nickFrom, to, out)
+							self.msg(to, out)
 				else:
 					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !roominfo [room]')
 			elif split[0].lower() == '!pause':
-				if len(split) >= 2:
-					rooms = self.functions[1]()
-					for room in split[1:]:
-						if (room in rooms) == False:
-							self.msg(to, chr(3) + '5Error!' + chr(15) + ' Room does not exists (' + room + ')')
-						else:
-							users = self.functions[4](room)
-							for u in users:
-								if u['nick'] == nickFrom:
-									break
-							else:
-								self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick is not in the specified room')
-								continue
+				rooms = self.functions[1]()
 
-							self.functions[6](nickFrom, room, True)
-				else:
-					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !pause [room]')							
+				for room in rooms:
+					users = self.functions[4](room)
+					for u in users:
+						if u['nick'] == nickFrom:
+							self.functions[6](nickFrom, True)
+							break
+					else:
+						self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
+						return
 			elif split[0].lower() == '!play':
-				if len(split) >= 2:
-					rooms = self.functions[1]()
-					for room in split[1:]:
-						if (room in rooms) == False:
-							self.msg(to, chr(3) + '5Error!' + chr(15) + ' Room does not exists (' + room + ')')
-						else:
-							users = self.functions[4](room)
-							for u in users:
-								if u['nick'] == nickFrom:
-									break
-							else:
-								self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick is not in the specified room')
-								continue
-
-							self.functions[6](room, False)							
-				else:
-					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !play [room]')
+				rooms = self.functions[1]()
+				
+				for room in rooms:
+					users = self.functions[4](room)
+					for u in users:
+						if u['nick'] == nickFrom:
+							self.functions[6](nickFrom, False)
+							break
+					else:
+						self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
+						return
 			elif split[0].lower() == '!help':
 				self.msg(to, chr(2) + 'Available commands:' + chr(15) + ' !rooms / !roominfo [room] / !pause / !play')
 
