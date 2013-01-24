@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Author: HarHar (https://github.com/HarHar)
+# @author HarHar
 
 import sys
 import os
