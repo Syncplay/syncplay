@@ -6,6 +6,7 @@ import socket
 import threading
 from syncplay import utils
 from time import sleep
+import traceback
 
 class Bot(object):
 	def __init__(self, server='irc.rizon.net', serverPassword='', port=6667, nick='SyncBot', nickservPass='', channel='', channelPassword='', functions=[]):
@@ -49,7 +50,7 @@ class Bot(object):
 			self.sock.recv(4096) #We don't want to join if nickserv hasn't done its job (shouldn't really matter, but good for vHost)
 
 		if channel != '':
-			self.join(channel)
+			self.join(channel, channelPassword)
 
 		self.active = True
 		self.thread = threading.Thread(target=handlingThread, args=(self.sock, self))
@@ -65,17 +66,22 @@ class Bot(object):
 	def sp_paused(self, who, room):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has paused (room ' + room + ')')
 	def sp_fileplaying(self, who, filename, room): #for when syncplay knows what filename is being played
+		if filename == '':
+			return
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' is playing "' + filename + '" (room ' + room + ')')
 	def sp_seek(self, who, fromTime, toTime, room):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has jumped from ' + utils.formatTime(fromTime) + ' to ' + utils.formatTime(toTime) +' (room ' + room + ')')
 
 	def sockSend(self, s):
-		self.sock.send(s + '\r\n')
+		self.sock.send(s + u'\r\n')
 	def msg(self, who, message):
 		self.sockSend('PRIVMSG ' + who + ' :' + message)
 	def join(self, channel, passw=''):
 		if passw != '': passw = ' ' + passw
-		self.sockSend('JOIN ' + channel + passw)
+		self.sockSend('\r\nJOIN ' + channel + passw)
+		#Just to make sure we joined; doesn't hurt anyone
+		sleep(1)
+		self.sockSend('\r\nJOIN ' + channel + passw)
 	def part(self, channel, reason=''):
 		self.sockSend('PART ' + channel + ' :' + reason)
 	def quit(self, reason='Leaving'):
@@ -94,7 +100,7 @@ class Bot(object):
 				rooms = self.functions[1]()
 
 				if len(rooms) == 0:
-					self.msg(to, chr(3) + '5Error!' + chr(15) + ' No rooms found on server')
+					self.msg(to, chr(3) + '12Notice:' + chr(15) + ' No rooms found on server')
 					return
 
 				out = 'Currently the Syncplay server hosts viewing sessions as follows: '
@@ -118,8 +124,21 @@ class Bot(object):
 							users = self.functions[4](room)
 							paused = self.functions[5](room)
 							out = chr(2) + '<Paused>' + chr(15) if paused else chr(2) + '<Playing>' + chr(15)
-							out += ' [' + utils.formatTime(self.functions[2](room)) + '/' + utils.formatTime(users[0]['length']) + '] '
-							out += users[0]['file']
+							time = self.functions[2](room)
+							if time == None: time = 0
+							for u in users:
+								if u['length'] == None: continue
+								out += ' [' + utils.formatTime(time) + '/' + utils.formatTime(u['length']) + '] '
+								break
+							else:
+								out += ' '
+
+							for u in users:
+								if u['file'] == None: continue
+								out += u['file']
+								break
+							else:
+								 out += '[no file]'
 							self.msg(to, out)
 							out = 'Users: '
 							i = 0
@@ -141,7 +160,7 @@ class Bot(object):
 					users = self.functions[4](room)
 					for u in users:
 						if u['nick'] == nickFrom:
-							self.functions[6](nickFrom, True)
+							self.functions[0](nickFrom, True)
 							return
 				self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
 			elif split[0].lower() == '!play':
@@ -151,7 +170,7 @@ class Bot(object):
 					users = self.functions[4](room)
 					for u in users:
 						if u['nick'] == nickFrom:
-							self.functions[6](nickFrom, False)
+							self.functions[0](nickFrom, False)
 							return
 				self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
 			elif split[0].lower() == '!help':
@@ -161,32 +180,39 @@ def handlingThread(sock, bot):
 	while bot.active:
 		rcvd = sock.recv(4096).split('\n')
 		for line in rcvd:
-			line = line.replace('\r', '')
+			try:
+				line = line.replace('\r', '')
 
-			if line.split(' ')[0] == 'PING':
-				try:
-					sock.send('\r\nPONG ' + line.split(' ')[1].replace(':', '') + '\r\n')
-				except: #if we were fooled by the server :C
-					sock.send('\r\nPONG\r\n')
-				#\r\n on the beggining too because if we send two things too fast, the IRC server can discern
+				if line.split(' ')[0] == 'PING':
+					try:
+						sock.send('\r\nPONG ' + line.split(' ')[1].replace(':', '') + '\r\n')
+					except: #if we were fooled by the server :C
+						sock.send('\r\nPONG\r\n')
+					#\r\n on the beggining too because if we send two things too fast, the IRC server can discern
 
-			lsplit = line.split(':')
-			if len(lsplit) >= 2:
-				if 'PRIVMSG' in lsplit[1] or 'NOTICE' in lsplit[1]:
-					# ---BEGIN WTF BLOCK---
-					lsplit = line.split(':')
-					addrnfrom = ''
-					if '~' in lsplit[1]:
-						addrnfrom = lsplit[1].split('~')[1].split(' ')[0]
-						nfrom = lsplit[1].split('!')[0]
-					else:
-						nfrom = lsplit[1].split('!')[0]
+				lsplit = line.split(':')
+				if len(lsplit) >= 2:
+					if len(lsplit[1].split(' ')) >= 2:
+						if lsplit[1].split(' ')[1] == '404':
+							bot.join(bot.channel, bot.channelPassword)
 
-					if len(lsplit[1].split()) >= 3:
-						to = lsplit[1].split()[2]
-					msg = ''
-					for brks in lsplit[2:]:
-						msg += brks + ':'
-					msg = msg[:-1].lstrip()
-					# ---END WTF BLOCK- --
-					bot.irc_onMsg(nfrom, addrnfrom, to, msg)
+					if 'PRIVMSG' in lsplit[1] or 'NOTICE' in lsplit[1]:
+						# ---BEGIN WTF BLOCK---
+						lsplit = line.split(':')
+						addrnfrom = ''
+						if '~' in lsplit[1]:
+							addrnfrom = lsplit[1].split('~')[1].split(' ')[0]
+							nfrom = lsplit[1].split('!')[0]
+						else:
+							nfrom = lsplit[1].split('!')[0]
+
+						if len(lsplit[1].split()) >= 3:
+							to = lsplit[1].split()[2]
+						msg = ''
+						for brks in lsplit[2:]:
+							msg += brks + ':'
+						msg = msg[:-1].lstrip()
+						# ---END WTF BLOCK- --
+						bot.irc_onMsg(nfrom, addrnfrom, to, msg)
+			except:
+				print traceback.format_exc()
