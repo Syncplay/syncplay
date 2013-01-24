@@ -25,7 +25,7 @@ class SyncFactory(Factory):
         self._rooms = {}
         self._roomStates = {}
         self._roomUpdate = threading.RLock()
-        self.ircVerbose = ircVerbose,
+        self.ircVerbose = ircVerbose
         ircConnectionData = self.readIrcConfig(ircConfig)
         if(ircConnectionData):
             self.setupIRCBot(ircConnectionData)
@@ -213,7 +213,7 @@ class SyncFactory(Factory):
                     elif(not paused and pauseChanged):
                         self.ircBot.sp_unpaused(watcher.name, watcher.room)
                     if(doSeek and position):
-                        self.ircBot.sp_seek(watcher.name, watcher.room, oldPosition, position)
+                        self.ircBot.sp_seek(watcher.name, oldPosition, position, watcher.room)
                 l = lambda w: self.sendState(w, doSeek, watcher.latency, forceUpdate)
                 self.broadcastRoom(watcher.watcherProtocol, l)
 
