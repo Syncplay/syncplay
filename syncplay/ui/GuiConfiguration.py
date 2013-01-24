@@ -20,6 +20,7 @@ class GuiConfiguration:
         self.window.add(vbox)
         vbox.show()
         self._addLabeledEntries(self.config, vbox)
+        self._addCheckboxEntries(self.config, vbox)
         self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
         button = gtk.Button(stock=gtk.STOCK_SAVE)
         button.connect("clicked", lambda w: self._saveDataAndLeave())
@@ -48,7 +49,7 @@ class GuiConfiguration:
         self.roomEntry = self._addLabeledEntryToVbox(getMessage("en", "room-label"), config['room'], vbox, lambda __, _: self._saveDataAndLeave())
         self.passEntry = self._addLabeledEntryToVbox(getMessage("en", "password-label"), config['password'], vbox, lambda __, _: self._saveDataAndLeave())
         self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillPlayerPath(), vbox, lambda __, _: self._saveDataAndLeave())
- 
+
     def _tryToFillPlayerPath(self):
         for path in self._availablePlayerPaths:
             if(os.path.isfile(path)):
@@ -92,12 +93,22 @@ class GuiConfiguration:
         hbox.show()
         return entry
     
+    def _addCheckboxEntries(self, config, vbox):
+        CheckVbox = gtk.VBox(False, 0)
+        vbox.pack_start(CheckVbox, False, False, 0)
+        alwaysShowCheck = gtk.CheckButton("Always Show This Dialog")
+        alwaysShowCheck.show()
+        doNotStoreConfigCheck = gtk.CheckButton("Do Not Store This Configuration")
+        doNotStoreConfigCheck.show()
+        slowOnDesyncCheck = gtk.CheckButton("Slow Down On Desync")
+        slowOnDesyncCheck.show()
+        CheckVbox.pack_start(alwaysShowCheck, False, False, 0)
+        CheckVbox.add(doNotStoreConfigCheck)
+        CheckVbox.add(slowOnDesyncCheck)
+        CheckVbox.show()
+
     def setAvailablePaths(self, paths):
         self._availablePlayerPaths = paths
     
     class WindowClosed(Exception):
         pass
-
-
-                
-                
