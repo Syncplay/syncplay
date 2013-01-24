@@ -1,29 +1,39 @@
 --[==========================================================================[
- syncplay.lua: Syncplay interface module
+ syncplay.lua: Syncplay interface module for VLC
 --[==========================================================================[
 
  Author: Etoh
- Project: http://syncplay.pl
+ Project: http://syncplay.pl/
+ Version: 0.0.4
  
 --[==========================================================================[
 
- === Commands and response ===
- = Note: ? is optional response, * is mandatory response; uses \n terminator
+
+ === Commands and responses ===
+ = Note: ? denotes optional responses; * denotes mandatory response; uses \n terminator.
 
  [On connect]
     >> VLC version
 
  .
     ? >> inputstate-change: [<input/no-input>]
-    ? >> filepath-change: [filepath URI]
-    ? >> file-length: [decimal seconds]
+    ? >> filepath-change-notification
     
     * >> playstate: [<playing/paused/no-input>]
     * >> position: [<decimal seconds/no-input>]
 
  get-interface-version
-    * >> interface-version: [sncplay connector version]
-
+    * >> interface-version: [syncplay connector version]
+ 
+ get-duration
+    * >> duration: [<duration/no-input>]
+	
+ get-filepath
+    * >> filepath: [<filepath/no-input>]
+	
+ get-filename
+    * >> filepath: [<filename/no-input>]
+ 
  set-position: [decimal seconds]
     ? >> play-error: no-input
 
@@ -45,7 +55,7 @@
 require "common"
 require "host"
 
-local connectorversion = "0.0.3"
+local connectorversion = "0.0.4"
 
 local port
 
@@ -66,7 +76,18 @@ local oldinputstate
 local newfilepath
 local newinputstate
 
+-- Start hosting Syncplay interface.
+
+port = tonumber(config["port"])
+if (port == nil or port < 1) then port = 4123 end
+
+vlc.msg.info("Hosting Syncplay interface on port: "..port)
+
+h = host.host()
+
 function detectchanges()
+    -- Detects changes in VLC to report to Syncplay.
+    -- [Used by the polll / "." command]
 
     local notificationbuffer = ""
 
@@ -96,6 +117,9 @@ function detectchanges()
 end
 
 function get_args (argument, argcount)
+    -- Converts comma-space-seperated values into array of a given size, with last item absorbing all remaining data if needed.
+	-- [Used by the display-osd command]
+	
     local argarray = {}
     local index
     local i
@@ -126,19 +150,10 @@ function get_args (argument, argcount)
     
 end
 
-port = tonumber(config["port"])
-if (port == nil or port < 1) then port = 4123 end
-
-vlc.msg.info("Hosting Syncplay interface on port: "..port)
-
-h = host.host()
-
-    -- Bypass any authentication
-function on_password( client )
-    client:switch_status( host.status.read )
-end
 
 function get_var( vartoget )
+    -- [Used by the poll / '.' command to get time]
+	
     local response
     local errormsg
     local input = vlc.object.input()
@@ -152,7 +167,10 @@ function get_var( vartoget )
     return response, errormsg
 end
 
+
 function set_var(vartoset, varvalue)
+    -- [Used by the set-time and set-rate commands]
+	
     local errormsg
     local input = vlc.object.input()
     
@@ -166,9 +184,10 @@ function set_var(vartoset, varvalue)
 end
 
   h:listen( "localhost:"..port)
---    h:listen( "*console" )
-    
+
 function get_play_state()
+    -- [Used by the get-playstate command]
+	
     local response
     local errormsg
     local input = vlc.object.input()
@@ -184,6 +203,8 @@ function get_play_state()
 end
 
 function get_filepath ()
+    -- [Used by get-filepath command]
+	
     local response
     local errormsg
     local item
@@ -212,7 +233,8 @@ function get_filepath ()
 end
 
 function get_filename ()
-
+    -- [Used by get-filename command]
+	
     local response
     local index
     local filename
@@ -231,6 +253,8 @@ function get_filename ()
 end
 
 function get_duration ()
+    -- [Used by get-duration command]
+
     local response
     local errormsg
     local item
@@ -252,6 +276,7 @@ end
     
 
 function display_osd ( argument )
+    -- [Used by display-osd command]
     local errormsg
     local osdarray
     local input = vlc.object.input()
@@ -268,6 +293,8 @@ end
 
     
 function do_command ( command, argument)
+    -- Processes all commands sent by Syncplay (see protocol, above).
+	
     if command == "." then
         do return detectchanges() end
     end
@@ -296,7 +323,10 @@ function do_command ( command, argument)
     
 end
 
+
 function errormerge(argument, errormsg)
+	-- Used to integrate 'no-input' error messages into command responses.
+	
     if (errormsg ~= nil) and (errormsg ~= "") then
         do return errormsg end
     end
@@ -305,6 +335,8 @@ function errormerge(argument, errormsg)
 end
 
 function set_playstate(argument)
+    -- [Used by the set-playstate command]
+	
     local errormsg
     local input = vlc.object.input()
     local playstate
@@ -318,7 +350,7 @@ function set_playstate(argument)
     return errormsg
 end
 
-    -- main loop
+    -- main loop, which alternates between writing and reading
 while not vlc.misc.should_die() do
         -- accept new connections and select active clients
     local write, read = h:accept_and_select()
