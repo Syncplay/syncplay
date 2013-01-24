@@ -42,9 +42,11 @@ class Bot(object):
 			self.sockSend('PASS ' + serverPassword)
 		self.sockSend('NICK ' + nick)
 		self.sockSend('USER ' + nick + ' ' + nick + ' ' + nick + ' :SyncPlay Bot') #Don't ask me
+		self.sock.recv(4096) #Wait for authentication to finish
 
 		if nickservPass != '':
 			self.msg('NickServ', 'IDENTIFY ' + nickservPass)
+			self.sock.recv(4096) #We don't want to join if nickserv hasn't done its job (shouldn't really matter, but good for vHost)
 
 		if channel != '':
 			self.join(channel)
@@ -54,7 +56,6 @@ class Bot(object):
 		self.thread.setDaemon(True)
 		self.thread.start()
 
-	##Events that have to be binded##
 	def sp_joined(self, who, room):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has joined ' + room)
 	def sp_left(self, who, room):
@@ -67,7 +68,6 @@ class Bot(object):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' is playing "' + filename + '" (room ' + room + ')')
 	def sp_seek(self, who, fromTime, toTime, room):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has jumped from ' + utils.formatTime(fromTime) + ' to ' + utils.formatTime(toTime) +' (room ' + room + ')')
-	##################################
 
 	def sockSend(self, s):
 		self.sock.send(s + '\r\n')
@@ -92,6 +92,10 @@ class Bot(object):
 
 			if split[0].lower() == '!rooms':
 				rooms = self.functions[1]()
+
+				if len(rooms) == 0:
+					self.msg(to, chr(3) + '5Error!' + chr(15) + ' No rooms found on server')
+					return
 
 				out = 'Currently the Syncplay server hosts viewing sessions as follows: '
 				i = 0
@@ -138,10 +142,8 @@ class Bot(object):
 					for u in users:
 						if u['nick'] == nickFrom:
 							self.functions[6](nickFrom, True)
-							break
-					else:
-						self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
-						return
+							return
+				self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
 			elif split[0].lower() == '!play':
 				rooms = self.functions[1]()
 				
@@ -150,10 +152,8 @@ class Bot(object):
 					for u in users:
 						if u['nick'] == nickFrom:
 							self.functions[6](nickFrom, False)
-							break
-					else:
-						self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
-						return
+							return
+				self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
 			elif split[0].lower() == '!help':
 				self.msg(to, chr(2) + 'Available commands:' + chr(15) + ' !rooms / !roominfo [room] / !pause / !play')
 
