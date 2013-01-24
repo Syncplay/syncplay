@@ -59,7 +59,6 @@ class SyncFactory(Factory):
                 elif("irc.channel: " in line):
                     ircConnectionData['channel'] = line.split(": ")[1]
                     
-            print ircConnectionData
             return ircConnectionData
         
     def setupIRCBot(self, ircConnectionData):
