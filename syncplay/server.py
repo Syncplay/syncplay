@@ -34,16 +34,33 @@ class SyncFactory(Factory):
         if(ircConfig and os.path.isfile(ircConfig)):
             cfg = codecs.open(ircConfig, "r", "utf-8-sig").read()
             cfg = cfg.splitlines()
-            if(len(cfg) == 7):
-                ircConnectionData = {}
-                ircConnectionData['server'] = cfg[0]
-                ircConnectionData['serverPassword'] = cfg[1]
-                ircConnectionData['port'] = int(cfg[2])
-                ircConnectionData['nick'] = cfg[3]
-                ircConnectionData['nickservPass'] = cfg[4]
-                ircConnectionData['channelPassword'] = cfg[5] 
-                ircConnectionData['channel'] = cfg[6]
-                return ircConnectionData
+            ircConnectionData = {
+                                 "server": "",
+                                 "serverPassword": "",
+                                 "port": "",
+                                 "nick": "",
+                                 "nickservPass": "",
+                                 "channelPassword": "",
+                                 "channel": ""
+                                 }
+            for line in cfg:
+                if("irc.server: " in line):
+                    ircConnectionData['server'] = line.split(": ")[1]
+                elif("irc.serverPassword: " in line):
+                    ircConnectionData['serverPassword'] = line.split(": ")[1]
+                elif("irc.serverPort: " in line):
+                    ircConnectionData['port'] = int(line.split(": ")[1])
+                elif("irc.botName: " in line):
+                    ircConnectionData['nick'] = line.split(": ")[1]
+                elif("irc.nicservPass: " in line):
+                    ircConnectionData['nickservPass'] = line.split(": ")[1]
+                elif("irc.channelPassword: " in line):
+                    ircConnectionData['channelPassword'] = line.split(": ")[1]
+                elif("irc.channel: " in line):
+                    ircConnectionData['channel'] = line.split(": ")[1]
+                    
+            print ircConnectionData
+            return ircConnectionData
         
     def setupIRCBot(self, ircConnectionData):
             botFunctions = [
