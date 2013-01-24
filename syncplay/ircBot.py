@@ -54,7 +54,6 @@ class Bot(object):
 		self.thread.setDaemon(True)
 		self.thread.start()
 
-	##Events that have to be binded##
 	def sp_joined(self, who, room):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has joined ' + room)
 	def sp_left(self, who, room):
@@ -67,7 +66,6 @@ class Bot(object):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' is playing "' + filename + '" (room ' + room + ')')
 	def sp_seek(self, who, fromTime, toTime, room):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has jumped from ' + utils.formatTime(fromTime) + ' to ' + utils.formatTime(toTime) +' (room ' + room + ')')
-	##################################
 
 	def sockSend(self, s):
 		self.sock.send(s + '\r\n')
