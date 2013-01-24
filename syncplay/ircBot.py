@@ -42,9 +42,11 @@ class Bot(object):
 			self.sockSend('PASS ' + serverPassword)
 		self.sockSend('NICK ' + nick)
 		self.sockSend('USER ' + nick + ' ' + nick + ' ' + nick + ' :SyncPlay Bot') #Don't ask me
+		self.sock.recv(4096) #Wait for authentication to finish
 
 		if nickservPass != '':
 			self.msg('NickServ', 'IDENTIFY ' + nickservPass)
+			self.sock.recv(4096) #We don't want to join if nickserv hasn't done its job (shouldn't really matter, but good for vHost)
 
 		if channel != '':
 			self.join(channel)
