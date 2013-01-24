@@ -97,7 +97,7 @@ class Bot(object):
 				rooms = self.functions[1]()
 
 				if len(rooms) == 0:
-					self.msg(to, chr(3) + '5Error!' + chr(15) + ' No rooms found on server')
+					self.msg(to, chr(3) + '12Notice:' + chr(15) + ' No rooms found on server')
 					return
 
 				out = 'Currently the Syncplay server hosts viewing sessions as follows: '
