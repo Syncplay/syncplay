@@ -6,6 +6,7 @@ import socket
 import threading
 from syncplay import utils
 from time import sleep
+import traceback
 
 class Bot(object):
 	def __init__(self, server='irc.rizon.net', serverPassword='', port=6667, nick='SyncBot', nickservPass='', channel='', channelPassword='', functions=[]):
@@ -172,36 +173,39 @@ def handlingThread(sock, bot):
 	while bot.active:
 		rcvd = sock.recv(4096).split('\n')
 		for line in rcvd:
-			line = line.replace('\r', '')
+			try:
+				line = line.replace('\r', '')
 
-			if line.split(' ')[0] == 'PING':
-				try:
-					sock.send('\r\nPONG ' + line.split(' ')[1].replace(':', '') + '\r\n')
-				except: #if we were fooled by the server :C
-					sock.send('\r\nPONG\r\n')
-				#\r\n on the beggining too because if we send two things too fast, the IRC server can discern
+				if line.split(' ')[0] == 'PING':
+					try:
+						sock.send('\r\nPONG ' + line.split(' ')[1].replace(':', '') + '\r\n')
+					except: #if we were fooled by the server :C
+						sock.send('\r\nPONG\r\n')
+					#\r\n on the beggining too because if we send two things too fast, the IRC server can discern
 
-			lsplit = line.split(':')
-			if len(lsplit) >= 2:
-				if len(lsplit[1].split(' ')) >= 2:
-					if lsplit[1].split(' ')[1] == '404':
-						bot.join(bot.channel, bot.channelPassword)
+				lsplit = line.split(':')
+				if len(lsplit) >= 2:
+					if len(lsplit[1].split(' ')) >= 2:
+						if lsplit[1].split(' ')[1] == '404':
+							bot.join(bot.channel, bot.channelPassword)
 
-				if 'PRIVMSG' in lsplit[1] or 'NOTICE' in lsplit[1]:
-					# ---BEGIN WTF BLOCK---
-					lsplit = line.split(':')
-					addrnfrom = ''
-					if '~' in lsplit[1]:
-						addrnfrom = lsplit[1].split('~')[1].split(' ')[0]
-						nfrom = lsplit[1].split('!')[0]
-					else:
-						nfrom = lsplit[1].split('!')[0]
+					if 'PRIVMSG' in lsplit[1] or 'NOTICE' in lsplit[1]:
+						# ---BEGIN WTF BLOCK---
+						lsplit = line.split(':')
+						addrnfrom = ''
+						if '~' in lsplit[1]:
+							addrnfrom = lsplit[1].split('~')[1].split(' ')[0]
+							nfrom = lsplit[1].split('!')[0]
+						else:
+							nfrom = lsplit[1].split('!')[0]
 
-					if len(lsplit[1].split()) >= 3:
-						to = lsplit[1].split()[2]
-					msg = ''
-					for brks in lsplit[2:]:
-						msg += brks + ':'
-					msg = msg[:-1].lstrip()
-					# ---END WTF BLOCK- --
-					bot.irc_onMsg(nfrom, addrnfrom, to, msg)
+						if len(lsplit[1].split()) >= 3:
+							to = lsplit[1].split()[2]
+						msg = ''
+						for brks in lsplit[2:]:
+							msg += brks + ':'
+						msg = msg[:-1].lstrip()
+						# ---END WTF BLOCK- --
+						bot.irc_onMsg(nfrom, addrnfrom, to, msg)
+			except:
+				print traceback.format_exc()
