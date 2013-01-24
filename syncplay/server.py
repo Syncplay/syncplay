@@ -328,7 +328,10 @@ class SyncFactory(Factory):
         with self._roomUpdate:
             if room in self._rooms:
                 for user in self._rooms[room].itervalues():
-                    l.append({'nick': user.name, 'file': user.file['name'], "length": user.file['duration']})
+                    if(user.file):
+                        l.append({'nick': user.name, 'file': user.file['name'], "length": user.file['duration']})
+                    else:
+                        l.append({'nick': user.name, 'file': None, "length": None})
         return l
             
     def isRoomPaused(self, room):
