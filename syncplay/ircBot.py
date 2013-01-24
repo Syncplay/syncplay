@@ -124,7 +124,14 @@ class Bot(object):
 							users = self.functions[4](room)
 							paused = self.functions[5](room)
 							out = chr(2) + '<Paused>' + chr(15) if paused else chr(2) + '<Playing>' + chr(15)
-							out += ' [' + utils.formatTime(self.functions[2](room)) + '/' + utils.formatTime(users[0]['length']) + '] '
+							time = self.functions[2](room)
+							if time == None: time = 0
+							for u in users:
+								if u['length'] == None: continue
+								out += ' [' + time + '/' + utils.formatTime(u['length']) + '] '
+								break
+							else:
+								out += ' '
 
 							for u in users:
 								if u['file'] == None: continue
@@ -153,7 +160,7 @@ class Bot(object):
 					users = self.functions[4](room)
 					for u in users:
 						if u['nick'] == nickFrom:
-							self.functions[6](nickFrom, True)
+							self.functions[5](nickFrom, True)
 							return
 				self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
 			elif split[0].lower() == '!play':
@@ -163,7 +170,7 @@ class Bot(object):
 					users = self.functions[4](room)
 					for u in users:
 						if u['nick'] == nickFrom:
-							self.functions[6](nickFrom, False)
+							self.functions[5](nickFrom, False)
 							return
 				self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
 			elif split[0].lower() == '!help':
