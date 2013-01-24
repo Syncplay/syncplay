@@ -183,7 +183,7 @@ def handlingThread(sock, bot):
 
 			lsplit = line.split(':')
 			if len(lsplit) >= 2:
-				if lsplit[1].split(' ') > 1:
+				if len(lsplit[1].split(' ')) >= 2:
 					if lsplit[1].split(' ')[1] == '404':
 						bot.join(bot.channel, bot.channelPassword)
 
