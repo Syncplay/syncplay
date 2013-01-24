@@ -17,10 +17,10 @@ class Bot(object):
 		#	channel 		- channel to autojoin and interact with
 		#	channelPassword		- if channel is +k
 		#	functions		- list/tuple of functions that can be used from the bot:
-		#		* pause(setBy, room, state=bool)
+		#		* pause(setBy, state=bool)
 		#		* getRooms() -> list
 		#		* getPosition(room) -> int
-		#		* setPosition(setBy, room, seconds)
+		#		* setPosition(setBy, seconds)
 		#		* getUsers(room) -> list of {'nick': str, 'file': str, 'length': int}
 		#		* isPaused(room) -> bool		
 
@@ -127,41 +127,29 @@ class Bot(object):
 				else:
 					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !roominfo [room]')
 			elif split[0].lower() == '!pause':
-				if len(split) >= 2:
-					rooms = self.functions[1]()
-					for room in split[1:]:
-						if (room in rooms) == False:
-							self.msg(to, chr(3) + '5Error!' + chr(15) + ' Room does not exists (' + room + ')')
-						else:
-							users = self.functions[4](room)
-							for u in users:
-								if u['nick'] == nickFrom:
-									break
-							else:
-								self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick is not in the specified room')
-								continue
+				rooms = self.functions[1]()
 
-							self.functions[6](nickFrom, room, True)
-				else:
-					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !pause [room]')							
+				for room in rooms:
+					users = self.functions[4](room)
+					for u in users:
+						if u['nick'] == nickFrom:
+							self.functions[6](nickFrom, True)
+							break
+					else:
+						self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
+						return
 			elif split[0].lower() == '!play':
-				if len(split) >= 2:
-					rooms = self.functions[1]()
-					for room in split[1:]:
-						if (room in rooms) == False:
-							self.msg(to, chr(3) + '5Error!' + chr(15) + ' Room does not exists (' + room + ')')
-						else:
-							users = self.functions[4](room)
-							for u in users:
-								if u['nick'] == nickFrom:
-									break
-							else:
-								self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick is not in the specified room')
-								continue
-
-							self.functions[6](room, False)							
-				else:
-					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !play [room]')
+				rooms = self.functions[1]()
+				
+				for room in rooms:
+					users = self.functions[4](room)
+					for u in users:
+						if u['nick'] == nickFrom:
+							self.functions[6](nickFrom, False)
+							break
+					else:
+						self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
+						return
 			elif split[0].lower() == '!help':
 				self.msg(to, chr(2) + 'Available commands:' + chr(15) + ' !rooms / !roominfo [room] / !pause / !play')
 
