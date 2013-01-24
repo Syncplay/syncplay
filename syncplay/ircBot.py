@@ -64,6 +64,8 @@ class Bot(object):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has paused (room ' + room + ')')
 	def sp_fileplaying(self, who, filename, room): #for when syncplay knows what filename is being played
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' is playing "' + filename + '" (room ' + room + ')')
+	def sp_seek(self, who, fromTime, toTime, room):
+		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has jumped from ' + utils.formatTime(fromTime) + ' to ' + utils.formatTime(toTime) +' (room ' + room + ')')
 	##################################
 
 	def sockSend(self, s):
