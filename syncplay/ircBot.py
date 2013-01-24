@@ -123,7 +123,7 @@ class Bot(object):
 								else:
 									out += chr(3) + '2' + user['nick'] + chr(15) + ', '
 								i += 1
-							self.msg(nickFrom, to, out)
+							self.msg(to, out)
 				else:
 					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !roominfo [room]')
 			elif split[0].lower() == '!pause':
