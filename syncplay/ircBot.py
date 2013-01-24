@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 # @author HarHar
 
-import sys
-import os
 import socket
 import threading
 from syncplay import utils
@@ -38,14 +36,11 @@ class Bot(object):
 		#Connection/authentication routine
 		self.sock = socket.socket()
 		self.sock.connect((server, port))
-		print self.sock.recv(4096)
 
 		if serverPassword != '':
 			self.sockSend('PASS ' + serverPassword)
 		self.sockSend('NICK ' + nick)
 		self.sockSend('USER ' + nick + ' ' + nick + ' ' + nick + ' :SyncPlay Bot') #Don't ask me
-
-		print self.sock.recv(4096)
 
 		if nickservPass != '':
 			self.msg('NickServ', 'IDENTIFY ' + nickservPass)
@@ -84,7 +79,7 @@ class Bot(object):
 		self.active = False
 		self.sockSend('QUIT :' + reason)
 		self.sock.close()
-	def nick(newnick):
+	def nick(self, newnick):
 		self.sockSend('NICK ' + newnick)
 		self.nick = newnick
 	def irc_onMsg(self, nickFrom, host, to, msg):
@@ -174,7 +169,6 @@ def handlingThread(sock, bot):
 	while bot.active:
 		rcvd = sock.recv(4096).split('\n')
 		for line in rcvd:
-			print line
 			line = line.replace('\r', '')
 
 			if line.split(' ')[0] == 'PING':
