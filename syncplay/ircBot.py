@@ -167,6 +167,8 @@ class Bot(object):
 							self.functions[6](room, False)							
 				else:
 					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !play [room]')
+			elif split[0].lower() == '!help':
+				self.msg(to, chr(2) + 'Available commands:' + chr(15) + ' !rooms / !roominfo [room] / !pause / !play')
 
 def handlingThread(sock, bot):
 	while bot.active:
