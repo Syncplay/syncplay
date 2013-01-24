@@ -5,6 +5,7 @@
 import socket
 import threading
 from syncplay import utils
+from time import sleep
 
 class Bot(object):
 	def __init__(self, server='irc.rizon.net', serverPassword='', port=6667, nick='SyncBot', nickservPass='', channel='', channelPassword='', functions=[]):
@@ -85,6 +86,7 @@ class Bot(object):
 		self.sockSend('NICK ' + newnick)
 		self.nick = newnick
 	def irc_onMsg(self, nickFrom, host, to, msg):
+		sleep(0.5)
 		if to[0] == '#': #channel
 			split = msg.split(' ')
 
