@@ -19,10 +19,10 @@ class Bot(object):
 		#	channel 		- channel to autojoin and interact with
 		#	channelPassword		- if channel is +k
 		#	functions		- list/tuple of functions that can be used from the bot:
-		#		* pause(room, state=bool)
+		#		* pause(setBy, room, state=bool)
 		#		* getRooms() -> list
 		#		* getPosition(room) -> int
-		#		* setPosition(room, seconds)
+		#		* setPosition(setBy, room, seconds)
 		#		* getUsers(room) -> list of {'nick': str, 'file': str, 'length': int}
 		#		* isPaused(room) -> bool		
 
@@ -128,7 +128,7 @@ class Bot(object):
 								else:
 									out += chr(3) + '2' + user['nick'] + chr(15) + ', '
 								i += 1
-							self.msg(to, out)
+							self.msg(nickFrom, to, out)
 				else:
 					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !roominfo [room]')
 			elif split[0].lower() == '!pause':
@@ -146,7 +146,7 @@ class Bot(object):
 								self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick is not in the specified room')
 								continue
 
-							self.functions[6](room, True)
+							self.functions[6](nickFrom, room, True)
 				else:
 					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !pause [room]')							
 			elif split[0].lower() == '!play':
