@@ -160,7 +160,7 @@ class Bot(object):
 					users = self.functions[4](room)
 					for u in users:
 						if u['nick'] == nickFrom:
-							self.functions[5](nickFrom, True)
+							self.functions[0](nickFrom, True)
 							return
 				self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
 			elif split[0].lower() == '!play':
@@ -170,7 +170,7 @@ class Bot(object):
 					users = self.functions[4](room)
 					for u in users:
 						if u['nick'] == nickFrom:
-							self.functions[5](nickFrom, False)
+							self.functions[0](nickFrom, False)
 							return
 				self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
 			elif split[0].lower() == '!help':
