@@ -8,6 +8,16 @@
  
 --[==========================================================================[
 
+ === Installation instructions ===
+
+Place the files in one of the VLC /lua/intf sub-directories. By default this should be:
+* Windows (all users): %ProgramFiles%\VideoLAN\VLC\lua\intf\
+* Windows (current user): %APPDATA%\VLC\lua\intf\
+* Linux (all users): /usr/share/vlc/lua/intf/
+* Linux (current user): ~/.local/share/vlc/lua/intf/
+* Mac OS X (all users): /Applications/VLC.app/Contents/MacOS/share/lua/intf/
+
+If a directory does not exist then you may have to create it.
 
  === Commands and responses ===
  = Note: ? denotes optional responses; * denotes mandatory response; uses \n terminator.
@@ -24,7 +34,7 @@
 
  get-interface-version
     * >> interface-version: [syncplay connector version]
- 
+	
  get-duration
     * >> duration: [<duration/no-input>]
 	
