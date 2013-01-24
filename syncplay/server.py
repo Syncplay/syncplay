@@ -52,7 +52,7 @@ class SyncFactory(Factory):
                     ircConnectionData['port'] = int(line.split(": ")[1])
                 elif("irc.botName: " in line):
                     ircConnectionData['nick'] = line.split(": ")[1]
-                elif("irc.nicservPass: " in line):
+                elif("irc.nickservPass: " in line):
                     ircConnectionData['nickservPass'] = line.split(": ")[1]
                 elif("irc.channelPassword: " in line):
                     ircConnectionData['channelPassword'] = line.split(": ")[1]
