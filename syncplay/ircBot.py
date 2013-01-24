@@ -49,7 +49,7 @@ class Bot(object):
 			self.sock.recv(4096) #We don't want to join if nickserv hasn't done its job (shouldn't really matter, but good for vHost)
 
 		if channel != '':
-			self.join(channel)
+			self.join(channel, channelPassword)
 
 		self.active = True
 		self.thread = threading.Thread(target=handlingThread, args=(self.sock, self))
@@ -75,7 +75,10 @@ class Bot(object):
 		self.sockSend('PRIVMSG ' + who + ' :' + message)
 	def join(self, channel, passw=''):
 		if passw != '': passw = ' ' + passw
-		self.sockSend('JOIN ' + channel + passw)
+		self.sockSend('\r\nJOIN ' + channel + passw)
+		#Just to make sure we joined; doesn't hurt anyone
+		sleep(1)
+		self.sockSend('\r\nJOIN ' + channel + passw)
 	def part(self, channel, reason=''):
 		self.sockSend('PART ' + channel + ' :' + reason)
 	def quit(self, reason='Leaving'):
@@ -94,7 +97,7 @@ class Bot(object):
 				rooms = self.functions[1]()
 
 				if len(rooms) == 0:
-					self.msg(to, chr(3) + '5Error!' + chr(15) + ' No rooms found on server')
+					self.msg(to, chr(3) + '12Notice:' + chr(15) + ' No rooms found on server')
 					return
 
 				out = 'Currently the Syncplay server hosts viewing sessions as follows: '
@@ -172,6 +175,9 @@ def handlingThread(sock, bot):
 
 			lsplit = line.split(':')
 			if len(lsplit) >= 2:
+				if lsplit[1].split(' ')[1] == '404':
+					bot.join(bot.channel, bot.channelPassword)
+
 				if 'PRIVMSG' in lsplit[1] or 'NOTICE' in lsplit[1]:
 					# ---BEGIN WTF BLOCK---
 					lsplit = line.split(':')
