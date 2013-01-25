@@ -20,9 +20,13 @@ class GuiConfiguration:
         self.window.add(vbox)
         vbox.show()
         self._addLabeledEntries(self.config, vbox)
+        self._addCheckboxEntries(self.config, vbox)
         self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
         button = gtk.Button(stock=gtk.STOCK_SAVE)
         button.connect("clicked", lambda w: self._saveDataAndLeave())
+        guideLink = gtk.LinkButton("http://syncplay.pl/guide/", "Configuration Guide")
+        guideLink.show()
+        vbox.add(guideLink)
         vbox.pack_start(button, True, True, 0)
         button.set_flags(gtk.CAN_DEFAULT)
         button.grab_default()
@@ -48,7 +52,7 @@ class GuiConfiguration:
         self.roomEntry = self._addLabeledEntryToVbox(getMessage("en", "room-label"), config['room'], vbox, lambda __, _: self._saveDataAndLeave())
         self.passEntry = self._addLabeledEntryToVbox(getMessage("en", "password-label"), config['password'], vbox, lambda __, _: self._saveDataAndLeave())
         self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillPlayerPath(), vbox, lambda __, _: self._saveDataAndLeave())
- 
+
     def _tryToFillPlayerPath(self):
         for path in self._availablePlayerPaths:
             if(os.path.isfile(path)):
@@ -66,9 +70,21 @@ class GuiConfiguration:
         self.config['room'] = self.roomEntry.get_text()
         self.config['password'] = self.passEntry.get_text()
         self.config['playerPath'] = self.mpcEntry.get_text()
+        if self.alwaysShowCheck.get_active() == True:
+            self.config['noGui'] = True
+        else:
+            self.config['noGui'] = False
+        if self.storeConfigCheck.get_active() == True:
+            self.config['noStore'] = True
+        else:
+			self.config['noStore'] = False
+        if self.slowOnDesyncCheck.get_active() == True:
+            self.config['slowOnDesync'] = True
+        else:
+            self.config['slowOnDesync'] = False
         self.window.destroy()
         gtk.main_quit()
-        
+
     def _addLabeledEntryToVbox(self, label, initialEntryValue, vbox, callback):
         hbox = gtk.HBox(False, 0)
         hbox.set_border_width(3)
@@ -87,17 +103,30 @@ class GuiConfiguration:
         hbox.pack_end(entry, False, False, 0)
         entry.set_usize(200, -1)
         entry.show()
-        hbox = gtk.HBox(False, 0)
-        vbox.add(hbox)
-        hbox.show()
         return entry
     
+    def _addCheckboxEntries(self, config, vbox):
+        CheckVbox = gtk.VBox(False, 0)
+        vbox.pack_start(CheckVbox, False, False, 0)
+        self.alwaysShowCheck = gtk.CheckButton("Always Show This Dialog")
+        if self.config['noGui'] == True:
+		    self.alwaysShowCheck.set_active(True)
+        self.alwaysShowCheck.show()
+        self.storeConfigCheck = gtk.CheckButton("Do Not Store This Configuration")
+        if self.config['noStore'] == True:
+            self.storeConfigCheck.set_active(True)
+        self.storeConfigCheck.show()
+        self.slowOnDesyncCheck = gtk.CheckButton("Slow Down On Desync")
+        if self.config['slowOnDesync'] == True:
+            self.slowOnDesyncCheck.set_active(True)
+        self.slowOnDesyncCheck.show()
+        CheckVbox.pack_start(self.alwaysShowCheck, False, False, 0)
+        CheckVbox.add(self.storeConfigCheck)
+        CheckVbox.add(self.slowOnDesyncCheck)
+        CheckVbox.show()
+
     def setAvailablePaths(self, paths):
         self._availablePlayerPaths = paths
     
     class WindowClosed(Exception):
         pass
-
-
-                
-                
