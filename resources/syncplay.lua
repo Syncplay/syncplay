@@ -4,13 +4,13 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.0.4
+ Version: 0.0.5
  
 --[==========================================================================[
 
  === Installation instructions ===
 
-Place the files in one of the VLC /lua/intf sub-directories. By default this should be:
+Place the files in the VLC /lua/intf sub-directories. By default this should be:
 * Windows (all users): %ProgramFiles%\VideoLAN\VLC\lua\intf\
 * Windows (current user): %APPDATA%\VLC\lua\intf\
 * Linux (all users): /usr/share/vlc/lua/intf/
@@ -65,7 +65,7 @@ If a directory does not exist then you may have to create it.
 require "common"
 require "host"
 
-local connectorversion = "0.0.4"
+local connectorversion = "0.0.5"
 
 local port
 
@@ -227,7 +227,6 @@ function get_filepath ()
                 
                 if (string.sub(response, 1, 8) == "file:///") then
                     response = string.gsub(response, "file:///","")
-                    response = string.gsub(response, "/","\\")
                 else
                     response = ""
                     errormsg = noinput
@@ -251,7 +250,7 @@ function get_filename ()
     filename = errormerge(get_filepath())
     
     if(filename ~= nil) and (filename ~= "") and (filename ~= noinput) then
-        index = string.len(tostring(string.match(filename, ".*\\")))
+        index = string.len(tostring(string.match(filename, ".*/")))
         if index then
             response = string.sub(tostring(filename), index+1)
         end
