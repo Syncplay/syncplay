@@ -109,10 +109,16 @@ class GuiConfiguration:
         CheckVbox = gtk.VBox(False, 0)
         vbox.pack_start(CheckVbox, False, False, 0)
         self.alwaysShowCheck = gtk.CheckButton("Always Show This Dialog")
+        if self.config['noGui'] == True:
+		    self.alwaysShowCheck.set_active(True)
         self.alwaysShowCheck.show()
         self.storeConfigCheck = gtk.CheckButton("Do Not Store This Configuration")
+        if self.config['noStore'] == True:
+            self.storeConfigCheck.set_active(True)
         self.storeConfigCheck.show()
         self.slowOnDesyncCheck = gtk.CheckButton("Slow Down On Desync")
+        if self.config['slowOnDesync'] == True:
+            self.slowOnDesyncCheck.set_active(True)
         self.slowOnDesyncCheck.show()
         CheckVbox.pack_start(self.alwaysShowCheck, False, False, 0)
         CheckVbox.add(self.storeConfigCheck)
