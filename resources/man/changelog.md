@@ -13,7 +13,8 @@
 *  syncplayClientForceConfiguration.bat file for opening configuration removed
 *  Configuration always opens if no file was provided (not done with open with) or was set like that in configuration window
 *  Syncplay now tries to locate default player on first run
-*  Released executables are now working on Windows 8 (Thanks titsontrains)
+*  Released executables are now working on Windows 8 (thanks titsontrains)
+*  Fixed Mplayer2 not working with msgcolor (thanks ion1)
 
 1.2.5
 
