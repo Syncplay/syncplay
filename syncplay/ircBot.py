@@ -78,7 +78,7 @@ class Bot(object):
 		except socket.error, info:
 			self.active = False
 			print '\033[91mSocket error (bot disconnected)\033[0;0m ' + str(info)
-			break
+			
 	def msg(self, who, message):
 		self.sockSend('PRIVMSG ' + who + ' :' + message)
 	def join(self, channel, passw=''):

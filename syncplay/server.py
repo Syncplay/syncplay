@@ -58,7 +58,6 @@ class SyncFactory(Factory):
                     ircConnectionData['channelPassword'] = line.split(": ")[1]
                 elif("irc.channel: " in line):
                     ircConnectionData['channel'] = line.split(": ")[1]
-                    
             return ircConnectionData
         
     def setupIRCBot(self, ircConnectionData):
@@ -70,16 +69,19 @@ class SyncFactory(Factory):
                     self.getRoomUsernames,
                     self.isRoomPaused,                            
                     ]
-            self.ircBot = IRCBot(
-                   ircConnectionData['server'],
-                   ircConnectionData['serverPassword'],
-                   ircConnectionData['port'],
-                   ircConnectionData['nick'],
-                   ircConnectionData['nickservPass'],
-                   ircConnectionData['channel'],
-                   ircConnectionData['channelPassword'],
-                   botFunctions,
-                   )
+            try:
+                self.ircBot = IRCBot(
+                       ircConnectionData['server'],
+                       ircConnectionData['serverPassword'],
+                       ircConnectionData['port'],
+                       ircConnectionData['nick'],
+                       ircConnectionData['nickservPass'],
+                       ircConnectionData['channel'],
+                       ircConnectionData['channelPassword'],
+                       botFunctions,
+                       )
+            except:
+                print "IRC Bot could not be started, please check your configuration"
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)        
