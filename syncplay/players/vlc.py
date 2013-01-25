@@ -76,11 +76,11 @@ class VlcPlayer(BasePlayer):
         self._pausedAsk.wait()
         self._client.updatePlayerStatus(self._paused, self._position)
                 
-    def displayMessage(self, message, duration = constants.OSD_DURATION):
+    def displayMessage(self, message, duration = constants.OSD_DURATION * 1000):
+        duration /= 1000
         self._listener.sendLine('display-osd: {}, {}, {}'.format('top-right', duration, message))
  
     def setSpeed(self, value):        
-        self._setProperty('speed', "{:.2f}".format(value))
         self._listener.sendLine("set-rate: {:.2f}".format(value))
 
     def setPosition(self, value):
