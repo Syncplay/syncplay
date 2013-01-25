@@ -10,7 +10,7 @@
 
  === Installation instructions ===
 
-Place the files in the VLC /lua/intf sub-directories. By default this should be:
+Place the syncplay.lua file in one of the VLC /lua/intf/ sub-directories. By default this should be:
 * Windows (all users): %ProgramFiles%\VideoLAN\VLC\lua\intf\
 * Windows (current user): %APPDATA%\VLC\lua\intf\
 * Linux (all users): /usr/share/vlc/lua/intf/
