@@ -104,6 +104,10 @@ class VlcPlayer(BasePlayer):
             t.setDaemon(True)
             t.start()
         elif (name == "filepath" and value != "no-input"):
+            if("file://" in value):
+                value = value.replace("file://", "")
+                if(not os.path.isfile(value)):
+                    value = value.lstrip("/")
             self._filepath = value
             self._pathAsk.set()
         elif(name == "duration" and (value != "no-input")):
