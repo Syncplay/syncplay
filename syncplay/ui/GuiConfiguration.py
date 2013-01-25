@@ -24,6 +24,9 @@ class GuiConfiguration:
         self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
         button = gtk.Button(stock=gtk.STOCK_SAVE)
         button.connect("clicked", lambda w: self._saveDataAndLeave())
+        guideLink = gtk.LinkButton("http://syncplay.pl/guide/", "Configuration Guide")
+        guideLink.show()
+        vbox.add(guideLink)
         vbox.pack_start(button, True, True, 0)
         button.set_flags(gtk.CAN_DEFAULT)
         button.grab_default()
@@ -68,20 +71,20 @@ class GuiConfiguration:
         self.config['password'] = self.passEntry.get_text()
         self.config['playerPath'] = self.mpcEntry.get_text()
         if self.alwaysShowCheck.get_active() == True:
-            self.config['alwaysShow'] = True
+            self.config['noGui'] = True
         else:
-            self.config['alwaysShow'] = False
+            self.config['noGui'] = False
         if self.storeConfigCheck.get_active() == True:
-            self.config['storeConfig'] = True
+            self.config['noStore'] = True
         else:
-			self.config['storeConfig'] = False
+			self.config['noStore'] = False
         if self.slowOnDesyncCheck.get_active() == True:
             self.config['slowOnDesync'] = True
         else:
             self.config['slowOnDesync'] = False
         self.window.destroy()
         gtk.main_quit()
-        
+
     def _addLabeledEntryToVbox(self, label, initialEntryValue, vbox, callback):
         hbox = gtk.HBox(False, 0)
         hbox.set_border_width(3)
