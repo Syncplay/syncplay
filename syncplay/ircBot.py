@@ -138,7 +138,7 @@ class Bot(object):
 								out += u['file']
 								break
 							else:
-								 out += '[no file]'
+								out += '[no file]'
 							self.msg(to, out)
 							out = 'Users: '
 							i = 0
