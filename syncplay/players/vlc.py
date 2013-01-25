@@ -8,6 +8,7 @@ import random
 import socket
 import asynchat, asyncore
 from syncplay.messages import getMessage
+import time
 
 class VlcPlayer(BasePlayer):
     speedSupported = True
@@ -106,13 +107,13 @@ class VlcPlayer(BasePlayer):
             self._filepath = value
             self._pathAsk.set()
         elif(name == "duration" and (value != "no-input")):
-            self._duration = float(value)
+            self._duration = float(value.replace(",", "."))
             self._durationAsk.set()
         elif(name == "playstate"):
             self._paused = bool(value != 'playing') if(value != "no-input") else self._client.getGlobalPaused()
             self._pausedAsk.set()
         elif(name == "position"):
-            self._position = float(value) if (value != "no-input") else self._client.getGlobalPosition()
+            self._position = float(value.replace(",", ".")) if (value != "no-input") else self._client.getGlobalPosition()
             self._positionAsk.set()
         elif(name == "filename"):
             self._filename = value
@@ -185,6 +186,7 @@ class VlcPlayer(BasePlayer):
                  
         def run(self):
             self._vlcready.clear()
+            time.sleep(constants.VLC_SOCKET_OPEN_WAIT_TIME)
             self.connect(('localhost', self.__playerController.vlcport))
             asyncore.loop()
         
