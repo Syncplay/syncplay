@@ -31,6 +31,7 @@ class ConfigurationGetter(object):
                         "file": None,
                         "playerArgs": [],
                         "playerClass": None,
+						"slowOnDesync": True
                         }
         
         #
