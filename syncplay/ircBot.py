@@ -181,7 +181,12 @@ class Bot(object):
 
 def handlingThread(sock, bot):
 	while bot.active:
-		rcvd = sock.recv(4096).split('\n')
+		try:
+			rcvd = sock.recv(4096).split('\n')
+		except socket.error, info:
+			bot.active = False
+			print '\033[91mSocket error (bot disconnected)\033[0;0m ' + str(info)
+			break
 		for line in rcvd:
 			try:
 				line = line.replace('\r', '')
