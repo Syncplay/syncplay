@@ -67,6 +67,18 @@ class GuiConfiguration:
         self.config['room'] = self.roomEntry.get_text()
         self.config['password'] = self.passEntry.get_text()
         self.config['playerPath'] = self.mpcEntry.get_text()
+        if self.alwaysShowCheck.get_active() == True:
+            self.config['alwaysShow'] = True
+        else:
+            self.config['alwaysShow'] = False
+        if self.storeConfigCheck.get_active() == True:
+            self.config['storeConfig'] = True
+        else:
+			self.config['storeConfig'] = False
+        if self.slowOnDesyncCheck.get_active() == True:
+            self.config['slowOnDesync'] = True
+        else:
+            self.config['slowOnDesync'] = False
         self.window.destroy()
         gtk.main_quit()
         
@@ -88,23 +100,20 @@ class GuiConfiguration:
         hbox.pack_end(entry, False, False, 0)
         entry.set_usize(200, -1)
         entry.show()
-        hbox = gtk.HBox(False, 0)
-        vbox.add(hbox)
-        hbox.show()
         return entry
     
     def _addCheckboxEntries(self, config, vbox):
         CheckVbox = gtk.VBox(False, 0)
         vbox.pack_start(CheckVbox, False, False, 0)
-        alwaysShowCheck = gtk.CheckButton("Always Show This Dialog")
-        alwaysShowCheck.show()
-        doNotStoreConfigCheck = gtk.CheckButton("Do Not Store This Configuration")
-        doNotStoreConfigCheck.show()
-        slowOnDesyncCheck = gtk.CheckButton("Slow Down On Desync")
-        slowOnDesyncCheck.show()
-        CheckVbox.pack_start(alwaysShowCheck, False, False, 0)
-        CheckVbox.add(doNotStoreConfigCheck)
-        CheckVbox.add(slowOnDesyncCheck)
+        self.alwaysShowCheck = gtk.CheckButton("Always Show This Dialog")
+        self.alwaysShowCheck.show()
+        self.storeConfigCheck = gtk.CheckButton("Do Not Store This Configuration")
+        self.storeConfigCheck.show()
+        self.slowOnDesyncCheck = gtk.CheckButton("Slow Down On Desync")
+        self.slowOnDesyncCheck.show()
+        CheckVbox.pack_start(self.alwaysShowCheck, False, False, 0)
+        CheckVbox.add(self.storeConfigCheck)
+        CheckVbox.add(self.slowOnDesyncCheck)
         CheckVbox.show()
 
     def setAvailablePaths(self, paths):
