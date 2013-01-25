@@ -13,11 +13,12 @@
 *  syncplayClientForceConfiguration.bat file for opening configuration removed
 *  Configuration always opens if no file was provided (not done with open with) or was set like that in configuration window
 *  Syncplay now tries to locate default player on first run
+*  Released executables are now working on Windows 8 (Thanks titsontrains)
 
 1.2.5
 
 *  Installation support for Windows
-*   First official release.
+*  First official release.
 
 1.2.4
 
