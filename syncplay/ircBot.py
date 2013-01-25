@@ -73,7 +73,12 @@ class Bot(object):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has jumped from ' + utils.formatTime(fromTime) + ' to ' + utils.formatTime(toTime) +' (room ' + room + ')')
 
 	def sockSend(self, s):
-		self.sock.send(s + u'\r\n')
+		try:
+			self.sock.send(s.encode('utf8') + '\r\n')
+		except socket.error, info:
+			bot.active = False
+			print '\033[91mSocket error (bot disconnected)\033[0;0m ' + str(info)
+			break
 	def msg(self, who, message):
 		self.sockSend('PRIVMSG ' + who + ' :' + message)
 	def join(self, channel, passw=''):
@@ -117,40 +122,43 @@ class Bot(object):
 			elif split[0].lower() == '!roominfo':
 				if len(split) >= 2:
 					rooms = self.functions[1]()
-					for room in split[1:]:
-						if (room in rooms) == False:
-							self.msg(to, chr(3) + '5Error!' + chr(15) + ' Room does not exists (' + room + ')')
+					room = ''
+					for r in split[1:]:
+						room += r + ' '
+					room = room[:-1]
+					if (room in rooms) == False:
+						self.msg(to, chr(3) + '5Error!' + chr(15) + ' Room does not exists (' + room + ')')
+					else:
+						users = self.functions[4](room)
+						paused = self.functions[5](room)
+						out = chr(2) + '<Paused>' + chr(15) if paused else chr(2) + '<Playing>' + chr(15)
+						time = self.functions[2](room)
+						if time == None: time = 0
+						for u in users:
+							if u['length'] == None: continue
+							out += ' [' + utils.formatTime(time) + '/' + utils.formatTime(u['length']) + '] '
+							break
 						else:
-							users = self.functions[4](room)
-							paused = self.functions[5](room)
-							out = chr(2) + '<Paused>' + chr(15) if paused else chr(2) + '<Playing>' + chr(15)
-							time = self.functions[2](room)
-							if time == None: time = 0
-							for u in users:
-								if u['length'] == None: continue
-								out += ' [' + utils.formatTime(time) + '/' + utils.formatTime(u['length']) + '] '
-								break
-							else:
-								out += ' '
+							out += ' '
 
-							for u in users:
-								if u['file'] == None: continue
-								out += u['file']
-								break
+						for u in users:
+							if u['file'] == None: continue
+							out += u['file']
+							break
+						else:
+							 out += '[no file]'
+						self.msg(to, out)
+						out = 'Users: '
+						i = 0
+						for user in users:
+							if i == len(users)-1:
+								out += chr(3) + '2' + user['nick'] + chr(15) + '.'
+							elif i == len(users)-2:
+								out += chr(3) + '2' + user['nick'] + chr(15) + ' and '
 							else:
-								 out += '[no file]'
-							self.msg(to, out)
-							out = 'Users: '
-							i = 0
-							for user in users:
-								if i == len(users)-1:
-									out += chr(3) + '2' + user['nick'] + chr(15) + '.'
-								elif i == len(users)-2:
-									out += chr(3) + '2' + user['nick'] + chr(15) + ' and '
-								else:
-									out += chr(3) + '2' + user['nick'] + chr(15) + ', '
-								i += 1
-							self.msg(to, out)
+								out += chr(3) + '2' + user['nick'] + chr(15) + ', '
+							i += 1
+						self.msg(to, out)
 				else:
 					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !roominfo [room]')
 			elif split[0].lower() == '!pause':
@@ -178,7 +186,12 @@ class Bot(object):
 
 def handlingThread(sock, bot):
 	while bot.active:
-		rcvd = sock.recv(4096).split('\n')
+		try:
+			rcvd = sock.recv(4096).split('\n')
+		except socket.error, info:
+			bot.active = False
+			print '\033[91mSocket error (bot disconnected)\033[0;0m ' + str(info)
+			break
 		for line in rcvd:
 			try:
 				line = line.replace('\r', '')
