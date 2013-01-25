@@ -7,6 +7,7 @@ import os
 import random
 import socket
 import asynchat, asyncore
+from syncplay.messages import getMessage
 
 class VlcPlayer(BasePlayer):
     speedSupported = True
@@ -25,7 +26,6 @@ class VlcPlayer(BasePlayer):
         self._duration = None
         self._filename = None
         self._filepath = None
-        self._playerReady = True
         
         self._durationAsk = threading.Event()
         self._filenameAsk = threading.Event()
@@ -34,15 +34,18 @@ class VlcPlayer(BasePlayer):
         self._pausedAsk = threading.Event()
         self._vlcready = threading.Event()
         try:
-            self._listener = self.__Listener(self, playerPath, filePath, args)
+            self._listener = self.__Listener(self, playerPath, filePath, args, self._vlcready)
         except ValueError:
-            self._client.ui.showMessage("Failed to load VLC")
+            self._client.ui.showMessage(getMessage("en", "vlc-failed-connection"))
             self._client.stop(True)
             return 
         self._listener.setDaemon(True)
         self._listener.start()
-        self._vlcready.wait()
-        self._preparePlayer()
+        if(not self._vlcready.wait(constants.VLC_OPEN_MAX_WAIT_TIME)):
+            self._vlcready.set()
+            self._client.ui.showMessage(getMessage("en", "vlc-failed-connection"))
+            self._client.stop(True)
+        self._client.initPlayer(self)
         
     def _fileUpdateClearEvents(self):
         self._durationAsk.clear()
@@ -61,12 +64,6 @@ class VlcPlayer(BasePlayer):
         self._client.updateFile(self._filename, self._duration, self._filepath)
         self.setPaused(self._client.getGlobalPaused()) 
         self.setPosition(self._client.getGlobalPosition())
-        
-    def _preparePlayer(self):
-        self.setPaused(self._client.getGlobalPaused()) 
-        self.setPosition(self._client.getGlobalPosition())
-        self._client.initPlayer(self)
-        self._playerReady = True     
 
     def askForStatus(self):
         self._positionAsk.clear()
@@ -161,11 +158,10 @@ class VlcPlayer(BasePlayer):
         self._positionAsk.set()
         self._vlcready.set()
         self._pausedAsk.set()
-        self.__running = False
         self._client.stop(False)
 
     class __Listener(threading.Thread, asynchat.async_chat):
-        def __init__(self, playerController, playerPath, filePath, args):
+        def __init__(self, playerController, playerPath, filePath, args, vlcReady):
             self.__playerController = playerController
             call = [playerPath]
             if(filePath):
@@ -173,7 +169,8 @@ class VlcPlayer(BasePlayer):
             call.extend(playerController.SLAVE_ARGS)
             if(args): 
                 call.extend(args)
-
+            
+            self._vlcready = vlcReady
             self.__process = subprocess.Popen(call, stderr=subprocess.PIPE)
             threading.Thread.__init__(self, name="VLC Listener")
             asynchat.async_chat.__init__(self)
@@ -181,22 +178,25 @@ class VlcPlayer(BasePlayer):
             self._ibuffer = []
             self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
             self._sendingData = threading.Lock()
-            self.connect(('localhost', self.__playerController.vlcport))
             
-                
         def initiate_send(self):
             with self._sendingData:
                 asynchat.async_chat.initiate_send(self)
                  
         def run(self):
-            self.__running = True
+            self._vlcready.clear()
+            self.connect(('localhost', self.__playerController.vlcport))
             asyncore.loop()
+        
+        def handle_connect(self):
+            asynchat.async_chat.handle_connect(self)
+            self._vlcready.set()
             
         def collect_incoming_data(self, data):
             self._ibuffer.append(data)
     
-        def close(self):
-            self.__running = False
+        def handle_close(self):
+            asynchat.async_chat.handle_close(self)
             self.__playerController.drop()
             
         def found_terminator(self):
@@ -205,6 +205,6 @@ class VlcPlayer(BasePlayer):
             self._ibuffer = []
 
         def sendLine(self, line):
-            if(self.__running):
+            if(self.connected):
 #                print "send: {}".format(line)
                 self.push(line + "\n")

@@ -53,6 +53,7 @@ MPC_LOCK_WAIT_TIME = 0.2
 MPC_RETRY_WAIT_TIME = 0.01
 MPC_MAX_RETRIES = 30
 MPC_PAUSE_TOGGLE_DELAY = 0.05
+VLC_OPEN_MAX_WAIT_TIME = 10
 
 #These are not changes you're looking for
 MPLAYER_SLAVE_ARGS = [ '-slave', '-nomsgcolor', '-msglevel', 'all=1:global=4']
