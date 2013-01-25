@@ -76,7 +76,7 @@ class Bot(object):
 		try:
 			self.sock.send(s.encode('utf8') + '\r\n')
 		except socket.error, info:
-			bot.active = False
+			self.active = False
 			print '\033[91mSocket error (bot disconnected)\033[0;0m ' + str(info)
 			break
 	def msg(self, who, message):
@@ -146,7 +146,7 @@ class Bot(object):
 							out += u['file']
 							break
 						else:
-							 out += '[no file]'
+							out += '[no file]'
 						self.msg(to, out)
 						out = 'Users: '
 						i = 0
