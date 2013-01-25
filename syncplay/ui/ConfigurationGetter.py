@@ -191,20 +191,26 @@ class ConfigurationGetter(object):
         if(changed):
             parser.write(codecs.open(iniPath, "wb", "utf_8_sig"))
         
+
+    def _forceGuiPrompt(self):
+        try:
+            self._validateArguments()
+        except InvalidConfigValue:
+            pass
+        try:
+            for key, value in self._promptForMissingArguments().items():
+                self._config[key] = value
+        except:
+            sys.exit()
+
     def getConfiguration(self):
         iniPath = self._getConfigurationFilePath()
         self._parseConfigFile(iniPath)
         args = self._argparser.parse_args()
         self._overrideConfigWithArgs(args)
-        if(self._config['forceGuiPrompt']):
-            try:
-                self._validateArguments()
-            except InvalidConfigValue:
-                pass
-            try:
-                self._promptForMissingArguments()
-            except:
-                sys.exit()
+        #Arguments not validated yet - booleans are still text values
+        if(self._config['forceGuiPrompt'] == "True" or not self._config['file']): 
+            self._forceGuiPrompt()
         self._checkConfig()
         self._saveConfig(iniPath)
         return self._config
