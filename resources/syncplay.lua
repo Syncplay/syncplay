@@ -224,13 +224,6 @@ function get_filepath ()
             local item = vlc.input.item()
             if item then
                 response = vlc.strings.decode_uri(item:uri())
-                
-                if (string.sub(response, 1, 8) == "file:///") then
-                    response = string.gsub(response, "file:///","")
-                else
-                    response = ""
-                    errormsg = noinput
-                end
             else
                 errormsg = noinput
             end
