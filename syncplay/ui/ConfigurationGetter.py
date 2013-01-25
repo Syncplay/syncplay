@@ -44,10 +44,18 @@ class ConfigurationGetter(object):
                           "playerPath",
                           "playerClass",
                          ]
+        
+        self._boolean = [
+                         "debug",
+                         "forceGuiPrompt",
+                         "noGui",
+                         "noStore",
+                         "slowOnDesync"
+                        ]
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath"]
+                        "client_settings": ["name", "room", "playerPath", "slowOnDesync", "forceGuiPrompt"]
                         }
 
         #
@@ -67,10 +75,14 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("en", "file-argument"))
         self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("en", "args-argument"))
   
-  
         self._playerFactory = PlayerFactory()
         
     def _validateArguments(self):
+        for key in self._boolean:
+            if(self._config[key] == "True"):
+                self._config[key] = True
+            elif(self._config[key] == "False"):
+                self._config[key] = False
         for key in self._required:
             if(key == "playerPath"):
                 player = self._playerFactory.getPlayerByPath(self._config["playerPath"])
@@ -86,7 +98,7 @@ class ConfigurationGetter(object):
                     raise InvalidConfigValue("Hostname can't be empty")
             elif(self._config[key] == "" or self._config[key] is None):
                 raise InvalidConfigValue("{} can't be empty".format(key))
-    
+
     def _overrideConfigWithArgs(self, args):
         for key, val in vars(args).items():
             if(val):
@@ -186,6 +198,11 @@ class ConfigurationGetter(object):
         self._overrideConfigWithArgs(args)
         if(self._config['forceGuiPrompt']):
             try:
+                self._validateArguments()
+            except InvalidConfigValue:
+                pass
+            try:
+                print self._config
                 self._promptForMissingArguments()
             except:
                 sys.exit()

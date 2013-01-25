@@ -71,13 +71,13 @@ class GuiConfiguration:
         self.config['password'] = self.passEntry.get_text()
         self.config['playerPath'] = self.mpcEntry.get_text()
         if self.alwaysShowCheck.get_active() == True:
-            self.config['noGui'] = True
+            self.config['forceGuiPrompt'] = True
         else:
-            self.config['noGui'] = False
+            self.config['forceGuiPrompt'] = False
         if self.storeConfigCheck.get_active() == True:
             self.config['noStore'] = True
         else:
-			self.config['noStore'] = False
+            self.config['noStore'] = False
         if self.slowOnDesyncCheck.get_active() == True:
             self.config['slowOnDesync'] = True
         else:
@@ -109,8 +109,8 @@ class GuiConfiguration:
         CheckVbox = gtk.VBox(False, 0)
         vbox.pack_start(CheckVbox, False, False, 0)
         self.alwaysShowCheck = gtk.CheckButton("Always Show This Dialog")
-        if self.config['noGui'] == True:
-		    self.alwaysShowCheck.set_active(True)
+        if self.config['forceGuiPrompt'] == True:
+            self.alwaysShowCheck.set_active(True)
         self.alwaysShowCheck.show()
         self.storeConfigCheck = gtk.CheckButton("Do Not Store This Configuration")
         if self.config['noStore'] == True:
