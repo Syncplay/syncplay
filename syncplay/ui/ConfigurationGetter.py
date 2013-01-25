@@ -202,7 +202,6 @@ class ConfigurationGetter(object):
             except InvalidConfigValue:
                 pass
             try:
-                print self._config
                 self._promptForMissingArguments()
             except:
                 sys.exit()
