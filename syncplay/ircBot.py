@@ -73,7 +73,7 @@ class Bot(object):
 		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has jumped from ' + utils.formatTime(fromTime) + ' to ' + utils.formatTime(toTime) +' (room ' + room + ')')
 
 	def sockSend(self, s):
-		self.sock.send(s.encode('utf8') + u'\r\n')
+		self.sock.send(s.encode('utf8') + '\r\n')
 	def msg(self, who, message):
 		self.sockSend('PRIVMSG ' + who + ' :' + message)
 	def join(self, channel, passw=''):
