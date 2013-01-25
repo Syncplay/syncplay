@@ -299,11 +299,16 @@ class SyncFactory(Factory):
         user = self._findUserByUsername(setBy)
         if(user):
             with self._roomUpdate:
-                self._roomStates[user.room]['paused'] = paused
-                self._roomStates[user.room]['setBy'] = "IRC: " + setBy
-            l = lambda w: self.sendState(w, False, user.latency, True)
-            self.broadcastRoom(user.watcherProtocol, l)
-  
+                if(self._roomStates[user.room]['paused'] != paused):
+                    self._roomStates[user.room]['paused'] = paused
+                    self._roomStates[user.room]['setBy'] = "IRC: " + setBy
+                    if(paused):
+                        self.ircBot.sp_paused("IRC: " + user.name, user.room)
+                    elif(not paused):
+                        self.ircBot.sp_unpaused("IRC: " + user.name, user.room)
+                    l = lambda w: self.sendState(w, False, user.latency, True)
+                    self.broadcastRoom(user.watcherProtocol, l)
+      
     
     def getRooms(self):
         return self._rooms.keys()
@@ -317,10 +322,13 @@ class SyncFactory(Factory):
         user = self._findUserByUsername(setBy)
         if(user):
             with self._roomUpdate:
-                self._roomStates[user.room]['paused'] = time
-                self._roomStates[user.room]['setBy'] = "IRC: " + setBy 
-            l = lambda w: self.sendState(w, True, user.latency, True)
-            self.broadcastRoom(user.watcherProtocol, l)
+                oldPosition = self._roomStates[user.room]['paused']
+                if(oldPosition - time > 1):
+                    self._roomStates[user.room]['paused'] = time
+                    self._roomStates[user.room]['setBy'] = "IRC: " + setBy 
+                    self.ircBot.sp_seek(user.name, oldPosition, time, user.room)                
+                    l = lambda w: self.sendState(w, True, user.latency, True)
+                    self.broadcastRoom(user.watcherProtocol, l)
   
     
     def getRoomUsernames(self, room):
