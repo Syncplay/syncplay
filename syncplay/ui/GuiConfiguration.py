@@ -3,7 +3,7 @@ import os
 pygtk.require('2.0')
 import gtk
 gtk.set_interactive(False)
-import cairo, gio, pango, atk, pangocairo, gobject #@UnusedImport
+import webbrowser
 from syncplay.messages import getMessage
 
 class GuiConfiguration:
@@ -25,7 +25,9 @@ class GuiConfiguration:
         self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
         button = gtk.Button(stock=gtk.STOCK_SAVE)
         button.connect("clicked", lambda w: self._saveDataAndLeave())
-        guideLink = gtk.LinkButton("http://syncplay.pl/guide/", "Configuration Guide")
+        guideLink = gtk.Button("Configuration Guide")
+        guideLink.connect("clicked", lambda w: webbrowser.open("http://syncplay.pl/guide/"))
+        print 'e'
         guideLink.show()
         vbox.add(guideLink)
         vbox.pack_start(button, True, True, 0)
