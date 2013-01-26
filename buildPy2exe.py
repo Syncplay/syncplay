@@ -20,8 +20,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\English.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Polish.nlf"
   
-  Name "Syncplay"
-  OutFile "Syncplay.exe"
+  Name "Syncplay $version"
+  OutFile "Syncplay $version Setup.exe"
   InstallDir $$PROGRAMFILES\Syncplay
   RequestExecutionLevel admin
   XPStyle on
