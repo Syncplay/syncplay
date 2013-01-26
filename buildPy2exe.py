@@ -9,7 +9,7 @@ import sys
 import os
 import subprocess
 
-p = "C:\\Program Files (x86)\\NSIS\\makensis.exe" #TODO: how to move that into proper place, huh
+p = "C:\\Program Files\\NSIS\\makensis.exe" #TODO: how to move that into proper place, huh
 NSIS_COMPILE = p if os.path.isfile(p) else "makensis.exe"
 OUT_DIR = "syncplay v{}".format(syncplay.version)
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
@@ -108,10 +108,6 @@ NSIS_SCRIPT_TEMPLATE = r"""
     !insertmacro APP_UNASSOCIATE "wmv" "Syncplay.wmv"      
   FunctionEnd
   
-  Function un.DeleteFiles
-    $uninstallFiles
-  FunctionEnd
-  
   ;Prevents from running more than one instance of installer
   Function .onInit
     System::Call 'kernel32::CreateMutexA(i 0, i 0, t "myMutex") i .r1 ?e'
@@ -148,7 +144,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
      
   Section "Uninstall"
     Call un.AssociateDel
-    Call un.DeleteFiles
+    $uninstallFiles
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay"
     DeleteRegKey HKLM SOFTWARE\Syncplay
     Delete $$INSTDIR\uninstall.exe
