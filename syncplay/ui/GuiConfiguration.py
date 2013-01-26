@@ -20,6 +20,7 @@ class GuiConfiguration:
         self.window.add(vbox)
         vbox.show()
         self._addLabeledEntries(self.config, vbox)
+        self._addFileChoosersButtons(vbox)
         self._addCheckboxEntries(self.config, vbox)
         self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
         button = gtk.Button(stock=gtk.STOCK_SAVE)
@@ -51,7 +52,6 @@ class GuiConfiguration:
         self.userEntry = self._addLabeledEntryToVbox(getMessage("en", "username-label"), config['name'], vbox, lambda __, _: self._saveDataAndLeave())
         self.roomEntry = self._addLabeledEntryToVbox(getMessage("en", "room-label"), config['room'], vbox, lambda __, _: self._saveDataAndLeave())
         self.passEntry = self._addLabeledEntryToVbox(getMessage("en", "password-label"), config['password'], vbox, lambda __, _: self._saveDataAndLeave())
-        self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillPlayerPath(), vbox, lambda __, _: self._saveDataAndLeave())
 
     def _tryToFillPlayerPath(self):
         for path in self._availablePlayerPaths:
@@ -69,7 +69,6 @@ class GuiConfiguration:
         self.config['name'] = self.userEntry.get_text()
         self.config['room'] = self.roomEntry.get_text()
         self.config['password'] = self.passEntry.get_text()
-        self.config['playerPath'] = self.mpcEntry.get_text()
         if self.alwaysShowCheck.get_active() == True:
             self.config['forceGuiPrompt'] = True
         else:
@@ -124,6 +123,33 @@ class GuiConfiguration:
         CheckVbox.add(self.storeConfigCheck)
         CheckVbox.add(self.slowOnDesyncCheck)
         CheckVbox.show()
+
+    def _addFileChoosersButtons(self, vbox):
+        hbox = gtk.HBox(False, 0)
+        self.playerPathButton = gtk.Button("Select Player Executable")
+        self.playerPathButton.connect("clicked", lambda w: self._showPlayerFileDialog())
+        self.playerPathButton.show()
+        self.mediaPathButton = gtk.Button("Select Media File")
+        self.mediaPathButton.connect("clicked", lambda w: self._showMediaFileDialog())
+        self.mediaPathButton.show()
+        hbox.add(self.playerPathButton)
+        hbox.add(self.mediaPathButton)
+        hbox.show()
+        vbox.add(hbox)
+
+    def _showPlayerFileDialog(self):
+        dialog = gtk.FileChooserDialog(parent=self.window,action=gtk.FILE_CHOOSER_ACTION_OPEN,buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT, gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
+        dialog.run()
+        if dialog.get_filename() != None:
+            self.config['playerPath'] = dialog.get_filename()
+        dialog.destroy()
+
+    def _showMediaFileDialog(self):
+        dialog = gtk.FileChooserDialog(parent=self.window,action=gtk.FILE_CHOOSER_ACTION_OPEN,buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT, gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
+        dialog.run()
+        if dialog.get_filename() != None:
+            self.config['file'] = dialog.get_filename()
+        dialog.destroy()
 
     def setAvailablePaths(self, paths):
         self._availablePlayerPaths = paths
