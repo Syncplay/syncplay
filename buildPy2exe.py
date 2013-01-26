@@ -16,6 +16,7 @@ SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
 NSIS_SCRIPT_TEMPLATE = r"""
   !include LogicLib.nsh
   !include nsDialogs.nsh
+  !include FileFunc.nsh
 
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\English.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Polish.nlf"
@@ -86,14 +87,18 @@ NSIS_SCRIPT_TEMPLATE = r"""
   FunctionEnd
   
   Function WriteRegistry
+    $${GetSize} "$$INSTDIR" "/S=0K" $$0 $$1 $$2
+    IntFmt $$0 "0x%08X" $$0
     WriteRegStr HKLM SOFTWARE\Syncplay "Install_Dir" "$$INSTDIR"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "DisplayName" "Syncplay"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "UninstallString" '"$$INSTDIR\uninstall.exe"'
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "DisplayIcon" "$$INSTDIR\lib\icon.ico"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "DisplayIcon" "$$INSTDIR\resources\icon.ico"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "Publisher" "Syncplay"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "DisplayVersion" "$version"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "URLInfoAbout" "http://syncplay.pl/"
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "NoModify" 1
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "NoRepair" 1
+    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "EstimatedSize" "$$0"
   FunctionEnd
     
   Function un.AssociateDel
@@ -136,10 +141,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
     SetOverwrite on
     SetOutPath $$INSTDIR
     WriteUninstaller uninstall.exe
-    Call Associate
-    Call WriteRegistry
     
     $installFiles
+    
+    Call Associate
+    Call WriteRegistry
   SectionEnd
      
   Section "Uninstall"
