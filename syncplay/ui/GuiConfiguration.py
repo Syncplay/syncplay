@@ -20,14 +20,12 @@ class GuiConfiguration:
         self.window.add(vbox)
         vbox.show()
         self._addLabeledEntries(self.config, vbox)
-        self._addFileChoosersButtons(vbox)
         self._addCheckboxEntries(self.config, vbox)
         self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
         button = gtk.Button(stock=gtk.STOCK_SAVE)
         button.connect("clicked", lambda w: self._saveDataAndLeave())
         guideLink = gtk.Button("Configuration Guide")
         guideLink.connect("clicked", lambda w: webbrowser.open("http://syncplay.pl/guide/"))
-        print 'e'
         guideLink.show()
         vbox.add(guideLink)
         vbox.pack_start(button, True, True, 0)
@@ -54,6 +52,8 @@ class GuiConfiguration:
         self.userEntry = self._addLabeledEntryToVbox(getMessage("en", "username-label"), config['name'], vbox, lambda __, _: self._saveDataAndLeave())
         self.roomEntry = self._addLabeledEntryToVbox(getMessage("en", "room-label"), config['room'], vbox, lambda __, _: self._saveDataAndLeave())
         self.passEntry = self._addLabeledEntryToVbox(getMessage("en", "password-label"), config['password'], vbox, lambda __, _: self._saveDataAndLeave())
+        self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillPlayerPath(), vbox, lambda __, _: self._saveDataAndLeave())
+        self.fileEntry = self._addLabeledEntryToVbox(getMessage("en", "file-label"), config['file'], vbox, lambda __, w: self._saveDataAndLeave())
 
     def _tryToFillPlayerPath(self):
         for path in self._availablePlayerPaths:
@@ -101,7 +101,20 @@ class GuiConfiguration:
         if(initialEntryValue == None):
             initialEntryValue = ""
         entry.set_text(initialEntryValue)
-        hbox.pack_end(entry, False, False, 0)
+        if(label == getMessage("en", "path-label")):
+            self.playerPathButton = gtk.Button("Browse")
+            self.playerPathButton.connect("clicked", lambda w: self._showPlayerFileDialog())
+            self.playerPathButton.show()
+            hbox.add(entry)
+            hbox.pack_end(self.playerPathButton, False, False, 0)
+        elif(label == getMessage("en", "file-label")):
+            self.mediaPathButton = gtk.Button("Browse")
+            self.mediaPathButton.connect("clicked", lambda w: self._showMediaFileDialog())
+            self.mediaPathButton.show()
+            hbox.add(entry)
+            hbox.pack_end(self.mediaPathButton, False, False, 0)
+        else:
+            hbox.pack_end(entry, False, False, 0)
         entry.set_usize(200, -1)
         entry.show()
         return entry
@@ -109,7 +122,7 @@ class GuiConfiguration:
     def _addCheckboxEntries(self, config, vbox):
         CheckVbox = gtk.VBox(False, 0)
         vbox.pack_start(CheckVbox, False, False, 0)
-        self.alwaysShowCheck = gtk.CheckButton("Always Show This Dialog")
+        self.alwaysShowCheck = gtk.CheckButton("Always Show This Dialog When Opening A File With Syncplay")
         if self.config['forceGuiPrompt'] == True:
             self.alwaysShowCheck.set_active(True)
         self.alwaysShowCheck.show()
@@ -126,25 +139,13 @@ class GuiConfiguration:
         CheckVbox.add(self.slowOnDesyncCheck)
         CheckVbox.show()
 
-    def _addFileChoosersButtons(self, vbox):
-        hbox = gtk.HBox(False, 0)
-        self.playerPathButton = gtk.Button("Select Player Executable")
-        self.playerPathButton.connect("clicked", lambda w: self._showPlayerFileDialog())
-        self.playerPathButton.show()
-        self.mediaPathButton = gtk.Button("Select Media File")
-        self.mediaPathButton.connect("clicked", lambda w: self._showMediaFileDialog())
-        self.mediaPathButton.show()
-        hbox.add(self.playerPathButton)
-        hbox.add(self.mediaPathButton)
-        hbox.show()
-        vbox.add(hbox)
-
     def _showPlayerFileDialog(self):
         dialog = gtk.FileChooserDialog(parent=self.window,action=gtk.FILE_CHOOSER_ACTION_OPEN,buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT, gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
         dialog.run()
         if dialog.get_filename() != None:
             self.config['playerPath'] = dialog.get_filename()
         dialog.destroy()
+        self.mpcEntry.set_text(self.config['playerPath'])
 
     def _showMediaFileDialog(self):
         dialog = gtk.FileChooserDialog(parent=self.window,action=gtk.FILE_CHOOSER_ACTION_OPEN,buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT, gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
@@ -152,6 +153,7 @@ class GuiConfiguration:
         if dialog.get_filename() != None:
             self.config['file'] = dialog.get_filename()
         dialog.destroy()
+        self.fileEntry.set_text(self.config['file'])
 
     def setAvailablePaths(self, paths):
         self._availablePlayerPaths = paths
