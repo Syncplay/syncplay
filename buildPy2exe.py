@@ -154,6 +154,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay"
     DeleteRegKey HKLM SOFTWARE\Syncplay
     Delete $$INSTDIR\uninstall.exe
+    RMDir $$INSTDIR\resources
+    RMDir $$INSTDIR\lib
     RMDir $$INSTDIR
   SectionEnd
 """
