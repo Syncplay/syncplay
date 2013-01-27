@@ -37,6 +37,45 @@ class Bot(object):
     def registerProto(self, proto):
         self.proto = proto
 
+    def takeAction(self, action, user):
+        if(action == "help" or action == "h"):
+            v = (ColorCode.BOLD, ColorCode.NORMAL)
+            return "{}Available commands:{} !rooms / !roominfo [room] / !playpause (or aliases: !r, !ri [room], !p).".format(*v)
+        elif(action == "rooms" or action == "r"):
+            return self.__listRooms()
+        elif(action.startswith("roominfo") or action.startswith("ri")):
+            return self.__getRoomInfo(action)
+        elif(action == "playpause" or action == "p"):
+            return self.__playpause(user)
+        else:
+            return "{}Error!{} Unknown command".format(ColorCode.RED, ColorCode.NORMAL)
+
+    def sp_joined(self, who, room):
+        msg ="{}<{}>{} has joined the room: `{}`".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
+        self._sendChanMessage(msg)
+
+    def sp_left(self, who, room):
+        msg ="{}<{}>{} has left the room: `{}`".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
+        self._sendChanMessage(msg)
+
+    def sp_unpaused(self, who, room):
+        msg ="{}<{}>{} has unpaused (in room `{}`)".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
+        self._sendChanMessage(msg)
+        
+    def sp_paused(self, who, room):
+        msg ="{}<{}>{} has paused (in room `{}`)".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
+        self._sendChanMessage(msg)
+        
+    def sp_fileplaying(self, who, filename, room):
+        if filename:
+            msg ="{}<{}>{} is playing {} (in room `{}`)".format(ColorCode.BOLD, who, ColorCode.NORMAL, filename, room)
+            self._sendChanMessage(msg)
+            
+    def sp_seek(self, who, fromTime, toTime, room):
+        v = (ColorCode.BOLD, who, ColorCode.NORMAL, utils.formatTime(fromTime), utils.formatTime(toTime), room,)
+        msg ="{}<{}>{} has jumped from {} to {} (in room `{}`)".format(*v)
+        self._sendChanMessage(msg)
+
     def __playpause(self, user):
         rooms = self._functions["getRooms"]()
         for room in rooms:
@@ -104,48 +143,9 @@ class Bot(object):
         message = self.__getUserlist(room)
         return message
         
-    def takeAction(self, action, user):
-        if(action == "help" or action == "h"):
-            v = (ColorCode.BOLD, ColorCode.NORMAL)
-            return "{}Available commands:{} !rooms / !roominfo [room] / !playpause (or aliases: !r, !ri [room], !p).".format(*v)
-        elif(action == "rooms" or action == "r"):
-            return self.__listRooms()
-        elif(action.startswith("roominfo") or action.startswith("ri")):
-            return self.__getRoomInfo(action)
-        elif(action == "playpause" or action == "p"):
-            return self.__playpause(user)
-        else:
-            return "{}Error!{} Unknown command".format(ColorCode.RED, ColorCode.NORMAL)
-    
     def _sendChanMessage(self, msg):
         if(self.proto):
             self.proto.sendChanMessage(msg)
-
-    def sp_joined(self, who, room):
-        msg ="{}<{}>{} has joined the room: `{}`".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
-        self._sendChanMessage(msg)
-
-    def sp_left(self, who, room):
-        msg ="{}<{}>{} has left the room: `{}`".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
-        self._sendChanMessage(msg)
-
-    def sp_unpaused(self, who, room):
-        msg ="{}<{}>{} has unpaused (in room `{}`)".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
-        self._sendChanMessage(msg)
-        
-    def sp_paused(self, who, room):
-        msg ="{}<{}>{} has paused (in room `{}`)".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
-        self._sendChanMessage(msg)
-        
-    def sp_fileplaying(self, who, filename, room):
-        if filename:
-            msg ="{}<{}>{} is playing {} (in room `{}`)".format(ColorCode.BOLD, who, ColorCode.NORMAL, filename, room)
-            self._sendChanMessage(msg)
-            
-    def sp_seek(self, who, fromTime, toTime, room):
-        v = (ColorCode.BOLD, who, ColorCode.NORMAL, utils.formatTime(fromTime), utils.formatTime(toTime), room,)
-        msg ="{}<{}>{} has jumped from {} to {} (in room `{}`)".format(*v)
-        self._sendChanMessage(msg)
         
 class BotProto(irc.IRCClient):
     def __init__(self, bot, nickname):
