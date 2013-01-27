@@ -21,8 +21,10 @@ class GuiConfiguration:
         vbox.show()
         self._addLabeledEntries(self.config, vbox)
         self._addCheckboxEntries(self.config, vbox)
+        self._addMalPanel(vbox)
         self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
         button = gtk.Button(stock=gtk.STOCK_SAVE)
+        button.set_resize_mode(gtk.RESIZE_PARENT)
         button.connect("clicked", lambda w: self._saveDataAndLeave())
         guideLink = gtk.Button("Configuration Guide")
         guideLink.connect("clicked", lambda w: webbrowser.open("http://syncplay.pl/guide/"))
@@ -154,6 +156,42 @@ class GuiConfiguration:
             self.config['file'] = dialog.get_filename()
         dialog.destroy()
         self.fileEntry.set_text(self.config['file'])
+
+    def _addMalPanel(self, vbox):
+        panel = gtk.Expander("MAL Updater Settings")
+        panel.show()
+        panelVbox = gtk.VBox(False, 0)
+
+        malCredHbox = gtk.HBox(False,0)
+        malCredHbox.show()
+        self.malUpdaterOnCheck = gtk.CheckButton("MAL Updater On")
+        self.malUpdaterOnCheck.show()
+        malCredHbox.add(self.malUpdaterOnCheck)
+        self.clearCredentialsButton = gtk.Button("Clear Saved Credentials")
+        self.clearCredentialsButton.connect("clicked", lambda w: self._clearMalCredentials())
+        self.clearCredentialsButton.show()
+        malCredHbox.add(self.clearCredentialsButton)
+        panelVbox.add(malCredHbox)
+
+        self.malUsername = self._addLabeledEntryToVbox("Username: ", " ", panelVbox, lambda __, w: self._saveDataAndLeave())
+        self.malPassword = self._addLabeledEntryToVbox("Password: ", " ", panelVbox, lambda __, w: self._saveDataAndLeave())
+
+        spinButtonHbox = gtk.HBox(True, 0)
+        percentBoxLabel = gtk.Label("Progress Threshold For Updating: ")
+        percentBoxLabel.show()
+        spinButtonHbox.add(percentBoxLabel)
+        self.percentBox = gtk.SpinButton(adjustment=gtk.Adjustment(0,1,100,1,1,0))
+        self.percentBox.show()
+        spinButtonHbox.add(self.percentBox)
+        spinButtonHbox.show()
+        panelVbox.add(spinButtonHbox)
+
+        panelVbox.show()
+        panel.add(panelVbox)
+        vbox.add(panel)
+
+    def _clearMalCredentials(self):
+        return
 
     def setAvailablePaths(self, paths):
         self._availablePlayerPaths = paths
