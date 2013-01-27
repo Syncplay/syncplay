@@ -65,6 +65,6 @@ install-server: common server
 
 uninstall-server: u-server u-common
 
-install-all: common client server
+install: common client server
 
-uninstall-all: u-client u-server u-common
+uninstall: u-client u-server u-common
