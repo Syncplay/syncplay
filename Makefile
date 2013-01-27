@@ -1,5 +1,9 @@
 SINGLE_USER	= false
 
+ifndef VLC_SUPPORT
+	VLC_SUPPORT = false
+endif
+
 BASE_PATH	= /usr
 LOCAL_PATH	= ~/.local
 
@@ -34,14 +38,17 @@ client:
 	echo '#!/bin/sh\npython -OO $(LIB_PATH)/syncplay/syncplayClient.py "$$@"' > $(BIN_PATH)/syncplay
 	chmod a+x $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
-	-mkdir -p $(SHARE_PATH)/vlc/lua/intf/
-	cp resources/syncplay.lua $(SHARE_PATH)/vlc/lua/intf/
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
+	
+ifeq ($(VLC_SUPPORT),true)
+	-mkdir -p $(LIB_PATH)/vlc/lua/intf/
+	cp resources/syncplay.lua $(LIB_PATH)/vlc/lua/intf/
+endif
 
 u-client:
 	-rm $(BIN_PATH)/syncplay
 	-rm $(LIB_PATH)/syncplay/syncplayClient.py
-	-rm $(SHARE_PATH)/vlc/lua/intf/syncplay.lua
+	-rm $(LIB_PATH)/vlc/lua/intf/syncplay.lua
 	-rm $(APP_SHORTCUT_PATH)/syncplay.desktop
 
 server:
