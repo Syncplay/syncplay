@@ -7,12 +7,12 @@ ifeq ($(SINGLE_USER),false)
 	BIN_PATH          = $(BASE_PATH)/bin
 	LIB_PATH          = $(BASE_PATH)/lib
 	APP_SHORTCUT_PATH = $(BASE_PATH)/share/applications
-	SHARE_PATH         = $(BASE_PATH)/share
+	SHARE_PATH        = $(BASE_PATH)/share
 else
 	BIN_PATH          = $(LOCAL_PATH)/syncplay
 	LIB_PATH          = $(LOCAL_PATH)/syncplay
 	APP_SHORTCUT_PATH = $(LOCAL_PATH)/share/applications
-	SHARE_PATH         = $(LOCAL_PATH)/share
+	SHARE_PATH        = $(LOCAL_PATH)/share
 endif
 
 common:
@@ -34,14 +34,14 @@ client:
 	echo '#!/bin/sh\npython -OO $(LIB_PATH)/syncplay/syncplayClient.py "$$@"' > $(BIN_PATH)/syncplay
 	chmod a+x $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
-	-mkdir -p $(SHARE_PATH)/usr/share/vlc/lua/intf/
-	cp resources/syncplay.lua $(SHARE_PATH)/usr/share/vlc/lua/intf/
+	-mkdir -p $(SHARE_PATH)/vlc/lua/intf/
+	cp resources/syncplay.lua $(SHARE_PATH)/vlc/lua/intf/
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
 
 u-client:
 	-rm $(BIN_PATH)/syncplay
 	-rm $(LIB_PATH)/syncplay/syncplayClient.py
-	-rm $(SHARE_PATH)/usr/share/vlc/lua/intf/syncplay.lua
+	-rm $(SHARE_PATH)/vlc/lua/intf/syncplay.lua
 	-rm $(APP_SHORTCUT_PATH)/syncplay.desktop
 
 server:
