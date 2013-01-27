@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.0.5
+ Version: 0.0.7
  
 --[==========================================================================[
 
@@ -13,11 +13,13 @@
 Place the syncplay.lua file in one of the VLC /lua/intf/ sub-directories. By default this should be:
 * Windows (all users): %ProgramFiles%\VideoLAN\VLC\lua\intf\
 * Windows (current user): %APPDATA%\VLC\lua\intf\
-* Linux (all users): /usr/share/vlc/lua/intf/
+* Linux (all users): /usr/lib/vlc/lua/intf/
 * Linux (current user): ~/.local/share/vlc/lua/intf/
 * Mac OS X (all users): /Applications/VLC.app/Contents/MacOS/share/lua/intf/
 
 If a directory does not exist then you may have to create it.
+
+Note: You may have to copy the VLC 'modules' folder to make it a sub-directory of the 'intf' folder.
 
  === Commands and responses ===
  = Note: ? denotes optional responses; * denotes mandatory response; uses \n terminator.
@@ -34,13 +36,13 @@ If a directory does not exist then you may have to create it.
 
  get-interface-version
     * >> interface-version: [syncplay connector version]
-	
+    
  get-duration
     * >> duration: [<duration/no-input>]
-	
+    
  get-filepath
     * >> filepath: [<filepath/no-input>]
-	
+    
  get-filename
     * >> filepath: [<filename/no-input>]
  
@@ -65,7 +67,9 @@ If a directory does not exist then you may have to create it.
 require "common"
 require "host"
 
-local connectorversion = "0.0.5"
+local connectorversion = "0.0.7"
+
+local durationdelay = 500000 -- Pause for get_duration command for increased reliability
 
 local port
 
@@ -128,8 +132,8 @@ end
 
 function get_args (argument, argcount)
     -- Converts comma-space-seperated values into array of a given size, with last item absorbing all remaining data if needed.
-	-- [Used by the display-osd command]
-	
+    -- [Used by the display-osd command]
+    
     local argarray = {}
     local index
     local i
@@ -163,7 +167,7 @@ end
 
 function get_var( vartoget )
     -- [Used by the poll / '.' command to get time]
-	
+    
     local response
     local errormsg
     local input = vlc.object.input()
@@ -180,7 +184,7 @@ end
 
 function set_var(vartoset, varvalue)
     -- [Used by the set-time and set-rate commands]
-	
+    
     local errormsg
     local input = vlc.object.input()
     
@@ -197,7 +201,7 @@ end
 
 function get_play_state()
     -- [Used by the get-playstate command]
-	
+    
     local response
     local errormsg
     local input = vlc.object.input()
@@ -214,7 +218,7 @@ end
 
 function get_filepath ()
     -- [Used by get-filepath command]
-	
+    
     local response
     local errormsg
     local item
@@ -236,7 +240,7 @@ end
 
 function get_filename ()
     -- [Used by get-filename command]
-	
+    
     local response
     local index
     local filename
@@ -265,7 +269,13 @@ function get_duration ()
         if input then
             local item = vlc.input.item()
             if item then
-                response = vlc.input.item():duration()
+            -- Try to get duration, which might not be available straight away
+                local i = 0            
+                repeat
+                    vlc.misc.mwait(vlc.misc.mdate() + durationdelay)
+                    response = vlc.input.item():duration()
+                    i = i + 1
+                until response > 0 or i > 5
             else
                 errormsg = noinput
             end
@@ -296,7 +306,7 @@ end
     
 function do_command ( command, argument)
     -- Processes all commands sent by Syncplay (see protocol, above).
-	
+    
     if command == "." then
         do return detectchanges() end
     end
@@ -327,8 +337,8 @@ end
 
 
 function errormerge(argument, errormsg)
-	-- Used to integrate 'no-input' error messages into command responses.
-	
+    -- Used to integrate 'no-input' error messages into command responses.
+    
     if (errormsg ~= nil) and (errormsg ~= "") then
         do return errormsg end
     end
@@ -338,7 +348,7 @@ end
 
 function set_playstate(argument)
     -- [Used by the set-playstate command]
-	
+    
     local errormsg
     local input = vlc.object.input()
     local playstate
