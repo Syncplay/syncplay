@@ -1,231 +1,190 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @author HarHar
-
-import socket
-import threading
+from twisted.words.protocols import irc
+from twisted.internet import reactor, protocol
 from syncplay import utils
-from time import sleep
-import traceback
 
+class ColorCode(object):
+    NORMAL = chr(15)
+    BOLD = chr(2)
+    RED = chr(3) + "5"
+    BLUE = chr(3) + "12"
+
+'''
+@author Uriziel
+@author HarHar
+'''
 class Bot(object):
-	def __init__(self, server='irc.rizon.net', serverPassword='', port=6667, nick='SyncBot', nickservPass='', channel='', channelPassword='', functions=[]):
-		#Arguments
-		#	server 			- IRC Server to connect to
-		#	serverPassword		- probably empty
-		#	port			- usually between 6660 - 6669, 7000
-		#	nick 			- duh
-		#	nickservPass		- if not given, NickServ identification string won't be sent
-		#	channel 		- channel to autojoin and interact with
-		#	channelPassword		- if channel is +k
-		#	functions		- list/tuple of functions that can be used from the bot:
-		#		* pause(setBy, state=bool)
-		#		* getRooms() -> list
-		#		* getPosition(room) -> int
-		#		* setPosition(setBy, seconds)
-		#		* getUsers(room) -> list of {'nick': str, 'file': str, 'length': int}
-		#		* isPaused(room) -> bool		
+    def __init__(self, server='irc.rizon.net', port=6667, nick='SyncBot', channel='', functions=[]):
+        '''
+        functions - dict of functions that can be used from the bot:
+        functions = {
+            "pause": lambda setBy, state: None,
+            "getRooms": lambda: ["",],
+            "setRoomPosition": lambda setBy, seconds 0: None,
+            "getRoomPosition": lambda room: 0,
+            "getRoomUsers": lambda room: [{"nick": "", "file": "", "duration": 0},],
+            "isRoomPaused": lambda room: True,                            
+            }
+        '''
+        self.factory = BotFactory(self, channel.encode("ascii", "replace"), nick.encode("ascii", "replace"))
+        self.proto = None
+        self.server = server
+        self.port = port
+        self._functions = functions
+        
+    def start(self):
+        reactor.connectTCP(self.server, self.port, self.factory)
+        
+    def registerProto(self, proto):
+        self.proto = proto
 
-		self.functions = functions
-		self.server = server
-		self.serverPassword = serverPassword
-		self.port = port
-		self.nick = nick
-		self.nickservPass = nickservPass
-		self.channel = channel
-		self.channelPassword = channelPassword
+    def __playpause(self, user):
+        rooms = self._functions["getRooms"]()
+        for room in rooms:
+            users = self._functions["getRoomUsers"](room)
+            for u in users:
+                if u['nick'] == user:
+                    paused = self._functions["isRoomPaused"](room)
+                    self._functions["pause"](user, not (paused))
+                    return "<{}> {} the room: `{}`".format(ColorCode.BOLD, user, ColorCode.NORMAL, "paused" if paused else "unpaused", room)
+        return "{}Error!{} Your nick was not found on the server.".format(ColorCode.RED, ColorCode.NORMAL)
 
-		#Connection/authentication routine
-		self.sock = socket.socket()
-		self.sock.connect((server, port))
+    def __listRooms(self):
+        rooms = self._functions["getRooms"]()
+        if(len(rooms) >= 3):
+            v = ("`, `".join(rooms[:-1]), rooms[-1])
+            return "Currently the Syncplay server hosts viewing sessions as follows: `{}` and ultimately `{}`.".format(*v)
+        elif(len(rooms) == 2):
+            return "Currently the Syncplay server hosts viewing sessions as follows: `{}` and `{}`.".format(rooms[0], rooms[1])
+        elif(len(rooms) == 1):
+            return "Currently the Syncplay server hosts one viewing session called `{}`".format(rooms[0])
+        else:
+            return "{}Notice:{} No rooms have been found on server".format(ColorCode.BLUE, ColorCode.NORMAL)
 
-		if serverPassword != '':
-			self.sockSend('PASS ' + serverPassword)
-		self.sockSend('NICK ' + nick)
-		self.sockSend('USER ' + nick + ' ' + nick + ' ' + nick + ' :SyncPlay Bot') #Don't ask me
-		self.sock.recv(4096) #Wait for authentication to finish
+    def __getListOfFiles(self, users):
+        files = []
+        for u in users:
+            if [u["file"], u["duration"]] not in files:
+                files.append([u["file"], u["duration"]])
+        return files
 
-		if nickservPass != '':
-			self.msg('NickServ', 'IDENTIFY ' + nickservPass)
-			self.sock.recv(4096) #We don't want to join if nickserv hasn't done its job (shouldn't really matter, but good for vHost)
+    def __getUserlist(self, room):
+        users = self._functions["getRoomUsers"](room)
+        position = self._functions["getRoomPosition"](room)
+        paused = "Paused" if self._functions["isRoomPaused"](room) else "Playing"
+        files = self.__getListOfFiles(users)
+        message = ""
+        for f in files:
+            if (f[0] == None):
+                message += "No file:\n"
+            else:
+                v = (
+                     ColorCode.BOLD, paused, ColorCode.NORMAL, 
+                     utils.formatTime(position),
+                     utils.formatTime(f[1]), f[0]
+                     )
+                message += "{}<{}>{} [{}/{}] {}\n".format(*v)
+            u = [u['nick'] for u in users if f[0] == u['file'] and f[1] == u['duration']]
+            if (len(u) > 1):
+                message += "Played by: <{}> and <{}>.\n".format(">, <".join(u[:-1]), u[-1])
+            else:
+                message += "Played by {} alone.\n".format(u[0])
+        return message
 
-		if channel != '':
-			self.join(channel, channelPassword)
+    def __getRoomInfo(self, action):
+        if(action.startswith("rooms")):
+            room = action.replace("rooms", "", 1)
+        else:
+            room = action.replace("ri", "", 1)
+        room = room.strip()
+        if('' == room):
+            return  "{}Usage:{} !roominfo [room]".format(ColorCode.BLUE, ColorCode.NORMAL)
+        rooms = self._functions["getRooms"]()
+        if(not room in rooms):
+            return "{}Error!{} Room does not exists.".format(ColorCode.RED, ColorCode.NORMAL)
+        message = self.__getUserlist(room)
+        return message
+        
+    def takeAction(self, action, user):
+        if(action == "help" or action == "h"):
+            v = (ColorCode.BOLD, ColorCode.NORMAL)
+            return "{}Available commands:{} !rooms / !roominfo [room] / !playpause (or aliases: !r, !ri [room], !p).".format(*v)
+        elif(action == "rooms" or action == "r"):
+            return self.__listRooms()
+        elif(action.startswith("roominfo") or action.startswith("ri")):
+            return self.__getRoomInfo(action)
+        elif(action == "playpause" or action == "p"):
+            return self.__playpause(user)
+        else:
+            return "{}Error!{} Unknown command".format(ColorCode.RED, ColorCode.NORMAL)
+    
+    def _sendChanMessage(self, msg):
+        if(self.proto):
+            self.proto.sendChanMessage(msg)
 
-		self.active = True
-		self.thread = threading.Thread(target=handlingThread, args=(self.sock, self))
-		self.thread.setDaemon(True)
-		self.thread.start()
+    def sp_joined(self, who, room):
+        msg ="{}<{}>{} has joined the room: `{}`".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
+        self._sendChanMessage(msg)
 
-	def sp_joined(self, who, room):
-		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has joined ' + room)
-	def sp_left(self, who, room):
-		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has left ' + room)
-	def sp_unpaused(self, who, room):
-		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has unpaused (room ' + room + ')')
-	def sp_paused(self, who, room):
-		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has paused (room ' + room + ')')
-	def sp_fileplaying(self, who, filename, room): #for when syncplay knows what filename is being played
-		if filename == '':
-			return
-		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' is playing "' + filename + '" (room ' + room + ')')
-	def sp_seek(self, who, fromTime, toTime, room):
-		self.msg(self.channel, chr(2) + '<' + who + '>'+ chr(15) +' has jumped from ' + utils.formatTime(fromTime) + ' to ' + utils.formatTime(toTime) +' (room ' + room + ')')
+    def sp_left(self, who, room):
+        msg ="{}<{}>{} has left the room: `{}`".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
+        self._sendChanMessage(msg)
 
-	def sockSend(self, s):
-		try:
-			self.sock.send(s.encode('utf8') + '\r\n')
-		except socket.error, info:
-			self.active = False
-			print '\033[91mSocket error (bot disconnected)\033[0;0m ' + str(info)
-			
-	def msg(self, who, message):
-		self.sockSend('PRIVMSG ' + who + ' :' + message)
-	def join(self, channel, passw=''):
-		if passw != '': passw = ' ' + passw
-		self.sockSend('\r\nJOIN ' + channel + passw)
-		#Just to make sure we joined; doesn't hurt anyone
-		sleep(1)
-		self.sockSend('\r\nJOIN ' + channel + passw)
-	def part(self, channel, reason=''):
-		self.sockSend('PART ' + channel + ' :' + reason)
-	def quit(self, reason='Leaving'):
-		self.active = False
-		self.sockSend('QUIT :' + reason)
-		self.sock.close()
-	def nick(self, newnick):
-		self.sockSend('NICK ' + newnick)
-		self.nick = newnick
-	def irc_onMsg(self, nickFrom, host, to, msg):
-		sleep(0.5)
-		if to[0] == '#': #channel
-			split = msg.split(' ')
+    def sp_unpaused(self, who, room):
+        msg ="{}<{}>{} has unpaused (in room `{}`)".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
+        self._sendChanMessage(msg)
+        
+    def sp_paused(self, who, room):
+        msg ="{}<{}>{} has paused (in room `{}`)".format(ColorCode.BOLD, who, ColorCode.NORMAL, room)
+        self._sendChanMessage(msg)
+        
+    def sp_fileplaying(self, who, filename, room):
+        if filename:
+            msg ="{}<{}>{} is playing {} (in room `{}`)".format(ColorCode.BOLD, who, ColorCode.NORMAL, filename, room)
+            self._sendChanMessage(msg)
+            
+    def sp_seek(self, who, fromTime, toTime, room):
+        v = (ColorCode.BOLD, who, ColorCode.NORMAL, utils.formatTime(fromTime), utils.formatTime(toTime), room,)
+        msg ="{}<{}>{} has jumped from {} to {} (in room `{}`)".format(*v)
+        self._sendChanMessage(msg)
+        
+class BotProto(irc.IRCClient):
+    def __init__(self, bot, nickname):
+        self.nickname = nickname
+        self.bot = bot
+        self.bot.registerProto(self)
+        
+    def signedOn(self):
+        self.join(self.factory.channel)
 
-			if split[0].lower() == '!rooms':
-				rooms = self.functions[1]()
+    def joined(self, channel):
+        self.msg(channel, "Syncplay IRC Bot - I'm all fired up!")
 
-				if len(rooms) == 0:
-					self.msg(to, chr(3) + '12Notice:' + chr(15) + ' No rooms found on server')
-					return
+    def privmsg(self, user, channel, msg):
+        user = user.split('!', 1)[0]
+        isActionMessage = channel == self.nickname or msg.startswith(self.nickname + ":") or msg.startswith("!") or msg.startswith(".") 
+        if isActionMessage:
+            action = msg.replace(self.nickname + ":", "")
+            action = msg.lstrip(".!")
+            reply = self.bot.takeAction(action.lower(), user)
+            for line in reply.splitlines():
+                self.msg(channel, line)
 
-				out = 'Currently the Syncplay server hosts viewing sessions as follows: '
-				i = 0
-				for room in rooms:
-					if i == len(rooms)-1:
-						out += chr(3) + '10' + room + chr(15) + '.'
-					elif i == len(rooms)-2:
-						out += chr(3) + '10' + room + chr(15) + ' and ultimately '
-					else:
-						out += chr(3) + '10' + room + chr(15) + ', '
-					i += 1
-				self.msg(to, out)
-			elif split[0].lower() == '!roominfo':
-				if len(split) >= 2:
-					rooms = self.functions[1]()
-					room = ''
-					for r in split[1:]:
-						room += r + ' '
-					room = room[:-1]
-					if (room in rooms) == False:
-						self.msg(to, chr(3) + '5Error!' + chr(15) + ' Room does not exists (' + room + ')')
-					else:
-						users = self.functions[4](room)
-						paused = self.functions[5](room)
-						out = chr(2) + '<Paused>' + chr(15) if paused else chr(2) + '<Playing>' + chr(15)
-						time = self.functions[2](room)
-						if time == None: time = 0
-						for u in users:
-							if u['length'] == None: continue
-							out += ' [' + utils.formatTime(time) + '/' + utils.formatTime(u['length']) + '] '
-							break
-						else:
-							out += ' '
+    def sendChanMessage(self, msg):
+        self.msg(self.factory.channel, msg)
 
-						for u in users:
-							if u['file'] == None: continue
-							out += u['file']
-							break
-						else:
-							out += '[no file]'
-						self.msg(to, out)
-						out = 'Users: '
-						i = 0
-						for user in users:
-							if i == len(users)-1:
-								out += chr(3) + '2' + user['nick'] + chr(15) + '.'
-							elif i == len(users)-2:
-								out += chr(3) + '2' + user['nick'] + chr(15) + ' and '
-							else:
-								out += chr(3) + '2' + user['nick'] + chr(15) + ', '
-							i += 1
-						self.msg(to, out)
-				else:
-					self.msg(to, chr(2) + 'Usage:' + chr(15) + ' !roominfo [room]')
-			elif split[0].lower() == '!pause':
-				rooms = self.functions[1]()
+class BotFactory(protocol.ClientFactory):
+    def __init__(self, bot, channel, nickname):
+        self.channel = channel
+        self.nickname = nickname
+        self.bot = bot
+        
+    def buildProtocol(self, addr):
+        p = BotProto(self.bot, self.nickname)
+        p.factory = self
+        return p
 
-				for room in rooms:
-					users = self.functions[4](room)
-					for u in users:
-						if u['nick'] == nickFrom:
-							self.functions[0](nickFrom, True)
-							return
-				self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
-			elif split[0].lower() == '!play':
-				rooms = self.functions[1]()
-				
-				for room in rooms:
-					users = self.functions[4](room)
-					for u in users:
-						if u['nick'] == nickFrom:
-							self.functions[0](nickFrom, False)
-							return
-				self.msg(to, chr(3) + '5Error!' + chr(15) + ' Your nick was not found on the server')
-			elif split[0].lower() == '!help':
-				self.msg(to, chr(2) + 'Available commands:' + chr(15) + ' !rooms / !roominfo [room] / !pause / !play')
+    def clientConnectionLost(self, connector, reason):
+        connector.connect()
 
-def handlingThread(sock, bot):
-	while bot.active:
-		try:
-			rcvd = sock.recv(4096).split('\n')
-		except socket.error, info:
-			bot.active = False
-			print '\033[91mSocket error (bot disconnected)\033[0;0m ' + str(info)
-			break
-		for line in rcvd:
-			try:
-				line = line.replace('\r', '')
-
-				if line.split(' ')[0] == 'PING':
-					try:
-						sock.send('\r\nPONG ' + line.split(' ')[1].replace(':', '') + '\r\n')
-					except: #if we were fooled by the server :C
-						sock.send('\r\nPONG\r\n')
-					#\r\n on the beggining too because if we send two things too fast, the IRC server can discern
-
-				lsplit = line.split(':')
-				if len(lsplit) >= 2:
-					if len(lsplit[1].split(' ')) >= 2:
-						if lsplit[1].split(' ')[1] == '404':
-							bot.join(bot.channel, bot.channelPassword)
-
-					if 'PRIVMSG' in lsplit[1] or 'NOTICE' in lsplit[1]:
-						# ---BEGIN WTF BLOCK---
-						lsplit = line.split(':')
-						addrnfrom = ''
-						if '~' in lsplit[1]:
-							addrnfrom = lsplit[1].split('~')[1].split(' ')[0]
-							nfrom = lsplit[1].split('!')[0]
-						else:
-							nfrom = lsplit[1].split('!')[0]
-
-						if len(lsplit[1].split()) >= 3:
-							to = lsplit[1].split()[2]
-						msg = ''
-						for brks in lsplit[2:]:
-							msg += brks + ':'
-						msg = msg[:-1].lstrip()
-						# ---END WTF BLOCK- --
-						bot.irc_onMsg(nfrom, addrnfrom, to, msg)
-			except:
-				print traceback.format_exc()
+    def clientConnectionFailed(self, connector, reason):
+        print "IRC Bot connection failed, please check your configuration"

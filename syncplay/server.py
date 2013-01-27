@@ -1,5 +1,4 @@
 #coding:utf8
-#TODO: #12, #13, #8;
 import hashlib
 from twisted.internet import task, reactor
 from twisted.internet.protocol import Factory
@@ -30,56 +29,45 @@ class SyncFactory(Factory):
         if(ircConnectionData):
             self.setupIRCBot(ircConnectionData)
     
-    def readIrcConfig(self, ircConfig): #TODO:
+    def readIrcConfig(self, ircConfig):
         if(ircConfig and os.path.isfile(ircConfig)):
             cfg = codecs.open(ircConfig, "r", "utf-8-sig").read()
             cfg = cfg.splitlines()
             ircConnectionData = {
                                  "server": "",
-                                 "serverPassword": "",
                                  "port": "",
                                  "nick": "",
-                                 "nickservPass": "",
-                                 "channelPassword": "",
                                  "channel": ""
                                  }
             for line in cfg:
                 if("irc.server: " in line):
                     ircConnectionData['server'] = line.split(": ")[1]
-                elif("irc.serverPassword: " in line):
-                    ircConnectionData['serverPassword'] = line.split(": ")[1]
                 elif("irc.serverPort: " in line):
                     ircConnectionData['port'] = int(line.split(": ")[1])
                 elif("irc.botName: " in line):
                     ircConnectionData['nick'] = line.split(": ")[1]
-                elif("irc.nickservPass: " in line):
-                    ircConnectionData['nickservPass'] = line.split(": ")[1]
-                elif("irc.channelPassword: " in line):
-                    ircConnectionData['channelPassword'] = line.split(": ")[1]
                 elif("irc.channel: " in line):
                     ircConnectionData['channel'] = line.split(": ")[1]
             return ircConnectionData
         
     def setupIRCBot(self, ircConnectionData):
-            botFunctions = [
-                    self.ircPauseRoom,
-                    self.getRooms,
-                    self.getRoomPosition,
-                    self.ircSetRoomPosition,
-                    self.getRoomUsernames,
-                    self.isRoomPaused,                            
-                    ]
+            botFunctions = {
+                    "pause": self.ircPauseRoom,
+                    "getRooms": self.getRooms,
+                    "setRoomPosition": self.ircSetRoomPosition,
+                    "getRoomPosition": self.getRoomPosition,
+                    "getRoomUsers": self.getRoomUsernames,
+                    "isRoomPaused": self.isRoomPaused,                            
+                    }
             try:
                 self.ircBot = IRCBot(
                        ircConnectionData['server'],
-                       ircConnectionData['serverPassword'],
                        ircConnectionData['port'],
                        ircConnectionData['nick'],
-                       ircConnectionData['nickservPass'],
                        ircConnectionData['channel'],
-                       ircConnectionData['channelPassword'],
                        botFunctions,
                        )
+                self.ircBot.start()
             except:
                 print "IRC Bot could not be started, please check your configuration"
 
@@ -339,9 +327,9 @@ class SyncFactory(Factory):
             if room in self._rooms:
                 for user in self._rooms[room].itervalues():
                     if(user.file):
-                        l.append({'nick': user.name, 'file': user.file['name'], "length": user.file['duration']})
+                        l.append({'nick': user.name, 'file': user.file['name'], "duration": user.file['duration']})
                     else:
-                        l.append({'nick': user.name, 'file': None, "length": None})
+                        l.append({'nick': user.name, 'file': None, "duration": None})
         return l
             
     def isRoomPaused(self, room):
