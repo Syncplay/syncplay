@@ -5,6 +5,7 @@ from syncplay import constants
 from syncplay.messages import getMessage
 import sys
 import os
+import itertools
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -88,3 +89,5 @@ def findWorkingDir():
         path = ""
     return path
 
+def limitedPowerset(s, minLength):
+    return itertools.chain.from_iterable(itertools.combinations(s, r) for r in xrange(len(s), minLength, -1))
