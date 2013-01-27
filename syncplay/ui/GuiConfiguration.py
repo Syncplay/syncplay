@@ -23,17 +23,19 @@ class GuiConfiguration:
         self._addCheckboxEntries(self.config, vbox)
         self._addMalPanel(vbox)
         self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
-        button = gtk.Button(stock=gtk.STOCK_SAVE)
-        button.set_resize_mode(gtk.RESIZE_PARENT)
-        button.connect("clicked", lambda w: self._saveDataAndLeave())
+        if self.config['noStore'] == True:
+            self.button = gtk.Button("Run Syncplay")
+        else:
+            self.button = gtk.Button("Save and Run Syncplay")
+        self.button.connect("clicked", lambda w: self._saveDataAndLeave())
         guideLink = gtk.Button("Configuration Guide")
         guideLink.connect("clicked", lambda w: webbrowser.open("http://syncplay.pl/guide/"))
         guideLink.show()
         vbox.add(guideLink)
-        vbox.pack_start(button, True, True, 0)
-        button.set_flags(gtk.CAN_DEFAULT)
-        button.grab_default()
-        button.show()
+        vbox.pack_start(self.button, True, True, 0)
+        self.button.set_flags(gtk.CAN_DEFAULT)
+        self.button.grab_default()
+        self.button.show()
         self.window.show()
         gtk.main()
      
@@ -129,6 +131,7 @@ class GuiConfiguration:
             self.alwaysShowCheck.set_active(True)
         self.alwaysShowCheck.show()
         self.storeConfigCheck = gtk.CheckButton("Do Not Store This Configuration")
+        self.storeConfigCheck.connect("toggled", lambda w: self._changeSaveLabel())
         if self.config['noStore'] == True:
             self.storeConfigCheck.set_active(True)
         self.storeConfigCheck.show()
@@ -140,6 +143,14 @@ class GuiConfiguration:
         CheckVbox.add(self.storeConfigCheck)
         CheckVbox.add(self.slowOnDesyncCheck)
         CheckVbox.show()
+
+    def _changeSaveLabel(self):
+        if self.config['noStore'] == True:
+            self.button.set_label("Save and Run Syncplay")
+            self.config['noStore'] = False
+        else:
+            self.button.set_label("Run Syncplay")
+            self.config['noStore'] = True
 
     def _showPlayerFileDialog(self):
         dialog = gtk.FileChooserDialog(parent=self.window,action=gtk.FILE_CHOOSER_ACTION_OPEN,buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT, gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
