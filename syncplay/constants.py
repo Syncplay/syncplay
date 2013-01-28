@@ -39,7 +39,7 @@ MPC_PATHS = [
              r"C:\Program Files\Combined Community Codec Pack\MPC\mpc-hc.exe",
              r"C:\Program Files\MPC HomeCinema (x64)\mpc-hc64.exe",
              ]
-MPLAYER_PATHS = ["mplayer2"]
+MPLAYER_PATHS = ["mplayer2", "mplayer"]
 MPV_PATHS = ["mpv", "/opt/mpv/mpv"]
 VLC_PATHS = [
              r"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
