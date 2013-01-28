@@ -198,9 +198,3 @@ class MplayerPlayer(BasePlayer):
                 self.__process.stdin.write(line + "\n")
             except IOError:
                 pass
-
-        def readStderrLine(self):
-            for line in self.__process.stderr.readlines():
-                yield line
-            
-            
