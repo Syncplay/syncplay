@@ -141,7 +141,7 @@ class MplayerPlayer(BasePlayer):
     
     @staticmethod
     def isValidPlayerPath(path):
-        if("mplayer2" in path and MplayerPlayer.getExpandedPath(path)):
+        if("mplayer" in path and MplayerPlayer.getExpandedPath(path)):
             return True
         return False
     
