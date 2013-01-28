@@ -273,6 +273,8 @@ class SyncplayClient(object):
         return self._globalPaused 
     
     def updateFile(self, filename, duration, path):
+        if not path:
+            return
         size = os.path.getsize(path)
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
@@ -583,4 +585,5 @@ class UiManager(object):
 
     def promptFor(self, prompt):
         return self.__ui.promptFor(prompt)
+
 

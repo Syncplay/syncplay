@@ -37,6 +37,7 @@ en = {
       
       "mplayer-file-required-notification" : "Syncplay using mplayer requires you to provide file when starting",
       "mplayer-file-required-notification/example" : "Usage example: syncplay [options] [url|path/]filename",
+      "mplayer2-required" : "Syncplay is incompatible with MPlayer 1.x, please use mplayer2",
       
       "unrecognized-command-notification" : "Unrecognized command",
       "commandlist-notification" : "Available commands:",
