@@ -131,7 +131,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     StrCpy $$CheckBox_Associate_State $${BST_CHECKED}
     StrCpy $$CheckBox_StartMenuShortcut_State $${BST_CHECKED}
    
-    Call GetSize
+    SectionGetSize 1 $$Size
+    ;Call GetSize
     Call DriveSpace
     Call Language
   FunctionEnd
@@ -231,6 +232,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   FunctionEnd
   
   Function DirectoryCustomLeave
+    $${NSD_GetText} $$Text_Directory $$INSTDIR
     $${NSD_GetState} $$CheckBox_Associate $$CheckBox_Associate_State
     $${NSD_GetState} $$CheckBox_VLC $$CheckBox_VLC_State
     $${NSD_GetState} $$CheckBox_StartMenuShortcut $$CheckBox_StartMenuShortcut_State
@@ -385,7 +387,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Delete $$VLC_Directory\lua\intf\syncplay.lua
   FunctionEnd
   
-  Section "Install"
+  Section "Install" 1
     SetOverwrite on
     SetOutPath $$INSTDIR
     WriteUninstaller uninstall.exe
