@@ -288,7 +288,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${EndIf}
     
     $${If} $$CheckBox_VLC_State == $${BST_CHECKED}
-      ReadRegStr $$VLC_Directory HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VLC media player" "InstallLocation"
+      ReadRegStr $$VLC_Directory HKLM "Software\VideoLAN\VLC" "InstallDir"
       SetOutPath $$VLC_Directory\lua\intf
       File resources\syncplay.lua
     $${EndIf}
@@ -381,7 +381,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     RMDir $$SMPROGRAMS\Syncplay
     Delete $$DESKTOP\Syncplay.lnk
     Delete $$QUICKLAUNCH\Syncplay.lnk
-    ReadRegStr $$VLC_Directory HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VLC media player" "InstallLocation"
+    ReadRegStr $$VLC_Directory HKLM "Software\VideoLAN\VLC" "InstallDir"
     Delete $$VLC_Directory\lua\intf\syncplay.lua
   FunctionEnd
   
