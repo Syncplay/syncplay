@@ -46,6 +46,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^StartMenu $${LANG_ENGLISH} "Start Menu"
   LangString ^Desktop $${LANG_ENGLISH} "Desktop"
   LangString ^QuickLaunchBar $${LANG_ENGLISH} "Quick Launch Bar"
+  LangString ^UninstConfig $${LANG_ENGLISH} "Delete configuration file."
     
   LangString ^Associate $${LANG_POLISH} "Skojarz Syncplaya z multimediami"
   LangString ^VLC $${LANG_POLISH} "Zainstaluj interface Syncplaya dla VLC(wymaga VLC 2.0.X)"
@@ -53,19 +54,21 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^StartMenu $${LANG_POLISH} "Menu Start"
   LangString ^Desktop $${LANG_POLISH} "Pulpit"
   LangString ^QuickLaunchBar $${LANG_POLISH} "Pasek szybkiego uruchamiania"
+  LangString ^UninstConfig $${LANG_POLISH} "Usun plik konfiguracyjny."
   
   PageEx license
     LicenseData resources\license.txt
   PageExEnd
   Page custom DirectoryCustom DirectoryCustomLeave
   Page instFiles
-     
+  
+  UninstPage custom un.installConfirm un.installConfirmLeave
   UninstPage uninstConfirm
   UninstPage instFiles
   
   Var Dialog
-  Var Syncplay_Icon
-  Var Syncplay_Icon_Handle
+  Var Icon_Syncplay
+  Var Icon_Syncplay_Handle
   Var CheckBox_Associate
   Var CheckBox_VLC
   Var CheckBox_StartMenuShortcut
@@ -84,6 +87,15 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Var Label_Size
   Var Label_Space
   Var Text_Directory
+  
+  Var Uninst_Dialog
+  Var Uninst_Icon
+  Var Uninst_Icon_Handle
+  Var Uninst_Label_Directory
+  Var Uninst_Label_Text
+  Var Uninst_Text_Directory
+  Var Uninst_CheckBox_Config
+  Var Uninst_CheckBox_Config_State
   
   Var Size
   Var SizeHex
@@ -147,8 +159,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     nsDialogs::OnBack $$R8
     
     $${NSD_CreateIcon} 0u 0u 22u 20u ""
-    Pop $$Syncplay_Icon
-    $${NSD_SetIconFromInstaller} $$Syncplay_Icon $$Syncplay_Icon_Handle
+    Pop $$Icon_Syncplay
+    $${NSD_SetIconFromInstaller} $$Icon_Syncplay $$Icon_Syncplay_Handle
     
     $${NSD_CreateLabel} 25u 0u 241u 34u "$$(^DirText)"
     Pop $$Label_Text
@@ -214,7 +226,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${EndIf}
     nsDialogs::Show
 
-    $${NSD_FreeIcon} $$Syncplay_Icon_Handle
+    $${NSD_FreeIcon} $$Icon_Syncplay_Handle
 
   FunctionEnd
   
@@ -319,6 +331,37 @@ NSIS_SCRIPT_TEMPLATE = r"""
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "EstimatedSize" "$$SizeHex"
   FunctionEnd
     
+  Function un.installConfirm
+    nsDialogs::Create 1018
+    Pop $$Uninst_Dialog
+    
+    $${NSD_CreateIcon} 0u 1u 22u 20u ""
+    Pop $$Uninst_Icon
+    $${NSD_SetIconFromInstaller} $$Uninst_Icon $$Uninst_Icon_Handle
+    
+    $${NSD_CreateLabel} 0u 45u 55u 8u "$$(^UninstallingSubText)"
+    Pop $$Uninst_Label_Directory
+    
+    $${NSD_CreateLabel} 25u 0u 241u 34u "$$(^UninstallingText)"
+    Pop $$Uninst_Label_Text
+    
+    ReadRegStr $$INSTDIR HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "InstallLocation"
+    $${NSD_CreateText} 56u 43u 209u 12u "$$INSTDIR" 
+    Pop $$Uninst_Text_Directory
+    EnableWindow $$Uninst_Text_Directory 0
+    
+    $${NSD_CreateCheckBox} 0u 60u 250u 10u "$$(^UninstConfig)"
+    Pop $$Uninst_CheckBox_Config
+    
+    
+    nsDialogs::Show
+    $${NSD_FreeIcon} $$Uninst_Icon_Handle
+  FunctionEnd
+  
+  Function un.installConfirmLeave
+    $${NSD_GetState} $$Uninst_CheckBox_Config $$Uninst_CheckBox_Config_State
+  FunctionEnd
+  
   Function un.AssociateDel
     !insertmacro APP_UNASSOCIATE "mkv" "Syncplay.mkv"
     !insertmacro APP_UNASSOCIATE "mp4" "Syncplay.mp4"
@@ -362,7 +405,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Delete $$INSTDIR\uninstall.exe
     RMDir $$INSTDIR\resources
     RMDir $$INSTDIR\lib
-    RMDir $$INSTDIR 
+    RMDir $$INSTDIR
+
+    $${If} $$Uninst_CheckBox_Config_State == $${BST_CHECKED}
+      Delete $$APPDATA\.syncplay
+    $${EndIf}
   SectionEnd
 """
 
