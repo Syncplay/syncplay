@@ -63,7 +63,6 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Page instFiles
   
   UninstPage custom un.installConfirm un.installConfirmLeave
-  UninstPage uninstConfirm
   UninstPage instFiles
   
   Var Dialog
@@ -130,9 +129,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
         
     StrCpy $$CheckBox_Associate_State $${BST_CHECKED}
     StrCpy $$CheckBox_StartMenuShortcut_State $${BST_CHECKED}
-   
-    SectionGetSize 1 $$Size
-    ;Call GetSize
+    
+    Call GetSize
     Call DriveSpace
     Call Language
   FunctionEnd
@@ -252,9 +250,9 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Abort
   FunctionEnd
   
-  ;Calculates size of installation files
   Function GetSize
-    $${GetSize} "$$PROGRAMFILES\Syncplay" "/S=0K" $$Size $$1 $$2
+    StrCpy $$Size "$totalSize"
+    IntOp $$Size $$Size / 1024
     IntFmt $$SizeHex "0x%08X" $$Size
     IntOp $$Size $$Size / 1024
   FunctionEnd
@@ -387,7 +385,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Delete $$VLC_Directory\lua\intf\syncplay.lua
   FunctionEnd
   
-  Section "Install" 1
+  Section "Install"
     SetOverwrite on
     SetOutPath $$INSTDIR
     WriteUninstaller uninstall.exe
@@ -417,7 +415,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
 class NSISScript(object):
     def create(self):
-        fileList = self.getBuildDirContents(OUT_DIR)
+        fileList, totalSize = self.getBuildDirContents(OUT_DIR)
+        print "Total size eq: {}".format(totalSize)
         installFiles = self.prepareInstallListTemplate(fileList) 
         uninstallFiles = self.prepareDeleteListTemplate(fileList)
         
@@ -427,11 +426,14 @@ class NSISScript(object):
                                                               version = syncplay.version,
                                                               uninstallFiles = uninstallFiles,
                                                               installFiles = installFiles,
+                                                              totalSize = totalSize,
                                                               )
         with open(SETUP_SCRIPT_PATH, "w") as outfile:
             outfile.write(contents)
         
     def compile(self):
+        if(not os.path.isfile(NSIS_COMPILE)):
+            return "makensis.exe not found, won't create the installer"
         subproc = subprocess.Popen([NSIS_COMPILE, SETUP_SCRIPT_PATH], env=os.environ)
         subproc.communicate()
         retcode = subproc.returncode
@@ -441,14 +443,15 @@ class NSISScript(object):
    
     def getBuildDirContents(self, path):
         fileList = {}
+        totalSize = 0
         for root, _, files in os.walk(path):
+            totalSize += sum(os.path.getsize(os.path.join(root, file_)) for file_ in files)
             for file_ in files:
                 new_root = root.replace(OUT_DIR, "").strip("\\")
                 if(not fileList.has_key(new_root)):
                     fileList[new_root] = []
                 fileList[new_root].append(file_)
-        return fileList           
-    
+        return fileList, totalSize          
     
     def prepareInstallListTemplate(self, fileList):
         create = []
