@@ -119,6 +119,15 @@ NSIS_SCRIPT_TEMPLATE = r"""
     DeleteRegKey HKCR `$${FileCLASS}`
   !macroend
   
+  !macro ASSOCIATE EXT
+    !insertmacro APP_ASSOCIATE "$${EXT}" "Syncplay.$${EXT}" "$$INSTDIR\Syncplay.exe,%1%" \
+    "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
+  !macroend
+  
+  !macro UNASSOCIATE EXT
+    !insertmacro APP_UNASSOCIATE "$${EXT}" "Syncplay.$${EXT}"
+  !macroend
+  
   ;Prevents from running more than one instance of installer and sets default state of checkboxes
   Function .onInit
     System::Call 'kernel32::CreateMutexA(i 0, i 0, t "myMutex") i .r1 ?e'
@@ -296,24 +305,30 @@ NSIS_SCRIPT_TEMPLATE = r"""
     
   ;Associates extensions with Syncplay
   Function Associate
-    !insertmacro APP_ASSOCIATE "mkv" "Syncplay.mkv" "$$INSTDIR\Syncplay.exe,%1%" \
-    "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
-    !insertmacro APP_ASSOCIATE "mp4" "Syncplay.mp4" "$$INSTDIR\Syncplay.exe,%1%" \
-    "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
-    !insertmacro APP_ASSOCIATE "avi" "Syncplay.avi" "$$INSTDIR\Syncplay.exe,%1%" \
-    "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
-    !insertmacro APP_ASSOCIATE "flv" "Syncplay.flv" "$$INSTDIR\Syncplay.exe,%1%" \
-    "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
-    !insertmacro APP_ASSOCIATE "mpg" "Syncplay.mpg" "$$INSTDIR\Syncplay.exe,%1%" \
-    "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
-    !insertmacro APP_ASSOCIATE "rmvb" "Syncplay.rmvb" "$$INSTDIR\Syncplay.exe,%1%" \
-    "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
-    !insertmacro APP_ASSOCIATE "vob" "Syncplay.vob" "$$INSTDIR\Syncplay.exe,%1%" \
-    "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
-    !insertmacro APP_ASSOCIATE "swf" "Syncplay.swf" "$$INSTDIR\Syncplay.exe,%1%" \
-     "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
-    !insertmacro APP_ASSOCIATE "wmv" "Syncplay.wmv" "$$INSTDIR\Syncplay.exe,%1%" \
-    "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
+    !insertmacro ASSOCIATE avi
+    !insertmacro ASSOCIATE mpg
+    !insertmacro ASSOCIATE mpeg
+    !insertmacro ASSOCIATE mpe
+    !insertmacro ASSOCIATE m1v
+    !insertmacro ASSOCIATE m2v
+    !insertmacro ASSOCIATE mpv2
+    !insertmacro ASSOCIATE mp2v
+    !insertmacro ASSOCIATE mkv
+    !insertmacro ASSOCIATE mp4
+    !insertmacro ASSOCIATE m4v
+    !insertmacro ASSOCIATE mp4v
+    !insertmacro ASSOCIATE 3gp
+    !insertmacro ASSOCIATE 3gpp
+    !insertmacro ASSOCIATE 3g2
+    !insertmacro ASSOCIATE 3pg2
+    !insertmacro ASSOCIATE flv
+    !insertmacro ASSOCIATE f4v
+    !insertmacro ASSOCIATE rm
+    !insertmacro ASSOCIATE wmv
+    !insertmacro ASSOCIATE swf
+    !insertmacro ASSOCIATE rmvb
+    !insertmacro ASSOCIATE divx
+    !insertmacro ASSOCIATE amv
   FunctionEnd
   
   Function WriteRegistry
@@ -363,15 +378,30 @@ NSIS_SCRIPT_TEMPLATE = r"""
   FunctionEnd
   
   Function un.AssociateDel
-    !insertmacro APP_UNASSOCIATE "mkv" "Syncplay.mkv"
-    !insertmacro APP_UNASSOCIATE "mp4" "Syncplay.mp4"
-    !insertmacro APP_UNASSOCIATE "avi" "Syncplay.avi"
-    !insertmacro APP_UNASSOCIATE "flv" "Syncplay.flv"
-    !insertmacro APP_UNASSOCIATE "mpg" "Syncplay.mpg"
-    !insertmacro APP_UNASSOCIATE "rmvb" "Syncplay.rmvb"
-    !insertmacro APP_UNASSOCIATE "vob" "Syncplay.vob"
-    !insertmacro APP_UNASSOCIATE "swf" "Syncplay.swf"
-    !insertmacro APP_UNASSOCIATE "wmv" "Syncplay.wmv"      
+    !insertmacro UNASSOCIATE avi
+    !insertmacro UNASSOCIATE mpg
+    !insertmacro UNASSOCIATE mpeg
+    !insertmacro UNASSOCIATE mpe
+    !insertmacro UNASSOCIATE m1v
+    !insertmacro UNASSOCIATE m2v
+    !insertmacro UNASSOCIATE mpv2
+    !insertmacro UNASSOCIATE mp2v
+    !insertmacro UNASSOCIATE mkv
+    !insertmacro UNASSOCIATE mp4
+    !insertmacro UNASSOCIATE m4v
+    !insertmacro UNASSOCIATE mp4v
+    !insertmacro UNASSOCIATE 3gp
+    !insertmacro UNASSOCIATE 3gpp
+    !insertmacro UNASSOCIATE 3g2
+    !insertmacro UNASSOCIATE 3pg2
+    !insertmacro UNASSOCIATE flv
+    !insertmacro UNASSOCIATE f4v
+    !insertmacro UNASSOCIATE rm
+    !insertmacro UNASSOCIATE wmv
+    !insertmacro UNASSOCIATE swf
+    !insertmacro UNASSOCIATE rmvb
+    !insertmacro UNASSOCIATE divx
+    !insertmacro UNASSOCIATE amv      
   FunctionEnd
   
   Function un.InstallOptions
