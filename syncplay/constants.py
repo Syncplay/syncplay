@@ -57,8 +57,8 @@ VLC_OPEN_MAX_WAIT_TIME = 10
 VLC_SOCKET_OPEN_WAIT_TIME = 0.5
 
 #These are not changes you're looking for
-MPLAYER_SLAVE_ARGS = [ '-slave', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4']
-MPV_SLAVE_ARGS = [ '--slave-broken', '-msglevel', 'all=1:global=4']
+MPLAYER_SLAVE_ARGS = [ '-slave', '--hr-seek=absolute', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4']
+MPV_SLAVE_ARGS = [ '--slave-broken', '--hr-seek=absolute', '-msglevel', 'all=1:global=4']
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_]+)=(.+)$"
 UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
 UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
