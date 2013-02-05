@@ -187,10 +187,13 @@ class MplayerPlayer(BasePlayer):
             line = self.__process.stdout.readline()
             if("MPlayer 1" in line):
                 self.__playerController.notMplayer2()
-            while(self.__process.poll() is None):
+            else:
                 line = line.rstrip("\r\n")
                 self.__playerController.lineReceived(line)
+            while(self.__process.poll() is None):
                 line = self.__process.stdout.readline()
+                line = line.rstrip("\r\n")
+                self.__playerController.lineReceived(line)
             self.__playerController.drop()
         
         def sendLine(self, line):
