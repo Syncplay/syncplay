@@ -215,21 +215,3 @@ class ConfigurationGetter(object):
         self._saveConfig(iniPath)
         return self._config
     
-class ServerConfigurationGetter(object):
-    def getConfiguration(self):
-        self._prepareArgParser()
-        self._args = self._argparser.parse_args()
-        if(self._args.port == None):
-            self._args.port = constants.DEFAULT_PORT
-        return self._args
-           
-    def _prepareArgParser(self):
-        self._argparser = argparse.ArgumentParser(description=getMessage("en", "server-argument-description"),
-                                         epilog=getMessage("en", "server-argument-epilog"))
-        self._argparser.add_argument('--port', metavar='port', type=str, nargs='?', help=getMessage("en", "server-port-argument"))
-        self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("en", "server-password-argument"))
-        self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("en", "server-isolate-room-argument"))
-        self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("en", "server-motd-argument"))
-        self._argparser.add_argument('--http-reply-file', metavar='file', type=str, nargs='?', help=getMessage("en", "server-http-reply-argument"))
-        self._argparser.add_argument('--irc-verbose', action='store_true', help=getMessage("en", "server-irc-verbose"))
-        self._argparser.add_argument('--irc-config-file', metavar='file', type=str, nargs='?', help=getMessage("en", "server-irc-config"))
