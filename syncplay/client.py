@@ -275,7 +275,10 @@ class SyncplayClient(object):
     def updateFile(self, filename, duration, path):
         if not path:
             return
-        size = os.path.getsize(path)
+        try:
+            size = os.path.getsize(path)
+        except OSError: #file not accessible (stream?)
+            size = 0
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
             
