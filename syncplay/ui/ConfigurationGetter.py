@@ -31,7 +31,9 @@ class ConfigurationGetter(object):
                         "file": None,
                         "playerArgs": [],
                         "playerClass": None,
-						"slowOnDesync": True
+						"slowOnDesync": True,
+                        "malUsername": "",
+                        "malPassword": ""
                         }
         
         #
@@ -55,7 +57,8 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowOnDesync", "forceGuiPrompt"]
+                        "client_settings": ["name", "room", "playerPath", "slowOnDesync", "forceGuiPrompt"],
+                        "mal": ["malPassword", "malUsername"]
                         }
 
         #

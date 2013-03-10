@@ -7,6 +7,11 @@ from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants
 from syncplay.messages import getMessage
+import threading
+try:
+    import libMal
+except ImportError:
+    libMal = None
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry = constants.RECONNECT_RETRIES):
@@ -83,6 +88,7 @@ class SyncplayClient(object):
         self._speedChanged = False
         
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui)
+        self._malUpdater = MalUpdater(config["malUsername"], config["malPassword"], self.ui)
         
     def initProtocol(self, protocol):
         self._protocol = protocol
@@ -217,6 +223,7 @@ class SyncplayClient(object):
         if(self.userlist.hasRoomStateChanged() and not paused):
             self._warnings.checkWarnings()
             self.userlist.roomStateConfirmed()
+        self._malUpdater.playingHook(position, paused)
 
     def updateGlobalState(self, position, paused, doSeek, setBy, latency):
         if(self.__getUserlistOnLogon):
@@ -281,6 +288,7 @@ class SyncplayClient(object):
             size = 0
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
+        self._malUpdater.fileChangeHook(filename, duration)
             
     def sendFile(self):
         file_ = self.userlist.currentUser.file
@@ -419,6 +427,50 @@ class SyncplayUser(object):
     def __lt__(self, other):
         return self.username < other.username
       
+      
+class MalUpdater(object):
+    def __init__(self, username, password, ui):
+        self._filePlayingFor = 0.0
+        self._lastHookUpdate = None
+        self._fileDuration = 0
+        self._filename = ""
+        self.__username = username
+        self.__password = password
+        self._ui = ui
+
+    def _updatePlayingTime(self, paused):
+        if (not self._lastHookUpdate):
+            self._lastHookUpdate = time.time()
+        if (not paused):
+            self._filePlayingFor += time.time() - self._lastHookUpdate
+        self._lastHookUpdate = time.time()
+
+    def playingHook(self, position, paused):
+        if(self._fileDuration == 0):
+            return
+        self._updatePlayingTime(paused)
+        pastMark = position / self._fileDuration > 0.4
+        if self._filePlayingFor > 30 and pastMark:
+            threading.Thread(target=self._updateMal).start()
+
+    def fileChangeHook(self, filename, duration):
+        self._fileDuration = duration
+        self._filename = filename
+        self._filePlayingFor = 0.0
+        self._lastHookUpdate = None
+        
+    def _updateMal(self):
+        self._fileDuration = 0  # Disable playingHook
+        if(libMal and self._filename and self.__username and self.__password):
+            manager = libMal.Manager(self.__username, self.__password)
+            results = manager.findEntriesOnMal(self._filename)
+            if(len(results) > 0):
+                result = results[0]
+                message = "Updating MAL with:\n\"{}\", episode: {}".format(result.mainTitle, result.episodeBeingWatched)
+                self._ui.showMessage(message)
+                manager.updateEntryOnMal(result)
+        self._filename = ""  # Make sure no updates will be performed until switch 
+        
 class SyncplayUserlist(object):
     def __init__(self, ui, client):
         self.currentUser = SyncplayUser()
