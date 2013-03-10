@@ -468,7 +468,8 @@ class MalUpdater(object):
                 result = results[0]
                 message = "Updating MAL with:\n\"{}\", episode: {}".format(result.mainTitle, result.episodeBeingWatched)
                 self._ui.showMessage(message)
-                manager.updateEntryOnMal(result)
+                options = {"tags": ["syncplay"]}
+                manager.updateEntryOnMal(result, options)
         self._filename = ""  # Make sure no updates will be performed until switch 
         
 class SyncplayUserlist(object):
