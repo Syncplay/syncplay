@@ -523,7 +523,7 @@ info = dict(
     options={'py2exe': {
                          'dist_dir': OUT_DIR,
                          'includes': 'cairo, pango, pangocairo, atk, gobject, twisted',
-                         'excludes': 'venv, _ssl, doctest, pdb, unittest, difflib, win32clipboard, win32event, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process',
+                         'excludes': 'venv, _ssl, doctest, pdb, unittest, win32clipboard, win32event, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process',
                          'dll_excludes': 'msvcr71.dll',
                          'optimize': 2,
                          'compressed': 1
