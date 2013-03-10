@@ -466,7 +466,7 @@ class MalUpdater(object):
             results = manager.findEntriesOnMal(self._filename)
             if(len(results) > 0):
                 result = results[0]
-                message = "Updating MAL with:\n\"{}\", episode: {}".format(result.mainTitle, result.episodeBeingWatched)
+                message = "Updating MAL with: \"{}\", episode: {}".format(result.mainTitle, result.episodeBeingWatched)
                 self._ui.showMessage(message)
                 options = {"tags": ["syncplay"]}
                 manager.updateEntryOnMal(result, options)
