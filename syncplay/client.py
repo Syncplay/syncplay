@@ -21,6 +21,7 @@ class SyncClientFactory(ClientFactory):
         self.reconnecting = False
         
     def buildProtocol(self, addr):
+        self._timesTried = 0
         return SyncClientProtocol(self._client)
 
     def startedConnecting(self, connector):
