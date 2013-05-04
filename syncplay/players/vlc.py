@@ -16,6 +16,7 @@ class VlcPlayer(BasePlayer):
     VLC_MIN_PORT = 10000
     VLC_MAX_PORT = 55000
     SLAVE_ARGS = ['--extraintf=luaintf','--lua-intf=syncplay']
+    VLC_MIN_VERSION = "2.0.6"
     
     random.seed()
     vlcport = random.randrange(VLC_MIN_PORT, VLC_MAX_PORT) if (VLC_MIN_PORT < VLC_MAX_PORT) else VLC_MIN_PORT
@@ -123,6 +124,9 @@ class VlcPlayer(BasePlayer):
             self._filename = value
             self._filenameAsk.set()
         elif (line[:16] == "VLC media player"):
+            vlc_version = line[17:22]
+            if (int(vlc_version.replace(".","")) < int(self.VLC_MIN_VERSION.replace(".",""))):
+                self._client.ui.showMessage(getMessage("en", "vlc-version-mismatch").format(str(vlc_version), str(self.VLC_MIN_VERSION)))
             self._vlcready.set()
 
 
