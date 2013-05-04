@@ -49,6 +49,8 @@ en = {
       "commandlist-notification/help" : "\th - this help",
       "syncplay-version-notification" : "Syncplay version: {}",    #syncplay.version
       "more-info-notification" : "More info available at: {}",    #projectURL
+      
+      "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above\n", # VLC version, VLC min version
 
       # Client prompts
       "enter-to-exit-prompt" : "Press enter to exit\n",
