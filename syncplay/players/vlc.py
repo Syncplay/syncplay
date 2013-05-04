@@ -18,7 +18,7 @@ class VlcPlayer(BasePlayer):
     SLAVE_ARGS = ['--extraintf=luaintf','--lua-intf=syncplay']
     
     random.seed()
-    vlcport = random.randrange(VLC_MIN_PORT, VLC_MAX_PORT) if (VLC_MIN_PORT < VLC_MAX_PORT) else VLC_MIN_PORT
+    vlcport = random.randrange(VLC_MIN_PORT, VLC_MAX_PORT)
     SLAVE_ARGS.append('--lua-config=syncplay={{port=\"{}\"}}'.format(str(vlcport)))
     
     def __init__(self, client, playerPath, filePath, args):
