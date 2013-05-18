@@ -55,7 +55,7 @@ class GuiConfiguration:
 
 
     def _tryToFillPlayerPath(self, playerpath):
-         if os.path.isfile(playerpath):
+        if os.path.isfile(playerpath):
                 return playerpath
 
         for path in self._availablePlayerPaths:
