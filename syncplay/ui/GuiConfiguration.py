@@ -51,9 +51,13 @@ class GuiConfiguration:
         self.userEntry = self._addLabeledEntryToVbox(getMessage("en", "username-label"), config['name'], vbox, lambda __, _: self._saveDataAndLeave())
         self.roomEntry = self._addLabeledEntryToVbox(getMessage("en", "room-label"), config['room'], vbox, lambda __, _: self._saveDataAndLeave())
         self.passEntry = self._addLabeledEntryToVbox(getMessage("en", "password-label"), config['password'], vbox, lambda __, _: self._saveDataAndLeave())
-        self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillPlayerPath(), vbox, lambda __, _: self._saveDataAndLeave())
+        self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillPlayerPath(config['playerPath']), vbox, lambda __, _: self._saveDataAndLeave())
 
-    def _tryToFillPlayerPath(self):
+
+    def _tryToFillPlayerPath(self, playerpath):
+         if os.path.isfile(playerpath):
+                return playerpath
+
         for path in self._availablePlayerPaths:
             if(os.path.isfile(path)):
                 return path
