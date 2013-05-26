@@ -138,10 +138,13 @@ class ConfigurationGetter(object):
                 configFile = os.path.join(os.getenv('APPDATA', '.'), constants.DEFAULT_CONFIG_NAME)
         return configFile
 
-    def _parseConfigFile(self, iniPath):
+    def _parseConfigFile(self, iniPath, createConfig = True):
         parser = SafeConfigParser()
         if(not os.path.isfile(iniPath)):
-            open(iniPath, 'w').close()
+            if(createConfig):
+                open(iniPath, 'w').close()
+            else:
+                return
         parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in self._iniStructure.items():
             if(parser.has_section(section)):
@@ -206,6 +209,24 @@ class ConfigurationGetter(object):
         except:
             sys.exit()
 
+
+    def __getRelativeConfigLocations(self):
+        locations = []
+        path = os.path.dirname(os.path.realpath(self._config['file']))
+        locations.append(path)
+        while path != os.path.dirname(path):
+            path = os.path.dirname(path)
+            locations.append(path)
+        locations.reverse()
+        return locations
+
+    def _loadRelativeConfiguration(self):
+        locations = self.__getRelativeConfigLocations()
+        for location in locations:
+            path = location + os.path.sep + constants.DEFAULT_CONFIG_NAME
+            self._parseConfigFile(path, createConfig = False)
+            self._checkConfig()
+
     def getConfiguration(self):
         iniPath = self._getConfigurationFilePath()
         self._parseConfigFile(iniPath)
@@ -216,5 +237,7 @@ class ConfigurationGetter(object):
             self._forceGuiPrompt()
         self._checkConfig()
         self._saveConfig(iniPath)
+        if(self._config['file']):
+            self._loadRelativeConfiguration()
         return self._config
     
