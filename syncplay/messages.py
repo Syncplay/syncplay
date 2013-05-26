@@ -96,7 +96,8 @@ en = {
       "room-label" : 'Default room (optional): ',
       "password-label" :  'Server password (optional): ',
       "path-label" : 'Path to player executable: ',
-      
+      "file-label" : 'Path to media file: ',
+
       # Server notifications
       "welcome-server-notification" : "Welcome to Syncplay server, ver. {0}", #version
       "client-connected-room-server-notification" : "{0}({2}) connected to room '{1}'", #username, host, room

@@ -3,7 +3,7 @@ import os
 pygtk.require('2.0')
 import gtk
 gtk.set_interactive(False)
-import cairo, gio, pango, atk, pangocairo, gobject #@UnusedImport
+import webbrowser
 from syncplay.messages import getMessage
 
 class GuiConfiguration:
@@ -21,16 +21,21 @@ class GuiConfiguration:
         vbox.show()
         self._addLabeledEntries(self.config, vbox)
         self._addCheckboxEntries(self.config, vbox)
+        self._addMalPanel(vbox)
         self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
-        button = gtk.Button(stock=gtk.STOCK_SAVE)
-        button.connect("clicked", lambda w: self._saveDataAndLeave())
-        guideLink = gtk.LinkButton("http://syncplay.pl/guide/", "Configuration Guide")
+        if self.config['noStore'] == True:
+            self.button = gtk.Button("Run Syncplay")
+        else:
+            self.button = gtk.Button("Save and Run Syncplay")
+        self.button.connect("clicked", lambda w: self._saveDataAndLeave())
+        guideLink = gtk.Button("Configuration Guide")
+        guideLink.connect("clicked", lambda w: webbrowser.open("http://syncplay.pl/guide/"))
         guideLink.show()
         vbox.add(guideLink)
-        vbox.pack_start(button, True, True, 0)
-        button.set_flags(gtk.CAN_DEFAULT)
-        button.grab_default()
-        button.show()
+        vbox.pack_start(self.button, True, True, 0)
+        self.button.set_flags(gtk.CAN_DEFAULT)
+        self.button.grab_default()
+        self.button.show()
         self.window.show()
         gtk.main()
      
@@ -52,6 +57,7 @@ class GuiConfiguration:
         self.roomEntry = self._addLabeledEntryToVbox(getMessage("en", "room-label"), config['room'], vbox, lambda __, _: self._saveDataAndLeave())
         self.passEntry = self._addLabeledEntryToVbox(getMessage("en", "password-label"), config['password'], vbox, lambda __, _: self._saveDataAndLeave())
         self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillPlayerPath(), vbox, lambda __, _: self._saveDataAndLeave())
+        self.fileEntry = self._addLabeledEntryToVbox(getMessage("en", "file-label"), config['file'], vbox, lambda __, w: self._saveDataAndLeave())
 
     def _tryToFillPlayerPath(self):
         for path in self._availablePlayerPaths:
@@ -69,7 +75,6 @@ class GuiConfiguration:
         self.config['name'] = self.userEntry.get_text()
         self.config['room'] = self.roomEntry.get_text()
         self.config['password'] = self.passEntry.get_text()
-        self.config['playerPath'] = self.mpcEntry.get_text()
         if self.alwaysShowCheck.get_active() == True:
             self.config['forceGuiPrompt'] = True
         else:
@@ -100,7 +105,20 @@ class GuiConfiguration:
         if(initialEntryValue == None):
             initialEntryValue = ""
         entry.set_text(initialEntryValue)
-        hbox.pack_end(entry, False, False, 0)
+        if(label == getMessage("en", "path-label")):
+            self.playerPathButton = gtk.Button("Browse")
+            self.playerPathButton.connect("clicked", lambda w: self._showPlayerFileDialog())
+            self.playerPathButton.show()
+            hbox.add(entry)
+            hbox.pack_end(self.playerPathButton, False, False, 0)
+        elif(label == getMessage("en", "file-label")):
+            self.mediaPathButton = gtk.Button("Browse")
+            self.mediaPathButton.connect("clicked", lambda w: self._showMediaFileDialog())
+            self.mediaPathButton.show()
+            hbox.add(entry)
+            hbox.pack_end(self.mediaPathButton, False, False, 0)
+        else:
+            hbox.pack_end(entry, False, False, 0)
         entry.set_usize(200, -1)
         entry.show()
         return entry
@@ -108,11 +126,12 @@ class GuiConfiguration:
     def _addCheckboxEntries(self, config, vbox):
         CheckVbox = gtk.VBox(False, 0)
         vbox.pack_start(CheckVbox, False, False, 0)
-        self.alwaysShowCheck = gtk.CheckButton("Always Show This Dialog")
+        self.alwaysShowCheck = gtk.CheckButton("Always Show This Dialog When Opening A File With Syncplay")
         if self.config['forceGuiPrompt'] == True:
             self.alwaysShowCheck.set_active(True)
         self.alwaysShowCheck.show()
         self.storeConfigCheck = gtk.CheckButton("Do Not Store This Configuration")
+        self.storeConfigCheck.connect("toggled", lambda w: self._changeSaveLabel())
         if self.config['noStore'] == True:
             self.storeConfigCheck.set_active(True)
         self.storeConfigCheck.show()
@@ -124,6 +143,66 @@ class GuiConfiguration:
         CheckVbox.add(self.storeConfigCheck)
         CheckVbox.add(self.slowOnDesyncCheck)
         CheckVbox.show()
+
+    def _changeSaveLabel(self):
+        if self.config['noStore'] == True:
+            self.button.set_label("Save and Run Syncplay")
+            self.config['noStore'] = False
+        else:
+            self.button.set_label("Run Syncplay")
+            self.config['noStore'] = True
+
+    def _showPlayerFileDialog(self):
+        dialog = gtk.FileChooserDialog(parent=self.window,action=gtk.FILE_CHOOSER_ACTION_OPEN,buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT, gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
+        dialog.run()
+        if dialog.get_filename() != None:
+            self.config['playerPath'] = dialog.get_filename()
+        dialog.destroy()
+        self.mpcEntry.set_text(self.config['playerPath'])
+
+    def _showMediaFileDialog(self):
+        dialog = gtk.FileChooserDialog(parent=self.window,action=gtk.FILE_CHOOSER_ACTION_OPEN,buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT, gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
+        dialog.run()
+        if dialog.get_filename() != None:
+            self.config['file'] = dialog.get_filename()
+        dialog.destroy()
+        self.fileEntry.set_text(self.config['file'])
+
+    def _addMalPanel(self, vbox):
+        panel = gtk.Expander("MAL Updater Settings")
+        panel.show()
+        panelVbox = gtk.VBox(False, 0)
+
+        malCredHbox = gtk.HBox(False,0)
+        malCredHbox.show()
+        self.malUpdaterOnCheck = gtk.CheckButton("MAL Updater On")
+        self.malUpdaterOnCheck.show()
+        malCredHbox.add(self.malUpdaterOnCheck)
+        self.clearCredentialsButton = gtk.Button("Clear Saved Credentials")
+        self.clearCredentialsButton.connect("clicked", lambda w: self._clearMalCredentials())
+        self.clearCredentialsButton.show()
+        malCredHbox.add(self.clearCredentialsButton)
+        panelVbox.add(malCredHbox)
+
+        self.malUsername = self._addLabeledEntryToVbox("Username: ", " ", panelVbox, lambda __, w: self._saveDataAndLeave())
+        self.malPassword = self._addLabeledEntryToVbox("Password: ", " ", panelVbox, lambda __, w: self._saveDataAndLeave())
+
+        spinButtonHbox = gtk.HBox(True, 0)
+        percentBoxLabel = gtk.Label("Progress Threshold For Updating: ")
+        percentBoxLabel.show()
+        spinButtonHbox.add(percentBoxLabel)
+        self.percentBox = gtk.SpinButton(adjustment=gtk.Adjustment(0,1,100,1,1,0))
+        self.percentBox.show()
+        spinButtonHbox.add(self.percentBox)
+        spinButtonHbox.show()
+        panelVbox.add(spinButtonHbox)
+
+        panelVbox.show()
+        panel.add(panelVbox)
+        vbox.add(panel)
+
+    def _clearMalCredentials(self):
+        return
 
     def setAvailablePaths(self, paths):
         self._availablePlayerPaths = paths
