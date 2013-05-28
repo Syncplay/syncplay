@@ -83,11 +83,22 @@ class ConfigDialog(QtGui.QDialog):
     
     def browsePlayerpath(self):
         options = QtGui.QFileDialog.Options()
+        defaultdirectory = ""
+        browserfilter = "All Files (*)"
+        
+        if os.name == 'nt':
+            browserfilter =  "Executable files (*.exe);;All Files (*)"
+            if os.environ["ProgramFiles(x86)"] != "" and os.environ["ProgramFiles(x86)"] != None: 
+                defaultdirectory = os.environ["ProgramFiles(x86)"]
+            elif os.environ["ProgramFiles"] != os.environ["ProgramFiles"] != None:
+                defaultdirectory = os.environ["ProgramFiles"]    
+        elif sys.platform.startswith('linux'):
+            defaultdirectory = "/usr/bin"
         
         fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,
                 "Browse for media player executable",
-                "",
-                "Windows Executables (*.exe);;All Files (*)", "", options)
+                defaultdirectory,
+                browserfilter, "", options)
         if fileName:
             self.executablepathCombobox.setEditText(fileName)
         
