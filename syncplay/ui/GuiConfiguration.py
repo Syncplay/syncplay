@@ -1,6 +1,6 @@
 from PySide import QtCore, QtGui
 from PySide.QtCore import QSettings, Qt
-from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox
+from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices
 
 import os
 import sys
@@ -62,6 +62,9 @@ class ConfigDialog(QtGui.QDialog):
             self.runButton.setText("Run Syncplay")
         else:
             self.runButton.setText("Store configuration and run Syncplay")
+            
+    def openHelp(self):
+        self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
 
     def _tryToFillPlayerPath(self, playerpath, playerpathlist):
         foundpath = ""
@@ -140,6 +143,7 @@ class ConfigDialog(QtGui.QDialog):
     def __init__(self, config, playerpaths):
         
         self.config = config
+        self.QtGui = QtGui
 
         super(ConfigDialog, self).__init__()
         
@@ -223,9 +227,6 @@ class ConfigDialog(QtGui.QDialog):
         if config['noStore'] == True:
             self.donotstoreCheckbox.setChecked(True)
         
-        self.runButton = QtGui.QPushButton("Store configuration and run Syncplay")
-        self.runButton.pressed.connect(self._saveDataAndLeave)
-        self.runButtonTextUpdate
         self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
                       
         self.mainLayout = QtGui.QVBoxLayout()
@@ -236,9 +237,18 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addWidget(self.malenabledCheckbox)
         self.mainLayout.addWidget(self.malSettingsGroup)
         
+        self.topLayout = QtGui.QHBoxLayout()
+        self.helpButton = QtGui.QPushButton("Help")
+        self.helpButton.setMaximumSize(self.helpButton.sizeHint())
+        self.helpButton.pressed.connect(self.openHelp)
+        self.runButton = QtGui.QPushButton("Store configuration and run Syncplay")
+        self.runButton.pressed.connect(self._saveDataAndLeave)
+        self.runButtonTextUpdate
+        self.topLayout.addWidget(self.helpButton, Qt.AlignLeft)
+        self.topLayout.addWidget(self.runButton, Qt.AlignRight)
         self.mainLayout.addWidget(self.alwaysshowCheckbox)
         self.mainLayout.addWidget(self.donotstoreCheckbox)
-        self.mainLayout.addWidget(self.runButton)
+        self.mainLayout.addLayout(self.topLayout)
         
         self.mainLayout.addStretch(1)
         
