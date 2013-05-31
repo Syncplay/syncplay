@@ -1,132 +1,256 @@
-import pygtk
+from PySide import QtCore, QtGui
+from PySide.QtCore import QSettings, Qt
+from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices
+
 import os
-pygtk.require('2.0')
-import gtk
-gtk.set_interactive(False)
-import cairo, gio, pango, atk, pangocairo, gobject #@UnusedImport
+import sys
 from syncplay.messages import getMessage
 
 class GuiConfiguration:
     def __init__(self, config):
         self.config = config
         self._availablePlayerPaths = []
-        self.closedAndNotSaved = False
-        
+
     def run(self):
-        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title(getMessage("en", "config-window-title"))
-        self.window.connect("delete_event", lambda w, e: self._windowClosed())
-        vbox = gtk.VBox(False, 0)
-        self.window.add(vbox)
-        vbox.show()
-        self._addLabeledEntries(self.config, vbox)
-        self._addCheckboxEntries(self.config, vbox)
-        self.hostEntry.select_region(0, len(self.hostEntry.get_text()))
-        button = gtk.Button(stock=gtk.STOCK_SAVE)
-        button.connect("clicked", lambda w: self._saveDataAndLeave())
-        guideLink = gtk.LinkButton("http://syncplay.pl/guide/", "Configuration Guide")
-        guideLink.show()
-        vbox.add(guideLink)
-        vbox.pack_start(button, True, True, 0)
-        button.set_flags(gtk.CAN_DEFAULT)
-        button.grab_default()
-        button.show()
-        self.window.show()
-        gtk.main()
-     
-    def _windowClosed(self):
-        self.window.destroy()
-        gtk.main_quit()
-        self.closedAndNotSaved = True
+        self.app = QtGui.QApplication(sys.argv)
+        dialog = ConfigDialog(self.config, self._availablePlayerPaths)
+        dialog.exec_()
+
+    def setAvailablePaths(self, paths):
+        self._availablePlayerPaths = paths
+
+    def getProcessedConfiguration(self):
+        return self.config
+    
+    class WindowClosed(Exception):
+        pass   
+
+class ConfigDialog(QtGui.QDialog):
+    
+    pressedclosebutton = False
+    
+    malToggling = False
+    
+    def malToggled(self):
+        if self.malToggling == False:
+            self.malToggling = True
+            
+            if self.malenabledCheckbox.isChecked() and self.malenabledCheckbox.isVisible():
+                self.malenabledCheckbox.setChecked(False)
+                self.malSettingsGroup.setChecked(True)
+                self.malSettingsGroup.show()
+                self.malpasswordLabel.show()
+                self.malpasswordTextbox.show()
+                self.malusernameLabel.show()
+                self.malusernameTextbox.show()
+                self.malenabledCheckbox.hide()
+            else:
+                self.malSettingsGroup.setChecked(False)
+                self.malSettingsGroup.hide()
+                self.malpasswordLabel.hide()
+                self.malpasswordTextbox.hide()
+                self.malusernameLabel.hide()
+                self.malusernameTextbox.hide()
+                self.malenabledCheckbox.show()
+                
+            self.malToggling = False
+            self.adjustSize()
+            self.setFixedSize(self.sizeHint())
+            
+    def runButtonTextUpdate(self):
+        if (self.donotstoreCheckbox.isChecked()):
+            self.runButton.setText("Run Syncplay")
+        else:
+            self.runButton.setText("Store configuration and run Syncplay")
+            
+    def openHelp(self):
+        self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
+
+    def _tryToFillPlayerPath(self, playerpath, playerpathlist):
+        foundpath = ""
         
-    def _addLabeledEntries(self, config, vbox):  
+        if playerpath != None and playerpath != "" and os.path.isfile(playerpath):
+            foundpath = playerpath
+            self.executablepathCombobox.addItem(foundpath)
+
+        for path in playerpathlist:
+            if(os.path.isfile(path) and path.lower() != foundpath.lower()):
+                self.executablepathCombobox.addItem(path)
+                if foundpath == None:
+                    foundpath = path
+
+        if foundpath:
+            return(foundpath)
+        else:
+            return("")
+    
+    def browsePlayerpath(self):
+        options = QtGui.QFileDialog.Options()
+        defaultdirectory = ""
+        browserfilter = "All Files (*)"
+        
+        if os.name == 'nt':
+            browserfilter =  "Executable files (*.exe);;All Files (*)"
+            if "PROGRAMFILES(X86)" in os.environ: 
+                defaultdirectory = os.environ["ProgramFiles(x86)"]
+            elif "PROGRAMFILES" in os.environ:
+                defaultdirectory = os.environ["ProgramFiles"]
+            elif "PROGRAMW6432" in os.environ:
+                defaultdirectory = os.environ["ProgramW6432"]
+        elif sys.platform.startswith('linux'):
+            defaultdirectory = "/usr/bin"
+        
+        fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,
+                "Browse for media player executable",
+                defaultdirectory,
+                browserfilter, "", options)
+        if fileName:
+            self.executablepathCombobox.setEditText(fileName)
+        
+    def _saveDataAndLeave(self):
+        self.config['host'] = self.hostTextbox.text()
+        self.config['name'] = self.usernameTextbox.text()
+        self.config['room'] = self.defaultroomTextbox.text()
+        self.config['password'] = self.serverpassTextbox.text()
+        self.config['playerPath'] = self.executablepathCombobox.currentText()
+        if self.alwaysshowCheckbox.isChecked() == True:
+            self.config['forceGuiPrompt'] = True
+        else:
+            self.config['forceGuiPrompt'] = False
+        if self.donotstoreCheckbox.isChecked() == True:
+            self.config['noStore'] = True
+        else:
+            self.config['noStore'] = False
+        if self.slowdownCheckbox.isChecked() == True:
+            self.config['slowOnDesync'] = True
+        else:
+            self.config['slowOnDesync'] = False
+        self.config['malUsername'] = self.malusernameTextbox.text()
+        if self.malSettingsGroup.isChecked():
+            self.config['malPassword'] = self.malpasswordTextbox.text()
+        else:
+            self.config['malPassword'] = ""
+        self.pressedclosebutton = True
+        self.close()
+        return
+    
+    def closeEvent(self, event):
+        if self.pressedclosebutton == False:
+            sys.exit()
+            raise GuiConfiguration.WindowClosed
+            event.accept()
+            
+    def __init__(self, config, playerpaths):
+        
+        self.config = config
+        self.QtGui = QtGui
+
+        super(ConfigDialog, self).__init__()
+        
+        self.setWindowTitle(getMessage("en", "config-window-title"))
+              
         if(config['host'] == None):
             host = ""
         elif(":" in config['host']):
             host = config['host']
         else:
             host = config['host']+":"+str(config['port'])
- 
-        self.hostEntry = self._addLabeledEntryToVbox(getMessage("en", "host-label"), host, vbox, lambda __, _: self._saveDataAndLeave())
-        self.userEntry = self._addLabeledEntryToVbox(getMessage("en", "username-label"), config['name'], vbox, lambda __, _: self._saveDataAndLeave())
-        self.roomEntry = self._addLabeledEntryToVbox(getMessage("en", "room-label"), config['room'], vbox, lambda __, _: self._saveDataAndLeave())
-        self.passEntry = self._addLabeledEntryToVbox(getMessage("en", "password-label"), config['password'], vbox, lambda __, _: self._saveDataAndLeave())
-        self.mpcEntry = self._addLabeledEntryToVbox(getMessage("en", "path-label"), self._tryToFillPlayerPath(), vbox, lambda __, _: self._saveDataAndLeave())
+            
+        self.connectionSettingsGroup = QtGui.QGroupBox("Connection Settings")
+        self.hostTextbox = QLineEdit(host, self)
+        self.hostLabel = QLabel(getMessage("en", "host-label"), self)
+        self.usernameTextbox = QLineEdit(config['name'],self)
+        self.serverpassLabel = QLabel(getMessage("en", "password-label"), self)
+        self.defaultroomTextbox = QLineEdit(config['room'],self)
+        self.usernameLabel = QLabel(getMessage("en", "username-label"), self)
+        self.serverpassTextbox = QLineEdit(config['password'],self)
+        self.defaultroomLabel = QLabel(getMessage("en", "room-label"), self)
+        self.connectionSettingsLayout = QtGui.QGridLayout()
+        self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
+        self.connectionSettingsLayout.addWidget(self.hostTextbox, 0, 1)
+        self.connectionSettingsLayout.addWidget(self.serverpassLabel, 1, 0)
+        self.connectionSettingsLayout.addWidget(self.serverpassTextbox, 1, 1)
+        self.connectionSettingsLayout.addWidget(self.usernameLabel, 2, 0)
+        self.connectionSettingsLayout.addWidget(self.usernameTextbox, 2, 1)
+        self.connectionSettingsLayout.addWidget(self.defaultroomLabel, 3, 0)
+        self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
+        self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
+        
+        self.mediaplayerSettingsGroup = QtGui.QGroupBox("Media Player Settings")
+        self.executablepathCombobox = QtGui.QComboBox(self)
+        self.executablepathCombobox.setEditable(True)
+        self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'],playerpaths))
+        self.executablepathCombobox.setMinimumWidth(200)
+        self.executablepathCombobox.setMaximumWidth(200)
+        self.executablepathLabel = QLabel("Path to player executable:", self)
+        self.executablebrowseButton = QtGui.QPushButton("Browse")
+        self.executablebrowseButton.clicked.connect(self.browsePlayerpath)
+        self.slowdownCheckbox = QCheckBox("Slow down on desync")
+        self.mediaplayerSettingsLayout = QtGui.QGridLayout()
+        self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
+        self.mediaplayerSettingsLayout.addWidget(self.executablepathCombobox , 0, 1)
+        self.mediaplayerSettingsLayout.addWidget(self.executablebrowseButton , 0, 2)
+        self.mediaplayerSettingsLayout.addWidget(self.slowdownCheckbox, 1, 0)
+        self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
+        if config['slowOnDesync'] == True:
+            self.slowdownCheckbox.setChecked(True)
 
-    def _tryToFillPlayerPath(self):
-        for path in self._availablePlayerPaths:
-            if(os.path.isfile(path)):
-                return path
-        return self.config["playerPath"]
-                 
-    def getProcessedConfiguration(self):
-        if(self.closedAndNotSaved):
-            raise self.WindowClosed
-        return self.config
-                    
-    def _saveDataAndLeave(self):
-        self.config['host'] = self.hostEntry.get_text()
-        self.config['name'] = self.userEntry.get_text()
-        self.config['room'] = self.roomEntry.get_text()
-        self.config['password'] = self.passEntry.get_text()
-        self.config['playerPath'] = self.mpcEntry.get_text()
-        if self.alwaysShowCheck.get_active() == True:
-            self.config['forceGuiPrompt'] = True
+        self.malSettingsGroup = QtGui.QGroupBox("Enable MyAnimeList Updater (EXPERIMENTAL)")
+        self.malSettingsGroup.setCheckable(True)
+        self.malSettingsGroup.toggled.connect(self.malToggled)
+        self.malSettingsSplit = QtGui.QSplitter(self)
+        self.malusernameTextbox = QLineEdit(config['malUsername'],self)
+        self.malusernameLabel = QLabel("MAL Username:", self)
+        self.malpasswordTextbox = QLineEdit(config['malPassword'],self)
+        self.malpasswordTextbox.setEchoMode(QtGui.QLineEdit.Password)
+        self.malpasswordLabel = QLabel("MAL Password:", self)
+        self.malSettingsLayout = QtGui.QGridLayout()
+        self.malSettingsLayout.addWidget(self.malusernameLabel , 0, 0)
+        self.malSettingsLayout.addWidget(self.malusernameTextbox, 0, 1)
+        self.malSettingsLayout.addWidget(self.malpasswordLabel , 1, 0)
+        self.malSettingsLayout.addWidget(self.malpasswordTextbox, 1, 1)
+        self.malSettingsGroup.setLayout(self.malSettingsLayout)
+        
+        self.malenabledCheckbox = QCheckBox("Enable MyAnimeList Updater (EXPERIMENTAL)")
+        self.malenabledCheckbox.toggled.connect(self.malToggled) 
+        if config['malPassword'] == None or config['malPassword'] == "":
+            self.malenabledCheckbox.setChecked(False)
+            self.malSettingsGroup.hide()
         else:
-            self.config['forceGuiPrompt'] = False
-        if self.storeConfigCheck.get_active() == True:
-            self.config['noStore'] = True
-        else:
-            self.config['noStore'] = False
-        if self.slowOnDesyncCheck.get_active() == True:
-            self.config['slowOnDesync'] = True
-        else:
-            self.config['slowOnDesync'] = False
-        self.window.destroy()
-        gtk.main_quit()
-
-    def _addLabeledEntryToVbox(self, label, initialEntryValue, vbox, callback):
-        hbox = gtk.HBox(False, 0)
-        hbox.set_border_width(3)
-        vbox.pack_start(hbox, False, False, 0)
-        hbox.show()
-        label_ = gtk.Label()
-        label_.set_text(label)
-        label_.set_alignment(xalign=0, yalign=0.5) 
-        hbox.pack_start(label_, False, False, 0)
-        label_.show()
-        entry = gtk.Entry()
-        entry.connect("activate", callback, entry)
-        if(initialEntryValue == None):
-            initialEntryValue = ""
-        entry.set_text(initialEntryValue)
-        hbox.pack_end(entry, False, False, 0)
-        entry.set_usize(200, -1)
-        entry.show()
-        return entry
-    
-    def _addCheckboxEntries(self, config, vbox):
-        CheckVbox = gtk.VBox(False, 0)
-        vbox.pack_start(CheckVbox, False, False, 0)
-        self.alwaysShowCheck = gtk.CheckButton("Always Show This Dialog")
-        if self.config['forceGuiPrompt'] == True:
-            self.alwaysShowCheck.set_active(True)
-        self.alwaysShowCheck.show()
-        self.storeConfigCheck = gtk.CheckButton("Do Not Store This Configuration")
-        if self.config['noStore'] == True:
-            self.storeConfigCheck.set_active(True)
-        self.storeConfigCheck.show()
-        self.slowOnDesyncCheck = gtk.CheckButton("Slow Down On Desync")
-        if self.config['slowOnDesync'] == True:
-            self.slowOnDesyncCheck.set_active(True)
-        self.slowOnDesyncCheck.show()
-        CheckVbox.pack_start(self.alwaysShowCheck, False, False, 0)
-        CheckVbox.add(self.storeConfigCheck)
-        CheckVbox.add(self.slowOnDesyncCheck)
-        CheckVbox.show()
-
-    def setAvailablePaths(self, paths):
-        self._availablePlayerPaths = paths
-    
-    class WindowClosed(Exception):
-        pass
+            self.malenabledCheckbox.hide()
+        
+        self.alwaysshowCheckbox = QCheckBox("Always Show This Dialog")
+        if config['forceGuiPrompt'] == True:
+            self.alwaysshowCheckbox.setChecked(True)
+        
+        self.donotstoreCheckbox = QCheckBox("Do Not Store This Configuration")
+        if config['noStore'] == True:
+            self.donotstoreCheckbox.setChecked(True)
+        
+        self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
+                      
+        self.mainLayout = QtGui.QVBoxLayout()
+        self.mainLayout.addWidget(self.connectionSettingsGroup)
+        self.mainLayout.addSpacing(12)
+        self.mainLayout.addWidget(self.mediaplayerSettingsGroup)
+        self.mainLayout.addSpacing(12)
+        self.mainLayout.addWidget(self.malenabledCheckbox)
+        self.mainLayout.addWidget(self.malSettingsGroup)
+        
+        self.topLayout = QtGui.QHBoxLayout()
+        self.helpButton = QtGui.QPushButton("Help")
+        self.helpButton.setMaximumSize(self.helpButton.sizeHint())
+        self.helpButton.pressed.connect(self.openHelp)
+        self.runButton = QtGui.QPushButton("Store configuration and run Syncplay")
+        self.runButton.pressed.connect(self._saveDataAndLeave)
+        self.runButtonTextUpdate
+        self.topLayout.addWidget(self.helpButton, Qt.AlignLeft)
+        self.topLayout.addWidget(self.runButton, Qt.AlignRight)
+        self.mainLayout.addWidget(self.alwaysshowCheckbox)
+        self.mainLayout.addWidget(self.donotstoreCheckbox)
+        self.mainLayout.addLayout(self.topLayout)
+        
+        self.mainLayout.addStretch(1)
+        
+        self.setLayout(self.mainLayout)
+        self.setFixedSize(self.sizeHint())
