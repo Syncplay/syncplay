@@ -88,10 +88,12 @@ class ConfigDialog(QtGui.QDialog):
         
         if os.name == 'nt':
             browserfilter =  "Executable files (*.exe);;All Files (*)"
-            if os.environ["ProgramFiles(x86)"] != "" and os.environ["ProgramFiles(x86)"] != None: 
+            if "PROGRAMFILES(X86)" in os.environ: 
                 defaultdirectory = os.environ["ProgramFiles(x86)"]
-            elif os.environ["ProgramFiles"] != os.environ["ProgramFiles"] != None:
-                defaultdirectory = os.environ["ProgramFiles"]    
+            elif "PROGRAMFILES" in os.environ:
+                defaultdirectory = os.environ["ProgramFiles"]
+            elif "PROGRAMW6432" in os.environ:
+                defaultdirectory = os.environ["ProgramW6432"]
         elif sys.platform.startswith('linux'):
             defaultdirectory = "/usr/bin"
         
