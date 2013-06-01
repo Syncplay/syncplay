@@ -28,6 +28,7 @@ class VlcPlayer(BasePlayer):
         self._duration = None
         self._filename = None
         self._filepath = None
+        self._filechanged = False
         
         self._durationAsk = threading.Event()
         self._filenameAsk = threading.Event()
@@ -68,12 +69,16 @@ class VlcPlayer(BasePlayer):
         self.setPosition(self._client.getGlobalPosition())
 
     def askForStatus(self):
+        self._filechanged = False
         self._positionAsk.clear()
         self._pausedAsk.clear()
         self._listener.sendLine(".")
-        self._positionAsk.wait()
-        self._pausedAsk.wait()
-        self._client.updatePlayerStatus(self._paused, self._position)
+        if self._filechanged  == False:
+            self._positionAsk.wait()
+            self._pausedAsk.wait()
+            self._client.updatePlayerStatus(self._paused, self._position)
+        else:
+            self._client.updatePlayerStatus(self._client.getGlobalPaused(), self._client.getGlobalPosition())
                 
     def displayMessage(self, message, duration = constants.OSD_DURATION * 1000):
         duration /= 1000
@@ -101,10 +106,12 @@ class VlcPlayer(BasePlayer):
             name, value = match.group('command'), match.group('argument')
   
         if(line == "filepath-change-notification"):
+            self._filechanged = True 
             t = threading.Thread(target=self._onFileUpdate)
             t.setDaemon(True)
             t.start()
         elif (name == "filepath" and value != "no-input"):
+            self._filechanged = True
             if("file://" in value):
                 value = value.replace("file://", "")
                 if(not os.path.isfile(value)):
@@ -115,12 +122,13 @@ class VlcPlayer(BasePlayer):
             self._duration = float(value.replace(",", "."))
             self._durationAsk.set()
         elif(name == "playstate"):
-            self._paused = bool(value != 'playing') if(value != "no-input") else self._client.getGlobalPaused()
+            self._paused = bool(value != 'playing') if(value != "no-input" and self._filechanged == False) else self._client.getGlobalPaused()
             self._pausedAsk.set()
         elif(name == "position"):
-            self._position = float(value.replace(",", ".")) if (value != "no-input") else self._client.getGlobalPosition()
+            self._position = float(value.replace(",", ".")) if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPosition()
             self._positionAsk.set()
         elif(name == "filename"):
+            self._filechanged = True
             self._filename = value
             self._filenameAsk.set()
         elif (line[:16] == "VLC media player"):

@@ -209,7 +209,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Pop $$CheckBox_QuickLaunchShortcut
     
     $${If} $$CheckBox_Associate_State == $${BST_CHECKED}
-    	$${NSD_Check} $$CheckBox_Associate
+      $${NSD_Check} $$CheckBox_Associate
     $${EndIf}
 
     $${If} $$CheckBox_VLC_State == $${BST_CHECKED}
@@ -522,9 +522,10 @@ info = dict(
     console=[{"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")], 'dest_base': "Syncplay"}, 'syncplayServer.py'],
     options={'py2exe': {
                          'dist_dir': OUT_DIR,
-                         'includes': 'cairo, pango, pangocairo, atk, gobject, twisted',
+                         'packages': 'PySide.QtUiTools',
+                         'includes': 'cairo, pango, pangocairo, atk, gobject, twisted, sys, encodings, datetime, os, time, math, PySide',
                          'excludes': 'venv, _ssl, doctest, pdb, unittest, win32clipboard, win32event, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process',
-                         'dll_excludes': 'msvcr71.dll',
+                         'dll_excludes': 'msvcr71.dll, MSVCP90.dll',
                          'optimize': 2,
                          'compressed': 1
                          }
@@ -536,4 +537,3 @@ info = dict(
 
 sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource'])
 setup(**info)
-
