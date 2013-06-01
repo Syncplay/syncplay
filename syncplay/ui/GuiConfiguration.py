@@ -1,6 +1,6 @@
 from PySide import QtCore, QtGui
 from PySide.QtCore import QSettings, Qt
-from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices
+from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon
 
 import os
 import sys
@@ -142,12 +142,19 @@ class ConfigDialog(QtGui.QDialog):
             
     def __init__(self, config, playerpaths):
         
+        from syncplay import utils
         self.config = config
         self.QtGui = QtGui
+        if sys.platform.startswith('linux'):
+            resourcespath = utils.findWorkingDir() + "/resources/"
+        else:
+            resourcespath = utils.findWorkingDir() + "\\resources\\"
+        print resourcespath
 
         super(ConfigDialog, self).__init__()
         
         self.setWindowTitle(getMessage("en", "config-window-title"))
+        self.setWindowIcon(QtGui.QIcon(resourcespath + "syncplay.png"))
               
         if(config['host'] == None):
             host = ""
@@ -183,7 +190,7 @@ class ConfigDialog(QtGui.QDialog):
         self.executablepathCombobox.setMinimumWidth(200)
         self.executablepathCombobox.setMaximumWidth(200)
         self.executablepathLabel = QLabel("Path to player executable:", self)
-        self.executablebrowseButton = QtGui.QPushButton("Browse")
+        self.executablebrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),"Browse")
         self.executablebrowseButton.clicked.connect(self.browsePlayerpath)
         self.slowdownCheckbox = QCheckBox("Slow down on desync")
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
@@ -238,10 +245,10 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addWidget(self.malSettingsGroup)
         
         self.topLayout = QtGui.QHBoxLayout()
-        self.helpButton = QtGui.QPushButton("Help")
+        self.helpButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'help.png'),"Help")
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.pressed.connect(self.openHelp)
-        self.runButton = QtGui.QPushButton("Store configuration and run Syncplay")
+        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'),"Store configuration and run Syncplay")
         self.runButton.pressed.connect(self._saveDataAndLeave)
         self.runButtonTextUpdate
         self.topLayout.addWidget(self.helpButton, Qt.AlignLeft)
@@ -251,6 +258,6 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addLayout(self.topLayout)
         
         self.mainLayout.addStretch(1)
-        
         self.setLayout(self.mainLayout)
+        self.runButton.setFocus()        
         self.setFixedSize(self.sizeHint())
