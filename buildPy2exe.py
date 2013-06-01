@@ -523,17 +523,18 @@ info = dict(
     options={'py2exe': {
                          'dist_dir': OUT_DIR,
                          'packages': 'PySide.QtUiTools',
-                         'includes': 'cairo, pango, pangocairo, atk, gobject, twisted, sys, encodings, datetime, os, time, math, PySide',
+                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide',
                          'excludes': 'venv, _ssl, doctest, pdb, unittest, win32clipboard, win32event, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process',
                          'dll_excludes': 'msvcr71.dll, MSVCP90.dll',
                          'optimize': 2,
                          'compressed': 1
                          }
              },
-    data_files = [("resources", ["resources/icon.ico",])],
+    data_files = [("resources", ["resources/icon.ico","resources/syncplay.png","resources/accept.png","resources/folder_explore.png","resources/help.png"])],
     zipfile = "lib/libsync",
     cmdclass = {"py2exe": build_installer},               
 )
 
 sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource'])
 setup(**info)
+
