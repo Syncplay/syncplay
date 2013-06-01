@@ -251,6 +251,6 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addLayout(self.topLayout)
         
         self.mainLayout.addStretch(1)
-        
         self.setLayout(self.mainLayout)
+        self.runButton.setFocus()        
         self.setFixedSize(self.sizeHint())
