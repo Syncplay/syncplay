@@ -20,9 +20,10 @@ else
 endif
 
 common:
-	-mkdir -p $(LIB_PATH)/syncplay/
+	-mkdir -p $(LIB_PATH)/syncplay/resources/
 	cp -r syncplay $(LIB_PATH)/syncplay/
 	cp -r resources/hicolor $(SHARE_PATH)/icons/
+	cp -r resources/*.png $(LIB_PATH)/syncplay/resources/
 	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/app-install/icons/
 	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/pixmaps/
 
