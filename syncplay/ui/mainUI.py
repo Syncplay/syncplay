@@ -128,8 +128,9 @@ class MainDialog(QtGui.QDialog):
         dialog.menuBar.addMenu(dialog.helpMenu)
         dialog.mainLayout.setMenuBar(dialog.menuBar)
         
-    def NewMessage(self, NewMessage):
-        self.outputbox.insertHtml(NewMessage)
+    def NewMessage(self, message):
+        self.outputbox.moveCursor(QtGui.QTextCursor.End)
+        self.outputbox.insertHtml(message)
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
 
     
