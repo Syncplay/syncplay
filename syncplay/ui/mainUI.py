@@ -90,17 +90,17 @@ class MainDialog(QtGui.QDialog):
     def addMiscBox(self, dialog):
         dialog.miscGroup = QtGui.QGroupBox("Other Commands")
         
-        dialog.showListButton = QtGui.QPushButton("Show list")
-        dialog.showListButton.pressed.connect(self.showList)
         dialog.unseekButton = QtGui.QPushButton("Undo last seek")
         dialog.unseekButton.pressed.connect(self.undoseek)
         dialog.pauseButton = QtGui.QPushButton("Toggle pause")
         dialog.pauseButton.pressed.connect(self.togglepause)
+        dialog.showListButton = QtGui.QPushButton("Show list")
+        dialog.showListButton.pressed.connect(self.showList)
         
         dialog.miscLayout = QtGui.QHBoxLayout()
-        dialog.miscLayout.addWidget(dialog.showListButton)
         dialog.miscLayout.addWidget(dialog.unseekButton)
         dialog.miscLayout.addWidget(dialog.pauseButton)
+        dialog.miscLayout.addWidget(dialog.showListButton)
         
         dialog.miscGroup.setLayout(dialog.miscLayout)
         dialog.miscGroup.setFixedSize(dialog.miscGroup.sizeHint())
