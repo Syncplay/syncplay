@@ -93,7 +93,7 @@ en = {
       "config-window-title" : 'Syncplay Configuration',
       "host-label" : 'Host: ',
       "username-label" :  'Username: ',
-      "room-label" : 'Default room (optional): ',
+      "room-label" : 'Default room: ',
       "password-label" :  'Server password (optional): ',
       "path-label" : 'Path to player executable: ',
       
