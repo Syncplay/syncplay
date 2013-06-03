@@ -43,6 +43,7 @@ class ConfigurationGetter(object):
                           "host",
                           "port",
                           "name",
+                          "room",
                           "playerPath",
                           "playerClass",
                          ]
