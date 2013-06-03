@@ -17,7 +17,7 @@ class MainDialog(QtGui.QDialog):
         self.seekInput.setText("")
         
     def showList(self):
-        print "SHOW USER LIST"
+        print "UPDATE USER LIST"
         
     def undoseek(self):
         print "UNDO LAST SEEK"
@@ -41,6 +41,42 @@ class MainDialog(QtGui.QDialog):
         
     def openUserGuide(self):
         self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
+        
+    def addTopLayout(self, dialog):       
+        dialog.topSplit = QtGui.QSplitter(Qt.Horizontal)
+        
+        
+        dialog.outputLayout = QtGui.QVBoxLayout()
+        dialog.outputbox = QtGui.QTextEdit()
+        dialog.outputbox.setReadOnly(True)  
+        dialog.outputlabel = QtGui.QLabel("Notifications")
+        dialog.outputFrame = QtGui.QFrame()
+        dialog.outputFrame.setLineWidth(0)
+        dialog.outputFrame.setMidLineWidth(0)
+        dialog.outputLayout.setContentsMargins(0,0,0,0)
+        dialog.outputLayout.addWidget(dialog.outputlabel)
+        dialog.outputLayout.addWidget(dialog.outputbox)
+        dialog.outputFrame.setLayout(dialog.outputLayout)
+        
+        dialog.listLayout = QtGui.QVBoxLayout()
+        dialog.listbox = QtGui.QTextEdit()
+        dialog.listbox.setReadOnly(True)
+        dialog.listlabel = QtGui.QLabel("List of who is playing what")
+        dialog.listFrame = QtGui.QFrame()
+        dialog.listFrame.setLineWidth(0)
+        dialog.listFrame.setMidLineWidth(0)
+        dialog.listLayout.setContentsMargins(0,0,0,0)
+        dialog.listLayout.addWidget(dialog.listlabel)
+        dialog.listLayout.addWidget(dialog.listbox)
+        dialog.listFrame.setLayout(dialog.listLayout)
+        
+        dialog.topSplit.addWidget(dialog.outputFrame)
+        dialog.topSplit.addWidget(dialog.listFrame)
+        dialog.topSplit.setStretchFactor(0,3)
+        dialog.topSplit.setStretchFactor(1,2)
+        dialog.mainLayout.addWidget(dialog.topSplit)
+        dialog.topSplit.setSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Expanding)
+
         
     def addBottomLayout(self, dialog):
         dialog.bottomLayout = QtGui.QHBoxLayout()
@@ -94,7 +130,7 @@ class MainDialog(QtGui.QDialog):
         dialog.unseekButton.pressed.connect(self.undoseek)
         dialog.pauseButton = QtGui.QPushButton("Toggle pause")
         dialog.pauseButton.pressed.connect(self.togglepause)
-        dialog.showListButton = QtGui.QPushButton("Show list")
+        dialog.showListButton = QtGui.QPushButton("Update list")
         dialog.showListButton.pressed.connect(self.showList)
         
         dialog.miscLayout = QtGui.QHBoxLayout()
@@ -105,9 +141,7 @@ class MainDialog(QtGui.QDialog):
         dialog.miscGroup.setLayout(dialog.miscLayout)
         dialog.miscGroup.setFixedSize(dialog.miscGroup.sizeHint())
         
-        
 
-            
     def addMenubar(self, dialog):
         dialog.menuBar = QtGui.QMenuBar()
         
@@ -132,6 +166,14 @@ class MainDialog(QtGui.QDialog):
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
         self.outputbox.insertHtml(message)
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
+        
+    def ResetList(self):
+        self.listbox.setText("")
+        
+    def NewListItem(self, item):
+        self.listbox.moveCursor(QtGui.QTextCursor.End)
+        self.listbox.insertHtml(item)
+        self.listbox.moveCursor(QtGui.QTextCursor.End)
 
     
     def __init__(self):
@@ -142,10 +184,7 @@ class MainDialog(QtGui.QDialog):
         self.setWindowTitle("Syncplay - Main Window")
         self.mainLayout = QtGui.QVBoxLayout()
         
-        self.outputbox = QtGui.QTextEdit()
-        self.outputbox.setReadOnly(True)
-               
-        self.mainLayout.addWidget(self.outputbox)
+        self.addTopLayout(self)
         self.addBottomLayout(self)
         self.addMenubar(self)
         self.setLayout(self.mainLayout)
