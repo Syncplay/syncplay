@@ -96,7 +96,7 @@ class MainDialog(QtGui.QDialog):
         dialog.roomGroup = QtGui.QGroupBox("Room")
         
         dialog.roomInput = QtGui.QLineEdit()
-        dialog.roomButton = QtGui.QPushButton("Join room")
+        dialog.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'), "Join room")
         dialog.roomButton.pressed.connect(self.joinRoom)
         dialog.roomLayout = QtGui.QHBoxLayout()
         dialog.roomInput.setMaximumWidth(150)
@@ -111,7 +111,7 @@ class MainDialog(QtGui.QDialog):
         dialog.seekGroup = QtGui.QGroupBox("Seek")
         
         dialog.seekInput = QtGui.QLineEdit()
-        dialog.seekButton = QtGui.QPushButton("Seek to position")
+        dialog.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),"Seek to position")
         dialog.seekButton.pressed.connect(self.seekPosition)
         
         dialog.seekLayout = QtGui.QHBoxLayout()
@@ -126,11 +126,11 @@ class MainDialog(QtGui.QDialog):
     def addMiscBox(self, dialog):
         dialog.miscGroup = QtGui.QGroupBox("Other Commands")
         
-        dialog.unseekButton = QtGui.QPushButton("Undo last seek")
+        dialog.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),"Undo last seek")
         dialog.unseekButton.pressed.connect(self.undoseek)
-        dialog.pauseButton = QtGui.QPushButton("Toggle pause")
+        dialog.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),"Toggle pause")
         dialog.pauseButton.pressed.connect(self.togglepause)
-        dialog.showListButton = QtGui.QPushButton("Update list")
+        dialog.showListButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'table_refresh.png'),"Update list")
         dialog.showListButton.pressed.connect(self.showList)
         
         dialog.miscLayout = QtGui.QHBoxLayout()
@@ -180,6 +180,10 @@ class MainDialog(QtGui.QDialog):
         
         super(MainDialog, self).__init__()
         self.QtGui = QtGui
+        if sys.platform.startswith('linux'):
+            self.resourcespath = utils.findWorkingDir() + "/resources/"
+        else:
+            self.resourcespath = utils.findWorkingDir() + "\\resources\\"
         
         self.setWindowTitle("Syncplay - Main Window")
         self.mainLayout = QtGui.QVBoxLayout()
@@ -190,11 +194,8 @@ class MainDialog(QtGui.QDialog):
         self.setLayout(self.mainLayout)
         self.resize(700,500)
         
-        if sys.platform.startswith('linux'):
-            resourcespath = utils.findWorkingDir() + "/resources/"
-        else:
-            resourcespath = utils.findWorkingDir() + "\\resources\\"
-        self.setWindowIcon(QtGui.QIcon(resourcespath + "syncplay.png"))
+        
+        self.setWindowIcon(QtGui.QIcon(self.resourcespath + "syncplay.png"))
         
         
         self.show()
