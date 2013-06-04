@@ -146,17 +146,17 @@ class MainDialog(QtGui.QDialog):
         dialog.menuBar = QtGui.QMenuBar()
         
         dialog.fileMenu = QtGui.QMenu("&File", self)
-        dialog.exitAction = dialog.fileMenu.addAction("E&xit")
+        dialog.exitAction = dialog.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'), "E&xit")
         dialog.exitAction.triggered.connect(self.exitSyncplay)
         dialog.menuBar.addMenu(dialog.fileMenu)
         
         dialog.advancedMenu = QtGui.QMenu("&Advanced", self)
-        dialog.setoffsetAction = dialog.advancedMenu.addAction("Set &Offset")
+        dialog.setoffsetAction = dialog.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'timeline_marker.png'),"Set &Offset")
         dialog.setoffsetAction.triggered.connect(self.setOffset)
         dialog.menuBar.addMenu(dialog.advancedMenu)
         
         dialog.helpMenu = QtGui.QMenu("&Help", self)
-        dialog.userguideAction = dialog.helpMenu.addAction("Open User &Guide")
+        dialog.userguideAction = dialog.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'), "Open User &Guide")
         dialog.userguideAction.triggered.connect(self.openUserGuide)
         
         dialog.menuBar.addMenu(dialog.helpMenu)
