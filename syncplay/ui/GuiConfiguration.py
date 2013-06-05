@@ -7,12 +7,16 @@ import sys
 from syncplay.messages import getMessage
 
 class GuiConfiguration:
-    def __init__(self, config):
+    def __init__(self, config, error = None):
         self.config = config
         self._availablePlayerPaths = []
-
+        self.error = error
+        
     def run(self):
-        self.app = QtGui.QApplication(sys.argv)
+        try:
+            self.app = QtGui.QApplication(sys.argv)
+        except:
+            pass
         dialog = ConfigDialog(self.config, self._availablePlayerPaths)
         dialog.exec_()
 

@@ -101,7 +101,7 @@ class ConfigurationGetter(object):
                 if(hostNotValid or portNotValid):
                     raise InvalidConfigValue("Hostname can't be empty")
             elif(self._config[key] == "" or self._config[key] is None):
-                raise InvalidConfigValue("{} can't be empty".format(key))
+                raise InvalidConfigValue("{} can't be empty".format(key.capitalize()))
 
     def _overrideConfigWithArgs(self, args):
         for key, val in vars(args).items():
@@ -156,20 +156,20 @@ class ConfigurationGetter(object):
     def _checkConfig(self):
         try:
             self._validateArguments()
-        except InvalidConfigValue:
+        except InvalidConfigValue as e:
             try:
-                for key, value in self._promptForMissingArguments().items():
+                for key, value in self._promptForMissingArguments(e.message).items():
                     self._config[key] = value
                 self._checkConfig()
             except:
                 sys.exit()
 
-    def _promptForMissingArguments(self):
+    def _promptForMissingArguments(self, error = None):
         if(self._config['noGui']):
             print getMessage("en", "missing-arguments-error")
             sys.exit()
         elif(GuiConfiguration):
-            gc = GuiConfiguration(self._config)
+            gc = GuiConfiguration(self._config, error = error)
             gc.setAvailablePaths(self._playerFactory.getAvailablePlayerPaths())
             gc.run()
             return gc.getProcessedConfiguration()
