@@ -129,7 +129,7 @@ class ConfigDialog(QtGui.QDialog):
         self.config['room'] = self.defaultroomTextbox.text()
         self.config['password'] = self.serverpassTextbox.text()
         self.config['playerPath'] = self.executablepathCombobox.currentText()
-        self.config['file'] = self.mediapathTextbox.text()
+        self.config['file'] = os.path.abspath(self.mediapathTextbox.text())
         if self.alwaysshowCheckbox.isChecked() == True:
             self.config['forceGuiPrompt'] = True
         else:
