@@ -242,6 +242,11 @@ class ConfigDialog(QtGui.QDialog):
         self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
                       
         self.mainLayout = QtGui.QVBoxLayout()
+        if error:
+            self.errorLabel = QLabel(error, self)
+            self.errorLabel.setAlignment(Qt.AlignCenter)
+            self.errorLabel.setStyleSheet("QLabel { color : red; }")
+            self.mainLayout.addWidget(self.errorLabel)
         self.mainLayout.addWidget(self.connectionSettingsGroup)
         self.mainLayout.addSpacing(12)
         self.mainLayout.addWidget(self.mediaplayerSettingsGroup)
@@ -266,6 +271,3 @@ class ConfigDialog(QtGui.QDialog):
         self.setLayout(self.mainLayout)
         self.runButton.setFocus()        
         self.setFixedSize(self.sizeHint())
-        
-        if error:
-            QtGui.QMessageBox.warning(self, "Syncplay", error, QtGui.QMessageBox.Ok)
