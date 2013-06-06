@@ -111,6 +111,17 @@ class ConfigDialog(QtGui.QDialog):
                 browserfilter, "", options)
         if fileName:
             self.executablepathCombobox.setEditText(fileName)
+            
+    def browseMediapath(self):
+        options = QtGui.QFileDialog.Options()
+        defaultdirectory = ""
+        browserfilter = "All Files (*)"
+
+        
+        fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,"Browse for media files","",
+                browserfilter, "", options)
+        if fileName:
+            self.mediapathTextbox.setText(fileName)
         
     def _saveDataAndLeave(self):
         self.config['host'] = self.hostTextbox.text()
@@ -118,6 +129,7 @@ class ConfigDialog(QtGui.QDialog):
         self.config['room'] = self.defaultroomTextbox.text()
         self.config['password'] = self.serverpassTextbox.text()
         self.config['playerPath'] = self.executablepathCombobox.currentText()
+        self.config['file'] = self.mediapathTextbox.text()
         if self.alwaysshowCheckbox.isChecked() == True:
             self.config['forceGuiPrompt'] = True
         else:
@@ -198,12 +210,19 @@ class ConfigDialog(QtGui.QDialog):
         self.executablepathLabel = QLabel("Path to player executable:", self)
         self.executablebrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),"Browse")
         self.executablebrowseButton.clicked.connect(self.browsePlayerpath)
+        self.mediapathTextbox = QLineEdit(config['file'], self)
+        self.mediapathLabel = QLabel("Path to media file:", self)
+        self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),"Browse")
+        self.mediabrowseButton.clicked.connect(self.browseMediapath)
         self.slowdownCheckbox = QCheckBox("Slow down on desync")
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
         self.mediaplayerSettingsLayout.addWidget(self.executablepathCombobox , 0, 1)
         self.mediaplayerSettingsLayout.addWidget(self.executablebrowseButton , 0, 2)
-        self.mediaplayerSettingsLayout.addWidget(self.slowdownCheckbox, 1, 0)
+        self.mediaplayerSettingsLayout.addWidget(self.mediapathLabel, 1, 0)
+        self.mediaplayerSettingsLayout.addWidget(self.mediapathTextbox , 1, 1)
+        self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton , 1, 2)
+        self.mediaplayerSettingsLayout.addWidget(self.slowdownCheckbox, 2, 0)
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
         if config['slowOnDesync'] == True:
             self.slowdownCheckbox.setChecked(True)
