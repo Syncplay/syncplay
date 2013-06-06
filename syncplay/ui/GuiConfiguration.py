@@ -159,6 +159,7 @@ class ConfigDialog(QtGui.QDialog):
         super(ConfigDialog, self).__init__()
         
         self.setWindowTitle(getMessage("en", "config-window-title"))
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QIcon(resourcespath + "syncplay.png"))
               
         if(config['host'] == None):
