@@ -12,12 +12,13 @@ class GuiConfiguration:
         self._availablePlayerPaths = []
         self.error = error
         
+        
     def run(self):
         try:
             self.app = QtGui.QApplication(sys.argv)
         except:
             pass
-        dialog = ConfigDialog(self.config, self._availablePlayerPaths)
+        dialog = ConfigDialog(self.config, self._availablePlayerPaths, self.error)
         dialog.exec_()
 
     def setAvailablePaths(self, paths):
@@ -144,16 +145,16 @@ class ConfigDialog(QtGui.QDialog):
             raise GuiConfiguration.WindowClosed
             event.accept()
             
-    def __init__(self, config, playerpaths):
+    def __init__(self, config, playerpaths, error):
         
         from syncplay import utils
         self.config = config
         self.QtGui = QtGui
+        self.error = error
         if sys.platform.startswith('linux'):
             resourcespath = utils.findWorkingDir() + "/resources/"
         else:
             resourcespath = utils.findWorkingDir() + "\\resources\\"
-        print resourcespath
 
         super(ConfigDialog, self).__init__()
         
@@ -265,3 +266,6 @@ class ConfigDialog(QtGui.QDialog):
         self.setLayout(self.mainLayout)
         self.runButton.setFocus()        
         self.setFixedSize(self.sizeHint())
+        
+        if error:
+            QtGui.QMessageBox.warning(self, "Syncplay", error, QtGui.QMessageBox.Ok)
