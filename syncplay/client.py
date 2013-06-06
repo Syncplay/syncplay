@@ -168,9 +168,8 @@ class SyncplayClient(object):
         self.ui.showMessage(getMessage("en", "unpause-notification").format(setBy))
         return madeChangeOnPlayer
 
-    def _serverPaused(self, setBy, diff):
-        if (diff > 0):
-            self.setPosition(self.getGlobalPosition())
+    def _serverPaused(self, setBy):
+        self.setPosition(self.getGlobalPosition())
         self._player.setPaused(True)
         madeChangeOnPlayer = True
         self.ui.showMessage(getMessage("en", "pause-notification").format(setBy))
@@ -217,7 +216,7 @@ class SyncplayClient(object):
         if (paused == False and pauseChanged):
             madeChangeOnPlayer = self._serverUnpaused(setBy)
         elif (paused == True and pauseChanged):
-            madeChangeOnPlayer = self._serverPaused(setBy, diff)
+            madeChangeOnPlayer = self._serverPaused(setBy)
         return madeChangeOnPlayer
 
     def _executePlaystateHooks(self, position, paused, doSeek, setBy, latency):

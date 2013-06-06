@@ -206,11 +206,11 @@ class SyncFactory(Factory):
         watcher.lastUpdate = time.time()
         if(watcher.file):
             oldPosition = self._roomStates[watcher.room]["position"]
-            if(position is not None):
-                self.__updatePositionState(position, doSeek, watcher)
             pauseChanged = False
             if(paused is not None):
                 pauseChanged = self.__updatePausedState(paused, watcher)
+            if(position is not None):
+                self.__updatePositionState(position, doSeek or pauseChanged, watcher)
             forceUpdate = self.__shouldServerForceUpdateOnRoom(pauseChanged, doSeek)
             if(forceUpdate):
                 if(self.ircVerbose):
