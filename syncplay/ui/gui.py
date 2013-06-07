@@ -34,8 +34,7 @@ class MainDialog(QtGui.QDialog):
         self._listBuffer = "";
     
     def userListChange(self):
-        #self._syncplayClient.getUserList()
-        pass
+        self._syncplayClient.showUserList()
     
     def showDebugMessage(self, message):
         print(message)

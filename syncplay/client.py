@@ -318,6 +318,9 @@ class SyncplayClient(object):
         if(self._protocol and self._protocol.logged):
             self._protocol.sendList()
     
+    def showUserList(self):
+        self.userlist.showUserList()
+    
     def getPassword(self):
         return self._serverPassword
     
@@ -505,7 +508,6 @@ class SyncplayUserlist(object):
                 self.ui.showMessage(message)
 
     def addUser(self, username, room, file_, position = 0, noMessage = False):
-        self.userListChange()
         if(username == self.currentUser.username):
             self.currentUser.lastPosition = position
             return
@@ -513,14 +515,15 @@ class SyncplayUserlist(object):
         self._users[username] = user
         if(not noMessage):
             self.__showUserChangeMessage(username, room, file_)
+        self.userListChange()
             
     def removeUser(self, username):
-        self.userListChange()
         if(self._users.has_key(username)):
             self._users.pop(username)
             message = getMessage("en", "left-notification").format(username)
             self.ui.showMessage(message)
-            
+        self.userListChange()
+        
     def __displayModUserMessage(self, username, room, file_, user):
         if (file_ and not user.isFileSame(file_)):
             self.__showUserChangeMessage(username, room, file_)
@@ -528,7 +531,6 @@ class SyncplayUserlist(object):
             self.__showUserChangeMessage(username, room, None)
 
     def modUser(self, username, room, file_):
-        self.userListChange()
         if(self._users.has_key(username)):
             user = self._users[username]
             self.__displayModUserMessage(username, room, file_, user)
@@ -538,7 +540,8 @@ class SyncplayUserlist(object):
             self.__showUserChangeMessage(username, room, file_)
         else:
             self.addUser(username, room, file_)
-
+        self.userListChange()
+            
     def __addUserWithFileToList(self, rooms, user):
         currentPosition = utils.formatTime(user.lastPosition)
         file_key = '\'{}\' ({}/{})'.format(user.file['name'], currentPosition, utils.formatTime(user.file['duration']))
