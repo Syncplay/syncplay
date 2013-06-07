@@ -78,11 +78,7 @@ class MainDialog(QtGui.QDialog):
         self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
         
     def exitSyncplay(self):
-        reply = QtGui.QMessageBox.question(self, "Syncplay",
-                "Are you sure you want to exit Syncplay?",
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-        if reply == QtGui.QMessageBox.Yes:
-            self._syncplayClient.stop()
+        self._syncplayClient.stop()
             
     def closeEvent(self, event):
         self.exitSyncplay()
