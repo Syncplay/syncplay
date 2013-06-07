@@ -205,8 +205,9 @@ class ConfigurationGetter(object):
         except InvalidConfigValue:
             pass
         try:
-            for key, value in self._promptForMissingArguments().items():
-                self._config[key] = value
+            if(self._config['noGui'] == False):
+                for key, value in self._promptForMissingArguments().items():
+                    self._config[key] = value
         except:
             sys.exit()
 
@@ -240,5 +241,8 @@ class ConfigurationGetter(object):
         self._saveConfig(iniPath)
         if(self._config['file']):
             self._loadRelativeConfiguration()
+        if(not self._config['noGui']):
+            from syncplay.vendor import qt4reactor
+            qt4reactor.install()
         return self._config
     
