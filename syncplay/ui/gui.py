@@ -82,7 +82,11 @@ class MainDialog(QtGui.QDialog):
                 "Are you sure you want to exit Syncplay?",
                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if reply == QtGui.QMessageBox.Yes:
-            sys.exit()
+            self._syncplayClient.stop()
+            
+    def closeEvent(self, event):
+        self.exitSyncplay()
+        event.ignore()
             
     def _extractSign(self, m):
         if(m):
