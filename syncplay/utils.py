@@ -91,3 +91,35 @@ def findWorkingDir():
 
 def limitedPowerset(s, minLength):
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in xrange(len(s), minLength, -1))
+
+def blackholeStdoutForFrozenWindow():
+    if getattr(sys, 'frozen', '') == "windows_exe":
+        class Stderr(object):
+            softspace = 0
+            _file = None
+            _error = None
+            def write(self, text, fname='.syncplay.log'):
+                if self._file is None and self._error is None:
+                    if(os.name <> 'nt'):
+                        path = os.path.join(os.getenv('HOME', '.'), fname)
+                    else:
+                        path = os.path.join(os.getenv('APPDATA', '.'), fname)
+                    self._file = open(path, 'a')
+                    #TODO: Handle errors.
+                if self._file is not None:
+                    self._file.write(text)
+                    self._file.flush()
+            def flush(self):
+                if self._file is not None:
+                    self._file.flush()
+        sys.stderr = Stderr()
+        del Stderr
+    
+        class Blackhole(object):
+            softspace = 0
+            def write(self, text):
+                pass
+            def flush(self):
+                pass
+        sys.stdout = Blackhole()
+        del Blackhole
