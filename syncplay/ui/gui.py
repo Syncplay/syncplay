@@ -5,7 +5,7 @@ import sys
 import time
 import re
 
-class MainDialog(QtGui.QDialog):
+class MainWindow(QtGui.QMainWindow):
     def addClient(self, client):
         self._syncplayClient = client
     
@@ -112,119 +112,128 @@ class MainDialog(QtGui.QDialog):
     def openUserGuide(self):
         self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
         
-    def addTopLayout(self, dialog):       
-        dialog.topSplit = QtGui.QSplitter(Qt.Horizontal)
+    def addTopLayout(self, window):       
+        window.topSplit = QtGui.QSplitter(Qt.Horizontal)
 
-        dialog.outputLayout = QtGui.QVBoxLayout()
-        dialog.outputbox = QtGui.QTextEdit()
-        dialog.outputbox.setReadOnly(True)  
-        dialog.outputlabel = QtGui.QLabel("Notifications")
-        dialog.outputFrame = QtGui.QFrame()
-        dialog.outputFrame.setLineWidth(0)
-        dialog.outputFrame.setMidLineWidth(0)
-        dialog.outputLayout.setContentsMargins(0,0,0,0)
-        dialog.outputLayout.addWidget(dialog.outputlabel)
-        dialog.outputLayout.addWidget(dialog.outputbox)
-        dialog.outputFrame.setLayout(dialog.outputLayout)
+        window.outputLayout = QtGui.QVBoxLayout()
+        window.outputbox = QtGui.QTextEdit()
+        window.outputbox.setReadOnly(True)  
+        window.outputlabel = QtGui.QLabel("Notifications")
+        window.outputFrame = QtGui.QFrame()
+        window.outputFrame.setLineWidth(0)
+        window.outputFrame.setMidLineWidth(0)
+        window.outputLayout.setContentsMargins(0,0,0,0)
+        window.outputLayout.addWidget(window.outputlabel)
+        window.outputLayout.addWidget(window.outputbox)
+        window.outputFrame.setLayout(window.outputLayout)
         
-        dialog.listLayout = QtGui.QVBoxLayout()
-        dialog.listbox = QtGui.QTextEdit()
-        dialog.listbox.setReadOnly(True)
-        dialog.listlabel = QtGui.QLabel("List of who is playing what")
-        dialog.listFrame = QtGui.QFrame()
-        dialog.listFrame.setLineWidth(0)
-        dialog.listFrame.setMidLineWidth(0)
-        dialog.listLayout.setContentsMargins(0,0,0,0)
-        dialog.listLayout.addWidget(dialog.listlabel)
-        dialog.listLayout.addWidget(dialog.listbox)
-        dialog.listFrame.setLayout(dialog.listLayout)
+        window.listLayout = QtGui.QVBoxLayout()
+        window.listbox = QtGui.QTextEdit()
+        window.listbox.setReadOnly(True)
+        window.listlabel = QtGui.QLabel("List of who is playing what")
+        window.listFrame = QtGui.QFrame()
+        window.listFrame.setLineWidth(0)
+        window.listFrame.setMidLineWidth(0)
+        window.listLayout.setContentsMargins(0,0,0,0)
+        window.listLayout.addWidget(window.listlabel)
+        window.listLayout.addWidget(window.listbox)
+        window.listFrame.setLayout(window.listLayout)
         
-        dialog.topSplit.addWidget(dialog.outputFrame)
-        dialog.topSplit.addWidget(dialog.listFrame)
-        dialog.topSplit.setStretchFactor(0,4)
-        dialog.topSplit.setStretchFactor(1,5)
-        dialog.mainLayout.addWidget(dialog.topSplit)
-        dialog.topSplit.setSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Expanding)
+        window.topSplit.addWidget(window.outputFrame)
+        window.topSplit.addWidget(window.listFrame)
+        window.topSplit.setStretchFactor(0,4)
+        window.topSplit.setStretchFactor(1,5)
+        window.mainLayout.addWidget(window.topSplit)
+        window.topSplit.setSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Expanding)
 
-    def addBottomLayout(self, dialog):
-        dialog.bottomLayout = QtGui.QHBoxLayout()
+    def addBottomLayout(self, window):
+        window.bottomLayout = QtGui.QHBoxLayout()
 
-        dialog.addRoomBox(MainDialog)
-        dialog.addSeekBox(MainDialog)
-        dialog.addMiscBox(MainDialog)
+        window.addRoomBox(MainWindow)
+        window.addSeekBox(MainWindow)
+        window.addMiscBox(MainWindow)
 
-        dialog.bottomLayout.addWidget(dialog.roomGroup, Qt.AlignLeft)
-        dialog.bottomLayout.addWidget(dialog.seekGroup, Qt.AlignLeft)
-        dialog.bottomLayout.addWidget(dialog.miscGroup, Qt.AlignLeft)
+        window.bottomLayout.addWidget(window.roomGroup, Qt.AlignLeft)
+        window.bottomLayout.addWidget(window.seekGroup, Qt.AlignLeft)
+        window.bottomLayout.addWidget(window.miscGroup, Qt.AlignLeft)
 
-        dialog.mainLayout.addLayout(dialog.bottomLayout, Qt.AlignLeft)
+        window.mainLayout.addLayout(window.bottomLayout, Qt.AlignLeft)
 
-    def addRoomBox(self, dialog):
-        dialog.roomGroup = QtGui.QGroupBox("Room")
+    def addRoomBox(self, window):
+        window.roomGroup = QtGui.QGroupBox("Room")
         
-        dialog.roomInput = QtGui.QLineEdit()
-        dialog.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'), "Join room")
-        dialog.roomButton.pressed.connect(self.joinRoom)
-        dialog.roomLayout = QtGui.QHBoxLayout()
-        dialog.roomInput.setMaximumWidth(150)
+        window.roomInput = QtGui.QLineEdit()
+        window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'), "Join room")
+        window.roomButton.pressed.connect(self.joinRoom)
+        window.roomLayout = QtGui.QHBoxLayout()
+        window.roomInput.setMaximumWidth(150)
         
-        dialog.roomLayout.addWidget(dialog.roomInput)
-        dialog.roomLayout.addWidget(dialog.roomButton)
+        window.roomLayout.addWidget(window.roomInput)
+        window.roomLayout.addWidget(window.roomButton)
         
-        dialog.roomGroup.setLayout(dialog.roomLayout)
-        dialog.roomGroup.setFixedSize(dialog.roomGroup.sizeHint())
+        window.roomGroup.setLayout(window.roomLayout)
+        window.roomGroup.setFixedSize(window.roomGroup.sizeHint())
         
-    def addSeekBox(self, dialog):
-        dialog.seekGroup = QtGui.QGroupBox("Seek")
+    def addSeekBox(self, window):
+        window.seekGroup = QtGui.QGroupBox("Seek")
         
-        dialog.seekInput = QtGui.QLineEdit()
-        dialog.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),"Seek to position")
-        dialog.seekButton.pressed.connect(self.seekPosition)
+        window.seekInput = QtGui.QLineEdit()
+        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),"Seek to position")
+        window.seekButton.pressed.connect(self.seekPosition)
         
-        dialog.seekLayout = QtGui.QHBoxLayout()
-        dialog.seekInput.setMaximumWidth(100)
+        window.seekLayout = QtGui.QHBoxLayout()
+        window.seekInput.setMaximumWidth(100)
         
-        dialog.seekLayout.addWidget(dialog.seekInput)
-        dialog.seekLayout.addWidget(dialog.seekButton)
+        window.seekLayout.addWidget(window.seekInput)
+        window.seekLayout.addWidget(window.seekButton)
         
-        dialog.seekGroup.setLayout(dialog.seekLayout)
-        dialog.seekGroup.setFixedSize(dialog.seekGroup.sizeHint())
+        window.seekGroup.setLayout(window.seekLayout)
+        window.seekGroup.setFixedSize(window.seekGroup.sizeHint())
         
-    def addMiscBox(self, dialog):
-        dialog.miscGroup = QtGui.QGroupBox("Other Commands")
+    def addMiscBox(self, window):
+        window.miscGroup = QtGui.QGroupBox("Other Commands")
         
-        dialog.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),"Undo last seek")
-        dialog.unseekButton.pressed.connect(self.undoSeek)
-        dialog.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),"Toggle pause")
-        dialog.pauseButton.pressed.connect(self.togglePause)
+        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),"Undo last seek")
+        window.unseekButton.pressed.connect(self.undoSeek)
+        window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),"Toggle pause")
+        window.pauseButton.pressed.connect(self.togglePause)
         
-        dialog.miscLayout = QtGui.QHBoxLayout()
-        dialog.miscLayout.addWidget(dialog.unseekButton)
-        dialog.miscLayout.addWidget(dialog.pauseButton)
+        window.miscLayout = QtGui.QHBoxLayout()
+        window.miscLayout.addWidget(window.unseekButton)
+        window.miscLayout.addWidget(window.pauseButton)
         
-        dialog.miscGroup.setLayout(dialog.miscLayout)
-        dialog.miscGroup.setFixedSize(dialog.miscGroup.sizeHint())
+        window.miscGroup.setLayout(window.miscLayout)
+        window.miscGroup.setFixedSize(window.miscGroup.sizeHint())
         
 
-    def addMenubar(self, dialog):
-        dialog.menuBar = QtGui.QMenuBar()
+    def addMenubar(self, window):
+        window.menuBar = QtGui.QMenuBar()
 
-        dialog.fileMenu = QtGui.QMenu("&File", self)
-        dialog.exitAction = dialog.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'), "E&xit")
-        dialog.exitAction.triggered.connect(self.exitSyncplay)
-        dialog.menuBar.addMenu(dialog.fileMenu)
+        window.fileMenu = QtGui.QMenu("&File", self)
+        window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'), "E&xit")
+        window.exitAction.triggered.connect(self.exitSyncplay)
+        window.menuBar.addMenu(window.fileMenu)
         
-        dialog.advancedMenu = QtGui.QMenu("&Advanced", self)
-        dialog.setoffsetAction = dialog.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'timeline_marker.png'),"Set &Offset")
-        dialog.setoffsetAction.triggered.connect(self.setOffset)
-        dialog.menuBar.addMenu(dialog.advancedMenu)
+        window.advancedMenu = QtGui.QMenu("&Advanced", self)
+        window.setoffsetAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'timeline_marker.png'),"Set &Offset")
+        window.setoffsetAction.triggered.connect(self.setOffset)
+        window.menuBar.addMenu(window.advancedMenu)
         
-        dialog.helpMenu = QtGui.QMenu("&Help", self)
-        dialog.userguideAction = dialog.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'), "Open User &Guide")
-        dialog.userguideAction.triggered.connect(self.openUserGuide)
+        window.helpMenu = QtGui.QMenu("&Help", self)
+        window.userguideAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'), "Open User &Guide")
+        window.userguideAction.triggered.connect(self.openUserGuide)
         
-        dialog.menuBar.addMenu(dialog.helpMenu)
-        dialog.mainLayout.setMenuBar(dialog.menuBar)
+        window.menuBar.addMenu(window.helpMenu)
+        window.mainLayout.setMenuBar(window.menuBar)
+    
+    def addMainFrame(self, window):
+        window.mainFrame = QtGui.QFrame()
+        window.mainFrame.setLineWidth(0)
+        window.mainFrame.setMidLineWidth(0)
+        window.mainFrame.setContentsMargins(0,0,0,0)
+        window.mainFrame.setLayout(window.mainLayout)
+        
+        window.setCentralWidget(window.mainFrame)
         
     def newMessage(self, message):
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
@@ -240,7 +249,7 @@ class MainDialog(QtGui.QDialog):
         self.listbox.moveCursor(QtGui.QTextCursor.End)
     
     def __init__(self):
-        super(MainDialog, self).__init__()
+        super(MainWindow, self).__init__()
         self.QtGui = QtGui
         self._listBuffer = ""
         if sys.platform.startswith('linux'):
@@ -252,7 +261,7 @@ class MainDialog(QtGui.QDialog):
         self.addTopLayout(self)
         self.addBottomLayout(self)
         self.addMenubar(self)
-        self.setLayout(self.mainLayout)
+        self.addMainFrame(self)
         self.resize(700,500)
         self.setWindowIcon(QtGui.QIcon(self.resourcespath + "syncplay.png"))
         self.show()
