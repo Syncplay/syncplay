@@ -304,8 +304,9 @@ class SyncplayClient(object):
     def setRoom(self, roomName):
         self.userlist.currentUser.room = roomName
         self.getUserList()
-        message = getMessage("en", "room-join-notification").format(self.getUsername(), roomName)
-        self.ui.showMessage(message)
+        if(self._protocol):
+            message = getMessage("en", "room-join-notification").format(self.getUsername(), roomName)
+            self.ui.showMessage(message)
         
     def sendRoom(self):
         room = self.userlist.currentUser.room
