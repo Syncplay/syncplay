@@ -526,7 +526,7 @@ class SyncplayUserlist(object):
     def __displayModUserMessage(self, username, room, file_, user):
         if (file_ and not user.isFileSame(file_)):
             self.__showUserChangeMessage(username, room, file_)
-        elif (room and (room != user.room or self.currentUser == user)):
+        elif (room and room != user.room):
             self.__showUserChangeMessage(username, room, None)
 
     def modUser(self, username, room, file_):
@@ -536,7 +536,7 @@ class SyncplayUserlist(object):
             user.room = room
             user.file = file_
         elif(username == self.currentUser.username):
-            self.__displayModUserMessage(username, room, file_, self.currentUser)
+            self.__showUserChangeMessage(username, room, file_)
         else:
             self.addUser(username, room, file_)
         self.userListChange()
