@@ -8,6 +8,8 @@ from syncplay.players.playerFactory import PlayerFactory
 import codecs
 try: 
     from syncplay.ui.GuiConfiguration import GuiConfiguration
+    from PySide import QtGui #@UnresolvedImport
+    from PySide.QtCore import Qt, QCoreApplication
 except ImportError:
     GuiConfiguration = None
 
@@ -243,6 +245,8 @@ class ConfigurationGetter(object):
             self._loadRelativeConfiguration()
         if(not self._config['noGui']):
             from syncplay.vendor import qt4reactor
+            if QCoreApplication.instance() is None:
+                self.app = QtGui.QApplication(sys.argv)
             qt4reactor.install()
         return self._config
     
