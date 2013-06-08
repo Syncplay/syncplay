@@ -1,4 +1,4 @@
-from ConfigParser import SafeConfigParser
+from ConfigParser import SafeConfigParser, DEFAULTSECT
 import argparse
 import os
 import sys
@@ -142,7 +142,7 @@ class ConfigurationGetter(object):
         return configFile
 
     def _parseConfigFile(self, iniPath, createConfig = True):
-        parser = SafeConfigParser()
+        parser = SafeConfigParserUnicode()
         if(not os.path.isfile(iniPath)):
             if(createConfig):
                 open(iniPath, 'w').close()
@@ -187,7 +187,7 @@ class ConfigurationGetter(object):
         changed = False
         if(self._config['noStore']):
             return
-        parser = SafeConfigParser()
+        parser = SafeConfigParserUnicode()
         parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in self._iniStructure.items():
             if(not parser.has_section(section)):
@@ -250,3 +250,20 @@ class ConfigurationGetter(object):
             qt4reactor.install()
         return self._config
     
+class SafeConfigParserUnicode(SafeConfigParser):
+    def write(self, fp):
+        """Write an .ini-format representation of the configuration state."""
+        if self._defaults:
+            fp.write("[%s]\n" % DEFAULTSECT)
+            for (key, value) in self._defaults.items():
+                fp.write("%s = %s\n" % (key, str(value).replace('\n', '\n\t')))
+            fp.write("\n")
+        for section in self._sections:
+            fp.write("[%s]\n" % section)
+            for (key, value) in self._sections[section].items():
+                if key == "__name__":
+                    continue
+                if (value is not None) or (self._optcre == self.OPTCRE):
+                    key = " = ".join((key, unicode(value).replace('\n', '\n\t')))
+                fp.write("%s\n" % (key))
+            fp.write("\n")
