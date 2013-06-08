@@ -11,6 +11,8 @@ class MplayerPlayer(BasePlayer):
     RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
     SLAVE_ARGS = constants.MPLAYER_SLAVE_ARGS
     def __init__(self, client, playerPath, filePath, args):
+        from twisted.internet import reactor
+        self.reactor = reactor
         self._client = client
         self._paused = None
         self._duration = None
@@ -21,7 +23,7 @@ class MplayerPlayer(BasePlayer):
         except ValueError:
             self._client.ui.showMessage(getMessage("en", "mplayer-file-required-notification"))
             self._client.ui.showMessage(getMessage("en", "mplayer-file-required-notification/example"))
-            self._client.stop(True)
+            self.reactor.callFromThread(self._client.stop, (True),)
             return 
         self._listener.setDaemon(True)
         self._listener.start()
@@ -56,7 +58,7 @@ class MplayerPlayer(BasePlayer):
     def _preparePlayer(self):
         self.setPaused(self._client.getGlobalPaused()) 
         self.setPosition(self._client.getGlobalPosition())
-        self._client.initPlayer(self)
+        self.reactor.callFromThread(self._client.initPlayer, (self),)
         self._onFileUpdate()
     
     def askForStatus(self):
@@ -157,7 +159,7 @@ class MplayerPlayer(BasePlayer):
     def notMplayer2(self):
         print getMessage("en", "mplayer2-required")
         self._listener.sendLine('quit')
-        self._client.stop(True)
+        self.reactor.callFromThread(self._client.stop, (True),)
     
     def _takeLocksDown(self):
         self._durationAsk.set()
@@ -169,7 +171,7 @@ class MplayerPlayer(BasePlayer):
     def drop(self):
         self._listener.sendLine('quit')
         self._takeLocksDown()
-        self._client.stop(False)
+        self.reactor.callFromThread(self._client.stop, (False),)
     
     class __Listener(threading.Thread):
         def __init__(self, playerController, playerPath, filePath, args):
