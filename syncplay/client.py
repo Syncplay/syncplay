@@ -58,6 +58,7 @@ class SyncplayClient(object):
         self.ui = UiManager(self, ui)
         self.userlist = SyncplayUserlist(self.ui, self)
         self._protocol = None
+        self._player = None
         if(config['room'] == None or config['room'] == ''):
             config['room'] = config['name'] # ticket #58
         self.defaultRoom = config['room']
@@ -71,7 +72,6 @@ class SyncplayClient(object):
             self.__getUserlistOnLogon = True
         else:
             self.__getUserlistOnLogon = False
-        self._player = None
         self._playerClass = playerClass
         self._config = config
         
@@ -304,7 +304,9 @@ class SyncplayClient(object):
     def setRoom(self, roomName):
         self.userlist.currentUser.room = roomName
         self.getUserList()
-    
+        message = getMessage("en", "room-join-notification").format(self.getUsername(), roomName)
+        self.ui.showMessage(message)
+        
     def sendRoom(self):
         room = self.userlist.currentUser.room
         if(self._protocol and self._protocol.logged and room):
@@ -484,10 +486,12 @@ class SyncplayUserlist(object):
         self._roomUsersChanged = True
 
     def __showUserChangeMessage(self, username, room, file_):
-        if (room and not file_):
+        if(username == self.currentUser.username):
+            pass
+        elif(room and not file_):
             message = getMessage("en", "room-join-notification").format(username, room)
             self.ui.showMessage(message)
-        elif (room and file_ and username != self.currentUser.username):
+        elif (room and file_):
             duration = utils.formatTime(file_['duration'])
             message = getMessage("en", "playing-notification").format(username, file_['name'], duration)
             if(self.currentUser.room <> room or self.currentUser.username == username):
