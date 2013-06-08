@@ -508,7 +508,14 @@ class build_installer(py2exe):
         script.compile()
         print "*** DONE ***"
 
-        
+guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock_go.png',
+     'resources/control_pause_blue.png', 'resources/cross.png', 'resources/door_in.png',
+     'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
+     'resources/timeline_marker.png'
+    ]
+resources = ["resources/icon.ico", "resources/syncplay.png"]
+resources.extend(guiIcons)
+
 common_info = dict(
     name='Syncplay',
     version=syncplay.version,
@@ -531,7 +538,7 @@ info = dict(
                          'compressed': 1
                          }
              },
-    data_files = [("resources", ["resources/icon.ico","resources/syncplay.png","resources/accept.png","resources/folder_explore.png","resources/help.png"])],
+    data_files = [("resources", resources)],
     zipfile = "lib/libsync",
     cmdclass = {"py2exe": build_installer},               
 )
