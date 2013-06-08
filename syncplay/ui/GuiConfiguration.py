@@ -253,10 +253,7 @@ class ConfigDialog(QtGui.QDialog):
         if config['forceGuiPrompt'] == True:
             self.alwaysshowCheckbox.setChecked(True)
         
-        self.donotstoreCheckbox = QCheckBox("Do Not Store This Configuration")
-        if config['noStore'] == True:
-            self.donotstoreCheckbox.setChecked(True)
-        
+        self.donotstoreCheckbox = QCheckBox("Do Not Store This Configuration")       
         self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
                       
         self.mainLayout = QtGui.QVBoxLayout()
@@ -278,7 +275,9 @@ class ConfigDialog(QtGui.QDialog):
         self.helpButton.pressed.connect(self.openHelp)
         self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'),"Store configuration and run Syncplay")
         self.runButton.pressed.connect(self._saveDataAndLeave)
-        self.runButtonTextUpdate
+        if config['noStore'] == True:
+            self.donotstoreCheckbox.setChecked(True)
+            self.runButton.setText("Run Syncplay")
         self.topLayout.addWidget(self.helpButton, Qt.AlignLeft)
         self.topLayout.addWidget(self.runButton, Qt.AlignRight)
         self.mainLayout.addWidget(self.alwaysshowCheckbox)
