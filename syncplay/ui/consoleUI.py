@@ -40,6 +40,15 @@ class ConsoleUI(threading.Thread):
         self.promptMode.wait()
         return self.PromptResult
 
+    def showListMessage(self, message):
+        self.showMessage(message, True)
+    
+    def markEndOfUserlist(self):
+        pass
+
+    def userListChange(self):
+        pass
+
     def showMessage(self, message, noTimestamp=False):
         message = message.encode(sys.stdout.encoding, 'replace')
         if(noTimestamp):

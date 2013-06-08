@@ -1,4 +1,3 @@
-from syncplay.client import SyncplayClient
 from syncplay.ui.ConfigurationGetter import ConfigurationGetter
 from syncplay import ui
 from syncplay.messages import getMessage
@@ -6,6 +5,7 @@ from syncplay.messages import getMessage
 class SyncplayClientManager(object):
     def run(self):
         config = ConfigurationGetter().getConfiguration()
+        from syncplay.client import SyncplayClient #Imported later, so the proper reactor is installed
         interface = ui.getUi(graphical=not config["noGui"])
         syncplayClient = SyncplayClient(config["playerClass"], interface, config)
         if(syncplayClient):

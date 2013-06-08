@@ -317,6 +317,9 @@ class SyncplayClient(object):
         if(self._protocol and self._protocol.logged):
             self._protocol.sendList()
     
+    def showUserList(self):
+        self.userlist.showUserList()
+    
     def getPassword(self):
         return self._serverPassword
     
@@ -504,7 +507,6 @@ class SyncplayUserlist(object):
                 self.ui.showMessage(message)
 
     def addUser(self, username, room, file_, position = 0, noMessage = False):
-        self._roomUsersChanged = True
         if(username == self.currentUser.username):
             self.currentUser.lastPosition = position
             return
@@ -512,14 +514,15 @@ class SyncplayUserlist(object):
         self._users[username] = user
         if(not noMessage):
             self.__showUserChangeMessage(username, room, file_)
+        self.userListChange()
             
     def removeUser(self, username):
-        self._roomUsersChanged = True
         if(self._users.has_key(username)):
             self._users.pop(username)
             message = getMessage("en", "left-notification").format(username)
             self.ui.showMessage(message)
-            
+        self.userListChange()
+        
     def __displayModUserMessage(self, username, room, file_, user):
         if (file_ and not user.isFileSame(file_)):
             self.__showUserChangeMessage(username, room, file_)
@@ -527,7 +530,6 @@ class SyncplayUserlist(object):
             self.__showUserChangeMessage(username, room, None)
 
     def modUser(self, username, room, file_):
-        self._roomUsersChanged = True
         if(self._users.has_key(username)):
             user = self._users[username]
             self.__displayModUserMessage(username, room, file_, user)
@@ -537,7 +539,8 @@ class SyncplayUserlist(object):
             self.__showUserChangeMessage(username, room, file_)
         else:
             self.addUser(username, room, file_)
-
+        self.userListChange()
+            
     def __addUserWithFileToList(self, rooms, user):
         currentPosition = utils.formatTime(user.lastPosition)
         file_key = '\'{}\' ({}/{})'.format(user.file['name'], currentPosition, utils.formatTime(user.file['duration']))
@@ -575,27 +578,28 @@ class SyncplayUserlist(object):
         return message
 
     def __displayFileWatchersInRoomList(self, key, users):
-        self.ui.showMessage(getMessage("en", "file-played-by-notification").format(key), True, True)
+        self.ui.showListMessage(getMessage("en", "file-played-by-notification").format(key))
         for user in sorted(users.itervalues()):
             message = "<"+user.username+">"
             if(self.currentUser.username == user.username):
                 message = "*" + message + "*"
             message = self.__addDifferentFileMessageIfNecessary(user, message)
-            self.ui.showMessage("\t" + message, True, True)
+            self.ui.showListMessage("\t" + message)
 
     def __displayPeopleInRoomWithNoFile(self, noFileList):
         if (noFileList):
-            self.ui.showMessage(getMessage("en", "notplaying-notification"), True, True)
+            self.ui.showListMessage(getMessage("en", "notplaying-notification"))
             for user in sorted(noFileList.itervalues()):
-                self.ui.showMessage("\t<" + user.username + ">", True, True)
+                self.ui.showListMessage("\t<" + user.username + ">")
 
     def __displayListOfPeople(self, rooms):
         for roomName in sorted(rooms.iterkeys()):
-            self.ui.showMessage(getMessage("en", "userlist-room-notification").format(roomName), True, False)
+            self.ui.showListMessage(getMessage("en", "userlist-room-notification").format(roomName))
             noFileList = rooms[roomName].pop("__noFile__") if (rooms[roomName].has_key("__noFile__")) else None
             for key in sorted(rooms[roomName].iterkeys()):
                 self.__displayFileWatchersInRoomList(key, rooms[roomName][key])
             self.__displayPeopleInRoomWithNoFile(noFileList)
+        self.ui.markEndOfUserlist()
             
     def areAllFilesInRoomSame(self):
         for user in self._users.itervalues():
@@ -609,6 +613,10 @@ class SyncplayUserlist(object):
                 return False
         return True
     
+    def userListChange(self):
+        self._roomUsersChanged = True
+        self.ui.userListChange()
+        
     def roomStateConfirmed(self):
         self._roomUsersChanged = False
     
@@ -632,6 +640,9 @@ class UiManager(object):
         if(not noPlayer): self.showOSDMessage(message)
         self.__ui.showMessage(message, noTimestamp)
     
+    def showListMessage(self, message):
+        self.__ui.showListMessage(message)
+        
     def showOSDMessage(self, message, duration = constants.OSD_DURATION):
         if(self._client._player):
             self._client._player.displayMessage(message, duration * 1000)
@@ -641,5 +652,11 @@ class UiManager(object):
 
     def promptFor(self, prompt):
         return self.__ui.promptFor(prompt)
+    
+    def userListChange(self):
+        self.__ui.userListChange()
 
+    def markEndOfUserlist(self):
+        self.__ui.markEndOfUserlist()
 
+    

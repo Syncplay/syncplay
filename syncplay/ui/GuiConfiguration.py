@@ -1,5 +1,5 @@
 from PySide import QtCore, QtGui
-from PySide.QtCore import QSettings, Qt
+from PySide.QtCore import QSettings, Qt, QCoreApplication
 from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon
 
 import os
@@ -14,10 +14,8 @@ class GuiConfiguration:
         
         
     def run(self):
-        try:
+        if QCoreApplication.instance() is None:
             self.app = QtGui.QApplication(sys.argv)
-        except:
-            pass
         dialog = ConfigDialog(self.config, self._availablePlayerPaths, self.error)
         dialog.exec_()
 
