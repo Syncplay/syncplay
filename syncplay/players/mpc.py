@@ -307,6 +307,8 @@ class MPCHCAPIPlayer(BasePlayer):
     speedSupported = False
     
     def __init__(self, client):
+        from twisted.internet import reactor
+        self.reactor = reactor
         self.__client = client
         self._mpcApi = MpcHcApi()
         self._mpcApi.callbacks.onUpdateFilename = lambda _: self.__makePing()
@@ -448,7 +450,8 @@ class MPCHCAPIPlayer(BasePlayer):
     def __handleUpdatedFilename(self):
         with self.__fileUpdate:
             self.__setUpStateForNewlyOpenedFile()
-            self.__client.updateFile(self._mpcApi.filePlaying, self._mpcApi.fileDuration, self._mpcApi.filePath)
+            args = (self._mpcApi.filePlaying, self._mpcApi.fileDuration, self._mpcApi.filePath)
+            self.reactor.callFromThread(self.__client.updateFile, *args)
     
     def __mpcError(self, err=""):
         self.__client.ui.showErrorMessage(err)
