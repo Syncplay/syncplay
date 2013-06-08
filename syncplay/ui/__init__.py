@@ -1,4 +1,4 @@
-from syncplay.ui.gui import MainDialog as GraphicalUI
+from syncplay.ui.gui import MainWindow as GraphicalUI
 from syncplay.ui.consoleUI import ConsoleUI
 
 def getUi(graphical=True):
