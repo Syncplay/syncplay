@@ -95,7 +95,7 @@ class MainDialog(QtGui.QDialog):
                 "Offset (+/-):", QtGui.QLineEdit.Normal,
                 "")
         if ok and newoffset != '':
-            o = re.match(constants.UI_OFFSET_REGEX, newoffset)
+            o = re.match(constants.UI_OFFSET_REGEX, "o " + newoffset)
             if(o):
                 sign = self._extractSign(o.group('sign'))
                 t = utils.parseTime(o.group('time'))
