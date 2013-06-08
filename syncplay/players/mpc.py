@@ -312,7 +312,7 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__client = client
         self._mpcApi = MpcHcApi()
         self._mpcApi.callbacks.onUpdateFilename = lambda _: self.__makePing()
-        self._mpcApi.callbacks.onMpcClosed = lambda _: self.__client.stop(False)
+        self._mpcApi.callbacks.onMpcClosed = lambda _: self.reactor.callFromThread(self.__client.stop, (False),)
         self._mpcApi.callbacks.onFileStateChange = lambda _: self.__lockAsking()
         self._mpcApi.callbacks.onUpdatePlaystate = lambda _: self.__unlockAsking()
         self._mpcApi.callbacks.onGetCurrentPosition = lambda _: self.__onGetPosition()
@@ -357,7 +357,7 @@ class MPCHCAPIPlayer(BasePlayer):
         self._mpcApi.askForVersion()
         if(not self.__versionUpdate.wait(0.1) or not self._mpcApi.version):
             self.__mpcError(getMessage("en", "mpc-version-insufficient-error").format(constants.MPC_MIN_VER))
-            self.__client.stop(True)
+            self.reactor.callFromThread(self.__client.stop, (True),)
             
     def __testMpcReady(self):
         if(not self.__preventAsking.wait(10)):
@@ -367,12 +367,12 @@ class MPCHCAPIPlayer(BasePlayer):
         try:
             self.__testMpcReady()
             self._mpcApi.callbacks.onUpdateFilename = lambda _: self.__handleUpdatedFilename()
-            self.__client.initPlayer(self)
+            self.reactor.callFromThread(self.__client.initPlayer, (self))
             self.__handleUpdatedFilename()
             self.askForStatus()
         except Exception, err:
             self.__client.ui.showErrorMessage(err.message)
-            self.__client.stop()
+            self.reactor.callFromThread(self.__client.stop)
             
     def initPlayer(self, filePath): 
         self.__dropIfNotSufficientVersion()
@@ -455,7 +455,7 @@ class MPCHCAPIPlayer(BasePlayer):
     
     def __mpcError(self, err=""):
         self.__client.ui.showErrorMessage(err)
-        self.__client.stop()
+        self.reactor.callFromThread(self.__client.stop)
 
     def sendCustomCommand(self, cmd, val):
         self._mpcApi.sendRawCommand(cmd, val)
