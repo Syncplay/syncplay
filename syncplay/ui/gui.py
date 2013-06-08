@@ -14,7 +14,7 @@ class MainDialog(QtGui.QDialog):
         return None
 
     def showMessage(self, message, noTimestamp=False):
-        message = message.encode(sys.stdout.encoding, 'replace')
+        message = unicode(message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         message = message.replace("\n", "<br />")
         if(noTimestamp):
@@ -23,7 +23,7 @@ class MainDialog(QtGui.QDialog):
             self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
     
     def showListMessage(self, message):
-        message = message.encode(sys.stdout.encoding, 'replace')
+        message = unicode(message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         message = message.replace("\t", "&nbsp;"*4)
         self._listBuffer += message + "<br />"

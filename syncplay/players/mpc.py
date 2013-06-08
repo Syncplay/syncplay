@@ -79,7 +79,6 @@ class MpcHcApi:
         self.__listener.SendCommand(self.CMD_SETSPEED, unicode(rate))
 
     def sendOsd(self, message, MsgPos=constants.MPC_OSD_POSITION, DurationMs=(constants.OSD_DURATION*1000)):
-        message = message.decode()
         class __OSDDATASTRUCT(ctypes.Structure):
             _fields_ = [
                 ('nMsgPos', ctypes.c_int32),

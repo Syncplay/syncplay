@@ -543,7 +543,7 @@ class SyncplayUserlist(object):
             
     def __addUserWithFileToList(self, rooms, user):
         currentPosition = utils.formatTime(user.lastPosition)
-        file_key = '\'{}\' ({}/{})'.format(user.file['name'], currentPosition, utils.formatTime(user.file['duration']))
+        file_key = u'\'{}\' ({}/{})'.format(user.file['name'], currentPosition, utils.formatTime(user.file['duration']))
         if (not rooms[user.room].has_key(file_key)):
             rooms[user.room][file_key] = {}
         rooms[user.room][file_key][user.username] = user
