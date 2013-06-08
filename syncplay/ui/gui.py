@@ -65,9 +65,6 @@ class MainDialog(QtGui.QDialog):
             self.seekInput.setText("")
         else:
             self.showMessage("Invalid seek value", True)
-            
-    def showList(self):
-        self._syncplayClient.getUserList() #TODO: remove?
         
     def undoSeek(self):
         tmp_pos = self._syncplayClient.getPlayerPosition()
@@ -200,13 +197,10 @@ class MainDialog(QtGui.QDialog):
         dialog.unseekButton.pressed.connect(self.undoSeek)
         dialog.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),"Toggle pause")
         dialog.pauseButton.pressed.connect(self.togglePause)
-        dialog.showListButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'table_refresh.png'),"Update list")
-        dialog.showListButton.pressed.connect(self.showList)
         
         dialog.miscLayout = QtGui.QHBoxLayout()
         dialog.miscLayout.addWidget(dialog.unseekButton)
         dialog.miscLayout.addWidget(dialog.pauseButton)
-        dialog.miscLayout.addWidget(dialog.showListButton)
         
         dialog.miscGroup.setLayout(dialog.miscLayout)
         dialog.miscGroup.setFixedSize(dialog.miscGroup.sizeHint())
