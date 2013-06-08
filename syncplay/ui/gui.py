@@ -144,8 +144,8 @@ class MainDialog(QtGui.QDialog):
         
         dialog.topSplit.addWidget(dialog.outputFrame)
         dialog.topSplit.addWidget(dialog.listFrame)
-        dialog.topSplit.setStretchFactor(0,3)
-        dialog.topSplit.setStretchFactor(1,2)
+        dialog.topSplit.setStretchFactor(0,4)
+        dialog.topSplit.setStretchFactor(1,5)
         dialog.mainLayout.addWidget(dialog.topSplit)
         dialog.topSplit.setSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Expanding)
 
