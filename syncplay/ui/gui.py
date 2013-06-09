@@ -8,6 +8,7 @@ import re
 class MainWindow(QtGui.QMainWindow):
     def addClient(self, client):
         self._syncplayClient = client
+        self.roomInput.setText(self._syncplayClient.getRoom())
     
     def promptFor(self, prompt=">", message=""):
         #TODO: Prompt user
