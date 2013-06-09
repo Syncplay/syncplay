@@ -154,7 +154,23 @@ class ConfigDialog(QtGui.QDialog):
             sys.exit()
             raise GuiConfiguration.WindowClosed
             event.accept()
+
+    def dragEnterEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        if (urls and urls[0].scheme() == 'file'):
+            event.acceptProposedAction()
             
+    def dropEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        if (urls and urls[0].scheme() == 'file'):
+            dropfilepath = unicode(urls[0].path())[1:]
+            if dropfilepath[-4:] == ".exe":
+                self.executablepathCombobox.setEditText(dropfilepath)
+            else:
+                self.mediapathTextbox.setText(dropfilepath)
+
     def __init__(self, config, playerpaths, error):
         
         from syncplay import utils
@@ -288,3 +304,4 @@ class ConfigDialog(QtGui.QDialog):
         self.setLayout(self.mainLayout)
         self.runButton.setFocus()        
         self.setFixedSize(self.sizeHint())
+        self.setAcceptDrops(True)
