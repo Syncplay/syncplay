@@ -64,6 +64,11 @@ def parseTime(timeStr):
     return datetime.timedelta(**time_params).total_seconds()
     
 def formatTime(timeInSeconds):
+    if(timeInSeconds < 0):
+        timeInSeconds = -timeInSeconds
+        sign = '-'
+    else:
+        sign = ''
     timeInSeconds = round(timeInSeconds)
     weeks = timeInSeconds // 604800
     days = (timeInSeconds % 604800) // 86400
@@ -71,13 +76,13 @@ def formatTime(timeInSeconds):
     minutes = (timeInSeconds % 3600) // 60
     seconds = timeInSeconds % 60
     if(weeks > 0):
-        return '{0:.0f}w, {1:.0f}d, {2:02.0f}:{3:02.0f}:{4:02.0f}'.format(weeks, days, hours, minutes, seconds)
+        return '{0:}{1:.0f}w, {2:.0f}d, {3:02.0f}:{4:02.0f}:{5:02.0f}'.format(sign, weeks, days, hours, minutes, seconds)
     elif(days > 0):
-        return '{0:.0f}d, {1:02.0f}:{2:02.0f}:{3:02.0f}'.format(days, hours, minutes, seconds)
+        return '{0:}{1:.0f}d, {2:02.0f}:{3:02.0f}:{4:02.0f}'.format(sign, days, hours, minutes, seconds)
     elif(hours > 0):
-        return '{0:02.0f}:{1:02.0f}:{2:02.0f}'.format(hours, minutes, seconds)
+        return '{0:}{1:02.0f}:{2:02.0f}:{3:02.0f}'.format(sign, hours, minutes, seconds)
     else:
-        return '{0:02.0f}:{1:02.0f}'.format(minutes, seconds)
+        return '{0:}{1:02.0f}:{2:02.0f}'.format(sign, minutes, seconds)
     
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
