@@ -169,7 +169,7 @@ class ConfigDialog(QtGui.QDialog):
                 dropfilepath = unicode(urls[0].path())
             else:
                 dropfilepath = unicode(urls[0].path())[1:] # Removes starting slash 
-            if dropfilepath[-4:] == ".exe":
+            if dropfilepath[-4:].lower() == ".exe":
                 self.executablepathCombobox.setEditText(dropfilepath)
             else:
                 self.mediapathTextbox.setText(dropfilepath)
