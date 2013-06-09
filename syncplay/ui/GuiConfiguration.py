@@ -165,7 +165,10 @@ class ConfigDialog(QtGui.QDialog):
         data = event.mimeData()
         urls = data.urls()
         if (urls and urls[0].scheme() == 'file'):
-            dropfilepath = unicode(urls[0].path())[1:]
+            if sys.platform.startswith('linux'):
+                dropfilepath = unicode(urls[0].path())
+            else:
+                dropfilepath = unicode(urls[0].path())[1:] # Removes starting slash 
             if dropfilepath[-4:] == ".exe":
                 self.executablepathCombobox.setEditText(dropfilepath)
             else:
