@@ -163,6 +163,7 @@ class MainWindow(QtGui.QMainWindow):
         window.roomGroup = QtGui.QGroupBox("Room")
         
         window.roomInput = QtGui.QLineEdit()
+        window.roomInput.returnPressed.connect(self.joinRoom)
         window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'), "Join room")
         window.roomButton.pressed.connect(self.joinRoom)
         window.roomLayout = QtGui.QHBoxLayout()
@@ -178,6 +179,7 @@ class MainWindow(QtGui.QMainWindow):
         window.seekGroup = QtGui.QGroupBox("Seek")
         
         window.seekInput = QtGui.QLineEdit()
+        window.seekInput.returnPressed.connect(self.seekPosition)
         window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),"Seek to position")
         window.seekButton.pressed.connect(self.seekPosition)
         
