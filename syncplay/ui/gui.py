@@ -111,7 +111,12 @@ class MainWindow(QtGui.QMainWindow):
                 self.showMessage("Invalid offset value", True)
         
     def openUserGuide(self):
-        self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
+        if sys.platform.startswith('linux'):
+            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/linux/")
+        elif sys.platform.startswith('win'):
+            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/windows/")
+        else:
+            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
         
     def addTopLayout(self, window):       
         window.topSplit = QtGui.QSplitter(Qt.Horizontal)
