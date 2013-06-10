@@ -67,7 +67,12 @@ class ConfigDialog(QtGui.QDialog):
             self.runButton.setText("Store configuration and run Syncplay")
             
     def openHelp(self):
-        self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
+        if sys.platform.startswith('linux'):
+            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/linux/")
+        elif sys.platform.startswith('win'):
+            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/windows/")
+        else:
+            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
 
     def _tryToFillPlayerPath(self, playerpath, playerpathlist):
         foundpath = ""
