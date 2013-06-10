@@ -93,7 +93,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def setOffset(self):
         newoffset, ok = QtGui.QInputDialog.getText(self,"Set Offset",
-                "Offset (+/-):", QtGui.QLineEdit.Normal,
+                "Offset (see http://syncplay.pl/guide/ for usage instructions):", QtGui.QLineEdit.Normal,
                 "")
         if ok and newoffset != '':
             o = re.match(constants.UI_OFFSET_REGEX, "o " + newoffset)
