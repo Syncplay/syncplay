@@ -9,7 +9,7 @@ import codecs
 try: 
     from syncplay.ui.GuiConfiguration import GuiConfiguration
     from PySide import QtGui #@UnresolvedImport
-    from PySide.QtCore import Qt, QCoreApplication
+    from PySide.QtCore import QCoreApplication
 except ImportError:
     GuiConfiguration = None
 
