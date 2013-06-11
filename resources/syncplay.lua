@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.0.7
+ Version: 0.0.8
  
 --[==========================================================================[
 
@@ -57,6 +57,9 @@ Note: You may have to copy the VLC 'modules' folder to make it a sub-directory o
 
  display-osd: [placement on screen <center/left/right/top/bottom/top-left/top-right/bottom-left/bottom-right>], [duration in seconds], [message]
     ? >> display-osd-error: no-input
+
+ load-file: [filepath]
+    * >> load-file-attempted
 
  close-vlc
 
@@ -289,6 +292,7 @@ end
 
 function display_osd ( argument )
     -- [Used by display-osd command]
+ 
     local errormsg
     local osdarray
     local input = vlc.object.input()
@@ -303,6 +307,13 @@ function display_osd ( argument )
     return errormsg
 end
 
+function load_file (filepath)
+    -- [Used by load-file command]
+	
+    local uri = vlc.strings.make_uri(filepath)
+    vlc.playlist.add({{path=uri}})
+    return "load-file-attempted"
+end
     
 function do_command ( command, argument)
     -- Processes all commands sent by Syncplay (see protocol, above).
@@ -323,6 +334,7 @@ function do_command ( command, argument)
     elseif command == "set-playstate"         then           errormsg = set_playstate(argument)
     elseif command == "set-rate"              then           errormsg = set_var("rate", tonumber(argument))
     elseif command == "display-osd"           then           errormsg = display_osd(argument) 
+    elseif command == "load-file"             then response           = load_file(argument)
     elseif command == "close-vlc"             then                      vlc.misc.quit()
     else                                                     errormsg = unknowncommand
     end
