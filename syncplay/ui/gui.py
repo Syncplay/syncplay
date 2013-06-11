@@ -18,6 +18,8 @@ class MainWindow(QtGui.QMainWindow):
     def showMessage(self, message, noTimestamp=False):
         message = unicode(message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+        message = message.replace("&lt;", "<span style=\"color:#367AA9;font-weight:bold;\">&lt;")
+        message = message.replace("&gt;", "&gt;</span>")
         message = message.replace("\n", "<br />")
         if(noTimestamp):
             self.newMessage(message + "<br />")
