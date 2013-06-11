@@ -7,6 +7,7 @@ from syncplay import utils
 from syncplay import constants
 from syncplay.messages import getMessage
 import sys
+from syncplay.utils import formatTime
 
 class ConsoleUI(threading.Thread):
     def __init__(self):
@@ -40,11 +41,23 @@ class ConsoleUI(threading.Thread):
         self.promptMode.wait()
         return self.PromptResult
 
-    def showListMessage(self, message):
-        self.showMessage(message, True)
-    
-    def markEndOfUserlist(self):
-        pass
+    def showUserList(self, currentUser, rooms):
+        for room in rooms:
+            message = u"In room '{}':".format(room)
+            self.showMessage(message, True)
+            for user in rooms[room]:
+                username = "*<{}>*".format(user.username) if user == currentUser else "<{}>".format(user.username)
+                if(user.file):
+                    message = u"{} is playing:".format(username)
+                    self.showMessage(message, True)
+                    message = u"    File: '{}' ({})".format(user.file['name'], formatTime(user.file['duration']))
+                    if(currentUser.file):
+                        if(user.file['name'] == currentUser.file['name'] and user.file['size'] != currentUser.file['size']):
+                            message += " (their file size is different from yours!)"
+                    self.showMessage(message, True)
+                else:
+                    message = u"{} is not playing a file".format(username)
+                    self.showMessage(message, True)
 
     def userListChange(self):
         pass

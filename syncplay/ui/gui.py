@@ -4,6 +4,7 @@ from syncplay import utils, constants
 import sys
 import time
 import re
+from syncplay.utils import formatTime
 
 class MainWindow(QtGui.QMainWindow):
     def addClient(self, client):
@@ -26,8 +27,27 @@ class MainWindow(QtGui.QMainWindow):
     def showListMessage(self, message):
         message = unicode(message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
-        message = message.replace("\t", "&nbsp;"*4)
-        self._listBuffer += message + "<br />"
+        message = message.replace("    ", "&nbsp;"*4)
+        self._listBuffer += message + "<br />"        
+    
+    def showUserList(self, currentUser, rooms):
+        for room in rooms:
+            message = u"In room '{}':".format(room)
+            self.showListMessage(message)
+            for user in rooms[room]:
+                username = "*<{}>*".format(user.username) if user == currentUser else "<{}>".format(user.username)
+                if(user.file):
+                    message = u"{} is playing:".format(username)
+                    self.showListMessage(message)
+                    message = u"    File: '{}' ({})".format(user.file['name'], formatTime(user.file['duration']))
+                    if(currentUser.file):
+                        if(user.file['name'] == currentUser.file['name'] and user.file['size'] != currentUser.file['size']):
+                            message += " (their file size is different from yours!)"
+                    self.showListMessage(message)
+                else:
+                    message = u"{} is not playing a file".format(username)
+                    self.showListMessage(message)
+        self.markEndOfUserlist()
         
     def markEndOfUserlist(self):
         self.resetList()

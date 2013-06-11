@@ -548,67 +548,7 @@ class SyncplayUserlist(object):
         else:
             self.addUser(username, room, file_)
         self.userListChange()
-            
-    def __addUserWithFileToList(self, rooms, user):
-        currentPosition = utils.formatTime(user.lastPosition)
-        file_key = u'\'{}\' ({}/{})'.format(user.file['name'], currentPosition, utils.formatTime(user.file['duration']))
-        if (not rooms[user.room].has_key(file_key)):
-            rooms[user.room][file_key] = {}
-        rooms[user.room][file_key][user.username] = user
-
-    def __addUserWithoutFileToList(self, rooms, user):
-        if (not rooms[user.room].has_key("__noFile__")):
-            rooms[user.room]["__noFile__"] = {}
-        rooms[user.room]["__noFile__"][user.username] = user
-
-    def __createListOfPeople(self, rooms):
-        if(not rooms.has_key(self.currentUser.room)):
-            rooms[self.currentUser.room] = {}
-        for user in self._users.itervalues():
-            if (not rooms.has_key(user.room)):
-                rooms[user.room] = {}
-            if(user.file):
-                self.__addUserWithFileToList(rooms, user)
-            else:
-                self.__addUserWithoutFileToList(rooms, user)
-        if(self.currentUser.file):                
-            self.__addUserWithFileToList(rooms, self.currentUser)
-        else:
-            self.__addUserWithoutFileToList(rooms, self.currentUser)
-        return rooms
-
-    def __addDifferentFileMessageIfNecessary(self, user, message):
-        if(self.currentUser.file):
-            fileHasSameSizeAsYour = user.file['size'] == self.currentUser.file['size']
-            fileHasSameNameYour = user.file['name'] == self.currentUser.file['name']
-            differentFileMessage = getMessage("en", "different-filesize-notification")
-            message += differentFileMessage if not fileHasSameSizeAsYour and fileHasSameNameYour else ""
-        return message
-
-    def __displayFileWatchersInRoomList(self, key, users):
-        self.ui.showListMessage(getMessage("en", "file-played-by-notification").format(key))
-        for user in sorted(users.itervalues()):
-            message = "<"+user.username+">"
-            if(self.currentUser.username == user.username):
-                message = "*" + message + "*"
-            message = self.__addDifferentFileMessageIfNecessary(user, message)
-            self.ui.showListMessage("\t" + message)
-
-    def __displayPeopleInRoomWithNoFile(self, noFileList):
-        if (noFileList):
-            self.ui.showListMessage(getMessage("en", "notplaying-notification"))
-            for user in sorted(noFileList.itervalues()):
-                self.ui.showListMessage("\t<" + user.username + ">")
-
-    def __displayListOfPeople(self, rooms):
-        for roomName in sorted(rooms.iterkeys()):
-            self.ui.showListMessage(getMessage("en", "userlist-room-notification").format(roomName))
-            noFileList = rooms[roomName].pop("__noFile__") if (rooms[roomName].has_key("__noFile__")) else None
-            for key in sorted(rooms[roomName].iterkeys()):
-                self.__displayFileWatchersInRoomList(key, rooms[roomName][key])
-            self.__displayPeopleInRoomWithNoFile(noFileList)
-        self.ui.markEndOfUserlist()
-            
+                    
     def areAllFilesInRoomSame(self):
         for user in self._users.itervalues():
             if(user.room == self.currentUser.room and user.file and not self.currentUser.isFileSame(user.file)):
@@ -632,10 +572,17 @@ class SyncplayUserlist(object):
         return self._roomUsersChanged
         
     def showUserList(self):
-        rooms = {} 
-        self.__createListOfPeople(rooms)
-        self.__displayListOfPeople(rooms)
-    
+        rooms = {}
+        for user in self._users.itervalues():
+            if(user.room not in rooms):
+                rooms[user.room] = []
+            rooms[user.room].append(user)
+        if(self.currentUser.room not in rooms):
+                rooms[self.currentUser.room] = []
+        rooms[user.room].append(self.currentUser)
+        
+        self.ui.showUserList(self.currentUser, rooms)
+        
     def clearList(self):
         self._users = {}
               
@@ -648,8 +595,8 @@ class UiManager(object):
         if(not noPlayer): self.showOSDMessage(message)
         self.__ui.showMessage(message, noTimestamp)
     
-    def showListMessage(self, message):
-        self.__ui.showListMessage(message)
+    def showUserList(self, currentUser, rooms):
+        self.__ui.showUserList(currentUser, rooms)
         
     def showOSDMessage(self, message, duration = constants.OSD_DURATION):
         if(self._client._player):
