@@ -513,7 +513,7 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
      'resources/timeline_marker.png'
     ]
-resources = ["resources/icon.ico", "resources/syncplay.png"]
+resources = ["resources/syncplay.lua", "resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)
 
 common_info = dict(
