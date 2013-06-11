@@ -26,6 +26,7 @@ COMMANDS_PAUSE = ["p", "play", "pause"]
 COMMANDS_ROOM = ["r", "room"]
 COMMANDS_HELP = ['help', 'h', '?', '/?', r'\?']
 MPC_MIN_VER = "1.6.4"
+VLC_MIN_VERSION = "2.0.6"
 MPC_PATHS = [
              r"C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
              r"C:\Program Files\MPC-HC\mpc-hc.exe",
@@ -55,11 +56,15 @@ MPC_MAX_RETRIES = 30
 MPC_PAUSE_TOGGLE_DELAY = 0.05
 VLC_OPEN_MAX_WAIT_TIME = 10
 VLC_SOCKET_OPEN_WAIT_TIME = 0.5
+VLC_MIN_PORT = 10000
+VLC_MAX_PORT = 55000
 
 #These are not changes you're looking for
 MPLAYER_SLAVE_ARGS = [ '-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4']
 MPV_SLAVE_ARGS = [ '--slave-broken', '--hr-seek=always', '-msglevel', 'all=1:global=4']
+VLC_SLAVE_ARGS = ['--extraintf=luaintf','--lua-intf=syncplay']
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_]+)=(.+)$"
+VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_]+)(?:\: )?(?P<argument>.*))"
 UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
 UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
 UI_SEEK_REGEX = r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
