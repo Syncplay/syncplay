@@ -383,7 +383,10 @@ class MPCHCAPIPlayer(BasePlayer):
         if(self.__mpcVersion[0:3] >= ['1', '6', '5']):
             self.speedSupported = True            
         if(filePath):
-            self._mpcApi.openFile(filePath)
+            self.openFile(filePath)
+    
+    def openFile(self, filePath):
+        self._mpcApi.openFile(filePath)
         
     def displayMessage(self, message, duration = (constants.OSD_DURATION*1000)):
         self._mpcApi.sendOsd(message, constants.MPC_OSD_POSITION, duration)

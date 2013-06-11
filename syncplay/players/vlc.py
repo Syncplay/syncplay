@@ -95,6 +95,9 @@ class VlcPlayer(BasePlayer):
         self._paused = value
         self._listener.sendLine('set-playstate: {}'.format("paused" if value else "playing"))
     
+    def openFile(self, filePath):
+        self._listener.sendLine('load-file: {}'.format(filePath))
+        
     def _getFileInfo(self):
         self._listener.sendLine("get-duration")
         self._listener.sendLine("get-filepath")

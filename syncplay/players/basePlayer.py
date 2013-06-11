@@ -47,6 +47,13 @@ class BasePlayer(object):
         raise NotImplementedError()
     
     '''
+    @type filePath: string 
+    '''
+    def openFile(self, filePath):
+        raise NotImplementedError()
+    
+    
+    '''
     @return: list of strings
     '''
     @staticmethod
