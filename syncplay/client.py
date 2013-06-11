@@ -304,9 +304,6 @@ class SyncplayClient(object):
     def setRoom(self, roomName):
         self.userlist.currentUser.room = roomName
         self.getUserList()
-        if(self._protocol):
-            message = getMessage("en", "room-join-notification").format(self.getUsername(), roomName)
-            self.ui.showMessage(message)
         
     def sendRoom(self):
         room = self.userlist.currentUser.room
@@ -490,9 +487,7 @@ class SyncplayUserlist(object):
         self._roomUsersChanged = True
 
     def __showUserChangeMessage(self, username, room, file_):
-        if(username == self.currentUser.username):
-            pass
-        elif(room and not file_):
+        if(room and not file_):
             message = getMessage("en", "room-join-notification").format(username, room)
             self.ui.showMessage(message)
         elif (room and file_):

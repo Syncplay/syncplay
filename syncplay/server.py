@@ -255,7 +255,7 @@ class SyncFactory(Factory):
         self._roomStates[room]["lastUpdate"] = time.time()
         self._deleteRoomIfEmpty(oldRoom)
         watcher.room = room
-        l = lambda w: w.sendUserSetting(watcher.name, watcher.room, watcher.file, None)
+        l = lambda w: w.sendUserSetting(watcher.name, watcher.room, None, None)
         self.broadcast(watcherProtocol, l)
                 
     def watcherSetFile(self, watcherProtocol, file_):
