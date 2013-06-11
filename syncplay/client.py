@@ -466,17 +466,20 @@ class MalUpdater(object):
         self._lastHookUpdate = None
         
     def _updateMal(self):
-        self._fileDuration = 0  # Disable playingHook
-        if(libMal and self._filename and self.__username and self.__password):
-            manager = libMal.Manager(self.__username, self.__password)
-            results = manager.findEntriesOnMal(self._filename)
-            if(len(results) > 0):
-                result = results[0]
-                message = "Updating MAL with: \"{}\", episode: {}".format(result.mainTitle, result.episodeBeingWatched)
-                self._ui.showMessage(message)
-                options = {"tags": ["syncplay"]}
-                manager.updateEntryOnMal(result, options)
-        self._filename = ""  # Make sure no updates will be performed until switch 
+        try:
+            self._fileDuration = 0  # Disable playingHook
+            if(libMal and self._filename and self.__username and self.__password):
+                manager = libMal.Manager(self.__username, self.__password)
+                results = manager.findEntriesOnMal(self._filename)
+                if(len(results) > 0):
+                    result = results[0]
+                    message = "Updating MAL with: \"{}\", episode: {}".format(result.mainTitle, result.episodeBeingWatched)
+                    reactor.callFromThread(self._ui.showMessage,(message),)
+                    options = {"tags": ["syncplay"]}
+                    manager.updateEntryOnMal(result, options)
+            self._filename = ""  # Make sure no updates will be performed until switch
+        except:
+            reactor.callFromThread(self._ui.showMessage, ("MAL Update failure"),) 
         
 class SyncplayUserlist(object):
     def __init__(self, ui, client):
