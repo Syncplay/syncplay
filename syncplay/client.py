@@ -579,7 +579,7 @@ class SyncplayUserlist(object):
             rooms[user.room].append(user)
         if(self.currentUser.room not in rooms):
                 rooms[self.currentUser.room] = []
-        rooms[user.room].append(self.currentUser)
+        rooms[self.currentUser.room].append(self.currentUser)
         
         self.ui.showUserList(self.currentUser, rooms)
         
