@@ -26,35 +26,42 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
     
-    def showListMessage(self, message):
-        message = unicode(message)
-        message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
-        message = message.replace("    ", "&nbsp;"*4)
-        self._listBuffer += message + "<br />"        
-    
     def showUserList(self, currentUser, rooms):
+        self._usertreebuffer = QtGui.QStandardItemModel()
+        self._usertreebuffer.setColumnCount(2)
+        self._usertreebuffer.setHorizontalHeaderLabels(("User","File being played"))
+        usertreeRoot = self._usertreebuffer.invisibleRootItem()
+        
         for room in rooms:
-            message = u"In room '{}':".format(room)
-            self.showListMessage(message)
+            roomitem = QtGui.QStandardItem(room)
+            blankitem = QtGui.QStandardItem("")
+            roomitem.setFlags(roomitem.flags()  & ~Qt.ItemIsEditable) 
+            blankitem.setFlags(blankitem.flags() & ~Qt.ItemIsEditable)
+            usertreeRoot.appendRow((roomitem, blankitem))
             for user in rooms[room]:
-                username = "*<{}>*".format(user.username) if user == currentUser else "<{}>".format(user.username)
+                useritem = QtGui.QStandardItem(user.username)
+                fileitem = QtGui.QStandardItem("")
                 if(user.file):
-                    message = u"{} is playing:".format(username)
-                    self.showListMessage(message)
-                    message = u"    File: '{}' ({})".format(user.file['name'], formatTime(user.file['duration']))
+                    fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")")
                     if(currentUser.file):
                         if(user.file['name'] == currentUser.file['name'] and user.file['size'] != currentUser.file['size']):
-                            message += " (their file size is different from yours!)"
-                    self.showListMessage(message)
+                            fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")" + " (Different size!)")
+                            if room == currentUser.room:
+                                fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
+                        if (user.file['name'] != currentUser.file['name'] and room == currentUser.room):
+                            fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
                 else:
-                    message = u"{} is not playing a file".format(username)
-                    self.showListMessage(message)
-        self.markEndOfUserlist()
-        
-    def markEndOfUserlist(self):
-        self.resetList()
-        self.newListItem(self._listBuffer)
-        self._listBuffer = "";
+                    fileitem = QtGui.QStandardItem("(No file being played)")
+                    if room == currentUser.room:
+                        fileitem.setForeground(QtGui.QBrush(QtGui.QColor('blue')))                    
+                useritem.setFlags(useritem.flags()  & ~Qt.ItemIsEditable)
+                fileitem.setFlags(fileitem.flags()  & ~Qt.ItemIsEditable)
+                roomitem.appendRow((useritem, fileitem))
+       
+        self.listTreeModel = self._usertreebuffer
+        self.listTreeView.setModel(self.listTreeModel)
+        self.listTreeView.expandAll()
+
     
     def userListChange(self):
         self._syncplayClient.showUserList()
@@ -156,15 +163,16 @@ class MainWindow(QtGui.QMainWindow):
         window.outputFrame.setLayout(window.outputLayout)
         
         window.listLayout = QtGui.QVBoxLayout()
-        window.listbox = QtGui.QTextEdit()
-        window.listbox.setReadOnly(True)
+        window.listTreeModel = QtGui.QStandardItemModel()
+        window.listTreeView = QtGui.QTreeView()
+        window.listTreeView.setModel(window.listTreeModel)
         window.listlabel = QtGui.QLabel("List of who is playing what")
         window.listFrame = QtGui.QFrame()
         window.listFrame.setLineWidth(0)
         window.listFrame.setMidLineWidth(0)
         window.listLayout.setContentsMargins(0,0,0,0)
         window.listLayout.addWidget(window.listlabel)
-        window.listLayout.addWidget(window.listbox)
+        window.listLayout.addWidget(window.listTreeView)
         window.listFrame.setLayout(window.listLayout)
         
         window.topSplit.addWidget(window.outputFrame)
@@ -281,7 +289,6 @@ class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.QtGui = QtGui
-        self._listBuffer = ""
         if sys.platform.startswith('linux'):
             self.resourcespath = utils.findWorkingDir() + "/resources/"
         else:
