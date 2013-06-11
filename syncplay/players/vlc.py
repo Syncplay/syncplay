@@ -20,6 +20,8 @@ class VlcPlayer(BasePlayer):
     SLAVE_ARGS.append('--lua-config=syncplay={{port=\"{}\"}}'.format(str(vlcport)))
     
     def __init__(self, client, playerPath, filePath, args):
+        from twisted.internet import reactor
+        self.reactor = reactor
         self._client = client
         self._paused = None
         self._duration = None
@@ -37,15 +39,15 @@ class VlcPlayer(BasePlayer):
             self._listener = self.__Listener(self, playerPath, filePath, args, self._vlcready)
         except ValueError:
             self._client.ui.showMessage(getMessage("en", "vlc-failed-connection"))
-            self._client.stop(True)
+            self.reactor.callFromThread(self._client.stop, (True),)
             return 
         self._listener.setDaemon(True)
         self._listener.start()
         if(not self._vlcready.wait(constants.VLC_OPEN_MAX_WAIT_TIME)):
             self._vlcready.set()
             self._client.ui.showMessage(getMessage("en", "vlc-failed-connection"))
-            self._client.stop(True)
-        self._client.initPlayer(self)
+            self.reactor.callFromThread(self._client.stop, (True),)
+        self.reactor.callFromThread(self._client.initPlayer, (self),)
         
     def _fileUpdateClearEvents(self):
         self._durationAsk.clear()
@@ -61,7 +63,8 @@ class VlcPlayer(BasePlayer):
         self._fileUpdateClearEvents()
         self._getFileInfo()
         self._fileUpdateWaitEvents()
-        self._client.updateFile(self._filename, self._duration, self._filepath)
+        args = (self._filename, self._duration, self._filepath)
+        self.reactor.callFromThread(self._client.updateFile, *args)
         self.setPaused(self._client.getGlobalPaused()) 
         self.setPosition(self._client.getGlobalPosition())
 
@@ -172,7 +175,7 @@ class VlcPlayer(BasePlayer):
         self._positionAsk.set()
         self._vlcready.set()
         self._pausedAsk.set()
-        self._client.stop(False)
+        self.reactor.callFromThread(self._client.stop, (False),)
 
     class __Listener(threading.Thread, asynchat.async_chat):
         def __init__(self, playerController, playerPath, filePath, args, vlcReady):
