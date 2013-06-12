@@ -29,7 +29,7 @@ class MainWindow(QtGui.QMainWindow):
     def showUserList(self, currentUser, rooms):
         self._usertreebuffer = QtGui.QStandardItemModel()
         self._usertreebuffer.setColumnCount(2)
-        self._usertreebuffer.setHorizontalHeaderLabels(("User","File being played"))
+        self._usertreebuffer.setHorizontalHeaderLabels(("Room / User","File being played"))
         usertreeRoot = self._usertreebuffer.invisibleRootItem()
         
         for room in rooms:
