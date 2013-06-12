@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.0.8
+ Version: 0.0.9
  
 --[==========================================================================[
 
@@ -70,7 +70,7 @@ Note: You may have to copy the VLC 'modules' folder to make it a sub-directory o
 require "common"
 require "host"
 
-local connectorversion = "0.0.7"
+local connectorversion = "0.0.9"
 
 local durationdelay = 500000 -- Pause for get_duration command for increased reliability
 
@@ -312,7 +312,7 @@ function load_file (filepath)
 	
     local uri = vlc.strings.make_uri(filepath)
     vlc.playlist.add({{path=uri}})
-    return "load-file-attempted"
+    return "load-file-attempted\n"
 end
     
 function do_command ( command, argument)
