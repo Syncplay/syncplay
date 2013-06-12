@@ -312,8 +312,8 @@ class MainWindow(QtGui.QMainWindow):
             if sys.platform.startswith('linux'):
                 dropfilepath = unicode(urls[0].path())
             else:
-                dropfilepath = unicode(urls[0].path())[1:] # Removes starting slash 
-                self._syncplayClient.openFile(dropfilepath)
+                dropfilepath = unicode(urls[0].path().replace("/","\\"))[1:] # Removes starting slash 
+            self._syncplayClient._player.openFile(dropfilepath)
     
     def saveSettings(self):
         settings = QSettings("Syncplay", "MainWindow")
