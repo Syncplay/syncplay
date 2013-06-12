@@ -335,6 +335,7 @@ class MPCHCAPIPlayer(BasePlayer):
         mpc = MPCHCAPIPlayer(client)
         mpc._mpcApi.callbacks.onConnected = lambda: mpc.initPlayer(filePath if(filePath) else None)
         mpc._mpcApi.startMpc(MPCHCAPIPlayer.getExpandedPath(playerPath), args)
+        client.initPlayer(mpc)
         return mpc
 
     def __lockAsking(self):
@@ -366,7 +367,6 @@ class MPCHCAPIPlayer(BasePlayer):
         try:
             self.__testMpcReady()
             self._mpcApi.callbacks.onUpdateFilename = lambda _: self.__handleUpdatedFilename()
-            self.reactor.callFromThread(self.__client.initPlayer, (self))
             self.__handleUpdatedFilename()
             self.askForStatus()
         except Exception, err:
