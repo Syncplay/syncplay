@@ -72,6 +72,10 @@ class MainWindow(QtGui.QMainWindow):
         self.listTreeView.expandAll()
         self.listTreeView.resizeColumnToContents(1)
 
+    def roomClicked(self, item):
+        while(item.parent().row() != -1):
+            item = item.parent()
+        self.joinRoom(item.sibling(item.row(), 0).data())
     
     def userListChange(self):
         self._syncplayClient.showUserList()
@@ -82,13 +86,15 @@ class MainWindow(QtGui.QMainWindow):
     def showErrorMessage(self, message):
         print("ERROR:\t" + message)
 
-    def joinRoom(self):
-        room = self.roomInput.text()
+    def joinRoom(self, room = None):
+        if room == None:
+            room = self.roomInput.text()
         if room == "":
             if  self._syncplayClient.userlist.currentUser.file:
                 room = self._syncplayClient.userlist.currentUser.file["name"]
             else:
                 room = self._syncplayClient.defaultRoom
+        self.roomInput.setText(room)
         self._syncplayClient.setRoom(room)
         self._syncplayClient.sendRoom()
 
@@ -179,6 +185,7 @@ class MainWindow(QtGui.QMainWindow):
         window.listTreeModel = QtGui.QStandardItemModel()
         window.listTreeView = QtGui.QTreeView()
         window.listTreeView.setModel(window.listTreeModel)
+        window.listTreeView.doubleClicked.connect(self.roomClicked)
         window.listlabel = QtGui.QLabel("List of who is playing what")
         window.listFrame = QtGui.QFrame()
         window.listFrame.setLineWidth(0)
