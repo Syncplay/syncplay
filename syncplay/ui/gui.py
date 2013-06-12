@@ -62,7 +62,6 @@ class MainWindow(QtGui.QMainWindow):
                     font = QtGui.QFont()
                     font.setWeight(QtGui.QFont.Bold)
                     useritem.setFont(font)
-                    fileitem.setFont(font)                    
                 useritem.setFlags(useritem.flags()  & ~Qt.ItemIsEditable)
                 fileitem.setFlags(fileitem.flags()  & ~Qt.ItemIsEditable)
                 roomitem.appendRow((useritem, fileitem))
