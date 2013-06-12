@@ -1,5 +1,5 @@
 from PySide import QtGui #@UnresolvedImport
-from PySide.QtCore import Qt #@UnresolvedImport
+from PySide.QtCore import Qt, QSettings, QSize, QPoint #@UnresolvedImport
 from syncplay import utils, constants
 import sys
 import time
@@ -119,7 +119,7 @@ class MainWindow(QtGui.QMainWindow):
             
     def closeEvent(self, event):
         self.exitSyncplay()
-        event.ignore()
+        self.saveSettings()
             
     def _extractSign(self, m):
         if(m):
@@ -156,6 +156,9 @@ class MainWindow(QtGui.QMainWindow):
             self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/windows/")
         else:
             self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
+
+    def drop(self):
+        self.close()
         
     def addTopLayout(self, window):       
         window.topSplit = QtGui.QSplitter(Qt.Horizontal)
@@ -312,6 +315,20 @@ class MainWindow(QtGui.QMainWindow):
                 dropfilepath = unicode(urls[0].path())[1:] # Removes starting slash 
                 self._syncplayClient.openFile(dropfilepath)
     
+    def saveSettings(self):
+        settings = QSettings("Syncplay", "MainWindow")
+        settings.beginGroup("MainWindow")
+        settings.setValue("size", self.size())
+        settings.setValue("pos", self.pos())
+        settings.endGroup()
+    
+    def loadSettings(self):
+        settings = QSettings("Syncplay", "MainWindow")
+        settings.beginGroup("MainWindow")
+        self.resize(settings.value("size", QSize(700, 500)))
+        self.move(settings.value("pos", QPoint(200, 200)))
+        settings.endGroup()
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.QtGui = QtGui
@@ -325,7 +342,7 @@ class MainWindow(QtGui.QMainWindow):
         self.addBottomLayout(self)
         self.addMenubar(self)
         self.addMainFrame(self)
-        self.resize(700,500)
+        self.loadSettings()
         self.setWindowIcon(QtGui.QIcon(self.resourcespath + "syncplay.png"))
         self.show()
         self.setAcceptDrops(True)

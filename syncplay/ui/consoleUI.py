@@ -20,6 +20,9 @@ class ConsoleUI(threading.Thread):
     def addClient(self, client):
         self._syncplayClient = client
         
+    def drop(self):
+        pass
+    
     def run(self):
         try:
             while True:

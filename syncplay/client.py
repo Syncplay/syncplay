@@ -355,6 +355,8 @@ class SyncplayClient(object):
         self.destroyProtocol()
         if self._player:
             self._player.drop()
+        if self.ui:
+            self.ui.drop()
         reactor.callLater(0.1, reactor.stop)
         if(promptForAction):
             self.ui.promptFor(getMessage("en", "enter-to-exit-prompt"))
@@ -608,5 +610,8 @@ class UiManager(object):
 
     def markEndOfUserlist(self):
         self.__ui.markEndOfUserlist()
+    
+    def drop(self):
+        self.__ui.drop()
 
     
