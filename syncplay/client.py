@@ -151,10 +151,11 @@ class SyncplayClient(object):
             return None, None, None, None
     
     def _initPlayerState(self, position, paused):
-        self.setPosition(position)
-        self._player.setPaused(paused)
-        madeChangeOnPlayer = True
-        return madeChangeOnPlayer
+        if(self.userlist.currentUser.file):
+            self.setPosition(position)
+            self._player.setPaused(paused)
+            madeChangeOnPlayer = True
+            return madeChangeOnPlayer
 
     def _rewindPlayerDueToTimeDifference(self, position, setBy):
         self.setPosition(position)
