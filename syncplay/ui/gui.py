@@ -285,6 +285,22 @@ class MainWindow(QtGui.QMainWindow):
         self.listbox.moveCursor(QtGui.QTextCursor.End)
         self.listbox.insertHtml(item)
         self.listbox.moveCursor(QtGui.QTextCursor.End)
+        
+    def dragEnterEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        if (urls and urls[0].scheme() == 'file'):
+            event.acceptProposedAction()
+            
+    def dropEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        if (urls and urls[0].scheme() == 'file'):
+            if sys.platform.startswith('linux'):
+                dropfilepath = unicode(urls[0].path())
+            else:
+                dropfilepath = unicode(urls[0].path())[1:] # Removes starting slash 
+                self._syncplayClient.openFile(dropfilepath)
     
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -302,3 +318,4 @@ class MainWindow(QtGui.QMainWindow):
         self.resize(700,500)
         self.setWindowIcon(QtGui.QIcon(self.resourcespath + "syncplay.png"))
         self.show()
+        self.setAcceptDrops(True)
