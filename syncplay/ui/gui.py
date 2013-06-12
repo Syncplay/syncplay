@@ -68,6 +68,7 @@ class MainWindow(QtGui.QMainWindow):
        
         self.listTreeModel = self._usertreebuffer
         self.listTreeView.setModel(self.listTreeModel)
+        self.listTreeView.setItemsExpandable(False)
         self.listTreeView.expandAll()
         self.listTreeView.resizeColumnToContents(1)
 
