@@ -34,6 +34,10 @@ class MainWindow(QtGui.QMainWindow):
         
         for room in rooms:
             roomitem = QtGui.QStandardItem(room)
+            if room == currentUser.room:
+                font = QtGui.QFont()
+                font.setWeight(QtGui.QFont.Bold)
+                roomitem.setFont(font)
             blankitem = QtGui.QStandardItem("")
             roomitem.setFlags(roomitem.flags()  & ~Qt.ItemIsEditable) 
             blankitem.setFlags(blankitem.flags() & ~Qt.ItemIsEditable)
@@ -48,12 +52,17 @@ class MainWindow(QtGui.QMainWindow):
                             fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")" + " (Different size!)")
                             if room == currentUser.room:
                                 fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
-                        if (user.file['name'] != currentUser.file['name'] and room == currentUser.room):
+                        elif (user.file['name'] != currentUser.file['name'] and room == currentUser.room):
                             fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
                 else:
                     fileitem = QtGui.QStandardItem("(No file being played)")
                     if room == currentUser.room:
-                        fileitem.setForeground(QtGui.QBrush(QtGui.QColor('blue')))                    
+                        fileitem.setForeground(QtGui.QBrush(QtGui.QColor('blue')))
+                if(currentUser.username == user.username):
+                    font = QtGui.QFont()
+                    font.setWeight(QtGui.QFont.Bold)
+                    useritem.setFont(font)
+                    fileitem.setFont(font)                    
                 useritem.setFlags(useritem.flags()  & ~Qt.ItemIsEditable)
                 fileitem.setFlags(fileitem.flags()  & ~Qt.ItemIsEditable)
                 roomitem.appendRow((useritem, fileitem))
@@ -61,6 +70,7 @@ class MainWindow(QtGui.QMainWindow):
         self.listTreeModel = self._usertreebuffer
         self.listTreeView.setModel(self.listTreeModel)
         self.listTreeView.expandAll()
+        self.listTreeView.resizeColumnToContents(1)
 
     
     def userListChange(self):
