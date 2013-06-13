@@ -83,7 +83,7 @@ class MplayerPlayer(BasePlayer):
         self._setProperty('speed', "{:.2f}".format(value))
     
     def openFile(self, filePath):
-        self._listener.sendLine('loadfile {}'.format(filePath))
+        self._listener.sendLine('loadfile {}'.format(self._quoteArg(filePath)))
         self._onFileUpdate()
         
     def setPosition(self, value):
@@ -108,7 +108,12 @@ class MplayerPlayer(BasePlayer):
     
     def _getPosition(self):
         self._getProperty('time_pos')
-    
+   
+    def _quoteArg(self, arg):
+        arg = arg.replace("'", "\\'")
+        arg = arg.replace('"', '\\"')
+        return '"{}"'.format(arg)
+ 
     def lineReceived(self, line):
         match = self.RE_ANSWER.match(line)
         if not match:
