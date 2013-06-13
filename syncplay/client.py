@@ -304,13 +304,13 @@ class SyncplayClient(object):
     
     def setRoom(self, roomName):
         self.userlist.currentUser.room = roomName
-        self.getUserList()
         
     def sendRoom(self):
         room = self.userlist.currentUser.room
         if(self._protocol and self._protocol.logged and room):
             self._protocol.sendRoomSetting(room)
-    
+            self.getUserList()
+            
     def getRoom(self):
         return self.userlist.currentUser.room
     
