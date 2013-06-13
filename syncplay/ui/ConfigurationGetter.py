@@ -96,6 +96,9 @@ class ConfigurationGetter(object):
                     self._config["playerClass"] = player
                 else:
                     raise InvalidConfigValue("Player path is not set properly")
+                if player.__name__ in ['MpvPlayer', 'MplayerPlayer']:
+                    if not self._config['file']:
+                        raise InvalidConfigValue("File must be selected before starting your player")
             elif(key == "host"):
                 self._config["host"], self._config["port"] = self._splitPortAndHost(self._config["host"])
                 hostNotValid = (self._config["host"] == "" or self._config["host"] is None)
