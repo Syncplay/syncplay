@@ -110,6 +110,7 @@ class MplayerPlayer(BasePlayer):
         self._getProperty('time_pos')
    
     def _quoteArg(self, arg):
+        arg = arg.replace('\\', '\\\\')
         arg = arg.replace("'", "\\'")
         arg = arg.replace('"', '\\"')
         return '"{}"'.format(arg)
