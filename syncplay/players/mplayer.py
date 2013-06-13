@@ -83,9 +83,8 @@ class MplayerPlayer(BasePlayer):
         self._setProperty('speed', "{:.2f}".format(value))
     
     def openFile(self, filePath):
-        pass
-        #Notification about new file opened must be added first.
-        #self._setProperty('loadfile', "{}".format(filePath))
+        self._listener.sendLine('loadfile {}'.format(filePath))
+        self._onFileUpdate()
         
     def setPosition(self, value):
         self._position = value
