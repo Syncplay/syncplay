@@ -4,6 +4,7 @@ from syncplay import utils, constants
 import sys
 import time
 import re
+import os
 from syncplay.utils import formatTime
 
 class MainWindow(QtGui.QMainWindow):
@@ -126,6 +127,39 @@ class MainWindow(QtGui.QMainWindow):
     def closeEvent(self, event):
         self.exitSyncplay()
         self.saveSettings()
+        
+    def loadMediaBrowseSettings(self):
+        settings = QSettings("Syncplay", "MediaBrowseDialog")
+        settings.beginGroup("MediaBrowseDialog")
+        self.mediadirectory = settings.value("mediadir", "")
+        settings.endGroup()
+                        
+    def saveMediaBrowseSettings(self):
+        settings = QSettings("Syncplay", "MediaBrowseDialog")
+        settings.beginGroup("MediaBrowseDialog")
+        settings.setValue("mediadir", self.mediadirectory)
+        settings.endGroup()
+        
+    def browseMediapath(self):
+        self.loadMediaBrowseSettings()
+        options = QtGui.QFileDialog.Options()
+        if (os.path.isdir(self.mediadirectory)):
+            defaultdirectory = self.mediadirectory
+        elif (os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation))):
+            defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)
+        elif (os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation))):
+            defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)
+        else:
+            defaultdirectory = ""
+        browserfilter = "All Files (*)"       
+        fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,"Browse for media files",defaultdirectory,
+                browserfilter, "", options)
+        if fileName:
+            if sys.platform.startswith('win'):
+                fileName = fileName.replace("/","\\")
+            self.mediadirectory = os.path.dirname(fileName)
+            self.saveMediaBrowseSettings()
+            self._syncplayClient._player.openFile(fileName)
             
     def _extractSign(self, m):
         if(m):
@@ -268,6 +302,8 @@ class MainWindow(QtGui.QMainWindow):
         window.menuBar = QtGui.QMenuBar()
 
         window.fileMenu = QtGui.QMenu("&File", self)
+        window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'folder_explore.png'), "&Open Media File")
+        window.openAction.triggered.connect(self.browseMediapath)
         window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'), "E&xit")
         window.exitAction.triggered.connect(self.exitSyncplay)
         window.menuBar.addMenu(window.fileMenu)
