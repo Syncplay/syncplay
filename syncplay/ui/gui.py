@@ -96,8 +96,9 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 room = self._syncplayClient.defaultRoom
         self.roomInput.setText(room)
-        self._syncplayClient.setRoom(room)
-        self._syncplayClient.sendRoom()
+        if(room != self._syncplayClient.getRoom()):
+            self._syncplayClient.setRoom(room)
+            self._syncplayClient.sendRoom()
 
     def seekPosition(self):
         s = re.match(constants.UI_SEEK_REGEX, self.seekInput.text())
