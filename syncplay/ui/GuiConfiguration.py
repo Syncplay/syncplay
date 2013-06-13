@@ -32,7 +32,6 @@ class ConfigDialog(QtGui.QDialog):
     
     pressedclosebutton = False
     malToggling = False
-    mediadirectory = ""
     
     def malToggled(self):
         if self.malToggling == False:
@@ -115,7 +114,20 @@ class ConfigDialog(QtGui.QDialog):
         if fileName:
             self.executablepathCombobox.setEditText(fileName)
             
+    def loadMediaBrowseSettings(self):
+        settings = QSettings("Syncplay", "MediaBrowseDialog")
+        settings.beginGroup("MediaBrowseDialog")
+        self.mediadirectory = settings.value("mediadir", "")
+        settings.endGroup()
+                        
+    def saveMediaBrowseSettings(self):
+        settings = QSettings("Syncplay", "MediaBrowseDialog")
+        settings.beginGroup("MediaBrowseDialog")
+        settings.setValue("mediadir", self.mediadirectory)
+        settings.endGroup()
+        
     def browseMediapath(self):
+        self.loadMediaBrowseSettings()
         options = QtGui.QFileDialog.Options()
         if (os.path.isdir(self.mediadirectory)):
             defaultdirectory = self.mediadirectory
@@ -131,6 +143,7 @@ class ConfigDialog(QtGui.QDialog):
         if fileName:
             self.mediapathTextbox.setText(fileName)
             self.mediadirectory = os.path.dirname(fileName)
+            self.saveMediaBrowseSettings()
         
     def _saveDataAndLeave(self):
         self.config['host'] = self.hostTextbox.text()
@@ -161,7 +174,6 @@ class ConfigDialog(QtGui.QDialog):
         return
     
     def closeEvent(self, event):
-        self.saveSettings()
         if self.pressedclosebutton == False:
             sys.exit()
             raise GuiConfiguration.WindowClosed
@@ -185,18 +197,6 @@ class ConfigDialog(QtGui.QDialog):
                 self.executablepathCombobox.setEditText(dropfilepath)
             else:
                 self.mediapathTextbox.setText(dropfilepath)
-                
-    def saveSettings(self):
-        settings = QSettings("Syncplay", "ConfigWindow")
-        settings.beginGroup("ConfigWindow")
-        settings.setValue("mediadir", self.mediadirectory)
-        settings.endGroup()
-    
-    def loadSettings(self):
-        settings = QSettings("Syncplay", "ConfigWindow")
-        settings.beginGroup("ConfigWindow")
-        self.mediadirectory = settings.value("mediadir", "")
-        settings.endGroup()
 
     def __init__(self, config, playerpaths, error):
         
@@ -331,5 +331,4 @@ class ConfigDialog(QtGui.QDialog):
         self.setLayout(self.mainLayout)
         self.runButton.setFocus()        
         self.setFixedSize(self.sizeHint())
-        self.loadSettings()
         self.setAcceptDrops(True)
