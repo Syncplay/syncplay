@@ -1,6 +1,6 @@
 from PySide import QtGui #@UnresolvedImport
 from PySide.QtCore import Qt, QSettings, QSize, QPoint #@UnresolvedImport
-from syncplay import utils, constants
+from syncplay import utils, constants, version
 import sys
 import time
 import re
@@ -379,7 +379,7 @@ class MainWindow(QtGui.QMainWindow):
             self.resourcespath = utils.findWorkingDir() + "/resources/"
         else:
             self.resourcespath = utils.findWorkingDir() + "\\resources\\"
-        self.setWindowTitle("Syncplay - Main Window")
+        self.setWindowTitle("Syncplay v" + version)
         self.mainLayout = QtGui.QVBoxLayout()
         self.addTopLayout(self)
         self.addBottomLayout(self)
