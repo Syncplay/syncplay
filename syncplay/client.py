@@ -539,7 +539,8 @@ class SyncplayUserlist(object):
             user = self._users[username]
             self.__displayModUserMessage(username, room, file_, user)
             user.room = room
-            user.file = file_
+            if file_:
+                user.file = file_
         elif(username == self.currentUser.username):
             self.__showUserChangeMessage(username, room, file_)
         else:
