@@ -37,12 +37,11 @@ class SyncClientFactory(ClientFactory):
             reactor.callLater(0.1*(2**self._timesTried), connector.connect)
         else:
             message = getMessage("en", "disconnection-notification")
-            self._client.ui.showMessage(message)
+            self._client.ui.showErrorMessage(message)
 
     def clientConnectionFailed(self, connector, reason):
         if not self.reconnecting:
-            self._client.ui.showMessage(getMessage("en", "connection-failed-notification"))
-            self._client.stop(True)
+            self._client.ui.showErrorMessage(getMessage("en", "connection-failed-notification"))
         else:
             self.clientConnectionLost(connector, reason)
         
