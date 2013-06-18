@@ -15,9 +15,12 @@ Place the syncplay.lua file in one of the VLC /lua/intf/ sub-directories. By def
 * Windows (current user): %APPDATA%\VLC\lua\intf\
 * Linux (all users): /usr/lib/vlc/lua/intf/
 * Linux (current user): ~/.local/share/vlc/lua/intf/
-* Mac OS X (all users): ~/Library/Application Support/org.videolan.vlc/lua/intf/
+* Mac OS X (all users): /Applications/VLC.app/Contents/MacOS/share/lua/intf/
+* Mac OS X (current user): ~/Library/Application Support/org.videolan.vlc/lua/intf/
 
 If a directory does not exist then you may have to create it.
+
+If you copy the file to the 'all users' directory then you may need to re-copy the file when you update VLC.
 
 Note: You may have to copy the VLC 'modules' folder to make it a sub-directory of the 'intf' folder.
 
