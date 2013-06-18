@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.0.9
+ Version: 0.0.9b
  
 --[==========================================================================[
 
@@ -15,7 +15,7 @@ Place the syncplay.lua file in one of the VLC /lua/intf/ sub-directories. By def
 * Windows (current user): %APPDATA%\VLC\lua\intf\
 * Linux (all users): /usr/lib/vlc/lua/intf/
 * Linux (current user): ~/.local/share/vlc/lua/intf/
-* Mac OS X (all users): /Applications/VLC.app/Contents/MacOS/share/lua/intf/
+* Mac OS X (all users): ~/Library/Application Support/org.videolan.vlc/lua/intf/
 
 If a directory does not exist then you may have to create it.
 
