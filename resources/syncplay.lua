@@ -96,6 +96,8 @@ local oldinputstate
 local newfilepath
 local newinputstate
 
+running = true
+
 -- Start hosting Syncplay interface.
 
 port = tonumber(config["port"])
@@ -347,7 +349,7 @@ function do_command ( command, argument)
     elseif command == "set-rate"              then           errormsg = set_var("rate", tonumber(argument))
     elseif command == "display-osd"           then           errormsg = display_osd(argument) 
     elseif command == "load-file"             then response           = load_file(argument)
-    elseif command == "close-vlc"             then                      vlc.misc.quit()
+    elseif command == "close-vlc"             then                      close_vlc()
     else                                                     errormsg = unknowncommand
     end
     
@@ -359,6 +361,10 @@ function do_command ( command, argument)
     
 end
 
+function close_vlc()
+    vlc.misc.quit()
+    running = false
+end
 
 function errormerge(argument, errormsg)
     -- Used to integrate 'no-input' error messages into command responses.
@@ -387,7 +393,7 @@ function set_playstate(argument)
 end
 
     -- main loop, which alternates between writing and reading
-while not vlc.misc.should_die() do
+while running do
         -- accept new connections and select active clients
     local write, read = h:accept_and_select()
 
