@@ -192,7 +192,7 @@ class MplayerPlayer(BasePlayer):
             call.extend(playerController.SLAVE_ARGS)
             if(args):
                 call.extend(args)
-            self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd = os.path.dirname(playerPath))
             threading.Thread.__init__(self, name="MPlayer Listener")
         
         def run(self):
