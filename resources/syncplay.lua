@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.0.9b
+ Version: 0.1.0
  
 --[==========================================================================[
 
@@ -73,7 +73,7 @@ Note: You may have to copy the VLC 'modules' folder to make it a sub-directory o
 require "common"
 require "host"
 
-local connectorversion = "0.0.9"
+local connectorversion = "0.1.0"
 
 local durationdelay = 500000 -- Pause for get_duration command for increased reliability
 
@@ -233,7 +233,16 @@ function get_filepath ()
         if input then
             local item = vlc.input.item()
             if item then
-                response = vlc.strings.decode_uri(item:uri())
+			    if string.find(item:uri(),"file://") then
+                     response = vlc.strings.decode_uri(item:uri())
+				else
+				     local metas = item:metas()
+				     if metas and metas["title"] and string.len(metas["title"]) > 0 then
+				          response = ":::(Stream: "..metas["title"]..")"
+					 else
+					      response = ":::(Stream)"
+					 end
+			    end
             else
                 errormsg = noinput
             end
