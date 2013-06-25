@@ -75,7 +75,7 @@ class ConsoleUI(threading.Thread):
     def showDebugMessage(self, message):
         print(message)
         
-    def showErrorMessage(self, message):
+    def showErrorMessage(self, message, criticalerror = False):
         print("ERROR:\t" + message)            
 
     def _extractSign(self, m):
