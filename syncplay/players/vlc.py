@@ -134,11 +134,16 @@ class VlcPlayer(BasePlayer):
             self._filechanged = True
             self._filename = value
             self._filenameAsk.set()
+        elif(line.startswith("interface-version: ")):
+            interface_version = line[19:24]
+            if (int(interface_version.replace(".","")) < int(constants.VLC_INTERFACE_MIN_VERSION.replace(".",""))):
+                self._client.ui.showErrorMessage(getMessage("en", "vlc-interface-version-mismatch").format(str(interface_version), str(constants.VLC_INTERFACE_MIN_VERSION)))
         elif (line[:16] == "VLC media player"):
             vlc_version = line[17:22]
             if (int(vlc_version.replace(".","")) < int(constants.VLC_MIN_VERSION.replace(".",""))):
                 self._client.ui.showErrorMessage(getMessage("en", "vlc-version-mismatch").format(str(vlc_version), str(constants.VLC_MIN_VERSION)))
             self._vlcready.set()
+            self._listener.sendLine("get-interface-version")
 
 
     @staticmethod
