@@ -1,3 +1,3 @@
 version = '1.2.7'
-milestone = 'Tequila'
+milestone = 'Biscuit'
 projectURL = 'http://syncplay.pl/'
