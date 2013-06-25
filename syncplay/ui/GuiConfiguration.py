@@ -94,10 +94,10 @@ class ConfigDialog(QtGui.QDialog):
     def browsePlayerpath(self):
         options = QtGui.QFileDialog.Options()
         defaultdirectory = ""
-        browserfilter = "All Files (*)"
+        browserfilter = "All files (*)"
         
         if os.name == 'nt':
-            browserfilter =  "Executable files (*.exe);;All Files (*)"
+            browserfilter =  "Executable files (*.exe);;All files (*)"
             if "PROGRAMFILES(X86)" in os.environ: 
                 defaultdirectory = os.environ["ProgramFiles(x86)"]
             elif "PROGRAMFILES" in os.environ:
@@ -137,7 +137,7 @@ class ConfigDialog(QtGui.QDialog):
             defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.HomeLocation)
         else:
             defaultdirectory = ""
-        browserfilter = "All Files (*)"       
+        browserfilter = "All files (*)"       
         fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,"Browse for media files",defaultdirectory,
                 browserfilter, "", options)
         if fileName:
@@ -227,7 +227,7 @@ class ConfigDialog(QtGui.QDialog):
         else:
             host = config['host']+":"+str(config['port'])
             
-        self.connectionSettingsGroup = QtGui.QGroupBox("Connection Settings")
+        self.connectionSettingsGroup = QtGui.QGroupBox("Connection settings")
         self.hostTextbox = QLineEdit(host, self)
         self.hostLabel = QLabel(getMessage("en", "host-label"), self)
         self.usernameTextbox = QLineEdit(config['name'],self)
@@ -247,7 +247,7 @@ class ConfigDialog(QtGui.QDialog):
         self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
         
-        self.mediaplayerSettingsGroup = QtGui.QGroupBox("Media Player Settings")
+        self.mediaplayerSettingsGroup = QtGui.QGroupBox("Media player settings")
         self.executablepathCombobox = QtGui.QComboBox(self)
         self.executablepathCombobox.setEditable(True)
         self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'],playerpaths))
@@ -273,15 +273,15 @@ class ConfigDialog(QtGui.QDialog):
         if config['slowOnDesync'] == True:
             self.slowdownCheckbox.setChecked(True)
 
-        self.malSettingsGroup = QtGui.QGroupBox("Enable MyAnimeList Updater (EXPERIMENTAL)")
+        self.malSettingsGroup = QtGui.QGroupBox("Enable MyAnimeList updater (EXPERIMENTAL)")
         self.malSettingsGroup.setCheckable(True)
         self.malSettingsGroup.toggled.connect(self.malToggled)
         self.malSettingsSplit = QtGui.QSplitter(self)
         self.malusernameTextbox = QLineEdit(config['malUsername'],self)
-        self.malusernameLabel = QLabel("MAL Username:", self)
+        self.malusernameLabel = QLabel("MAL username:", self)
         self.malpasswordTextbox = QLineEdit(config['malPassword'],self)
         self.malpasswordTextbox.setEchoMode(QtGui.QLineEdit.Password)
-        self.malpasswordLabel = QLabel("MAL Password:", self)
+        self.malpasswordLabel = QLabel("MAL password:", self)
         self.malSettingsLayout = QtGui.QGridLayout()
         self.malSettingsLayout.addWidget(self.malusernameLabel , 0, 0)
         self.malSettingsLayout.addWidget(self.malusernameTextbox, 0, 1)
@@ -289,7 +289,7 @@ class ConfigDialog(QtGui.QDialog):
         self.malSettingsLayout.addWidget(self.malpasswordTextbox, 1, 1)
         self.malSettingsGroup.setLayout(self.malSettingsLayout)
         
-        self.malenabledCheckbox = QCheckBox("Enable MyAnimeList Updater (EXPERIMENTAL)")
+        self.malenabledCheckbox = QCheckBox("Enable MyAnimeList updater (EXPERIMENTAL)")
         self.malenabledCheckbox.toggled.connect(self.malToggled) 
         if config['malPassword'] == None or config['malPassword'] == "":
             self.malenabledCheckbox.setChecked(False)
@@ -297,11 +297,11 @@ class ConfigDialog(QtGui.QDialog):
         else:
             self.malenabledCheckbox.hide()
         
-        self.alwaysshowCheckbox = QCheckBox("Always Show This Dialog")
+        self.alwaysshowCheckbox = QCheckBox("Always show this dialog")
         if config['forceGuiPrompt'] == True:
             self.alwaysshowCheckbox.setChecked(True)
         
-        self.donotstoreCheckbox = QCheckBox("Do Not Store This Configuration")       
+        self.donotstoreCheckbox = QCheckBox("Do not store this configuration")       
         self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
                       
         self.mainLayout = QtGui.QVBoxLayout()

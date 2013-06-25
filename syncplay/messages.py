@@ -37,7 +37,7 @@ en = {
       
       "mplayer-file-required-notification" : "Syncplay using mplayer requires you to provide file when starting",
       "mplayer-file-required-notification/example" : "Usage example: syncplay [options] [url|path/]filename",
-      "mplayer2-required" : "Syncplay is incompatible with MPlayer 1.x, please use mplayer2",
+      "mplayer2-required" : "Syncplay is incompatible with MPlayer 1.x, please use mplayer2 or mpv",
       
       "unrecognized-command-notification" : "Unrecognized command",
       "commandlist-notification" : "Available commands:",
@@ -90,7 +90,7 @@ en = {
       "args-argument" : 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
       
       # Client labels
-      "config-window-title" : 'Syncplay Configuration',
+      "config-window-title" : 'Syncplay configuration',
       "host-label" : 'Host: ',
       "username-label" :  'Username: ',
       "room-label" : 'Default room: ',

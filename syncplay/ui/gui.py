@@ -158,7 +158,7 @@ class MainWindow(QtGui.QMainWindow):
             defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)
         else:
             defaultdirectory = ""
-        browserfilter = "All Files (*)"       
+        browserfilter = "All files (*)"       
         fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,"Browse for media files",defaultdirectory,
                 browserfilter, "", options)
         if fileName:
@@ -178,7 +178,7 @@ class MainWindow(QtGui.QMainWindow):
             return None
         
     def setOffset(self):
-        newoffset, ok = QtGui.QInputDialog.getText(self,"Set Offset",
+        newoffset, ok = QtGui.QInputDialog.getText(self,"Set offset",
                 "Offset (see http://syncplay.pl/guide/ for usage instructions):", QtGui.QLineEdit.Normal,
                 "")
         if ok and newoffset != '':
@@ -290,7 +290,7 @@ class MainWindow(QtGui.QMainWindow):
         window.seekGroup.setFixedSize(window.seekGroup.sizeHint())
         
     def addMiscBox(self, window):
-        window.miscGroup = QtGui.QGroupBox("Other Commands")
+        window.miscGroup = QtGui.QGroupBox("Other commands")
         
         window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),"Undo last seek")
         window.unseekButton.pressed.connect(self.undoSeek)
@@ -309,19 +309,19 @@ class MainWindow(QtGui.QMainWindow):
         window.menuBar = QtGui.QMenuBar()
 
         window.fileMenu = QtGui.QMenu("&File", self)
-        window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'folder_explore.png'), "&Open Media File")
+        window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'folder_explore.png'), "&Open media file")
         window.openAction.triggered.connect(self.browseMediapath)
         window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'), "E&xit")
         window.exitAction.triggered.connect(self.exitSyncplay)
         window.menuBar.addMenu(window.fileMenu)
         
         window.advancedMenu = QtGui.QMenu("&Advanced", self)
-        window.setoffsetAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'timeline_marker.png'),"Set &Offset")
+        window.setoffsetAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'timeline_marker.png'),"Set &offset")
         window.setoffsetAction.triggered.connect(self.setOffset)
         window.menuBar.addMenu(window.advancedMenu)
         
         window.helpMenu = QtGui.QMenu("&Help", self)
-        window.userguideAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'), "Open User &Guide")
+        window.userguideAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'), "Open user &guide")
         window.userguideAction.triggered.connect(self.openUserGuide)
         
         window.menuBar.addMenu(window.helpMenu)
