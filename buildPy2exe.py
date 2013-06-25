@@ -138,6 +138,10 @@ NSIS_SCRIPT_TEMPLATE = r"""
         
     StrCpy $$CheckBox_Associate_State $${BST_CHECKED}
     StrCpy $$CheckBox_StartMenuShortcut_State $${BST_CHECKED}
+    ReadRegStr $$VLC_Version HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VLC media player" "VersionMajor"
+    $${If} $$VLC_Version == "2"
+      StrCpy $$CheckBox_VLC_State $${BST_CHECKED}
+    $${EndIf}
     
     Call GetSize
     Call DriveSpace
