@@ -72,7 +72,7 @@ en = {
        "not-json-error" : "Not a json encoded string\n",
        "hello-arguments-error" : "Not enough Hello arguments\n",
        "version-mismatch-error" : "Mismatch between versions of client and server\n",
-       "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay-vlc.lua then please follow the VLC instructions at http://syncplay.pl/, if you have, please try again",
+       "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua then please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",
       
       # Client arguments
       "argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
