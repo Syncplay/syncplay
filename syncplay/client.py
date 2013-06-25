@@ -600,8 +600,8 @@ class UiManager(object):
         if(self._client._player):
             self._client._player.displayMessage(message, duration * 1000)
     
-    def showErrorMessage(self, message):
-        self.__ui.showErrorMessage(message)
+    def showErrorMessage(self, message, criticalerror = False):
+        self.__ui.showErrorMessage(message, criticalerror)
 
     def promptFor(self, prompt):
         return self.__ui.promptFor(prompt)
