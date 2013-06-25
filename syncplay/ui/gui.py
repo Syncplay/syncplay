@@ -84,8 +84,10 @@ class MainWindow(QtGui.QMainWindow):
     def showDebugMessage(self, message):
         print(message)
         
-    def showErrorMessage(self, message):
+    def showErrorMessage(self, message, criticalerror = False):
         message = unicode(message)
+        if criticalerror:
+            QtGui.QMessageBox.critical(self,"DON'T PANIC", message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         message = message.replace("\n", "<br />")
         message = "<span style=\"color:#FF0000;\">" + message + "</span>"
