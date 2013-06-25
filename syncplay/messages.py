@@ -51,7 +51,7 @@ en = {
       "more-info-notification" : "More info available at: {}",    #projectURL
       
       "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above\n", # VLC version, VLC min version
-      "vlc-interface-version-mismatch": "Warning: You are running Syncplay version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above\n", # VLC interface version, VLC interface min version
+      "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above\n", # VLC interface version, VLC interface min version
 
       # Client prompts
       "enter-to-exit-prompt" : "Press enter to exit\n",
