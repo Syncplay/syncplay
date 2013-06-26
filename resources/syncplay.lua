@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.1.0
+ Version: 0.1.1
  
 --[==========================================================================[
 
@@ -73,7 +73,7 @@ Note: You may have to copy the VLC 'modules' folder to make it a sub-directory o
 require "common"
 require "host"
 
-local connectorversion = "0.1.0"
+local connectorversion = "0.1.1"
 
 local durationdelay = 500000 -- Pause for get_duration command for increased reliability
 
@@ -96,8 +96,6 @@ local oldinputstate
 local newfilepath
 local newinputstate
 
-running = true
-
 -- Start hosting Syncplay interface.
 
 port = tonumber(config["port"])
@@ -105,7 +103,12 @@ if (port == nil or port < 1) then port = 4123 end
 
 vlc.msg.info("Hosting Syncplay interface on port: "..port)
 
-h = host.host()
+if string.sub(vlc.misc.version(),1,4) == "2.1." then
+    vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module. Please use VLC 2.0.7+ rather than 2.1.X.")
+    vlc.misc.quit()
+else
+    h = host.host()
+end
 
 function detectchanges()
     -- Detects changes in VLC to report to Syncplay.
@@ -349,7 +352,7 @@ function do_command ( command, argument)
     elseif command == "set-rate"              then           errormsg = set_var("rate", tonumber(argument))
     elseif command == "display-osd"           then           errormsg = display_osd(argument) 
     elseif command == "load-file"             then response           = load_file(argument)
-    elseif command == "close-vlc"             then                      close_vlc()
+    elseif command == "close-vlc"             then                      vlc.misc.quit()
     else                                                     errormsg = unknowncommand
     end
     
@@ -361,10 +364,6 @@ function do_command ( command, argument)
     
 end
 
-function close_vlc()
-    vlc.misc.quit()
-    running = false
-end
 
 function errormerge(argument, errormsg)
     -- Used to integrate 'no-input' error messages into command responses.
@@ -393,7 +392,7 @@ function set_playstate(argument)
 end
 
     -- main loop, which alternates between writing and reading
-while running do
+while not vlc.misc.should_die() do
         -- accept new connections and select active clients
     local write, read = h:accept_and_select()
 
