@@ -50,8 +50,8 @@ en = {
       "syncplay-version-notification" : "Syncplay version: {}",    #syncplay.version
       "more-info-notification" : "More info available at: {}",    #projectURL
       
-      "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above\n", # VLC version, VLC min version
-      "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above\n", # VLC interface version, VLC interface min version
+      "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above", # VLC version, VLC min version
+      "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above", # VLC interface version, VLC interface min version      
 
       # Client prompts
       "enter-to-exit-prompt" : "Press enter to exit\n",
@@ -74,6 +74,9 @@ en = {
        "hello-arguments-error" : "Not enough Hello arguments\n",
        "version-mismatch-error" : "Mismatch between versions of client and server\n",
        "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua then please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",
+       "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",                                                  
+       "vlc-failed-versioncheck": "This version of VLC is not supported by Syncplay. Please use VLC 2.0.X.",
+       "vlc-failed-other" : "When trying to load the syncplay.lua interface script VLC has provided the following error: {}", #Syncplay Error
       
       # Client arguments
       "argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
