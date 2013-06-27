@@ -90,6 +90,7 @@ local notificationmarker = "-notification"
 local noinput = "no-input"
 local notimplemented = "not-implemented"
 local unknowncommand = "unknown-command"
+local unknownstream = "(Unknown Stream)"
     
 local oldfilepath
 local oldinputstate
@@ -120,7 +121,7 @@ function detectchanges()
             newinputstate = "input"
             newfilepath = get_filepath()
         
-            if newfilepath ~= oldfilepath then
+            if newfilepath ~= oldfilepath and get_filepath() ~= unknownstream then
                 oldfilepath = newfilepath
                 notificationbuffer = notificationbuffer .. "filepath-change"..notificationmarker..msgterminator
             end
@@ -245,7 +246,7 @@ function get_filepath ()
 				     if metas and metas["title"] and string.len(metas["title"]) > 0 then
 				          response = ":::(Stream: "..metas["title"]..")"
 					 else
-					      response = ":::(Stream)"
+				          response = unknownstream
 					 end
 			    end
             else
@@ -288,12 +289,12 @@ function get_duration ()
     
         if input then
             local item = vlc.input.item()
-            if item then
+            if (item and item:duration()) then
             -- Try to get duration, which might not be available straight away
                 local i = 0            
                 repeat
                     vlc.misc.mwait(vlc.misc.mdate() + durationdelay)
-                    response = vlc.input.item():duration()
+                    response = item:duration()
                     i = i + 1
                 until response > 0 or i > 5
             else
