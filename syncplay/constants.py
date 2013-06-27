@@ -26,8 +26,8 @@ COMMANDS_PAUSE = ["p", "play", "pause"]
 COMMANDS_ROOM = ["r", "room"]
 COMMANDS_HELP = ['help', 'h', '?', '/?', r'\?']
 MPC_MIN_VER = "1.6.4"
-VLC_MIN_VERSION = "2.0.6"
-VLC_INTERFACE_MIN_VERSION = "0.1.0"
+VLC_MIN_VERSION = "2.0.0"
+VLC_INTERFACE_MIN_VERSION = "0.1.1"
 MPC_PATHS = [
              r"C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
              r"C:\Program Files\MPC-HC\mpc-hc.exe",
