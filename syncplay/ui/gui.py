@@ -71,6 +71,7 @@ class MainWindow(QtGui.QMainWindow):
         self.listTreeView.setModel(self.listTreeModel)
         self.listTreeView.setItemsExpandable(False)
         self.listTreeView.expandAll()
+        self.listTreeView.resizeColumnToContents(0)
         self.listTreeView.resizeColumnToContents(1)
 
     def roomClicked(self, item):
