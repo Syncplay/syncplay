@@ -34,6 +34,7 @@ class ConfigurationGetter(object):
                         "playerArgs": [],
                         "playerClass": None,
 						"slowOnDesync": True,
+                        "rewindOnDesync": True,
                         "malUsername": "",
                         "malPassword": ""
                         }
@@ -55,12 +56,13 @@ class ConfigurationGetter(object):
                          "forceGuiPrompt",
                          "noGui",
                          "noStore",
-                         "slowOnDesync"
+                         "slowOnDesync",
+                         "rewindOnDesync"
                         ]
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowOnDesync", "forceGuiPrompt"],
+                        "client_settings": ["name", "room", "playerPath", "slowOnDesync", "rewindOnDesync", "forceGuiPrompt"],
                         "mal": ["malPassword", "malUsername"]
                         }
 
