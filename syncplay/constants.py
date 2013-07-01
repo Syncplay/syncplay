@@ -20,6 +20,7 @@ SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
 
 #Usually there's no need to adjust these
+FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]" 
 COMMANDS_UNDO = ["u", "undo", "revert"]
 COMMANDS_LIST = ["l", "list", "users"]
 COMMANDS_PAUSE = ["p", "play", "pause"]
