@@ -28,6 +28,9 @@ class MainWindow(QtGui.QMainWindow):
             self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
     
     def showUserList(self, currentUser, rooms):
+        def stripfilename(filename):
+            return re.sub(constants.FILENAME_STRIP_REGEX,"",filename) 
+        
         self._usertreebuffer = QtGui.QStandardItemModel()
         self._usertreebuffer.setColumnCount(2)
         self._usertreebuffer.setHorizontalHeaderLabels(("Room / User","File being played"))
@@ -49,11 +52,11 @@ class MainWindow(QtGui.QMainWindow):
                 if(user.file):
                     fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")")
                     if(currentUser.file):
-                        if(user.file['name'] == currentUser.file['name'] and user.file['size'] != currentUser.file['size']):
+                        if(stripfilename(user.file['name']) == stripfilename(currentUser.file['name']) and user.file['size'] != currentUser.file['size']):
                             fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")" + " (Different size!)")
                             if room == currentUser.room:
                                 fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
-                        elif (user.file['name'] != currentUser.file['name'] and room == currentUser.room):
+                        elif (stripfilename(user.file['name']) != stripfilename(currentUser.file['name']) and room == currentUser.room):
                             fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
                 else:
                     fileitem = QtGui.QStandardItem("(No file being played)")
