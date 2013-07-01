@@ -430,7 +430,7 @@ class SyncplayUser(object):
             return False
         sameName = stripfilename(self.file['name']) == stripfilename(file_['name'])
         sameSize = self.file['size'] == file_['size']
-        sameDuration = int(self.file['duration']) - int(file_['duration']) < constants.DIFFFERENT_DURATION_THRESHOLD
+        sameDuration = abs(int(self.file['duration']) - int(file_['duration'])) < constants.DIFFFERENT_DURATION_THRESHOLD
         return sameName and sameSize and sameDuration
       
     def __lt__(self, other):
