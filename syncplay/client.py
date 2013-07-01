@@ -2,6 +2,7 @@
 import hashlib
 import os.path
 import time
+import re
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
@@ -422,9 +423,12 @@ class SyncplayUser(object):
         self.file = file_
     
     def isFileSame(self, file_):
+        def stripfilename(filename):
+            return re.sub(constants.FILENAME_STRIP_REGEX,"",filename) 
+        
         if(not self.file):
             return False
-        sameName = self.file['name'] == file_['name']
+        sameName = stripfilename(self.file['name']) == stripfilename(file_['name'])
         sameSize = self.file['size'] == file_['size']
         sameDuration = int(self.file['duration']) - int(file_['duration']) < constants.DIFFFERENT_DURATION_THRESHOLD
         return sameName and sameSize and sameDuration
