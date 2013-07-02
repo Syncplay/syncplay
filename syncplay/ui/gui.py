@@ -38,7 +38,7 @@ class MainWindow(QtGui.QMainWindow):
         
         for room in rooms:
             roomitem = QtGui.QStandardItem(room)
-            if room == currentUser.room:
+            if (room == currentUser.room):
                 font = QtGui.QFont()
                 font.setWeight(QtGui.QFont.Bold)
                 roomitem.setFont(font)
@@ -49,18 +49,28 @@ class MainWindow(QtGui.QMainWindow):
             for user in rooms[room]:
                 useritem = QtGui.QStandardItem(user.username)
                 fileitem = QtGui.QStandardItem("")
-                if(user.file):
+                if (user.file):
                     fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")")
-                    if(currentUser.file):
-                        if(stripfilename(user.file['name']) == stripfilename(currentUser.file['name']) and user.file['size'] != currentUser.file['size']):
-                            fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")" + " (Different size!)")
-                            if room == currentUser.room:
+                    if (currentUser.file):
+                        sameName = stripfilename(user.file['name']) == stripfilename(currentUser.file['name'])
+                        sameSize = user.file['size'] == currentUser.file['size']
+                        sameDuration = abs(int(user.file['duration']) - int(currentUser.file['duration'])) < constants.DIFFFERENT_DURATION_THRESHOLD
+                        sameRoom = room == currentUser.room
+                        differentName = not sameName
+                        differentSize = not sameSize
+                        differentDuration = not sameDuration
+                        if (sameName or sameRoom):
+                            if (differentSize and sameDuration):
+                                fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")" + " (Different size!)")
+                            elif (differentSize and differentDuration):
+                                fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")" + " (Different size and duration!)")
+                            elif (differentDuration):
+                                fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")" + " (Different duration!)")
+                            if (sameRoom and (differentName or differentSize or differentDuration)):
                                 fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
-                        elif (stripfilename(user.file['name']) != stripfilename(currentUser.file['name']) and room == currentUser.room):
-                            fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
                 else:
                     fileitem = QtGui.QStandardItem("(No file being played)")
-                    if room == currentUser.room:
+                    if (room == currentUser.room):
                         fileitem.setForeground(QtGui.QBrush(QtGui.QColor('blue')))
                 if(currentUser.username == user.username):
                     font = QtGui.QFont()
