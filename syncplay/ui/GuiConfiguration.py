@@ -5,6 +5,7 @@ from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QD
 import os
 import sys
 from syncplay.messages import getMessage
+from syncplay import constants
 
 class GuiConfiguration:
     def __init__(self, config, error = None):
@@ -169,6 +170,11 @@ class ConfigDialog(QtGui.QDialog):
             self.config['slowOnDesync'] = True
         else:
             self.config['slowOnDesync'] = False
+        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
+            if self.rewindCheckbox.isChecked() == True:
+                self.config['rewindOnDesync'] = True
+            else:
+                self.config['rewindOnDesync'] = False
         self.config['malUsername'] = self.malusernameTextbox.text()
         if self.malSettingsGroup.isChecked():
             self.config['malPassword'] = self.malpasswordTextbox.text()
@@ -261,6 +267,8 @@ class ConfigDialog(QtGui.QDialog):
         self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),"Browse")
         self.mediabrowseButton.clicked.connect(self.browseMediapath)
         self.slowdownCheckbox = QCheckBox("Slow down on desync")
+        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
+            self.rewindCheckbox = QCheckBox("Rewind on major desync")
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
         self.mediaplayerSettingsLayout.addWidget(self.executablepathCombobox , 0, 1)
@@ -269,9 +277,13 @@ class ConfigDialog(QtGui.QDialog):
         self.mediaplayerSettingsLayout.addWidget(self.mediapathTextbox , 1, 1)
         self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton , 1, 2)
         self.mediaplayerSettingsLayout.addWidget(self.slowdownCheckbox, 2, 0)
+        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
+            self.mediaplayerSettingsLayout.addWidget(self.rewindCheckbox, 3, 0)
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
         if config['slowOnDesync'] == True:
             self.slowdownCheckbox.setChecked(True)
+        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True and config['rewindOnDesync'] == True:
+            self.rewindCheckbox.setChecked(True)
 
         self.malSettingsGroup = QtGui.QGroupBox("Enable MyAnimeList updater (EXPERIMENTAL)")
         self.malSettingsGroup.setCheckable(True)
