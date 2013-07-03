@@ -254,11 +254,9 @@ class SyncFactory(Factory):
         self._createRoomIfDoesntExist(room)
         with self._roomUpdate:
             self._rooms[room][watcherProtocol] = watcher
-        self._roomStates[room]["position"] = watcher.position
-        self._roomStates[room]["setBy"] = watcher.name
-        self._roomStates[room]["lastUpdate"] = time.time()
         self._deleteRoomIfEmpty(oldRoom)
         watcher.room = room
+        self.sendState(watcherProtocol, True)
         l = lambda w: w.sendUserSetting(watcher.name, watcher.room, None, None)
         self.broadcast(watcherProtocol, l)
                 
