@@ -200,6 +200,16 @@ class SyncFactory(Factory):
             self._roomStates[watcher.room]["setBy"] = setter.name 
             self._roomStates[watcher.room]["lastUpdate"] = setter.lastUpdate
             
+
+    def __notifyIrcBot(self, position, paused, doSeek, watcher, oldPosition, pauseChanged):
+        if (self.ircVerbose):
+            if (paused and pauseChanged):
+                self.ircBot.sp_paused(watcher.name, watcher.room)
+            elif (not paused and pauseChanged):
+                self.ircBot.sp_unpaused(watcher.name, watcher.room)
+            if (doSeek and position):
+                self.ircBot.sp_seek(watcher.name, oldPosition, position, watcher.room)
+
     def updateWatcherState(self, watcherProtocol, position, paused, doSeek, latencyCalculation):
         watcher = self.getWatcher(watcherProtocol)
         self.__updateWatcherPing(latencyCalculation, watcher)
@@ -213,13 +223,7 @@ class SyncFactory(Factory):
                 self.__updatePositionState(position, doSeek or pauseChanged, watcher)
             forceUpdate = self.__shouldServerForceUpdateOnRoom(pauseChanged, doSeek)
             if(forceUpdate):
-                if(self.ircVerbose):
-                    if(paused and pauseChanged):
-                        self.ircBot.sp_paused(watcher.name, watcher.room)
-                    elif(not paused and pauseChanged):
-                        self.ircBot.sp_unpaused(watcher.name, watcher.room)
-                    if(doSeek and position):
-                        self.ircBot.sp_seek(watcher.name, oldPosition, position, watcher.room)
+                self.__notifyIrcBot(position, paused, doSeek, watcher, oldPosition, pauseChanged)
                 l = lambda w: self.sendState(w, doSeek, watcher.latency, forceUpdate)
                 self.broadcastRoom(watcher.watcherProtocol, l)
 
