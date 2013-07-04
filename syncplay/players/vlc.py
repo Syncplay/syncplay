@@ -82,7 +82,7 @@ class VlcPlayer(BasePlayer):
                 
     def displayMessage(self, message, duration = constants.OSD_DURATION * 1000):
         duration /= 1000
-        self._listener.sendLine('display-osd: {}, {}, {}'.format('top-right', duration, message))
+        self._listener.sendLine('display-osd: {}, {}, {}'.format('top-right', duration, message.encode('ascii','ignore'))) #TODO: Proper Unicode support
  
     def setSpeed(self, value):        
         self._listener.sendLine("set-rate: {:.2n}".format(value))
@@ -94,9 +94,15 @@ class VlcPlayer(BasePlayer):
     def setPaused(self, value):
         self._paused = value
         self._listener.sendLine('set-playstate: {}'.format("paused" if value else "playing"))
+        
+    def _isASCII (self, s):
+        return all(ord(c) < 256 for c in s)
     
     def openFile(self, filePath):
-        self._listener.sendLine('load-file: {}'.format(filePath))
+        if (self._isASCII(filePath) == True):
+            self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii','ignore'))) #TODO: Proper Unicode support
+        else:
+            self._client.ui.showErrorMessage(getMessage("en", "vlc-unicode-loadfile-error"), True)
         
     def _getFileInfo(self):
         self._listener.sendLine("get-duration")
@@ -190,7 +196,10 @@ class VlcPlayer(BasePlayer):
             self.__playerController = playerController
             call = [playerPath]
             if(filePath):
-                call.append(filePath)
+                if (self.__playerController._isASCII(filePath) == True):
+                    call.append(filePath) #TODO: Proper Unicode support
+                else:
+                    playerController._client.ui.showErrorMessage(getMessage("en", "vlc-unicode-loadfile-error"), True)
             call.extend(playerController.SLAVE_ARGS)
             if(args): 
                 call.extend(args)
