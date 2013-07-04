@@ -423,7 +423,7 @@ class SyncplayUser(object):
         self.file = file_
     
     def isFileSame(self, file_):
-        def stripfilename(filename):
+        def stripfilename(filename): #TODO: Add proper Unicode support
             return re.sub(constants.FILENAME_STRIP_REGEX,"",filename) 
         
         if(not self.file):
