@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.1.1
+ Version: 0.1.2
  
 --[==========================================================================[
 
@@ -70,13 +70,20 @@ Note: You may have to copy the VLC 'modules' folder to make it a sub-directory o
     * >> [Unknown command]-error: unknown-command
 
 --]==========================================================================]
-require "common"
-require "host"
 
-local connectorversion = "0.1.1"
+local modulepath = config["modulepath"]
+if(modulepath ~= nil) and (modulepath ~= "") then
+    -- Workaround for when the script is not being run from the usual VLC intf folder.
+    package.path = modulepath
+    pcall(require,"common")
+    pcall(require,"host")
+else
+    require "common"
+    require "host"
+end
 
+local connectorversion = "0.1.2"
 local durationdelay = 500000 -- Pause for get_duration command for increased reliability
-
 local port
 
 local msgterminator = "\n"
@@ -332,7 +339,7 @@ function load_file (filepath)
     vlc.playlist.add({{path=uri}})
     return "load-file-attempted\n"
 end
-    
+
 function do_command ( command, argument)
     -- Processes all commands sent by Syncplay (see protocol, above).
     
