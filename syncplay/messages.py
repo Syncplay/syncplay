@@ -73,6 +73,7 @@ en = {
        "not-json-error" : "Not a json encoded string\n",
        "hello-arguments-error" : "Not enough Hello arguments\n",
        "version-mismatch-error" : "Mismatch between versions of client and server\n",
+       "vlc-unicode-loadfile-error" : "Cannot load file through Syncplay because it contains non-ASCII characters. Please load the file through VLC.",
        "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua then please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",
        "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",                                                  
        "vlc-failed-versioncheck": "This version of VLC is not supported by Syncplay. Please use VLC 2.0.X.",
