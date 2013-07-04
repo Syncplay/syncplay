@@ -2,7 +2,7 @@ import subprocess
 import re
 import threading
 from syncplay.players.basePlayer import BasePlayer
-from syncplay import constants
+from syncplay import constants, utils
 import os
 import random
 import socket
@@ -17,7 +17,6 @@ class VlcPlayer(BasePlayer):
     
     random.seed()
     vlcport = random.randrange(constants.VLC_MIN_PORT, constants.VLC_MAX_PORT) if (constants.VLC_MIN_PORT < constants.VLC_MAX_PORT) else constants.VLC_MIN_PORT
-    SLAVE_ARGS.append('--lua-config=syncplay={{port=\"{}\"}}'.format(str(vlcport)))
     
     def __init__(self, client, playerPath, filePath, args):
         from twisted.internet import reactor
@@ -200,6 +199,29 @@ class VlcPlayer(BasePlayer):
                     call.append(filePath) #TODO: Proper Unicode support
                 else:
                     playerController._client.ui.showErrorMessage(getMessage("en", "vlc-unicode-loadfile-error"), True)
+            def _usevlcintf(vlcIntfPath):
+                vlcSyncplayInterfacePath = vlcIntfPath + "syncplay.lua"
+                if os.path.isfile(vlcSyncplayInterfacePath):
+                    with open(vlcSyncplayInterfacePath, 'rU') as interfacefile:
+                        for line in interfacefile:
+                            if "local connectorversion" in line:
+                                interface_version = line[26:31]
+                                if (int(interface_version.replace(".","")) >= int(constants.VLC_INTERFACE_MIN_VERSION.replace(".",""))):
+                                    return True
+                                else:
+                                    playerController._client.ui.showErrorMessage(getMessage("en", "vlc-interface-oldversion-ignored"))
+                                    return False
+                playerController._client.ui.showErrorMessage(getMessage("en", "vlc-interface-not-installed"))
+                return False
+            playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\","/") + "/lua/intf/"
+            playerController.vlcModulePath = playerController.vlcIntfPath + "modules/?.luac"
+            if _usevlcintf(playerController.vlcIntfPath) == True:
+                playerController.SLAVE_ARGS.append('--lua-config=syncplay={{port=\"{}\"}}'.format(str(playerController.vlcport)))
+            else:
+                playerController.vlcDataPath = utils.findWorkingDir()+"\\resources"               
+                playerController.SLAVE_ARGS.append('--data-path={}'.format(playerController.vlcDataPath))
+                playerController.SLAVE_ARGS.append('--lua-config=syncplay={{modulepath=\"{}\",port=\"{}\"}}'.format(playerController.vlcModulePath,str(playerController.vlcport)))
+            
             call.extend(playerController.SLAVE_ARGS)
             if(args): 
                 call.extend(args)
@@ -211,7 +233,7 @@ class VlcPlayer(BasePlayer):
                     if "Listening on host" in line:
                         break
                     elif "lua interface error" in line:
-                        playerController._client.ui.showErrorMessage("VLC Error: " + line)
+                        playerController._client.ui.showErrorMessage(getMessage("en", "vlc-error-echo").format(line), True)
                         playerController._client.ui.showErrorMessage(getMessage("en", "vlc-failed-connection"), True)
                         break
             threading.Thread.__init__(self, name="VLC Listener")
