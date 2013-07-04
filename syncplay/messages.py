@@ -51,7 +51,9 @@ en = {
       "more-info-notification" : "More info available at: {}",    #projectURL
       
       "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above", # VLC version, VLC min version
-      "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above", # VLC interface version, VLC interface min version      
+      "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above", # VLC interface version, VLC interface min version
+      "vlc-interface-oldversion-ignored": "Warning: Syncplay detected that an old version version of the Syncplay interface module for VLC was installed in the VLC directory. As such, it is being ignored in favour of the syncplay.lua module contained within the Syncplay directory. If you wish to run any VLC extensions or interface scripts then please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",
+      "vlc-interface-not-installed": "Warning: The Syncplay interface module for VLC was not found in the VLC directory. As such, VLC will use the syncplau.lua module contained within the Syncplay directory. If you wish to run any VLC extensions or interface scripts then please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",      
 
       # Client prompts
       "enter-to-exit-prompt" : "Press enter to exit\n",
@@ -73,6 +75,7 @@ en = {
        "not-json-error" : "Not a json encoded string\n",
        "hello-arguments-error" : "Not enough Hello arguments\n",
        "version-mismatch-error" : "Mismatch between versions of client and server\n",
+       "vlc-error-echo": "VLC error: {}", # VLC error line
        "vlc-unicode-loadfile-error" : "Cannot load file through Syncplay because it contains non-ASCII characters. Please load the file through VLC.",
        "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua then please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",
        "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",                                                  
