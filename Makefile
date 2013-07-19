@@ -24,6 +24,7 @@ common:
 	cp -r syncplay $(LIB_PATH)/syncplay/
 	cp -r resources/hicolor $(SHARE_PATH)/icons/
 	cp -r resources/*.png $(LIB_PATH)/syncplay/resources/
+	cp -r resources/lua/intf/*.lua $(LIB_PATH)/syncplay/resources/lua/intf/
 	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/app-install/icons/
 	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/pixmaps/
 
@@ -43,7 +44,7 @@ client:
 	
 ifeq ($(VLC_SUPPORT),true)
 	-mkdir -p $(LIB_PATH)/vlc/lua/intf/
-	cp resources/syncplay.lua $(LIB_PATH)/vlc/lua/intf/
+	cp resources/lua/intf/syncplay.lua $(LIB_PATH)/vlc/lua/intf/
 endif
 
 u-client:
