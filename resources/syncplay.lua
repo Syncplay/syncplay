@@ -4,25 +4,20 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.1.2
+ Version: 0.1.4
  
 --[==========================================================================[
 
  === Installation instructions ===
 
-Place the syncplay.lua file in one of the VLC /lua/intf/ sub-directories. By default this should be:
-* Windows (all users): %ProgramFiles%\VideoLAN\VLC\lua\intf\
-* Windows (current user): %APPDATA%\VLC\lua\intf\
-* Linux (all users): /usr/lib/vlc/lua/intf/
-* Linux (current user): ~/.local/share/vlc/lua/intf/
-* Mac OS X (all users): /Applications/VLC.app/Contents/MacOS/share/lua/intf/
-* Mac OS X (current user): ~/Library/Application Support/org.videolan.vlc/lua/intf/
+Place the syncplay.lua file in the main (all user) VLC /lua/intf/ sub-directory. By default this should be:
+* Window: %ProgramFiles%\VideoLAN\VLC\lua\intf\
+* Linux: /usr/lib/vlc/lua/intf/
+* Mac OS X: /Applications/VLC.app/Contents/MacOS/share/lua/intf/
 
 If a directory does not exist then you may have to create it.
 
-If you copy the file to the 'all users' directory then you may need to re-copy the file when you update VLC.
-
-Note: You may have to copy the VLC 'modules' folder to make it a sub-directory of the 'intf' folder.
+You may also need to re-copy the file when you update VLC.
 
  === Commands and responses ===
  = Note: ? denotes optional responses; * denotes mandatory response; uses \n terminator.
@@ -82,7 +77,7 @@ else
     require "host"
 end
 
-local connectorversion = "0.1.2"
+local connectorversion = "0.1.3"
 local durationdelay = 500000 -- Pause for get_duration command for increased reliability
 local port
 
@@ -111,8 +106,8 @@ if (port == nil or port < 1) then port = 4123 end
 
 vlc.msg.info("Hosting Syncplay interface on port: "..port)
 
-if string.sub(vlc.misc.version(),1,4) == "2.1." then
-    vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module. Please use VLC 2.0.7+ rather than 2.1.X.")
+if string.sub(vlc.misc.version(),1,4) ~= "2.0." then
+    vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module. Please use VLC 2.0.7+ rather than 2.1.* or 2.2.*.")
     vlc.misc.quit()
 else
     h = host.host()
