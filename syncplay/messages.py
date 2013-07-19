@@ -98,12 +98,34 @@ en = {
       "args-argument" : 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
       
       # Client labels
-      "config-window-title" : 'Syncplay configuration',
-      "host-label" : 'Host: ',
-      "username-label" :  'Username: ',
-      "room-label" : 'Default room: ',
-      "password-label" :  'Server password (optional): ',
-      "path-label" : 'Path to player executable: ',
+      "config-window-title" : "Syncplay configuration",
+      
+      "connection-group-title" : "Connection settings",
+      "host-label" : "Server address: ",
+      "username-label" :  "Username:",
+      "password-label" :  "Server password (optional):",
+      "room-label" : "Default room: ",
+      
+      "media-setting-title" : "Media player settings",
+      "executable-path-label" : "Path to player executable:",
+      "media-path-label" : "Path to media file:",
+      "browse-label" : "Browse",
+      "slowdown-label" : "Slow down on desync",
+      "rewind-label" : "Rewind on major desync",
+      
+      "mal-title" : "Enable MyAnimeList updater (EXPERIMENTAL)",
+      "mal-username" : "MAL username:",
+      "mal-password" : "MAL password:",
+      
+      "alwayshow-label" : "Always show this dialog",
+      "donotstore-label" : "Do not store this configuration",
+      
+      "help-label" : "Help",
+      "run-label" : "Run Syncplay",
+      "storeandrun-label" : "Store configuration and run Syncplay",
+      
+      "roomuser-heading-label" : "Room / User",
+      "fileplayed-heading-label" : "File being played",
       
       # Server notifications
       "welcome-server-notification" : "Welcome to Syncplay server, ver. {0}", #version
