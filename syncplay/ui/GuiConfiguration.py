@@ -62,9 +62,9 @@ class ConfigDialog(QtGui.QDialog):
             
     def runButtonTextUpdate(self):
         if (self.donotstoreCheckbox.isChecked()):
-            self.runButton.setText("Run Syncplay")
+            self.runButton.setText(getMessage("en", "run-label"))
         else:
-            self.runButton.setText("Store configuration and run Syncplay")
+            self.runButton.setText(getMessage("en", "storeandrun-label"))
             
     def openHelp(self):
         if sys.platform.startswith('linux'):
@@ -233,7 +233,7 @@ class ConfigDialog(QtGui.QDialog):
         else:
             host = config['host']+":"+str(config['port'])
             
-        self.connectionSettingsGroup = QtGui.QGroupBox("Connection settings")
+        self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("en", "connection-group-title"))
         self.hostTextbox = QLineEdit(host, self)
         self.hostLabel = QLabel(getMessage("en", "host-label"), self)
         self.usernameTextbox = QLineEdit(config['name'],self)
@@ -253,22 +253,22 @@ class ConfigDialog(QtGui.QDialog):
         self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
         
-        self.mediaplayerSettingsGroup = QtGui.QGroupBox("Media player settings")
+        self.mediaplayerSettingsGroup = QtGui.QGroupBox(getMessage("en", "media-setting-title"))
         self.executablepathCombobox = QtGui.QComboBox(self)
         self.executablepathCombobox.setEditable(True)
         self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'],playerpaths))
         self.executablepathCombobox.setMinimumWidth(200)
         self.executablepathCombobox.setMaximumWidth(200)
-        self.executablepathLabel = QLabel("Path to player executable:", self)
-        self.executablebrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),"Browse")
+        self.executablepathLabel = QLabel(getMessage("en", "executable-path-label"), self)
+        self.executablebrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),getMessage("en", "browse-label"))
         self.executablebrowseButton.clicked.connect(self.browsePlayerpath)
         self.mediapathTextbox = QLineEdit(config['file'], self)
-        self.mediapathLabel = QLabel("Path to media file:", self)
-        self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),"Browse")
+        self.mediapathLabel = QLabel(getMessage("en", "media-path-label"), self)
+        self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),getMessage("en", "browse-label"))
         self.mediabrowseButton.clicked.connect(self.browseMediapath)
-        self.slowdownCheckbox = QCheckBox("Slow down on desync")
+        self.slowdownCheckbox = QCheckBox(getMessage("en", "slowdown-label"))
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
-            self.rewindCheckbox = QCheckBox("Rewind on major desync")
+            self.rewindCheckbox = QCheckBox(getMessage("en", "rewind-label"))
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
         self.mediaplayerSettingsLayout.addWidget(self.executablepathCombobox , 0, 1)
@@ -285,15 +285,15 @@ class ConfigDialog(QtGui.QDialog):
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True and config['rewindOnDesync'] == True:
             self.rewindCheckbox.setChecked(True)
 
-        self.malSettingsGroup = QtGui.QGroupBox("Enable MyAnimeList updater (EXPERIMENTAL)")
+        self.malSettingsGroup = QtGui.QGroupBox(getMessage("en", "mal-title"))
         self.malSettingsGroup.setCheckable(True)
         self.malSettingsGroup.toggled.connect(self.malToggled)
         self.malSettingsSplit = QtGui.QSplitter(self)
         self.malusernameTextbox = QLineEdit(config['malUsername'],self)
-        self.malusernameLabel = QLabel("MAL username:", self)
+        self.malusernameLabel = QLabel(getMessage("en", "mal-username"), self)
         self.malpasswordTextbox = QLineEdit(config['malPassword'],self)
         self.malpasswordTextbox.setEchoMode(QtGui.QLineEdit.Password)
-        self.malpasswordLabel = QLabel("MAL password:", self)
+        self.malpasswordLabel = QLabel(getMessage("en", "mal-password"), self)
         self.malSettingsLayout = QtGui.QGridLayout()
         self.malSettingsLayout.addWidget(self.malusernameLabel , 0, 0)
         self.malSettingsLayout.addWidget(self.malusernameTextbox, 0, 1)
@@ -301,7 +301,7 @@ class ConfigDialog(QtGui.QDialog):
         self.malSettingsLayout.addWidget(self.malpasswordTextbox, 1, 1)
         self.malSettingsGroup.setLayout(self.malSettingsLayout)
         
-        self.malenabledCheckbox = QCheckBox("Enable MyAnimeList updater (EXPERIMENTAL)")
+        self.malenabledCheckbox = QCheckBox(getMessage("en", "mal-title"))
         self.malenabledCheckbox.toggled.connect(self.malToggled) 
         if config['malPassword'] == None or config['malPassword'] == "":
             self.malenabledCheckbox.setChecked(False)
@@ -309,11 +309,11 @@ class ConfigDialog(QtGui.QDialog):
         else:
             self.malenabledCheckbox.hide()
         
-        self.alwaysshowCheckbox = QCheckBox("Always show this dialog")
+        self.alwaysshowCheckbox = QCheckBox(getMessage("en", "alwayshow-label"))
         if config['forceGuiPrompt'] == True:
             self.alwaysshowCheckbox.setChecked(True)
         
-        self.donotstoreCheckbox = QCheckBox("Do not store this configuration")       
+        self.donotstoreCheckbox = QCheckBox(getMessage("en", "donotstore-label"))       
         self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
                       
         self.mainLayout = QtGui.QVBoxLayout()
@@ -330,14 +330,14 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addWidget(self.malSettingsGroup)
         
         self.topLayout = QtGui.QHBoxLayout()
-        self.helpButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'help.png'),"Help")
+        self.helpButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'help.png'),getMessage("en", "help-label"))
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.pressed.connect(self.openHelp)
-        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'),"Store configuration and run Syncplay")
+        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'),getMessage("en", "storeandrun-label"))
         self.runButton.pressed.connect(self._saveDataAndLeave)
         if config['noStore'] == True:
             self.donotstoreCheckbox.setChecked(True)
-            self.runButton.setText("Run Syncplay")
+            self.runButton.setText(getMessage("en", "run-label"))
         self.topLayout.addWidget(self.helpButton, Qt.AlignLeft)
         self.topLayout.addWidget(self.runButton, Qt.AlignRight)
         self.mainLayout.addWidget(self.alwaysshowCheckbox)
