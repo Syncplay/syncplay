@@ -54,7 +54,7 @@ class MainWindow(QtGui.QMainWindow):
                     if (currentUser.file):
                         sameName = stripfilename(user.file['name']) == stripfilename(currentUser.file['name'])
                         sameSize = user.file['size'] == currentUser.file['size']
-                        sameDuration = abs(int(user.file['duration']) - int(currentUser.file['duration'])) < constants.DIFFFERENT_DURATION_THRESHOLD
+                        sameDuration = abs(round(user.file['duration']) - round(currentUser.file['duration'])) < constants.DIFFFERENT_DURATION_THRESHOLD
                         sameRoom = room == currentUser.room
                         differentName = not sameName
                         differentSize = not sameSize
