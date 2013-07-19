@@ -21,6 +21,8 @@ endif
 
 common:
 	-mkdir -p $(LIB_PATH)/syncplay/resources/
+	-mkdir -p $(LIB_PATH)/syncplay/resources/lua
+	-mkdir -p $(LIB_PATH)/syncplay/resources/lua/intf
 	cp -r syncplay $(LIB_PATH)/syncplay/
 	cp -r resources/hicolor $(SHARE_PATH)/icons/
 	cp -r resources/*.png $(LIB_PATH)/syncplay/resources/
