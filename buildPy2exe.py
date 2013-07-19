@@ -303,7 +303,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${If} $$CheckBox_VLC_State == $${BST_CHECKED}
       ReadRegStr $$VLC_Directory HKLM "Software\VideoLAN\VLC" "InstallDir"
       SetOutPath $$VLC_Directory\lua\intf
-      File resources\syncplay.lua
+      File resources\lua\intf\syncplay.lua
     $${EndIf}
   FunctionEnd
     
@@ -517,7 +517,7 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
      'resources/timeline_marker.png'
     ]
-resources = ["resources/syncplay.lua", "resources/icon.ico", "resources/syncplay.png"]
+resources = ["resources/lua/intf/syncplay.lua", "resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)
 
 common_info = dict(
