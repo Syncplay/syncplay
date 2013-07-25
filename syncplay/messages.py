@@ -114,8 +114,8 @@ en = {
       "rewind-label" : "Rewind on major desync",
       
       "mal-title" : "Enable MyAnimeList updater (EXPERIMENTAL)",
-      "mal-username" : "MAL username:",
-      "mal-password" : "MAL password:",
+      "mal-username-label" : "MAL username:",
+      "mal-password-label" : "MAL password:",
       
       "alwayshow-label" : "Always show this dialog",
       "donotstore-label" : "Do not store this configuration",
@@ -126,6 +126,27 @@ en = {
       
       "roomuser-heading-label" : "Room / User",
       "fileplayed-heading-label" : "File being played",
+            
+      # Tooltips
+      
+      "host-tooltip" : "Hostname or IP to connect to, optionally including port (e.g. syncplay.pl:8999). Only synchronised with people on same server/port.",
+      "username-tooltip" : "Nickname you will be known by. There is no registration, so you can change this later.",
+      "password-tooltip" : "Passwords are only needed for connecting to private servers.",
+      "room-tooltip" : "Default room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
+      
+      "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or MPV).",
+      "media-path-tooltip" : "Location of video or stream to be opened. Necessary for MPV and mplayer2.",
+      "slowdown-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers.",
+      "rewind-tooltip" : "Jump back when needed to get back in sync. Recommended.",
+      
+      "mal-tooltip" : "Track what shows you are watching on the MyAnimeList social network.",
+      "mal-username-tooltip" : "Your MyAnimeList username.",
+      "mal-password-tooltip" : "Your MyAnimeList password. Note: This is not encrypted!",
+      
+      "alwayshow-tooltip" : "Always show this dialog - Configuration dialogue is always shown, even when opening a file with Syncplay.",
+      "donotstore-tooltip" : "Do not store this configuration - Run Syncplay with the given configuration, but do not permanently store the changes.",
+      
+      "help-tooltip" : "Opens the Syncplay.pl user guide.",
       
       # Server notifications
       "welcome-server-notification" : "Welcome to Syncplay server, ver. {0}", #version
