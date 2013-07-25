@@ -242,6 +242,17 @@ class ConfigDialog(QtGui.QDialog):
         self.usernameLabel = QLabel(getMessage("en", "username-label"), self)
         self.serverpassTextbox = QLineEdit(config['password'],self)
         self.defaultroomLabel = QLabel(getMessage("en", "room-label"), self)
+        
+        if (constants.SHOW_TOOLTIPS == True):
+            self.hostLabel.setToolTip(getMessage("en", "host-tooltip"))
+            self.hostTextbox.setToolTip(getMessage("en", "host-tooltip"))
+            self.usernameLabel.setToolTip(getMessage("en", "username-tooltip"))
+            self.usernameTextbox.setToolTip(getMessage("en", "username-tooltip"))
+            self.serverpassLabel.setToolTip(getMessage("en", "password-tooltip"))
+            self.serverpassTextbox.setToolTip(getMessage("en", "password-tooltip"))
+            self.defaultroomLabel.setToolTip(getMessage("en", "room-tooltip"))
+            self.defaultroomTextbox.setToolTip(getMessage("en", "room-tooltip"))
+            
         self.connectionSettingsLayout = QtGui.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
         self.connectionSettingsLayout.addWidget(self.hostTextbox, 0, 1)
@@ -267,8 +278,17 @@ class ConfigDialog(QtGui.QDialog):
         self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),getMessage("en", "browse-label"))
         self.mediabrowseButton.clicked.connect(self.browseMediapath)
         self.slowdownCheckbox = QCheckBox(getMessage("en", "slowdown-label"))
+        if (constants.SHOW_TOOLTIPS == True):
+            self.executablepathLabel.setToolTip(getMessage("en", "executable-path-tooltip"))
+            self.executablepathCombobox.setToolTip(getMessage("en", "executable-path-tooltip"))
+            self.mediapathLabel.setToolTip(getMessage("en", "media-path-tooltip"))
+            self.mediapathTextbox.setToolTip(getMessage("en", "media-path-tooltip"))
+            self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
+        
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
             self.rewindCheckbox = QCheckBox(getMessage("en", "rewind-label"))
+            if (constants.SHOW_TOOLTIPS == True):
+                self.rewindCheckbox.setToolTip(getMessage("en", "rewind-tooltip"))
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
         self.mediaplayerSettingsLayout.addWidget(self.executablepathCombobox , 0, 1)
@@ -290,10 +310,16 @@ class ConfigDialog(QtGui.QDialog):
         self.malSettingsGroup.toggled.connect(self.malToggled)
         self.malSettingsSplit = QtGui.QSplitter(self)
         self.malusernameTextbox = QLineEdit(config['malUsername'],self)
-        self.malusernameLabel = QLabel(getMessage("en", "mal-username"), self)
+        self.malusernameLabel = QLabel(getMessage("en", "mal-username-label"), self)
+        
         self.malpasswordTextbox = QLineEdit(config['malPassword'],self)
         self.malpasswordTextbox.setEchoMode(QtGui.QLineEdit.Password)
-        self.malpasswordLabel = QLabel(getMessage("en", "mal-password"), self)
+        self.malpasswordLabel = QLabel(getMessage("en", "mal-password-label"), self)
+        if (constants.SHOW_TOOLTIPS == True):
+            self.malusernameLabel.setToolTip(getMessage("en", "mal-username-tooltip"))
+            self.malusernameTextbox.setToolTip(getMessage("en", "mal-username-tooltip"))
+            self.malpasswordLabel.setToolTip(getMessage("en", "mal-password-tooltip"))
+            self.malpasswordTextbox.setToolTip(getMessage("en", "mal-password-tooltip"))
         self.malSettingsLayout = QtGui.QGridLayout()
         self.malSettingsLayout.addWidget(self.malusernameLabel , 0, 0)
         self.malSettingsLayout.addWidget(self.malusernameTextbox, 0, 1)
@@ -310,10 +336,16 @@ class ConfigDialog(QtGui.QDialog):
             self.malenabledCheckbox.hide()
         
         self.alwaysshowCheckbox = QCheckBox(getMessage("en", "alwayshow-label"))
+        
         if config['forceGuiPrompt'] == True:
             self.alwaysshowCheckbox.setChecked(True)
         
-        self.donotstoreCheckbox = QCheckBox(getMessage("en", "donotstore-label"))       
+        self.donotstoreCheckbox = QCheckBox(getMessage("en", "donotstore-label"))
+        if (constants.SHOW_TOOLTIPS == True):
+            self.malenabledCheckbox.setToolTip(getMessage("en", "mal-tooltip"))
+            self.alwaysshowCheckbox.setToolTip(getMessage("en", "alwayshow-tooltip"))
+            self.donotstoreCheckbox.setToolTip(getMessage("en", "donotstore-tooltip"))
+               
         self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
                       
         self.mainLayout = QtGui.QVBoxLayout()
@@ -331,6 +363,8 @@ class ConfigDialog(QtGui.QDialog):
         
         self.topLayout = QtGui.QHBoxLayout()
         self.helpButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'help.png'),getMessage("en", "help-label"))
+        if (constants.SHOW_TOOLTIPS == True):
+            self.helpButton.setToolTip(getMessage("en", "help-tooltip"))
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.pressed.connect(self.openHelp)
         self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'),getMessage("en", "storeandrun-label"))
