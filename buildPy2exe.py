@@ -517,8 +517,9 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
      'resources/timeline_marker.png'
     ]
-resources = ["resources/lua/intf/syncplay.lua", "resources/icon.ico", "resources/syncplay.png"]
+resources = ["resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)
+intf_resources = ["resources/lua/intf/syncplay.lua"]
 
 common_info = dict(
     name='Syncplay',
@@ -542,7 +543,7 @@ info = dict(
                          'compressed': 1
                          }
              },
-    data_files = [("resources", resources)],
+    data_files = [("resources", resources),("resources/lua/intf", intf_resources)],
     zipfile = "lib/libsync",
     cmdclass = {"py2exe": build_installer},               
 )
