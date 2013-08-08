@@ -234,7 +234,6 @@ class VlcPlayer(BasePlayer):
                         break
                     elif "lua interface error" in line:
                         playerController._client.ui.showErrorMessage(getMessage("en", "vlc-error-echo").format(line), True)
-                        playerController._client.ui.showErrorMessage(getMessage("en", "vlc-failed-connection"), True)
                         break
             threading.Thread.__init__(self, name="VLC Listener")
             asynchat.async_chat.__init__(self)
