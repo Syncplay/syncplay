@@ -296,6 +296,7 @@ class MainWindow(QtGui.QMainWindow):
         
         window.seekLayout = QtGui.QHBoxLayout()
         window.seekInput.setMaximumWidth(100)
+        window.seekInput.setText("0:00")
         
         window.seekLayout.addWidget(window.seekInput)
         window.seekLayout.addWidget(window.seekButton)
