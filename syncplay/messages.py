@@ -132,7 +132,7 @@ en = {
       "host-tooltip" : "Hostname or IP to connect to, optionally including port (e.g. syncplay.pl:8999). Only synchronised with people on same server/port.",
       "username-tooltip" : "Nickname you will be known by. There is no registration, so you can change this later.",
       "password-tooltip" : "Passwords are only needed for connecting to private servers.",
-      "room-tooltip" : "Default room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
+      "room-tooltip" : "Room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
       
       "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or MPV).",
       "media-path-tooltip" : "Location of video or stream to be opened. Necessary for MPV and mplayer2.",
@@ -143,8 +143,8 @@ en = {
       "mal-username-tooltip" : "Your MyAnimeList username.",
       "mal-password-tooltip" : "Your MyAnimeList password. Note: This is not encrypted!",
       
-      "alwayshow-tooltip" : "Always show this dialog - Configuration dialogue is always shown, even when opening a file with Syncplay.",
-      "donotstore-tooltip" : "Do not store this configuration - Run Syncplay with the given configuration, but do not permanently store the changes.",
+      "alwayshow-tooltip" : "Configuration dialogue is always shown, even when opening a file with Syncplay.",
+      "donotstore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.",
       
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
       
