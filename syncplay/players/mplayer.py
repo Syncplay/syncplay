@@ -77,7 +77,7 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine("get_property {}".format(property_))
     
     def displayMessage(self, message, duration = (constants.OSD_DURATION*1000)):
-        self._listener.sendLine('osd_show_text "{!s}" {} {}'.format(message, duration, constants.MPLAYER_OSD_LEVEL))
+        self._listener.sendLine(u'osd_show_text "{!s}" {} {}'.format(message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
     
     def setSpeed(self, value):        
         self._setProperty('speed', "{:.2f}".format(value))
