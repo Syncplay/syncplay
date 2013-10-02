@@ -213,7 +213,7 @@ class VlcPlayer(BasePlayer):
                                     return False
                 playerController._client.ui.showErrorMessage(getMessage("en", "vlc-interface-not-installed"))
                 return False
-            playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\","/") + "/lua/intf/" # TODO: Make Mac version use /Applications/VLC.app/Contents/MacOS/share/lua/intf/
+            playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\","/").replace("/usr/bin/","/usr/lib/") + "/lua/intf/" # TODO: Make Mac version use /Applications/VLC.app/Contents/MacOS/share/lua/intf/
             playerController.vlcModulePath = playerController.vlcIntfPath + "modules/?.luac"
             if _usevlcintf(playerController.vlcIntfPath) == True:
                 playerController.SLAVE_ARGS.append('--lua-config=syncplay={{port=\"{}\"}}'.format(str(playerController.vlcport)))
