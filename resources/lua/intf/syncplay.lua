@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.1.4
+ Version: 0.1.5
  
 --[==========================================================================[
 
@@ -77,7 +77,7 @@ else
     require "host"
 end
 
-local connectorversion = "0.1.3"
+local connectorversion = "0.1.5"
 local durationdelay = 500000 -- Pause for get_duration command for increased reliability
 local port
 
@@ -99,6 +99,8 @@ local oldinputstate
 local newfilepath
 local newinputstate
 
+local running = true
+
 -- Start hosting Syncplay interface.
 
 port = tonumber(config["port"])
@@ -106,9 +108,22 @@ if (port == nil or port < 1) then port = 4123 end
 
 vlc.msg.info("Hosting Syncplay interface on port: "..port)
 
-if string.sub(vlc.misc.version(),1,4) ~= "2.0." then
-    vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module. Please use VLC 2.0.7+ rather than 2.1.* or 2.2.*.")
-    vlc.misc.quit()
+function mightbewindows()
+    -- Used to detect whether the Operating System might be Windows.
+    sysos = os.getenv("OS")
+    if sysos == nil then
+        return true
+	elseif sysos == "" or string.match(sysos:lower(), "windows") then
+        return true
+	else
+        return false
+	end
+	
+end
+
+if mightbewindows() == true and string.sub(vlc.misc.version(),1,4) ~= "2.0." then
+    vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module on Windows. Please use VLC 2.0.* rather than 2.1.* or 2.2.*.")
+	quit_vlc()
 else
     h = host.host()
 end
@@ -335,6 +350,11 @@ function load_file (filepath)
     return "load-file-attempted\n"
 end
 
+function quit_vlc()
+    running = false
+	vlc.misc.quit()
+end
+
 function do_command ( command, argument)
     -- Processes all commands sent by Syncplay (see protocol, above).
     
@@ -355,7 +375,7 @@ function do_command ( command, argument)
     elseif command == "set-rate"              then           errormsg = set_var("rate", tonumber(argument))
     elseif command == "display-osd"           then           errormsg = display_osd(argument) 
     elseif command == "load-file"             then response           = load_file(argument)
-    elseif command == "close-vlc"             then                      vlc.misc.quit()
+    elseif command == "close-vlc"             then                      quit_vlc()
     else                                                     errormsg = unknowncommand
     end
     
@@ -395,7 +415,7 @@ function set_playstate(argument)
 end
 
     -- main loop, which alternates between writing and reading
-while not vlc.misc.should_die() do
+while running do
         -- accept new connections and select active clients
     local write, read = h:accept_and_select()
 
