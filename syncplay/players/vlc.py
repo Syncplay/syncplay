@@ -4,6 +4,7 @@ import threading
 from syncplay.players.basePlayer import BasePlayer
 from syncplay import constants, utils
 import os
+import sys
 import random
 import socket
 import asynchat, asyncore
