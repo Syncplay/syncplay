@@ -222,7 +222,10 @@ class VlcPlayer(BasePlayer):
             if _usevlcintf(playerController.vlcIntfPath) == True:
                 playerController.SLAVE_ARGS.append('--lua-config=syncplay={{port=\"{}\"}}'.format(str(playerController.vlcport)))
             else:
-                playerController.vlcDataPath = utils.findWorkingDir()+"\\resources"               
+                if sys.platform.startswith('linux'):
+                    playerController.vlcDataPath = "/usr/lib/syncplay/resources"
+                else:
+                    playerController.vlcDataPath = utils.findWorkingDir()+"\\resources"
                 playerController.SLAVE_ARGS.append('--data-path={}'.format(playerController.vlcDataPath))
                 playerController.SLAVE_ARGS.append('--lua-config=syncplay={{modulepath=\"{}\",port=\"{}\"}}'.format(playerController.vlcModulePath,str(playerController.vlcport)))
             
