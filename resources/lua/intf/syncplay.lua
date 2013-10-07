@@ -118,17 +118,17 @@ function mightbewindows()
     sysos = os.getenv("OS")
     if sysos == nil then
         return false
-	elseif sysos == "" or string.match(sysos:lower(), "windows") then
+    elseif sysos == "" or string.match(sysos:lower(), "windows") then
         return true
-	else
+    else
         return false
-	end
-	
+    end
+    
 end
 
 if mightbewindows() == true and string.sub(vlc.misc.version(),1,4) ~= "2.0." then
     vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module on Windows. Please use VLC 2.0.* rather than 2.1.* or 2.2.*.")
-	quit_vlc()
+    quit_vlc()
 else
     h = host.host()
 end
@@ -261,16 +261,16 @@ function get_filepath ()
         if input then
             local item = vlc.input.item()
             if item then
-			    if string.find(item:uri(),"file://") then
+                if string.find(item:uri(),"file://") then
                      response = vlc.strings.decode_uri(item:uri())
-				else
-				     local metas = item:metas()
-				     if metas and metas["title"] and string.len(metas["title"]) > 0 then
-				          response = ":::(Stream: "..metas["title"]..")"
-					 else
-				          response = unknownstream
-					 end
-			    end
+                else
+                     local metas = item:metas()
+                     if metas and metas["title"] and string.len(metas["title"]) > 0 then
+                          response = ":::(Stream: "..metas["title"]..")"
+                     else
+                          response = unknownstream
+                     end
+                end
             else
                 errormsg = noinput
             end
@@ -349,7 +349,7 @@ end
 
 function load_file (filepath)
     -- [Used by load-file command]
-	
+    
     local uri = vlc.strings.make_uri(filepath)
     vlc.playlist.add({{path=uri}})
     return "load-file-attempted\n"
