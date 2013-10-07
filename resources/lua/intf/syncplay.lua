@@ -108,6 +108,11 @@ if (port == nil or port < 1) then port = 4123 end
 
 vlc.msg.info("Hosting Syncplay interface on port: "..port)
 
+function quit_vlc()
+    running = false
+    vlc.misc.quit()
+end
+
 function mightbewindows()
     -- Used to detect whether the Operating System might be Windows.
     sysos = os.getenv("OS")
@@ -348,11 +353,6 @@ function load_file (filepath)
     local uri = vlc.strings.make_uri(filepath)
     vlc.playlist.add({{path=uri}})
     return "load-file-attempted\n"
-end
-
-function quit_vlc()
-    running = false
-    vlc.misc.quit()
 end
 
 function do_command ( command, argument)
