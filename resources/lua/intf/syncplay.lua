@@ -112,7 +112,7 @@ function mightbewindows()
     -- Used to detect whether the Operating System might be Windows.
     sysos = os.getenv("OS")
     if sysos == nil then
-        return true
+        return false
 	elseif sysos == "" or string.match(sysos:lower(), "windows") then
         return true
 	else
