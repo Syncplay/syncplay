@@ -515,7 +515,7 @@ class build_installer(py2exe):
 guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock_go.png',
      'resources/control_pause_blue.png', 'resources/cross.png', 'resources/door_in.png',
      'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
-     'resources/timeline_marker.png'
+     'resources/timeline_marker.png','resources/control_play_blue.png'
     ]
 resources = ["resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)
@@ -550,4 +550,3 @@ info = dict(
 
 sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource'])
 setup(**info)
-
