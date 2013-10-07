@@ -142,6 +142,12 @@ class MainWindow(QtGui.QMainWindow):
     def togglePause(self):
         self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
         
+    def play(self):
+        self._syncplayClient.setPaused(False)
+        
+    def pause(self):
+        self._syncplayClient.setPaused(True)
+        
     def exitSyncplay(self):
         self._syncplayClient.stop()
             
@@ -291,7 +297,7 @@ class MainWindow(QtGui.QMainWindow):
         
         window.seekInput = QtGui.QLineEdit()
         window.seekInput.returnPressed.connect(self.seekPosition)
-        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),"Seek to position")
+        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),"Seek to")
         window.seekButton.pressed.connect(self.seekPosition)
         
         window.seekLayout = QtGui.QHBoxLayout()
@@ -307,14 +313,22 @@ class MainWindow(QtGui.QMainWindow):
     def addMiscBox(self, window):
         window.miscGroup = QtGui.QGroupBox("Other commands")
         
-        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),"Undo last seek")
+        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),"Undo seek")
         window.unseekButton.pressed.connect(self.undoSeek)
-        window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),"Toggle pause")
-        window.pauseButton.pressed.connect(self.togglePause)
-        
+
         window.miscLayout = QtGui.QHBoxLayout()
         window.miscLayout.addWidget(window.unseekButton)
-        window.miscLayout.addWidget(window.pauseButton)
+        if constants.MERGE_PLAYPAUSE_BUTTONS == True:
+            window.playpauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),"Toggle pause")
+            window.playpauseButton.pressed.connect(self.togglePause)
+            window.miscLayout.addWidget(window.playpauseButton)
+        else:
+            window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'),"Play")
+            window.playButton.pressed.connect(self.play)
+            window.miscLayout.addWidget(window.playButton)
+            window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),"Pause")
+            window.pauseButton.pressed.connect(self.pause)
+            window.miscLayout.addWidget(window.pauseButton)
         
         window.miscGroup.setLayout(window.miscLayout)
         window.miscGroup.setFixedSize(window.miscGroup.sizeHint())
