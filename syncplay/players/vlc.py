@@ -168,7 +168,7 @@ class VlcPlayer(BasePlayer):
     
     @staticmethod
     def isValidPlayerPath(path):
-        if("vlc" in path and VlcPlayer.getExpandedPath(path)):
+        if("vlc" in path.lower() and VlcPlayer.getExpandedPath(path)):
             return True
         return False
     
