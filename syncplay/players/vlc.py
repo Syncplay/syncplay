@@ -216,6 +216,8 @@ class VlcPlayer(BasePlayer):
                 return False
             if sys.platform.startswith('linux'):
                 playerController.vlcIntfPath = "/usr/lib/vlc/lua/intf/"
+            elif sys.platform.startswith('darwin'):
+                playerController.vlcIntfPath = "/Applications/VLC.app/Contents/MacOS/share/lua/intf/"
             else:
                 playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\","/") + "/lua/intf/" # TODO: Make Mac version use /Applications/VLC.app/Contents/MacOS/share/lua/intf/
             playerController.vlcModulePath = playerController.vlcIntfPath + "modules/?.luac"
