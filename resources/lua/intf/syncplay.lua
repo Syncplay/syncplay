@@ -352,7 +352,7 @@ end
 
 function quit_vlc()
     running = false
-	vlc.misc.quit()
+    vlc.misc.quit()
 end
 
 function do_command ( command, argument)
