@@ -15,7 +15,8 @@ class VlcPlayer(BasePlayer):
     speedSupported = True
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS
-    
+    if not sys.platform.startswith('darwin'):
+         SLAVE_ARGS.extend(constants.VLC_SLAVE_NONOSX_ARGS)
     random.seed()
     vlcport = random.randrange(constants.VLC_MIN_PORT, constants.VLC_MAX_PORT) if (constants.VLC_MIN_PORT < constants.VLC_MAX_PORT) else constants.VLC_MIN_PORT
     
