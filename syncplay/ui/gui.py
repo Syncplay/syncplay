@@ -130,6 +130,7 @@ class MainWindow(QtGui.QMainWindow):
             if(sign):
                 t = self._syncplayClient.getGlobalPosition() + sign * t 
             self._syncplayClient.setPosition(t)
+
         else:
             self.showMessage("Invalid seek value", True)
         
@@ -296,11 +297,11 @@ class MainWindow(QtGui.QMainWindow):
         
         window.seekInput = QtGui.QLineEdit()
         window.seekInput.returnPressed.connect(self.seekPosition)
-        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),"Seek to")
+        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),"Seek to time")
         window.seekButton.pressed.connect(self.seekPosition)
         
         window.seekLayout = QtGui.QHBoxLayout()
-        window.seekInput.setMaximumWidth(100)
+        window.seekInput.setMaximumWidth(50)
         window.seekInput.setText("0:00")
         
         window.seekLayout.addWidget(window.seekInput)
@@ -324,9 +325,11 @@ class MainWindow(QtGui.QMainWindow):
         else:
             window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'),"Play")
             window.playButton.pressed.connect(self.play)
+            window.playButton.setMaximumWidth(60)
             window.miscLayout.addWidget(window.playButton)
             window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),"Pause")
             window.pauseButton.pressed.connect(self.pause)
+            window.pauseButton.setMaximumWidth(60)
             window.miscLayout.addWidget(window.pauseButton)
         
         window.miscGroup.setLayout(window.miscLayout)
