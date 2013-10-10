@@ -130,7 +130,6 @@ class MainWindow(QtGui.QMainWindow):
             if(sign):
                 t = self._syncplayClient.getGlobalPosition() + sign * t 
             self._syncplayClient.setPosition(t)
-            self.seekInput.setText("")
         else:
             self.showMessage("Invalid seek value", True)
         
