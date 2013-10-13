@@ -22,3 +22,15 @@ class MpvPlayer(MplayerPlayer):
         if("mpv" in path and MpvPlayer.getExpandedPath(path)):
             return True
         return False
+        
+    @staticmethod
+    def getExpandedPath(playerPath):
+        if(os.path.isfile(playerPath + u"\\mpv.exe")):
+            playerPath += u"\\mpv.exe"
+            return playerPath
+        if os.access(playerPath, os.X_OK):
+            return playerPath
+        for path in os.environ['PATH'].split(':'):
+            path = os.path.join(os.path.realpath(path), playerPath)
+            if os.access(path, os.X_OK):
+                return path
