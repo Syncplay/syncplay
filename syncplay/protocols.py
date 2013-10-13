@@ -402,3 +402,32 @@ class SyncServerProtocol(JSONCommandProtocol):
     def sendError(self, message):
         self.sendMessage({"Error": {"message": message}})
 
+
+class PingService(object):
+
+    def __init__(self):
+        self._rtt = 0
+        self._t0 = None
+        self._fdDiff = 0
+        self._fd = 0
+
+    def newTimestamp(self):
+        return time.time()
+
+    def receiveMessage(self, timestamp, senderRtt):
+        prevRtt = self._rtt
+        self._rtt = time.time() - timestamp
+        if(self._t0 == None):
+            self._t0 = self._rtt / 2
+            return
+        if(senderRtt <= 0):
+            return
+        self._fdDiff = self._fdDiff + (prevRtt - senderRtt)
+        self._fd = self._t0 - self._fdDiff
+
+    def getLastForwardDelay(self):
+        return self._fd
+
+    def getRtt(self):
+        return self._rtt
+
