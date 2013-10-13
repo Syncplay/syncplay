@@ -215,7 +215,7 @@ class ConfigurationGetter(object):
             if(self._config['noGui'] == False):
                 for key, value in self._promptForMissingArguments().items():
                     self._config[key] = value
-        except:
+        except GuiConfiguration.WindowClosed:
             sys.exit()
 
 
