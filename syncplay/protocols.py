@@ -23,19 +23,10 @@ class JSONCommandProtocol(LineReceiver):
             else:
                 self.dropWithError(getMessage("en", "unknown-command-server-error").format(message[1])) #TODO: log, not drop
 
-    def printReceived(self, line): #TODO: remove
-        #print ">>i", line
-        pass
-        
-    def printSent(self, line):
-        #print "o<<", line
-        pass
-
     def lineReceived(self, line):
         line = line.strip()
         if not line:
             return
-        self.printReceived(line)
         try:
             messages = json.loads(line)
         except:
@@ -49,7 +40,6 @@ class JSONCommandProtocol(LineReceiver):
     
     def sendMessage(self, dict_):
         line = json.dumps(dict_)
-        self.printSent(line)    
         self.sendLine(line)
 
     def drop(self):
