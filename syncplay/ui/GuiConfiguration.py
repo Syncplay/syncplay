@@ -75,6 +75,11 @@ class ConfigDialog(QtGui.QDialog):
             self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
 
     def _tryToFillPlayerPath(self, playerpath, playerpathlist):
+        settings = QSettings("Syncplay", "MediaBrowseDialog")
+        settings.beginGroup("PlayerList")
+        savedPlayers = settings.value("PlayerList", [])
+        playerpathlist = list(set([os.path.normcase(path) for path in set(playerpathlist + savedPlayers)]))
+        settings.endGroup()
         foundpath = ""
         
         if playerpath != None and playerpath != "" and os.path.isfile(playerpath):
@@ -82,15 +87,17 @@ class ConfigDialog(QtGui.QDialog):
             self.executablepathCombobox.addItem(foundpath)
 
         for path in playerpathlist:
-            if(os.path.isfile(path) and path.lower() != foundpath.lower()):
+            if(os.path.isfile(path) and os.path.normcase(path) != os.path.normcase(foundpath)):
                 self.executablepathCombobox.addItem(path)
-                if foundpath == None:
+                if foundpath == "":
                     foundpath = path
 
-        if foundpath:
-            return(foundpath)
-        else:
-            return("")
+        if foundpath != "":
+            settings.beginGroup("PlayerList")
+            playerpathlist.append(os.path.normcase(foundpath))
+            settings.setValue("PlayerList",  list(set([os.path.normcase(path) for path in set(playerpathlist)])))
+            settings.endGroup()
+        return(foundpath)
     
     def browsePlayerpath(self):
         options = QtGui.QFileDialog.Options()
