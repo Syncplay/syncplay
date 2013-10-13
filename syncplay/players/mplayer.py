@@ -159,6 +159,9 @@ class MplayerPlayer(BasePlayer):
     
     @staticmethod
     def getExpandedPath(playerPath):
+        if(os.path.isfile(playerPath + u"\\mplayer.exe")):
+            playerPath += u"\\mplayer.exe"
+            return playerPath
         if os.access(playerPath, os.X_OK):
             return playerPath
         for path in os.environ['PATH'].split(':'):
