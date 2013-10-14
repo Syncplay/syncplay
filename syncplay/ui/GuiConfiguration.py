@@ -1,6 +1,6 @@
 from PySide import QtCore, QtGui
 from PySide.QtCore import QSettings, Qt, QCoreApplication
-from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon
+from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage
 from syncplay.players.playerFactory import PlayerFactory
 
 import os
@@ -105,6 +105,16 @@ class ConfigDialog(QtGui.QDialog):
             settings.setValue("PlayerList",  list(set([os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist)])))
             settings.endGroup()
         return(foundpath)
+    
+    def updateExecutableIcon(self):
+        currentplayerpath = unicode(self.executablepathCombobox.currentText())
+        iconpath = PlayerFactory().getPlayerIconByPath(currentplayerpath)
+        if iconpath != None and iconpath != "":
+            self.executableiconImage.load(self.resourcespath + iconpath)
+            self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(self.executableiconImage))
+        else:
+            self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(QtGui.QImage()))
+        
     
     def browsePlayerpath(self):
         options = QtGui.QFileDialog.Options()
@@ -233,6 +243,7 @@ class ConfigDialog(QtGui.QDialog):
             resourcespath = utils.findWorkingDir() + "/resources/"
         else:
             resourcespath = utils.findWorkingDir() + "\\resources\\"
+        self.resourcespath = resourcespath
 
         super(ConfigDialog, self).__init__()
         
@@ -279,11 +290,17 @@ class ConfigDialog(QtGui.QDialog):
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
         
         self.mediaplayerSettingsGroup = QtGui.QGroupBox(getMessage("en", "media-setting-title"))
+        self.executableiconImage = QtGui.QImage()
+        self.executableiconLabel = QLabel(self)
+        self.executableiconLabel.setMinimumWidth(16)
         self.executablepathCombobox = QtGui.QComboBox(self)
         self.executablepathCombobox.setEditable(True)
+        self.executablepathCombobox.currentIndexChanged.connect(self.updateExecutableIcon)
         self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'],playerpaths))
         self.executablepathCombobox.setMinimumWidth(200)
         self.executablepathCombobox.setMaximumWidth(200)
+        self.executablepathCombobox.editTextChanged.connect(self.updateExecutableIcon)
+        
         self.executablepathLabel = QLabel(getMessage("en", "executable-path-label"), self)
         self.executablebrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),getMessage("en", "browse-label"))
         self.executablebrowseButton.clicked.connect(self.browsePlayerpath)
@@ -305,14 +322,15 @@ class ConfigDialog(QtGui.QDialog):
                 self.rewindCheckbox.setToolTip(getMessage("en", "rewind-tooltip"))
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
-        self.mediaplayerSettingsLayout.addWidget(self.executablepathCombobox , 0, 1)
-        self.mediaplayerSettingsLayout.addWidget(self.executablebrowseButton , 0, 2)
+        self.mediaplayerSettingsLayout.addWidget(self.executableiconLabel, 0, 1)
+        self.mediaplayerSettingsLayout.addWidget(self.executablepathCombobox, 0, 2)
+        self.mediaplayerSettingsLayout.addWidget(self.executablebrowseButton, 0, 3)
         self.mediaplayerSettingsLayout.addWidget(self.mediapathLabel, 1, 0)
-        self.mediaplayerSettingsLayout.addWidget(self.mediapathTextbox , 1, 1)
-        self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton , 1, 2)
-        self.mediaplayerSettingsLayout.addWidget(self.slowdownCheckbox, 2, 0)
+        self.mediaplayerSettingsLayout.addWidget(self.mediapathTextbox , 1, 2)
+        self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton , 1, 3)
+        self.mediaplayerSettingsLayout.addWidget(self.slowdownCheckbox, 2, 0,1,3)
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
-            self.mediaplayerSettingsLayout.addWidget(self.rewindCheckbox, 3, 0)
+            self.mediaplayerSettingsLayout.addWidget(self.rewindCheckbox, 3, 0,1,3)
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
         if config['slowOnDesync'] == True:
             self.slowdownCheckbox.setChecked(True)
