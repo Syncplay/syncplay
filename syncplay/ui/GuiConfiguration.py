@@ -127,7 +127,7 @@ class ConfigDialog(QtGui.QDialog):
                 defaultdirectory,
                 browserfilter, "", options)
         if fileName:
-            self.executablepathCombobox.setEditText(fileName)
+            self.executablepathCombobox.setEditText(os.path.normpath(fileName))
             
     def loadMediaBrowseSettings(self):
         settings = QSettings("Syncplay", "MediaBrowseDialog")
@@ -156,7 +156,7 @@ class ConfigDialog(QtGui.QDialog):
         fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,"Browse for media files",defaultdirectory,
                 browserfilter, "", options)
         if fileName:
-            self.mediapathTextbox.setText(fileName)
+            self.mediapathTextbox.setText(os.path.normpath(fileName))
             self.mediadirectory = os.path.dirname(fileName)
             self.saveMediaBrowseSettings()
         
