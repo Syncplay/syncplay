@@ -81,10 +81,18 @@ class ConfigDialog(QtGui.QDialog):
         playerpathlist = list(set([os.path.normcase(path) for path in set(playerpathlist + savedPlayers)]))
         settings.endGroup()
         foundpath = ""
-        
-        if playerpath != None and playerpath != "" and os.path.isfile(playerpath):
-            foundpath = playerpath
-            self.executablepathCombobox.addItem(foundpath)
+
+        if playerpath != None and playerpath != "":
+            if not os.path.isfile(playerpath):
+                from syncplay.players.playerFactory import PlayerFactory
+                self._playerFactory = PlayerFactory()
+                expandedpath = self._playerFactory.getPlayerByPath(playerpath).getExpandedPath(playerpath)
+                if os.path.isfile(expandedpath):
+                    playerpath = expandedpath
+
+            if os.path.isfile(playerpath):
+                foundpath = playerpath
+                self.executablepathCombobox.addItem(foundpath)
 
         for path in playerpathlist:
             if(os.path.isfile(path) and os.path.normcase(path) != os.path.normcase(foundpath)):
