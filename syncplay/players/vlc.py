@@ -172,6 +172,10 @@ class VlcPlayer(BasePlayer):
         if("vlc" in path.lower() and VlcPlayer.getExpandedPath(path)):
             return True
         return False
+        
+    @staticmethod
+    def getIconPath(path):
+        return constants.VLC_ICONPATH
     
     @staticmethod
     def getExpandedPath(playerPath):
