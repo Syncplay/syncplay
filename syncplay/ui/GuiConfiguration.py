@@ -79,7 +79,7 @@ class ConfigDialog(QtGui.QDialog):
         settings = QSettings("Syncplay", "MediaBrowseDialog")
         settings.beginGroup("PlayerList")
         savedPlayers = settings.value("PlayerList", [])
-        playerpathlist = list(set([os.path.normcase(path) for path in set(playerpathlist + savedPlayers)]))
+        playerpathlist = list(set([os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist + savedPlayers)]))
         settings.endGroup()
         foundpath = ""
 
@@ -94,15 +94,15 @@ class ConfigDialog(QtGui.QDialog):
                 self.executablepathCombobox.addItem(foundpath)
 
         for path in playerpathlist:
-            if(os.path.isfile(path) and os.path.normcase(path) != os.path.normcase(foundpath)):
+            if(os.path.isfile(path) and os.path.normcase(os.path.normpath(path)) != os.path.normcase(os.path.normpath(foundpath))):
                 self.executablepathCombobox.addItem(path)
                 if foundpath == "":
                     foundpath = path
 
         if foundpath != "":
             settings.beginGroup("PlayerList")
-            playerpathlist.append(os.path.normcase(foundpath))
-            settings.setValue("PlayerList",  list(set([os.path.normcase(path) for path in set(playerpathlist)])))
+            playerpathlist.append(os.path.normcase(os.path.normpath(foundpath)))
+            settings.setValue("PlayerList",  list(set([os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist)])))
             settings.endGroup()
         return(foundpath)
     
