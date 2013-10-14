@@ -477,8 +477,14 @@ class MPCHCAPIPlayer(BasePlayer):
         if(os.path.isfile(path)):
             if(path.lower().endswith(u'mpc-hc.exe'.lower()) or path.lower().endswith(u'mpc-hc64.exe'.lower())):
                 return path
+        if(os.path.isfile(path + u"mpc-hc.exe")):
+            path += u"mpc-hc.exe"
+            return path
         if(os.path.isfile(path + u"\\mpc-hc.exe")):
             path += u"\\mpc-hc.exe"
+            return path
+        if(os.path.isfile(path + u"mpc-hc64.exe")):
+            path += u"mpc-hc64.exe"
             return path
         if(os.path.isfile(path + u"\\mpc-hc64.exe")):
             path += u"\\mpc-hc64.exe"
