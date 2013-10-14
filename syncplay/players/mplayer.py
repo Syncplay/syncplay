@@ -152,6 +152,10 @@ class MplayerPlayer(BasePlayer):
         return l
     
     @staticmethod
+    def getIconPath(path):
+        return constants.MPLAYER_ICONPATH
+    
+    @staticmethod
     def isValidPlayerPath(path):
         if("mplayer" in path and MplayerPlayer.getExpandedPath(path)):
             return True
