@@ -72,6 +72,14 @@ class BasePlayer(object):
     @return: string
     '''    
     @staticmethod
+    def getIconPath(path):
+        raise NotImplementedError()
+    
+    '''
+    @type path: string
+    @return: string
+    '''    
+    @staticmethod
     def getExpandedPath(path):
         raise NotImplementedError()
     
@@ -85,7 +93,11 @@ class DummyPlayer(BasePlayer):
     @staticmethod
     def isValidPlayerPath(path):
         return False
-        
+    
+    @staticmethod
+    def getIconPath(path):
+        return None
+    
     @staticmethod
     def getExpandedPath(path):
         return path
