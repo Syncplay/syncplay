@@ -38,3 +38,7 @@ class MpvPlayer(MplayerPlayer):
             path = os.path.join(os.path.realpath(path), playerPath)
             if os.access(path, os.X_OK):
                 return path
+
+    @staticmethod
+    def getIconPath(path):
+        return constants.MPV_ICONPATH
