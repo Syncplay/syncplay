@@ -15,6 +15,12 @@ class PlayerFactory(object):
             if(player.isValidPlayerPath(path)):
                 return player
                 
+    def getPlayerIconByPath(self, path):
+        for player in self._players:
+            if(player.isValidPlayerPath(path)):
+                return player.getIconPath(path)
+        return None
+    
     def getExpandedPlayerPathByPath(self, path):
         for player in self._players:
             if(player.isValidPlayerPath(path)):
