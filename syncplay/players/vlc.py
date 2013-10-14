@@ -175,9 +175,13 @@ class VlcPlayer(BasePlayer):
     
     @staticmethod
     def getExpandedPath(playerPath):
-        if(os.path.isfile(playerPath + u"\\vlc.exe")):
-            playerPath += u"\\vlc.exe"
-            return playerPath
+        if not os.path.isfile(playerPath):
+            if os.path.isfile(playerPath + u"vlc.exe"):
+                playerPath += u"vlc.exe"
+                return playerPath
+            elif os.path.isfile(playerPath + u"\\vlc.exe"):
+                playerPath += u"\\vlc.exe"
+                return playerPath
         if os.access(playerPath, os.X_OK):
             return playerPath
         for path in os.environ['PATH'].split(':'):
