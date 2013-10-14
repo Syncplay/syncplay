@@ -467,6 +467,13 @@ class MPCHCAPIPlayer(BasePlayer):
         return constants.MPC_PATHS
     
     @staticmethod
+    def getIconPath(path):
+        if(MPCHCAPIPlayer.getExpandedPath(path).lower().endswith(u'mpc-hc64.exe'.lower())):
+            return constants.MPC64_ICONPATH
+        else:
+            return constants.MPC_ICONPATH
+    
+    @staticmethod
     def isValidPlayerPath(path):
         if(MPCHCAPIPlayer.getExpandedPath(path)):
             return True
