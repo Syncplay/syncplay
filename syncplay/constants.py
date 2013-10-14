@@ -51,6 +51,13 @@ VLC_PATHS = [
              r"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
              r"C:\Program Files\VideoLAN\VLC\vlc.exe"
             ]
+
+VLC_ICONPATH = "vlc.png"
+MPLAYER_ICONPATH = "mplayer.png"
+MPV_ICONPATH = "mpv.png"
+MPC_ICONPATH = "mpc-hc.png"
+MPC64_ICONPATH = "mpc-hc64.png"
+
 #Changing these is usually not something you're looking for
 PLAYER_ASK_DELAY = 0.1
 PING_MOVING_AVERAGE_WEIGHT = 0.85
