@@ -1,6 +1,7 @@
 from PySide import QtCore, QtGui
 from PySide.QtCore import QSettings, Qt, QCoreApplication
 from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon
+from syncplay.players.playerFactory import PlayerFactory
 
 import os
 import sys
@@ -81,10 +82,16 @@ class ConfigDialog(QtGui.QDialog):
         playerpathlist = list(set([os.path.normcase(path) for path in set(playerpathlist + savedPlayers)]))
         settings.endGroup()
         foundpath = ""
-        
-        if playerpath != None and playerpath != "" and os.path.isfile(playerpath):
-            foundpath = playerpath
-            self.executablepathCombobox.addItem(foundpath)
+
+        if playerpath != None and playerpath != "":
+            if not os.path.isfile(playerpath):
+                expandedpath = PlayerFactory().getExpandedPlayerPathByPath(playerpath)
+                if expandedpath != None and os.path.isfile(expandedpath):
+                    playerpath = expandedpath
+
+            if os.path.isfile(playerpath):
+                foundpath = playerpath
+                self.executablepathCombobox.addItem(foundpath)
 
         for path in playerpathlist:
             if(os.path.isfile(path) and os.path.normcase(path) != os.path.normcase(foundpath)):
