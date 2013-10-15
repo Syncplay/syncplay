@@ -50,6 +50,8 @@ en = {
       "syncplay-version-notification" : "Syncplay version: {}",    #syncplay.version
       "more-info-notification" : "More info available at: {}",    #projectURL
       
+      "gui-data-cleared-notification" : "Syncplay has cleared the path and window state data used by the GUI.",
+      
       "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above", # VLC version, VLC min version
       "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above", # VLC interface version, VLC interface min version
       "vlc-interface-oldversion-ignored": "Warning: Syncplay detected that an old version version of the Syncplay interface module for VLC was installed in the VLC directory. As such, it is being ignored in favour of the syncplay.lua module contained within the Syncplay directory. If you wish to run any VLC extensions or interface scripts then please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",
@@ -96,6 +98,7 @@ en = {
       "player-path-argument" : 'path to your player executable',
       "file-argument" : 'file to play',
       "args-argument" : 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
+      "clear-gui-data-argument" : 'resets path and window state GUI data stored as QSettings',
       
       # Client labels
       "config-window-title" : "Syncplay configuration",
