@@ -76,7 +76,7 @@ class ConfigDialog(QtGui.QDialog):
             self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
 
     def _tryToFillPlayerPath(self, playerpath, playerpathlist):
-        settings = QSettings("Syncplay", "MediaBrowseDialog")
+        settings = QSettings("Syncplay", "PlayerList")
         settings.beginGroup("PlayerList")
         savedPlayers = settings.value("PlayerList", [])
         playerpathlist = list(set([os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist + savedPlayers)]))
