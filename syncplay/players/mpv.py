@@ -1,5 +1,6 @@
 from syncplay.players.mplayer import MplayerPlayer
 from syncplay import constants
+import os
 
 class MpvPlayer(MplayerPlayer):
     SLAVE_ARGS = constants.MPV_SLAVE_ARGS
