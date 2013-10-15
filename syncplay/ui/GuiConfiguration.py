@@ -237,6 +237,15 @@ class ConfigDialog(QtGui.QDialog):
         
         from syncplay import utils
         self.config = config
+        self.datacleared = False
+        if config['clearGUIData'] == True:
+            settings = QSettings("Syncplay","PlayerList")
+            settings.clear()
+            settings = QSettings("Syncplay","MediaBrowseDialog")
+            settings.clear()
+            settings = QSettings("Syncplay","MainWindow")
+            settings.clear()
+            self.datacleared = True
         self.QtGui = QtGui
         self.error = error
         if sys.platform.startswith('linux'):
@@ -415,3 +424,6 @@ class ConfigDialog(QtGui.QDialog):
         self.runButton.setFocus()        
         self.setFixedSize(self.sizeHint())
         self.setAcceptDrops(True)
+        
+        if self.datacleared == True:
+            QtGui.QMessageBox.information(self,"Syncplay", getMessage("en", "gui-data-cleared-notification"))
