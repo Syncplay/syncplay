@@ -515,7 +515,9 @@ class build_installer(py2exe):
 guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock_go.png',
      'resources/control_pause_blue.png', 'resources/cross.png', 'resources/door_in.png',
      'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
-     'resources/timeline_marker.png','resources/control_play_blue.png'
+     'resources/timeline_marker.png','resources/control_play_blue.png',
+     'resources/mpc-hc.png','resources/mpc-hc64.png','resources/mplayer.png',
+     'resources/mpv.png','resources/vlc.png'
     ]
 resources = ["resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)
