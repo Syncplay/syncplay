@@ -103,11 +103,11 @@ en = {
       "connection-group-title" : "Connection settings",
       "host-label" : "Server address: ",
       "username-label" :  "Username:",
-      "password-label" :  "Server password (optional):",
+      "password-label" :  "Server password (if any):",
       "room-label" : "Default room: ",
       
       "media-setting-title" : "Media player settings",
-      "executable-path-label" : "Path to player executable:",
+      "executable-path-label" : "Path to media player:",
       "media-path-label" : "Path to media file:",
       "browse-label" : "Browse",
       "slowdown-label" : "Slow down on desync",
