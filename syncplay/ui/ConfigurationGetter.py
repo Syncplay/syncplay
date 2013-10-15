@@ -36,7 +36,9 @@ class ConfigurationGetter(object):
 						"slowOnDesync": True,
                         "rewindOnDesync": True,
                         "malUsername": "",
-                        "malPassword": ""
+                        "malPassword": "",
+                        "malPassword": "",
+                        "clearGUIData": False
                         }
         
         #
@@ -57,7 +59,8 @@ class ConfigurationGetter(object):
                          "noGui",
                          "noStore",
                          "slowOnDesync",
-                         "rewindOnDesync"
+                         "rewindOnDesync",
+                         "clearGUIData"
                         ]
 
         self._iniStructure = {
@@ -81,6 +84,7 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help=getMessage("en", "password-argument"))
         self._argparser.add_argument('--player-path', metavar='path', type=str, help=getMessage("en", "player-path-argument"))
         self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("en", "file-argument"))
+        self._argparser.add_argument('--clear-gui-data', action='store_true', help=getMessage("en", "clear-gui-data-argument"))
         self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("en", "args-argument"))
   
         self._playerFactory = PlayerFactory()
@@ -123,6 +127,8 @@ class ConfigurationGetter(object):
                     key = "playerArgs"
                 if(key == "no_gui"):
                     key = "noGui"
+                if(key == "clear_gui_data"):
+                    key = "clearGUIData"
                 self._config[key] = val
             
     def _splitPortAndHost(self, host):
