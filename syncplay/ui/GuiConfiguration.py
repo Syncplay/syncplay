@@ -171,7 +171,7 @@ class ConfigDialog(QtGui.QDialog):
             self.saveMediaBrowseSettings()
         
     def _saveDataAndLeave(self):
-        self.config['host'] = self.hostTextbox.text()
+        self.config['host'] = self.hostTextbox.text() if ":" in self.hostTextbox.text() else self.hostTextbox.text() + ":" + unicode(constants.DEFAULT_PORT) 
         self.config['name'] = self.usernameTextbox.text()
         self.config['room'] = self.defaultroomTextbox.text()
         self.config['password'] = self.serverpassTextbox.text()
