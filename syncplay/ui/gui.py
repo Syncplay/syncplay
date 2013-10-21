@@ -101,7 +101,7 @@ class MainWindow(QtGui.QMainWindow):
     def showErrorMessage(self, message, criticalerror = False):
         message = unicode(message)
         if criticalerror:
-            QtGui.QMessageBox.critical(self,"DON'T PANIC", message)
+            QtGui.QMessageBox.critical(self,"Syncplay", message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         message = message.replace("\n", "<br />")
         message = "<span style=\"color:#FF0000;\">" + message + "</span>"
