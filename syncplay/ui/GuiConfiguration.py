@@ -1,6 +1,6 @@
 from PySide import QtCore, QtGui
 from PySide.QtCore import QSettings, Qt, QCoreApplication
-from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage
+from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton
 from syncplay.players.playerFactory import PlayerFactory
 
 import os
@@ -204,6 +204,12 @@ class ConfigDialog(QtGui.QDialog):
             self.config['slowOnDesync'] = True
         else:
             self.config['slowOnDesync'] = False
+        if self.pauseonleaveCheckbox.isChecked() == True:
+            self.config['pauseOnLeave'] = True
+        else:
+            self.config['pauseOnLeave'] = False
+
+
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
             if self.rewindCheckbox.isChecked() == True:
                 self.config['rewindOnDesync'] = True
@@ -211,6 +217,20 @@ class ConfigDialog(QtGui.QDialog):
                 self.config['rewindOnDesync'] = False
         self.config['malUsername'] = self.malusernameTextbox.text()
         self.config['malPassword'] = self.malpasswordTextbox.text()
+        
+        if self.filenameprivacySendRawOption.isChecked() == True:
+            self.config['filenamePrivacyMode'] = constants.PRIVACY_SENDRAW_MODE
+        elif self.filenameprivacySendHashedOption.isChecked() == True:
+            self.config['filenamePrivacyMode'] = constants.PRIVACY_SENDHASHED_MODE
+        elif self.filenameprivacyDontSendOption.isChecked() == True:
+            self.config['filenamePrivacyMode'] = constants.PRIVACY_DONTSEND_MODE
+
+        if self.filesizeprivacySendRawOption.isChecked() == True:
+            self.config['filesizePrivacyMode'] = constants.PRIVACY_SENDRAW_MODE
+        elif self.filesizeprivacySendHashedOption.isChecked() == True:
+            self.config['filesizePrivacyMode'] = constants.PRIVACY_SENDHASHED_MODE
+        elif self.filesizeprivacyDontSendOption.isChecked() == True:
+            self.config['filesizePrivacyMode'] = constants.PRIVACY_DONTSEND_MODE
 
         self.pressedclosebutton = True
         self.close()
@@ -286,7 +306,7 @@ class ConfigDialog(QtGui.QDialog):
         self.usernameLabel = QLabel(getMessage("en", "username-label"), self)
         self.serverpassTextbox = QLineEdit(config['password'],self)
         self.defaultroomLabel = QLabel(getMessage("en", "room-label"), self)
-        
+
         if (constants.SHOW_TOOLTIPS == True):
             self.hostLabel.setToolTip(getMessage("en", "host-tooltip"))
             self.hostTextbox.setToolTip(getMessage("en", "host-tooltip"))
@@ -327,13 +347,12 @@ class ConfigDialog(QtGui.QDialog):
         self.mediapathLabel = QLabel(getMessage("en", "media-path-label"), self)
         self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'),getMessage("en", "browse-label"))
         self.mediabrowseButton.clicked.connect(self.browseMediapath)
-        self.slowdownCheckbox = QCheckBox(getMessage("en", "slowdown-label"))
+        
         if (constants.SHOW_TOOLTIPS == True):
             self.executablepathLabel.setToolTip(getMessage("en", "executable-path-tooltip"))
             self.executablepathCombobox.setToolTip(getMessage("en", "executable-path-tooltip"))
             self.mediapathLabel.setToolTip(getMessage("en", "media-path-tooltip"))
             self.mediapathTextbox.setToolTip(getMessage("en", "media-path-tooltip"))
-            self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
         
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
             self.rewindCheckbox = QCheckBox(getMessage("en", "rewind-label"))
@@ -348,13 +367,9 @@ class ConfigDialog(QtGui.QDialog):
         self.mediaplayerSettingsLayout.addWidget(self.mediapathTextbox , 1, 2)
         self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton , 1, 3)
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
-#BOB
+
         self.moreSettingsGroup = QtGui.QGroupBox(getMessage("en", "more-title"))
 
-        if config['slowOnDesync'] == True:
-            self.slowdownCheckbox.setChecked(True)
-        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True and config['rewindOnDesync'] == True:
-            self.rewindCheckbox.setChecked(True)
         self.moreSettingsGroup.setCheckable(True)
         self.malSettingsSplit = QtGui.QSplitter(self)
         self.malusernameTextbox = QLineEdit(config['malUsername'],self)
@@ -364,25 +379,104 @@ class ConfigDialog(QtGui.QDialog):
         self.malpasswordTextbox = QLineEdit(config['malPassword'],self)
         self.malpasswordTextbox.setEchoMode(QtGui.QLineEdit.Password)
         self.malpasswordLabel = QLabel(getMessage("en", "mal-password-label"), self)
+        
+        self.filenameprivacyLabel = QLabel(getMessage("en", "filename-privacy-label"), self)
+        self.filenameprivacyButtonGroup = QButtonGroup()
+        self.filenameprivacySendRawOption = QRadioButton(getMessage("en", "privacy-sendraw-option"))
+        self.filenameprivacySendHashedOption = QRadioButton(getMessage("en", "privacy-sendhashed-option"))
+        self.filenameprivacyDontSendOption = QRadioButton(getMessage("en", "privacy-dontsend-option"))
+        self.filenameprivacyButtonGroup.addButton(self.filenameprivacySendRawOption)
+        self.filenameprivacyButtonGroup.addButton(self.filenameprivacySendHashedOption)
+        self.filenameprivacyButtonGroup.addButton(self.filenameprivacyDontSendOption)
+        
+        self.filesizeprivacyLabel = QLabel(getMessage("en", "filesize-privacy-label"), self)
+        self.filesizeprivacyButtonGroup = QButtonGroup()
+        self.filesizeprivacySendRawOption = QRadioButton(getMessage("en", "privacy-sendraw-option"))
+        self.filesizeprivacySendHashedOption = QRadioButton(getMessage("en", "privacy-sendhashed-option"))
+        self.filesizeprivacyDontSendOption = QRadioButton(getMessage("en", "privacy-dontsend-option"))
+        self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendRawOption)
+        self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendHashedOption)
+        self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacyDontSendOption)
+        
+        self.slowdownCheckbox = QCheckBox(getMessage("en", "slowdown-label"))
+        self.pauseonleaveCheckbox = QCheckBox(getMessage("en", "pauseonleave-label"))
         self.alwaysshowCheckbox = QCheckBox(getMessage("en", "alwayshow-label"))
         self.donotstoreCheckbox = QCheckBox(getMessage("en", "donotstore-label"))
+        
+        filenamePrivacyMode = config['filenamePrivacyMode']
+        if filenamePrivacyMode == constants.PRIVACY_DONTSEND_MODE:
+            self.filenameprivacyDontSendOption.setChecked(True)
+        elif filenamePrivacyMode == constants.PRIVACY_SENDHASHED_MODE:
+            self.filenameprivacySendHashedOption.setChecked(True)
+        else:
+            self.filenameprivacySendRawOption.setChecked(True)
+            
+        filesizePrivacyMode = config['filesizePrivacyMode']
+        if filesizePrivacyMode == constants.PRIVACY_DONTSEND_MODE:
+            self.filesizeprivacyDontSendOption.setChecked(True)
+        elif filesizePrivacyMode == constants.PRIVACY_SENDHASHED_MODE:
+            self.filesizeprivacySendHashedOption.setChecked(True)
+        else:
+            self.filesizeprivacySendRawOption.setChecked(True)
+        
+        if config['slowOnDesync'] == True:
+            self.slowdownCheckbox.setChecked(True)
+        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True and config['rewindOnDesync'] == True:
+            self.rewindCheckbox.setChecked(True)
+        if config['pauseOnLeave'] == True:
+            self.pauseonleaveCheckbox.setChecked(True)
+        
         if (constants.SHOW_TOOLTIPS == True):
             self.malusernameLabel.setToolTip(getMessage("en", "mal-username-tooltip"))
             self.malusernameTextbox.setToolTip(getMessage("en", "mal-username-tooltip"))
             self.malpasswordLabel.setToolTip(getMessage("en", "mal-password-tooltip"))
             self.malpasswordTextbox.setToolTip(getMessage("en", "mal-password-tooltip"))
+            
+            self.filenameprivacyLabel.setToolTip(getMessage("en", "filename-privacy-tooltip"))
+            self.filenameprivacySendRawOption.setToolTip(getMessage("en", "privacy-sendraw-tooltip"))
+            self.filenameprivacySendHashedOption.setToolTip(getMessage("en", "privacy-sendhashed-tooltip"))
+            self.filenameprivacyDontSendOption.setToolTip(getMessage("en", "privacy-dontsend-tooltip"))
+            self.filesizeprivacyLabel.setToolTip(getMessage("en", "filesize-privacy-tooltip"))
+            self.filesizeprivacySendRawOption.setToolTip(getMessage("en", "privacy-sendraw-tooltip"))
+            self.filesizeprivacySendHashedOption.setToolTip(getMessage("en", "privacy-sendhashed-tooltip"))
+            self.filesizeprivacyDontSendOption.setToolTip(getMessage("en", "privacy-dontsend-tooltip"))
+            
+            self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
+            self.pauseonleaveCheckbox.setToolTip(getMessage("en", "pauseonleave-tooltip"))
             self.alwaysshowCheckbox.setToolTip(getMessage("en", "alwayshow-tooltip"))
             self.donotstoreCheckbox.setToolTip(getMessage("en", "donotstore-tooltip"))
+            self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
+            
         self.moreSettingsLayout = QtGui.QGridLayout()
-        self.moreSettingsLayout.addWidget(self.malusernameLabel , 0, 0)
-        self.moreSettingsLayout.addWidget(self.malusernameTextbox, 0, 1)
-        self.moreSettingsLayout.addWidget(self.malpasswordLabel , 0, 2)
-        self.moreSettingsLayout.addWidget(self.malpasswordTextbox, 0, 3)
+        
+        self.privacySettingsLayout = QtGui.QGridLayout()
+        self.privacyFrame = QtGui.QFrame()
+        self.privacyFrame.setLineWidth(0)
+        self.privacyFrame.setMidLineWidth(0)
+        self.privacySettingsLayout.setContentsMargins(0,0,0,0)
+        self.privacySettingsLayout.addWidget(self.filenameprivacyLabel, 0, 0)
+        self.privacySettingsLayout.addWidget(self.filenameprivacySendRawOption, 0, 1, Qt.AlignRight) 
+        self.privacySettingsLayout.addWidget(self.filenameprivacySendHashedOption, 0,2, Qt.AlignRight)
+        self.privacySettingsLayout.addWidget(self.filenameprivacyDontSendOption, 0, 3, Qt.AlignRight)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacyLabel, 1, 0)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacySendRawOption, 1, 1, Qt.AlignRight)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacySendHashedOption, 1, 2, Qt.AlignRight)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacyDontSendOption, 1, 3, Qt.AlignRight)
+        self.privacyFrame.setLayout(self.privacySettingsLayout)
+        
+        self.moreSettingsLayout.addWidget(self.privacyFrame, 0, 0, 1, 4)
+
+        self.moreSettingsLayout.addWidget(self.malusernameLabel , 1, 0)
+        self.moreSettingsLayout.addWidget(self.malusernameTextbox, 1, 1)
+        self.moreSettingsLayout.addWidget(self.malpasswordLabel , 1, 2)
+        self.moreSettingsLayout.addWidget(self.malpasswordTextbox, 1, 3)
+
         self.moreSettingsLayout.addWidget(self.slowdownCheckbox, 2, 0,1,4)
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
             self.moreSettingsLayout.addWidget(self.rewindCheckbox, 3, 0, 1, 4)
-        self.moreSettingsLayout.addWidget(self.alwaysshowCheckbox, 4, 0, 1, 4)
-        self.moreSettingsLayout.addWidget(self.donotstoreCheckbox, 5, 0, 1, 4)
+        self.moreSettingsLayout.addWidget(self.pauseonleaveCheckbox, 4, 0, 1, 4)      
+        self.moreSettingsLayout.addWidget(self.alwaysshowCheckbox, 5, 0, 1, 4)
+        self.moreSettingsLayout.addWidget(self.donotstoreCheckbox, 6, 0, 1, 4)
 
         self.moreSettingsGroup.setLayout(self.moreSettingsLayout)
         
@@ -416,6 +510,7 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addSpacing(12)
         self.mainLayout.addWidget(self.showmoreCheckbox)
         self.mainLayout.addWidget(self.moreSettingsGroup)
+        self.mainLayout.addSpacing(12)
         
         self.topLayout = QtGui.QHBoxLayout()
         self.helpButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'help.png'),getMessage("en", "help-label"))
