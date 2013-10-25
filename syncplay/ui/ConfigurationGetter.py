@@ -38,6 +38,9 @@ class ConfigurationGetter(object):
                         "malUsername": "",
                         "malPassword": "",
                         "malPassword": "",
+                        "filenamePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
+                        "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
+                        "pauseOnLeave": False,
                         "clearGUIData": False
                         }
         
@@ -65,7 +68,7 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowOnDesync", "rewindOnDesync", "forceGuiPrompt"],
+                        "client_settings": ["name", "room", "playerPath", "slowOnDesync", "rewindOnDesync", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
                         "mal": ["malPassword", "malUsername"]
                         }
 
