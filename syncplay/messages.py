@@ -113,13 +113,12 @@ en = {
       "executable-path-label" : "Path to media player:",
       "media-path-label" : "Path to media file:",
       "browse-label" : "Browse",
-      "slowdown-label" : "Slow down on desync",
-      "rewind-label" : "Rewind on major desync",
       
-      "mal-title" : "Enable MyAnimeList updater (EXPERIMENTAL)",
+      "more-title" : "Show more settings",
       "mal-username-label" : "MAL username:",
       "mal-password-label" : "MAL password:",
-      
+      "slowdown-label" : "Slow down on desync",
+      "rewind-label" : "Rewind on major desync (highly recommended)",
       "alwayshow-label" : "Always show this dialog",
       "donotstore-label" : "Do not store this configuration",
       
@@ -139,13 +138,12 @@ en = {
       
       "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or MPV).",
       "media-path-tooltip" : "Location of video or stream to be opened. Necessary for MPV and mplayer2.",
-      "slowdown-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers.",
-      "rewind-tooltip" : "Jump back when needed to get back in sync. Recommended.",
       
-      "mal-tooltip" : "Track what shows you are watching on the MyAnimeList social network.",
+      "more-tooltip" : "Display less frequently used settings.",
       "mal-username-tooltip" : "Your MyAnimeList username.",
       "mal-password-tooltip" : "Your MyAnimeList password. Note: This is not encrypted!",
-      
+      "slowdown-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers.",
+      "rewind-tooltip" : "Jump back when needed to get back in sync. Recommended.",
       "alwayshow-tooltip" : "Configuration dialogue is always shown, even when opening a file with Syncplay.",
       "donotstore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.",
       
