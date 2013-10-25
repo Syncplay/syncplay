@@ -62,6 +62,7 @@ class ConfigurationGetter(object):
                          "noGui",
                          "noStore",
                          "slowOnDesync",
+                         "pauseOnLeave",
                          "rewindOnDesync",
                          "clearGUIData"
                         ]
