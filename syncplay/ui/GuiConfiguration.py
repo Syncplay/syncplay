@@ -148,7 +148,7 @@ class ConfigDialog(QtGui.QDialog):
     def getMoreState(self):
         settings = QSettings("Syncplay", "MoreSettings")
         settings.beginGroup("MoreSettings")
-        morestate = unicode.lower(settings.value("ShowMoreSettings", False))
+        morestate = unicode.lower(settings.value("ShowMoreSettings", "false"))
         settings.endGroup()
         if morestate == "true":
             return(True)
