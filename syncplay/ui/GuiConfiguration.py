@@ -253,6 +253,8 @@ class ConfigDialog(QtGui.QDialog):
             settings.clear()
             settings = QSettings("Syncplay","MainWindow")
             settings.clear()
+            settings = QSettings("Syncplay","MoreSettings")
+            settings.clear()
             self.datacleared = True
         self.QtGui = QtGui
         self.error = error
