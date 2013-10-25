@@ -24,7 +24,7 @@ class ConfigurationGetter(object):
                         "port": constants.DEFAULT_PORT,
                         "name": None,
                         "debug": False,
-                        "forceGuiPrompt": False,
+                        "forceGuiPrompt": True,
                         "noGui": False,
                         "noStore": False,
                         "room": "",
