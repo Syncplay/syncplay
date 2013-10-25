@@ -82,3 +82,6 @@ UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,4}(?:[^\d\.](?
 UI_SEEK_REGEX = r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
 PARSE_TIME_REGEX = r'(:?(?:(?P<hours>\d+?)[^\d\.])?(?:(?P<minutes>\d+?))?[^\d\.])?(?P<seconds>\d+?)(?:\.(?P<miliseconds>\d+?))?$'
 SERVER_MAX_TEMPLATE_LENGTH = 10000
+PRIVACY_SENDRAW_MODE = "SendRaw"
+PRIVACY_SENDHASHED_MODE = "SendHashed"
+PRIVACY_DONTSEND_MODE = "DoNotSend"
