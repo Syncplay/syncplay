@@ -33,31 +33,25 @@ class GuiConfiguration:
 class ConfigDialog(QtGui.QDialog):
     
     pressedclosebutton = False
-    malToggling = False
+    moreToggling = False
     
-    def malToggled(self):
-        if self.malToggling == False:
-            self.malToggling = True
+    def moreToggled(self):
+        if self.moreToggling == False:
+            self.moreToggling = True
             
-            if self.malenabledCheckbox.isChecked() and self.malenabledCheckbox.isVisible():
-                self.malenabledCheckbox.setChecked(False)
-                self.malSettingsGroup.setChecked(True)
-                self.malSettingsGroup.show()
-                self.malpasswordLabel.show()
-                self.malpasswordTextbox.show()
-                self.malusernameLabel.show()
-                self.malusernameTextbox.show()
-                self.malenabledCheckbox.hide()
+            if self.showmoreCheckbox.isChecked() and self.showmoreCheckbox.isVisible():
+                self.showmoreCheckbox.setChecked(False)
+                self.moreSettingsGroup.setChecked(True)
+                self.moreSettingsGroup.show()
+                self.showmoreCheckbox.hide()
+                self.saveMoreState(True)
             else:
-                self.malSettingsGroup.setChecked(False)
-                self.malSettingsGroup.hide()
-                self.malpasswordLabel.hide()
-                self.malpasswordTextbox.hide()
-                self.malusernameLabel.hide()
-                self.malusernameTextbox.hide()
-                self.malenabledCheckbox.show()
+                self.moreSettingsGroup.setChecked(False)
+                self.moreSettingsGroup.hide()
+                self.showmoreCheckbox.show()
+                self.saveMoreState(False)
                 
-            self.malToggling = False
+            self.moreToggling = False
             self.adjustSize()
             self.setFixedSize(self.sizeHint())
             
@@ -151,6 +145,22 @@ class ConfigDialog(QtGui.QDialog):
         settings.setValue("mediadir", self.mediadirectory)
         settings.endGroup()
         
+    def getMoreState(self):
+        settings = QSettings("Syncplay", "MoreSettings")
+        settings.beginGroup("MoreSettings")
+        morestate = unicode.lower(settings.value("ShowMoreSettings", False))
+        settings.endGroup()
+        if morestate == "true":
+            return(True)
+        else:
+            return(False)
+                        
+    def saveMoreState(self, morestate):
+        settings = QSettings("Syncplay", "MoreSettings")
+        settings.beginGroup("MoreSettings")
+        settings.setValue("ShowMoreSettings", morestate)
+        settings.endGroup()
+        
     def browseMediapath(self):
         self.loadMediaBrowseSettings()
         options = QtGui.QFileDialog.Options()
@@ -200,10 +210,8 @@ class ConfigDialog(QtGui.QDialog):
             else:
                 self.config['rewindOnDesync'] = False
         self.config['malUsername'] = self.malusernameTextbox.text()
-        if self.malSettingsGroup.isChecked():
-            self.config['malPassword'] = self.malpasswordTextbox.text()
-        else:
-            self.config['malPassword'] = ""
+        self.config['malPassword'] = self.malpasswordTextbox.text()
+
         self.pressedclosebutton = True
         self.close()
         return
@@ -337,55 +345,60 @@ class ConfigDialog(QtGui.QDialog):
         self.mediaplayerSettingsLayout.addWidget(self.mediapathLabel, 1, 0)
         self.mediaplayerSettingsLayout.addWidget(self.mediapathTextbox , 1, 2)
         self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton , 1, 3)
-        self.mediaplayerSettingsLayout.addWidget(self.slowdownCheckbox, 2, 0,1,3)
-        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
-            self.mediaplayerSettingsLayout.addWidget(self.rewindCheckbox, 3, 0,1,3)
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
+#BOB
+        self.moreSettingsGroup = QtGui.QGroupBox(getMessage("en", "more-title"))
+
         if config['slowOnDesync'] == True:
             self.slowdownCheckbox.setChecked(True)
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True and config['rewindOnDesync'] == True:
             self.rewindCheckbox.setChecked(True)
-
-        self.malSettingsGroup = QtGui.QGroupBox(getMessage("en", "mal-title"))
-        self.malSettingsGroup.setCheckable(True)
-        self.malSettingsGroup.toggled.connect(self.malToggled)
+        self.moreSettingsGroup.setCheckable(True)
         self.malSettingsSplit = QtGui.QSplitter(self)
         self.malusernameTextbox = QLineEdit(config['malUsername'],self)
+        self.malusernameTextbox.setMaximumWidth(115)
         self.malusernameLabel = QLabel(getMessage("en", "mal-username-label"), self)
         
         self.malpasswordTextbox = QLineEdit(config['malPassword'],self)
         self.malpasswordTextbox.setEchoMode(QtGui.QLineEdit.Password)
         self.malpasswordLabel = QLabel(getMessage("en", "mal-password-label"), self)
+        self.alwaysshowCheckbox = QCheckBox(getMessage("en", "alwayshow-label"))
+        self.donotstoreCheckbox = QCheckBox(getMessage("en", "donotstore-label"))
         if (constants.SHOW_TOOLTIPS == True):
             self.malusernameLabel.setToolTip(getMessage("en", "mal-username-tooltip"))
             self.malusernameTextbox.setToolTip(getMessage("en", "mal-username-tooltip"))
             self.malpasswordLabel.setToolTip(getMessage("en", "mal-password-tooltip"))
             self.malpasswordTextbox.setToolTip(getMessage("en", "mal-password-tooltip"))
-        self.malSettingsLayout = QtGui.QGridLayout()
-        self.malSettingsLayout.addWidget(self.malusernameLabel , 0, 0)
-        self.malSettingsLayout.addWidget(self.malusernameTextbox, 0, 1)
-        self.malSettingsLayout.addWidget(self.malpasswordLabel , 1, 0)
-        self.malSettingsLayout.addWidget(self.malpasswordTextbox, 1, 1)
-        self.malSettingsGroup.setLayout(self.malSettingsLayout)
+            self.alwaysshowCheckbox.setToolTip(getMessage("en", "alwayshow-tooltip"))
+            self.donotstoreCheckbox.setToolTip(getMessage("en", "donotstore-tooltip"))
+        self.moreSettingsLayout = QtGui.QGridLayout()
+        self.moreSettingsLayout.addWidget(self.malusernameLabel , 0, 0)
+        self.moreSettingsLayout.addWidget(self.malusernameTextbox, 0, 1)
+        self.moreSettingsLayout.addWidget(self.malpasswordLabel , 0, 2)
+        self.moreSettingsLayout.addWidget(self.malpasswordTextbox, 0, 3)
+        self.moreSettingsLayout.addWidget(self.slowdownCheckbox, 2, 0,1,4)
+        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
+            self.moreSettingsLayout.addWidget(self.rewindCheckbox, 3, 0, 1, 4)
+        self.moreSettingsLayout.addWidget(self.alwaysshowCheckbox, 4, 0, 1, 4)
+        self.moreSettingsLayout.addWidget(self.donotstoreCheckbox, 5, 0, 1, 4)
+
+        self.moreSettingsGroup.setLayout(self.moreSettingsLayout)
         
-        self.malenabledCheckbox = QCheckBox(getMessage("en", "mal-title"))
-        self.malenabledCheckbox.toggled.connect(self.malToggled) 
-        if config['malPassword'] == None or config['malPassword'] == "":
-            self.malenabledCheckbox.setChecked(False)
-            self.malSettingsGroup.hide()
+        self.showmoreCheckbox = QCheckBox(getMessage("en", "more-title"))
+        
+        if self.getMoreState() == False:
+            self.showmoreCheckbox.setChecked(False)
+            self.moreSettingsGroup.hide()
         else:
-            self.malenabledCheckbox.hide()
-        
-        self.alwaysshowCheckbox = QCheckBox(getMessage("en", "alwayshow-label"))
+            self.showmoreCheckbox.hide()
+        self.showmoreCheckbox.toggled.connect(self.moreToggled)            
+        self.moreSettingsGroup.toggled.connect(self.moreToggled)
         
         if config['forceGuiPrompt'] == True:
             self.alwaysshowCheckbox.setChecked(True)
         
-        self.donotstoreCheckbox = QCheckBox(getMessage("en", "donotstore-label"))
         if (constants.SHOW_TOOLTIPS == True):
-            self.malenabledCheckbox.setToolTip(getMessage("en", "mal-tooltip"))
-            self.alwaysshowCheckbox.setToolTip(getMessage("en", "alwayshow-tooltip"))
-            self.donotstoreCheckbox.setToolTip(getMessage("en", "donotstore-tooltip"))
+            self.showmoreCheckbox.setToolTip(getMessage("en", "more-tooltip"))
                
         self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
                       
@@ -399,8 +412,8 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addSpacing(12)
         self.mainLayout.addWidget(self.mediaplayerSettingsGroup)
         self.mainLayout.addSpacing(12)
-        self.mainLayout.addWidget(self.malenabledCheckbox)
-        self.mainLayout.addWidget(self.malSettingsGroup)
+        self.mainLayout.addWidget(self.showmoreCheckbox)
+        self.mainLayout.addWidget(self.moreSettingsGroup)
         
         self.topLayout = QtGui.QHBoxLayout()
         self.helpButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'help.png'),getMessage("en", "help-label"))
@@ -415,8 +428,6 @@ class ConfigDialog(QtGui.QDialog):
             self.runButton.setText(getMessage("en", "run-label"))
         self.topLayout.addWidget(self.helpButton, Qt.AlignLeft)
         self.topLayout.addWidget(self.runButton, Qt.AlignRight)
-        self.mainLayout.addWidget(self.alwaysshowCheckbox)
-        self.mainLayout.addWidget(self.donotstoreCheckbox)
         self.mainLayout.addLayout(self.topLayout)
         
         self.mainLayout.addStretch(1)
