@@ -139,7 +139,7 @@ class VlcPlayer(BasePlayer):
             self._positionAsk.set()
         elif(name == "filename"):
             self._filechanged = True
-            self._filename = value
+            self._filename = value.decode('utf-8')
             self._filenameAsk.set()
         elif(line.startswith("interface-version: ")):
             interface_version = line[19:24]

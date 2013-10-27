@@ -134,7 +134,7 @@ class MplayerPlayer(BasePlayer):
             self._filepath = value
             self._pathAsk.set()
         elif(name == "filename"):
-            self._filename = value
+            self._filename = value.decode('utf-8')
             self._filenameAsk.set()
     
     @staticmethod
