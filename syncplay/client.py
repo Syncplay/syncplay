@@ -356,14 +356,14 @@ class SyncplayClient(object):
     
     def setPosition(self, position):
         position += self.getUserOffset() 
-        if(self._player):
+        if(self._player and self.userlist.currentUser.file):
             if(position < 0):
                 position = 0
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), True, None, True) 
             self._player.setPosition(position)
     
     def setPaused(self, paused):
-        if(self._player):
+        if(self._player and self.userlist.currentUser.file):
             self._player.setPaused(paused)
     
     def start(self, host, port):
