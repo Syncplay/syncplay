@@ -33,6 +33,8 @@ class SyncClientFactory(ClientFactory):
         self._client.ui.showMessage(message)
 
     def clientConnectionLost(self, connector, reason):
+        if self._timesTried == 0:
+            self._client.onDisconnect()
         if self._timesTried < self.retry:
             self._timesTried += 1
             self._client.ui.showMessage(getMessage("en", "reconnection-attempt-notification"))
@@ -248,7 +250,15 @@ class SyncplayClient(object):
         self._userOffset = time
         self.setPosition(self.getGlobalPosition())
         self.ui.showMessage(getMessage("en", "current-offset-notification").format(self._userOffset))
-        
+
+    def onDisconnect(self):
+        if(self._config['pauseOnLeave']):
+            self.setPaused(True)
+
+    def removeUser(self, username):
+        self.onDisconnect()
+        self.userlist.removeUser(username)
+
     def getPlayerPosition(self):
         if(not self._lastPlayerUpdate):
             if(self._lastGlobalUpdate):

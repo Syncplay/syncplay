@@ -119,7 +119,7 @@ class SyncClientProtocol(JSONCommandProtocol):
                 if(settings["event"].has_key("joined")):
                     self._client.userlist.addUser(username, room, file_)
                 elif(settings["event"].has_key("left")):
-                    self._client.userlist.removeUser(username)
+                    self._client.removeUser(username)
             else:
                 self._client.userlist.modUser(username, room, file_)
                             
