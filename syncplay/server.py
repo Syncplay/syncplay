@@ -357,7 +357,7 @@ class SyncIsolatedFactory(SyncFactory):
         l = lambda w: w.sendUserSetting(watcher.name, oldRoom, None, {"left": True})
         self.broadcast(watcherProtocol, l)
         SyncFactory.watcherSetRoom(self, watcherProtocol, room)
-
+        self.watcherSetFile(watcherProtocol, watcher.file)
 
 class Watcher(object):
     def __init__(self, factory, watcherProtocol, name, room):
