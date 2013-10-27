@@ -9,6 +9,8 @@ from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants
 from syncplay.messages import getMessage
 import threading
+from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE,\
+    PRIVACY_HIDDENFILENAME
 try:
     import libMal
 except ImportError:
@@ -287,15 +289,33 @@ class SyncplayClient(object):
             size = os.path.getsize(path)
         except OSError: #file not accessible (stream?)
             size = 0
+        filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
         self._malUpdater.fileChangeHook(filename, duration)
-            
+
+    def __hashFilename(self, filename):
+        return hashlib.sha256(filename).hexdigest()[:12]
+
+    def __hashFilesize(self, size):
+        hashlib.sha256(str(size)).hexdigest()
+
+    def __executePrivacySettings(self, filename, size):
+        if (self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE):
+            filename = self.__hashFilename(filename) 
+        elif (self._config['filenamePrivacyMode'] == PRIVACY_DONTSEND_MODE):
+            filename = PRIVACY_HIDDENFILENAME
+        if (self._config['filesizePrivacyMode'] == PRIVACY_SENDHASHED_MODE):
+            size = self.__hashFilesize(size)
+        elif (self._config['filesizePrivacyMode'] == PRIVACY_DONTSEND_MODE):
+            size = 0
+        return filename, size
+
     def sendFile(self):
         file_ = self.userlist.currentUser.file
         if(self._protocol and self._protocol.logged and file_):
             self._protocol.sendFileSetting(file_)
-            
+
     def setUsername(self, username):
         self.userlist.currentUser.username = username
     
