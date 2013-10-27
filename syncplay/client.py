@@ -256,7 +256,8 @@ class SyncplayClient(object):
             self.setPaused(True)
 
     def removeUser(self, username):
-        self.onDisconnect()
+        if(self.userlist.isUserInYourRoom(username)):
+            self.onDisconnect()
         self.userlist.removeUser(username)
 
     def getPlayerPosition(self):
@@ -592,7 +593,13 @@ class SyncplayUserlist(object):
             if(user.room == self.currentUser.room):
                 return False
         return True
-    
+
+    def isUserInYourRoom(self, username):
+        for user in self._users.itervalues():
+            if(user.username == username and user.room == self.currentUser.room):
+                return True
+        return False
+
     def userListChange(self):
         self._roomUsersChanged = True
         self.ui.userListChange()
