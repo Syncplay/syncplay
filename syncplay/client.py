@@ -312,7 +312,7 @@ class SyncplayClient(object):
         return hashlib.sha256(self.__stripfilename(filename)).hexdigest()[:12]
 
     def __hashFilesize(self, size):
-        hashlib.sha256(str(size)).hexdigest()
+        return hashlib.sha256(str(size)).hexdigest()[:12]
 
     def __executePrivacySettings(self, filename, size):
         if (self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE):
