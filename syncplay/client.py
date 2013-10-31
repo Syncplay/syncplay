@@ -10,7 +10,7 @@ from syncplay import utils, constants
 from syncplay.messages import getMessage
 import threading
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE,\
-    PRIVACY_HIDDENFILENAME
+    PRIVACY_HIDDENFILENAME, FILENAME_STRIP_REGEX
 try:
     import libMal
 except ImportError:
@@ -304,9 +304,12 @@ class SyncplayClient(object):
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
         self._malUpdater.fileChangeHook(filename, duration)
+        
+    def __stripfilename(self, filename):
+        return re.sub(constants.FILENAME_STRIP_REGEX,"",filename)
 
     def __hashFilename(self, filename):
-        return hashlib.sha256(filename).hexdigest()[:12]
+        return hashlib.sha256(self.__stripfilename(filename)).hexdigest()[:12]
 
     def __hashFilesize(self, size):
         hashlib.sha256(str(size)).hexdigest()
