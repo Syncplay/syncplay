@@ -305,22 +305,13 @@ class SyncplayClient(object):
         self.sendFile()
         self._malUpdater.fileChangeHook(filename, duration)
         
-    def __stripfilename(self, filename):
-        return re.sub(constants.FILENAME_STRIP_REGEX,"",filename)
-
-    def __hashFilename(self, filename):
-        return hashlib.sha256(self.__stripfilename(filename)).hexdigest()[:12]
-
-    def __hashFilesize(self, size):
-        return hashlib.sha256(str(size)).hexdigest()[:12]
-
     def __executePrivacySettings(self, filename, size):
         if (self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE):
-            filename = self.__hashFilename(filename) 
+            filename = utils.hashFilename(filename) 
         elif (self._config['filenamePrivacyMode'] == PRIVACY_DONTSEND_MODE):
             filename = PRIVACY_HIDDENFILENAME
         if (self._config['filesizePrivacyMode'] == PRIVACY_SENDHASHED_MODE):
-            size = self.__hashFilesize(size)
+            size = utils.hashFilesize(size)
         elif (self._config['filesizePrivacyMode'] == PRIVACY_DONTSEND_MODE):
             size = 0
         return filename, size
@@ -456,15 +447,12 @@ class SyncplayUser(object):
                  }
         self.file = file_
     
-    def isFileSame(self, file_):
-        def stripfilename(filename): #TODO: Add proper Unicode support
-            return re.sub(constants.FILENAME_STRIP_REGEX,"",filename) 
-        
+    def isFileSame(self, file_):       
         if(not self.file):
             return False
-        sameName = stripfilename(self.file['name']) == stripfilename(file_['name'])
-        sameSize = self.file['size'] == file_['size']
-        sameDuration = abs(round(self.file['duration']) - round(file_['duration'])) < constants.DIFFFERENT_DURATION_THRESHOLD
+        sameName = utils.sameFilename(self.file['name'], file_['name'])
+        sameSize = utils.sameFilesize(self.file['size'], file_['size'])
+        sameDuration = utils.sameFileduration(self.file['duration'], file_['duration'])
         return sameName and sameSize and sameDuration
       
     def __lt__(self, other):
@@ -540,11 +528,14 @@ class SyncplayUserlist(object):
                 message = getMessage("en", "file-different-notification").format(username)
                 self.ui.showMessage(message)
                 differences = []
-                if(self.currentUser.file['name'] <> file_['name']):
+                differentName = not utils.sameFilename(self.currentUser.file['name'], file_['name'])
+                differentSize = not utils.sameFilesize(self.currentUser.file['size'], file_['size'])
+                differentDuration = not utils.sameFileduration(self.currentUser.file['duration'], file_['duration'])
+                if(differentName):
                     differences.append("filename") 
-                if(self.currentUser.file['size'] <> file_['size']):
+                if(differentSize):
                     differences.append("size")
-                if(self.currentUser.file['duration'] <> file_['duration']):
+                if(differentDuration):
                     differences.append("duration")
                 message = getMessage("en", "file-differences-notification") + ", ".join(differences)
                 self.ui.showMessage(message)
