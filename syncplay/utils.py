@@ -152,13 +152,17 @@ def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
         return True
     
 def sameFilename (filename1, filename2):
-    if sameHashed(stripfilename(filename1), hashFilename(filename1), stripfilename(filename2), hashFilename(filename2)):
+    if filename1 == constants.PRIVACY_HIDDENFILENAME or filename2 == constants.PRIVACY_HIDDENFILENAME:
+        return True
+    elif sameHashed(stripfilename(filename1), hashFilename(filename1), stripfilename(filename2), hashFilename(filename2)):
         return True
     else:
         return False
 
 def sameFilesize (filesize1, filesize2):
-    if sameHashed(filesize1, hashFilesize(filesize1), filesize2, hashFilesize(filesize2)):
+    if filesize1 == 0 or filesize2 == 0:
+        return True
+    elif sameHashed(filesize1, hashFilesize(filesize1), filesize2, hashFilesize(filesize2)):
         return True
     else:
         return False
