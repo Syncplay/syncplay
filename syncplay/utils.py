@@ -6,6 +6,7 @@ from syncplay.messages import getMessage
 import sys
 import os
 import itertools
+import hashlib
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -128,3 +129,42 @@ def blackholeStdoutForFrozenWindow():
                 pass
         sys.stdout = Blackhole()
         del Blackhole
+
+# Relate to file hashing / difference checking:
+
+def stripfilename(filename):
+    return re.sub(constants.FILENAME_STRIP_REGEX,"",filename)
+
+def hashFilename(filename):
+    return hashlib.sha256(stripfilename(filename)).hexdigest()[:12]
+
+def hashFilesize(size):
+    return hashlib.sha256(str(size)).hexdigest()[:12]
+    
+def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
+    if string1raw == string2raw:
+        return True
+    elif string1raw == string2hashed:
+        return True
+    elif string1hashed == string2raw:
+        return True 
+    elif string1hashed == string2hashed:
+        return True
+    
+def sameFilename (filename1, filename2):
+    if sameHashed(stripfilename(filename1), hashFilename(filename1), stripfilename(filename2), hashFilename(filename2)):
+        return True
+    else:
+        return False
+
+def sameFilesize (filesize1, filesize2):
+    if sameHashed(filesize1, hashFilesize(filesize1), filesize2, hashFilesize(filesize2)):
+        return True
+    else:
+        return False
+    
+def sameFileduration (duration1, duration2):
+    if abs(round(duration1) - round(duration2)) < constants.DIFFFERENT_DURATION_THRESHOLD:
+        return True
+    else:
+        return False
