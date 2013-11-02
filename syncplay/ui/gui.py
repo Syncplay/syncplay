@@ -4,8 +4,8 @@ from syncplay import utils, constants, version
 import sys
 import time
 import re
-import os
-from syncplay.utils import formatTime
+import os 
+from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration
 
 class MainWindow(QtGui.QMainWindow):
     def addClient(self, client):
@@ -28,9 +28,6 @@ class MainWindow(QtGui.QMainWindow):
             self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
     
     def showUserList(self, currentUser, rooms):
-        def stripfilename(filename):
-            return re.sub(constants.FILENAME_STRIP_REGEX,"",filename) 
-        
         self._usertreebuffer = QtGui.QStandardItemModel()
         self._usertreebuffer.setColumnCount(2)
         self._usertreebuffer.setHorizontalHeaderLabels(("Room / User","File being played"))
@@ -51,10 +48,10 @@ class MainWindow(QtGui.QMainWindow):
                 fileitem = QtGui.QStandardItem("")
                 if (user.file):
                     fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")")
-                    if (currentUser.file):
-                        sameName = stripfilename(user.file['name']) == stripfilename(currentUser.file['name'])
-                        sameSize = user.file['size'] == currentUser.file['size']
-                        sameDuration = abs(round(user.file['duration']) - round(currentUser.file['duration'])) < constants.DIFFFERENT_DURATION_THRESHOLD
+                    if (currentUser.file):                     
+                        sameName = sameFilename(user.file['name'], currentUser.file['name'])
+                        sameSize = sameFilesize(user.file['size'], currentUser.file['size'])
+                        sameDuration = sameFileduration(user.file['duration'], currentUser.file['duration'])
                         sameRoom = room == currentUser.room
                         differentName = not sameName
                         differentSize = not sameSize
@@ -86,7 +83,7 @@ class MainWindow(QtGui.QMainWindow):
         self.listTreeView.expandAll()
         self.listTreeView.resizeColumnToContents(0)
         self.listTreeView.resizeColumnToContents(1)
-
+        
     def roomClicked(self, item):
         while(item.parent().row() != -1):
             item = item.parent()
