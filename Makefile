@@ -24,6 +24,7 @@ common:
 	-mkdir -p $(LIB_PATH)/syncplay/resources/lua
 	-mkdir -p $(LIB_PATH)/syncplay/resources/lua/intf
 	cp -r syncplay $(LIB_PATH)/syncplay/
+	chmod 755 $(LIB_PATH)/syncplay/
 	cp -r resources/hicolor $(SHARE_PATH)/icons/
 	cp -r resources/*.png $(LIB_PATH)/syncplay/resources/
 	cp -r resources/lua/intf/*.lua $(LIB_PATH)/syncplay/resources/lua/intf/
@@ -40,7 +41,7 @@ client:
 	-mkdir -p $(BIN_PATH)
 	touch $(BIN_PATH)/syncplay
 	echo '#!/bin/sh\npython -OO $(LIB_PATH)/syncplay/syncplayClient.py "$$@"' > $(BIN_PATH)/syncplay
-	chmod a+x $(BIN_PATH)/syncplay
+	chmod 755 $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
 	
@@ -59,7 +60,7 @@ server:
 	-mkdir -p $(BIN_PATH)
 	touch $(BIN_PATH)/syncplay-server
 	echo '#!/bin/sh\npython -OO $(LIB_PATH)/syncplay/syncplayServer.py "$$@"' > $(BIN_PATH)/syncplay-server
-	chmod a+x $(BIN_PATH)/syncplay-server
+	chmod 755 $(BIN_PATH)/syncplay-server
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
 
