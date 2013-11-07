@@ -155,7 +155,7 @@ class SyncFactory(Factory):
         else:
             return getMessage("en", "server-default-http-reply")
 
-    def sendState(self, watcherProtocol, doSeek = False, senderLatency = 0, forcedUpdate = False):
+    def sendState(self, watcherProtocol, doSeek = False, forcedUpdate = False):
         watcher = self.getWatcher(watcherProtocol)
         if(not watcher):
             return
@@ -164,18 +164,10 @@ class SyncFactory(Factory):
         setBy = self._roomStates[room]["setBy"]
         watcher.paused = paused
         watcher.position = position
-        watcherProtocol.sendState(position, paused, doSeek, setBy, senderLatency, watcher.latency, forcedUpdate)
+        watcherProtocol.sendState(position, paused, doSeek, setBy, forcedUpdate)
         if(time.time() - watcher.lastUpdate > constants.PROTOCOL_TIMEOUT):
             watcherProtocol.drop()
             self.removeWatcher(watcherProtocol)
-        
-    def __updateWatcherPing(self, latencyCalculation, watcher):
-        if (latencyCalculation):
-            ping = (time.time() - latencyCalculation) / 2
-            if (watcher.latency):
-                watcher.latency = watcher.latency * (constants.PING_MOVING_AVERAGE_WEIGHT) + ping * (1-constants.PING_MOVING_AVERAGE_WEIGHT) #Exponential moving average 
-            else:
-                watcher.latency = ping
 
     def __shouldServerForceUpdateOnRoom(self, pauseChanged, doSeek):
         return doSeek or pauseChanged
@@ -210,9 +202,10 @@ class SyncFactory(Factory):
             if (doSeek and position):
                 self.ircBot.sp_seek(watcher.name, oldPosition, position, watcher.room)
 
-    def updateWatcherState(self, watcherProtocol, position, paused, doSeek, latencyCalculation):
+    def updateWatcherState(self, watcherProtocol, position, paused, doSeek, messageAge):
         watcher = self.getWatcher(watcherProtocol)
-        self.__updateWatcherPing(latencyCalculation, watcher)
+        if(not watcher):
+            return
         watcher.lastUpdate = time.time()
         if(watcher.file):
             oldPosition = self._roomStates[watcher.room]["position"]
@@ -220,11 +213,13 @@ class SyncFactory(Factory):
             if(paused is not None):
                 pauseChanged = self.__updatePausedState(paused, watcher)
             if(position is not None):
+                if(not paused):
+                    position += messageAge
                 self.__updatePositionState(position, doSeek or pauseChanged, watcher)
             forceUpdate = self.__shouldServerForceUpdateOnRoom(pauseChanged, doSeek)
             if(forceUpdate):
                 self.__notifyIrcBot(position, paused, doSeek, watcher, oldPosition, pauseChanged)
-                l = lambda w: self.sendState(w, doSeek, watcher.latency, forceUpdate)
+                l = lambda w: self.sendState(w, doSeek, forceUpdate)
                 self.broadcastRoom(watcher.watcherProtocol, l)
 
     def removeWatcher(self, watcherProtocol):
@@ -262,6 +257,8 @@ class SyncFactory(Factory):
                 
     def watcherSetFile(self, watcherProtocol, file_):
         watcher = self.getWatcher(watcherProtocol)
+        if(not watcher):
+            return
         watcher.file = file_
         l = lambda w: w.sendUserSetting(watcher.name, watcher.room, watcher.file, None)
         self.broadcast(watcherProtocol, l)
@@ -299,7 +296,7 @@ class SyncFactory(Factory):
                         self.ircBot.sp_paused("IRC: " + user.name, user.room)
                     elif(not paused):
                         self.ircBot.sp_unpaused("IRC: " + user.name, user.room)
-                    l = lambda w: self.sendState(w, False, user.latency, True)
+                    l = lambda w: self.sendState(w, False, 0, True)
                     self.broadcastRoom(user.watcherProtocol, l)
       
     
@@ -320,7 +317,7 @@ class SyncFactory(Factory):
                     self._roomStates[user.room]['paused'] = time
                     self._roomStates[user.room]['setBy'] = "IRC: " + setBy 
                     self.ircBot.sp_seek(user.name, oldPosition, time, user.room)                
-                    l = lambda w: self.sendState(w, True, user.latency, True)
+                    l = lambda w: self.sendState(w, True, 0, True)
                     self.broadcastRoom(user.watcherProtocol, l)
   
     
@@ -368,7 +365,6 @@ class Watcher(object):
         self.file = None
         self._sendStateTimer = None
         self.position = None
-        self.latency = 0
         self.lastUpdate = time.time()
 
     def __lt__(self, b):
