@@ -5,6 +5,7 @@ import syncplay
 from functools import wraps
 import time
 from syncplay.messages import getMessage
+from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT
 
 
 class JSONCommandProtocol(LineReceiver):
@@ -426,29 +427,28 @@ class PingService(object):
 
     def __init__(self):
         self._rtt = 0
-        self._t0 = None
-        self._fdDiff = 0
         self._fd = 0
+        self._avrRtt = 0
 
     def newTimestamp(self):
         return time.time()
 
     def receiveMessage(self, timestamp, senderRtt):
-        prevRtt = self._rtt
         if(not timestamp):
             return
         self._rtt = time.time() - timestamp
-        if(self._t0 == None and self._rtt > 0 and prevRtt):
-            self._t0 = self._rtt / 2
+        if(self._rtt < 0 or senderRtt < 0):
             return
-        if(senderRtt <= 0 or not prevRtt):
-            return
-        self._fdDiff = self._fdDiff + (prevRtt - senderRtt)
-        self._fd = abs(self._t0 - self._fdDiff)
+        if(not self._avrRtt):
+            self._avrRtt = self._rtt
+        self._avrRtt = self._avrRtt * PING_MOVING_AVERAGE_WEIGHT + self._rtt * (1 - PING_MOVING_AVERAGE_WEIGHT)
+        if(senderRtt < self._rtt):
+            self._fd = self._avrRtt/2 + (self._rtt - senderRtt)
+        else:
+            self._fd = self._avrRtt/2
 
     def getLastForwardDelay(self):
         return self._fd
 
     def getRtt(self):
         return self._rtt
-

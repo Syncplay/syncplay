@@ -204,6 +204,8 @@ class SyncFactory(Factory):
 
     def updateWatcherState(self, watcherProtocol, position, paused, doSeek, messageAge):
         watcher = self.getWatcher(watcherProtocol)
+        if(not watcher):
+            return
         watcher.lastUpdate = time.time()
         if(watcher.file):
             oldPosition = self._roomStates[watcher.room]["position"]
@@ -255,6 +257,8 @@ class SyncFactory(Factory):
                 
     def watcherSetFile(self, watcherProtocol, file_):
         watcher = self.getWatcher(watcherProtocol)
+        if(not watcher):
+            return
         watcher.file = file_
         l = lambda w: w.sendUserSetting(watcher.name, watcher.room, watcher.file, None)
         self.broadcast(watcherProtocol, l)
