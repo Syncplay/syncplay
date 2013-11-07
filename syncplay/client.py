@@ -224,24 +224,24 @@ class SyncplayClient(object):
             madeChangeOnPlayer = self._serverPaused(setBy)
         return madeChangeOnPlayer
 
-    def _executePlaystateHooks(self, position, paused, doSeek, setBy, latency):
+    def _executePlaystateHooks(self, position, paused, doSeek, setBy, messageAge):
         if(self.userlist.hasRoomStateChanged() and not paused):
             self._warnings.checkWarnings()
             self.userlist.roomStateConfirmed()
         self._malUpdater.playingHook(position, paused)
 
-    def updateGlobalState(self, position, paused, doSeek, setBy, latency):
+    def updateGlobalState(self, position, paused, doSeek, setBy, messageAge):
         if(self.__getUserlistOnLogon):
             self.__getUserlistOnLogon = False
             self.getUserList()
         madeChangeOnPlayer = False
         if(not paused):
-            position += latency
+            position += messageAge
         if(self._player):
             madeChangeOnPlayer = self._changePlayerStateAccordingToGlobalState(position, paused, doSeek, setBy)
         if(madeChangeOnPlayer):
             self.askPlayer()
-        self._executePlaystateHooks(position, paused, doSeek, setBy, latency)
+        self._executePlaystateHooks(position, paused, doSeek, setBy, messageAge)
         
     def getUserOffset(self):
         return self._userOffset
