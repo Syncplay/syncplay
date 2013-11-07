@@ -85,6 +85,9 @@ class MplayerPlayer(BasePlayer):
     def openFile(self, filePath):
         self._listener.sendLine('loadfile {}'.format(self._quoteArg(filePath)))
         self._onFileUpdate()
+        if self._client.getGlobalPaused():
+            self._listener.sendLine('pause')
+        self.setPosition(self._client.getGlobalPosition())
         
     def setPosition(self, value):
         self._position = value
