@@ -63,6 +63,7 @@ class SyncplayClient(object):
         self.userlist = SyncplayUserlist(self.ui, self)
         self._protocol = None
         self._player = None
+        self.givenmalprivacywarning = False
         if(config['room'] == None or config['room'] == ''):
             config['room'] = config['name'] # ticket #58
         self.defaultRoom = config['room']
@@ -300,10 +301,16 @@ class SyncplayClient(object):
             size = os.path.getsize(path)
         except OSError: #file not accessible (stream?)
             size = 0
+        rawfilename = filename
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
-        self._malUpdater.fileChangeHook(filename, duration)
+        self._malUpdater.fileChangeHook(rawfilename, duration)
+        if filename <> rawfilename and self.givenmalprivacywarning == False:
+            message = getMessage("en", "mal-noprivacy-notification")
+            self.ui.showErrorMessage(message)
+            self.givenmalprivacywarning = True
+            
         
     def __executePrivacySettings(self, filename, size):
         if (self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE):
