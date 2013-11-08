@@ -55,7 +55,9 @@ en = {
       "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above", # VLC version, VLC min version
       "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above", # VLC interface version, VLC interface min version
       "vlc-interface-oldversion-ignored": "Warning: Syncplay detected that an old version version of the Syncplay interface module for VLC was installed in the VLC directory. As such, it is being ignored in favour of the syncplay.lua module contained within the Syncplay directory. If you wish to run any VLC extensions or interface scripts then please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",
-      "vlc-interface-not-installed": "Warning: The Syncplay interface module for VLC was not found in the VLC directory. As such, VLC will use the syncplau.lua module contained within the Syncplay directory. If you wish to run any VLC extensions or interface scripts then please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",      
+      "vlc-interface-not-installed": "Warning: The Syncplay interface module for VLC was not found in the VLC directory. As such, VLC will use the syncplau.lua module contained within the Syncplay directory. If you wish to run any VLC extensions or interface scripts then please refer to the Syncplay User Guide at http://syncplay.pl/ for instructions.",
+      
+      "mal-noprivacy-notification": "Warning: The MyAnimeList updater does not support Syncplay's filename privacy settings. Filename information sent to Google.com, MAL-API.com and MyAnimeList.net will not be encrypted, masked or hashed. See http://syncplay.pl/tech/ for more details on MyAnimeList/libMal behaviour.",      
 
       # Client prompts
       "enter-to-exit-prompt" : "Press enter to exit\n",
