@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.1.5
+ Version: 0.1.6
  
 --[==========================================================================[
 
@@ -71,14 +71,13 @@ if(modulepath ~= nil) and (modulepath ~= "") then
     -- Workaround for when the script is not being run from the usual VLC intf folder.
     package.path = modulepath
     pcall(require,"common")
-    pcall(require,"host")
 else
     require "common"
-    require "host"
 end
 
-local connectorversion = "0.1.5"
+local connectorversion = "0.1.6"
 local durationdelay = 500000 -- Pause for get_duration command for increased reliability
+local host = "localhost"
 local port
 
 local msgterminator = "\n"
@@ -111,26 +110,6 @@ vlc.msg.info("Hosting Syncplay interface on port: "..port)
 function quit_vlc()
     running = false
     vlc.misc.quit()
-end
-
-function mightbewindows()
-    -- Used to detect whether the Operating System might be Windows.
-    sysos = os.getenv("OS")
-    if sysos == nil then
-        return false
-    elseif sysos == "" or string.match(sysos:lower(), "windows") then
-        return true
-    else
-        return false
-    end
-    
-end
-
-if mightbewindows() == true and string.sub(vlc.misc.version(),1,4) ~= "2.0." then
-    vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module on Windows. Please use VLC 2.0.* rather than 2.1.* or 2.2.*.")
-    quit_vlc()
-else
-    h = host.host()
 end
 
 function detectchanges()
@@ -231,7 +210,6 @@ function set_var(vartoset, varvalue)
     return  errormsg
 end
 
-  h:listen( "localhost:"..port)
 
 function get_play_state()
     -- [Used by the get-playstate command]
@@ -387,7 +365,6 @@ function do_command ( command, argument)
     
 end
 
-
 function errormerge(argument, errormsg)
     -- Used to integrate 'no-input' error messages into command responses.
     
@@ -414,36 +391,39 @@ function set_playstate(argument)
     return errormsg
 end
 
+if string.sub(vlc.misc.version(),1,2) ~= "2." then
+    vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module on Windows. Please use VLC 2.")
+    quit_vlc()
+else
+    l = vlc.net.listen_tcp(host, port)
+end
+
     -- main loop, which alternates between writing and reading
+    
 while running do
-        -- accept new connections and select active clients
-    local write, read = h:accept_and_select()
+    --accept new connections and select active clients
+    local fd = l:accept()
+    local buffer = ""
+    while fd >= 0 do
 
-        -- handle clients in write mode
-    for _, client in pairs(write) do
-        client:send()
-        client.buffer = ""
-        client:switch_status( host.status.read )
-    end
-
-        -- handle clients in read mode
-        
-    for _, client in pairs(read) do
-        local str = client:recv(1000)
+        -- handle read mode
+    
+        local str = vlc.net.recv ( fd, 1000)
+            
         local responsebuffer
-        if not str then break end
+        if str == nil then str = "" end
         
         local safestr = string.gsub(tostring(str), "\r", "")
-        if client.inputbuffer == nil then client.inputbuffer = "" end
+        if inputbuffer == nil then inputbuffer = "" end
         
-        client.inputbuffer = client.inputbuffer .. safestr
-            
-        while string.find(client.inputbuffer, msgterminator) do
-            local index = string.find(client.inputbuffer, msgterminator)
-            local request = string.sub(client.inputbuffer, 0, index - 1)
+        inputbuffer = inputbuffer .. safestr
+
+        while string.find(inputbuffer, msgterminator) do
+            local index = string.find(inputbuffer, msgterminator)
+            local request = string.sub(inputbuffer, 0, index - 1)
             local command
             local argument
-            client.inputbuffer = string.sub(client.inputbuffer, index + string.len(msgterminator))
+            inputbuffer = string.sub(inputbuffer, index + string.len(msgterminator))
 
             if (string.find(request, msgseperator)) then
                 index = string.find(request, msgseperator)
@@ -462,12 +442,13 @@ while running do
 
         end
         
-        client.buffer = ""
+        -- handle write mode
+        
         if (responsebuffer) then
-            client:send(responsebuffer)
+            vlc.net.send( fd, responsebuffer )
+            responsebuffer = ""
         end
-        client.buffer = ""
-        client:switch_status( host.status.write )
+
     end
-    
+
 end
