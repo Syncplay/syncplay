@@ -41,7 +41,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_POLISH} "FileDescription" "Syncplay"
   
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
-  LangString ^VLC $${LANG_ENGLISH} "Install Syncplay interface for VLC (requires VLC 2.0.X)"
+  LangString ^VLC $${LANG_ENGLISH} "Install Syncplay interface for VLC (requires VLC 2.x.x)"
   LangString ^Shortcut $${LANG_ENGLISH} "Create Shortcuts in following locations:"
   LangString ^StartMenu $${LANG_ENGLISH} "Start Menu"
   LangString ^Desktop $${LANG_ENGLISH} "Desktop"
