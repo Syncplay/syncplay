@@ -136,7 +136,7 @@ def stripfilename(filename):
     return re.sub(constants.FILENAME_STRIP_REGEX,"",filename)
 
 def hashFilename(filename):
-    return hashlib.sha256(stripfilename(filename)).hexdigest()[:12]
+    return hashlib.sha256(stripfilename(filename).encode('utf-8')).hexdigest()[:12]
 
 def hashFilesize(size):
     return hashlib.sha256(str(size)).hexdigest()[:12]
