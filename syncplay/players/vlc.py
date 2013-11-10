@@ -253,6 +253,9 @@ class VlcPlayer(BasePlayer):
                 if "[syncplay]" in line:
                     if "Listening on host" in line:
                         break
+                    elif "Couldn't find lua interface" in line:
+                        playerController._client.ui.showErrorMessage(getMessage("en", "vlc-failed-noscript").format(line), True)
+                        break
                     elif "lua interface error" in line:
                         playerController._client.ui.showErrorMessage(getMessage("en", "vlc-error-echo").format(line), True)
                         break
