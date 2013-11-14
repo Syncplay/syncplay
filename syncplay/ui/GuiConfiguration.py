@@ -73,7 +73,9 @@ class ConfigDialog(QtGui.QDialog):
         settings = QSettings("Syncplay", "PlayerList")
         settings.beginGroup("PlayerList")
         savedPlayers = settings.value("PlayerList", [])
-        playerpathlist = list(set([os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist + savedPlayers)]))
+        if(not isinstance(savedPlayers, list)):
+            savedPlayers = []
+        playerpathlist = list(set(os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist + savedPlayers)))
         settings.endGroup()
         foundpath = ""
 
@@ -96,7 +98,7 @@ class ConfigDialog(QtGui.QDialog):
         if foundpath != "":
             settings.beginGroup("PlayerList")
             playerpathlist.append(os.path.normcase(os.path.normpath(foundpath)))
-            settings.setValue("PlayerList",  list(set([os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist)])))
+            settings.setValue("PlayerList",  list(set(os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist))))
             settings.endGroup()
         return(foundpath)
     
@@ -335,7 +337,7 @@ class ConfigDialog(QtGui.QDialog):
         self.executablepathCombobox = QtGui.QComboBox(self)
         self.executablepathCombobox.setEditable(True)
         self.executablepathCombobox.currentIndexChanged.connect(self.updateExecutableIcon)
-        self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'],playerpaths))
+        self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'], playerpaths))
         self.executablepathCombobox.setMinimumWidth(200)
         self.executablepathCombobox.setMaximumWidth(200)
         self.executablepathCombobox.editTextChanged.connect(self.updateExecutableIcon)
