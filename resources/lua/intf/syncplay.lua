@@ -105,8 +105,6 @@ local running = true
 port = tonumber(config["port"])
 if (port == nil or port < 1) then port = 4123 end
 
-vlc.msg.info("Hosting Syncplay interface on port: "..port)
-
 function quit_vlc()
     running = false
     vlc.misc.quit()
@@ -396,6 +394,7 @@ if string.sub(vlc.misc.version(),1,2) ~= "2." then
     quit_vlc()
 else
     l = vlc.net.listen_tcp(host, port)
+    vlc.msg.info("Hosting Syncplay interface on port: "..port)
 end
 
     -- main loop, which alternates between writing and reading
