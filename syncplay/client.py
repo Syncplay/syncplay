@@ -11,11 +11,14 @@ from syncplay.messages import getMessage
 import threading
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE,\
     PRIVACY_HIDDENFILENAME, FILENAME_STRIP_REGEX
-try:
+# <MAL DISABLE>
+libMal = None
+'''try:
     import libMal
 except ImportError:
     libMal = None
-
+'''
+# </MAL DISABLE>
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry = constants.RECONNECT_RETRIES):
         self._client = client
