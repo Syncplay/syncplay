@@ -382,6 +382,13 @@ class ConfigDialog(QtGui.QDialog):
         self.malpasswordTextbox.setEchoMode(QtGui.QLineEdit.Password)
         self.malpasswordLabel = QLabel(getMessage("en", "mal-password-label"), self)
         
+        ### <MAL DISABLE>
+        self.malpasswordTextbox.hide()
+        self.malpasswordLabel.hide()
+        self.malusernameTextbox.hide()
+        self.malusernameLabel.hide()
+        ### </MAL DISABLE>
+        
         self.filenameprivacyLabel = QLabel(getMessage("en", "filename-privacy-label"), self)
         self.filenameprivacyButtonGroup = QButtonGroup()
         self.filenameprivacySendRawOption = QRadioButton(getMessage("en", "privacy-sendraw-option"))
