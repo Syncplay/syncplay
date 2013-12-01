@@ -309,7 +309,7 @@ class SyncplayClient(object):
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
         self._malUpdater.fileChangeHook(rawfilename, duration)
-        if filename <> rawfilename and self.givenmalprivacywarning == False:
+        if libMal and filename <> rawfilename and self.givenmalprivacywarning == False:
             message = getMessage("en", "mal-noprivacy-notification")
             self.ui.showErrorMessage(message)
             self.givenmalprivacywarning = True
