@@ -8,10 +8,10 @@ BASE_PATH	= /usr
 LOCAL_PATH	= ~/.local
 
 ifeq ($(SINGLE_USER),false)
-	BIN_PATH          = $(BASE_PATH)/bin
-	LIB_PATH          = $(BASE_PATH)/lib
-	APP_SHORTCUT_PATH = $(BASE_PATH)/share/applications
-	SHARE_PATH        = $(BASE_PATH)/share
+	BIN_PATH          = ${PREFIX}$(BASE_PATH)/bin
+	LIB_PATH          = ${PREFIX}$(BASE_PATH)/lib
+	APP_SHORTCUT_PATH = ${PREFIX}$(BASE_PATH)/share/applications
+	SHARE_PATH        = ${PREFIX}$(BASE_PATH)/share
 else
 	BIN_PATH          = $(LOCAL_PATH)/syncplay
 	LIB_PATH          = $(LOCAL_PATH)/syncplay
@@ -23,6 +23,9 @@ common:
 	-mkdir -p $(LIB_PATH)/syncplay/resources/
 	-mkdir -p $(LIB_PATH)/syncplay/resources/lua
 	-mkdir -p $(LIB_PATH)/syncplay/resources/lua/intf
+	-mkdir -p $(APP_SHORTCUT_PATH)
+	-mkdir -p $(SHARE_PATH)/app-install/icons
+	-mkdir -p $(SHARE_PATH)/pixmaps/
 	cp -r syncplay $(LIB_PATH)/syncplay/
 	chmod 755 $(LIB_PATH)/syncplay/
 	cp -r resources/hicolor $(SHARE_PATH)/icons/
@@ -39,8 +42,8 @@ u-common:
 
 client:
 	-mkdir -p $(BIN_PATH)
-	touch $(BIN_PATH)/syncplay
-	echo '#!/bin/sh\npython -OO $(LIB_PATH)/syncplay/syncplayClient.py "$$@"' > $(BIN_PATH)/syncplay
+	cp syncplayClient.py $(BIN_PATH)/syncplay
+	sed -i -e 's%# libpath%site.addsitedir\("$(BASE_PATH)/lib/syncplay"\)%' $(BIN_PATH)/syncplay
 	chmod 755 $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
@@ -58,8 +61,8 @@ u-client:
 
 server:
 	-mkdir -p $(BIN_PATH)
-	touch $(BIN_PATH)/syncplay-server
-	echo '#!/bin/sh\npython -OO $(LIB_PATH)/syncplay/syncplayServer.py "$$@"' > $(BIN_PATH)/syncplay-server
+	cp syncplayServer.py $(BIN_PATH)/syncplay-server
+	sed -i -e 's%# libpath%site.addsitedir\("$(BASE_PATH)/lib/syncplay"\)%' $(BIN_PATH)/syncplay-server
 	chmod 755 $(BIN_PATH)/syncplay-server
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
