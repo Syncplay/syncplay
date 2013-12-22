@@ -6,6 +6,12 @@
  Project: http://syncplay.pl/
  Version: 0.1.6
  
+ Note:
+ * This interface module is intended to be used in conjunction with Syncplay.
+ * Syncplay provides synchronized video playback across multiple media player instances over the net.
+ * Syncplay allows group of people who all have the same videos to watch them together wherever they are.
+ * Syncplay is available to download for free from http://syncplay.pl/
+ 
 --[==========================================================================[
 
  === Installation instructions ===
