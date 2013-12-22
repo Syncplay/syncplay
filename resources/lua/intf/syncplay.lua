@@ -23,7 +23,6 @@ You may also need to re-copy the file when you update VLC.
  = Note: ? denotes optional responses; * denotes mandatory response; uses \n terminator.
 
  [On connect]
-    >> VLC version
 
  .
     ? >> inputstate-change: [<input/no-input>]
