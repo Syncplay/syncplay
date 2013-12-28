@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 #coding:utf8
 
+import site
+
+# libpath
+
 from twisted.internet import reactor
 
 from syncplay.server import SyncFactory, SyncIsolatedFactory, ConfigurationGetter
