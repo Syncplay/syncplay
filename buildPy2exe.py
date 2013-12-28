@@ -539,7 +539,7 @@ info = dict(
                          'dist_dir': OUT_DIR,
                          'packages': 'PySide.QtUiTools',
                          'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide',
-                         'excludes': 'venv, _ssl, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process',
+                         'excludes': 'venv, _ssl, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
                          'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
                          'optimize': 2,
                          'compressed': 1
