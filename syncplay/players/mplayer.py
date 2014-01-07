@@ -206,7 +206,14 @@ class MplayerPlayer(BasePlayer):
             call.extend(playerController.SLAVE_ARGS)
             if(args):
                 call.extend(args)
-            self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd = os.path.dirname(playerPath))
+            # At least mpv may output escape sequences which result in syncplay
+            # trying to parse something like
+            # "\x1b[?1l\x1b>ANS_filename=blah.mkv". Work around this by
+            # unsetting TERM.
+            env = os.environ.copy()
+            if 'TERM' in env:
+                del env['TERM']
+            self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd=os.path.dirname(playerPath), env=env)
             threading.Thread.__init__(self, name="MPlayer Listener")
         
         def run(self):
