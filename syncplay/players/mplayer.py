@@ -83,7 +83,7 @@ class MplayerPlayer(BasePlayer):
         self._setProperty('speed', "{:.2f}".format(value))
     
     def openFile(self, filePath):
-        self._listener.sendLine('loadfile {}'.format(self._quoteArg(filePath)))
+        self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
         self._onFileUpdate()
         if self._client.getGlobalPaused():
             self._listener.sendLine('pause')
@@ -116,7 +116,7 @@ class MplayerPlayer(BasePlayer):
         arg = arg.replace('\\', '\\\\')
         arg = arg.replace("'", "\\'")
         arg = arg.replace('"', '\\"')
-        return '"{}"'.format(arg)
+        return u'"{}"'.format(arg)
  
     def lineReceived(self, line):
         match = self.RE_ANSWER.match(line)
@@ -231,6 +231,7 @@ class MplayerPlayer(BasePlayer):
         
         def sendLine(self, line):
             try:
-                self.__process.stdin.write(line + "\n")
+                line = (line + "\n").encode('utf8')
+                self.__process.stdin.write(line)
             except IOError:
                 pass
