@@ -393,16 +393,18 @@ class MPCHCAPIPlayer(BasePlayer):
 
     @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
     def setPaused(self, value):
-        if self.__switchPauseCalls:
-            value = not value
-        if value:
-            self._mpcApi.pause()
-        else:
-            self._mpcApi.unpause()
+        if self._mpcApi.filePlaying:
+            if self.__switchPauseCalls:
+                value = not value
+            if value:
+                self._mpcApi.pause()
+            else:
+                self._mpcApi.unpause()
             
     @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
     def setPosition(self, value):
-        self._mpcApi.seek(value)
+        if self._mpcApi.filePlaying:
+            self._mpcApi.seek(value)
         
     def __getPosition(self):
         self.__positionUpdate.clear()
@@ -412,7 +414,7 @@ class MPCHCAPIPlayer(BasePlayer):
     
     @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
     def askForStatus(self):
-        if(self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0)):
+        if(self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0) and self._mpcApi.filePlaying):
             self.__fileUpdate.release()
             position = self.__getPosition()
             paused = self._mpcApi.isPaused()
