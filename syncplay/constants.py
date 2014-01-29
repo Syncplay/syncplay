@@ -46,10 +46,11 @@ MPC_PATHS = [
              r"C:\Program Files\MPC HomeCinema (x64)\mpc-hc64.exe",
              ]
 MPLAYER_PATHS = ["mplayer2", "mplayer"]
-MPV_PATHS = ["mpv", "/opt/mpv/mpv"]
+MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"C:\Program Files\mpv\mpv.exe", r"C:\Program Files\mpv-player\mpv.exe", r"C:\Program Files (x86)\mpv\mpv.exe", r"C:\Program Files (x86)\mpv-player\mpv.exe","/Applications/mpv.app/Contents/MacOS/mpv"]
 VLC_PATHS = [
              r"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
-             r"C:\Program Files\VideoLAN\VLC\vlc.exe"
+             r"C:\Program Files\VideoLAN\VLC\vlc.exe",
+             "/Applications/VLC.app/Contents/MacOS/VLC"
             ]
 
 VLC_ICONPATH = "vlc.png"
