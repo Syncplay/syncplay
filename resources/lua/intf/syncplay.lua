@@ -16,19 +16,15 @@
 
  === Installation instructions ===
 
-Place the syncplay.lua file in the main (all user) VLC /lua/intf/ sub-directory. By default this should be:
+Place the syncplay.lua file in the main (all user) VLC /lua/intf/ sub-directory:
 * Window: %ProgramFiles%\VideoLAN\VLC\lua\intf\
 * Linux: /usr/lib/vlc/lua/intf/
 * Mac OS X: /Applications/VLC.app/Contents/MacOS/share/lua/intf/
 
-If a directory does not exist then you may have to create it.
-
-You may also need to re-copy the file when you update VLC.
+You may also need to re-copy the syncplay.lua file when you update VLC.
 
  === Commands and responses ===
  = Note: ? denotes optional responses; * denotes mandatory response; uses \n terminator.
-
- [On connect]
 
  .
     ? >> inputstate-change: [<input/no-input>]
@@ -117,7 +113,7 @@ end
 
 function detectchanges()
     -- Detects changes in VLC to report to Syncplay.
-    -- [Used by the polll / "." command]
+    -- [Used by the poll / "." command]
 
     local notificationbuffer = ""
 
@@ -319,7 +315,7 @@ function display_osd ( argument )
     local input = vlc.object.input()
     if input then
         osdarray = get_args(argument,3)
-        --position, duration, message -> message, , position, duration (converted from seconds to microseconds)
+        --position, duration, message -> message, position, duration (converted from seconds to microseconds)
         local osdduration = tonumber(osdarray[2]) * 1000 * 1000
         vlc.osd.message(osdarray[3],channel1,osdarray[1],osdduration)
     else
