@@ -76,7 +76,7 @@ else
     require "common"
 end
 
-local connectorversion = "0.1.6"
+local connectorversion = "0.1.7"
 local durationdelay = 500000 -- Pause for get_duration command for increased reliability
 local host = "localhost"
 local port
@@ -315,7 +315,7 @@ function display_osd ( argument )
     local input = vlc.object.input()
     if input then
         osdarray = get_args(argument,3)
-        --position, duration, message -> message, position, duration (converted from seconds to microseconds)
+        --position, duration, message -> message, , position, duration (converted from seconds to microseconds)
         local osdduration = tonumber(osdarray[2]) * 1000 * 1000
         vlc.osd.message(osdarray[3],channel1,osdarray[1],osdduration)
     else
@@ -400,11 +400,11 @@ end
 
     -- main loop, which alternates between writing and reading
     
-while running do
+while running == true do
     --accept new connections and select active clients
     local fd = l:accept()
     local buffer = ""
-    while fd >= 0 do
+    while fd >= 0 and running == true do
 
         -- handle read mode
     
@@ -418,7 +418,7 @@ while running do
         
         inputbuffer = inputbuffer .. safestr
 
-        while string.find(inputbuffer, msgterminator) do
+        while string.find(inputbuffer, msgterminator) and running == true do
             local index = string.find(inputbuffer, msgterminator)
             local request = string.sub(inputbuffer, 0, index - 1)
             local command
@@ -440,6 +440,10 @@ while running do
                 responsebuffer = do_command(command,argument)
             end
 
+        end
+        
+        if (running == false) then
+            net.close(fd)
         end
         
         -- handle write mode
