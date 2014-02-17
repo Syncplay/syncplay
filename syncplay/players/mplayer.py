@@ -213,9 +213,21 @@ class MplayerPlayer(BasePlayer):
             env = os.environ.copy()
             if 'TERM' in env:
                 del env['TERM']
-            self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd=os.path.dirname(playerPath), env=env)
+            self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.__getCwd(filePath, env), env=env)
             threading.Thread.__init__(self, name="MPlayer Listener")
-        
+
+
+        def __getCwd(self, filePath, env):
+            if os.path.isfile(filePath):
+                cwd = os.path.dirname(filePath)
+            elif 'HOME' in env:
+                cwd = env['HOME']
+            elif 'APPDATA' in env:
+                cwd = env['APPDATA']
+            else:
+                cwd = None
+            return cwd
+
         def run(self):
             line = self.__process.stdout.readline()
             if("MPlayer 1" in line):
