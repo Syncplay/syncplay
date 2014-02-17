@@ -36,8 +36,9 @@ class VlcPlayer(BasePlayer):
         self._positionAsk = threading.Event()
         self._pausedAsk = threading.Event()
         self._vlcready = threading.Event()
+        self._vlcclosed = threading.Event()
         try:
-            self._listener = self.__Listener(self, playerPath, filePath, args, self._vlcready)
+            self._listener = self.__Listener(self, playerPath, filePath, args, self._vlcready, self._vlcclosed)
         except ValueError:
             self._client.ui.showErrorMessage(getMessage("en", "vlc-failed-connection"), True)
             self.reactor.callFromThread(self._client.stop, (True),)
@@ -194,7 +195,9 @@ class VlcPlayer(BasePlayer):
                 return path
 
     def drop(self):
+        self._vlcclosed.clear()
         self._listener.sendLine('close-vlc')
+        self._vlcclosed.wait()
         self._durationAsk.set()
         self._filenameAsk.set()
         self._pathAsk.set()
@@ -204,7 +207,7 @@ class VlcPlayer(BasePlayer):
         self.reactor.callFromThread(self._client.stop, (False),)
 
     class __Listener(threading.Thread, asynchat.async_chat):
-        def __init__(self, playerController, playerPath, filePath, args, vlcReady):
+        def __init__(self, playerController, playerPath, filePath, args, vlcReady, vlcClosed):
             self.__playerController = playerController
             call = [playerPath]
             if(filePath):
@@ -248,6 +251,7 @@ class VlcPlayer(BasePlayer):
                 call.extend(args)
             
             self._vlcready = vlcReady
+            self._vlcclosed = vlcClosed
             self.__process = subprocess.Popen(call, stderr=subprocess.PIPE)
             for line in iter(self.__process.stderr.readline,''):
                 if "[syncplay]" in line:
@@ -296,4 +300,9 @@ class VlcPlayer(BasePlayer):
         def sendLine(self, line):
             if(self.connected):
 #                print "send: {}".format(line)
-                self.push(line + "\n")
+                try:
+                    self.push(line + "\n")
+                except:
+                    pass
+            if(line == "close-vlc"):
+                self._vlcclosed.set()
