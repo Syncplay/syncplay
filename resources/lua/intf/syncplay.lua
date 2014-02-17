@@ -448,7 +448,7 @@ while running == true do
         
         -- handle write mode
         
-        if (responsebuffer) then
+        if (responsebuffer and running == true) then
             vlc.net.send( fd, responsebuffer )
             responsebuffer = ""
         end
