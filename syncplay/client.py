@@ -366,7 +366,8 @@ class SyncplayClient(object):
         reactor.connectTCP(host, port, self.protocolFactory)
         reactor.run()
 
-    def stop(self, promptForAction=False):
+
+    def stop(self, stopMessage=None):
         if not self._running:
             return
         self._running = False
@@ -376,10 +377,12 @@ class SyncplayClient(object):
         if self._player:
             self._player.drop()
         if self.ui:
+            if(stopMessage):
+                self.ui.showErrorMessage(stopMessage, True)
             self.ui.drop()
         reactor.callLater(0.1, reactor.stop)
-        if(promptForAction):
-            self.ui.promptFor(getMessage("en", "enter-to-exit-prompt"))
+        if(stopMessage):
+            self.ui.waitForUserAction(getMessage("en", "enter-to-exit-prompt"))
 
     class _WarningManager(object):
         def __init__(self, player, userlist, ui):
@@ -596,8 +599,8 @@ class UiManager(object):
     def showErrorMessage(self, message, criticalerror=False):
         self.__ui.showErrorMessage(message, criticalerror)
 
-    def promptFor(self, prompt):
-        return self.__ui.promptFor(prompt)
+    def waitForUserAction(self, prompt):
+        return self.__ui.waitForUserAction(prompt)
 
     def userListChange(self):
         self.__ui.userListChange()
