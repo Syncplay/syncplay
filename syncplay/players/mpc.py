@@ -311,7 +311,7 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__client = client
         self._mpcApi = MpcHcApi()
         self._mpcApi.callbacks.onUpdateFilename = lambda _: self.__makePing()
-        self._mpcApi.callbacks.onMpcClosed = lambda _: self.reactor.callFromThread(self.__client.stop, (False),)
+        self._mpcApi.callbacks.onMpcClosed = lambda _: self.reactor.callFromThread(self.__client.stop,)
         self._mpcApi.callbacks.onFileStateChange = lambda _: self.__lockAsking()
         self._mpcApi.callbacks.onUpdatePlaystate = lambda _: self.__unlockAsking()
         self._mpcApi.callbacks.onGetCurrentPosition = lambda _: self.__onGetPosition()
@@ -356,8 +356,7 @@ class MPCHCAPIPlayer(BasePlayer):
     def __dropIfNotSufficientVersion(self):
         self._mpcApi.askForVersion()
         if(not self.__versionUpdate.wait(0.1) or not self._mpcApi.version):
-            self.__mpcError(getMessage("en", "mpc-version-insufficient-error").format(constants.MPC_MIN_VER))
-            self.reactor.callFromThread(self.__client.stop, (True),)
+            self.reactor.callFromThread(self.__client.stop, getMessage("en", "mpc-version-insufficient-error").format(constants.MPC_MIN_VER),)
             
     def __testMpcReady(self):
         if(not self.__preventAsking.wait(10)):
@@ -370,8 +369,7 @@ class MPCHCAPIPlayer(BasePlayer):
             self.__handleUpdatedFilename()
             self.askForStatus()
         except Exception, err:
-            self.__client.ui.showErrorMessage(err.message)
-            self.reactor.callFromThread(self.__client.stop)
+            self.reactor.callFromThread(self.__client.stop, err.message,)
             
     def initPlayer(self, filePath): 
         self.__dropIfNotSufficientVersion()
@@ -456,10 +454,6 @@ class MPCHCAPIPlayer(BasePlayer):
             self.__setUpStateForNewlyOpenedFile()
             args = (self._mpcApi.filePlaying, self._mpcApi.fileDuration, self._mpcApi.filePath)
             self.reactor.callFromThread(self.__client.updateFile, *args)
-    
-    def __mpcError(self, err=""):
-        self.__client.ui.showErrorMessage(err)
-        self.reactor.callFromThread(self.__client.stop)
 
     def sendCustomCommand(self, cmd, val):
         self._mpcApi.sendRawCommand(cmd, val)
