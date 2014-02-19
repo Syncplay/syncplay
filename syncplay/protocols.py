@@ -68,7 +68,7 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def dropWithError(self, error):
         self._client.protocolFactory.stopRetrying()
-        self._client.drop()
+        self.drop()
         self._client.stop(error)
 
     def _extractHelloArguments(self, hello):
