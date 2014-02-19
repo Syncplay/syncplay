@@ -67,9 +67,9 @@ class SyncClientProtocol(JSONCommandProtocol):
         self._client.destroyProtocol()
 
     def dropWithError(self, error):
-        self._client.ui.showErrorMessage(error)
         self._client.protocolFactory.stopRetrying()
-        self.drop()
+        self._client.drop()
+        self._client.stop(error)
 
     def _extractHelloArguments(self, hello):
         username = hello["username"] if hello.has_key("username") else None
