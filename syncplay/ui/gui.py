@@ -12,8 +12,7 @@ class MainWindow(QtGui.QMainWindow):
         self._syncplayClient = client
         self.roomInput.setText(self._syncplayClient.getRoom())
     
-    def promptFor(self, prompt=">", message=""):
-        #TODO: Prompt user
+    def waitForUserAction(self, prompt=">", message=""):
         return None
 
     def showMessage(self, message, noTimestamp=False):
