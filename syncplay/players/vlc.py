@@ -40,15 +40,13 @@ class VlcPlayer(BasePlayer):
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args, self._vlcready, self._vlcclosed)
         except ValueError:
-            self._client.ui.showErrorMessage(getMessage("en", "vlc-failed-connection"), True)
-            self.reactor.callFromThread(self._client.stop, (True),)
+            self.reactor.callFromThread(self._client.stop, getMessage("en", "vlc-failed-connection"),)
             return 
         self._listener.setDaemon(True)
         self._listener.start()
         if(not self._vlcready.wait(constants.VLC_OPEN_MAX_WAIT_TIME)):
             self._vlcready.set()
-            self._client.ui.showErrorMessage(getMessage("en", "vlc-failed-connection"), True)
-            self.reactor.callFromThread(self._client.stop, (True),)
+            self.reactor.callFromThread(self._client.stop, getMessage("en", "vlc-failed-connection"),)
         self.reactor.callFromThread(self._client.initPlayer, (self),)
         
     def _fileUpdateClearEvents(self):
@@ -204,7 +202,7 @@ class VlcPlayer(BasePlayer):
         self._positionAsk.set()
         self._vlcready.set()
         self._pausedAsk.set()
-        self.reactor.callFromThread(self._client.stop, (False),)
+        self.reactor.callFromThread(self._client.stop,)
 
     class __Listener(threading.Thread, asynchat.async_chat):
         def __init__(self, playerController, playerPath, filePath, args, vlcReady, vlcClosed):
