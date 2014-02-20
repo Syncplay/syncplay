@@ -141,19 +141,23 @@ class ConfigurationGetter(object):
             if ':' in host:
                 host, port = host.split(':', 1)
         return host, int(port)
-        
+
     def _checkForPortableFile(self):
         path = utils.findWorkingDir()
-        if(os.path.isfile(os.path.join(path, constants.DEFAULT_CONFIG_NAME))):
-            return os.path.join(path, constants.DEFAULT_CONFIG_NAME) 
-        
+        for name in constants.DEFAULT_CONFIG_NAMES:
+            if(os.path.isfile(os.path.join(path, name))):
+                return os.path.join(path, name) 
+
     def _getConfigurationFilePath(self):
         configFile = self._checkForPortableFile()
-        if(not configFile):
-            if(os.name <> 'nt'):
-                configFile = os.path.join(os.getenv('HOME', '.'), constants.DEFAULT_CONFIG_NAME)
-            else:
-                configFile = os.path.join(os.getenv('APPDATA', '.'), constants.DEFAULT_CONFIG_NAME)
+        if not configFile:
+            for name in constants.DEFAULT_CONFIG_NAMES:
+                if(configFile and os.path.isfile(configFile)):
+                    break
+                if(os.name <> 'nt'):
+                    configFile = os.path.join(os.getenv('HOME', '.'), name)
+                else:
+                    configFile = os.path.join(os.getenv('APPDATA', '.'), name)
         return configFile
 
     def _parseConfigFile(self, iniPath, createConfig = True):
@@ -242,9 +246,10 @@ class ConfigurationGetter(object):
     def _loadRelativeConfiguration(self):
         locations = self.__getRelativeConfigLocations()
         for location in locations:
-            path = location + os.path.sep + constants.DEFAULT_CONFIG_NAME
-            self._parseConfigFile(path, createConfig = False)
-            self._checkConfig()
+            for name in constants.DEFAULT_CONFIG_NAMES:
+                path = location + os.path.sep + name 
+                self._parseConfigFile(path, createConfig = False)
+                self._checkConfig()
 
     def getConfiguration(self):
         iniPath = self._getConfigurationFilePath()
