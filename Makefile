@@ -1,7 +1,7 @@
 SINGLE_USER	= false
 
 ifndef VLC_SUPPORT
-	VLC_SUPPORT = false
+	VLC_SUPPORT = true
 endif
 
 BASE_PATH	= /usr
