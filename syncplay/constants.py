@@ -5,7 +5,9 @@ OSD_WARNING_MESSAGE_DURATION = 15
 MPC_OSD_POSITION = 2 #Right corner, 1 for left
 MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "
-DEFAULT_CONFIG_NAMES = [".syncplay", "syncplay.ini"] 
+CONFIG_NAMES = [".syncplay", "syncplay.ini"] #Syncplay searches first to last
+DEFAULT_CONFIG_NAME_WINDOWS = "syncplay.ini"
+DEFAULT_CONFIG_NAME_LINUX = ".syncplay" 
 
 #Changing these might be ok
 REWIND_THRESHOLD = 4
