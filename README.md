@@ -5,8 +5,8 @@ Solution to synchronize video playback across multiple instances of mplayer2, mp
 ## Official website
 http://syncplay.pl
 
-## Downloads
-http://sourceforge.net/projects/syncplay/
+## Download
+http://syncplay.pl/download/
 
 ## What does it do
 
@@ -16,9 +16,9 @@ When a new person joins they will also be synchronised.
 
 ## What it doesn't do
 
-Syncplay does not use video streaming or file sharing so each user must have their own copy of the media to be played. Syncplay does not synchronise player configuration, audio or subtitle track choice, playback rate, volume or filters. Furthermore, users must manually choose what file to play as Syncplay does not synchronise which file is open. Finally, Syncplay does not provide a voice or text-based chat platform to allow for discussion during playback as Syncplay is intended to be used in conjunction with third-party communication solutions such as IRC and Mumble.
+Syncplay does not use video streaming or file sharing so each user must have their own copy of the media to be played. Syncplay does not synchronise player configuration, audio/subtitle track choice, playback rate, volume or filters. Furthermore, users must manually choose what file to play as Syncplay does not synchronise which file is open. Finally, Syncplay does not provide a voice or text-based chat platform to allow for discussion during playback as Syncplay is intended to be used in conjunction with third-party communication solutions such as IRC and Mumble.
 
 ## Authors
 * *Concept and principal Syncplay developer* - Uriziel.
 * *Other Syncplay coders* - daniel-123, Et0h.
-* *Original SyncPlay code* - Tomasz Kowalczyk (Fluxid), who developed SyncPlay at https://github.com/fluxid/syncplay.
+* *Original SyncPlay code* - Tomasz Kowalczyk (Fluxid), who developed SyncPlay at https://github.com/fluxid/syncplay
