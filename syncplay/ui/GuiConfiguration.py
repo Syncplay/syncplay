@@ -62,12 +62,7 @@ class ConfigDialog(QtGui.QDialog):
             self.runButton.setText(getMessage("en", "storeandrun-label"))
             
     def openHelp(self):
-        if sys.platform.startswith('linux'):
-            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/linux/")
-        elif sys.platform.startswith('win'):
-            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/windows/")
-        else:
-            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
+        self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/client/")
 
     def _tryToFillPlayerPath(self, playerpath, playerpathlist):
         settings = QSettings("Syncplay", "PlayerList")
