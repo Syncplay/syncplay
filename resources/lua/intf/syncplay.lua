@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.1.6
+ Version: 0.1.7
  
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
