@@ -144,8 +144,8 @@ en = {
       "password-tooltip" : "Passwords are only needed for connecting to private servers.",
       "room-tooltip" : "Room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
       
-      "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or MPV).",
-      "media-path-tooltip" : "Location of video or stream to be opened. Necessary for MPV and mplayer2.",
+      "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or mpv).",
+      "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
       
       "more-tooltip" : "Display less frequently used settings.",
       "mal-username-tooltip" : "Your MyAnimeList username. Note: MAL support is experimental!",
