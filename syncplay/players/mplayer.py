@@ -243,7 +243,7 @@ class MplayerPlayer(BasePlayer):
         
         def sendLine(self, line):
             try:
-                line = (line + "\n").encode('utf8')
+                line = (line.decode('utf8') + u"\n").encode('utf8')
                 self.__process.stdin.write(line)
             except IOError:
                 pass
