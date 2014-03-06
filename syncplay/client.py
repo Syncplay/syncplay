@@ -42,7 +42,7 @@ class SyncClientFactory(ClientFactory):
 
     def clientConnectionFailed(self, connector, reason):
         if not self.reconnecting:
-            self._client.ui.showErrorMessage(getMessage("en", "connection-failed-notification"))
+            self._client.stop(getMessage("en", "connection-failed-notification"))
         else:
             self.clientConnectionLost(connector, reason)
 
