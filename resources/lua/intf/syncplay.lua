@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.1.7
+ Version: 0.1.8
  
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -44,15 +44,24 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
     
  get-filename
     * >> filepath: [<filename/no-input>]
+    
+ get-title
+    * >> title: [<title/no-input>]
  
  set-position: [decimal seconds]
     ? >> play-error: no-input
+    
+ seek-within-title: [decimal seconds]
+    ? >> seek-within-title-error: no-input
 
  set-playstate: [<playing/paused>]
     ? >> set-playstate-error: no-input
 
  set-rate: [decimal rate]
     ? >> set-rate-error: no-input
+    
+ set-title
+    ? >> set-title-error: no-input
 
  display-osd: [placement on screen <center/left/right/top/bottom/top-left/top-right/bottom-left/bottom-right>], [duration in seconds], [message]
     ? >> display-osd-error: no-input
@@ -76,10 +85,12 @@ else
     require "common"
 end
 
-local connectorversion = "0.1.7"
+local connectorversion = "0.1.8"
 local durationdelay = 500000 -- Pause for get_duration command for increased reliability
 local host = "localhost"
 local port
+
+local titlemultiplier = 604800 -- One week
 
 local msgterminator = "\n"
 local msgseperator = ": "
@@ -127,7 +138,7 @@ function detectchanges()
             end
             
             notificationbuffer = notificationbuffer .. "playstate"..msgseperator..tostring(get_play_state())..msgterminator
-            notificationbuffer = notificationbuffer .. "position"..msgseperator..tostring(get_var("time"))..msgterminator                        
+            notificationbuffer = notificationbuffer .. "position"..msgseperator..tostring(get_time())..msgterminator                        
         else
             notificationbuffer = notificationbuffer .. "playstate"..msgseperator..noinput..msgterminator
             notificationbuffer = notificationbuffer .. "position"..msgseperator..noinput..msgterminator
@@ -201,7 +212,7 @@ function set_var(vartoset, varvalue)
     local input = vlc.object.input()
     
     if input then
-        vlc.var.set(input,tostring(vartoset),tostring(varvalue))
+        vlc.var.set(input,tostring(vartoset),varvalue)
     else
         errormsg = noinput
     end
@@ -209,6 +220,36 @@ function set_var(vartoset, varvalue)
     return  errormsg
 end
 
+function get_time()
+    local realtime, errormsg, longtime
+    realtime, errormsg = get_var("time") -- Seconds
+    if errormsg ~= nil and errormsg ~= "" then
+        return errormsg
+    end
+    
+    titletime, errormsg = get_var("title") * titlemultiplier -- Days
+    if errormsg ~= nil and errormsg ~= "" then
+        return realtime
+    end
+    
+    longtime = titletime + realtime
+    return longtime
+end
+
+function set_time ( timetoset)
+    local response, errormsg, realtime, titletrack
+    realtime = timetoset % titlemultiplier
+    oldtitle = tonumber(get_var("title"))
+    newtitle = (timetoset - realtime) / titlemultiplier
+    if oldtitle ~= newtitle and newtitle > -1 then
+        set_var("title", tonumber(newtitle))
+    end
+
+    errormsg = set_var("time", tonumber(realtime))
+    return errormsg
+end
+
+get_var("time")
 
 function get_play_state()
     -- [Used by the get-playstate command]
@@ -240,6 +281,8 @@ function get_filepath ()
             if item then
                 if string.find(item:uri(),"file://") then
                      response = vlc.strings.decode_uri(item:uri())
+                elseif string.find(item:uri(),"dvd://") or string.find(item:uri(),"simpledvd://") then
+                     response = ":::DVD:::"
                 else
                      local metas = item:metas()
                      if metas and metas["title"] and string.len(metas["title"]) > 0 then
@@ -265,10 +308,27 @@ function get_filename ()
     local index
     local filename
     filename = errormerge(get_filepath())
+    if filename == unknownstream then
+        return unknownstream
+    end
+    if filename == "" then
+        local input = vlc.object.input()
+        if input then
+            local item = vlc.input.item()
+            if item then
+                if item.name then
+                    response = ":::("..item.title..")"
+                    return response
+                end
+            end
+        end
+    end
     
     if(filename ~= nil) and (filename ~= "") and (filename ~= noinput) then
         index = string.len(tostring(string.match(filename, ".*/")))
-        if index then
+        if string.sub(filename,1,3) == ":::" then
+            return filename
+        elseif index then
             response = string.sub(tostring(filename), index+1)
         end
     else
@@ -347,9 +407,12 @@ function do_command ( command, argument)
     elseif command == "get-duration"          then response           = "duration"..msgseperator..errormerge(get_duration())..msgterminator
     elseif command == "get-filepath"          then response           = "filepath"..msgseperator..errormerge(get_filepath())..msgterminator
     elseif command == "get-filename"          then response           = "filename"..msgseperator..errormerge(get_filename())..msgterminator
-    elseif command == "set-position"          then           errormsg = set_var("time", tonumber(argument))
+    elseif command == "get-title"             then response           = "title"..msgseperator..errormerge(get_var("title"))..msgterminator
+    elseif command == "set-position"          then           errormsg = set_time(tonumber(argument))
+    elseif command == "seek-within-title"     then           errormsg = set_var("time", tonumber(argument))
     elseif command == "set-playstate"         then           errormsg = set_playstate(argument)
     elseif command == "set-rate"              then           errormsg = set_var("rate", tonumber(argument))
+    elseif command == "set-title"             then           errormsg = set_var("title", tonumber(argument))
     elseif command == "display-osd"           then           errormsg = display_osd(argument) 
     elseif command == "load-file"             then response           = load_file(argument)
     elseif command == "close-vlc"             then                      quit_vlc()
