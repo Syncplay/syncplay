@@ -637,8 +637,8 @@ class SyncplayUserlist(object):
 
     def sortList(self, rooms):
         for room in rooms:
-            rooms[room] = sorted(rooms[room])
-        rooms = collections.OrderedDict(sorted(rooms.items()))
+            rooms[room] = sorted(rooms[room], key=lambda s: s.username.lower())
+        rooms = collections.OrderedDict(sorted(rooms.items(), key=lambda s: s[0].lower()))
         return rooms
 
 class UiManager(object):
