@@ -4,18 +4,30 @@ ifndef VLC_SUPPORT
 	VLC_SUPPORT = true
 endif
 
+<<<<<<< HEAD
 ifeq ($(SINGLE_USER),false)
 	BASE_PATH    = /usr
 	VLC_LIB_PATH = /usr/lib
 else
 	BASE_PATH    = ${HOME}/.local
 	VLC_LIB_PATH = ${HOME}/.local/share
+=======
+
+ifeq ($(SINGLE_USER),false)
+    BASE_PATH	= /usr
+else
+    BASE_PATH	= ~/.local
+>>>>>>> bbee87932a9c5db007692c7958752dbbcd094418
 endif
 
 	BIN_PATH          = ${PREFIX}$(BASE_PATH)/bin
 	LIB_PATH          = ${PREFIX}$(BASE_PATH)/lib
 	APP_SHORTCUT_PATH = ${PREFIX}$(BASE_PATH)/share/applications
 	SHARE_PATH        = ${PREFIX}$(BASE_PATH)/share
+<<<<<<< HEAD
+=======
+
+>>>>>>> bbee87932a9c5db007692c7958752dbbcd094418
 
 common:
 	-mkdir -p $(LIB_PATH)/syncplay/resources/
