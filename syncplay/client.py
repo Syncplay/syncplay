@@ -10,6 +10,7 @@ from syncplay.messages import getMessage
 import threading
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME, FILENAME_STRIP_REGEX
+import collections
 # <MAL DISABLE>
 libMal = None
 '''try:
@@ -468,6 +469,11 @@ class SyncplayUser(object):
     def __lt__(self, other):
         return self.username < other.username
 
+    def __repr__(self, *args, **kwargs):
+        if(self.file):
+            return "{}: {} ({}, {})".format(self.username, self.file['name'], self.file['duration'], self.file['size'])
+        else:
+            return "{}".format(self.username)
 
 class MalUpdater(object):
     def __init__(self, username, password, ui):
@@ -623,14 +629,17 @@ class SyncplayUserlist(object):
         if(self.currentUser.room not in rooms):
                 rooms[self.currentUser.room] = []
         rooms[self.currentUser.room].append(self.currentUser)
-
+        rooms = self.sortList(rooms)
         self.ui.showUserList(self.currentUser, rooms)
 
     def clearList(self):
         self._users = {}
 
-    def sortList(self):
-        pass
+    def sortList(self, rooms):
+        for room in rooms:
+            rooms[room] = sorted(rooms[room])
+        rooms = collections.OrderedDict(sorted(rooms.items()))
+        return rooms
 
 class UiManager(object):
     def __init__(self, client, ui):
