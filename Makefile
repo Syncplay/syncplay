@@ -31,10 +31,6 @@ common:
 	cp -r resources/lua/intf/*.lua $(LIB_PATH)/syncplay/resources/lua/intf/
 	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/app-install/icons/
 	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/pixmaps/
-	
-ifeq ($(SINGLE_USER),true)
-	@echo -e '\n**********\n**********\n \nRemeber to add ${HOME}/.local/bin to your $$PATH with "PATH=$$PATH:${HOME}/.local/bin"\n \n**********\n**********\n'
-endif
 
 u-common:
 	-rm -rf $(LIB_PATH)/syncplay
@@ -73,15 +69,20 @@ u-server:
 	-rm $(BIN_PATH)/syncplay-server
 	-rm $(LIB_PATH)/syncplay/syncplayServer.py
 	-rm $(APP_SHORTCUT_PATH)/syncplay-server.desktop
+	
+warnings:
+ifeq ($(SINGLE_USER),true)
+	@echo -e '\n**********\n**********\n \nRemeber to add ${HOME}/.local/bin to your $$PATH with "PATH=$$PATH:${HOME}/.local/bin"\n \n**********\n**********\n'
+endif
 
-install-client: common client
+install-client: common client warnings
 
-uninstall-client: u-client u-common
+uninstall-client: u-client u-common 
 
-install-server: common server
+install-server: common server warnings
 
 uninstall-server: u-server u-common
 
-install: common client server
+install: common client server warnings 
 
 uninstall: u-client u-server u-common
