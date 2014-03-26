@@ -467,7 +467,7 @@ class SyncplayUser(object):
         return sameName and sameSize and sameDuration
 
     def __lt__(self, other):
-        return self.username < other.username
+        return self.username.lower() < other.username.lower()
 
     def __repr__(self, *args, **kwargs):
         if(self.file):
@@ -637,7 +637,7 @@ class SyncplayUserlist(object):
 
     def sortList(self, rooms):
         for room in rooms:
-            rooms[room] = sorted(rooms[room], key=lambda s: s.username.lower())
+            rooms[room] = sorted(rooms[room])
         rooms = collections.OrderedDict(sorted(rooms.items(), key=lambda s: s[0].lower()))
         return rooms
 
