@@ -11,14 +11,6 @@ import threading
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME, FILENAME_STRIP_REGEX
 import collections
-# <MAL DISABLE>
-libMal = None
-'''try:
-    import libMal
-except ImportError:
-    libMal = None
-'''
-# </MAL DISABLE>
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry=constants.RECONNECT_RETRIES):
@@ -67,7 +59,6 @@ class SyncplayClient(object):
         self.userlist = SyncplayUserlist(self.ui, self)
         self._protocol = None
         self._player = None
-        self.givenmalprivacywarning = False
         if(config['room'] == None or config['room'] == ''):
             config['room'] = config['name']  # ticket #58
         self.defaultRoom = config['room']
@@ -98,7 +89,6 @@ class SyncplayClient(object):
         self._speedChanged = False
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui)
-        self._malUpdater = MalUpdater(config["malUsername"], config["malPassword"], self.ui)
 
     def initProtocol(self, protocol):
         self._protocol = protocol
@@ -233,7 +223,6 @@ class SyncplayClient(object):
         if(self.userlist.hasRoomStateChanged() and not paused):
             self._warnings.checkWarnings()
             self.userlist.roomStateConfirmed()
-        self._malUpdater.playingHook(position, paused)
 
     def updateGlobalState(self, position, paused, doSeek, setBy, messageAge):
         if(self.__getUserlistOnLogon):
@@ -309,12 +298,6 @@ class SyncplayClient(object):
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
-        self._malUpdater.fileChangeHook(rawfilename, duration)
-        if libMal and filename <> rawfilename and self.givenmalprivacywarning == False:
-            message = getMessage("en", "mal-noprivacy-notification")
-            self.ui.showErrorMessage(message)
-            self.givenmalprivacywarning = True
-
 
     def __executePrivacySettings(self, filename, size):
         if (self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE):
@@ -474,53 +457,6 @@ class SyncplayUser(object):
             return "{}: {} ({}, {})".format(self.username, self.file['name'], self.file['duration'], self.file['size'])
         else:
             return "{}".format(self.username)
-
-class MalUpdater(object):
-    def __init__(self, username, password, ui):
-        self._filePlayingFor = 0.0
-        self._lastHookUpdate = None
-        self._fileDuration = 0
-        self._filename = ""
-        self.__username = username
-        self.__password = password
-        self._ui = ui
-
-    def _updatePlayingTime(self, paused):
-        if (not self._lastHookUpdate):
-            self._lastHookUpdate = time.time()
-        if (not paused):
-            self._filePlayingFor += time.time() - self._lastHookUpdate
-        self._lastHookUpdate = time.time()
-
-    def playingHook(self, position, paused):
-        if(self._fileDuration == 0):
-            return
-        self._updatePlayingTime(paused)
-        pastMark = position / self._fileDuration > 0.4
-        if self._filePlayingFor > 30 and pastMark:
-            threading.Thread(target=self._updateMal).start()
-
-    def fileChangeHook(self, filename, duration):
-        self._fileDuration = duration
-        self._filename = filename
-        self._filePlayingFor = 0.0
-        self._lastHookUpdate = None
-
-    def _updateMal(self):
-        try:
-            self._fileDuration = 0  # Disable playingHook
-            if(libMal and self._filename and self.__username and self.__password):
-                manager = libMal.Manager(self.__username, self.__password)
-                results = manager.findEntriesOnMal(self._filename)
-                if(len(results) > 0):
-                    result = results[0]
-                    message = "Updating MAL with: \"{}\", episode: {}".format(result.mainTitle, result.episodeBeingWatched)
-                    reactor.callFromThread(self._ui.showMessage, (message),)
-                    options = {"tags": ["syncplay"]}
-                    manager.updateEntryOnMal(result, options)
-            self._filename = ""  # Make sure no updates will be performed until switch
-        except:
-            reactor.callFromThread(self._ui.showMessage, ("MAL Update failure"),)
 
 class SyncplayUserlist(object):
     def __init__(self, ui, client):
