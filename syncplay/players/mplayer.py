@@ -202,6 +202,9 @@ class MplayerPlayer(BasePlayer):
             self.__playerController = playerController
             if(not filePath):
                 raise ValueError()
+            if not os.path.isfile(filePath) and 'PWD' in os.environ:
+                filePath = os.environ['PWD'] + os.path.sep + filePath
+            filePath = os.path.realpath(filePath)
             call = [playerPath, filePath]
             call.extend(playerController.SLAVE_ARGS)
             if(args):
