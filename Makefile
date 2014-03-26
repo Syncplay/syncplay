@@ -1,23 +1,21 @@
-SINGLE_USER	= false
+SINGLE_USER	= false 
 
 ifndef VLC_SUPPORT
 	VLC_SUPPORT = true
 endif
 
-BASE_PATH	= /usr
-LOCAL_PATH	= ~/.local
-
 ifeq ($(SINGLE_USER),false)
+	BASE_PATH    = /usr
+	VLC_LIB_PATH = /usr/lib
+else
+	BASE_PATH    = ${HOME}/.local
+	VLC_LIB_PATH = ${HOME}/.local/share
+endif
+
 	BIN_PATH          = ${PREFIX}$(BASE_PATH)/bin
 	LIB_PATH          = ${PREFIX}$(BASE_PATH)/lib
 	APP_SHORTCUT_PATH = ${PREFIX}$(BASE_PATH)/share/applications
 	SHARE_PATH        = ${PREFIX}$(BASE_PATH)/share
-else
-	BIN_PATH          = $(LOCAL_PATH)/syncplay
-	LIB_PATH          = $(LOCAL_PATH)/syncplay
-	APP_SHORTCUT_PATH = $(LOCAL_PATH)/share/applications
-	SHARE_PATH        = $(LOCAL_PATH)/share
-endif
 
 common:
 	-mkdir -p $(LIB_PATH)/syncplay/resources/
@@ -33,6 +31,10 @@ common:
 	cp -r resources/lua/intf/*.lua $(LIB_PATH)/syncplay/resources/lua/intf/
 	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/app-install/icons/
 	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/pixmaps/
+	
+ifeq ($(SINGLE_USER),true)
+	@echo -e '\n**********\n**********\n \nRemeber to add ${HOME}/.local/bin to your $$PATH with "PATH=$$PATH:${HOME}/.local/bin"\n \n**********\n**********\n'
+endif
 
 u-common:
 	-rm -rf $(LIB_PATH)/syncplay
@@ -49,14 +51,14 @@ client:
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
 	
 ifeq ($(VLC_SUPPORT),true)
-	-mkdir -p $(LIB_PATH)/vlc/lua/intf/
-	cp resources/lua/intf/syncplay.lua $(LIB_PATH)/vlc/lua/intf/
+	-mkdir -p $(VLC_LIB_PATH)/vlc/lua/intf/
+	cp resources/lua/intf/syncplay.lua $(VLC_LIB_PATH)/vlc/lua/intf/
 endif
 
 u-client:
 	-rm $(BIN_PATH)/syncplay
 	-rm $(LIB_PATH)/syncplay/syncplayClient.py
-	-rm $(LIB_PATH)/vlc/lua/intf/syncplay.lua
+	-rm $(VLC_LIB_PATH)/vlc/lua/intf/syncplay.lua
 	-rm $(APP_SHORTCUT_PATH)/syncplay.desktop
 
 server:
