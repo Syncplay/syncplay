@@ -1,4 +1,4 @@
-SINGLE_USER	= false 
+SINGLE_USER	= false
 
 ifndef VLC_SUPPORT
 	VLC_SUPPORT = true
