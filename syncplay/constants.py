@@ -8,6 +8,8 @@ UI_TIME_FORMAT = "[%X] "
 CONFIG_NAMES = [".syncplay", "syncplay.ini"] #Syncplay searches first to last
 DEFAULT_CONFIG_NAME_WINDOWS = "syncplay.ini"
 DEFAULT_CONFIG_NAME_LINUX = ".syncplay" 
+RECENT_CLIENT_THRESHOLD = "1.2.7" #This and higher considered 'recent' clients (no warnings)
+WARN_OLD_CLIENTS = True #Use MOTD to inform old clients to upgrade
 
 #Changing these might be ok
 REWIND_THRESHOLD = 4

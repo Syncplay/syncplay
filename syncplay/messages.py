@@ -163,6 +163,9 @@ en = {
       
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
       
+      # Server messages to client
+      "new-syncplay-available-motd-message" : "<NOTICE> You are using Syncplay {} but a newer version is available from http://syncplay.pl </NOTICE>", #ClientVersion
+      
       # Server notifications
       "welcome-server-notification" : "Welcome to Syncplay server, ver. {0}", #version
       "client-connected-room-server-notification" : "{0}({2}) connected to room '{1}'", #username, host, room

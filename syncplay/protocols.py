@@ -291,9 +291,9 @@ class SyncServerProtocol(JSONCommandProtocol):
                 return
             self._factory.addWatcher(self, username, roomName, roomPassword)
             self._logged = True
-            self.sendHello()
+            self.sendHello(version)
 
-    def sendHello(self):
+    def sendHello(self, clientVersion):
         hello = {}
         username = self._factory.watcherGetUsername(self)
         hello["username"] = username
@@ -301,7 +301,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         room = self._factory.watcherGetRoom(self)
         if(room): hello["room"] = {"name": room}
         hello["version"] = syncplay.version
-        hello["motd"] = self._factory.getMotd(userIp, username, room)
+        hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
         self.sendMessage({"Hello": hello})
 
     @requireLogged

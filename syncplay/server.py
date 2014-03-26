@@ -136,15 +136,24 @@ class SyncFactory(Factory):
             position += timePassedSinceSet
         return paused, position
 
-    def getMotd(self, userIp, username, room):
+    def getMotd(self, userIp, username, room, clientVersion):
+        oldClient = False
+        if constants.WARN_OLD_CLIENTS:
+            if int(clientVersion.replace(".","")) < int(constants.RECENT_CLIENT_THRESHOLD.replace(".","")):
+                oldClient = True
         if(self._motdFilePath and os.path.isfile(self._motdFilePath)):
             tmpl = codecs.open(self._motdFilePath, "r", "utf-8-sig").read()
             args = dict(version=syncplay.version, userIp=userIp, username=username, room=room)
             try:
                 motd = Template(tmpl).substitute(args)
+                if oldClient:
+                    motdwarning = getMessage("en","new-syncplay-available-motd-message").format(clientVersion)
+                    motd = "{}\n{}".format(motdwarning, motd)
                 return motd if len(motd) < constants.SERVER_MAX_TEMPLATE_LENGTH else getMessage("en", "server-messed-up-motd-too-long").format(constants.SERVER_MAX_TEMPLATE_LENGTH, len(motd))
             except ValueError: 
                 return getMessage("en", "server-messed-up-motd-unescaped-placeholders")
+        elif oldClient:
+            return getMessage("en", "new-syncplay-available-motd-message").format(clientVersion)
         else:
             return ""
 
