@@ -1,7 +1,7 @@
-SINGLE_USER	= true
+SINGLE_USER	= false
 
 ifndef VLC_SUPPORT
-	VLC_SUPPORT = false
+	VLC_SUPPORT = true
 endif
 
 ifeq ($(SINGLE_USER),false)
