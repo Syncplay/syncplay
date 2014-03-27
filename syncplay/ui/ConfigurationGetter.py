@@ -66,7 +66,7 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowOnDesync", "rewindOnDesync", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
+                        "client_settings": ["name", "room", "playerPath", "slowOnDesync", "rewindOnDesync", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave", "noGui"],
                         }
 
         #
