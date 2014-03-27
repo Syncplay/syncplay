@@ -1,7 +1,7 @@
-SINGLE_USER	= false
+SINGLE_USER	= true
 
 ifndef VLC_SUPPORT
-	VLC_SUPPORT = true
+	VLC_SUPPORT = false
 endif
 
 ifeq ($(SINGLE_USER),false)
@@ -45,6 +45,10 @@ client:
 	chmod 755 $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
+
+ifeq ($(SINGLE_USER),false)
+	chmod 755 $(APP_SHORTCUT_PATH)/syncplay.desktop
+endif
 	
 ifeq ($(VLC_SUPPORT),true)
 	-mkdir -p $(VLC_LIB_PATH)/vlc/lua/intf/
@@ -65,6 +69,10 @@ server:
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
 
+ifeq ($(SINGLE_USER),false)
+	chmod 755 $(APP_SHORTCUT_PATH)/syncplay-server.desktop
+endif
+
 u-server:
 	-rm $(BIN_PATH)/syncplay-server
 	-rm $(LIB_PATH)/syncplay/syncplayServer.py
@@ -72,7 +80,7 @@ u-server:
 	
 warnings:
 ifeq ($(SINGLE_USER),true)
-	@echo -e '\n**********\n**********\n \nRemeber to add ${HOME}/.local/bin to your $$PATH with "PATH=$$PATH:${HOME}/.local/bin"\n \n**********\n**********\n'
+	@echo -e "\n**********\n**********\n \nRemeber to add ${HOME}/.local/bin to your \$$PATH with 'echo \"export PATH=\$$PATH:${HOME}/.local/bin\" >> ${HOME}/.profile' \nThis will take effect after you logoff.\n \n**********\n**********\n"
 endif
 
 install-client: common client warnings
