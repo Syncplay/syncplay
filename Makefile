@@ -4,20 +4,18 @@ ifndef VLC_SUPPORT
 	VLC_SUPPORT = true
 endif
 
-BASE_PATH	= /usr
-LOCAL_PATH	= ~/.local
-
 ifeq ($(SINGLE_USER),false)
+	BASE_PATH    = /usr
+	VLC_LIB_PATH = /usr/lib
+else
+	BASE_PATH    = ${HOME}/.local
+	VLC_LIB_PATH = ${HOME}/.local/share
+endif
+
 	BIN_PATH          = ${PREFIX}$(BASE_PATH)/bin
 	LIB_PATH          = ${PREFIX}$(BASE_PATH)/lib
 	APP_SHORTCUT_PATH = ${PREFIX}$(BASE_PATH)/share/applications
 	SHARE_PATH        = ${PREFIX}$(BASE_PATH)/share
-else
-	BIN_PATH          = $(LOCAL_PATH)/syncplay
-	LIB_PATH          = $(LOCAL_PATH)/syncplay
-	APP_SHORTCUT_PATH = $(LOCAL_PATH)/share/applications
-	SHARE_PATH        = $(LOCAL_PATH)/share
-endif
 
 common:
 	-mkdir -p $(LIB_PATH)/syncplay/resources/
@@ -47,16 +45,20 @@ client:
 	chmod 755 $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
+
+ifeq ($(SINGLE_USER),false)
+	chmod 755 $(APP_SHORTCUT_PATH)/syncplay.desktop
+endif
 	
 ifeq ($(VLC_SUPPORT),true)
-	-mkdir -p $(LIB_PATH)/vlc/lua/intf/
-	cp resources/lua/intf/syncplay.lua $(LIB_PATH)/vlc/lua/intf/
+	-mkdir -p $(VLC_LIB_PATH)/vlc/lua/intf/
+	cp resources/lua/intf/syncplay.lua $(VLC_LIB_PATH)/vlc/lua/intf/
 endif
 
 u-client:
 	-rm $(BIN_PATH)/syncplay
 	-rm $(LIB_PATH)/syncplay/syncplayClient.py
-	-rm $(LIB_PATH)/vlc/lua/intf/syncplay.lua
+	-rm $(VLC_LIB_PATH)/vlc/lua/intf/syncplay.lua
 	-rm $(APP_SHORTCUT_PATH)/syncplay.desktop
 
 server:
@@ -67,19 +69,28 @@ server:
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
 
+ifeq ($(SINGLE_USER),false)
+	chmod 755 $(APP_SHORTCUT_PATH)/syncplay-server.desktop
+endif
+
 u-server:
 	-rm $(BIN_PATH)/syncplay-server
 	-rm $(LIB_PATH)/syncplay/syncplayServer.py
 	-rm $(APP_SHORTCUT_PATH)/syncplay-server.desktop
+	
+warnings:
+ifeq ($(SINGLE_USER),true)
+	@echo -e "\n**********\n**********\n \nRemeber to add ${HOME}/.local/bin to your \$$PATH with 'echo \"export PATH=\$$PATH:${HOME}/.local/bin\" >> ${HOME}/.profile' \nThis will take effect after you logoff.\n \n**********\n**********\n"
+endif
 
-install-client: common client
+install-client: common client warnings
 
-uninstall-client: u-client u-common
+uninstall-client: u-client u-common 
 
-install-server: common server
+install-server: common server warnings
 
 uninstall-server: u-server u-common
 
-install: common client server
+install: common client server warnings 
 
 uninstall: u-client u-server u-common
