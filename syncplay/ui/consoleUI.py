@@ -36,7 +36,7 @@ class ConsoleUI(threading.Thread):
         except EOFError:
             pass
         
-    def promptFor(self, prompt=">", message=""):
+    def waitForUserAction(self, prompt=">", message=""):
         if message <> "":
             print(message)
         self.promptMode.clear()

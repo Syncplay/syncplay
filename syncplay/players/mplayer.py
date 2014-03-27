@@ -21,9 +21,7 @@ class MplayerPlayer(BasePlayer):
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:
-            self._client.ui.showMessage(getMessage("en", "mplayer-file-required-notification"))
-            self._client.ui.showMessage(getMessage("en", "mplayer-file-required-notification/example"))
-            self.reactor.callFromThread(self._client.stop, (True),)
+            self.reactor.callFromThread(self._client.stop,getMessage("en", "mplayer-file-required-notification")+"\n"+getMessage("en", "mplayer-file-required-notification/example"),)
             return 
         self._listener.setDaemon(True)
         self._listener.start()
@@ -181,9 +179,8 @@ class MplayerPlayer(BasePlayer):
                 return path
     
     def notMplayer2(self):
-        print getMessage("en", "mplayer2-required")
         self._listener.sendLine('quit')
-        self.reactor.callFromThread(self._client.stop, (True),)
+        self.reactor.callFromThread(self._client.stop, getMessage("en", "mplayer2-required"),)
     
     def _takeLocksDown(self):
         self._durationAsk.set()
@@ -195,7 +192,7 @@ class MplayerPlayer(BasePlayer):
     def drop(self):
         self._listener.sendLine('quit')
         self._takeLocksDown()
-        self.reactor.callFromThread(self._client.stop, (False),)
+        self.reactor.callFromThread(self._client.stop,)
     
     class __Listener(threading.Thread):
         def __init__(self, playerController, playerPath, filePath, args):
