@@ -169,7 +169,8 @@ class SyncplayClient(object):
         return madeChangeOnPlayer
 
     def _serverPaused(self, setBy):
-        self.setPosition(self.getGlobalPosition())
+        if constants.SYNC_ON_PAUSE == True:
+            self.setPosition(self.getGlobalPosition())
         self._player.setPaused(True)
         madeChangeOnPlayer = True
         self.ui.showMessage(getMessage("en", "pause-notification").format(setBy))
@@ -607,5 +608,3 @@ class UiManager(object):
 
     def drop(self):
         self.__ui.drop()
-
-
