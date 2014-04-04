@@ -25,6 +25,7 @@ WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
 SHOW_REWIND_ON_DESYNC_CHECKBOX = False
 SHOW_TOOLTIPS = True
 MERGE_PLAYPAUSE_BUTTONS = False
+SYNC_ON_PAUSE = True # Client seek to global position - subtitles may disappear on some media players
 
 #Usually there's no need to adjust these
 FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]" 
