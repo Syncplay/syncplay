@@ -153,7 +153,10 @@ class ConfigurationGetter(object):
                 try:
                     port = int(port)
                 except ValueError:
-                    pass
+                    try:
+                        port = port.encode('ascii', 'ignore')
+                    except:
+                        port = ""
         return host, port
 
     def _checkForPortableFile(self):
