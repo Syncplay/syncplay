@@ -235,7 +235,7 @@ class ConfigurationGetter(object):
             for option in options:
                 if(self.__wasOptionChanged(parser, section, option)):
                     changed = True
-                parser.set(section, option, unicode(self._config[option]))
+                parser.set(section, option, unicode(self._config[option]).replace('%', '%%'))
         if(changed):
             parser.write(codecs.open(iniPath, "wb", "utf_8_sig"))
 
