@@ -364,6 +364,7 @@ class SyncplayClient(object):
             self._playerClass.run(self, self._config['playerPath'], self._config['file'], self._config['playerArgs'])
             self._playerClass = None
         self.protocolFactory = SyncClientFactory(self)
+        port = int(port)
         reactor.connectTCP(host, port, self.protocolFactory)
         reactor.run()
 
