@@ -90,6 +90,18 @@ class ConfigurationGetter(object):
         self._playerFactory = PlayerFactory()
 
     def _validateArguments(self):
+        def _isPortValid(varToTest):
+            try:
+                if (varToTest == "" or varToTest is None):
+                    return False
+                if (str(varToTest).isdigit() == False):
+                    return False
+                varToTest = int(varToTest)
+                if (varToTest > 65535 or varToTest < 1):
+                    return False
+                return True
+            except:
+                return False
         for key in self._boolean:
             if(self._config[key] == "True"):
                 self._config[key] = True
@@ -108,9 +120,11 @@ class ConfigurationGetter(object):
             elif(key == "host"):
                 self._config["host"], self._config["port"] = self._splitPortAndHost(self._config["host"])
                 hostNotValid = (self._config["host"] == "" or self._config["host"] is None)
-                portNotValid = (self._config["port"] == "" or self._config["port"] is None)
-                if(hostNotValid or portNotValid):
+                portNotValid = (_isPortValid(self._config["port"]) == False)
+                if(hostNotValid):
                     raise InvalidConfigValue("Hostname can't be empty")
+                elif(portNotValid):
+                    raise InvalidConfigValue("Port must be valid")
             elif(self._config[key] == "" or self._config[key] is None):
                 raise InvalidConfigValue("{} can't be empty".format(key.capitalize()))
 
@@ -136,7 +150,11 @@ class ConfigurationGetter(object):
         if(host):
             if ':' in host:
                 host, port = host.split(':', 1)
-        return host, int(port)
+                try:
+                    port = int(port)
+                except ValueError:
+                    pass
+        return host, port
 
     def _checkForPortableFile(self):
         path = utils.findWorkingDir()
