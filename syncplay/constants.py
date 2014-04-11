@@ -10,6 +10,11 @@ DEFAULT_CONFIG_NAME_WINDOWS = "syncplay.ini"
 DEFAULT_CONFIG_NAME_LINUX = ".syncplay" 
 RECENT_CLIENT_THRESHOLD = "1.2.7" #This and higher considered 'recent' clients (no warnings)
 WARN_OLD_CLIENTS = True #Use MOTD to inform old clients to upgrade
+SHOW_OSD = True # Sends Syncplay messages to media player OSD
+SHOW_OSD_WARNINGS = True # Show warnings if playing different file, alone in room
+SHOW_SLOWDOWN_OSD = True # Show notifications of slowing down / reverting on time difference
+SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room user is in
+SHOW_DIFFERENT_ROOM_OSD = False # Show OSD notifications for events relating to room user is not in
 
 #Changing these might be ok
 REWIND_THRESHOLD = 4
