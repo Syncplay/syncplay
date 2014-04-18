@@ -15,6 +15,7 @@ SHOW_OSD_WARNINGS = True # Show warnings if playing different file, alone in roo
 SHOW_SLOWDOWN_OSD = True # Show notifications of slowing down / reverting on time difference
 SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room user is in
 SHOW_DIFFERENT_ROOM_OSD = False # Show OSD notifications for events relating to room user is not in
+LIST_RELATIVE_CONFIGS = True # Print list of relative configs loaded
 
 #Changing these might be ok
 REWIND_THRESHOLD = 4
