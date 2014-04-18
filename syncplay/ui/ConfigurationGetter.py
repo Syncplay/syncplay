@@ -268,11 +268,15 @@ class ConfigurationGetter(object):
 
     def _loadRelativeConfiguration(self):
         locations = self.__getRelativeConfigLocations()
+        loadedPaths = []
         for location in locations:
             for name in constants.CONFIG_NAMES:
                 path = location + os.path.sep + name
+                if(os.path.isfile(path)):
+                    loadedPaths.append("'" + os.path.normpath(path) + "'")
                 self._parseConfigFile(path, createConfig=False)
                 self._checkConfig()
+        return loadedPaths
 
     def getConfiguration(self):
         iniPath = self._getConfigurationFilePath()
@@ -285,7 +289,7 @@ class ConfigurationGetter(object):
         self._checkConfig()
         self._saveConfig(iniPath)
         if(self._config['file']):
-            self._loadRelativeConfiguration()
+            self._config['loadedRelativePaths'] = self._loadRelativeConfiguration()
         if(not self._config['noGui']):
             from syncplay.vendor import qt4reactor
             if QCoreApplication.instance() is None:
