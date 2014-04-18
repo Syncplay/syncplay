@@ -4,7 +4,7 @@
 
  Author: Etoh
  Project: http://syncplay.pl/
- Version: 0.1.8
+ Version: 0.1.9
  
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -85,8 +85,8 @@ else
     require "common"
 end
 
-local connectorversion = "0.1.8"
-local durationdelay = 500000 -- Pause for get_duration command for increased reliability
+local connectorversion = "0.1.9"
+local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability
 local host = "localhost"
 local port
 
@@ -109,6 +109,8 @@ local oldfilepath
 local oldinputstate
 local newfilepath
 local newinputstate
+local oldtitle = 0
+local newtitle = 0
 
 local running = true
 
@@ -137,6 +139,11 @@ function detectchanges()
                 notificationbuffer = notificationbuffer .. "filepath-change"..notificationmarker..msgterminator
             end
             
+            newtitle = get_var("title")
+            if newtitle ~= oldtitle and get_var("time") > 1 then
+                vlc.misc.mwait(vlc.misc.mdate() + durationdelay) -- Don't give new title with old time
+            end
+            oldtitle = newtitle
             notificationbuffer = notificationbuffer .. "playstate"..msgseperator..tostring(get_play_state())..msgterminator
             notificationbuffer = notificationbuffer .. "position"..msgseperator..tostring(get_time())..msgterminator                        
         else
