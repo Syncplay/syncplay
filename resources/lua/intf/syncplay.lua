@@ -227,7 +227,7 @@ function get_time()
         return errormsg
     end
     
-    titletime, errormsg = get_var("title") * titlemultiplier -- Days
+    titletime, errormsg = get_var("title") * titlemultiplier -- Weeks
     if errormsg ~= nil and errormsg ~= "" then
         return realtime
     end
