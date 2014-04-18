@@ -63,8 +63,8 @@ def parseTime(timeStr):
             else:
                 time_params[name] = int(param)
     return datetime.timedelta(**time_params).total_seconds()
-    
-def formatTime(timeInSeconds):
+
+def formatTime(timeInSeconds, weeksAsTitles=True):
     if(timeInSeconds < 0):
         timeInSeconds = -timeInSeconds
         sign = '-'
@@ -72,19 +72,27 @@ def formatTime(timeInSeconds):
         sign = ''
     timeInSeconds = round(timeInSeconds)
     weeks = timeInSeconds // 604800
+    if weeksAsTitles and weeks > 0:
+        title = weeks
+        weeks = 0
+    else:
+        title = 0
     days = (timeInSeconds % 604800) // 86400
     hours = (timeInSeconds % 86400) // 3600
     minutes = (timeInSeconds % 3600) // 60
     seconds = timeInSeconds % 60
     if(weeks > 0):
-        return '{0:}{1:.0f}w, {2:.0f}d, {3:02.0f}:{4:02.0f}:{5:02.0f}'.format(sign, weeks, days, hours, minutes, seconds)
+        formattedTime = '{0:}{1:.0f}w, {2:.0f}d, {3:02.0f}:{4:02.0f}:{5:02.0f}'.format(sign, weeks, days, hours, minutes, seconds)
     elif(days > 0):
-        return '{0:}{1:.0f}d, {2:02.0f}:{3:02.0f}:{4:02.0f}'.format(sign, days, hours, minutes, seconds)
+        formattedTime = '{0:}{1:.0f}d, {2:02.0f}:{3:02.0f}:{4:02.0f}'.format(sign, days, hours, minutes, seconds)
     elif(hours > 0):
-        return '{0:}{1:02.0f}:{2:02.0f}:{3:02.0f}'.format(sign, hours, minutes, seconds)
+        formattedTime = '{0:}{1:02.0f}:{2:02.0f}:{3:02.0f}'.format(sign, hours, minutes, seconds)
     else:
-        return '{0:}{1:02.0f}:{2:02.0f}'.format(sign, minutes, seconds)
-    
+        formattedTime = '{0:}{1:02.0f}:{2:02.0f}'.format(sign, minutes, seconds)
+    if title > 0:
+        formattedTime = "{0:} (Title {1:.0f})".format(formattedTime, title)
+    return formattedTime
+
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
     if not frozen:
@@ -120,7 +128,7 @@ def blackholeStdoutForFrozenWindow():
                     self._file.flush()
         sys.stderr = Stderr()
         del Stderr
-    
+
         class Blackhole(object):
             softspace = 0
             def write(self, text):
@@ -133,24 +141,24 @@ def blackholeStdoutForFrozenWindow():
 # Relate to file hashing / difference checking:
 
 def stripfilename(filename):
-    return re.sub(constants.FILENAME_STRIP_REGEX,"",filename)
+    return re.sub(constants.FILENAME_STRIP_REGEX, "", filename)
 
 def hashFilename(filename):
     return hashlib.sha256(stripfilename(filename).encode('utf-8')).hexdigest()[:12]
 
 def hashFilesize(size):
     return hashlib.sha256(str(size)).hexdigest()[:12]
-    
+
 def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
     if string1raw == string2raw:
         return True
     elif string1raw == string2hashed:
         return True
     elif string1hashed == string2raw:
-        return True 
+        return True
     elif string1hashed == string2hashed:
         return True
-    
+
 def sameFilename (filename1, filename2):
     if filename1 == constants.PRIVACY_HIDDENFILENAME or filename2 == constants.PRIVACY_HIDDENFILENAME:
         return True
@@ -166,7 +174,7 @@ def sameFilesize (filesize1, filesize2):
         return True
     else:
         return False
-    
+
 def sameFileduration (duration1, duration2):
     if abs(round(duration1) - round(duration2)) < constants.DIFFFERENT_DURATION_THRESHOLD:
         return True
