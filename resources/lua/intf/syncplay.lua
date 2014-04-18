@@ -244,16 +244,19 @@ function get_time()
 end
 
 function set_time ( timetoset)
-    local response, errormsg, realtime, titletrack
-    realtime = timetoset % titlemultiplier
-    oldtitle = tonumber(get_var("title"))
-    newtitle = (timetoset - realtime) / titlemultiplier
-    if oldtitle ~= newtitle and newtitle > -1 then
-        set_var("title", tonumber(newtitle))
-    end
-
-    errormsg = set_var("time", tonumber(realtime))
-    return errormsg
+    local input = vlc.object.input()
+    if input then
+        local response, errormsg, realtime, titletrack
+        realtime = timetoset % titlemultiplier
+        oldtitle = tonumber(get_var("title"))
+        newtitle = (timetoset - realtime) / titlemultiplier
+        if oldtitle ~= newtitle and newtitle > -1 then
+            set_var("title", tonumber(newtitle))
+        end
+        errormsg = set_var("time", tonumber(realtime))
+        return errormsg
+	else
+	    return noinput
 end
 
 get_var("time")
