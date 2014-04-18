@@ -3,6 +3,8 @@
 en = {
 
       # Client notifications
+      "relative-config-notification" : "Loaded relative configuration file(s): {}",
+
       "connection-attempt-notification" : "Attempting to connect to {}:{}",  # Port, IP
       "reconnection-attempt-notification" : "Connection with server lost, attempting to reconnect",
       "disconnection-notification" : "Disconnected from server",
