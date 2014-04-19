@@ -47,7 +47,6 @@ class ConfigurationGetter(object):
         self._required = [
                           "host",
                           "port",
-                          "name",
                           "room",
                           "playerPath",
                           "playerClass",
