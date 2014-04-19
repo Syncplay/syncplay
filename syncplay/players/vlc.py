@@ -215,8 +215,10 @@ class VlcPlayer(BasePlayer):
                     call.append(filePath) #TODO: Proper Unicode support
                 else:
                     playerController._client.ui.showErrorMessage(getMessage("en", "vlc-unicode-loadfile-error"), True)
-            def _usevlcintf(vlcIntfPath):
+            def _usevlcintf(vlcIntfPath, vlcIntfUserPath):
                 vlcSyncplayInterfacePath = vlcIntfPath + "syncplay.lua"
+                if not os.path.isfile(vlcSyncplayInterfacePath):
+                    vlcSyncplayInterfacePath = vlcIntfUserPath + "syncplay.lua"
                 if os.path.isfile(vlcSyncplayInterfacePath):
                     with open(vlcSyncplayInterfacePath, 'rU') as interfacefile:
                         for line in interfacefile:
@@ -231,12 +233,15 @@ class VlcPlayer(BasePlayer):
                 return False
             if sys.platform.startswith('linux'):
                 playerController.vlcIntfPath = "/usr/lib/vlc/lua/intf/"
+                playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), "Library/Application Support/org.videolan.vlc/lua/intf/")
             elif sys.platform.startswith('darwin'):
                 playerController.vlcIntfPath = "/Applications/VLC.app/Contents/MacOS/share/lua/intf/"
+                playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), ".local/share/vlc/lua/intf/")
             else:
                 playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/lua/intf/" # TODO: Make Mac version use /Applications/VLC.app/Contents/MacOS/share/lua/intf/
+                playerController.vlcIntfUserPath = os.path.join(os.getenv('APPDATA', '.'), "VLC\\lua\\intf\\")
             playerController.vlcModulePath = playerController.vlcIntfPath + "modules/?.luac"
-            if _usevlcintf(playerController.vlcIntfPath) == True:
+            if _usevlcintf(playerController.vlcIntfPath, playerController.vlcIntfUserPath) == True:
                 playerController.SLAVE_ARGS.append('--lua-config=syncplay={{port=\"{}\"}}'.format(str(playerController.vlcport)))
             else:
                 if sys.platform.startswith('linux'):
