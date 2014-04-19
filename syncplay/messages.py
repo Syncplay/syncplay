@@ -107,7 +107,7 @@ en = {
 
       "connection-group-title" : "Connection settings",
       "host-label" : "Server address: ",
-      "username-label" :  "Username:",
+      "username-label" :  "Username (optional):",
       "password-label" :  "Server password (if any):",
       "room-label" : "Default room: ",
 
