@@ -32,11 +32,7 @@ class JSONCommandProtocol(LineReceiver):
         try:
             messages = json.loads(line)
         except:
-            if ("GET / HTTP/1." in line):
-                self.handleHttpRequest(line)
-                self.drop()
-            else:
-                self.dropWithError(getMessage("en", "not-json-server-error").format(line))
+            self.dropWithError(getMessage("en", "not-json-server-error").format(line))
             return
         self.handleMessages(messages)
 
@@ -190,9 +186,6 @@ class SyncClientProtocol(JSONCommandProtocol):
         position, paused, doSeek, stateChange = self._client.getLocalState()
         self.sendState(position, paused, doSeek, latencyCalculation, stateChange)
 
-    def handleHttpRequest(self, request):
-        pass
-
     def sendState(self, position, paused, doSeek, latencyCalculation, stateChange=False):
         state = {}
         positionAndPausedIsSet = position is not None and paused is not None
@@ -234,7 +227,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         self._pingService = PingService()
         self._clientLatencyCalculation = 0
         self._clientLatencyCalculationArrivalTime = 0
-        
+
     def __hash__(self):
         return hash('|'.join((
             self.transport.getPeer().host,
@@ -364,7 +357,7 @@ class SyncServerProtocol(JSONCommandProtocol):
                     }
         ping = {
                 "latencyCalculation": self._pingService.newTimestamp(),
-                "serverRtt": self._pingService.getRtt() 
+                "serverRtt": self._pingService.getRtt()
                 }
         if(self._clientLatencyCalculation):
             ping["clientLatencyCalculation"] = self._clientLatencyCalculation + processingTime
@@ -413,9 +406,6 @@ class SyncServerProtocol(JSONCommandProtocol):
         if(self.serverIgnoringOnTheFly == 0):
             self._factory.updateWatcherState(self, position, paused, doSeek, self._pingService.getLastForwardDelay())
 
-    def handleHttpRequest(self, request):
-        self.sendLine(self._factory.gethttpRequestReply())
-
     def handleError(self, error):
         self.dropWithError(error["message"])  # TODO: more processing and fallbacking
 
@@ -443,9 +433,9 @@ class PingService(object):
             self._avrRtt = self._rtt
         self._avrRtt = self._avrRtt * PING_MOVING_AVERAGE_WEIGHT + self._rtt * (1 - PING_MOVING_AVERAGE_WEIGHT)
         if(senderRtt < self._rtt):
-            self._fd = self._avrRtt/2 + (self._rtt - senderRtt)
+            self._fd = self._avrRtt / 2 + (self._rtt - senderRtt)
         else:
-            self._fd = self._avrRtt/2
+            self._fd = self._avrRtt / 2
 
     def getLastForwardDelay(self):
         return self._fd

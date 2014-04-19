@@ -14,13 +14,12 @@ from string import Template
 import argparse
 
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None, httpReplyFilePath=None):
+    def __init__(self, password='', motdFilePath=None):
         print getMessage("en", "welcome-server-notification").format(syncplay.version)
         if(password):
             password = hashlib.md5(password).hexdigest()
         self.password = password
         self._motdFilePath = motdFilePath
-        self._httpReplyFilePath = httpReplyFilePath
         self._rooms = {}
         self._roomStates = {}
         self._roomUpdate = threading.RLock()
@@ -107,13 +106,6 @@ class SyncFactory(Factory):
             return getMessage("en", "new-syncplay-available-motd-message").format(clientVersion)
         else:
             return ""
-
-    def gethttpRequestReply(self):
-        if(self._httpReplyFilePath and os.path.isfile(self._httpReplyFilePath)):
-            tmpl = codecs.open(self._httpReplyFilePath, "r", "utf-8-sig").read()
-            return tmpl.encode('utf-8')
-        else:
-            return getMessage("en", "server-default-http-reply")
 
     def sendState(self, watcherProtocol, doSeek=False, forcedUpdate=False):
         watcher = self.getWatcher(watcherProtocol)
@@ -296,4 +288,3 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("en", "server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("en", "server-isolate-room-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("en", "server-motd-argument"))
-        self._argparser.add_argument('--http-reply-file', metavar='file', type=str, nargs='?', help=getMessage("en", "server-http-reply-argument"))
