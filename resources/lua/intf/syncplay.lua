@@ -257,6 +257,7 @@ function set_time ( timetoset)
         return errormsg
 	else
 	    return noinput
+    end
 end
 
 get_var("time")
