@@ -138,7 +138,7 @@ en = {
       # Tooltips
 
       "host-tooltip" : "Hostname or IP to connect to, optionally including port (e.g. syncplay.pl:8999). Only synchronised with people on same server/port.",
-      "username-tooltip" : "Nickname you will be known by. There is no registration, so you can change this later.",
+      "username-tooltip" : "Nickname you will be known by. No registration, so can easily change later. Random name generated if none specified.",
       "password-tooltip" : "Passwords are only needed for connecting to private servers.",
       "room-tooltip" : "Room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
 
