@@ -324,7 +324,13 @@ class SyncplayClient(object):
             self._protocol.sendFileSetting(file_)
 
     def setUsername(self, username):
-        self.userlist.currentUser.username = username
+        if username and username <> "":
+            self.userlist.currentUser.username = username
+        else:
+            import random
+            random.seed()
+            random_number = random.randrange(1000, 9999)
+            self.userlist.currentUser.username = "Anonymous" + str(random_number)
 
     def getUsername(self):
         return self.userlist.currentUser.username
