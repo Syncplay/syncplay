@@ -271,10 +271,10 @@ class ConfigurationGetter(object):
         for location in locations:
             for name in constants.CONFIG_NAMES:
                 path = location + os.path.sep + name
-                if(os.path.isfile(path)):
+                if(os.path.isfile(path) and (os.name == 'nt' or path != os.path.join(os.getenv('HOME', '.'), constants.DEFAULT_CONFIG_NAME_LINUX))):
                     loadedPaths.append("'" + os.path.normpath(path) + "'")
-                self._parseConfigFile(path, createConfig=False)
-                self._checkConfig()
+                    self._parseConfigFile(path, createConfig=False)
+                    self._checkConfig()
         return loadedPaths
 
     def getConfiguration(self):
