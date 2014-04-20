@@ -119,6 +119,8 @@ class MpcHcApi:
             
         elif(cmd == self.CMD_NOWPLAYING):
             value = re.split(r'(?<!\\)\|', value)
+            if self.filePath == value[3]:
+                return
             self.filePath = value[3]
             self.filePlaying = value[3].split('\\').pop()
             self.fileDuration = float(value[4])
