@@ -7,13 +7,11 @@ import site
 
 from twisted.internet import reactor
 
-from syncplay.server import SyncFactory, SyncIsolatedFactory, ConfigurationGetter
+from syncplay.server import SyncFactory, ConfigurationGetter
 
-argsGetter = ConfigurationGetter()
-args = argsGetter.getConfiguration()
+if __name__ == '__main__':
+    argsGetter = ConfigurationGetter()
+    args = argsGetter.getConfiguration()
 
-if(not args.isolate_rooms):
-    reactor.listenTCP(int(args.port), SyncFactory(args.password, args.motd_file))
-else:
-    reactor.listenTCP(int(args.port), SyncIsolatedFactory(args.password, args.motd_file))
-reactor.run()
+    reactor.listenTCP(int(args.port), SyncFactory(args.password, args.motd_file, args.isolate_rooms))
+    reactor.run()
