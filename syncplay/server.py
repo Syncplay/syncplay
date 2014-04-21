@@ -106,7 +106,7 @@ class RoomManager(object):
             for receiver in room.getWatchers():
                 whatLambda(receiver)
 
-    def getAllWatchersForUser(self, watcher):
+    def getAllWatchersForUser(self, sender):
         watchers = []
         for room in self._rooms.itervalues():
             for watcher in room.getWatchers():
@@ -152,7 +152,7 @@ class PublicRoomManager(RoomManager):
     def broadcast(self, sender, what):
         self.broadcastRoom(sender, what)
 
-    def getAllWatchersForUser(self, watcher):
+    def getAllWatchersForUser(self, sender):
         room = sender.getRoom().getWatchers()
 
     def moveWatcher(self, watcher, room):
@@ -208,7 +208,7 @@ class Room(object):
         watcher.setRoom(None)
 
     def isEmpty(self):
-        return bool(self._watchers)
+        return not bool(self._watchers)
 
     def getSetBy(self):
         return self._setBy
