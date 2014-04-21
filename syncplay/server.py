@@ -59,11 +59,18 @@ class SyncFactory(Factory):
     def addWatcher(self, watcherProtocol, username, roomName, roomPassword):
         username = self._roomManager.findFreeUsername(username)
         watcher = Watcher(self, watcherProtocol, username)
-        self.setWatcherRoom(watcher, roomName)
+        self.setWatcherRoom(watcher, roomName, asJoin=True)
 
-    def setWatcherRoom(self, watcher, roomName):
+    def setWatcherRoom(self, watcher, roomName, asJoin=False):
         self._roomManager.moveWatcher(watcher, roomName)
-        self.sendJoinMessage(watcher)
+        if asJoin:
+            self.sendJoinMessage(watcher)
+        else:
+            self.sendRoomSwitchMessage(watcher)
+
+    def sendRoomSwitchMessage(self, watcher):
+        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, None)
+        self._roomManager.broadcast(watcher, l)
 
     def removeWatcher(self, watcher):
         self.sendLeftMessage(watcher)
@@ -117,8 +124,6 @@ class RoomManager(object):
         self.removeWatcher(watcher)
         room = self._getRoom(roomName)
         room.addWatcher(watcher)
-        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, None)
-        self.broadcast(watcher, l)
 
     def removeWatcher(self, watcher):
         oldRoom = watcher.getRoom()
