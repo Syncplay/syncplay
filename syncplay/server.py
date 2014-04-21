@@ -289,7 +289,8 @@ class Watcher(object):
             self._sendStateTimer.stop()
 
     def sendState(self, position, paused, doSeek, setBy, forcedUpdate):
-        self._connector.sendState(position, paused, doSeek, setBy, forcedUpdate)
+        if self._connector.isLogged():
+            self._connector.sendState(position, paused, doSeek, setBy, forcedUpdate)
         if time.time() - self._lastUpdatedOn > constants.PROTOCOL_TIMEOUT:
             self._server.removeWatcher(self)
             self._connector.drop()

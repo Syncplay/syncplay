@@ -249,6 +249,9 @@ class SyncServerProtocol(JSONCommandProtocol):
     def connectionLost(self, reason):
         self._factory.removeWatcher(self._watcher)
 
+    def isLogged(self):
+        return self._logged
+
     def _extractHelloArguments(self, hello):
         roomName, roomPassword = None, None
         username = hello["username"] if hello.has_key("username") else None
