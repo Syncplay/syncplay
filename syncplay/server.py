@@ -275,11 +275,12 @@ class Watcher(object):
 
     def _resetStateTimer(self):
         if self._sendStateTimer:
-            self._sendStateTimer.stop()
+            if self._sendStateTimer.running:
+                self._sendStateTimer.stop()
             self._sendStateTimer.start(constants.SERVER_STATE_INTERVAL)
 
     def _deactivateStateTimer(self):
-        if(self._sendStateTimer):
+        if(self._sendStateTimer and self._sendStateTimer.running):
             self._sendStateTimer.stop()
 
     def sendState(self, position, paused, doSeek, setBy, forcedUpdate):
