@@ -92,6 +92,7 @@ class SyncFactory(Factory):
         room = watcher.getRoom()
         paused, position = room.isPaused(), watcher.getPosition()
         setBy = watcher
+        room.setPosition(watcher.getPosition(), setBy)
         l = lambda w: w.sendState(position, paused, doSeek, setBy, True)
         self._roomManager.broadcastRoom(watcher, l)
 
@@ -193,6 +194,11 @@ class Room(object):
         self._playState = paused
         self._setBy = setBy
 
+    def setPosition(self, position, setBy=None):
+        for watcher in self._watchers.itervalues():
+            watcher.setPosition(position)
+            self._setBy = setBy
+
     def isPlaying(self):
         return self._playState == self.STATE_PLAYING
 
@@ -251,6 +257,10 @@ class Watcher(object):
 
     def getFile(self):
         return self._file
+
+    def setPosition(self, position):
+        self._position = position
+        self._lastUpdatedOn = time.time()
 
     def getPosition(self):
         if self._position is None:
