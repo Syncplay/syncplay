@@ -6,7 +6,7 @@ endif
 
 ifeq ($(SINGLE_USER),false)
 	BASE_PATH    = /usr
-	VLC_LIB_PATH = /usr/lib
+	VLC_LIB_PATH = ${PREFIX}/usr/lib
 else
 	BASE_PATH    = ${HOME}/.local
 	VLC_LIB_PATH = ${HOME}/.local/share
