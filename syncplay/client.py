@@ -90,7 +90,7 @@ class SyncplayClient(object):
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
-                self.ui.showMessage(getMessage("en", "relative-config-notification").format("; ".join(self._config['loadedRelativePaths'])), True)
+            self.ui.showMessage(getMessage("en", "relative-config-notification").format("; ".join(self._config['loadedRelativePaths'])), noPlayer=True, noTimestamp=True)
 
     def initProtocol(self, protocol):
         self._protocol = protocol
