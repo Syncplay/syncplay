@@ -257,7 +257,7 @@ class VlcPlayer(BasePlayer):
 
             self._vlcready = vlcReady
             self._vlcclosed = vlcClosed
-            self.__process = subprocess.Popen(call, stderr=subprocess.PIPE)
+            self.__process = subprocess.Popen(call, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             for line in iter(self.__process.stderr.readline, ''):
                 if "[syncplay]" in line:
                     if "Listening on host" in line:
