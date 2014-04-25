@@ -43,7 +43,7 @@ COMMANDS_ROOM = ["r", "room"]
 COMMANDS_HELP = ['help', 'h', '?', '/?', r'\?']
 MPC_MIN_VER = "1.6.4"
 VLC_MIN_VERSION = "2.0.0"
-VLC_INTERFACE_MIN_VERSION = "0.1.7"
+VLC_INTERFACE_MIN_VERSION = "0.1.9"
 MPC_PATHS = [
              r"C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
              r"C:\Program Files\MPC-HC\mpc-hc.exe",
