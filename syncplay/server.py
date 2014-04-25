@@ -186,9 +186,12 @@ class Room(object):
         return self._name
 
     def getPosition(self):
-        watcher = min(self._watchers.values())
-        self._setBy = watcher
-        return watcher.getPosition()
+        if self._watchers:
+            watcher = min(self._watchers.values())
+            self._setBy = watcher
+            return watcher.getPosition()
+        else:
+            return 0
 
     def setPaused(self, paused=STATE_PAUSED, setBy=None):
         self._playState = paused
@@ -209,6 +212,8 @@ class Room(object):
         return self._watchers.values()
 
     def addWatcher(self, watcher):
+        if self._watchers:
+            watcher.setPosition(self.getPosition())
         self._watchers[watcher.getName()] = watcher
         watcher.setRoom(self)
 
