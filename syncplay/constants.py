@@ -16,6 +16,7 @@ SHOW_SLOWDOWN_OSD = True # Show notifications of slowing down / reverting on tim
 SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room user is in
 SHOW_DIFFERENT_ROOM_OSD = False # Show OSD notifications for events relating to room user is not in
 LIST_RELATIVE_CONFIGS = True # Print list of relative configs loaded
+SHOW_CONTACT_INFO = True # Displays dev contact details below list in GUI
 
 #Changing these might be ok
 REWIND_THRESHOLD = 4
