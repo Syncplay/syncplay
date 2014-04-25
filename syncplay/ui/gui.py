@@ -251,6 +251,17 @@ class MainWindow(QtGui.QMainWindow):
         window.listLayout.setContentsMargins(0,0,0,0)
         window.listLayout.addWidget(window.listlabel)
         window.listLayout.addWidget(window.listTreeView)
+        if constants.SHOW_CONTACT_INFO:
+            window.contactLabel = QtGui.QLabel()
+            window.contactLabel.setWordWrap(True)
+            window.contactLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
+            window.contactLabel.setLineWidth(1)
+            window.contactLabel.setMidLineWidth(0)
+            window.contactLabel.setMargin(2)
+            window.contactLabel.setText("Have an idea, bug report or feedback? E-mail <a href=\"mailto:devs@syncplay.pl\">devs@syncplay.pl</a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC channel</a> on irc.freenode.net or <a href=\"https://github.com/Uriziel/syncplay/issues/new\">raise an issue via GitHub</a>. Also check out <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> for info, help and updates.")
+            window.contactLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
+            window.contactLabel.setOpenExternalLinks(True)
+            window.listLayout.addWidget(window.contactLabel)
         window.listFrame.setLayout(window.listLayout)
         
         window.topSplit.addWidget(window.outputFrame)
