@@ -201,6 +201,10 @@ class ConfigDialog(QtGui.QDialog):
             self.config['slowOnDesync'] = True
         else:
             self.config['slowOnDesync'] = False
+        if self.dontslowwithmeCheckbox.isChecked() == True:
+            self.config['dontSlowDownWithMe'] = True
+        else:
+            self.config['dontSlowDownWithMe'] = False
         if self.pauseonleaveCheckbox.isChecked() == True:
             self.config['pauseOnLeave'] = True
         else:
@@ -386,6 +390,7 @@ class ConfigDialog(QtGui.QDialog):
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacyDontSendOption)
 
         self.slowdownCheckbox = QCheckBox(getMessage("en", "slowdown-label"))
+        self.dontslowwithmeCheckbox = QCheckBox(getMessage("en", "dontslowwithme-label"))
         self.pauseonleaveCheckbox = QCheckBox(getMessage("en", "pauseonleave-label"))
         self.alwaysshowCheckbox = QCheckBox(getMessage("en", "alwayshow-label"))
         self.donotstoreCheckbox = QCheckBox(getMessage("en", "donotstore-label"))
@@ -408,6 +413,9 @@ class ConfigDialog(QtGui.QDialog):
 
         if config['slowOnDesync'] == True:
             self.slowdownCheckbox.setChecked(True)
+        if config['dontSlowDownWithMe'] == True:
+            self.dontslowwithmeCheckbox.setChecked(True)
+
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True and config['rewindOnDesync'] == True:
             self.rewindCheckbox.setChecked(True)
         if config['pauseOnLeave'] == True:
@@ -424,6 +432,7 @@ class ConfigDialog(QtGui.QDialog):
             self.filesizeprivacyDontSendOption.setToolTip(getMessage("en", "privacy-dontsend-tooltip"))
 
             self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
+            self.dontslowwithmeCheckbox.setToolTip(getMessage("en", "dontslowwithme-tooltip"))
             self.pauseonleaveCheckbox.setToolTip(getMessage("en", "pauseonleave-tooltip"))
             self.alwaysshowCheckbox.setToolTip(getMessage("en", "alwayshow-tooltip"))
             self.donotstoreCheckbox.setToolTip(getMessage("en", "donotstore-tooltip"))
@@ -449,11 +458,12 @@ class ConfigDialog(QtGui.QDialog):
         self.moreSettingsLayout.addWidget(self.privacyFrame, 0, 0, 1, 4)
 
         self.moreSettingsLayout.addWidget(self.slowdownCheckbox, 2, 0, 1, 4)
+        self.moreSettingsLayout.addWidget(self.dontslowwithmeCheckbox, 3, 0, 1, 4)
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
-            self.moreSettingsLayout.addWidget(self.rewindCheckbox, 3, 0, 1, 4)
-        self.moreSettingsLayout.addWidget(self.pauseonleaveCheckbox, 4, 0, 1, 4)
-        self.moreSettingsLayout.addWidget(self.alwaysshowCheckbox, 5, 0, 1, 4)
-        self.moreSettingsLayout.addWidget(self.donotstoreCheckbox, 6, 0, 1, 4)
+            self.moreSettingsLayout.addWidget(self.rewindCheckbox, 4, 0, 1, 4)
+        self.moreSettingsLayout.addWidget(self.pauseonleaveCheckbox, 5, 0, 1, 4)
+        self.moreSettingsLayout.addWidget(self.alwaysshowCheckbox, 6, 0, 1, 4)
+        self.moreSettingsLayout.addWidget(self.donotstoreCheckbox, 7, 0, 1, 4)
 
         self.moreSettingsGroup.setLayout(self.moreSettingsLayout)
 

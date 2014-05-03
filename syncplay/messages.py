@@ -123,6 +123,7 @@ en = {
       "filename-privacy-label" : "Filename information:",
       "filesize-privacy-label" : "File size information:",
       "slowdown-label" : "Slow down on desync",
+      "dontslowwithme-label" : "Never slow down others on my account",
       "pauseonleave-label" : "Pause when user leaves",
       "rewind-label" : "Rewind on major desync (highly recommended)",
       "alwayshow-label" : "Always show this dialog",
@@ -152,6 +153,7 @@ en = {
       "privacy-sendhashed-tooltip" : "Send a hashed version of the information, making it less visible to other clients.",
       "privacy-dontsend-tooltip" : "Do not send this information to the server. This provides for maximum privacy.",
       "slowdown-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers.",
+      "dontslowwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
       "rewind-tooltip" : "Jump back when needed to get back in sync. Recommended.",
       "alwayshow-tooltip" : "Configuration dialogue is always shown, even when opening a file with Syncplay.",
@@ -197,27 +199,27 @@ en = {
 pl = {
 
       # Client notifications
-      "connection-attempt-notification" : "Próba połączenia z {}:{}",  # Port, IP
+      "connection-attempt-notification" : "Próba połączenia z {}:{}", # Port, IP
       "reconnection-attempt-notification" : "Połączenie z serwerem zostało przerwane, ponowne łączenie",
       "disconnection-notification" : "Odłączono od serwera",
       "connection-failed-notification" : "Połączenie z serwerem zakończone fiaskiem",
 
-      "rewind-notification" : "Cofnięto z powodu różnicy czasu z <{}>",  # User
-      "slowdown-notification" : "Zwolniono z powodu różnicy czasu z <{}>",  # User
+      "rewind-notification" : "Cofnięto z powodu różnicy czasu z <{}>", # User
+      "slowdown-notification" : "Zwolniono z powodu różnicy czasu z <{}>", # User
       "revert-notification" : "Przywrócono normalną prędkość odtwarzania",
 
-      "pause-notification" : "<{}> zatrzymał odtwarzanie",  # User
-      "unpause-notification" : "<{}> wznowił odtwarzanie",  # User
-      "seek-notification" : "<{}> skoczył z {} do {}",  # User, from time, to time
+      "pause-notification" : "<{}> zatrzymał odtwarzanie", # User
+      "unpause-notification" : "<{}> wznowił odtwarzanie", # User
+      "seek-notification" : "<{}> skoczył z {} do {}", # User, from time, to time
 
       "current-offset-notification" : "Obecny offset: {} seconds",  # Offset
 
-      "room-join-notification" : "<{}> dołączył do pokoju: '{}'",  # User
-      "left-notification" : "<{}> wyszedł",  # User
+      "room-join-notification" : "<{}> dołączył do pokoju: '{}'", # User
+      "left-notification" : "<{}> wyszedł", # User
       "playing-notification" : "<{}> odtwarza '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" : " w pokoju: '{}'",  # Room
 
-      "file-different-notification" : "Plik, który odtwarzasz wydaje się być różny od <{}>",  # User
+      "file-different-notification" : "Plik, który odtwarzasz wydaje się być różny od <{}>", # User
       "file-differences-notification" : "Twój plik różni się następującymi parametrami: ",
 
       "different-filesize-notification" : " (inny rozmiar pliku!)",

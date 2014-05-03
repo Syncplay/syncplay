@@ -144,7 +144,10 @@ class SyncplayClient(object):
 
     def getLocalState(self):
         paused = self.getPlayerPaused()
-        position = self.getPlayerPosition()
+        if self._config['dontSlowDownWithMe']:
+            position = self.getGlobalPosition()
+        else:
+            position = self.getPlayerPosition()
         pauseChange, _ = self._determinePlayerStateChange(paused, position)
         if(self._lastGlobalUpdate):
             return position, paused, _, pauseChange
