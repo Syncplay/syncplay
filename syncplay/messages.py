@@ -123,7 +123,7 @@ en = {
       "filename-privacy-label" : "Filename information:",
       "filesize-privacy-label" : "File size information:",
       "slowdown-label" : "Slow down on desync",
-      "dontslowwithme-label" : "Never slow down others on my account",
+      "dontslowwithme-label" : "Never slow down or rewind others",
       "pauseonleave-label" : "Pause when user leaves",
       "rewind-label" : "Rewind on major desync (highly recommended)",
       "alwayshow-label" : "Always show this dialog",
