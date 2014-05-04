@@ -129,7 +129,7 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient.setPosition(t)
 
         else:
-            self.showMessage("Invalid seek value", True)
+            self.showErrorMessage("Invalid seek value")
         
     def undoSeek(self):
         tmp_pos = self._syncplayClient.getPlayerPosition()
