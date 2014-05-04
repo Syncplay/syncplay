@@ -86,10 +86,10 @@ VLC_MAX_PORT = 55000
 #These are not changes you're looking for
 MPLAYER_SLAVE_ARGS = [ '-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4']
 # --quiet works with both mpv 0.2 and 0.3
-MPV_SLAVE_ARGS = ['--slave-broken', '--hr-seek=always', '--no-msgcolor', '--quiet']
+MPV_SLAVE_ARGS = ['--slave-broken', '--hr-seek=always', '--quiet']
 VLC_SLAVE_ARGS = ['--extraintf=luaintf','--lua-intf=syncplay','--no-quiet','--no-input-fast-seek']
 VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance','--no-one-instance-when-started-from-file']
-MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_]+)=(.+)$"
+MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$"
 VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_]+)(?:\: )?(?P<argument>.*))"
 UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
 UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"

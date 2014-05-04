@@ -10,6 +10,9 @@ class MplayerPlayer(BasePlayer):
     speedSupported = True
     RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
     SLAVE_ARGS = constants.MPLAYER_SLAVE_ARGS
+    POSITION_QUERY = 'time_pos'
+    OSD_QUERY = 'osd_show_text'
+
     def __init__(self, client, playerPath, filePath, args):
         from twisted.internet import reactor
         self.reactor = reactor
@@ -75,7 +78,7 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine("get_property {}".format(property_))
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000)):
-        self._listener.sendLine(u'osd_show_text "{!s}" {} {}'.format(message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
+        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
 
     def setSpeed(self, value):
         self._setProperty('speed', "{:.2f}".format(value))
@@ -89,7 +92,7 @@ class MplayerPlayer(BasePlayer):
 
     def setPosition(self, value):
         self._position = value
-        self._setProperty('time_pos', "{}".format(value))
+        self._setProperty(self.POSITION_QUERY, "{}".format(value))
 
     def setPaused(self, value):
         if self._paused <> value:
@@ -108,7 +111,7 @@ class MplayerPlayer(BasePlayer):
         self._getProperty('pause')
 
     def _getPosition(self):
-        self._getProperty('time_pos')
+        self._getProperty(self.POSITION_QUERY)
 
     def _quoteArg(self, arg):
         arg = arg.replace('\\', '\\\\')
@@ -121,8 +124,7 @@ class MplayerPlayer(BasePlayer):
         if not match:
             return
         name, value = match.group(1).lower(), match.group(2)
-
-        if(name == "time_pos"):
+        if(name == self.POSITION_QUERY):
             self._position = float(value)
             self._positionAsk.set()
         elif(name == "pause"):
