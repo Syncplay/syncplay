@@ -265,7 +265,6 @@ class Watcher(object):
 
     def setPosition(self, position):
         self._position = position
-        self._lastUpdatedOn = time.time()
 
     def getPosition(self):
         if self._position is None:
@@ -276,13 +275,13 @@ class Watcher(object):
             timePassedSinceSet = 0
         return self._position + timePassedSinceSet
 
-    def sendSetting(self, username, roomName, file_, event):
-        self._connector.sendUserSetting(username, roomName, file_, event)
+    def sendSetting(self, user, room, file_, event):
+        self._connector.sendUserSetting(user, room, file_, event)
 
     def __lt__(self, b):
-        if self.getPosition() is None:
+        if self.getPosition() is None or self._file is None:
             return False
-        if b.getPosition is None:
+        if b.getPosition is None or b._file is None:
             return True
         return self.getPosition() < b.getPosition()
 
@@ -311,23 +310,21 @@ class Watcher(object):
             self._connector.drop()
 
     def __hasPauseChanged(self, paused):
+        if paused is None:
+            return False
         return self._room.isPaused() and not paused or not self._room.isPaused() and paused
 
     def updateState(self, position, paused, doSeek, messageAge):
-        if(self._file):
-            oldPosition = self.getPosition()
-            pauseChanged = False
-            if(paused is not None):
-                pauseChanged = self.__hasPauseChanged(paused)
-                if pauseChanged:
-                    self.getRoom().setPaused(Room.STATE_PAUSED if paused else Room.STATE_PLAYING, self)
-            if(position is not None):
-                if(not paused):
-                    position += messageAge
-                self._position = position
-                self._lastUpdatedOn = time.time()
-            if(doSeek or pauseChanged):
-                self._server.forcePositionUpdate(self._room, self, doSeek)
+        pauseChanged = self.__hasPauseChanged(paused)
+        self._lastUpdatedOn = time.time()
+        if pauseChanged:
+            self.getRoom().setPaused(Room.STATE_PAUSED if paused else Room.STATE_PLAYING, self)
+        if position is not None:
+            if(not paused):
+                position += messageAge
+            self.setPosition(position)
+        if doSeek or pauseChanged:
+            self._server.forcePositionUpdate(self._room, self, doSeek)
 
 
 class ConfigurationGetter(object):
