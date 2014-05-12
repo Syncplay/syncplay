@@ -233,9 +233,211 @@ pl = {
       "server-timeout-error" : "Przekroczono czas oczekiwania na odpowiedź serwera"
       }
 
+de = {
+
+      # Client notifications
+      "relative-config-notification" : "Loaded relative configuration file(s): {}",
+
+      "connection-attempt-notification" : "Versuche zu verbinden nach {}:{}",  # Port, IP
+      "reconnection-attempt-notification" : "Verbindung zum Server verloren, versuche erneut",
+      "disconnection-notification" : "Verbindung zum Server beendet",
+      "connection-failed-notification" : "Verbindung zum Server fehlgeschlagen",
+      "connected-successful-notification" : "Erfolgreich mit Server verbunden",
+      "retrying-notification" : "%s, Versuche erneut in %d Sekunden...",  # Seconds
+
+      "rewind-notification" : "Zurückgespult wegen Zeitdifferenz mit <{}>",  # User
+      "slowdown-notification" : "Verlangsamt wegen Zeitdifferenz mit <{}>",  # User
+      "revert-notification" : "Normalgeschwindigkeit",
+
+      "pause-notification" : "<{}> pausierte",  # User
+      "unpause-notification" : "<{}> startete",  # User
+      "seek-notification" : "<{}> sprang von {} nach {}",  # User, from time, to time
+
+      "current-offset-notification" : "Aktueller offset: {} Sekunden",  # Offset
+
+      "room-join-notification" : "<{}> hat den Raum '{}' betreten",  # User
+      "left-notification" : "<{}> ist gegangen",  # User
+      "playing-notification" : "<{}> spielt '{}' ({})",  # User, file, duration
+      "playing-notification/room-addendum" :  " in Raum: '{}'",  # Room
+
+      "file-different-notification" : "Deine Datei scheint sich von <{}>s zu unterscheiden",  # User
+      "file-differences-notification" : "Deine Datei unterscheidet sich auf folgende Art: ",
+      "room-files-not-same" : "Nicht alle Dateien im Raum sind gleich",
+      "alone-in-the-room": "Du bist alleine im Raum",
+
+      "different-filesize-notification" : " (ihre Dateigröße ist anders als deine!)",
+      "file-played-by-notification" : "Datei: {} wird gespielt von:",  # File
+      "notplaying-notification" : "Personen im Raum, die keine Dateien spielen:",
+      "userlist-room-notification" :  "In Raum '{}':",  # Room
+
+      "mplayer-file-required-notification" : "Syncplay using mplayer requires you to provide file when starting",
+      "mplayer-file-required-notification/example" : "Usage example: syncplay [options] [url|path/]filename",
+      "mplayer2-required" : "Syncplay is incompatible with MPlayer 1.x, please use mplayer2 or mpv",
+
+      "unrecognized-command-notification" : "Unrecognized command",
+      "commandlist-notification" : "Available commands:",
+      "commandlist-notification/room" : "\tr [name] - change room",
+      "commandlist-notification/list" : "\tl - show user list",
+      "commandlist-notification/undo" : "\tu - undo last seek",
+      "commandlist-notification/pause" : "\tp - toggle pause",
+      "commandlist-notification/seek" : "\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec",
+      "commandlist-notification/help" : "\th - this help",
+      "syncplay-version-notification" : "Syncplay version: {}",  # syncplay.version
+      "more-info-notification" : "More info available at: {}",  # projectURL
+
+      "gui-data-cleared-notification" : "Syncplay has cleared the path and window state data used by the GUI.",
+
+      "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above.",  # VLC version, VLC min version
+      "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above.",  # VLC interface version, VLC interface min version
+      "vlc-interface-oldversion-ignored": "Warning: Syncplay detected that an old version version of the Syncplay interface module for VLC was installed in the VLC directory. As such, if you are running VLC 2.0 then it will be ignored in favour of the syncplay.lua module contained within the Syncplay directory, but this will mean that other custom interface scripts and extensions will not work. Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
+      "vlc-interface-not-installed": "Warning: The Syncplay interface module for VLC was not found in the VLC directory. As such, if you are running VLC 2.0 then VLC will use the syncplay.lua module contained within the Syncplay directory, but this will mean that other custom interface scripts and extensions will not work. Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
+
+      # Client prompts
+      "enter-to-exit-prompt" : "Enter drücken zum Beenden\n",
+
+      # Client errors
+      "missing-arguments-error" : "Some necessary arguments are missing, refer to --help",
+      "server-timeout-error" : "Connection with server timed out",
+       "mpc-slave-error" : "Unable to start MPC in slave mode!",
+       "mpc-version-insufficient-error" : "MPC version not sufficient, please use `mpc-hc` >= `{}`",
+       "player-file-open-error" : "Player failed opening file",
+       "player-path-error" : "Player path is not set properly",
+       "hostname-empty-error" : "Hostname can't be empty",
+       "empty-error" : "{} can't be empty",  # Configuration
+
+       "arguments-missing-error" : "Some necessary arguments are missing, refer to --help",
+
+       "unable-to-start-client-error" : "Client kann nicht gestartet werden",
+
+       "not-json-error" : "Not a json encoded string\n",
+       "hello-arguments-error" : "Not enough Hello arguments\n",
+       "version-mismatch-error" : "Mismatch between versions of client and server\n",
+       "vlc-error-echo": "VLC error: {}",  # VLC error line
+       "vlc-unicode-loadfile-error" : "Cannot load file through Syncplay because it contains non-ASCII characters. Please load the file through VLC.",
+       "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua then please refer to http://syncplay.pl/LUA/ for instructions.",
+       "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to http://syncplay.pl/LUA/ for instructions.",
+       "vlc-failed-versioncheck": "This version of VLC is not supported by Syncplay. Please use VLC 2.",
+       "vlc-failed-other" : "When trying to load the syncplay.lua interface script VLC has provided the following error: {}",  # Syncplay Error
+
+      # Client arguments
+      "argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
+      "argument-epilog" : 'If no options supplied _config values will be used',
+      "nogui-argument" : 'show no GUI',
+      "host-argument" : 'server\'s address',
+      "name-argument" : 'desired username',
+      "debug-argument" : 'debug mode',
+      "force-gui-prompt-argument" : 'make configuration prompt appear',
+      "no-store-argument" : 'don\'t store values in .syncplay',
+      "room-argument" : 'default room',
+      "password-argument" : 'server password',
+      "player-path-argument" : 'path to your player executable',
+      "file-argument" : 'file to play',
+      "args-argument" : 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
+      "clear-gui-data-argument" : 'resets path and window state GUI data stored as QSettings',
+
+      # Client labels
+      "config-window-title" : "Syncplay Konfiguration",
+
+      "connection-group-title" : "Verbindungseinstellungen",
+      "host-label" : "Server-Adresse: ",
+      "username-label" :  "Benutzername (optional):",
+      "password-label" :  "Server-Ppasswort (falls nötig):",
+      "room-label" : "Standard-Raum: ",
+
+      "media-setting-title" : "Media-Player Einstellungen",
+      "executable-path-label" : "Pfad zum Media-Player:",
+      "media-path-label" : "Pfad zur Datei:",
+      "browse-label" : "Durchsuchen",
+
+      "more-title" : "Mehr Einstellungen zeigen",
+      "privacy-sendraw-option" : "Roh senden",
+      "privacy-sendhashed-option" : "Hash senden",
+      "privacy-dontsend-option" : "nicht senden",
+      "filename-privacy-label" : "Dateiname:",
+      "filesize-privacy-label" : "Dateigröße:",
+      "slowdown-label" : "Verlangsamen wenn nicht synchron",
+      "dontslowwithme-label" : "Nie verlangsamen oder andere zurückspulen",
+      "pauseonleave-label" : "Pausieren wenn ein Benutzer austritt",
+      "rewind-label" : "Zurückspulen bei großer Zeitdifferent (empfohlen)",
+      "alwayshow-label" : "Diesen Dialog immer zeigen",
+      "donotstore-label" : "Diese Konfiguration nicht speichern",
+
+      "help-label" : "Hilfe",
+      "run-label" : "Syncplay starten",
+      "storeandrun-label" : "Konfiguration speichern und Syncplay starten",
+
+      "roomuser-heading-label" : "Raum / Benutzer",
+      "fileplayed-heading-label" : "gespielte Datei",
+
+      # Tooltips
+
+      "host-tooltip" : "Hostname or IP to connect to, optionally including port (e.g. syncplay.pl:8999). Only synchronised with people on same server/port.",
+      "username-tooltip" : "Nickname you will be known by. No registration, so can easily change later. Random name generated if none specified.",
+      "password-tooltip" : "Passwords are only needed for connecting to private servers.",
+      "room-tooltip" : "Room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
+
+      "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or mpv).",
+      "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
+
+      "more-tooltip" : "Display less frequently used settings.",
+      "filename-privacy-tooltip" : "Privacy mode for sending currently playing filename to server.",
+      "filesize-privacy-tooltip" : "Privacy mode for sending size of currently playing file to server.",
+      "privacy-sendraw-tooltip" : "Send this information without obfuscation. This is the default option with most functionality.",
+      "privacy-sendhashed-tooltip" : "Send a hashed version of the information, making it less visible to other clients.",
+      "privacy-dontsend-tooltip" : "Do not send this information to the server. This provides for maximum privacy.",
+      "slowdown-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers.",
+      "dontslowwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging.",
+      "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
+      "rewind-tooltip" : "Jump back when needed to get back in sync. Recommended.",
+      "alwayshow-tooltip" : "Configuration dialogue is always shown, even when opening a file with Syncplay.",
+      "donotstore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.",
+
+      "help-tooltip" : "Opens the Syncplay.pl user guide.",
+
+      # Server messages to client
+      "new-syncplay-available-motd-message" : "<NOTICE> You are using Syncplay {} but a newer version is available from http://syncplay.pl </NOTICE>",  # ClientVersion
+
+      # Server notifications
+      "welcome-server-notification" : "Welcome to Syncplay server, ver. {0}",  # version
+      "client-connected-room-server-notification" : "{0}({2}) connected to room '{1}'",  # username, host, room
+      "client-left-server-notification" : "{0} left server",  # name
+
+
+      # Server arguments
+      "server-argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network. Server instance',
+      "server-argument-epilog" : 'If no options supplied _config values will be used',
+      "server-port-argument" : 'server TCP port',
+      "server-password-argument" : 'server password',
+      "server-isolate-room-argument" : 'should rooms be isolated?',
+      "server-motd-argument": "path to file from which motd will be fetched",
+      "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
+      "server-messed-up-motd-too-long": "Message of the Day is too long - maximum of {} chars, {} given.",
+      "server-irc-verbose": "Should server actively report changes in rooms",
+      "server-irc-config": "Path to irc bot config files",
+
+      # Server errors
+      "unknown-command-server-error" : "Unknown command {}",  # message
+      "not-json-server-error" : "Not a json encoded string {}",  # message
+      "not-known-server-error" : "You must be known to server before sending this command",
+      "client-drop-server-error" : "Client drop: {} -- {}",  # host, error
+      "password-required-server-error" : "Password required",
+      "wrong-password-server-error" : "Wrong password supplied",
+      "hello-server-error" : "Not enough Hello arguments",
+      "version-mismatch-server-error" : "Mismatch between versions of client and server",
+      "wrong-password-server-error" : "Wrong password supplied"
+
+
+      }
+
+
+
+
+
+
 messages = {
            "en": en,
-           "pl": pl
+           "pl": pl,
+           "de": de
            }
 
 def getMessage(locale, type_):
