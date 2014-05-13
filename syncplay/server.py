@@ -1,4 +1,3 @@
-# coding:utf8
 import hashlib
 from twisted.internet import task, reactor
 from twisted.internet.protocol import Factory
@@ -12,79 +11,29 @@ import codecs
 import os
 from string import Template
 import argparse
+from pprint import pprint
 
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None):
+    def __init__(self, password='', motdFilePath=None, isolateRooms=False):
         print getMessage("en", "welcome-server-notification").format(syncplay.version)
         if(password):
             password = hashlib.md5(password).hexdigest()
         self.password = password
         self._motdFilePath = motdFilePath
-        self._rooms = {}
-        self._roomStates = {}
-        self._roomUpdate = threading.RLock()
+        if(not isolateRooms):
+            self._roomManager = RoomManager()
+        else:
+            self._roomManager = PublicRoomManager()
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
 
-    def _createRoomIfDoesntExist(self, roomName):
-        if (not self._rooms.has_key(roomName)):
-            with self._roomUpdate:
-                self._rooms[roomName] = {}
-                self._roomStates[roomName] = {
-                                              "position": 0.0,
-                                              "paused": True,
-                                              "setBy": None,
-                                              "lastUpdate": time.time()
-                                             }
-
-    def addWatcher(self, watcherProtocol, username, roomName, roomPassword):
-        allnames = []
-        for room in self._rooms.itervalues():
-            for watcher in room.itervalues():
-                allnames.append(watcher.name.lower())
-        while username.lower() in allnames:
-            username += '_'
-        self._createRoomIfDoesntExist(roomName)
-        watcher = Watcher(self, watcherProtocol, username, roomName)
-        with self._roomUpdate:
-            self._rooms[roomName][watcherProtocol] = watcher
-        reactor.callLater(0.1, watcher.scheduleSendState)
-        l = lambda w: w.sendUserSetting(username, roomName, None, {"joined": True})
-        self.broadcast(watcherProtocol, l)
-
-    def getWatcher(self, watcherProtocol):
-        for room in self._rooms.itervalues():
-            if(room.has_key(watcherProtocol)):
-                return room[watcherProtocol]
-
-    def getAllWatchers(self, watcherProtocol):  # TODO: Optimize me
-        watchers = {}
-        for room in self._rooms.itervalues():
-            for watcher in room.itervalues():
-                watchers[watcher.watcherProtocol] = watcher
-        return watchers
-
-    def _removeWatcherFromTheRoom(self, watcherProtocol):
-        for room in self._rooms.itervalues():
-            with self._roomUpdate:
-                watcher = room.pop(watcherProtocol, None)
-            if(watcher):
-                return watcher
-
-    def _deleteRoomIfEmpty(self, room):
-        if (self._rooms[room] == {}):
-            with self._roomUpdate:
-                self._rooms.pop(room)
-                self._roomStates.pop(room)
-
-    def getRoomPausedAndPosition(self, room):
-        position = self._roomStates[room]["position"]
-        paused = self._roomStates[room]["paused"]
-        if (not paused):
-            timePassedSinceSet = time.time() - self._roomStates[room]["lastUpdate"]
-            position += timePassedSinceSet
-        return paused, position
+    def sendState(self, watcher, doSeek=False, forcedUpdate=False):
+        room = watcher.getRoom()
+        if room:
+            paused, position = room.isPaused(), room.getPosition()
+            setBy = room.getSetBy()
+            watcher.sendState(position, paused, doSeek, setBy, forcedUpdate)
 
     def getMotd(self, userIp, username, room, clientVersion):
         oldClient = False
@@ -107,171 +56,277 @@ class SyncFactory(Factory):
         else:
             return ""
 
-    def sendState(self, watcherProtocol, doSeek=False, forcedUpdate=False):
-        watcher = self.getWatcher(watcherProtocol)
-        if(not watcher):
-            return
-        room = watcher.room
-        paused, position = self.getRoomPausedAndPosition(room)
-        setBy = self._roomStates[room]["setBy"]
-        watcher.paused = paused
-        watcher.position = position
-        watcherProtocol.sendState(position, paused, doSeek, setBy, forcedUpdate)
-        if(time.time() - watcher.lastUpdate > constants.PROTOCOL_TIMEOUT):
-            watcherProtocol.drop()
-            self.removeWatcher(watcherProtocol)
+    def addWatcher(self, watcherProtocol, username, roomName, roomPassword):
+        username = self._roomManager.findFreeUsername(username)
+        watcher = Watcher(self, watcherProtocol, username)
+        self.setWatcherRoom(watcher, roomName, asJoin=True)
 
-    def __shouldServerForceUpdateOnRoom(self, pauseChanged, doSeek):
-        return doSeek or pauseChanged
-
-    def __updatePausedState(self, paused, watcher):
-        watcher.paused = paused
-        if(self._roomStates[watcher.room]["paused"] <> paused):
-            self._roomStates[watcher.room]["setBy"] = watcher.name
-            self._roomStates[watcher.room]["paused"] = paused
-            self._roomStates[watcher.room]["lastUpdate"] = time.time()
-            return True
-
-    def __updatePositionState(self, position, doSeek, watcher):
-        watcher.position = position
-        if (doSeek):
-            self._roomStates[watcher.room]["position"] = position
-            self._roomStates[watcher.room]["setBy"] = watcher.name
-            self._roomStates[watcher.room]["lastUpdate"] = time.time()
+    def setWatcherRoom(self, watcher, roomName, asJoin=False):
+        self._roomManager.moveWatcher(watcher, roomName)
+        if asJoin:
+            self.sendJoinMessage(watcher)
         else:
-            setter = min(self._rooms[watcher.room].values())
-            self._roomStates[watcher.room]["position"] = setter.position
-            self._roomStates[watcher.room]["setBy"] = setter.name
-            self._roomStates[watcher.room]["lastUpdate"] = setter.lastUpdate
+            self.sendRoomSwitchMessage(watcher)
 
-    def updateWatcherState(self, watcherProtocol, position, paused, doSeek, messageAge):
-        watcher = self.getWatcher(watcherProtocol)
-        if(not watcher):
-            return
-        watcher.lastUpdate = time.time()
-        if(watcher.file):
-            oldPosition = self._roomStates[watcher.room]["position"]
-            pauseChanged = False
-            if(paused is not None):
-                pauseChanged = self.__updatePausedState(paused, watcher)
-            if(position is not None):
-                if(not paused):
-                    position += messageAge
-                self.__updatePositionState(position, doSeek or pauseChanged, watcher)
-            forceUpdate = self.__shouldServerForceUpdateOnRoom(pauseChanged, doSeek)
-            if(forceUpdate):
-                l = lambda w: self.sendState(w, doSeek, forceUpdate)
-                self.broadcastRoom(watcher.watcherProtocol, l)
+    def sendRoomSwitchMessage(self, watcher):
+        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, None)
+        self._roomManager.broadcast(watcher, l)
 
-    def removeWatcher(self, watcherProtocol):
-        watcher = self.getWatcher(watcherProtocol)
-        if(not watcher):
-            return
-        l = lambda w: w.sendUserSetting(watcher.name, watcher.room, None, {"left": True})
-        self.broadcast(watcherProtocol, l)
-        self._removeWatcherFromTheRoom(watcherProtocol)
-        watcher.deactivate()
-        self._deleteRoomIfEmpty(watcher.room)
+    def removeWatcher(self, watcher):
+        if watcher.getRoom():
+            self.sendLeftMessage(watcher)
+            self._roomManager.removeWatcher(watcher)
 
-    def watcherGetUsername(self, watcherProtocol):
-        return self.getWatcher(watcherProtocol).name
+    def sendLeftMessage(self, watcher):
+        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"left": True})
+        self._roomManager.broadcast(watcher, l)
 
-    def watcherGetRoom(self, watcherProtocol):
-        return self.getWatcher(watcherProtocol).room
+    def sendJoinMessage(self, watcher):
+        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True}) if w != watcher else None
+        self._roomManager.broadcast(watcher, l)
 
-    def watcherSetRoom(self, watcherProtocol, room):
-        watcher = self._removeWatcherFromTheRoom(watcherProtocol)
-        if(not watcher):
-            return
-        watcher.resetStateTimer()
-        oldRoom = watcher.room
-        self._createRoomIfDoesntExist(room)
-        with self._roomUpdate:
-            self._rooms[room][watcherProtocol] = watcher
-        self._deleteRoomIfEmpty(oldRoom)
-        watcher.room = room
-        self.sendState(watcherProtocol, True)
-        l = lambda w: w.sendUserSetting(watcher.name, watcher.room, None, None)
-        self.broadcast(watcherProtocol, l)
+    def sendFileUpdate(self, watcher, file_):
+        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), watcher.getFile(), None)
+        self._roomManager.broadcast(watcher, l)
 
-    def watcherSetFile(self, watcherProtocol, file_):
-        watcher = self.getWatcher(watcherProtocol)
-        if(not watcher):
-            return
-        watcher.file = file_
-        l = lambda w: w.sendUserSetting(watcher.name, watcher.room, watcher.file, None)
-        self.broadcast(watcherProtocol, l)
+    def forcePositionUpdate(self, room, watcher, doSeek):
+        room = watcher.getRoom()
+        paused, position = room.isPaused(), watcher.getPosition()
+        setBy = watcher
+        room.setPosition(watcher.getPosition(), setBy)
+        l = lambda w: w.sendState(position, paused, doSeek, setBy, True)
+        self._roomManager.broadcastRoom(watcher, l)
 
-    def broadcastRoom(self, sender, what):
-        room = self._rooms[self.watcherGetRoom(sender)]
-        if(room):
-            with self._roomUpdate:
-                for receiver in room:
-                    what(receiver)
+    def getAllWatchersForUser(self, forUser):
+        return self._roomManager.getAllWatchersForUser(forUser)
 
-    def broadcast(self, sender, what):
-        with self._roomUpdate:
-            for room in self._rooms.itervalues():
-                    for receiver in room:
-                        what(receiver)
+class RoomManager(object):
+    def __init__(self):
+        self._rooms = {}
 
-class SyncIsolatedFactory(SyncFactory):
+    def broadcastRoom(self, sender, whatLambda):
+        room = sender.getRoom()
+        if room and room.getName() in self._rooms:
+            for receiver in room.getWatchers():
+                whatLambda(receiver)
+
+    def broadcast(self, sender, whatLambda):
+        for room in self._rooms.itervalues():
+            for receiver in room.getWatchers():
+                whatLambda(receiver)
+
+    def getAllWatchersForUser(self, sender):
+        watchers = []
+        for room in self._rooms.itervalues():
+            for watcher in room.getWatchers():
+                watchers.append(watcher)
+        return watchers
+
+    def moveWatcher(self, watcher, roomName):
+        self.removeWatcher(watcher)
+        room = self._getRoom(roomName)
+        room.addWatcher(watcher)
+
+    def removeWatcher(self, watcher):
+        oldRoom = watcher.getRoom()
+        if(oldRoom):
+            oldRoom.removeWatcher(watcher)
+            self._deleteRoomIfEmpty(oldRoom)
+
+    def _getRoom(self, roomName):
+        if roomName in self._rooms:
+            return self._rooms[roomName]
+        else:
+            room = Room(roomName)
+            self._rooms[roomName] = room
+            return room
+
+    def _deleteRoomIfEmpty(self, room):
+        if room.isEmpty() and room.getName() in self._rooms:
+            del self._rooms[room.getName()]
+
+    def findFreeUsername(self, username):
+        allnames = []
+        for room in self._rooms.itervalues():
+            for watcher in room.getWatchers():
+                allnames.append(watcher.getName().lower())
+        while username.lower() in allnames:
+            username += '_'
+        return username
+
+
+class PublicRoomManager(RoomManager):
     def broadcast(self, sender, what):
         self.broadcastRoom(sender, what)
 
-    def getAllWatchers(self, watcherProtocol):
-        room = self.getWatcher(watcherProtocol).room
-        if(self._rooms.has_key(room)):
-            return self._rooms[room]
-        else:
-            return {}
+    def getAllWatchersForUser(self, sender):
+        room = sender.getRoom().getWatchers()
 
-    def watcherSetRoom(self, watcherProtocol, room):
-        watcher = self.getWatcher(watcherProtocol)
+    def moveWatcher(self, watcher, room):
         oldRoom = watcher.room
-        l = lambda w: w.sendUserSetting(watcher.name, oldRoom, None, {"left": True})
-        self.broadcast(watcherProtocol, l)
-        SyncFactory.watcherSetRoom(self, watcherProtocol, room)
-        self.watcherSetFile(watcherProtocol, watcher.file)
+        l = lambda w: w.sendSetting(watcher.getName(), oldRoom, None, {"left": True})
+        self.broadcast(watcher, l)
+        RoomManager.watcherSetRoom(self, watcher, room)
+        watcher.setFile(watcher.getFile())
+
+
+class Room(object):
+    STATE_PAUSED = 0
+    STATE_PLAYING = 1
+
+    def __init__(self, name):
+        self._name = name
+        self._watchers = {}
+        self._playState = self.STATE_PAUSED
+        self._setBy = None
+
+    def __str__(self, *args, **kwargs):
+        return self.getName()
+
+    def getName(self):
+        return self._name
+
+    def getPosition(self):
+        if self._watchers:
+            watcher = min(self._watchers.values())
+            self._setBy = watcher
+            return watcher.getPosition()
+        else:
+            return 0
+
+    def setPaused(self, paused=STATE_PAUSED, setBy=None):
+        self._playState = paused
+        self._setBy = setBy
+
+    def setPosition(self, position, setBy=None):
+        for watcher in self._watchers.itervalues():
+            watcher.setPosition(position)
+            self._setBy = setBy
+
+    def isPlaying(self):
+        return self._playState == self.STATE_PLAYING
+
+    def isPaused(self):
+        return self._playState == self.STATE_PAUSED
+
+    def getWatchers(self):
+        return self._watchers.values()
+
+    def addWatcher(self, watcher):
+        if self._watchers:
+            watcher.setPosition(self.getPosition())
+        self._watchers[watcher.getName()] = watcher
+        watcher.setRoom(self)
+
+    def removeWatcher(self, watcher):
+        if(watcher.getName() not in self._watchers):
+            return
+        del self._watchers[watcher.getName()]
+        watcher.setRoom(None)
+
+    def isEmpty(self):
+        return not bool(self._watchers)
+
+    def getSetBy(self):
+        return self._setBy
 
 class Watcher(object):
-    def __init__(self, factory, watcherProtocol, name, room):
-        self.factory = factory
-        self.watcherProtocol = watcherProtocol
-        self.name = name
-        self.room = room
-        self.file = None
+    def __init__(self, server, connector, name):
+        self._server = server
+        self._connector = connector
+        self._name = name
+        self._room = None
+        self._file = None
+        self._position = None
+        self._lastUpdatedOn = time.time()
         self._sendStateTimer = None
-        self.position = None
-        self.lastUpdate = time.time()
+        self._connector.setWatcher(self)
+        reactor.callLater(0.1, self._scheduleSendState)
+
+    def setFile(self, file):
+        self._file = file
+        self._server.sendFileUpdate(self, file)
+
+    def setRoom(self, room):
+        self._room = room
+        if room is None:
+            self._deactivateStateTimer()
+        else:
+            self._resetStateTimer()
+            self._askForStateUpdate(True, True)
+
+    def getRoom(self):
+        return self._room
+
+    def getName(self):
+        return self._name
+
+    def getFile(self):
+        return self._file
+
+    def setPosition(self, position):
+        self._position = position
+
+    def getPosition(self):
+        if self._position is None:
+            return None
+        if self._room.isPlaying():
+            timePassedSinceSet = time.time() - self._lastUpdatedOn
+        else:
+            timePassedSinceSet = 0
+        return self._position + timePassedSinceSet
+
+    def sendSetting(self, user, room, file_, event):
+        self._connector.sendUserSetting(user, room, file_, event)
 
     def __lt__(self, b):
-        if(self.position is None):
+        if self.getPosition() is None or self._file is None:
             return False
-        elif(b.position is None):
+        if b.getPosition is None or b._file is None:
             return True
-        else:
-            return self.position < b.position
+        return self.getPosition() < b.getPosition()
 
-    def getRoomPosition(self):
-        _, position = self.factory.getRoomPausedAndPosition(self.room)
-        return position
-
-    def scheduleSendState(self):
-        self._sendStateTimer = task.LoopingCall(self.sendState)
+    def _scheduleSendState(self):
+        self._sendStateTimer = task.LoopingCall(self._askForStateUpdate)
         self._sendStateTimer.start(constants.SERVER_STATE_INTERVAL, True)
 
-    def sendState(self):
-        self.factory.sendState(self.watcherProtocol)
+    def _askForStateUpdate(self, doSeek=False, forcedUpdate=False):
+        self._server.sendState(self, doSeek, forcedUpdate)
 
-    def resetStateTimer(self):
-        if(self._sendStateTimer):
-            self._sendStateTimer.stop()
+    def _resetStateTimer(self):
+        if self._sendStateTimer:
+            if self._sendStateTimer.running:
+                self._sendStateTimer.stop()
             self._sendStateTimer.start(constants.SERVER_STATE_INTERVAL)
 
-    def deactivate(self):
-        if(self._sendStateTimer):
+    def _deactivateStateTimer(self):
+        if(self._sendStateTimer and self._sendStateTimer.running):
             self._sendStateTimer.stop()
+
+    def sendState(self, position, paused, doSeek, setBy, forcedUpdate):
+        if self._connector.isLogged():
+            self._connector.sendState(position, paused, doSeek, setBy, forcedUpdate)
+        if time.time() - self._lastUpdatedOn > constants.PROTOCOL_TIMEOUT:
+            self._server.removeWatcher(self)
+            self._connector.drop()
+
+    def __hasPauseChanged(self, paused):
+        if paused is None:
+            return False
+        return self._room.isPaused() and not paused or not self._room.isPaused() and paused
+
+    def updateState(self, position, paused, doSeek, messageAge):
+        pauseChanged = self.__hasPauseChanged(paused)
+        self._lastUpdatedOn = time.time()
+        if pauseChanged:
+            self.getRoom().setPaused(Room.STATE_PAUSED if paused else Room.STATE_PLAYING, self)
+        if position is not None:
+            if(not paused):
+                position += messageAge
+            self.setPosition(position)
+        if doSeek or pauseChanged:
+            self._server.forcePositionUpdate(self._room, self, doSeek)
+
 
 class ConfigurationGetter(object):
     def getConfiguration(self):

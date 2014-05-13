@@ -445,11 +445,10 @@ class SyncplayClient(object):
 
 
 class SyncplayUser(object):
-    def __init__(self, username=None, room=None, file_=None, position=0):
+    def __init__(self, username=None, room=None, file_=None):
         self.username = username
         self.room = room
         self.file = file_
-        self.lastPosition = position
 
     def setFile(self, filename, duration, size):
         file_ = {
@@ -522,11 +521,10 @@ class SyncplayUserlist(object):
                 message = getMessage("en", "file-differences-notification") + ", ".join(differences)
                 self.ui.showMessage(message, not constants.SHOW_OSD_WARNINGS)
 
-    def addUser(self, username, room, file_, position=0, noMessage=False):
+    def addUser(self, username, room, file_, noMessage=False):
         if(username == self.currentUser.username):
-            self.currentUser.lastPosition = position
             return
-        user = SyncplayUser(username, room, file_, position)
+        user = SyncplayUser(username, room, file_)
         self._users[username] = user
         if(not noMessage):
             self.__showUserChangeMessage(username, room, file_)
