@@ -2,9 +2,10 @@
  syncplay.lua: Syncplay interface module for VLC
 --[==========================================================================[
 
- Author: Etoh
+ Principal author: Etoh
+ Other contributors: DerGenaue, jb
  Project: http://syncplay.pl/
- Version: 0.1.9
+ Version: 0.2.0
  
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -85,8 +86,10 @@ else
     require "common"
 end
 
-local connectorversion = "0.1.9"
-local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability
+local connectorversion = "0.2.0"
+local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
+local loopsleepduration = 5000 -- Pause for every event loop (uses microseconds)  
+	
 local host = "localhost"
 local port
 
@@ -526,6 +529,7 @@ while running == true do
             vlc.net.send( fd, responsebuffer )
             responsebuffer = ""
         end
+        vlc.misc.mwait(vlc.misc.mdate() + loopsleepduration) -- Don't waste processor time
 
     end
 
