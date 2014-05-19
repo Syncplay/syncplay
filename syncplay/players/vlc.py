@@ -8,6 +8,7 @@ import sys
 import random
 import socket
 import asynchat, asyncore
+import urllib
 from syncplay.messages import getMessage
 import time
 
@@ -97,14 +98,26 @@ class VlcPlayer(BasePlayer):
         self._paused = value
         self._listener.sendLine('set-playstate: {}'.format("paused" if value else "playing"))
 
+    def getMRL(self, fileURL):
+        fileURL = fileURL.replace(u'\\', u'/')
+        fileURL = fileURL.encode('utf8')
+        fileURL = urllib.quote_plus(fileURL)
+        if sys.platform.startswith('win'):
+            fileURL = "file:///" + fileURL
+        else:
+            fileURL = "file://" + fileURL
+        fileURL = fileURL.replace("+", "%20")
+        return fileURL
+
     def _isASCII (self, s):
-        return all(ord(c) < 256 for c in s)
+        return all(ord(c) < 128 for c in s)
 
     def openFile(self, filePath):
         if (self._isASCII(filePath) == True):
-            self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii', 'ignore'))) #TODO: Proper Unicode support
+            self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii', 'ignore')))
         else:
-            self._client.ui.showErrorMessage(getMessage("en", "vlc-unicode-loadfile-error"), True)
+            fileURL = self.getMRL(filePath)
+            self._listener.sendLine('load-file: {}'.format(fileURL))
 
     def _getFileInfo(self):
         self._listener.sendLine("get-duration")
@@ -212,9 +225,9 @@ class VlcPlayer(BasePlayer):
             call = [playerPath]
             if(filePath):
                 if (self.__playerController._isASCII(filePath) == True):
-                    call.append(filePath) #TODO: Proper Unicode support
+                    call.append(filePath)
                 else:
-                    playerController._client.ui.showErrorMessage(getMessage("en", "vlc-unicode-loadfile-error"), True)
+                    call.append(self.__playerController.getMRL(filePath))
             def _usevlcintf(vlcIntfPath, vlcIntfUserPath):
                 vlcSyncplayInterfacePath = vlcIntfPath + "syncplay.lua"
                 if not os.path.isfile(vlcSyncplayInterfacePath):
@@ -238,7 +251,7 @@ class VlcPlayer(BasePlayer):
                 playerController.vlcIntfPath = "/Applications/VLC.app/Contents/MacOS/share/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), "Library/Application Support/org.videolan.vlc/lua/intf/")
             else:
-                playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/lua/intf/" # TODO: Make Mac version use /Applications/VLC.app/Contents/MacOS/share/lua/intf/
+                playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('APPDATA', '.'), "VLC\\lua\\intf\\")
             playerController.vlcModulePath = playerController.vlcIntfPath + "modules/?.luac"
             if _usevlcintf(playerController.vlcIntfPath, playerController.vlcIntfUserPath) == True:
