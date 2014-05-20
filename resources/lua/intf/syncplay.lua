@@ -481,7 +481,7 @@ end
 while running == true do
     --accept new connections and select active clients
     local fd = l:accept()
-    local buffer, inputbuffer, responsebuffer = ""
+    local buffer, inputbuffer, responsebuffer = "", "", ""
     while fd >= 0 and running == true do
 
         -- handle read mode
