@@ -141,9 +141,10 @@ function detectchanges()
                 oldfilepath = newfilepath
                 notificationbuffer = notificationbuffer .. "filepath-change"..notificationmarker..msgterminator
             end
-            
-            newtitle = get_var("title")
-            if newtitle ~= oldtitle and get_var("time") > 1 then
+
+            local titleerror
+            newtitle, titleerror = get_var("title", 0)
+            if newtitle ~= oldtitle and get_var("time", 0) > 1 then
                 vlc.misc.mwait(vlc.misc.mdate() + durationdelay) -- Don't give new title with old time
             end
             oldtitle = newtitle
@@ -198,7 +199,7 @@ function get_args (argument, argcount)
 end
 
 
-function get_var( vartoget )
+function get_var( vartoget, fallbackvar )
     -- [Used by the poll / '.' command to get time]
     
     local response
@@ -208,6 +209,7 @@ function get_var( vartoget )
     if input then
         response = vlc.var.get(input,tostring(vartoget))
     else
+        response = fallbackvar
         errormsg = noinput
     end
    
@@ -231,17 +233,18 @@ function set_var(vartoset, varvalue)
 end
 
 function get_time()
-    local realtime, errormsg, longtime
-    realtime, errormsg = get_var("time") -- Seconds
+    local realtime, errormsg, longtime, title, titletime
+    realtime, errormsg = get_var("time", 0) -- Seconds
     if errormsg ~= nil and errormsg ~= "" then
         return errormsg
     end
-    
-    titletime, errormsg = get_var("title") * titlemultiplier -- Weeks
+
+    title = get_var("title", 0)
+
     if errormsg ~= nil and errormsg ~= "" then
         return realtime
     end
-    
+    titletime = title * titlemultiplier -- weeks
     longtime = titletime + realtime
     return longtime
 end
@@ -251,7 +254,7 @@ function set_time ( timetoset)
     if input then
         local response, errormsg, realtime, titletrack
         realtime = timetoset % titlemultiplier
-        oldtitle = tonumber(get_var("title"))
+        oldtitle = tonumber(get_var("title", 0))
         newtitle = (timetoset - realtime) / titlemultiplier
         if oldtitle ~= newtitle and newtitle > -1 then
             set_var("title", tonumber(newtitle))
@@ -262,8 +265,6 @@ function set_time ( timetoset)
 	    return noinput
     end
 end
-
-get_var("time")
 
 function get_play_state()
     -- [Used by the get-playstate command]
@@ -421,7 +422,7 @@ function do_command ( command, argument)
     elseif command == "get-duration"          then response           = "duration"..msgseperator..errormerge(get_duration())..msgterminator
     elseif command == "get-filepath"          then response           = "filepath"..msgseperator..errormerge(get_filepath())..msgterminator
     elseif command == "get-filename"          then response           = "filename"..msgseperator..errormerge(get_filename())..msgterminator
-    elseif command == "get-title"             then response           = "title"..msgseperator..errormerge(get_var("title"))..msgterminator
+    elseif command == "get-title"             then response           = "title"..msgseperator..errormerge(get_var("title", 0))..msgterminator
     elseif command == "set-position"          then           errormsg = set_time(tonumber(argument))
     elseif command == "seek-within-title"     then           errormsg = set_var("time", tonumber(argument))
     elseif command == "set-playstate"         then           errormsg = set_playstate(argument)
@@ -480,7 +481,7 @@ end
 while running == true do
     --accept new connections and select active clients
     local fd = l:accept()
-    local buffer = ""
+    local buffer, inputbuffer, responsebuffer = ""
     while fd >= 0 and running == true do
 
         -- handle read mode
