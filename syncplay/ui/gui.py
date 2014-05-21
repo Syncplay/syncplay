@@ -406,8 +406,11 @@ class MainWindow(QtGui.QMainWindow):
                 dropfilepath = unicode(urls[0].path())
             else:
                 dropfilepath = unicode(urls[0].path().replace("/", "\\"))[1:] # Removes starting slash
-            self._syncplayClient._player.openFile(dropfilepath)
-            if rewindFile == True:
+            if rewindFile == False:
+                self._syncplayClient._player.openFile(dropfilepath)
+            else:
+                self._syncplayClient.setPosition(0)
+                self._syncplayClient._player.openFile(dropfilepath)
                 self._syncplayClient.setPosition(0)
     
     def saveSettings(self):
