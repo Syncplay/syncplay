@@ -395,14 +395,20 @@ class MainWindow(QtGui.QMainWindow):
             event.acceptProposedAction()
             
     def dropEvent(self, event):
+        rewindFile = False
+        if QtGui.QDropEvent.proposedAction(event) == Qt.MoveAction:
+            QtGui.QDropEvent.setDropAction(event, Qt.CopyAction) # Avoids file being deleted
+            rewindFile = True
         data = event.mimeData()
         urls = data.urls()
         if (urls and urls[0].scheme() == 'file'):
             if sys.platform.startswith('linux'):
                 dropfilepath = unicode(urls[0].path())
             else:
-                dropfilepath = unicode(urls[0].path().replace("/","\\"))[1:] # Removes starting slash 
+                dropfilepath = unicode(urls[0].path().replace("/", "\\"))[1:] # Removes starting slash
             self._syncplayClient._player.openFile(dropfilepath)
+            if rewindFile == True:
+                self._syncplayClient.setPosition(0)
     
     def saveSettings(self):
         settings = QSettings("Syncplay", "MainWindow")
