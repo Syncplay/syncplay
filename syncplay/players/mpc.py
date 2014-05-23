@@ -358,8 +358,8 @@ class MPCHCAPIPlayer(BasePlayer):
     def __dropIfNotSufficientVersion(self):
         self._mpcApi.askForVersion()
         if(not self.__versionUpdate.wait(0.1) or not self._mpcApi.version):
-            self.__mpcError(getMessage("en", "mpc-version-insufficient-error").format(constants.MPC_MIN_VER))
-            self.reactor.callFromThread(self.__client.stop, (True),)
+            self.reactor.callFromThread(self.__client.ui.showErrorMessage, getMessage("en", "mpc-version-insufficient-error").format(constants.MPC_MIN_VER), True)
+            self.reactor.callFromThread(self.__client.stop, True)
             
     def __testMpcReady(self):
         if(not self.__preventAsking.wait(10)):
@@ -372,7 +372,7 @@ class MPCHCAPIPlayer(BasePlayer):
             self.__handleUpdatedFilename()
             self.askForStatus()
         except Exception, err:
-            self.__client.ui.showErrorMessage(err.message)
+            self.reactor.callFromThread(self.__client.ui.showErrorMessage, err.message, True)
             self.reactor.callFromThread(self.__client.stop)
             
     def initPlayer(self, filePath): 
@@ -458,10 +458,6 @@ class MPCHCAPIPlayer(BasePlayer):
             self.__setUpStateForNewlyOpenedFile()
             args = (self._mpcApi.filePlaying, self._mpcApi.fileDuration, self._mpcApi.filePath)
             self.reactor.callFromThread(self.__client.updateFile, *args)
-    
-    def __mpcError(self, err=""):
-        self.__client.ui.showErrorMessage(err)
-        self.reactor.callFromThread(self.__client.stop)
 
     def sendCustomCommand(self, cmd, val):
         self._mpcApi.sendRawCommand(cmd, val)

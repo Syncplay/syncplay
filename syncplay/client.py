@@ -42,7 +42,8 @@ class SyncClientFactory(ClientFactory):
 
     def clientConnectionFailed(self, connector, reason):
         if not self.reconnecting:
-            self._client.ui.showErrorMessage(getMessage("en", "connection-failed-notification"))
+            reactor.callLater(0.1, self._client.ui.showErrorMessage, getMessage("en", "connection-failed-notification"), True)
+            reactor.callLater(0.1, self._client.stop, True)
         else:
             self.clientConnectionLost(connector, reason)
 
@@ -616,6 +617,7 @@ class UiManager(object):
     def __init__(self, client, ui):
         self._client = client
         self.__ui = ui
+        self.lastError = ""
 
     def showMessage(self, message, noPlayer=False, noTimestamp=False):
         if(not noPlayer): self.showOSDMessage(message)
@@ -629,7 +631,9 @@ class UiManager(object):
             self._client._player.displayMessage(message, duration * 1000)
 
     def showErrorMessage(self, message, criticalerror=False):
-        self.__ui.showErrorMessage(message, criticalerror)
+        if message <> self.lastError: # Avoid double call bug
+            self.lastError = message
+            self.__ui.showErrorMessage(message, criticalerror)
 
     def promptFor(self, prompt):
         return self.__ui.promptFor(prompt)
