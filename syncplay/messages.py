@@ -132,8 +132,35 @@ en = {
       "run-label" : "Run Syncplay",
       "storeandrun-label" : "Store configuration and run Syncplay",
 
+      "contact-label" : "Have an idea, bug report or feedback? E-mail <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC channel</a> on irc.freenode.net or <a href=\"https://github.com/Uriziel/syncplay/issues/new\">raise an issue via GitHub</a>. Also check out <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> for info, help and updates.",
+
+      "joinroom-label" : "Join room",
+      "seektime-label" : "Seek to time",
+      "undoseek-label" : "Undo seek",
+      "togglepause-label" : "Toggle pause",
+      "play-label" : "Play",
+      "pause-label" : "Play",
+
       "roomuser-heading-label" : "Room / User",
       "fileplayed-heading-label" : "File being played",
+      "notifications-heading-label" : "Notifications",
+      "userlist-heading-label" : "List of who is playing what",
+      "othercommands-heading-label" :  "Other commands",
+      "room-heading-label" :  "Room",
+      "seek-heading-label" :  "Seek",
+
+      "browseformedia-label" : "Browse for media files",
+
+      "file-menu-label" : "&File", # & precedes shortcut key
+      "openmedia-menu-label" : "&Open media file",
+      "exit-menu-label" : "E&xit",
+      "advanced-menu-label" : "&Advanced",
+      "setoffset-menu-label" : "Set &offset",
+      "help-menu-label" : "&Help",
+      "userguide-menu-label" : "Open user &guide",
+
+      "setoffset-msgbox-label" : "Set offset",
+      "offsetinfo-msgbox-label" : "Offset (see http://syncplay.pl/guide/ for usage instructions):",
 
       # Tooltips
 
@@ -159,6 +186,12 @@ en = {
       "donotstore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.",
 
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
+
+      # In-userlist notes (GUI)
+      "differentsize-note" : "Different size!",
+      "differentsizeandduration-note" : "Different size and duration!",
+      "differentduration-note" : "Different duration!",
+      "nofile-note" : "(No file being played)",
 
       # Server messages to client
       "new-syncplay-available-motd-message" : "<NOTICE> You are using Syncplay {} but a newer version is available from http://syncplay.pl </NOTICE>",  # ClientVersion
