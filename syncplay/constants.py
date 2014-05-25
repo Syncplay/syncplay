@@ -17,6 +17,7 @@ SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room 
 SHOW_DIFFERENT_ROOM_OSD = False # Show OSD notifications for events relating to room user is not in
 LIST_RELATIVE_CONFIGS = True # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True # Displays dev contact details below list in GUI
+SHOW_BUTTON_LABELS = True # If disabled, only shows icons for main GUI buttons
 
 #Changing these might be ok
 REWIND_THRESHOLD = 4
@@ -33,7 +34,7 @@ SHOW_REWIND_ON_DESYNC_CHECKBOX = False
 SHOW_TOOLTIPS = True
 MERGE_PLAYPAUSE_BUTTONS = False
 SYNC_ON_PAUSE = True # Client seek to global position - subtitles may disappear on some media players
-
+True
 #Usually there's no need to adjust these
 FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]" 
 COMMANDS_UNDO = ["u", "undo", "revert"]

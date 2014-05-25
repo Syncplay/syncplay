@@ -1,4 +1,5 @@
 # coding:utf8
+from syncplay import constants
 
 en = {
 
@@ -270,7 +271,12 @@ messages = {
            "pl": pl
            }
 
+buttonlabels = ["joinroom-label", "seektime-label", "undoseek-label", "togglepause-label", "play-label", "pause-label"]
+
 def getMessage(locale, type_):
+    if(constants.SHOW_BUTTON_LABELS == False):
+        if(type_ in buttonlabels):
+            return ""
     if(messages.has_key(locale)):
         if(messages[locale].has_key(type_)):
             return unicode(messages[locale][type_])
