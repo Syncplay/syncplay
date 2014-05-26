@@ -135,12 +135,12 @@ en = {
 
       "contact-label" : "Have an idea, bug report or feedback? E-mail <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC channel</a> on irc.freenode.net or <a href=\"https://github.com/Uriziel/syncplay/issues/new\">raise an issue via GitHub</a>. Also check out <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> for info, help and updates.",
 
-      "joinroom-label" : "Join room",
-      "seektime-label" : "Seek to time",
-      "undoseek-label" : "Undo seek",
-      "togglepause-label" : "Toggle pause",
-      "play-label" : "Play",
-      "pause-label" : "Play",
+      "joinroom-guibuttonlabel" : "Join room",
+      "seektime-guibuttonlabel" : "Seek to time",
+      "undoseek-guibuttonlabel" : "Undo seek",
+      "togglepause-guibuttonlabel" : "Toggle pause",
+      "play-guibuttonlabel" : "Play",
+      "pause-guibuttonlabel" : "Play",
 
       "roomuser-heading-label" : "Room / User",
       "fileplayed-heading-label" : "File being played",
@@ -277,11 +277,12 @@ messages = {
            "pl": pl
            }
 
-buttonlabels = ["joinroom-label", "seektime-label", "undoseek-label", "togglepause-label", "play-label", "pause-label"]
-
 def getMessage(locale, type_):
     if(constants.SHOW_BUTTON_LABELS == False):
-        if(type_ in buttonlabels):
+        if("-guibuttonlabel" in type_):
+            return ""
+    if(constants.SHOW_TOOLTIPS == False):
+        if("-tooltip" in type_):
             return ""
     if(messages.has_key(locale)):
         if(messages[locale].has_key(type_)):

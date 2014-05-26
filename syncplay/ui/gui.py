@@ -290,13 +290,12 @@ class MainWindow(QtGui.QMainWindow):
         
         window.roomInput = QtGui.QLineEdit()
         window.roomInput.returnPressed.connect(self.joinRoom)
-        window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'), getMessage("en", "joinroom-label"))
+        window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'), getMessage("en", "joinroom-guibuttonlabel"))
         window.roomButton.pressed.connect(self.joinRoom)
         window.roomLayout = QtGui.QHBoxLayout()
         window.roomInput.setMaximumWidth(150)
 
-        if (constants.SHOW_TOOLTIPS == True):
-            self.roomButton.setToolTip(getMessage("en", "joinroom-tooltip"))
+        self.roomButton.setToolTip(getMessage("en", "joinroom-tooltip"))
         
         window.roomLayout.addWidget(window.roomInput)
         window.roomLayout.addWidget(window.roomButton)
@@ -309,11 +308,10 @@ class MainWindow(QtGui.QMainWindow):
         
         window.seekInput = QtGui.QLineEdit()
         window.seekInput.returnPressed.connect(self.seekPosition)
-        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),getMessage("en", "seektime-label"))
+        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),getMessage("en", "seektime-guibuttonlabel"))
         window.seekButton.pressed.connect(self.seekPosition)
 
-        if (constants.SHOW_TOOLTIPS == True):
-            self.seekButton.setToolTip(getMessage("en", "seektime-tooltip"))
+        self.seekButton.setToolTip(getMessage("en", "seektime-tooltip"))
         
         window.seekLayout = QtGui.QHBoxLayout()
         window.seekInput.setMaximumWidth(50)
@@ -328,31 +326,28 @@ class MainWindow(QtGui.QMainWindow):
     def addMiscBox(self, window):
         window.miscGroup = QtGui.QGroupBox(getMessage("en", "othercommands-heading-label"))
         
-        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),getMessage("en", "undoseek-label"))
+        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),getMessage("en", "undoseek-guibuttonlabel"))
         window.unseekButton.pressed.connect(self.undoSeek)
-        if (constants.SHOW_TOOLTIPS == True):
-            self.unseekButton.setToolTip(getMessage("en", "undoseek-tooltip"))
+        self.unseekButton.setToolTip(getMessage("en", "undoseek-tooltip"))
 
         window.miscLayout = QtGui.QHBoxLayout()
         window.miscLayout.addWidget(window.unseekButton)
         if constants.MERGE_PLAYPAUSE_BUTTONS == True:
-            window.playpauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),getMessage("en", "togglepause-label"))
+            window.playpauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),getMessage("en", "togglepause-guibuttonlabel"))
             window.playpauseButton.pressed.connect(self.togglePause)
             window.miscLayout.addWidget(window.playpauseButton)
-            if (constants.SHOW_TOOLTIPS == True):
-                self.playpauseButton.setToolTip(getMessage("en", "togglepause-tooltip"))
+            self.playpauseButton.setToolTip(getMessage("en", "togglepause-tooltip"))
         else:
-            window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'),getMessage("en", "play-label"))
+            window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'),getMessage("en", "play-guibuttonlabel"))
             window.playButton.pressed.connect(self.play)
             window.playButton.setMaximumWidth(60)
             window.miscLayout.addWidget(window.playButton)
-            window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),getMessage("en", "pause-label"))
+            window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),getMessage("en", "pause-guibuttonlabel"))
             window.pauseButton.pressed.connect(self.pause)
             window.pauseButton.setMaximumWidth(60)
             window.miscLayout.addWidget(window.pauseButton)
-            if (constants.SHOW_TOOLTIPS == True):
-                self.playButton.setToolTip(getMessage("en", "play-tooltip"))
-                self.pauseButton.setToolTip(getMessage("en", "pause-tooltip"))
+            self.playButton.setToolTip(getMessage("en", "play-tooltip"))
+            self.pauseButton.setToolTip(getMessage("en", "pause-tooltip"))
         
         window.miscGroup.setLayout(window.miscLayout)
         window.miscGroup.setFixedSize(window.miscGroup.sizeHint())

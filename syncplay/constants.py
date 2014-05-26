@@ -18,6 +18,7 @@ SHOW_DIFFERENT_ROOM_OSD = False # Show OSD notifications for events relating to 
 LIST_RELATIVE_CONFIGS = True # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True # Displays dev contact details below list in GUI
 SHOW_BUTTON_LABELS = True # If disabled, only shows icons for main GUI buttons
+SHOW_TOOLTIPS = True
 
 #Changing these might be ok
 REWIND_THRESHOLD = 4
@@ -31,7 +32,6 @@ RECONNECT_RETRIES = 10
 SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
 SHOW_REWIND_ON_DESYNC_CHECKBOX = False
-SHOW_TOOLTIPS = True
 MERGE_PLAYPAUSE_BUTTONS = False
 SYNC_ON_PAUSE = True # Client seek to global position - subtitles may disappear on some media players
 #Usually there's no need to adjust these

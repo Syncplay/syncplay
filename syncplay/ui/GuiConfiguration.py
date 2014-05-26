@@ -306,15 +306,14 @@ class ConfigDialog(QtGui.QDialog):
         self.serverpassTextbox = QLineEdit(config['password'], self)
         self.defaultroomLabel = QLabel(getMessage("en", "room-label"), self)
 
-        if (constants.SHOW_TOOLTIPS == True):
-            self.hostLabel.setToolTip(getMessage("en", "host-tooltip"))
-            self.hostTextbox.setToolTip(getMessage("en", "host-tooltip"))
-            self.usernameLabel.setToolTip(getMessage("en", "username-tooltip"))
-            self.usernameTextbox.setToolTip(getMessage("en", "username-tooltip"))
-            self.serverpassLabel.setToolTip(getMessage("en", "password-tooltip"))
-            self.serverpassTextbox.setToolTip(getMessage("en", "password-tooltip"))
-            self.defaultroomLabel.setToolTip(getMessage("en", "room-tooltip"))
-            self.defaultroomTextbox.setToolTip(getMessage("en", "room-tooltip"))
+        self.hostLabel.setToolTip(getMessage("en", "host-tooltip"))
+        self.hostTextbox.setToolTip(getMessage("en", "host-tooltip"))
+        self.usernameLabel.setToolTip(getMessage("en", "username-tooltip"))
+        self.usernameTextbox.setToolTip(getMessage("en", "username-tooltip"))
+        self.serverpassLabel.setToolTip(getMessage("en", "password-tooltip"))
+        self.serverpassTextbox.setToolTip(getMessage("en", "password-tooltip"))
+        self.defaultroomLabel.setToolTip(getMessage("en", "room-tooltip"))
+        self.defaultroomTextbox.setToolTip(getMessage("en", "room-tooltip"))
 
         self.connectionSettingsLayout = QtGui.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
@@ -347,16 +346,14 @@ class ConfigDialog(QtGui.QDialog):
         self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'), getMessage("en", "browse-label"))
         self.mediabrowseButton.clicked.connect(self.browseMediapath)
 
-        if (constants.SHOW_TOOLTIPS == True):
-            self.executablepathLabel.setToolTip(getMessage("en", "executable-path-tooltip"))
-            self.executablepathCombobox.setToolTip(getMessage("en", "executable-path-tooltip"))
-            self.mediapathLabel.setToolTip(getMessage("en", "media-path-tooltip"))
-            self.mediapathTextbox.setToolTip(getMessage("en", "media-path-tooltip"))
+        self.executablepathLabel.setToolTip(getMessage("en", "executable-path-tooltip"))
+        self.executablepathCombobox.setToolTip(getMessage("en", "executable-path-tooltip"))
+        self.mediapathLabel.setToolTip(getMessage("en", "media-path-tooltip"))
+        self.mediapathTextbox.setToolTip(getMessage("en", "media-path-tooltip"))
 
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
             self.rewindCheckbox = QCheckBox(getMessage("en", "rewind-label"))
-            if (constants.SHOW_TOOLTIPS == True):
-                self.rewindCheckbox.setToolTip(getMessage("en", "rewind-tooltip"))
+            self.rewindCheckbox.setToolTip(getMessage("en", "rewind-tooltip"))
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
         self.mediaplayerSettingsLayout.addWidget(self.executableiconLabel, 0, 1)
@@ -421,22 +418,21 @@ class ConfigDialog(QtGui.QDialog):
         if config['pauseOnLeave'] == True:
             self.pauseonleaveCheckbox.setChecked(True)
 
-        if (constants.SHOW_TOOLTIPS == True):
-            self.filenameprivacyLabel.setToolTip(getMessage("en", "filename-privacy-tooltip"))
-            self.filenameprivacySendRawOption.setToolTip(getMessage("en", "privacy-sendraw-tooltip"))
-            self.filenameprivacySendHashedOption.setToolTip(getMessage("en", "privacy-sendhashed-tooltip"))
-            self.filenameprivacyDontSendOption.setToolTip(getMessage("en", "privacy-dontsend-tooltip"))
-            self.filesizeprivacyLabel.setToolTip(getMessage("en", "filesize-privacy-tooltip"))
-            self.filesizeprivacySendRawOption.setToolTip(getMessage("en", "privacy-sendraw-tooltip"))
-            self.filesizeprivacySendHashedOption.setToolTip(getMessage("en", "privacy-sendhashed-tooltip"))
-            self.filesizeprivacyDontSendOption.setToolTip(getMessage("en", "privacy-dontsend-tooltip"))
+        self.filenameprivacyLabel.setToolTip(getMessage("en", "filename-privacy-tooltip"))
+        self.filenameprivacySendRawOption.setToolTip(getMessage("en", "privacy-sendraw-tooltip"))
+        self.filenameprivacySendHashedOption.setToolTip(getMessage("en", "privacy-sendhashed-tooltip"))
+        self.filenameprivacyDontSendOption.setToolTip(getMessage("en", "privacy-dontsend-tooltip"))
+        self.filesizeprivacyLabel.setToolTip(getMessage("en", "filesize-privacy-tooltip"))
+        self.filesizeprivacySendRawOption.setToolTip(getMessage("en", "privacy-sendraw-tooltip"))
+        self.filesizeprivacySendHashedOption.setToolTip(getMessage("en", "privacy-sendhashed-tooltip"))
+        self.filesizeprivacyDontSendOption.setToolTip(getMessage("en", "privacy-dontsend-tooltip"))
 
-            self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
-            self.dontslowwithmeCheckbox.setToolTip(getMessage("en", "dontslowwithme-tooltip"))
-            self.pauseonleaveCheckbox.setToolTip(getMessage("en", "pauseonleave-tooltip"))
-            self.alwaysshowCheckbox.setToolTip(getMessage("en", "alwayshow-tooltip"))
-            self.donotstoreCheckbox.setToolTip(getMessage("en", "donotstore-tooltip"))
-            self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
+        self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
+        self.dontslowwithmeCheckbox.setToolTip(getMessage("en", "dontslowwithme-tooltip"))
+        self.pauseonleaveCheckbox.setToolTip(getMessage("en", "pauseonleave-tooltip"))
+        self.alwaysshowCheckbox.setToolTip(getMessage("en", "alwayshow-tooltip"))
+        self.donotstoreCheckbox.setToolTip(getMessage("en", "donotstore-tooltip"))
+        self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
 
         self.moreSettingsLayout = QtGui.QGridLayout()
 
@@ -480,8 +476,7 @@ class ConfigDialog(QtGui.QDialog):
         if config['forceGuiPrompt'] == True:
             self.alwaysshowCheckbox.setChecked(True)
 
-        if (constants.SHOW_TOOLTIPS == True):
-            self.showmoreCheckbox.setToolTip(getMessage("en", "more-tooltip"))
+        self.showmoreCheckbox.setToolTip(getMessage("en", "more-tooltip"))
 
         self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
 
@@ -501,8 +496,7 @@ class ConfigDialog(QtGui.QDialog):
 
         self.topLayout = QtGui.QHBoxLayout()
         self.helpButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'help.png'), getMessage("en", "help-label"))
-        if (constants.SHOW_TOOLTIPS == True):
-            self.helpButton.setToolTip(getMessage("en", "help-tooltip"))
+        self.helpButton.setToolTip(getMessage("en", "help-tooltip"))
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.pressed.connect(self.openHelp)
         self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("en", "storeandrun-label"))
