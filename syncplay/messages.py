@@ -192,7 +192,7 @@ en = {
       "play-tooltip" : "Unpause media.",
       "pause-tooltip" : "Pause media.",
       "undoseek-tooltip" : "Seek to where you were before the most recent seek.",
-      "joinroom-tooltip" : "Leave current room and joins specified room",
+      "joinroom-tooltip" : "Leave current room and joins specified room.",
       "seektime-tooltip" : "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",
 
       # In-userlist notes (GUI)
@@ -230,8 +230,7 @@ en = {
       "password-required-server-error" : "Password required",
       "wrong-password-server-error" : "Wrong password supplied",
       "hello-server-error" : "Not enough Hello arguments",
-      "version-mismatch-server-error" : "Mismatch between versions of client and server",
-      "wrong-password-server-error" : "Wrong password supplied"
+      "version-mismatch-server-error" : "Mismatch between versions of client and server"
 
 
       }
