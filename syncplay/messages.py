@@ -188,6 +188,13 @@ en = {
 
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
 
+      "togglepause-tooltip" : "Pause/unpause media.",
+      "play-tooltip" : "Unpause media.",
+      "pause-tooltip" : "Pause media.",
+      "undoseek-tooltip" : "Seek to where you were before the most recent seek.",
+      "joinroom-tooltip" : "Leave current room and joins specified room",
+      "seektime-tooltip" : "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",
+
       # In-userlist notes (GUI)
       "differentsize-note" : "Different size!",
       "differentsizeandduration-note" : "Different size and duration!",

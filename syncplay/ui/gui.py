@@ -294,6 +294,9 @@ class MainWindow(QtGui.QMainWindow):
         window.roomButton.pressed.connect(self.joinRoom)
         window.roomLayout = QtGui.QHBoxLayout()
         window.roomInput.setMaximumWidth(150)
+
+        if (constants.SHOW_TOOLTIPS == True):
+            self.roomButton.setToolTip(getMessage("en", "joinroom-tooltip"))
         
         window.roomLayout.addWidget(window.roomInput)
         window.roomLayout.addWidget(window.roomButton)
@@ -308,6 +311,9 @@ class MainWindow(QtGui.QMainWindow):
         window.seekInput.returnPressed.connect(self.seekPosition)
         window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),getMessage("en", "seektime-label"))
         window.seekButton.pressed.connect(self.seekPosition)
+
+        if (constants.SHOW_TOOLTIPS == True):
+            self.seekButton.setToolTip(getMessage("en", "seektime-tooltip"))
         
         window.seekLayout = QtGui.QHBoxLayout()
         window.seekInput.setMaximumWidth(50)
@@ -324,6 +330,8 @@ class MainWindow(QtGui.QMainWindow):
         
         window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),getMessage("en", "undoseek-label"))
         window.unseekButton.pressed.connect(self.undoSeek)
+        if (constants.SHOW_TOOLTIPS == True):
+            self.unseekButton.setToolTip(getMessage("en", "undoseek-tooltip"))
 
         window.miscLayout = QtGui.QHBoxLayout()
         window.miscLayout.addWidget(window.unseekButton)
@@ -331,6 +339,8 @@ class MainWindow(QtGui.QMainWindow):
             window.playpauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),getMessage("en", "togglepause-label"))
             window.playpauseButton.pressed.connect(self.togglePause)
             window.miscLayout.addWidget(window.playpauseButton)
+            if (constants.SHOW_TOOLTIPS == True):
+                self.playpauseButton.setToolTip(getMessage("en", "togglepause-tooltip"))
         else:
             window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'),getMessage("en", "play-label"))
             window.playButton.pressed.connect(self.play)
@@ -340,6 +350,9 @@ class MainWindow(QtGui.QMainWindow):
             window.pauseButton.pressed.connect(self.pause)
             window.pauseButton.setMaximumWidth(60)
             window.miscLayout.addWidget(window.pauseButton)
+            if (constants.SHOW_TOOLTIPS == True):
+                self.playButton.setToolTip(getMessage("en", "play-tooltip"))
+                self.pauseButton.setToolTip(getMessage("en", "pause-tooltip"))
         
         window.miscGroup.setLayout(window.miscLayout)
         window.miscGroup.setFixedSize(window.miscGroup.sizeHint())
