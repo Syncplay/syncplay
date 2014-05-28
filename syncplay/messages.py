@@ -25,6 +25,7 @@ en = {
 
       "room-join-notification" : "<{}> has joined the room: '{}'",  # User
       "left-notification" : "<{}> has left",  # User
+      "left-paused-notification" : "<{}> left, <{}> paused",  # User who left, User who paused
       "playing-notification" : "<{}> is playing '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" :  " in room: '{}'",  # Room
 

@@ -55,6 +55,8 @@ class SyncClientFactory(ClientFactory):
 
 class SyncplayClient(object):
     def __init__(self, playerClass, ui, config):
+        self.lastLeftTime = 0
+        self.lastLeftUser = u""
         self.protocolFactory = SyncClientFactory(self)
         self.ui = UiManager(self, ui)
         self.userlist = SyncplayUserlist(self.ui, self)
@@ -182,7 +184,10 @@ class SyncplayClient(object):
             self.setPosition(self.getGlobalPosition())
         self._player.setPaused(True)
         madeChangeOnPlayer = True
-        self.ui.showMessage(getMessage("en", "pause-notification").format(setBy), hideFromOSD)
+        if (self.lastLeftTime < time.time() - constants.OSD_DURATION) or (hideFromOSD == True):
+            self.ui.showMessage(getMessage("en", "pause-notification").format(setBy), hideFromOSD)
+        else:
+            self.ui.showMessage(getMessage("en", "left-paused-notification").format(self.lastLeftUser, setBy), hideFromOSD)
         return madeChangeOnPlayer
 
     def _serverSeeked(self, position, setBy):
@@ -542,6 +547,8 @@ class SyncplayUserlist(object):
             self._users.pop(username)
             message = getMessage("en", "left-notification").format(username)
             self.ui.showMessage(message, hideFromOSD)
+            self._client.lastLeftTime = time.time()
+            self._client.lastLeftUser = username
         self.userListChange()
 
     def __displayModUserMessage(self, username, room, file_, user, oldRoom):
