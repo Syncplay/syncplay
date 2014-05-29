@@ -284,6 +284,9 @@ class ConfigurationGetter(object):
         self._parseConfigFile(iniPath)
         args = self._argparser.parse_args()
         self._overrideConfigWithArgs(args)
+        if(self._config['file'] and self._config['file'][:2] == "--"):
+            self._config['playerArgs'].insert(0, self._config['file'])
+            self._config['file'] = None
         # Arguments not validated yet - booleans are still text values
         if(self._config['forceGuiPrompt'] == "True" or not self._config['file']):
             self._forceGuiPrompt()
