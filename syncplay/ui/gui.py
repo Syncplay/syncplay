@@ -48,7 +48,7 @@ class MainWindow(QtGui.QMainWindow):
                 useritem = QtGui.QStandardItem(user.username)
                 fileitem = QtGui.QStandardItem("")
                 if (user.file):
-                    fileitem = QtGui.QStandardItem(user.file['name'] + " ("+formatTime(user.file['duration'])+")")
+                    fileitem = QtGui.QStandardItem(u"{} ({})".format(user.file['name'], formatTime(user.file['duration'])))
                     if (currentUser.file):                     
                         sameName = sameFilename(user.file['name'], currentUser.file['name'])
                         sameSize = sameFilesize(user.file['size'], currentUser.file['size'])
@@ -59,11 +59,11 @@ class MainWindow(QtGui.QMainWindow):
                         differentDuration = not sameDuration
                         if (sameName or sameRoom):
                             if (differentSize and sameDuration):
-                                fileitem = QtGui.QStandardItem("{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("en", "differentsize-note")))
+                                fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("en", "differentsize-note")))
                             elif (differentSize and differentDuration):
-                                fileitem = QtGui.QStandardItem("{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("en", "differentsizeandduration-note")))
+                                fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("en", "differentsizeandduration-note")))
                             elif (differentDuration):
-                                fileitem = QtGui.QStandardItem("{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("en", "differentduration-note")))
+                                fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("en", "differentduration-note")))
                             if (sameRoom and (differentName or differentSize or differentDuration)):
                                 fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
                 else:
