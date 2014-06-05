@@ -85,7 +85,7 @@ class VlcPlayer(BasePlayer):
 
     def displayMessage(self, message, duration=constants.OSD_DURATION * 1000):
         duration /= 1000
-        self._listener.sendLine('display-osd: {}, {}, {}'.format('top-right', duration, message.encode('ascii', 'ignore'))) #TODO: Proper Unicode support
+        self._listener.sendLine('display-osd: {}, {}, {}'.format('top-right', duration, message.encode('utf8')))
 
     def setSpeed(self, value):
         self._listener.sendLine("set-rate: {:.2n}".format(value))
