@@ -228,8 +228,9 @@ class SyncplayClient(object):
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
         if (diff > constants.REWIND_THRESHOLD and not doSeek and not self._config['rewindOnDesync'] == False):
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
-        if (self._player.speedSupported and not doSeek and not paused and not self._config['slowOnDesync'] == False):
-            madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
+        if (self._player.speedSupported and not doSeek and not paused):
+            if (self._config['slowMeOnDesync'] == constants.OPTION_ALWAYS or (self._config['slowMeOnDesync'] == constants.OPTION_AUTO and self._player.speedRecommended)):
+                madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
         if (paused == False and pauseChanged):
             madeChangeOnPlayer = self._serverUnpaused(setBy)
         elif (paused == True and pauseChanged):

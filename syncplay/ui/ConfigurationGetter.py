@@ -33,7 +33,7 @@ class ConfigurationGetter(object):
                         "file": None,
                         "playerArgs": [],
                         "playerClass": None,
-                        "slowOnDesync": True,
+                        "slowMeOnDesync": constants.OPTION_AUTO,
                         "dontSlowDownWithMe": False,
                         "rewindOnDesync": True,
                         "filenamePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
@@ -58,7 +58,6 @@ class ConfigurationGetter(object):
                          "forceGuiPrompt",
                          "noGui",
                          "noStore",
-                         "slowOnDesync",
                          "dontSlowDownWithMe",
                          "pauseOnLeave",
                          "rewindOnDesync",
@@ -67,7 +66,7 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowOnDesync", "dontSlowDownWithMe", "rewindOnDesync", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
+                        "client_settings": ["name", "room", "playerPath", "slowMeOnDesync", "dontSlowDownWithMe", "rewindOnDesync", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
                         }
 
         #

@@ -197,10 +197,6 @@ class ConfigDialog(QtGui.QDialog):
             self.config['noStore'] = True
         else:
             self.config['noStore'] = False
-        if self.slowdownCheckbox.isChecked() == True:
-            self.config['slowOnDesync'] = True
-        else:
-            self.config['slowOnDesync'] = False
         if self.dontslowwithmeCheckbox.isChecked() == True:
             self.config['dontSlowDownWithMe'] = True
         else:
@@ -224,12 +220,12 @@ class ConfigDialog(QtGui.QDialog):
         elif self.filenameprivacyDontSendOption.isChecked() == True:
             self.config['filenamePrivacyMode'] = constants.PRIVACY_DONTSEND_MODE
 
-        if self.filesizeprivacySendRawOption.isChecked() == True:
-            self.config['filesizePrivacyMode'] = constants.PRIVACY_SENDRAW_MODE
-        elif self.filesizeprivacySendHashedOption.isChecked() == True:
-            self.config['filesizePrivacyMode'] = constants.PRIVACY_SENDHASHED_MODE
-        elif self.filesizeprivacyDontSendOption.isChecked() == True:
-            self.config['filesizePrivacyMode'] = constants.PRIVACY_DONTSEND_MODE
+        if self.slowdownAutoOption.isChecked() == True:
+            self.config['slowMeOnDesync'] = constants.OPTION_AUTO
+        elif self.slowdownAlwaysOption.isChecked() == True:
+            self.config['slowMeOnDesync'] = constants.OPTION_ALWAYS
+        elif self.slowdownNeverOption.isChecked() == True:
+            self.config['slowMeOnDesync'] = constants.OPTION_NEVER
 
         self.pressedclosebutton = True
         self.close()
@@ -386,7 +382,15 @@ class ConfigDialog(QtGui.QDialog):
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendHashedOption)
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacyDontSendOption)
 
-        self.slowdownCheckbox = QCheckBox(getMessage("en", "slowdown-label"))
+        self.slowdownLabel = QLabel(getMessage("en", "slowdown-label"), self)
+        self.slowdownButtonGroup = QButtonGroup()
+        self.slowdownAutoOption = QRadioButton(getMessage("en", "slowdown-auto-option"))
+        self.slowdownAlwaysOption = QRadioButton(getMessage("en", "slowdown-always-option"))
+        self.slowdownNeverOption = QRadioButton(getMessage("en", "slowdown-never-option"))
+        self.slowdownButtonGroup.addButton(self.slowdownAutoOption)
+        self.slowdownButtonGroup.addButton(self.slowdownAlwaysOption)
+        self.slowdownButtonGroup.addButton(self.slowdownNeverOption)
+
         self.dontslowwithmeCheckbox = QCheckBox(getMessage("en", "dontslowwithme-label"))
         self.pauseonleaveCheckbox = QCheckBox(getMessage("en", "pauseonleave-label"))
         self.alwaysshowCheckbox = QCheckBox(getMessage("en", "alwayshow-label"))
@@ -408,12 +412,7 @@ class ConfigDialog(QtGui.QDialog):
         else:
             self.filesizeprivacySendRawOption.setChecked(True)
 
-        if config['slowOnDesync'] == True:
-            self.slowdownCheckbox.setChecked(True)
-        if config['dontSlowDownWithMe'] == True:
-            self.dontslowwithmeCheckbox.setChecked(True)
-
-        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True and config['rewindOnDesync'] == True:
+        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True and config['slowMeOnDesync'] == True:
             self.rewindCheckbox.setChecked(True)
         if config['pauseOnLeave'] == True:
             self.pauseonleaveCheckbox.setChecked(True)
@@ -427,12 +426,25 @@ class ConfigDialog(QtGui.QDialog):
         self.filesizeprivacySendHashedOption.setToolTip(getMessage("en", "privacy-sendhashed-tooltip"))
         self.filesizeprivacyDontSendOption.setToolTip(getMessage("en", "privacy-dontsend-tooltip"))
 
-        self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
+        slowdownMode = config['slowMeOnDesync']
+        if slowdownMode == constants.OPTION_ALWAYS:
+            self.slowdownAlwaysOption.setChecked(True)
+        elif slowdownMode == constants.OPTION_NEVER:
+            self.slowdownNeverOption.setChecked(True)
+        else:
+            self.slowdownAutoOption.setChecked(True)
+        if config['dontSlowDownWithMe'] == True:
+            self.dontslowwithmeCheckbox.setChecked(True)
+
+        self.slowdownLabel.setToolTip(getMessage("en", "slowdown-tooltip"))
+        self.slowdownAutoOption.setToolTip(getMessage("en", "slowdown-auto-tooltip"))
+        self.slowdownAlwaysOption.setToolTip(getMessage("en", "slowdown-always-tooltip"))
+        self.slowdownNeverOption.setToolTip(getMessage("en", "slowdown-never-tooltip"))
+
         self.dontslowwithmeCheckbox.setToolTip(getMessage("en", "dontslowwithme-tooltip"))
         self.pauseonleaveCheckbox.setToolTip(getMessage("en", "pauseonleave-tooltip"))
         self.alwaysshowCheckbox.setToolTip(getMessage("en", "alwayshow-tooltip"))
         self.donotstoreCheckbox.setToolTip(getMessage("en", "donotstore-tooltip"))
-        self.slowdownCheckbox.setToolTip(getMessage("en", "slowdown-tooltip"))
 
         self.moreSettingsLayout = QtGui.QGridLayout()
 
@@ -442,18 +454,21 @@ class ConfigDialog(QtGui.QDialog):
         self.privacyFrame.setMidLineWidth(0)
         self.privacySettingsLayout.setContentsMargins(0, 0, 0, 0)
         self.privacySettingsLayout.addWidget(self.filenameprivacyLabel, 0, 0)
-        self.privacySettingsLayout.addWidget(self.filenameprivacySendRawOption, 0, 1, Qt.AlignRight)
-        self.privacySettingsLayout.addWidget(self.filenameprivacySendHashedOption, 0, 2, Qt.AlignRight)
-        self.privacySettingsLayout.addWidget(self.filenameprivacyDontSendOption, 0, 3, Qt.AlignRight)
+        self.privacySettingsLayout.addWidget(self.filenameprivacySendRawOption, 0, 1, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.filenameprivacySendHashedOption, 0, 2, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.filenameprivacyDontSendOption, 0, 3, Qt.AlignLeft)
         self.privacySettingsLayout.addWidget(self.filesizeprivacyLabel, 1, 0)
-        self.privacySettingsLayout.addWidget(self.filesizeprivacySendRawOption, 1, 1, Qt.AlignRight)
-        self.privacySettingsLayout.addWidget(self.filesizeprivacySendHashedOption, 1, 2, Qt.AlignRight)
-        self.privacySettingsLayout.addWidget(self.filesizeprivacyDontSendOption, 1, 3, Qt.AlignRight)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacySendRawOption, 1, 1, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacySendHashedOption, 1, 2, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacyDontSendOption, 1, 3, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.slowdownLabel, 2, 0)
+        self.privacySettingsLayout.addWidget(self.slowdownAutoOption, 2, 1, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.slowdownAlwaysOption, 2, 2, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.slowdownNeverOption, 2, 3, Qt.AlignLeft)
         self.privacyFrame.setLayout(self.privacySettingsLayout)
 
         self.moreSettingsLayout.addWidget(self.privacyFrame, 0, 0, 1, 4)
 
-        self.moreSettingsLayout.addWidget(self.slowdownCheckbox, 2, 0, 1, 4)
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
             self.moreSettingsLayout.addWidget(self.rewindCheckbox, 3, 0, 1, 4)
         self.moreSettingsLayout.addWidget(self.dontslowwithmeCheckbox, 4, 0, 1, 2)

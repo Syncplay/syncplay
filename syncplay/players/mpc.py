@@ -306,6 +306,7 @@ class MpcHcApi:
 
 class MPCHCAPIPlayer(BasePlayer):
     speedSupported = False
+    speedRecommended = False
     
     def __init__(self, client):
         from twisted.internet import reactor
