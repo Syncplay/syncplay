@@ -454,12 +454,12 @@ class ConfigDialog(QtGui.QDialog):
         self.moreSettingsLayout.addWidget(self.privacyFrame, 0, 0, 1, 4)
 
         self.moreSettingsLayout.addWidget(self.slowdownCheckbox, 2, 0, 1, 4)
-        self.moreSettingsLayout.addWidget(self.dontslowwithmeCheckbox, 3, 0, 1, 4)
         if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
-            self.moreSettingsLayout.addWidget(self.rewindCheckbox, 4, 0, 1, 4)
-        self.moreSettingsLayout.addWidget(self.pauseonleaveCheckbox, 5, 0, 1, 4)
-        self.moreSettingsLayout.addWidget(self.alwaysshowCheckbox, 6, 0, 1, 4)
-        self.moreSettingsLayout.addWidget(self.donotstoreCheckbox, 7, 0, 1, 4)
+            self.moreSettingsLayout.addWidget(self.rewindCheckbox, 3, 0, 1, 4)
+        self.moreSettingsLayout.addWidget(self.dontslowwithmeCheckbox, 4, 0, 1, 2)
+        self.moreSettingsLayout.addWidget(self.pauseonleaveCheckbox, 5, 0, 1, 2)
+        self.moreSettingsLayout.addWidget(self.alwaysshowCheckbox, 4, 2, 1, 2)
+        self.moreSettingsLayout.addWidget(self.donotstoreCheckbox, 5, 2, 1, 2)
 
         self.moreSettingsGroup.setLayout(self.moreSettingsLayout)
 
