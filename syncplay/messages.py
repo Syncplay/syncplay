@@ -127,7 +127,7 @@ en = {
       "dontslowwithme-label" : "Never slow down or rewind others",
       "pauseonleave-label" : "Pause when user leaves",
       "rewind-label" : "Rewind on major desync (highly recommended)",
-      "alwayshow-label" : "Always show this dialog",
+      "alwayshow-label" : "Do not always show this dialog",
       "donotstore-label" : "Do not store this configuration",
 
       "help-label" : "Help",
@@ -184,7 +184,7 @@ en = {
       "dontslowwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
       "rewind-tooltip" : "Jump back when needed to get back in sync. Recommended.",
-      "alwayshow-tooltip" : "Configuration dialogue is always shown, even when opening a file with Syncplay.",
+      "alwayshow-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.",
       "donotstore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.",
 
       "help-tooltip" : "Opens the Syncplay.pl user guide.",

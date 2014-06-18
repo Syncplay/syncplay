@@ -189,7 +189,7 @@ class ConfigDialog(QtGui.QDialog):
             self.config['file'] = os.path.abspath(self.mediapathTextbox.text())
         else:
             self.config['file'] = unicode(self.mediapathTextbox.text())
-        if self.alwaysshowCheckbox.isChecked() == True:
+        if self.alwaysshowCheckbox.isChecked() == False:
             self.config['forceGuiPrompt'] = True
         else:
             self.config['forceGuiPrompt'] = False
@@ -473,7 +473,7 @@ class ConfigDialog(QtGui.QDialog):
         self.showmoreCheckbox.toggled.connect(self.moreToggled)
         self.moreSettingsGroup.toggled.connect(self.moreToggled)
 
-        if config['forceGuiPrompt'] == True:
+        if config['forceGuiPrompt'] == False:
             self.alwaysshowCheckbox.setChecked(True)
 
         self.showmoreCheckbox.setToolTip(getMessage("en", "more-tooltip"))
