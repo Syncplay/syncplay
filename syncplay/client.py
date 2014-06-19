@@ -204,7 +204,7 @@ class SyncplayClient(object):
 
     def _slowDownToCoverTimeDifference(self, diff, setBy):
         hideFromOSD = not constants.SHOW_SLOWDOWN_OSD
-        if(constants.SLOWDOWN_KICKIN_THRESHOLD < diff and not self._speedChanged):
+        if(self._config['slowdownThreshold']  < diff and not self._speedChanged):
             self._player.setSpeed(constants.SLOWDOWN_RATE)
             self._speedChanged = True
             self.ui.showMessage(getMessage("en", "slowdown-notification").format(setBy), hideFromOSD)
@@ -226,7 +226,7 @@ class SyncplayClient(object):
         self._lastGlobalUpdate = time.time()
         if (doSeek):
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
-        if (diff > constants.REWIND_THRESHOLD and not doSeek and not self._config['rewindOnDesync'] == False):
+        if (diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindThreshold'] == 0.0):
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
         if (self._player.speedSupported and not doSeek and not paused):
             if (self._config['slowMeOnDesync'] == constants.OPTION_ALWAYS or (self._config['slowMeOnDesync'] == constants.OPTION_AUTO and self._player.speedRecommended)):

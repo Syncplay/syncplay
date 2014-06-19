@@ -1,6 +1,6 @@
 from PySide import QtCore, QtGui
 from PySide.QtCore import QSettings, Qt, QCoreApplication
-from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton
+from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton, QDoubleSpinBox
 from syncplay.players.playerFactory import PlayerFactory
 
 import os
@@ -206,12 +206,12 @@ class ConfigDialog(QtGui.QDialog):
         else:
             self.config['pauseOnLeave'] = False
 
-
-        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
-            if self.rewindCheckbox.isChecked() == True:
-                self.config['rewindOnDesync'] = True
-            else:
-                self.config['rewindOnDesync'] = False
+        if not self.slowdownThresholdSpinbox.text:
+            self.slowdownThresholdSpinbox.value = constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD
+        if not self.rewindThresholdSpinbox.text:
+            self.rewindThresholdSpinbox.value = constants.DEFAULT_REWIND_THRESHOLD
+        self.config['slowdownThreshold'] = self.slowdownThresholdSpinbox.value()
+        self.config['rewindThreshold'] = self.rewindThresholdSpinbox.value()
 
         if self.filenameprivacySendRawOption.isChecked() == True:
             self.config['filenamePrivacyMode'] = constants.PRIVACY_SENDRAW_MODE
@@ -347,9 +347,6 @@ class ConfigDialog(QtGui.QDialog):
         self.mediapathLabel.setToolTip(getMessage("en", "media-path-tooltip"))
         self.mediapathTextbox.setToolTip(getMessage("en", "media-path-tooltip"))
 
-        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
-            self.rewindCheckbox = QCheckBox(getMessage("en", "rewind-label"))
-            self.rewindCheckbox.setToolTip(getMessage("en", "rewind-tooltip"))
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
         self.mediaplayerSettingsLayout.addWidget(self.executableiconLabel, 0, 1)
@@ -363,6 +360,49 @@ class ConfigDialog(QtGui.QDialog):
         self.moreSettingsGroup = QtGui.QGroupBox(getMessage("en", "more-title"))
 
         self.moreSettingsGroup.setCheckable(True)
+
+        self.slowdownThresholdLabel = QLabel(getMessage("en", "slowdown-threshold-label"), self)
+        self.slowdownThresholdSpinbox = QDoubleSpinBox()
+        try:
+            self.slowdownThresholdSpinbox.setValue(float(config['slowdownThreshold']))
+        except ValueError:
+            self.slowdownThresholdSpinbox.setValue(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD)
+        self.slowdownThresholdSpinbox.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.slowdownThresholdSpinbox.setMinimumWidth(80)
+        self.slowdownThresholdSpinbox.setMaximumWidth(80)
+        self.slowdownThresholdSpinbox.setMinimum(0.1)
+        self.slowdownThresholdSpinbox.setSingleStep(0.1)
+        self.slowdownThresholdSpinbox.setSuffix(" secs")
+        self.slowdownThresholdSpinbox.adjustSize()
+
+        self.rewindThresholdLabel = QLabel(getMessage("en", "rewind-threshold-label"), self)
+        self.rewindThresholdSpinbox = QDoubleSpinBox()
+        try:
+            self.rewindThresholdSpinbox.setValue(float(config['rewindThreshold']))
+        except ValueError:
+            self.rewindThresholdSpinbox.setValue(constants.DEFAULT_REWIND_THRESHOLD)
+        self.rewindThresholdSpinbox.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.rewindThresholdSpinbox.setMinimumWidth(80)
+        self.rewindThresholdSpinbox.setMaximumWidth(80)
+        self.rewindThresholdSpinbox.setMinimum(0)
+        self.rewindThresholdSpinbox.setSingleStep(0.1)
+        self.rewindThresholdSpinbox.setSpecialValueText(getMessage("en", "never-rewind-value"))
+        self.rewindThresholdSpinbox.setSuffix(getMessage("en", "seconds-suffix"))
+        self.rewindThresholdSpinbox.adjustSize()
+
+        self.slowdownThresholdLabel.setToolTip(getMessage("en", "slowdown-threshold-tooltip"))
+        self.slowdownThresholdSpinbox.setToolTip(getMessage("en", "slowdown-threshold-tooltip"))
+        self.rewindThresholdLabel.setToolTip(getMessage("en", "rewind-threshold-tooltip"))
+        self.rewindThresholdSpinbox.setToolTip(getMessage("en", "rewind-threshold-tooltip"))
+
+        self.slowdownLabel = QLabel(getMessage("en", "slowdown-label"), self)
+        self.slowdownButtonGroup = QButtonGroup()
+        self.slowdownAutoOption = QRadioButton(getMessage("en", "slowdown-auto-option"))
+        self.slowdownAlwaysOption = QRadioButton(getMessage("en", "slowdown-always-option"))
+        self.slowdownNeverOption = QRadioButton(getMessage("en", "slowdown-never-option"))
+        self.slowdownButtonGroup.addButton(self.slowdownAutoOption)
+        self.slowdownButtonGroup.addButton(self.slowdownAlwaysOption)
+        self.slowdownButtonGroup.addButton(self.slowdownNeverOption)
 
         self.filenameprivacyLabel = QLabel(getMessage("en", "filename-privacy-label"), self)
         self.filenameprivacyButtonGroup = QButtonGroup()
@@ -381,15 +421,6 @@ class ConfigDialog(QtGui.QDialog):
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendRawOption)
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendHashedOption)
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacyDontSendOption)
-
-        self.slowdownLabel = QLabel(getMessage("en", "slowdown-label"), self)
-        self.slowdownButtonGroup = QButtonGroup()
-        self.slowdownAutoOption = QRadioButton(getMessage("en", "slowdown-auto-option"))
-        self.slowdownAlwaysOption = QRadioButton(getMessage("en", "slowdown-always-option"))
-        self.slowdownNeverOption = QRadioButton(getMessage("en", "slowdown-never-option"))
-        self.slowdownButtonGroup.addButton(self.slowdownAutoOption)
-        self.slowdownButtonGroup.addButton(self.slowdownAlwaysOption)
-        self.slowdownButtonGroup.addButton(self.slowdownNeverOption)
 
         self.dontslowwithmeCheckbox = QCheckBox(getMessage("en", "dontslowwithme-label"))
         self.pauseonleaveCheckbox = QCheckBox(getMessage("en", "pauseonleave-label"))
@@ -412,8 +443,6 @@ class ConfigDialog(QtGui.QDialog):
         else:
             self.filesizeprivacySendRawOption.setChecked(True)
 
-        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True and config['slowMeOnDesync'] == True:
-            self.rewindCheckbox.setChecked(True)
         if config['pauseOnLeave'] == True:
             self.pauseonleaveCheckbox.setChecked(True)
 
@@ -448,33 +477,44 @@ class ConfigDialog(QtGui.QDialog):
 
         self.moreSettingsLayout = QtGui.QGridLayout()
 
+        self.thresholdSettingsLayout = QtGui.QGridLayout()
+        self.thresholdFrame = QtGui.QFrame()
+        self.thresholdFrame.setLineWidth(0)
+        self.thresholdFrame.setMidLineWidth(0)
+        self.thresholdSettingsLayout.setContentsMargins(0, 0, 0, 0)
+        self.thresholdSettingsLayout.addWidget(self.slowdownThresholdLabel, 0, 0, Qt.AlignLeft)
+        self.thresholdSettingsLayout.addWidget(self.slowdownThresholdSpinbox, 0, 1, Qt.AlignLeft)
+        self.thresholdSettingsLayout.addWidget(self.rewindThresholdLabel, 0, 2, Qt.AlignLeft)
+        self.thresholdSettingsLayout.addWidget(self.rewindThresholdSpinbox, 0, 3, Qt.AlignLeft)
+        self.thresholdFrame.setLayout(self.thresholdSettingsLayout)
+        self.moreSettingsLayout.addWidget(self.thresholdFrame, 0, 0, 1, 4, Qt.AlignLeft)
+
         self.privacySettingsLayout = QtGui.QGridLayout()
-        self.privacyFrame = QtGui.QFrame()
-        self.privacyFrame.setLineWidth(0)
-        self.privacyFrame.setMidLineWidth(0)
+        self.radioFrame = QtGui.QFrame()
+        self.radioFrame.setLineWidth(0)
+        self.radioFrame.setMidLineWidth(0)
         self.privacySettingsLayout.setContentsMargins(0, 0, 0, 0)
-        self.privacySettingsLayout.addWidget(self.filenameprivacyLabel, 0, 0)
-        self.privacySettingsLayout.addWidget(self.filenameprivacySendRawOption, 0, 1, Qt.AlignLeft)
-        self.privacySettingsLayout.addWidget(self.filenameprivacySendHashedOption, 0, 2, Qt.AlignLeft)
-        self.privacySettingsLayout.addWidget(self.filenameprivacyDontSendOption, 0, 3, Qt.AlignLeft)
-        self.privacySettingsLayout.addWidget(self.filesizeprivacyLabel, 1, 0)
-        self.privacySettingsLayout.addWidget(self.filesizeprivacySendRawOption, 1, 1, Qt.AlignLeft)
-        self.privacySettingsLayout.addWidget(self.filesizeprivacySendHashedOption, 1, 2, Qt.AlignLeft)
-        self.privacySettingsLayout.addWidget(self.filesizeprivacyDontSendOption, 1, 3, Qt.AlignLeft)
-        self.privacySettingsLayout.addWidget(self.slowdownLabel, 2, 0)
-        self.privacySettingsLayout.addWidget(self.slowdownAutoOption, 2, 1, Qt.AlignLeft)
-        self.privacySettingsLayout.addWidget(self.slowdownAlwaysOption, 2, 2, Qt.AlignLeft)
-        self.privacySettingsLayout.addWidget(self.slowdownNeverOption, 2, 3, Qt.AlignLeft)
-        self.privacyFrame.setLayout(self.privacySettingsLayout)
+        self.privacySettingsLayout.addWidget(self.slowdownLabel, 0, 0)
+        self.privacySettingsLayout.addWidget(self.slowdownAutoOption, 0, 1, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.slowdownAlwaysOption, 0, 2, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.slowdownNeverOption, 0, 3, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.filenameprivacyLabel, 1, 0)
+        self.privacySettingsLayout.addWidget(self.filenameprivacySendRawOption, 1, 1, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.filenameprivacySendHashedOption, 1, 2, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.filenameprivacyDontSendOption, 1, 3, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacyLabel, 2, 0)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacySendRawOption, 2, 1, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacySendHashedOption, 2, 2, Qt.AlignLeft)
+        self.privacySettingsLayout.addWidget(self.filesizeprivacyDontSendOption, 2, 3, Qt.AlignLeft)
+        self.radioFrame.setLayout(self.privacySettingsLayout)
 
-        self.moreSettingsLayout.addWidget(self.privacyFrame, 0, 0, 1, 4)
+        self.moreSettingsLayout.addWidget(self.radioFrame, 1, 0, 1, 4)
 
-        if constants.SHOW_REWIND_ON_DESYNC_CHECKBOX == True:
-            self.moreSettingsLayout.addWidget(self.rewindCheckbox, 3, 0, 1, 4)
         self.moreSettingsLayout.addWidget(self.dontslowwithmeCheckbox, 4, 0, 1, 2)
         self.moreSettingsLayout.addWidget(self.pauseonleaveCheckbox, 5, 0, 1, 2)
         self.moreSettingsLayout.addWidget(self.alwaysshowCheckbox, 4, 2, 1, 2)
         self.moreSettingsLayout.addWidget(self.donotstoreCheckbox, 5, 2, 1, 2)
+
 
         self.moreSettingsGroup.setLayout(self.moreSettingsLayout)
 
@@ -492,6 +532,7 @@ class ConfigDialog(QtGui.QDialog):
             self.alwaysshowCheckbox.setChecked(True)
 
         self.showmoreCheckbox.setToolTip(getMessage("en", "more-tooltip"))
+
 
         self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
 

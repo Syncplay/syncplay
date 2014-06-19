@@ -118,6 +118,10 @@ en = {
       "browse-label" : "Browse",
 
       "more-title" : "Show more settings",
+      "slowdown-threshold-label" : "Slow down threshold:",
+      "rewind-threshold-label" : "Rewind threshold:",
+      "never-rewind-value" : "Never",
+      "seconds-suffix" : " secs",
       "privacy-sendraw-option" : "Send raw",
       "privacy-sendhashed-option" : "Send hashed",
       "privacy-dontsend-option" : "Don't send",
@@ -129,7 +133,6 @@ en = {
       "slowdown-never-option" : "Never",
       "dontslowwithme-label" : "Never slow down or rewind others",
       "pauseonleave-label" : "Pause when user leaves",
-      "rewind-label" : "Rewind on major desync (highly recommended)",
       "alwayshow-label" : "Do not always show this dialog",
       "donotstore-label" : "Do not store this configuration",
 
@@ -178,6 +181,8 @@ en = {
       "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
 
       "more-tooltip" : "Display less frequently used settings.",
+      "slowdown-threshold-tooltip" : "Time ahead of slowest client before temporarily reducing playback speed (default: {} secs).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
+      "rewind-threshold-tooltip" : "Time ahead slowest client before seeking to get back in sync (default: {} secs). 'Never' can result in major desync!".format(constants.DEFAULT_REWIND_THRESHOLD),
       "filename-privacy-tooltip" : "Privacy mode for sending currently playing filename to server.",
       "filesize-privacy-tooltip" : "Privacy mode for sending size of currently playing file to server.",
       "privacy-sendraw-tooltip" : "Send this information without obfuscation. This is the default option with most functionality.",
@@ -189,7 +194,6 @@ en = {
       "slowdown-never-tooltip" : "Never slow down on desync (even on players where this is probably better than rewinding).",
       "dontslowwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
-      "rewind-tooltip" : "Jump back when needed to get back in sync. Recommended.",
       "alwayshow-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.",
       "donotstore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.",
 
