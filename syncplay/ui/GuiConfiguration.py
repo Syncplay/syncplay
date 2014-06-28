@@ -372,7 +372,7 @@ class ConfigDialog(QtGui.QDialog):
         self.slowdownThresholdSpinbox.setMaximumWidth(80)
         self.slowdownThresholdSpinbox.setMinimum(constants.MINIMUM_SLOWDOWN_THRESHOLD)
         self.slowdownThresholdSpinbox.setSingleStep(0.1)
-        self.slowdownThresholdSpinbox.setSuffix(" secs")
+        self.slowdownThresholdSpinbox.setSuffix(getMessage("en", "seconds-suffix"))
         self.slowdownThresholdSpinbox.adjustSize()
 
         self.rewindThresholdLabel = QLabel(getMessage("en", "rewind-threshold-label"), self)
