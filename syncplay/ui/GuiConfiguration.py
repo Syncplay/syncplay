@@ -370,7 +370,7 @@ class ConfigDialog(QtGui.QDialog):
         self.slowdownThresholdSpinbox.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.slowdownThresholdSpinbox.setMinimumWidth(80)
         self.slowdownThresholdSpinbox.setMaximumWidth(80)
-        self.slowdownThresholdSpinbox.setMinimum(0.1)
+        self.slowdownThresholdSpinbox.setMinimum(constants.MINIMUM_SLOWDOWN_THRESHOLD)
         self.slowdownThresholdSpinbox.setSingleStep(0.1)
         self.slowdownThresholdSpinbox.setSuffix(" secs")
         self.slowdownThresholdSpinbox.adjustSize()
