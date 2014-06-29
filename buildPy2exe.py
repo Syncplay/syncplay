@@ -41,7 +41,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_POLISH} "FileDescription" "Syncplay"
   
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
-  LangString ^VLC $${LANG_ENGLISH} "Install Syncplay interface for VLC (requires VLC 2.x.x)"
+  LangString ^VLC $${LANG_ENGLISH} "Install Syncplay interface for VLC 2 and above"
+  LangString ^BrowseVLCBtn $${LANG_ENGLISH} "Select VLC folder"
   LangString ^Shortcut $${LANG_ENGLISH} "Create Shortcuts in following locations:"
   LangString ^StartMenu $${LANG_ENGLISH} "Start Menu"
   LangString ^Desktop $${LANG_ENGLISH} "Desktop"
@@ -49,7 +50,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^UninstConfig $${LANG_ENGLISH} "Delete configuration file."
     
   LangString ^Associate $${LANG_POLISH} "Skojarz Syncplaya z multimediami"
-  LangString ^VLC $${LANG_POLISH} "Zainstaluj interface Syncplaya dla VLC(wymaga VLC 2.0.X)"
+  LangString ^VLC $${LANG_POLISH} "Zainstaluj interface Syncplaya dla VLC 2+"
+  LangString ^BrowseVLCBtn $${LANG_POLISH} "Określ folder VLC"
   LangString ^Shortcut $${LANG_POLISH} "Utworz skroty w nastepujacych miejscach:"
   LangString ^StartMenu $${LANG_POLISH} "Menu Start"
   LangString ^Desktop $${LANG_POLISH} "Pulpit"
@@ -79,6 +81,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Var CheckBox_DesktopShortcut_State
   Var CheckBox_QuickLaunchShortcut_State
   Var Button_Browse
+  Var Button_Browse_VLC
   Var Directory
   Var GroupBox_DirSub
   Var Label_Text
@@ -130,24 +133,23 @@ NSIS_SCRIPT_TEMPLATE = r"""
   
   ;Prevents from running more than one instance of installer and sets default state of checkboxes
   Function .onInit
-    System::Call 'kernel32::CreateMutexA(i 0, i 0, t "myMutex") i .r1 ?e'
+    System::Call 'kernel32::CreateMutexA(i 0, i 0, t "SyncplayMutex") i .r1 ?e'
     Pop $$R0
     StrCmp $$R0 0 +3
     MessageBox MB_OK|MB_ICONEXCLAMATION "The installer is already running."
       Abort
-        
+
     StrCpy $$CheckBox_Associate_State $${BST_CHECKED}
     StrCpy $$CheckBox_StartMenuShortcut_State $${BST_CHECKED}
-    ReadRegStr $$VLC_Version HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VLC media player" "VersionMajor"
-    $${If} $$VLC_Version == "2"
-      StrCpy $$CheckBox_VLC_State $${BST_CHECKED}
-    $${EndIf}
-    
+    Call GetVLCDir
+    IfFileExists "$$VLC_Directory\vlc.exe" 0 +2
+    StrCpy $$CheckBox_VLC_State $${BST_CHECKED}
+
     Call GetSize
     Call DriveSpace
     Call Language
   FunctionEnd
-     
+
   ;Language selection dialog
   Function Language
     Push ""
@@ -161,57 +163,61 @@ NSIS_SCRIPT_TEMPLATE = r"""
     StrCmp $$LANGUAGE "cancel" 0 +2
       Abort
   FunctionEnd
-  
+
   Function DirectoryCustom
-    
+
     nsDialogs::Create 1018
     Pop $$Dialog
-    
+
     GetFunctionAddress $$R8 DirectoryCustomLeave
     nsDialogs::OnBack $$R8
-    
+
     $${NSD_CreateIcon} 0u 0u 22u 20u ""
     Pop $$Icon_Syncplay
     $${NSD_SetIconFromInstaller} $$Icon_Syncplay $$Icon_Syncplay_Handle
-    
+
     $${NSD_CreateLabel} 25u 0u 241u 34u "$$(^DirText)"
     Pop $$Label_Text
-    
-    $${NSD_CreateText} 8u 38u 187u 12u "$$INSTDIR" 
+
+    $${NSD_CreateText} 8u 38u 187u 12u "$$INSTDIR"
     Pop $$Text_Directory
     $${NSD_SetFocus} $$Text_Directory
-    
+
     $${NSD_CreateBrowseButton} 202u 37u 55u 14u "$$(^BrowseBtn)"
     Pop $$Button_Browse
     $${NSD_OnClick} $$Button_Browse DirectoryBrowseDialog
-    
+
     $${NSD_CreateGroupBox} 1u 27u 264u 30u "$$(^DirSubText)"
     Pop $$GroupBox_DirSub
 
     $${NSD_CreateLabel} 0u 111u 265u 8u "$$(^SpaceRequired)$$SizeMB"
     Pop $$Label_Size
-    
+
     $${NSD_CreateLabel} 0u 122u 265u 8u "$$(^SpaceAvailable)$$AvailibleSpaceGiB.$$AvailibleSpaceGB"
     Pop $$Label_Space
-    
+
     $${NSD_CreateCheckBox} 8u 59u 187u 10u "$$(^Associate)"
     Pop $$CheckBox_Associate
-    
+
+    $${NSD_CreateBrowseButton} 185u 70u 70u 14u "$$(^BrowseVLCBtn)"
+    Pop $$Button_Browse_VLC
+    $${NSD_OnClick} $$Button_Browse_VLC DirectoryBrowseDialogVLC
+
     $${NSD_CreateCheckBox} 8u 72u 250u 10u "$$(^VLC)"
     Pop $$CheckBox_VLC
-    
+
     $${NSD_CreateLabel} 8u 85u 187u 10u "$$(^Shortcut)"
     Pop $$Label_Shortcut
-    
+
     $${NSD_CreateCheckbox} 8u 98u 50u 10u "$$(^StartMenu)"
     Pop $$CheckBox_StartMenuShortcut
 
     $${NSD_CreateCheckbox} 68u 98u 50u 10u "$$(^Desktop)"
     Pop $$CheckBox_DesktopShortcut
-    
+
     $${NSD_CreateCheckbox} 128u 98u 150u 10u "$$(^QuickLaunchBar)"
     Pop $$CheckBox_QuickLaunchShortcut
-    
+
     $${If} $$CheckBox_Associate_State == $${BST_CHECKED}
       $${NSD_Check} $$CheckBox_Associate
     $${EndIf}
@@ -219,19 +225,21 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${If} $$CheckBox_VLC_State == $${BST_CHECKED}
     	$${NSD_Check} $$CheckBox_VLC
     $${EndIf}
-    
+
+    Call UpdateVLCCheckbox
+
     $${If} $$CheckBox_StartMenuShortcut_State == $${BST_CHECKED}
     	$${NSD_Check} $$CheckBox_StartMenuShortcut
     $${EndIf}
-    
+
     $${If} $$CheckBox_DesktopShortcut_State == $${BST_CHECKED}
     	$${NSD_Check} $$CheckBox_DesktopShortcut
     $${EndIf}
-    
+
     $${If} $$CheckBox_QuickLaunchShortcut_State == $${BST_CHECKED}
     	$${NSD_Check} $$CheckBox_QuickLaunchShortcut
     $${EndIf}
-    
+
     ReadRegStr $$VLC_Version HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VLC media player" "VersionMajor"
     $${If} $$VLC_Version != "2"
       EnableWindow $$CheckBox_VLC 0
@@ -241,7 +249,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${NSD_FreeIcon} $$Icon_Syncplay_Handle
 
   FunctionEnd
-  
+
   Function DirectoryCustomLeave
     $${NSD_GetText} $$Text_Directory $$INSTDIR
     $${NSD_GetState} $$CheckBox_Associate $$CheckBox_Associate_State
@@ -250,9 +258,9 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${NSD_GetState} $$CheckBox_DesktopShortcut $$CheckBox_DesktopShortcut_State
     $${NSD_GetState} $$CheckBox_QuickLaunchShortcut $$CheckBox_QuickLaunchShortcut_State
   FunctionEnd
-  
+
   Function DirectoryBrowseDialog
-    nsDialogs::SelectFolderDialog $$(^DirBrowseText) 
+    nsDialogs::SelectFolderDialog $$(^DirBrowseText)
     Pop $$Directory
     $${If} $$Directory != error
     StrCpy $$INSTDIR $$Directory
@@ -262,14 +270,53 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${EndIf}
     Abort
   FunctionEnd
-  
+
+  Function GetVLCDir
+    IfFileExists "$$VLC_Directory\vlc.exe" VLCFound 0
+    ReadRegStr $$VLC_Directory HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "VLCInstallLocation"
+    IfFileExists "$$VLC_Directory\vlc.exe" VLCFound 0
+    ReadRegStr $$VLC_Directory HKLM "Software\VideoLAN\VLC" "InstallDir"
+    IfFileExists "$$VLC_Directory\vlc.exe" VLCFound 0
+    StrCpy $$VLC_Directory "c:\program files (x86)\videolan\vlc"
+    IfFileExists "$$VLC_Directory\vlc.exe" VLCFound 0
+    StrCpy $$VLC_Directory "c:\program files\videolan\vlc"
+    IfFileExists "$$VLC_Directory\vlc.exe" VLCFound 0
+    StrCpy $$VLC_Directory ""
+    VLCFound:
+  FunctionEnd
+
+  Function UpdateVLCCheckbox
+    IfFileExists "$$VLC_Directory\vlc.exe" VLC_Enabled VLC_Disabled
+
+    VLC_Enabled:
+    EnableWindow $$CheckBox_VLC 1
+    ;StrCpy $$CheckBox_VLC_State $${BST_CHECKED}
+    goto CheckboxUpdated
+
+    VLC_Disabled:
+    EnableWindow $$CheckBox_VLC 0
+    ;StrCpy $$CheckBox_VLC_State $${BST_UNCHECKED}
+
+    CheckboxUpdated:
+  FunctionEnd
+
+  Function DirectoryBrowseDialogVLC
+    nsDialogs::SelectFolderDialog $$(^BrowseVLCBtn) $$VLC_Directory
+    Pop $$Directory
+    $${If} $$Directory != error
+    StrCpy $$VLC_Directory $$Directory
+    Call UpdateVLCCheckbox
+    $${EndIf}
+    Abort
+  FunctionEnd
+
   Function GetSize
     StrCpy $$Size "$totalSize"
     IntOp $$Size $$Size / 1024
     IntFmt $$SizeHex "0x%08X" $$Size
     IntOp $$Size $$Size / 1024
   FunctionEnd
-  
+
   ;Calculates Free Space on HDD
   Function DriveSpace
     StrCpy $$Drive $$INSTDIR 1
@@ -278,35 +325,37 @@ NSIS_SCRIPT_TEMPLATE = r"""
     IntOp $$AvailibleSpace $$AvailibleSpace % 1024
     IntOp $$AvailibleSpace $$AvailibleSpace / 102
   FunctionEnd
-  
+
   Function InstallOptions
     $${If} $$CheckBox_Associate_State == $${BST_CHECKED}
       Call Associate
       DetailPrint "Associated Syncplay with multimedia files"
     $${EndIf}
-    
+
     $${If} $$CheckBox_StartMenuShortcut_State == $${BST_CHECKED}
       CreateDirectory $$SMPROGRAMS\Syncplay
-      CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" "" 
+      CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
+      CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay Server.lnk" "$$INSTDIR\syncplayServer.exe" ""
       CreateShortCut "$$SMPROGRAMS\Syncplay\Uninstall.lnk" "$$INSTDIR\Uninstall.exe" ""
       WriteINIStr "$$SMPROGRAMS\Syncplay\SyncplayWebsite.url" "InternetShortcut" "URL" "http://syncplay.pl"
     $${EndIf}
-    
+
     $${If} $$CheckBox_DesktopShortcut_State == $${BST_CHECKED}
       CreateShortCut "$$DESKTOP\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
     $${EndIf}
-    
+
     $${If} $$CheckBox_QuickLaunchShortcut_State == $${BST_CHECKED}
       CreateShortCut "$$QUICKLAUNCH\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
     $${EndIf}
-    
+
     $${If} $$CheckBox_VLC_State == $${BST_CHECKED}
-      ReadRegStr $$VLC_Directory HKLM "Software\VideoLAN\VLC" "InstallDir"
+    IfFileExists "$$VLC_Directory\vlc.exe" 0 EndOfVLC
       SetOutPath $$VLC_Directory\lua\intf
       File resources\lua\intf\syncplay.lua
+      EndOfVLC:
     $${EndIf}
   FunctionEnd
-    
+
   ;Associates extensions with Syncplay
   Function Associate
     !insertmacro ASSOCIATE avi
@@ -334,12 +383,13 @@ NSIS_SCRIPT_TEMPLATE = r"""
     !insertmacro ASSOCIATE divx
     !insertmacro ASSOCIATE amv
   FunctionEnd
-  
+
   Function WriteRegistry
     Call GetSize
     WriteRegStr HKLM SOFTWARE\Syncplay "Install_Dir" "$$INSTDIR"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "DisplayName" "Syncplay"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "InstallLocation" "$$INSTDIR" 
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "InstallLocation" "$$INSTDIR"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "VLCInstallLocation" "$$VLC_Directory"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "UninstallString" '"$$INSTDIR\uninstall.exe"'
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "DisplayIcon" "$$INSTDIR\resources\icon.ico"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "Publisher" "Syncplay"
@@ -349,38 +399,38 @@ NSIS_SCRIPT_TEMPLATE = r"""
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "NoRepair" 1
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "EstimatedSize" "$$SizeHex"
   FunctionEnd
-    
+
   Function un.installConfirm
     nsDialogs::Create 1018
     Pop $$Uninst_Dialog
-    
+
     $${NSD_CreateIcon} 0u 1u 22u 20u ""
     Pop $$Uninst_Icon
     $${NSD_SetIconFromInstaller} $$Uninst_Icon $$Uninst_Icon_Handle
-    
+
     $${NSD_CreateLabel} 0u 45u 55u 8u "$$(^UninstallingSubText)"
     Pop $$Uninst_Label_Directory
-    
+
     $${NSD_CreateLabel} 25u 0u 241u 34u "$$(^UninstallingText)"
     Pop $$Uninst_Label_Text
-    
+
     ReadRegStr $$INSTDIR HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "InstallLocation"
-    $${NSD_CreateText} 56u 43u 209u 12u "$$INSTDIR" 
+    $${NSD_CreateText} 56u 43u 209u 12u "$$INSTDIR"
     Pop $$Uninst_Text_Directory
     EnableWindow $$Uninst_Text_Directory 0
-    
+
     $${NSD_CreateCheckBox} 0u 60u 250u 10u "$$(^UninstConfig)"
     Pop $$Uninst_CheckBox_Config
-    
-    
+
+
     nsDialogs::Show
     $${NSD_FreeIcon} $$Uninst_Icon_Handle
   FunctionEnd
-  
+
   Function un.installConfirmLeave
     $${NSD_GetState} $$Uninst_CheckBox_Config $$Uninst_CheckBox_Config_State
   FunctionEnd
-  
+
   Function un.AssociateDel
     !insertmacro UNASSOCIATE avi
     !insertmacro UNASSOCIATE mpg
@@ -405,17 +455,19 @@ NSIS_SCRIPT_TEMPLATE = r"""
     !insertmacro UNASSOCIATE swf
     !insertmacro UNASSOCIATE rmvb
     !insertmacro UNASSOCIATE divx
-    !insertmacro UNASSOCIATE amv      
+    !insertmacro UNASSOCIATE amv
   FunctionEnd
-  
+
   Function un.InstallOptions
     Delete $$SMPROGRAMS\Syncplay\Syncplay.lnk
+    Delete "$$SMPROGRAMS\Syncplay\Syncplay Server.lnk"
     Delete $$SMPROGRAMS\Syncplay\Uninstall.lnk
     Delete $$SMPROGRAMS\Syncplay\SyncplayWebsite.url
     RMDir $$SMPROGRAMS\Syncplay
     Delete $$DESKTOP\Syncplay.lnk
     Delete $$QUICKLAUNCH\Syncplay.lnk
-    ReadRegStr $$VLC_Directory HKLM "Software\VideoLAN\VLC" "InstallDir"
+    ReadRegStr $$VLC_Directory HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "VLCInstallLocation"
+    IfFileExists "$$VLC_Directory\lua\intf\syncplay.lua" 0 +2
     Delete $$VLC_Directory\lua\intf\syncplay.lua
   FunctionEnd
   
@@ -437,12 +489,18 @@ NSIS_SCRIPT_TEMPLATE = r"""
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay"
     DeleteRegKey HKLM SOFTWARE\Syncplay
     Delete $$INSTDIR\uninstall.exe
+    RMDir $$INSTDIR\Syncplay\\resources\lua\intf
+    RMDir $$INSTDIR\Syncplay\\resources\lua
+    RMDir $$INSTDIR\Syncplay\\resources
     RMDir $$INSTDIR\resources
     RMDir $$INSTDIR\lib
     RMDir $$INSTDIR
 
     $${If} $$Uninst_CheckBox_Config_State == $${BST_CHECKED}
+      IfFileExists "$$APPDATA\.syncplay" 0 +2
       Delete $$APPDATA\.syncplay
+      IfFileExists "$$APPDATA\syncplay.ini" 0 +2
+      Delete $$APPDATA\syncplay.ini
     $${EndIf}
   SectionEnd
 """
@@ -527,7 +585,7 @@ common_info = dict(
     name='Syncplay',
     version=syncplay.version,
     author='Uriziel',
-    author_email='urizieli@gmail.com',
+    author_email='dev@syncplay.pl',
     description='Syncplay',
 )
     
