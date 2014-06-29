@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb
  Project: http://syncplay.pl/
- Version: 0.2.1
+ Version: 0.2.2
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -86,7 +86,7 @@ else
     require "common"
 end
 
-local connectorversion = "0.2.1"
+local connectorversion = "0.2.2"
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
 local loopsleepduration = 5000 -- Pause for every event loop (uses microseconds)
 local quitcheckfrequency = 20 -- Check whether VLC has closed every X loops
@@ -469,8 +469,8 @@ function set_playstate(argument)
     return errormsg
 end
 
-if string.sub(vlc.misc.version(),1,2) ~= "2." then
-    vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module on Windows. Please use VLC 2.")
+if string.sub(vlc.misc.version(),1,2) == "1." then
+    vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module on Windows. Please use VLC 2+.")
     quit_vlc()
 else
     l = vlc.net.listen_tcp(host, port)
