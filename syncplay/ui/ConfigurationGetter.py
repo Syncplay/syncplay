@@ -3,7 +3,7 @@ import argparse
 import os
 import sys
 from syncplay import constants, utils
-from syncplay.messages import getMessage
+from syncplay.messages import getMessage, setLanguage
 from syncplay.players.playerFactory import PlayerFactory
 import codecs
 try:
@@ -40,7 +40,8 @@ class ConfigurationGetter(object):
                         "filenamePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
                         "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
                         "pauseOnLeave": False,
-                        "clearGUIData": False
+                        "clearGUIData": False,
+                        "language" : ""
                         }
 
         #
@@ -67,25 +68,8 @@ class ConfigurationGetter(object):
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
                         "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "slowMeOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
+                        "general": ["language"]
                         }
-
-        #
-        # Watch out for the method self._overrideConfigWithArgs when you're adding custom multi-word command line arguments
-        #
-        self._argparser = argparse.ArgumentParser(description=getMessage("en", "argument-description"),
-                                         epilog=getMessage("en", "argument-epilog"))
-        self._argparser.add_argument('--no-gui', action='store_true', help=getMessage("en", "nogui-argument"))
-        self._argparser.add_argument('-a', '--host', metavar='hostname', type=str, help=getMessage("en", "host-argument"))
-        self._argparser.add_argument('-n', '--name', metavar='username', type=str, help=getMessage("en", "name-argument"))
-        self._argparser.add_argument('-d', '--debug', action='store_true', help=getMessage("en", "debug-argument"))
-        self._argparser.add_argument('-g', '--force-gui-prompt', action='store_true', help=getMessage("en", "force-gui-prompt-argument"))
-        self._argparser.add_argument('--no-store', action='store_true', help=getMessage("en", "no-store-argument"))
-        self._argparser.add_argument('-r', '--room', metavar='room', type=str, nargs='?', help=getMessage("en", "room-argument"))
-        self._argparser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help=getMessage("en", "password-argument"))
-        self._argparser.add_argument('--player-path', metavar='path', type=str, help=getMessage("en", "player-path-argument"))
-        self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("en", "file-argument"))
-        self._argparser.add_argument('--clear-gui-data', action='store_true', help=getMessage("en", "clear-gui-data-argument"))
-        self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("en", "args-argument"))
 
         self._playerFactory = PlayerFactory()
 
@@ -281,18 +265,42 @@ class ConfigurationGetter(object):
     def getConfiguration(self):
         iniPath = self._getConfigurationFilePath()
         self._parseConfigFile(iniPath)
+        #
+        # Watch out for the method self._overrideConfigWithArgs when you're adding custom multi-word command line arguments
+        #
+        if self._config['language']:
+            setLanguage(self._config['language'])
+        self._argparser = argparse.ArgumentParser(description=getMessage("en", "argument-description"),
+                                         epilog=getMessage("en", "argument-epilog"))
+        self._argparser.add_argument('--no-gui', action='store_true', help=getMessage("en", "nogui-argument"))
+        self._argparser.add_argument('-a', '--host', metavar='hostname', type=str, help=getMessage("en", "host-argument"))
+        self._argparser.add_argument('-n', '--name', metavar='username', type=str, help=getMessage("en", "name-argument"))
+        self._argparser.add_argument('-d', '--debug', action='store_true', help=getMessage("en", "debug-argument"))
+        self._argparser.add_argument('-g', '--force-gui-prompt', action='store_true', help=getMessage("en", "force-gui-prompt-argument"))
+        self._argparser.add_argument('--no-store', action='store_true', help=getMessage("en", "no-store-argument"))
+        self._argparser.add_argument('-r', '--room', metavar='room', type=str, nargs='?', help=getMessage("en", "room-argument"))
+        self._argparser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help=getMessage("en", "password-argument"))
+        self._argparser.add_argument('--player-path', metavar='path', type=str, help=getMessage("en", "player-path-argument"))
+        self._argparser.add_argument('--language', metavar='language', type=str, help=getMessage("en", "language-argument"))
+        self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("en", "file-argument"))
+        self._argparser.add_argument('--clear-gui-data', action='store_true', help=getMessage("en", "clear-gui-data-argument"))
+        self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("en", "args-argument"))
         args = self._argparser.parse_args()
         self._overrideConfigWithArgs(args)
         if(self._config['file'] and self._config['file'][:2] == "--"):
             self._config['playerArgs'].insert(0, self._config['file'])
             self._config['file'] = None
         # Arguments not validated yet - booleans are still text values
+        if self._config['language']:
+            setLanguage(self._config['language'])
         if(self._config['forceGuiPrompt'] == "True" or not self._config['file']):
             self._forceGuiPrompt()
         self._checkConfig()
         self._saveConfig(iniPath)
         if(self._config['file']):
             self._config['loadedRelativePaths'] = self._loadRelativeConfiguration()
+        if self._config['language']:
+            setLanguage(self._config['language'])
         if(not self._config['noGui']):
             from syncplay.vendor import qt4reactor
             if QCoreApplication.instance() is None:

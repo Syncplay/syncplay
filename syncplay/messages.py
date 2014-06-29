@@ -102,6 +102,7 @@ en = {
       "file-argument" : 'file to play',
       "args-argument" : 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
       "clear-gui-data-argument" : 'resets path and window state GUI data stored as QSettings',
+      "language-argument" :'language for Syncplay messages (en/pl)',
 
       # Client labels
       "config-window-title" : "Syncplay configuration",
@@ -249,44 +250,48 @@ en = {
 pl = {
 
       # Client notifications
-      "connection-attempt-notification" : "Próba połączenia z {}:{}", # Port, IP
-      "reconnection-attempt-notification" : "Połączenie z serwerem zostało przerwane, ponowne łączenie",
-      "disconnection-notification" : "Odłączono od serwera",
-      "connection-failed-notification" : "Połączenie z serwerem zakończone fiaskiem",
+      "connection-attempt-notification" : u"Próba połączenia z {}:{}", # Port, IP
+      "reconnection-attempt-notification" : u"Połączenie z serwerem zostało przerwane, ponowne łączenie",
+      "disconnection-notification" : u"Odłączono od serwera",
+      "connection-failed-notification" : u"Połączenie z serwerem zakończone fiaskiem",
 
-      "rewind-notification" : "Cofnięto z powodu różnicy czasu z <{}>", # User
-      "slowdown-notification" : "Zwolniono z powodu różnicy czasu z <{}>", # User
-      "revert-notification" : "Przywrócono normalną prędkość odtwarzania",
+      "rewind-notification" : u"Cofnięto z powodu różnicy czasu z <{}>", # User
+      "slowdown-notification" : u"Zwolniono z powodu różnicy czasu z <{}>", # User
+      "revert-notification" : u"Przywrócono normalną prędkość odtwarzania",
 
-      "pause-notification" : "<{}> zatrzymał odtwarzanie", # User
-      "unpause-notification" : "<{}> wznowił odtwarzanie", # User
-      "seek-notification" : "<{}> skoczył z {} do {}", # User, from time, to time
+      "pause-notification" : u"<{}> zatrzymał odtwarzanie", # User
+      "unpause-notification" : u"<{}> wznowił odtwarzanie", # User
+      "seek-notification" : u"<{}> skoczył z {} do {}", # User, from time, to time
 
-      "current-offset-notification" : "Obecny offset: {} seconds",  # Offset
+      "current-offset-notification" : u"Obecny offset: {} seconds",  # Offset
 
-      "room-join-notification" : "<{}> dołączył do pokoju: '{}'", # User
-      "left-notification" : "<{}> wyszedł", # User
-      "playing-notification" : "<{}> odtwarza '{}' ({})",  # User, file, duration
-      "playing-notification/room-addendum" : " w pokoju: '{}'",  # Room
+      "room-join-notification" : u"<{}> dołączył do pokoju: '{}'", # User
+      "left-notification" : u"<{}> wyszedł", # User
+      "playing-notification" : u"<{}> odtwarza '{}' ({})",  # User, file, duration
+      "playing-notification/room-addendum" : u" w pokoju: '{}'",  # Room
 
-      "file-different-notification" : "Plik, który odtwarzasz wydaje się być różny od <{}>", # User
-      "file-differences-notification" : "Twój plik różni się następującymi parametrami: ",
+      "file-different-notification" : u"Plik, który odtwarzasz wydaje się być różny od <{}>", # User
+      "file-differences-notification" : u"Twój plik różni się następującymi parametrami: ",
 
-      "different-filesize-notification" : " (inny rozmiar pliku!)",
-      "file-played-by-notification" : "Plik: {} jest odtwarzany przez:",  # File
-      "notplaying-notification" : "Osoby, które nie odtwarzają żadnych plików:",
-      "userlist-room-notification" :  "W pokoju '{}':",  # Room
+      "different-filesize-notification" : u" (inny rozmiar pliku!)",
+      "file-played-by-notification" : u"Plik: {} jest odtwarzany przez:",  # File
+      "notplaying-notification" : u"Osoby, które nie odtwarzają żadnych plików:",
+      "userlist-room-notification" :  u"W pokoju '{}':",  # Room
       # Client prompts
-      "enter-to-exit-prompt" : "Wciśnij Enter, aby zakończyć działanie programu\n",
+      "enter-to-exit-prompt" : u"Wciśnij Enter, aby zakończyć działanie programu\n",
 
       # Client errors
-      "server-timeout-error" : "Przekroczono czas oczekiwania na odpowiedź serwera"
+      "server-timeout-error" : u"Przekroczono czas oczekiwania na odpowiedź serwera"
       }
 
 messages = {
            "en": en,
-           "pl": pl
+           "pl": pl,
+           "current": ""
            }
+
+def setLanguage(lang):
+    messages["current"] = lang
 
 def getMessage(locale, type_):
     if(constants.SHOW_BUTTON_LABELS == False):
@@ -295,6 +300,10 @@ def getMessage(locale, type_):
     if(constants.SHOW_TOOLTIPS == False):
         if("-tooltip" in type_):
             return ""
+    lang = messages["current"]
+    if(messages.has_key(lang)):
+        if(messages[lang].has_key(type_)):
+            return unicode(messages[lang][type_])
     if(messages.has_key(locale)):
         if(messages[locale].has_key(type_)):
             return unicode(messages[locale][type_])

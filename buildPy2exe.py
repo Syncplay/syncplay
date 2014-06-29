@@ -40,6 +40,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_POLISH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_POLISH} "FileDescription" "Syncplay"
   
+  LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
   LangString ^VLC $${LANG_ENGLISH} "Install Syncplay interface for VLC 2 and above"
   LangString ^BrowseVLCBtn $${LANG_ENGLISH} "Select VLC folder"
@@ -49,6 +50,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^QuickLaunchBar $${LANG_ENGLISH} "Quick Launch Bar"
   LangString ^UninstConfig $${LANG_ENGLISH} "Delete configuration file."
     
+  LangString ^SyncplayLanguage $${LANG_POLISH} "pl"
   LangString ^Associate $${LANG_POLISH} "Skojarz Syncplaya z multimediami"
   LangString ^VLC $${LANG_POLISH} "Zainstaluj interface Syncplaya dla VLC 2+"
   LangString ^BrowseVLCBtn $${LANG_POLISH} "Określ folder VLC"
@@ -158,7 +160,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push $${LANG_POLISH}
     Push Polski
     Push A ; A means auto count languages
-    LangDLL::LangDialog "Installer Language" "Please select the language of the installer"
+    LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE
     StrCmp $$LANGUAGE "cancel" 0 +2
       Abort
@@ -398,6 +400,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "NoModify" 1
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "NoRepair" 1
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "EstimatedSize" "$$SizeHex"
+    WriteINIStr $$APPDATA\syncplay.ini general language $$(^SyncplayLanguage)
   FunctionEnd
 
   Function un.installConfirm
