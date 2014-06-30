@@ -73,6 +73,7 @@ en = {
        "player-path-error" : "Player path is not set properly",
        "hostname-empty-error" : "Hostname can't be empty",
        "empty-error" : "{} can't be empty",  # Configuration
+       "media-player-error": "Media player error: \"{}\"",  # Error line
 
        "arguments-missing-error" : "Some necessary arguments are missing, refer to --help",
 
@@ -81,7 +82,6 @@ en = {
        "not-json-error" : "Not a json encoded string\n",
        "hello-arguments-error" : "Not enough Hello arguments\n",
        "version-mismatch-error" : "Mismatch between versions of client and server\n",
-       "vlc-error-echo": "VLC error: {}",  # VLC error line
        "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua then please refer to http://syncplay.pl/LUA/ for instructions.",
        "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to http://syncplay.pl/LUA/ for instructions.",
        "vlc-failed-versioncheck": "This version of VLC is not supported by Syncplay. Please use VLC 2.",

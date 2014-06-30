@@ -146,7 +146,7 @@ class MplayerPlayer(BasePlayer):
             self._filenameAsk.set()
         elif name == "exiting":
             if value != 'Quit':
-                self.reactor.callFromThread(self._client.ui.showErrorMessage, value, True)
+                self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("en", "media-player-error").format(value), True)
             self.drop()
 
     @staticmethod
