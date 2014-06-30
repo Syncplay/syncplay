@@ -1,23 +1,23 @@
-#You might want to change these
+# You might want to change these
 DEFAULT_PORT = 8999
 OSD_DURATION = 3
 OSD_WARNING_MESSAGE_DURATION = 15
-MPC_OSD_POSITION = 2 #Right corner, 1 for left
+MPC_OSD_POSITION = 2  #Right corner, 1 for left
 MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "
-CONFIG_NAMES = [".syncplay", "syncplay.ini"] #Syncplay searches first to last
+CONFIG_NAMES = [".syncplay", "syncplay.ini"]  #Syncplay searches first to last
 DEFAULT_CONFIG_NAME_WINDOWS = "syncplay.ini"
-DEFAULT_CONFIG_NAME_LINUX = ".syncplay" 
-RECENT_CLIENT_THRESHOLD = "1.2.8" #This and higher considered 'recent' clients (no warnings)
-WARN_OLD_CLIENTS = True #Use MOTD to inform old clients to upgrade
-SHOW_OSD = True # Sends Syncplay messages to media player OSD
-SHOW_OSD_WARNINGS = True # Show warnings if playing different file, alone in room
-SHOW_SLOWDOWN_OSD = True # Show notifications of slowing down / reverting on time difference
+DEFAULT_CONFIG_NAME_LINUX = ".syncplay"
+RECENT_CLIENT_THRESHOLD = "1.2.8"  #This and higher considered 'recent' clients (no warnings)
+WARN_OLD_CLIENTS = True  #Use MOTD to inform old clients to upgrade
+SHOW_OSD = True  # Sends Syncplay messages to media player OSD
+SHOW_OSD_WARNINGS = True  # Show warnings if playing different file, alone in room
+SHOW_SLOWDOWN_OSD = True  # Show notifications of slowing down / reverting on time difference
 SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room user is in
-SHOW_DIFFERENT_ROOM_OSD = False # Show OSD notifications for events relating to room user is not in
-LIST_RELATIVE_CONFIGS = True # Print list of relative configs loaded
-SHOW_CONTACT_INFO = True # Displays dev contact details below list in GUI
-SHOW_BUTTON_LABELS = True # If disabled, only shows icons for main GUI buttons
+SHOW_DIFFERENT_ROOM_OSD = False  # Show OSD notifications for events relating to room user is not in
+LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
+SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
+SHOW_BUTTON_LABELS = True  # If disabled, only shows icons for main GUI buttons
 SHOW_TOOLTIPS = True
 
 #Changing these might be ok
@@ -33,9 +33,9 @@ RECONNECT_RETRIES = 10
 SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
 MERGE_PLAYPAUSE_BUTTONS = False
-SYNC_ON_PAUSE = True # Client seek to global position - subtitles may disappear on some media players
+SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 #Usually there's no need to adjust these
-FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]" 
+FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
 COMMANDS_UNDO = ["u", "undo", "revert"]
 COMMANDS_LIST = ["l", "list", "users"]
 COMMANDS_PAUSE = ["p", "play", "pause"]
@@ -45,25 +45,27 @@ MPC_MIN_VER = "1.6.4"
 VLC_MIN_VERSION = "2.0.0"
 VLC_INTERFACE_MIN_VERSION = "0.2.1"
 MPC_PATHS = [
-             r"C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
-             r"C:\Program Files\MPC-HC\mpc-hc.exe",
-             r"C:\Program Files\MPC-HC\mpc-hc64.exe",
-             r"C:\Program Files\Media Player Classic - Home Cinema\mpc-hc.exe",
-             r"C:\Program Files\Media Player Classic - Home Cinema\mpc-hc64.exe",
-             r"C:\Program Files (x86)\Media Player Classic - Home Cinema\mpc-hc.exe",
-             r"C:\Program Files (x86)\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
-             r"C:\Program Files\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
-             r"C:\Program Files (x86)\Combined Community Codec Pack\MPC\mpc-hc.exe",
-             r"C:\Program Files\Combined Community Codec Pack\MPC\mpc-hc.exe",
-             r"C:\Program Files\MPC HomeCinema (x64)\mpc-hc64.exe",
-             ]
+    r"C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
+    r"C:\Program Files\MPC-HC\mpc-hc.exe",
+    r"C:\Program Files\MPC-HC\mpc-hc64.exe",
+    r"C:\Program Files\Media Player Classic - Home Cinema\mpc-hc.exe",
+    r"C:\Program Files\Media Player Classic - Home Cinema\mpc-hc64.exe",
+    r"C:\Program Files (x86)\Media Player Classic - Home Cinema\mpc-hc.exe",
+    r"C:\Program Files (x86)\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
+    r"C:\Program Files\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
+    r"C:\Program Files (x86)\Combined Community Codec Pack\MPC\mpc-hc.exe",
+    r"C:\Program Files\Combined Community Codec Pack\MPC\mpc-hc.exe",
+    r"C:\Program Files\MPC HomeCinema (x64)\mpc-hc64.exe",
+]
 MPLAYER_PATHS = ["mplayer2", "mplayer"]
-MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"C:\Program Files\mpv\mpv.exe", r"C:\Program Files\mpv-player\mpv.exe", r"C:\Program Files (x86)\mpv\mpv.exe", r"C:\Program Files (x86)\mpv-player\mpv.exe","/Applications/mpv.app/Contents/MacOS/mpv"]
+MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"C:\Program Files\mpv\mpv.exe", r"C:\Program Files\mpv-player\mpv.exe",
+             r"C:\Program Files (x86)\mpv\mpv.exe", r"C:\Program Files (x86)\mpv-player\mpv.exe",
+             "/Applications/mpv.app/Contents/MacOS/mpv"]
 VLC_PATHS = [
-             r"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
-             r"C:\Program Files\VideoLAN\VLC\vlc.exe",
-             "/Applications/VLC.app/Contents/MacOS/VLC"
-            ]
+    r"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
+    r"C:\Program Files\VideoLAN\VLC\vlc.exe",
+    "/Applications/VLC.app/Contents/MacOS/VLC"
+]
 
 VLC_ICONPATH = "vlc.png"
 MPLAYER_ICONPATH = "mplayer.png"
@@ -84,12 +86,13 @@ VLC_MIN_PORT = 10000
 VLC_MAX_PORT = 55000
 
 #These are not changes you're looking for
-MPLAYER_SLAVE_ARGS = [ '-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4']
+MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4']
 # --quiet works with both mpv 0.2 and 0.3
-MPV_SLAVE_ARGS = ['--slave-broken', '--hr-seek=always', '--quiet','--keep-open']
-VLC_SLAVE_ARGS = ['--extraintf=luaintf','--lua-intf=syncplay','--no-quiet','--no-input-fast-seek','--play-and-pause']
-VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance','--no-one-instance-when-started-from-file']
-MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$"
+MPV_SLAVE_ARGS = ['--slave-broken', '--hr-seek=always', '--quiet', '--keep-open']
+VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
+                  '--play-and-pause']
+VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
+MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
 VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_]+)(?:\: )?(?P<argument>.*))"
 UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
 UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
@@ -101,5 +104,5 @@ PRIVACY_SENDHASHED_MODE = "SendHashed"
 PRIVACY_DONTSEND_MODE = "DoNotSend"
 PRIVACY_HIDDENFILENAME = "**Hidden filename**"
 OPTION_AUTO = "Automatic"
-OPTION_ALWAYS= "Always"
+OPTION_ALWAYS = "Always"
 OPTION_NEVER = "Never"

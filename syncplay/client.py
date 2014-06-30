@@ -384,7 +384,7 @@ class SyncplayClient(object):
             return
         self._running = True
         if self._playerClass:
-            self._playerClass.run(self, self._config['playerPath'], self._config['file'], self._config['playerArgs'])
+            reactor.callLater(0.1, self._playerClass.run, self, self._config['playerPath'], self._config['file'], self._config['playerArgs'])
             self._playerClass = None
         self.protocolFactory = SyncClientFactory(self)
         port = int(port)

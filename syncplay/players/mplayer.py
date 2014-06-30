@@ -19,6 +19,7 @@ class MplayerPlayer(BasePlayer):
         self.reactor = reactor
         self._client = client
         self._paused = None
+        self._position = 0.0
         self._duration = None
         self._filename = None
         self._filepath = None
@@ -27,7 +28,7 @@ class MplayerPlayer(BasePlayer):
         except ValueError:
             self._client.ui.showMessage(getMessage("en", "mplayer-file-required-notification"))
             self._client.ui.showMessage(getMessage("en", "mplayer-file-required-notification/example"))
-            self.reactor.callFromThread(self._client.stop, (True),)
+            self.drop()
             return
         self._listener.setDaemon(True)
         self._listener.start()
@@ -60,7 +61,7 @@ class MplayerPlayer(BasePlayer):
         self._client.updateFile(self._filename, self._duration, self._filepath)
 
     def _preparePlayer(self):
-        self.reactor.callFromThread(self._client.initPlayer, (self),)
+        self.reactor.callLater(0, self._client.initPlayer, self)
         self._onFileUpdate()
 
     def askForStatus(self):
@@ -124,22 +125,29 @@ class MplayerPlayer(BasePlayer):
         match = self.RE_ANSWER.match(line)
         if not match:
             return
-        name, value = match.group(1).lower(), match.group(2)
-        if(name == self.POSITION_QUERY):
+
+        name, value =[m for m in match.groups() if m]
+        name = name.lower()
+
+        if name == self.POSITION_QUERY:
             self._position = float(value)
             self._positionAsk.set()
-        elif(name == "pause"):
+        elif name == "pause":
             self._paused = bool(value == 'yes')
             self._pausedAsk.set()
-        elif(name == "length"):
+        elif name == "length":
             self._duration = float(value)
             self._durationAsk.set()
-        elif(name == "path"):
+        elif name == "path":
             self._filepath = value
             self._pathAsk.set()
-        elif(name == "filename"):
+        elif name == "filename":
             self._filename = value.decode('utf-8')
             self._filenameAsk.set()
+        elif name == "exiting":
+            if value != 'Quit':
+                self.reactor.callFromThread(self._client.ui.showErrorMessage, value, True)
+            self.drop()
 
     @staticmethod
     def run(client, playerPath, filePath, args):
@@ -161,7 +169,7 @@ class MplayerPlayer(BasePlayer):
 
     @staticmethod
     def isValidPlayerPath(path):
-        if("mplayer" in path and MplayerPlayer.getExpandedPath(path)):
+        if "mplayer" in path and MplayerPlayer.getExpandedPath(path):
             return True
         return False
 
@@ -184,7 +192,7 @@ class MplayerPlayer(BasePlayer):
     def notMplayer2(self):
         print getMessage("en", "mplayer2-required")
         self._listener.sendLine('quit')
-        self.reactor.callFromThread(self._client.stop, (True),)
+        self.drop()
 
     def _takeLocksDown(self):
         self._durationAsk.set()
@@ -196,12 +204,12 @@ class MplayerPlayer(BasePlayer):
     def drop(self):
         self._listener.sendLine('quit')
         self._takeLocksDown()
-        self.reactor.callFromThread(self._client.stop, (False),)
+        self.reactor.callFromThread(self._client.stop, True)
 
     class __Listener(threading.Thread):
         def __init__(self, playerController, playerPath, filePath, args):
             self.__playerController = playerController
-            if(not filePath):
+            if not filePath:
                 raise ValueError()
             if '://' not in filePath:
                 if not os.path.isfile(filePath) and 'PWD' in os.environ:
@@ -210,7 +218,7 @@ class MplayerPlayer(BasePlayer):
 
             call = [playerPath, filePath]
             call.extend(playerController.SLAVE_ARGS)
-            if(args):
+            if args:
                 call.extend(args)
             # At least mpv may output escape sequences which result in syncplay
             # trying to parse something like
@@ -236,12 +244,12 @@ class MplayerPlayer(BasePlayer):
 
         def run(self):
             line = self.__process.stdout.readline()
-            if("MPlayer 1" in line):
+            if "MPlayer 1" in line:
                 self.__playerController.notMplayer2()
             else:
                 line = line.rstrip("\r\n")
                 self.__playerController.lineReceived(line)
-            while(self.__process.poll() is None):
+            while self.__process.poll() is None:
                 line = self.__process.stdout.readline()
                 line = line.rstrip("\r\n")
                 self.__playerController.lineReceived(line)
