@@ -25,7 +25,7 @@ class SyncClientFactory(ClientFactory):
 
     def startedConnecting(self, connector):
         destination = connector.getDestination()
-        message = getMessage("en", "connection-attempt-notification").format(destination.host, destination.port)
+        message = getMessage("connection-attempt-notification").format(destination.host, destination.port)
         self._client.ui.showMessage(message)
 
     def clientConnectionLost(self, connector, reason):
@@ -33,16 +33,16 @@ class SyncClientFactory(ClientFactory):
             self._client.onDisconnect()
         if self._timesTried < self.retry:
             self._timesTried += 1
-            self._client.ui.showMessage(getMessage("en", "reconnection-attempt-notification"))
+            self._client.ui.showMessage(getMessage("reconnection-attempt-notification"))
             self.reconnecting = True
             reactor.callLater(0.1 * (2 ** self._timesTried), connector.connect)
         else:
-            message = getMessage("en", "disconnection-notification")
+            message = getMessage("disconnection-notification")
             self._client.ui.showErrorMessage(message)
 
     def clientConnectionFailed(self, connector, reason):
         if not self.reconnecting:
-            reactor.callLater(0.1, self._client.ui.showErrorMessage, getMessage("en", "connection-failed-notification"), True)
+            reactor.callLater(0.1, self._client.ui.showErrorMessage, getMessage("connection-failed-notification"), True)
             reactor.callLater(0.1, self._client.stop, True)
         else:
             self.clientConnectionLost(connector, reason)
@@ -93,7 +93,7 @@ class SyncplayClient(object):
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
-            self.ui.showMessage(getMessage("en", "relative-config-notification").format("; ".join(self._config['loadedRelativePaths'])), noPlayer=True, noTimestamp=True)
+            self.ui.showMessage(getMessage("relative-config-notification").format("; ".join(self._config['loadedRelativePaths'])), noPlayer=True, noTimestamp=True)
 
     def initProtocol(self, protocol):
         self._protocol = protocol
@@ -121,7 +121,7 @@ class SyncplayClient(object):
     def checkIfConnected(self):
         if(self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > constants.PROTOCOL_TIMEOUT):
             self._lastGlobalUpdate = None
-            self.ui.showErrorMessage(getMessage("en", "server-timeout-error"))
+            self.ui.showErrorMessage(getMessage("server-timeout-error"))
             self._protocol.drop()
             return False
         return True
@@ -167,7 +167,7 @@ class SyncplayClient(object):
     def _rewindPlayerDueToTimeDifference(self, position, setBy):
         hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
         self.setPosition(position)
-        self.ui.showMessage(getMessage("en", "rewind-notification").format(setBy), hideFromOSD)
+        self.ui.showMessage(getMessage("rewind-notification").format(setBy), hideFromOSD)
         madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
@@ -175,7 +175,7 @@ class SyncplayClient(object):
         hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
         self._player.setPaused(False)
         madeChangeOnPlayer = True
-        self.ui.showMessage(getMessage("en", "unpause-notification").format(setBy), hideFromOSD)
+        self.ui.showMessage(getMessage("unpause-notification").format(setBy), hideFromOSD)
         return madeChangeOnPlayer
 
     def _serverPaused(self, setBy):
@@ -185,9 +185,9 @@ class SyncplayClient(object):
         self._player.setPaused(True)
         madeChangeOnPlayer = True
         if (self.lastLeftTime < time.time() - constants.OSD_DURATION) or (hideFromOSD == True):
-            self.ui.showMessage(getMessage("en", "pause-notification").format(setBy), hideFromOSD)
+            self.ui.showMessage(getMessage("pause-notification").format(setBy), hideFromOSD)
         else:
-            self.ui.showMessage(getMessage("en", "left-paused-notification").format(self.lastLeftUser, setBy), hideFromOSD)
+            self.ui.showMessage(getMessage("left-paused-notification").format(self.lastLeftUser, setBy), hideFromOSD)
         return madeChangeOnPlayer
 
     def _serverSeeked(self, position, setBy):
@@ -198,7 +198,7 @@ class SyncplayClient(object):
             madeChangeOnPlayer = True
         else:
             madeChangeOnPlayer = False
-        message = getMessage("en", "seek-notification").format(setBy, utils.formatTime(self.playerPositionBeforeLastSeek), utils.formatTime(position))
+        message = getMessage("seek-notification").format(setBy, utils.formatTime(self.playerPositionBeforeLastSeek), utils.formatTime(position))
         self.ui.showMessage(message, hideFromOSD)
         return madeChangeOnPlayer
 
@@ -207,11 +207,11 @@ class SyncplayClient(object):
         if(self._config['slowdownThreshold']  < diff and not self._speedChanged):
             self._player.setSpeed(constants.SLOWDOWN_RATE)
             self._speedChanged = True
-            self.ui.showMessage(getMessage("en", "slowdown-notification").format(setBy), hideFromOSD)
+            self.ui.showMessage(getMessage("slowdown-notification").format(setBy), hideFromOSD)
         elif(self._speedChanged and diff < constants.SLOWDOWN_RESET_THRESHOLD):
             self._player.setSpeed(1.00)
             self._speedChanged = False
-            self.ui.showMessage(getMessage("en", "revert-notification"), hideFromOSD)
+            self.ui.showMessage(getMessage("revert-notification"), hideFromOSD)
         madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
@@ -261,7 +261,7 @@ class SyncplayClient(object):
     def setUserOffset(self, time):
         self._userOffset = time
         self.setPosition(self.getGlobalPosition())
-        self.ui.showMessage(getMessage("en", "current-offset-notification").format(self._userOffset))
+        self.ui.showMessage(getMessage("current-offset-notification").format(self._userOffset))
 
     def onDisconnect(self):
         if(self._config['pauseOnLeave']):
@@ -404,7 +404,7 @@ class SyncplayClient(object):
             self.ui.drop()
         reactor.callLater(0.1, reactor.stop)
         if(promptForAction):
-            self.ui.promptFor(getMessage("en", "enter-to-exit-prompt"))
+            self.ui.promptFor(getMessage("enter-to-exit-prompt"))
 
     class _WarningManager(object):
         def __init__(self, player, userlist, ui):
@@ -427,7 +427,7 @@ class SyncplayClient(object):
 
         def _checkRoomForSameFiles(self):
             if (not self._userlist.areAllFilesInRoomSame()):
-                self._ui.showMessage(getMessage("en", "room-files-not-same"), True)
+                self._ui.showMessage(getMessage("room-files-not-same"), True)
                 if(constants.SHOW_OSD_WARNINGS and not self._warnings["room-files-not-same"]['timer'].running):
                     self._warnings["room-files-not-same"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
             elif(self._warnings["room-files-not-same"]['timer'].running):
@@ -435,7 +435,7 @@ class SyncplayClient(object):
 
         def _checkIfYouReAloneInTheRoom(self):
             if (self._userlist.areYouAloneInRoom()):
-                self._ui.showMessage(getMessage("en", "alone-in-the-room"), True)
+                self._ui.showMessage(getMessage("alone-in-the-room"), True)
                 if(constants.SHOW_OSD_WARNINGS and not self._warnings["alone-in-the-room"]['timer'].running):
                     self._warnings["alone-in-the-room"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
             elif(self._warnings["alone-in-the-room"]['timer'].running):
@@ -443,7 +443,7 @@ class SyncplayClient(object):
 
         def __displayMessageOnOSD(self, warningName):
             if (constants.OSD_WARNING_MESSAGE_DURATION > self._warnings[warningName]["displayedFor"]):
-                self._ui.showOSDMessage(getMessage("en", warningName), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL)
+                self._ui.showOSDMessage(getMessage(warningName), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL)
                 self._warnings[warningName]["displayedFor"] += constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL
             else:
                 self._warnings[warningName]["displayedFor"] = 0
@@ -504,16 +504,16 @@ class SyncplayUserlist(object):
                 showOnOSD = constants.SHOW_DIFFERENT_ROOM_OSD
             hideFromOSD = not showOnOSD
         if(room and not file_):
-            message = getMessage("en", "room-join-notification").format(username, room)
+            message = getMessage("room-join-notification").format(username, room)
             self.ui.showMessage(message, hideFromOSD)
         elif (room and file_):
             duration = utils.formatTime(file_['duration'])
-            message = getMessage("en", "playing-notification").format(username, file_['name'], duration)
+            message = getMessage("playing-notification").format(username, file_['name'], duration)
             if(self.currentUser.room <> room or self.currentUser.username == username):
-                message += getMessage("en", "playing-notification/room-addendum").format(room)
+                message += getMessage("playing-notification/room-addendum").format(room)
             self.ui.showMessage(message, hideFromOSD)
             if(self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room):
-                message = getMessage("en", "file-different-notification").format(username)
+                message = getMessage("file-different-notification").format(username)
                 self.ui.showMessage(message, not constants.SHOW_OSD_WARNINGS)
                 differences = []
                 differentName = not utils.sameFilename(self.currentUser.file['name'], file_['name'])
@@ -525,7 +525,7 @@ class SyncplayUserlist(object):
                     differences.append("size")
                 if(differentDuration):
                     differences.append("duration")
-                message = getMessage("en", "file-differences-notification") + ", ".join(differences)
+                message = getMessage("file-differences-notification") + ", ".join(differences)
                 self.ui.showMessage(message, not constants.SHOW_OSD_WARNINGS)
 
     def addUser(self, username, room, file_, noMessage=False):
@@ -546,7 +546,7 @@ class SyncplayUserlist(object):
                     hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
         if(self._users.has_key(username)):
             self._users.pop(username)
-            message = getMessage("en", "left-notification").format(username)
+            message = getMessage("left-notification").format(username)
             self.ui.showMessage(message, hideFromOSD)
             self._client.lastLeftTime = time.time()
             self._client.lastLeftUser = username

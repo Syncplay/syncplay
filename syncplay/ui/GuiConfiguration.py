@@ -57,9 +57,9 @@ class ConfigDialog(QtGui.QDialog):
 
     def runButtonTextUpdate(self):
         if (self.donotstoreCheckbox.isChecked()):
-            self.runButton.setText(getMessage("en", "run-label"))
+            self.runButton.setText(getMessage("run-label"))
         else:
-            self.runButton.setText(getMessage("en", "storeandrun-label"))
+            self.runButton.setText(getMessage("storeandrun-label"))
 
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/client/")
@@ -281,7 +281,7 @@ class ConfigDialog(QtGui.QDialog):
 
         super(ConfigDialog, self).__init__()
 
-        self.setWindowTitle(getMessage("en", "config-window-title"))
+        self.setWindowTitle(getMessage("config-window-title"))
         self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QIcon(resourcespath + "syncplay.png"))
 
@@ -292,24 +292,24 @@ class ConfigDialog(QtGui.QDialog):
         else:
             host = config['host'] + ":" + str(config['port'])
 
-        self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("en", "connection-group-title"))
+        self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
         self.hostTextbox = QLineEdit(host, self)
-        self.hostLabel = QLabel(getMessage("en", "host-label"), self)
+        self.hostLabel = QLabel(getMessage("host-label"), self)
         self.usernameTextbox = QLineEdit(config['name'], self)
-        self.serverpassLabel = QLabel(getMessage("en", "password-label"), self)
+        self.serverpassLabel = QLabel(getMessage("password-label"), self)
         self.defaultroomTextbox = QLineEdit(config['room'], self)
-        self.usernameLabel = QLabel(getMessage("en", "username-label"), self)
+        self.usernameLabel = QLabel(getMessage("username-label"), self)
         self.serverpassTextbox = QLineEdit(config['password'], self)
-        self.defaultroomLabel = QLabel(getMessage("en", "room-label"), self)
+        self.defaultroomLabel = QLabel(getMessage("room-label"), self)
 
-        self.hostLabel.setToolTip(getMessage("en", "host-tooltip"))
-        self.hostTextbox.setToolTip(getMessage("en", "host-tooltip"))
-        self.usernameLabel.setToolTip(getMessage("en", "username-tooltip"))
-        self.usernameTextbox.setToolTip(getMessage("en", "username-tooltip"))
-        self.serverpassLabel.setToolTip(getMessage("en", "password-tooltip"))
-        self.serverpassTextbox.setToolTip(getMessage("en", "password-tooltip"))
-        self.defaultroomLabel.setToolTip(getMessage("en", "room-tooltip"))
-        self.defaultroomTextbox.setToolTip(getMessage("en", "room-tooltip"))
+        self.hostLabel.setToolTip(getMessage("host-tooltip"))
+        self.hostTextbox.setToolTip(getMessage("host-tooltip"))
+        self.usernameLabel.setToolTip(getMessage("username-tooltip"))
+        self.usernameTextbox.setToolTip(getMessage("username-tooltip"))
+        self.serverpassLabel.setToolTip(getMessage("password-tooltip"))
+        self.serverpassTextbox.setToolTip(getMessage("password-tooltip"))
+        self.defaultroomLabel.setToolTip(getMessage("room-tooltip"))
+        self.defaultroomTextbox.setToolTip(getMessage("room-tooltip"))
 
         self.connectionSettingsLayout = QtGui.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
@@ -322,7 +322,7 @@ class ConfigDialog(QtGui.QDialog):
         self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
 
-        self.mediaplayerSettingsGroup = QtGui.QGroupBox(getMessage("en", "media-setting-title"))
+        self.mediaplayerSettingsGroup = QtGui.QGroupBox(getMessage("media-setting-title"))
         self.executableiconImage = QtGui.QImage()
         self.executableiconLabel = QLabel(self)
         self.executableiconLabel.setMinimumWidth(16)
@@ -334,18 +334,18 @@ class ConfigDialog(QtGui.QDialog):
         self.executablepathCombobox.setMaximumWidth(200)
         self.executablepathCombobox.editTextChanged.connect(self.updateExecutableIcon)
 
-        self.executablepathLabel = QLabel(getMessage("en", "executable-path-label"), self)
-        self.executablebrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'), getMessage("en", "browse-label"))
+        self.executablepathLabel = QLabel(getMessage("executable-path-label"), self)
+        self.executablebrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'), getMessage("browse-label"))
         self.executablebrowseButton.clicked.connect(self.browsePlayerpath)
         self.mediapathTextbox = QLineEdit(config['file'], self)
-        self.mediapathLabel = QLabel(getMessage("en", "media-path-label"), self)
-        self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'), getMessage("en", "browse-label"))
+        self.mediapathLabel = QLabel(getMessage("media-path-label"), self)
+        self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'), getMessage("browse-label"))
         self.mediabrowseButton.clicked.connect(self.browseMediapath)
 
-        self.executablepathLabel.setToolTip(getMessage("en", "executable-path-tooltip"))
-        self.executablepathCombobox.setToolTip(getMessage("en", "executable-path-tooltip"))
-        self.mediapathLabel.setToolTip(getMessage("en", "media-path-tooltip"))
-        self.mediapathTextbox.setToolTip(getMessage("en", "media-path-tooltip"))
+        self.executablepathLabel.setToolTip(getMessage("executable-path-tooltip"))
+        self.executablepathCombobox.setToolTip(getMessage("executable-path-tooltip"))
+        self.mediapathLabel.setToolTip(getMessage("media-path-tooltip"))
+        self.mediapathTextbox.setToolTip(getMessage("media-path-tooltip"))
 
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
@@ -357,11 +357,11 @@ class ConfigDialog(QtGui.QDialog):
         self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton , 1, 3)
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
 
-        self.moreSettingsGroup = QtGui.QGroupBox(getMessage("en", "more-title"))
+        self.moreSettingsGroup = QtGui.QGroupBox(getMessage("more-title"))
 
         self.moreSettingsGroup.setCheckable(True)
 
-        self.slowdownThresholdLabel = QLabel(getMessage("en", "slowdown-threshold-label"), self)
+        self.slowdownThresholdLabel = QLabel(getMessage("slowdown-threshold-label"), self)
         self.slowdownThresholdSpinbox = QDoubleSpinBox()
         try:
             self.slowdownThresholdSpinbox.setValue(float(config['slowdownThreshold']))
@@ -372,10 +372,10 @@ class ConfigDialog(QtGui.QDialog):
         self.slowdownThresholdSpinbox.setMaximumWidth(80)
         self.slowdownThresholdSpinbox.setMinimum(constants.MINIMUM_SLOWDOWN_THRESHOLD)
         self.slowdownThresholdSpinbox.setSingleStep(0.1)
-        self.slowdownThresholdSpinbox.setSuffix(getMessage("en", "seconds-suffix"))
+        self.slowdownThresholdSpinbox.setSuffix(getMessage("seconds-suffix"))
         self.slowdownThresholdSpinbox.adjustSize()
 
-        self.rewindThresholdLabel = QLabel(getMessage("en", "rewind-threshold-label"), self)
+        self.rewindThresholdLabel = QLabel(getMessage("rewind-threshold-label"), self)
         self.rewindThresholdSpinbox = QDoubleSpinBox()
         try:
             self.rewindThresholdSpinbox.setValue(float(config['rewindThreshold']))
@@ -386,46 +386,46 @@ class ConfigDialog(QtGui.QDialog):
         self.rewindThresholdSpinbox.setMaximumWidth(80)
         self.rewindThresholdSpinbox.setMinimum(0)
         self.rewindThresholdSpinbox.setSingleStep(0.1)
-        self.rewindThresholdSpinbox.setSpecialValueText(getMessage("en", "never-rewind-value"))
-        self.rewindThresholdSpinbox.setSuffix(getMessage("en", "seconds-suffix"))
+        self.rewindThresholdSpinbox.setSpecialValueText(getMessage("never-rewind-value"))
+        self.rewindThresholdSpinbox.setSuffix(getMessage("seconds-suffix"))
         self.rewindThresholdSpinbox.adjustSize()
 
-        self.slowdownThresholdLabel.setToolTip(getMessage("en", "slowdown-threshold-tooltip"))
-        self.slowdownThresholdSpinbox.setToolTip(getMessage("en", "slowdown-threshold-tooltip"))
-        self.rewindThresholdLabel.setToolTip(getMessage("en", "rewind-threshold-tooltip"))
-        self.rewindThresholdSpinbox.setToolTip(getMessage("en", "rewind-threshold-tooltip"))
+        self.slowdownThresholdLabel.setToolTip(getMessage("slowdown-threshold-tooltip"))
+        self.slowdownThresholdSpinbox.setToolTip(getMessage("slowdown-threshold-tooltip"))
+        self.rewindThresholdLabel.setToolTip(getMessage("rewind-threshold-tooltip"))
+        self.rewindThresholdSpinbox.setToolTip(getMessage("rewind-threshold-tooltip"))
 
-        self.slowdownLabel = QLabel(getMessage("en", "slowdown-label"), self)
+        self.slowdownLabel = QLabel(getMessage("slowdown-label"), self)
         self.slowdownButtonGroup = QButtonGroup()
-        self.slowdownAutoOption = QRadioButton(getMessage("en", "slowdown-auto-option"))
-        self.slowdownAlwaysOption = QRadioButton(getMessage("en", "slowdown-always-option"))
-        self.slowdownNeverOption = QRadioButton(getMessage("en", "slowdown-never-option"))
+        self.slowdownAutoOption = QRadioButton(getMessage("slowdown-auto-option"))
+        self.slowdownAlwaysOption = QRadioButton(getMessage("slowdown-always-option"))
+        self.slowdownNeverOption = QRadioButton(getMessage("slowdown-never-option"))
         self.slowdownButtonGroup.addButton(self.slowdownAutoOption)
         self.slowdownButtonGroup.addButton(self.slowdownAlwaysOption)
         self.slowdownButtonGroup.addButton(self.slowdownNeverOption)
 
-        self.filenameprivacyLabel = QLabel(getMessage("en", "filename-privacy-label"), self)
+        self.filenameprivacyLabel = QLabel(getMessage("filename-privacy-label"), self)
         self.filenameprivacyButtonGroup = QButtonGroup()
-        self.filenameprivacySendRawOption = QRadioButton(getMessage("en", "privacy-sendraw-option"))
-        self.filenameprivacySendHashedOption = QRadioButton(getMessage("en", "privacy-sendhashed-option"))
-        self.filenameprivacyDontSendOption = QRadioButton(getMessage("en", "privacy-dontsend-option"))
+        self.filenameprivacySendRawOption = QRadioButton(getMessage("privacy-sendraw-option"))
+        self.filenameprivacySendHashedOption = QRadioButton(getMessage("privacy-sendhashed-option"))
+        self.filenameprivacyDontSendOption = QRadioButton(getMessage("privacy-dontsend-option"))
         self.filenameprivacyButtonGroup.addButton(self.filenameprivacySendRawOption)
         self.filenameprivacyButtonGroup.addButton(self.filenameprivacySendHashedOption)
         self.filenameprivacyButtonGroup.addButton(self.filenameprivacyDontSendOption)
 
-        self.filesizeprivacyLabel = QLabel(getMessage("en", "filesize-privacy-label"), self)
+        self.filesizeprivacyLabel = QLabel(getMessage("filesize-privacy-label"), self)
         self.filesizeprivacyButtonGroup = QButtonGroup()
-        self.filesizeprivacySendRawOption = QRadioButton(getMessage("en", "privacy-sendraw-option"))
-        self.filesizeprivacySendHashedOption = QRadioButton(getMessage("en", "privacy-sendhashed-option"))
-        self.filesizeprivacyDontSendOption = QRadioButton(getMessage("en", "privacy-dontsend-option"))
+        self.filesizeprivacySendRawOption = QRadioButton(getMessage("privacy-sendraw-option"))
+        self.filesizeprivacySendHashedOption = QRadioButton(getMessage("privacy-sendhashed-option"))
+        self.filesizeprivacyDontSendOption = QRadioButton(getMessage("privacy-dontsend-option"))
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendRawOption)
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendHashedOption)
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacyDontSendOption)
 
-        self.dontslowwithmeCheckbox = QCheckBox(getMessage("en", "dontslowwithme-label"))
-        self.pauseonleaveCheckbox = QCheckBox(getMessage("en", "pauseonleave-label"))
-        self.alwaysshowCheckbox = QCheckBox(getMessage("en", "alwayshow-label"))
-        self.donotstoreCheckbox = QCheckBox(getMessage("en", "donotstore-label"))
+        self.dontslowwithmeCheckbox = QCheckBox(getMessage("dontslowwithme-label"))
+        self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
+        self.alwaysshowCheckbox = QCheckBox(getMessage("alwayshow-label"))
+        self.donotstoreCheckbox = QCheckBox(getMessage("donotstore-label"))
 
         filenamePrivacyMode = config['filenamePrivacyMode']
         if filenamePrivacyMode == constants.PRIVACY_DONTSEND_MODE:
@@ -446,14 +446,14 @@ class ConfigDialog(QtGui.QDialog):
         if config['pauseOnLeave'] == True:
             self.pauseonleaveCheckbox.setChecked(True)
 
-        self.filenameprivacyLabel.setToolTip(getMessage("en", "filename-privacy-tooltip"))
-        self.filenameprivacySendRawOption.setToolTip(getMessage("en", "privacy-sendraw-tooltip"))
-        self.filenameprivacySendHashedOption.setToolTip(getMessage("en", "privacy-sendhashed-tooltip"))
-        self.filenameprivacyDontSendOption.setToolTip(getMessage("en", "privacy-dontsend-tooltip"))
-        self.filesizeprivacyLabel.setToolTip(getMessage("en", "filesize-privacy-tooltip"))
-        self.filesizeprivacySendRawOption.setToolTip(getMessage("en", "privacy-sendraw-tooltip"))
-        self.filesizeprivacySendHashedOption.setToolTip(getMessage("en", "privacy-sendhashed-tooltip"))
-        self.filesizeprivacyDontSendOption.setToolTip(getMessage("en", "privacy-dontsend-tooltip"))
+        self.filenameprivacyLabel.setToolTip(getMessage("filename-privacy-tooltip"))
+        self.filenameprivacySendRawOption.setToolTip(getMessage("privacy-sendraw-tooltip"))
+        self.filenameprivacySendHashedOption.setToolTip(getMessage("privacy-sendhashed-tooltip"))
+        self.filenameprivacyDontSendOption.setToolTip(getMessage("privacy-dontsend-tooltip"))
+        self.filesizeprivacyLabel.setToolTip(getMessage("filesize-privacy-tooltip"))
+        self.filesizeprivacySendRawOption.setToolTip(getMessage("privacy-sendraw-tooltip"))
+        self.filesizeprivacySendHashedOption.setToolTip(getMessage("privacy-sendhashed-tooltip"))
+        self.filesizeprivacyDontSendOption.setToolTip(getMessage("privacy-dontsend-tooltip"))
 
         slowdownMode = config['slowMeOnDesync']
         if slowdownMode == constants.OPTION_ALWAYS:
@@ -465,15 +465,15 @@ class ConfigDialog(QtGui.QDialog):
         if config['dontSlowDownWithMe'] == True:
             self.dontslowwithmeCheckbox.setChecked(True)
 
-        self.slowdownLabel.setToolTip(getMessage("en", "slowdown-tooltip"))
-        self.slowdownAutoOption.setToolTip(getMessage("en", "slowdown-auto-tooltip"))
-        self.slowdownAlwaysOption.setToolTip(getMessage("en", "slowdown-always-tooltip"))
-        self.slowdownNeverOption.setToolTip(getMessage("en", "slowdown-never-tooltip"))
+        self.slowdownLabel.setToolTip(getMessage("slowdown-tooltip"))
+        self.slowdownAutoOption.setToolTip(getMessage("slowdown-auto-tooltip"))
+        self.slowdownAlwaysOption.setToolTip(getMessage("slowdown-always-tooltip"))
+        self.slowdownNeverOption.setToolTip(getMessage("slowdown-never-tooltip"))
 
-        self.dontslowwithmeCheckbox.setToolTip(getMessage("en", "dontslowwithme-tooltip"))
-        self.pauseonleaveCheckbox.setToolTip(getMessage("en", "pauseonleave-tooltip"))
-        self.alwaysshowCheckbox.setToolTip(getMessage("en", "alwayshow-tooltip"))
-        self.donotstoreCheckbox.setToolTip(getMessage("en", "donotstore-tooltip"))
+        self.dontslowwithmeCheckbox.setToolTip(getMessage("dontslowwithme-tooltip"))
+        self.pauseonleaveCheckbox.setToolTip(getMessage("pauseonleave-tooltip"))
+        self.alwaysshowCheckbox.setToolTip(getMessage("alwayshow-tooltip"))
+        self.donotstoreCheckbox.setToolTip(getMessage("donotstore-tooltip"))
 
         self.moreSettingsLayout = QtGui.QGridLayout()
 
@@ -518,7 +518,7 @@ class ConfigDialog(QtGui.QDialog):
 
         self.moreSettingsGroup.setLayout(self.moreSettingsLayout)
 
-        self.showmoreCheckbox = QCheckBox(getMessage("en", "more-title"))
+        self.showmoreCheckbox = QCheckBox(getMessage("more-title"))
 
         if self.getMoreState() == False:
             self.showmoreCheckbox.setChecked(False)
@@ -531,7 +531,7 @@ class ConfigDialog(QtGui.QDialog):
         if config['forceGuiPrompt'] == False:
             self.alwaysshowCheckbox.setChecked(True)
 
-        self.showmoreCheckbox.setToolTip(getMessage("en", "more-tooltip"))
+        self.showmoreCheckbox.setToolTip(getMessage("more-tooltip"))
 
 
         self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
@@ -551,15 +551,15 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addSpacing(12)
 
         self.topLayout = QtGui.QHBoxLayout()
-        self.helpButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'help.png'), getMessage("en", "help-label"))
-        self.helpButton.setToolTip(getMessage("en", "help-tooltip"))
+        self.helpButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'help.png'), getMessage("help-label"))
+        self.helpButton.setToolTip(getMessage("help-tooltip"))
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.pressed.connect(self.openHelp)
-        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("en", "storeandrun-label"))
+        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("storeandrun-label"))
         self.runButton.pressed.connect(self._saveDataAndLeave)
         if config['noStore'] == True:
             self.donotstoreCheckbox.setChecked(True)
-            self.runButton.setText(getMessage("en", "run-label"))
+            self.runButton.setText(getMessage("run-label"))
         self.topLayout.addWidget(self.helpButton, Qt.AlignLeft)
         self.topLayout.addWidget(self.runButton, Qt.AlignRight)
         self.mainLayout.addLayout(self.topLayout)
@@ -571,4 +571,4 @@ class ConfigDialog(QtGui.QDialog):
         self.setAcceptDrops(True)
 
         if self.datacleared == True:
-            QtGui.QMessageBox.information(self, "Syncplay", getMessage("en", "gui-data-cleared-notification"))
+            QtGui.QMessageBox.information(self, "Syncplay", getMessage("gui-data-cleared-notification"))

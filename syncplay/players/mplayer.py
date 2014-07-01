@@ -26,8 +26,8 @@ class MplayerPlayer(BasePlayer):
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:
-            self._client.ui.showMessage(getMessage("en", "mplayer-file-required-notification"))
-            self._client.ui.showMessage(getMessage("en", "mplayer-file-required-notification/example"))
+            self._client.ui.showMessage(getMessage("mplayer-file-required-notification"))
+            self._client.ui.showMessage(getMessage("mplayer-file-required-notification/example"))
             self.drop()
             return
         self._listener.setDaemon(True)
@@ -146,7 +146,7 @@ class MplayerPlayer(BasePlayer):
             self._filenameAsk.set()
         elif name == "exiting":
             if value != 'Quit':
-                self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("en", "media-player-error").format(value), True)
+                self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("media-player-error").format(value), True)
             self.drop()
 
     @staticmethod
@@ -190,7 +190,7 @@ class MplayerPlayer(BasePlayer):
                 return path
 
     def notMplayer2(self):
-        print getMessage("en", "mplayer2-required")
+        print getMessage("mplayer2-required")
         self._listener.sendLine('quit')
         self.drop()
 

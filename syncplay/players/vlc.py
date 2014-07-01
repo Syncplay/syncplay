@@ -42,14 +42,14 @@ class VlcPlayer(BasePlayer):
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args, self._vlcready, self._vlcclosed)
         except ValueError:
-            self._client.ui.showErrorMessage(getMessage("en", "vlc-failed-connection"), True)
+            self._client.ui.showErrorMessage(getMessage("vlc-failed-connection"), True)
             self.reactor.callFromThread(self._client.stop, (True),)
             return
         self._listener.setDaemon(True)
         self._listener.start()
         if(not self._vlcready.wait(constants.VLC_OPEN_MAX_WAIT_TIME)):
             self._vlcready.set()
-            self._client.ui.showErrorMessage(getMessage("en", "vlc-failed-connection"), True)
+            self._client.ui.showErrorMessage(getMessage("vlc-failed-connection"), True)
             self.reactor.callFromThread(self._client.stop, (True),)
         self.reactor.callFromThread(self._client.initPlayer, (self),)
 
@@ -159,11 +159,11 @@ class VlcPlayer(BasePlayer):
         elif(line.startswith("interface-version: ")):
             interface_version = line[19:24]
             if (int(interface_version.replace(".", "")) < int(constants.VLC_INTERFACE_MIN_VERSION.replace(".", ""))):
-                self._client.ui.showErrorMessage(getMessage("en", "vlc-interface-version-mismatch").format(str(interface_version), str(constants.VLC_INTERFACE_MIN_VERSION)))
+                self._client.ui.showErrorMessage(getMessage("vlc-interface-version-mismatch").format(str(interface_version), str(constants.VLC_INTERFACE_MIN_VERSION)))
         elif (line[:16] == "VLC media player"):
             vlc_version = line[17:22]
             if (int(vlc_version.replace(".", "")) < int(constants.VLC_MIN_VERSION.replace(".", ""))):
-                self._client.ui.showErrorMessage(getMessage("en", "vlc-version-mismatch").format(str(vlc_version), str(constants.VLC_MIN_VERSION)))
+                self._client.ui.showErrorMessage(getMessage("vlc-version-mismatch").format(str(vlc_version), str(constants.VLC_MIN_VERSION)))
             self._vlcready.set()
             self._listener.sendLine("get-interface-version")
 
@@ -241,9 +241,9 @@ class VlcPlayer(BasePlayer):
                                 if (int(interface_version.replace(".", "")) >= int(constants.VLC_INTERFACE_MIN_VERSION.replace(".", ""))):
                                     return True
                                 else:
-                                    playerController._client.ui.showErrorMessage(getMessage("en", "vlc-interface-oldversion-ignored"))
+                                    playerController._client.ui.showErrorMessage(getMessage("vlc-interface-oldversion-ignored"))
                                     return False
-                playerController._client.ui.showErrorMessage(getMessage("en", "vlc-interface-not-installed"))
+                playerController._client.ui.showErrorMessage(getMessage("vlc-interface-not-installed"))
                 return False
             if sys.platform.startswith('linux'):
                 playerController.vlcIntfPath = "/usr/lib/vlc/lua/intf/"
@@ -279,10 +279,10 @@ class VlcPlayer(BasePlayer):
                     if "Hosting Syncplay" in line:
                         break
                     elif "Couldn't find lua interface" in line:
-                        playerController._client.ui.showErrorMessage(getMessage("en", "vlc-failed-noscript").format(line), True)
+                        playerController._client.ui.showErrorMessage(getMessage("vlc-failed-noscript").format(line), True)
                         break
                     elif "lua interface error" in line:
-                        playerController._client.ui.showErrorMessage(getMessage("en", "media-player-error").format(line), True)
+                        playerController._client.ui.showErrorMessage(getMessage("media-player-error").format(line), True)
                         break
             threading.Thread.__init__(self, name="VLC Listener")
             asynchat.async_chat.__init__(self)

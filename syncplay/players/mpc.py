@@ -42,7 +42,7 @@ class MpcHcApi:
         args = "%s /slave %s" % (" ".join(args), str(self.__listener.hwnd))
         win32api.ShellExecute(0, "open", path, args, None, 1)
         if(not self.__locks.mpcStart.wait(constants.MPC_OPEN_MAX_WAIT_TIME)):
-            raise self.NoSlaveDetectedException(getMessage("en", "mpc-slave-error"))
+            raise self.NoSlaveDetectedException(getMessage("mpc-slave-error"))
         self.__mpcExistenceChecking.start() 
 
     def openFile(self, filePath):
@@ -359,12 +359,12 @@ class MPCHCAPIPlayer(BasePlayer):
     def __dropIfNotSufficientVersion(self):
         self._mpcApi.askForVersion()
         if(not self.__versionUpdate.wait(0.1) or not self._mpcApi.version):
-            self.reactor.callFromThread(self.__client.ui.showErrorMessage, getMessage("en", "mpc-version-insufficient-error").format(constants.MPC_MIN_VER), True)
+            self.reactor.callFromThread(self.__client.ui.showErrorMessage, getMessage("mpc-version-insufficient-error").format(constants.MPC_MIN_VER), True)
             self.reactor.callFromThread(self.__client.stop, True)
             
     def __testMpcReady(self):
         if(not self.__preventAsking.wait(10)):
-            raise Exception(getMessage("en", "player-file-open-error"))
+            raise Exception(getMessage("player-file-open-error"))
         
     def __makePing(self):
         try:

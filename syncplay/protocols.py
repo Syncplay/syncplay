@@ -23,7 +23,7 @@ class JSONCommandProtocol(LineReceiver):
             elif command == "Error":
                 self.handleError(message[1])
             else:
-                self.dropWithError(getMessage("en", "unknown-command-server-error").format(message[1]))  # TODO: log, not drop
+                self.dropWithError(getMessage("unknown-command-server-error").format(message[1]))  # TODO: log, not drop
 
     def lineReceived(self, line):
         line = line.strip()
@@ -32,7 +32,7 @@ class JSONCommandProtocol(LineReceiver):
         try:
             messages = json.loads(line)
         except:
-            self.dropWithError(getMessage("en", "not-json-server-error").format(line))
+            self.dropWithError(getMessage("not-json-server-error").format(line))
             return
         self.handleMessages(messages)
 
@@ -77,16 +77,16 @@ class SyncClientProtocol(JSONCommandProtocol):
     def handleHello(self, hello):
         username, roomName, version, motd = self._extractHelloArguments(hello)
         if(not username or not roomName or not version):
-            self.dropWithError(getMessage("en", "hello-server-error").format(hello))
+            self.dropWithError(getMessage("hello-server-error").format(hello))
         elif(version.split(".")[0:2] != syncplay.version.split(".")[0:2]):
-            self.dropWithError(getMessage("en", "version-mismatch-server-error".format(hello)))
+            self.dropWithError(getMessage("version-mismatch-server-error".format(hello)))
         else:
             self._client.setUsername(username)
             self._client.setRoom(roomName)
         self.logged = True
         if(motd):
             self._client.ui.showMessage(motd, True, True)
-        self._client.ui.showMessage(getMessage("en", "connected-successful-notification"))
+        self._client.ui.showMessage(getMessage("connected-successful-notification"))
         self._client.sendFile()
 
     def sendHello(self):
@@ -237,12 +237,12 @@ class SyncServerProtocol(JSONCommandProtocol):
         @wraps(f)
         def wrapper(self, *args, **kwds):
             if(not self._logged):
-                self.dropWithError(getMessage("en", "not-known-server-error"))
+                self.dropWithError(getMessage("not-known-server-error"))
             return f(self, *args, **kwds)
         return wrapper
 
     def dropWithError(self, error):
-        print getMessage("en", "client-drop-server-error").format(self.transport.getPeer().host, error)
+        print getMessage("client-drop-server-error").format(self.transport.getPeer().host, error)
         self.sendError(error)
         self.drop()
 
@@ -268,19 +268,19 @@ class SyncServerProtocol(JSONCommandProtocol):
     def _checkPassword(self, serverPassword):
         if(self._factory.password):
             if(not serverPassword):
-                self.dropWithError(getMessage("en", "password-required-server-error"))
+                self.dropWithError(getMessage("password-required-server-error"))
                 return False
             if(serverPassword != self._factory.password):
-                self.dropWithError(getMessage("en", "wrong-password-server-error"))
+                self.dropWithError(getMessage("wrong-password-server-error"))
                 return False
         return True
 
     def handleHello(self, hello):
         username, serverPassword, roomName, roomPassword, version = self._extractHelloArguments(hello)
         if(not username or not roomName or not version):
-            self.dropWithError(getMessage("en", "hello-server-error"))
+            self.dropWithError(getMessage("hello-server-error"))
         elif(version.split(".")[0:2] != syncplay.version.split(".")[0:2]):
-            self.dropWithError(getMessage("en", "version-mismatch-server-error"))
+            self.dropWithError(getMessage("version-mismatch-server-error"))
         else:
             if(not self._checkPassword(serverPassword)):
                 return

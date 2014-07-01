@@ -15,7 +15,7 @@ from pprint import pprint
 
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False):
-        print getMessage("en", "welcome-server-notification").format(syncplay.version)
+        print getMessage("welcome-server-notification").format(syncplay.version)
         if(password):
             password = hashlib.md5(password).hexdigest()
         self.password = password
@@ -46,13 +46,13 @@ class SyncFactory(Factory):
             try:
                 motd = Template(tmpl).substitute(args)
                 if oldClient:
-                    motdwarning = getMessage("en", "new-syncplay-available-motd-message").format(clientVersion)
+                    motdwarning = getMessage("new-syncplay-available-motd-message").format(clientVersion)
                     motd = "{}\n{}".format(motdwarning, motd)
-                return motd if len(motd) < constants.SERVER_MAX_TEMPLATE_LENGTH else getMessage("en", "server-messed-up-motd-too-long").format(constants.SERVER_MAX_TEMPLATE_LENGTH, len(motd))
+                return motd if len(motd) < constants.SERVER_MAX_TEMPLATE_LENGTH else getMessage("server-messed-up-motd-too-long").format(constants.SERVER_MAX_TEMPLATE_LENGTH, len(motd))
             except ValueError:
-                return getMessage("en", "server-messed-up-motd-unescaped-placeholders")
+                return getMessage("server-messed-up-motd-unescaped-placeholders")
         elif oldClient:
-            return getMessage("en", "new-syncplay-available-motd-message").format(clientVersion)
+            return getMessage("new-syncplay-available-motd-message").format(clientVersion)
         else:
             return ""
 
@@ -337,9 +337,9 @@ class ConfigurationGetter(object):
         return self._args
 
     def _prepareArgParser(self):
-        self._argparser = argparse.ArgumentParser(description=getMessage("en", "server-argument-description"),
-                                         epilog=getMessage("en", "server-argument-epilog"))
-        self._argparser.add_argument('--port', metavar='port', type=str, nargs='?', help=getMessage("en", "server-port-argument"))
-        self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("en", "server-password-argument"))
-        self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("en", "server-isolate-room-argument"))
-        self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("en", "server-motd-argument"))
+        self._argparser = argparse.ArgumentParser(description=getMessage("server-argument-description"),
+                                         epilog=getMessage("server-argument-epilog"))
+        self._argparser.add_argument('--port', metavar='port', type=str, nargs='?', help=getMessage("server-port-argument"))
+        self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
+        self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
+        self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))

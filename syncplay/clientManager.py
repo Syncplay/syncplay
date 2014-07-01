@@ -12,5 +12,5 @@ class SyncplayClientManager(object):
             interface.addClient(syncplayClient)
             syncplayClient.start(config['host'], config['port'])
         else:
-            interface.showErrorMessage(getMessage("en", "unable-to-start-client-error"), True)
+            interface.showErrorMessage(getMessage("unable-to-start-client-error"), True)
         

@@ -287,13 +287,13 @@ pl = {
 messages = {
            "en": en,
            "pl": pl,
-           "current": ""
+           "current": None
            }
 
 def setLanguage(lang):
     messages["current"] = lang
 
-def getMessage(locale, type_):
+def getMessage(type_, locale=None):
     if(constants.SHOW_BUTTON_LABELS == False):
         if("-guibuttonlabel" in type_):
             return ""
@@ -301,12 +301,12 @@ def getMessage(locale, type_):
         if("-tooltip" in type_):
             return ""
     lang = messages["current"]
-    if(messages.has_key(lang)):
-        if(messages[lang].has_key(type_)):
-            return unicode(messages[lang][type_])
-    if(messages.has_key(locale)):
+    if(locale and messages.has_key(locale)):
         if(messages[locale].has_key(type_)):
             return unicode(messages[locale][type_])
+    if(lang and messages.has_key(lang)):
+        if(messages[lang].has_key(type_)):
+            return unicode(messages[lang][type_])
     if(messages["en"].has_key(type_)):
         return unicode(messages["en"][type_])
     else:

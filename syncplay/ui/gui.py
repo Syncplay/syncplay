@@ -31,7 +31,7 @@ class MainWindow(QtGui.QMainWindow):
     def showUserList(self, currentUser, rooms):
         self._usertreebuffer = QtGui.QStandardItemModel()
         self._usertreebuffer.setColumnCount(2)
-        self._usertreebuffer.setHorizontalHeaderLabels((getMessage("en", "roomuser-heading-label"),getMessage("en", "fileplayed-heading-label")))
+        self._usertreebuffer.setHorizontalHeaderLabels((getMessage("roomuser-heading-label"),getMessage("fileplayed-heading-label")))
         usertreeRoot = self._usertreebuffer.invisibleRootItem()
         
         for room in rooms:
@@ -59,15 +59,15 @@ class MainWindow(QtGui.QMainWindow):
                         differentDuration = not sameDuration
                         if (sameName or sameRoom):
                             if (differentSize and sameDuration):
-                                fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("en", "differentsize-note")))
+                                fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("differentsize-note")))
                             elif (differentSize and differentDuration):
-                                fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("en", "differentsizeandduration-note")))
+                                fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("differentsizeandduration-note")))
                             elif (differentDuration):
-                                fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("en", "differentduration-note")))
+                                fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("differentduration-note")))
                             if (sameRoom and (differentName or differentSize or differentDuration)):
                                 fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
                 else:
-                    fileitem = QtGui.QStandardItem(getMessage("en", "nofile-note"))
+                    fileitem = QtGui.QStandardItem(getMessage("nofile-note"))
                     if (room == currentUser.room):
                         fileitem.setForeground(QtGui.QBrush(QtGui.QColor('blue')))
                 if(currentUser.username == user.username):
@@ -177,7 +177,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             defaultdirectory = ""
         browserfilter = "All files (*)"       
-        fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,getMessage("en", "browseformedia-label"),defaultdirectory,
+        fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,getMessage("browseformedia-label"),defaultdirectory,
                 browserfilter, "", options)
         if fileName:
             if sys.platform.startswith('win'):
@@ -196,8 +196,8 @@ class MainWindow(QtGui.QMainWindow):
             return None
         
     def setOffset(self):
-        newoffset, ok = QtGui.QInputDialog.getText(self,getMessage("en","setoffset-msgbox-label"),
-                getMessage("en","offsetinfo-msgbox-label"), QtGui.QLineEdit.Normal,
+        newoffset, ok = QtGui.QInputDialog.getText(self,getMessage("setoffset-msgbox-label"),
+                getMessage("offsetinfo-msgbox-label"), QtGui.QLineEdit.Normal,
                 "")
         if ok and newoffset != '':
             o = re.match(constants.UI_OFFSET_REGEX, "o " + newoffset)
@@ -231,7 +231,7 @@ class MainWindow(QtGui.QMainWindow):
         window.outputLayout = QtGui.QVBoxLayout()
         window.outputbox = QtGui.QTextEdit()
         window.outputbox.setReadOnly(True)  
-        window.outputlabel = QtGui.QLabel(getMessage("en", "notifications-heading-label"))
+        window.outputlabel = QtGui.QLabel(getMessage("notifications-heading-label"))
         window.outputFrame = QtGui.QFrame()
         window.outputFrame.setLineWidth(0)
         window.outputFrame.setMidLineWidth(0)
@@ -245,7 +245,7 @@ class MainWindow(QtGui.QMainWindow):
         window.listTreeView = QtGui.QTreeView()
         window.listTreeView.setModel(window.listTreeModel)
         window.listTreeView.doubleClicked.connect(self.roomClicked)
-        window.listlabel = QtGui.QLabel(getMessage("en", "userlist-heading-label"))
+        window.listlabel = QtGui.QLabel(getMessage("userlist-heading-label"))
         window.listFrame = QtGui.QFrame()
         window.listFrame.setLineWidth(0)
         window.listFrame.setMidLineWidth(0)
@@ -259,7 +259,7 @@ class MainWindow(QtGui.QMainWindow):
             window.contactLabel.setLineWidth(1)
             window.contactLabel.setMidLineWidth(0)
             window.contactLabel.setMargin(2)
-            window.contactLabel.setText(getMessage("en","contact-label"))
+            window.contactLabel.setText(getMessage("contact-label"))
             window.contactLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
             window.contactLabel.setOpenExternalLinks(True)
             window.listLayout.addWidget(window.contactLabel)
@@ -286,16 +286,16 @@ class MainWindow(QtGui.QMainWindow):
         window.mainLayout.addLayout(window.bottomLayout, Qt.AlignLeft)
 
     def addRoomBox(self, window):
-        window.roomGroup = QtGui.QGroupBox(getMessage("en", "room-heading-label"))
+        window.roomGroup = QtGui.QGroupBox(getMessage("room-heading-label"))
         
         window.roomInput = QtGui.QLineEdit()
         window.roomInput.returnPressed.connect(self.joinRoom)
-        window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'), getMessage("en", "joinroom-guibuttonlabel"))
+        window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'), getMessage("joinroom-guibuttonlabel"))
         window.roomButton.pressed.connect(self.joinRoom)
         window.roomLayout = QtGui.QHBoxLayout()
         window.roomInput.setMaximumWidth(150)
 
-        self.roomButton.setToolTip(getMessage("en", "joinroom-tooltip"))
+        self.roomButton.setToolTip(getMessage("joinroom-tooltip"))
         
         window.roomLayout.addWidget(window.roomInput)
         window.roomLayout.addWidget(window.roomButton)
@@ -304,14 +304,14 @@ class MainWindow(QtGui.QMainWindow):
         window.roomGroup.setFixedSize(window.roomGroup.sizeHint())
         
     def addSeekBox(self, window):
-        window.seekGroup = QtGui.QGroupBox(getMessage("en", "seek-heading-label"))
+        window.seekGroup = QtGui.QGroupBox(getMessage("seek-heading-label"))
         
         window.seekInput = QtGui.QLineEdit()
         window.seekInput.returnPressed.connect(self.seekPosition)
-        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),getMessage("en", "seektime-guibuttonlabel"))
+        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),getMessage("seektime-guibuttonlabel"))
         window.seekButton.pressed.connect(self.seekPosition)
 
-        self.seekButton.setToolTip(getMessage("en", "seektime-tooltip"))
+        self.seekButton.setToolTip(getMessage("seektime-tooltip"))
         
         window.seekLayout = QtGui.QHBoxLayout()
         window.seekInput.setMaximumWidth(50)
@@ -324,30 +324,30 @@ class MainWindow(QtGui.QMainWindow):
         window.seekGroup.setFixedSize(window.seekGroup.sizeHint())
         
     def addMiscBox(self, window):
-        window.miscGroup = QtGui.QGroupBox(getMessage("en", "othercommands-heading-label"))
+        window.miscGroup = QtGui.QGroupBox(getMessage("othercommands-heading-label"))
         
-        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),getMessage("en", "undoseek-guibuttonlabel"))
+        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),getMessage("undoseek-guibuttonlabel"))
         window.unseekButton.pressed.connect(self.undoSeek)
-        self.unseekButton.setToolTip(getMessage("en", "undoseek-tooltip"))
+        self.unseekButton.setToolTip(getMessage("undoseek-tooltip"))
 
         window.miscLayout = QtGui.QHBoxLayout()
         window.miscLayout.addWidget(window.unseekButton)
         if constants.MERGE_PLAYPAUSE_BUTTONS == True:
-            window.playpauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),getMessage("en", "togglepause-guibuttonlabel"))
+            window.playpauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),getMessage("togglepause-guibuttonlabel"))
             window.playpauseButton.pressed.connect(self.togglePause)
             window.miscLayout.addWidget(window.playpauseButton)
-            self.playpauseButton.setToolTip(getMessage("en", "togglepause-tooltip"))
+            self.playpauseButton.setToolTip(getMessage("togglepause-tooltip"))
         else:
-            window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'),getMessage("en", "play-guibuttonlabel"))
+            window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'),getMessage("play-guibuttonlabel"))
             window.playButton.pressed.connect(self.play)
             window.playButton.setMaximumWidth(60)
             window.miscLayout.addWidget(window.playButton)
-            window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),getMessage("en", "pause-guibuttonlabel"))
+            window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),getMessage("pause-guibuttonlabel"))
             window.pauseButton.pressed.connect(self.pause)
             window.pauseButton.setMaximumWidth(60)
             window.miscLayout.addWidget(window.pauseButton)
-            self.playButton.setToolTip(getMessage("en", "play-tooltip"))
-            self.pauseButton.setToolTip(getMessage("en", "pause-tooltip"))
+            self.playButton.setToolTip(getMessage("play-tooltip"))
+            self.pauseButton.setToolTip(getMessage("pause-tooltip"))
         
         window.miscGroup.setLayout(window.miscLayout)
         window.miscGroup.setFixedSize(window.miscGroup.sizeHint())
@@ -356,20 +356,20 @@ class MainWindow(QtGui.QMainWindow):
     def addMenubar(self, window):
         window.menuBar = QtGui.QMenuBar()
 
-        window.fileMenu = QtGui.QMenu(getMessage("en", "file-menu-label"), self)
-        window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'folder_explore.png'), getMessage("en", "openmedia-menu-label"))
+        window.fileMenu = QtGui.QMenu(getMessage("file-menu-label"), self)
+        window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'folder_explore.png'), getMessage("openmedia-menu-label"))
         window.openAction.triggered.connect(self.browseMediapath)
-        window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'), getMessage("en", "file-menu-label"))
+        window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'), getMessage("file-menu-label"))
         window.exitAction.triggered.connect(self.exitSyncplay)
         window.menuBar.addMenu(window.fileMenu)
         
-        window.advancedMenu = QtGui.QMenu(getMessage("en", "advanced-menu-label"), self)
-        window.setoffsetAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'timeline_marker.png'),getMessage("en", "setoffset-menu-label"))
+        window.advancedMenu = QtGui.QMenu(getMessage("advanced-menu-label"), self)
+        window.setoffsetAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'timeline_marker.png'),getMessage("setoffset-menu-label"))
         window.setoffsetAction.triggered.connect(self.setOffset)
         window.menuBar.addMenu(window.advancedMenu)
         
-        window.helpMenu = QtGui.QMenu(getMessage("en", "help-menu-label"), self)
-        window.userguideAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'), getMessage("en", "userguide-menu-label"))
+        window.helpMenu = QtGui.QMenu(getMessage("help-menu-label"), self)
+        window.userguideAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'), getMessage("userguide-menu-label"))
         window.userguideAction.triggered.connect(self.openUserGuide)
         
         window.menuBar.addMenu(window.helpMenu)

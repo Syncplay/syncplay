@@ -198,7 +198,7 @@ class ConfigurationGetter(object):
         if(self._config['noGui'] or not GuiConfiguration):
             if error:
                 print "{}!".format(error)
-            print getMessage("en", "missing-arguments-error")
+            print getMessage("missing-arguments-error")
             sys.exit()
         elif(GuiConfiguration):
             gc = GuiConfiguration(self._config, error=error)
@@ -281,21 +281,21 @@ class ConfigurationGetter(object):
         #
         if self._config['language']:
             setLanguage(self._config['language'])
-        self._argparser = argparse.ArgumentParser(description=getMessage("en", "argument-description"),
-                                         epilog=getMessage("en", "argument-epilog"))
-        self._argparser.add_argument('--no-gui', action='store_true', help=getMessage("en", "nogui-argument"))
-        self._argparser.add_argument('-a', '--host', metavar='hostname', type=str, help=getMessage("en", "host-argument"))
-        self._argparser.add_argument('-n', '--name', metavar='username', type=str, help=getMessage("en", "name-argument"))
-        self._argparser.add_argument('-d', '--debug', action='store_true', help=getMessage("en", "debug-argument"))
-        self._argparser.add_argument('-g', '--force-gui-prompt', action='store_true', help=getMessage("en", "force-gui-prompt-argument"))
-        self._argparser.add_argument('--no-store', action='store_true', help=getMessage("en", "no-store-argument"))
-        self._argparser.add_argument('-r', '--room', metavar='room', type=str, nargs='?', help=getMessage("en", "room-argument"))
-        self._argparser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help=getMessage("en", "password-argument"))
-        self._argparser.add_argument('--player-path', metavar='path', type=str, help=getMessage("en", "player-path-argument"))
-        self._argparser.add_argument('--language', metavar='language', type=str, help=getMessage("en", "language-argument"))
-        self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("en", "file-argument"))
-        self._argparser.add_argument('--clear-gui-data', action='store_true', help=getMessage("en", "clear-gui-data-argument"))
-        self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("en", "args-argument"))
+        self._argparser = argparse.ArgumentParser(description=getMessage("argument-description"),
+                                         epilog=getMessage("argument-epilog"))
+        self._argparser.add_argument('--no-gui', action='store_true', help=getMessage("nogui-argument"))
+        self._argparser.add_argument('-a', '--host', metavar='hostname', type=str, help=getMessage("host-argument"))
+        self._argparser.add_argument('-n', '--name', metavar='username', type=str, help=getMessage("name-argument"))
+        self._argparser.add_argument('-d', '--debug', action='store_true', help=getMessage("debug-argument"))
+        self._argparser.add_argument('-g', '--force-gui-prompt', action='store_true', help=getMessage("force-gui-prompt-argument"))
+        self._argparser.add_argument('--no-store', action='store_true', help=getMessage("no-store-argument"))
+        self._argparser.add_argument('-r', '--room', metavar='room', type=str, nargs='?', help=getMessage("room-argument"))
+        self._argparser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help=getMessage("password-argument"))
+        self._argparser.add_argument('--player-path', metavar='path', type=str, help=getMessage("player-path-argument"))
+        self._argparser.add_argument('--language', metavar='language', type=str, help=getMessage("language-argument"))
+        self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("file-argument"))
+        self._argparser.add_argument('--clear-gui-data', action='store_true', help=getMessage("clear-gui-data-argument"))
+        self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("args-argument"))
         args = self._argparser.parse_args()
         self._overrideConfigWithArgs(args)
         if(self._config['file'] and self._config['file'][:2] == "--"):

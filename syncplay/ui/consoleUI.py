@@ -138,14 +138,14 @@ class ConsoleUI(threading.Thread):
             if(self._tryAdvancedCommands(data)):
                 return
             if (command.group('command') not in constants.COMMANDS_HELP):
-                self.showMessage(getMessage("en", "unrecognized-command-notification"))
-            self.showMessage(getMessage("en", "commandlist-notification"), True)
-            self.showMessage(getMessage("en", "commandlist-notification/room"), True)
-            self.showMessage(getMessage("en", "commandlist-notification/list"), True)
-            self.showMessage(getMessage("en", "commandlist-notification/undo"), True)
-            self.showMessage(getMessage("en", "commandlist-notification/pause"), True)
-            self.showMessage(getMessage("en", "commandlist-notification/seek"), True)
-            self.showMessage(getMessage("en", "commandlist-notification/help"), True)
-            self.showMessage(getMessage("en", "syncplay-version-notification").format(syncplay.version), True)
-            self.showMessage(getMessage("en", "more-info-notification").format(syncplay.projectURL), True)
+                self.showMessage(getMessage("unrecognized-command-notification"))
+            self.showMessage(getMessage("commandlist-notification"), True)
+            self.showMessage(getMessage("commandlist-notification/room"), True)
+            self.showMessage(getMessage("commandlist-notification/list"), True)
+            self.showMessage(getMessage("commandlist-notification/undo"), True)
+            self.showMessage(getMessage("commandlist-notification/pause"), True)
+            self.showMessage(getMessage("commandlist-notification/seek"), True)
+            self.showMessage(getMessage("commandlist-notification/help"), True)
+            self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)
+            self.showMessage(getMessage("more-info-notification").format(syncplay.projectURL), True)
     
