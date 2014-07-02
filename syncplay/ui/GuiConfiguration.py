@@ -56,7 +56,7 @@ class ConfigDialog(QtGui.QDialog):
             self.setFixedSize(self.sizeHint())
 
     def runButtonTextUpdate(self):
-        if (self.donotstoreCheckbox.isChecked()):
+        if self.donotstoreCheckbox.isChecked():
             self.runButton.setText(getMessage("run-label"))
         else:
             self.runButton.setText(getMessage("storeandrun-label"))
@@ -68,7 +68,7 @@ class ConfigDialog(QtGui.QDialog):
         settings = QSettings("Syncplay", "PlayerList")
         settings.beginGroup("PlayerList")
         savedPlayers = settings.value("PlayerList", [])
-        if(not isinstance(savedPlayers, list)):
+        if not isinstance(savedPlayers, list):
             savedPlayers = []
         playerpathlist = list(set(os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist + savedPlayers)))
         settings.endGroup()
@@ -85,7 +85,7 @@ class ConfigDialog(QtGui.QDialog):
                 self.executablepathCombobox.addItem(foundpath)
 
         for path in playerpathlist:
-            if(os.path.isfile(path) and os.path.normcase(os.path.normpath(path)) != os.path.normcase(os.path.normpath(foundpath))):
+            if os.path.isfile(path) and os.path.normcase(os.path.normpath(path)) != os.path.normcase(os.path.normpath(foundpath)):
                 self.executablepathCombobox.addItem(path)
                 if foundpath == "":
                     foundpath = path
@@ -95,7 +95,7 @@ class ConfigDialog(QtGui.QDialog):
             playerpathlist.append(os.path.normcase(os.path.normpath(foundpath)))
             settings.setValue("PlayerList", list(set(os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist))))
             settings.endGroup()
-        return(foundpath)
+        return foundpath
 
     def updateExecutableIcon(self):
         currentplayerpath = unicode(self.executablepathCombobox.currentText())
@@ -148,9 +148,9 @@ class ConfigDialog(QtGui.QDialog):
         morestate = unicode.lower(unicode(settings.value("ShowMoreSettings", "false")))
         settings.endGroup()
         if morestate == "true":
-            return(True)
+            return True
         else:
-            return(False)
+            return False
 
     def saveMoreState(self, morestate):
         settings = QSettings("Syncplay", "MoreSettings")
@@ -161,11 +161,11 @@ class ConfigDialog(QtGui.QDialog):
     def browseMediapath(self):
         self.loadMediaBrowseSettings()
         options = QtGui.QFileDialog.Options()
-        if (os.path.isdir(self.mediadirectory)):
+        if os.path.isdir(self.mediadirectory):
             defaultdirectory = self.mediadirectory
-        elif (os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.MoviesLocation))):
+        elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)):
             defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)
-        elif (os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.HomeLocation))):
+        elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.HomeLocation)):
             defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.HomeLocation)
         else:
             defaultdirectory = ""
@@ -240,13 +240,13 @@ class ConfigDialog(QtGui.QDialog):
     def dragEnterEvent(self, event):
         data = event.mimeData()
         urls = data.urls()
-        if (urls and urls[0].scheme() == 'file'):
+        if urls and urls[0].scheme() == 'file':
             event.acceptProposedAction()
 
     def dropEvent(self, event):
         data = event.mimeData()
         urls = data.urls()
-        if (urls and urls[0].scheme() == 'file'):
+        if urls and urls[0].scheme() == 'file':
             if sys.platform.startswith('linux'):
                 dropfilepath = unicode(urls[0].path())
             else:
@@ -285,9 +285,9 @@ class ConfigDialog(QtGui.QDialog):
         self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QIcon(resourcespath + "syncplay.png"))
 
-        if(config['host'] == None):
+        if config['host'] == None:
             host = ""
-        elif(":" in config['host']):
+        elif ":" in config['host']:
             host = config['host']
         else:
             host = config['host'] + ":" + str(config['port'])

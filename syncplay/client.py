@@ -62,16 +62,16 @@ class SyncplayClient(object):
         self.userlist = SyncplayUserlist(self.ui, self)
         self._protocol = None
         self._player = None
-        if(config['room'] == None or config['room'] == ''):
+        if config['room'] == None or config['room'] == '':
             config['room'] = config['name']  # ticket #58
         self.defaultRoom = config['room']
         self.playerPositionBeforeLastSeek = 0.0
         self.setUsername(config['name'])
         self.setRoom(config['room'])
-        if(config['password']):
+        if config['password']:
             config['password'] = hashlib.md5(config['password']).hexdigest()
         self._serverPassword = config['password']
-        if(not config['file']):
+        if not config['file']:
             self.__getUserlistOnLogon = True
         else:
             self.__getUserlistOnLogon = False
@@ -99,7 +99,7 @@ class SyncplayClient(object):
         self._protocol = protocol
 
     def destroyProtocol(self):
-        if(self._protocol):
+        if self._protocol:
             self._protocol.drop()
         self._protocol = None
 
@@ -112,14 +112,14 @@ class SyncplayClient(object):
         self._askPlayerTimer.start(when)
 
     def askPlayer(self):
-        if(not self._running):
+        if not self._running:
             return
-        if(self._player):
+        if self._player:
             self._player.askForStatus()
         self.checkIfConnected()
 
     def checkIfConnected(self):
-        if(self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > constants.PROTOCOL_TIMEOUT):
+        if self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > constants.PROTOCOL_TIMEOUT:
             self._lastGlobalUpdate = None
             self.ui.showErrorMessage(getMessage("server-timeout-error"))
             self._protocol.drop()
@@ -138,10 +138,10 @@ class SyncplayClient(object):
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
         self._playerPosition = position
         self._playerPaused = paused
-        if(self._lastGlobalUpdate):
+        if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
-            if((pauseChange or seeked) and self._protocol):
-                if(seeked):
+            if (pauseChange or seeked) and self._protocol:
+                if seeked:
                     self.playerPositionBeforeLastSeek = self.getGlobalPosition()
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)
 
@@ -152,13 +152,13 @@ class SyncplayClient(object):
         else:
             position = self.getPlayerPosition()
         pauseChange, _ = self._determinePlayerStateChange(paused, position)
-        if(self._lastGlobalUpdate):
+        if self._lastGlobalUpdate:
             return position, paused, _, pauseChange
         else:
             return None, None, None, None
 
     def _initPlayerState(self, position, paused):
-        if(self.userlist.currentUser.file):
+        if self.userlist.currentUser.file:
             self.setPosition(position)
             self._player.setPaused(paused)
             madeChangeOnPlayer = True
@@ -192,7 +192,7 @@ class SyncplayClient(object):
 
     def _serverSeeked(self, position, setBy):
         hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
-        if(self.getUsername() <> setBy):
+        if self.getUsername() <> setBy:
             self.playerPositionBeforeLastSeek = self.getPlayerPosition()
             self.setPosition(position)
             madeChangeOnPlayer = True
@@ -204,11 +204,11 @@ class SyncplayClient(object):
 
     def _slowDownToCoverTimeDifference(self, diff, setBy):
         hideFromOSD = not constants.SHOW_SLOWDOWN_OSD
-        if(self._config['slowdownThreshold']  < diff and not self._speedChanged):
+        if self._config['slowdownThreshold']  < diff and not self._speedChanged:
             self._player.setSpeed(constants.SLOWDOWN_RATE)
             self._speedChanged = True
             self.ui.showMessage(getMessage("slowdown-notification").format(setBy), hideFromOSD)
-        elif(self._speedChanged and diff < constants.SLOWDOWN_RESET_THRESHOLD):
+        elif self._speedChanged and diff < constants.SLOWDOWN_RESET_THRESHOLD:
             self._player.setSpeed(1.00)
             self._speedChanged = False
             self.ui.showMessage(getMessage("revert-notification"), hideFromOSD)
@@ -219,39 +219,39 @@ class SyncplayClient(object):
         madeChangeOnPlayer = False
         pauseChanged = paused != self.getGlobalPaused()
         diff = self.getPlayerPosition() - position
-        if(self._lastGlobalUpdate is None):
+        if self._lastGlobalUpdate is None:
             madeChangeOnPlayer = self._initPlayerState(position, paused)
         self._globalPaused = paused
         self._globalPosition = position
         self._lastGlobalUpdate = time.time()
-        if (doSeek):
+        if doSeek:
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
-        if (diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindThreshold'] == 0.0):
+        if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindThreshold'] == 0.0:
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
-        if (self._player.speedSupported and not doSeek and not paused):
-            if (self._config['slowMeOnDesync'] == constants.OPTION_ALWAYS or (self._config['slowMeOnDesync'] == constants.OPTION_AUTO and self._player.speedRecommended)):
+        if self._player.speedSupported and not doSeek and not paused:
+            if self._config['slowMeOnDesync'] == constants.OPTION_ALWAYS or (self._config['slowMeOnDesync'] == constants.OPTION_AUTO and self._player.speedRecommended):
                 madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
-        if (paused == False and pauseChanged):
+        if paused == False and pauseChanged:
             madeChangeOnPlayer = self._serverUnpaused(setBy)
-        elif (paused == True and pauseChanged):
+        elif paused == True and pauseChanged:
             madeChangeOnPlayer = self._serverPaused(setBy)
         return madeChangeOnPlayer
 
     def _executePlaystateHooks(self, position, paused, doSeek, setBy, messageAge):
-        if(self.userlist.hasRoomStateChanged() and not paused):
+        if self.userlist.hasRoomStateChanged() and not paused:
             self._warnings.checkWarnings()
             self.userlist.roomStateConfirmed()
 
     def updateGlobalState(self, position, paused, doSeek, setBy, messageAge):
-        if(self.__getUserlistOnLogon):
+        if self.__getUserlistOnLogon:
             self.__getUserlistOnLogon = False
             self.getUserList()
         madeChangeOnPlayer = False
-        if(not paused):
+        if not paused:
             position += messageAge
-        if(self._player):
+        if self._player:
             madeChangeOnPlayer = self._changePlayerStateAccordingToGlobalState(position, paused, doSeek, setBy)
-        if(madeChangeOnPlayer):
+        if madeChangeOnPlayer:
             self.askPlayer()
         self._executePlaystateHooks(position, paused, doSeek, setBy, messageAge)
 
@@ -264,29 +264,29 @@ class SyncplayClient(object):
         self.ui.showMessage(getMessage("current-offset-notification").format(self._userOffset))
 
     def onDisconnect(self):
-        if(self._config['pauseOnLeave']):
+        if self._config['pauseOnLeave']:
             self.setPaused(True)
 
     def removeUser(self, username):
-        if(self.userlist.isUserInYourRoom(username)):
+        if self.userlist.isUserInYourRoom(username):
             self.onDisconnect()
         self.userlist.removeUser(username)
 
     def getPlayerPosition(self):
-        if(not self._lastPlayerUpdate):
-            if(self._lastGlobalUpdate):
+        if not self._lastPlayerUpdate:
+            if self._lastGlobalUpdate:
                 return self.getGlobalPosition()
             else:
                 return 0.0
         position = self._playerPosition
-        if(not self._playerPaused):
+        if not self._playerPaused:
             diff = time.time() - self._lastPlayerUpdate
             position += diff
         return position
 
     def getPlayerPaused(self):
-        if(not self._lastPlayerUpdate):
-            if(self._lastGlobalUpdate):
+        if not self._lastPlayerUpdate:
+            if self._lastGlobalUpdate:
                 return self.getGlobalPaused()
             else:
                 return True
@@ -301,7 +301,7 @@ class SyncplayClient(object):
         return position
 
     def getGlobalPaused(self):
-        if(not self._lastGlobalUpdate):
+        if not self._lastGlobalUpdate:
             return True
         return self._globalPaused
 
@@ -318,19 +318,19 @@ class SyncplayClient(object):
         self.sendFile()
 
     def __executePrivacySettings(self, filename, size):
-        if (self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE):
+        if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
             filename = utils.hashFilename(filename)
-        elif (self._config['filenamePrivacyMode'] == PRIVACY_DONTSEND_MODE):
+        elif self._config['filenamePrivacyMode'] == PRIVACY_DONTSEND_MODE:
             filename = PRIVACY_HIDDENFILENAME
-        if (self._config['filesizePrivacyMode'] == PRIVACY_SENDHASHED_MODE):
+        if self._config['filesizePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
             size = utils.hashFilesize(size)
-        elif (self._config['filesizePrivacyMode'] == PRIVACY_DONTSEND_MODE):
+        elif self._config['filesizePrivacyMode'] == PRIVACY_DONTSEND_MODE:
             size = 0
         return filename, size
 
     def sendFile(self):
         file_ = self.userlist.currentUser.file
-        if(self._protocol and self._protocol.logged and file_):
+        if self._protocol and self._protocol.logged and file_:
             self._protocol.sendFileSetting(file_)
 
     def setUsername(self, username):
@@ -350,7 +350,7 @@ class SyncplayClient(object):
 
     def sendRoom(self):
         room = self.userlist.currentUser.room
-        if(self._protocol and self._protocol.logged and room):
+        if self._protocol and self._protocol.logged and room:
             self._protocol.sendRoomSetting(room)
             self.getUserList()
 
@@ -358,7 +358,7 @@ class SyncplayClient(object):
         return self.userlist.currentUser.room
 
     def getUserList(self):
-        if(self._protocol and self._protocol.logged):
+        if self._protocol and self._protocol.logged:
             self._protocol.sendList()
 
     def showUserList(self):
@@ -369,14 +369,14 @@ class SyncplayClient(object):
 
     def setPosition(self, position):
         position += self.getUserOffset()
-        if(self._player and self.userlist.currentUser.file):
-            if(position < 0):
+        if self._player and self.userlist.currentUser.file:
+            if position < 0:
                 position = 0
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), True, None, True)
             self._player.setPosition(position)
 
     def setPaused(self, paused):
-        if(self._player and self.userlist.currentUser.file):
+        if self._player and self.userlist.currentUser.file:
             self._player.setPaused(paused)
 
     def start(self, host, port):
@@ -403,7 +403,7 @@ class SyncplayClient(object):
         if self.ui:
             self.ui.drop()
         reactor.callLater(0.1, reactor.stop)
-        if(promptForAction):
+        if promptForAction:
             self.ui.promptFor(getMessage("enter-to-exit-prompt"))
 
     class _WarningManager(object):
@@ -413,11 +413,13 @@ class SyncplayClient(object):
             self._ui = ui
             self._warnings = {
                             "room-files-not-same": {
-                                                     "timer": task.LoopingCall(self.__displayMessageOnOSD, ("room-files-not-same"),),
+                                                     "timer": task.LoopingCall(self.__displayMessageOnOSD,
+                                                                               "room-files-not-same",),
                                                      "displayedFor": 0,
                                                     },
                             "alone-in-the-room": {
-                                                     "timer": task.LoopingCall(self.__displayMessageOnOSD, ("alone-in-the-room"),),
+                                                     "timer": task.LoopingCall(self.__displayMessageOnOSD,
+                                                                               "alone-in-the-room",),
                                                      "displayedFor": 0,
                                                     },
                             }
@@ -426,23 +428,23 @@ class SyncplayClient(object):
             self._checkRoomForSameFiles()
 
         def _checkRoomForSameFiles(self):
-            if (not self._userlist.areAllFilesInRoomSame()):
+            if not self._userlist.areAllFilesInRoomSame():
                 self._ui.showMessage(getMessage("room-files-not-same"), True)
-                if(constants.SHOW_OSD_WARNINGS and not self._warnings["room-files-not-same"]['timer'].running):
+                if constants.SHOW_OSD_WARNINGS and not self._warnings["room-files-not-same"]['timer'].running:
                     self._warnings["room-files-not-same"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
-            elif(self._warnings["room-files-not-same"]['timer'].running):
+            elif self._warnings["room-files-not-same"]['timer'].running:
                 self._warnings["room-files-not-same"]['timer'].stop()
 
         def _checkIfYouReAloneInTheRoom(self):
-            if (self._userlist.areYouAloneInRoom()):
+            if self._userlist.areYouAloneInRoom():
                 self._ui.showMessage(getMessage("alone-in-the-room"), True)
-                if(constants.SHOW_OSD_WARNINGS and not self._warnings["alone-in-the-room"]['timer'].running):
+                if constants.SHOW_OSD_WARNINGS and not self._warnings["alone-in-the-room"]['timer'].running:
                     self._warnings["alone-in-the-room"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
-            elif(self._warnings["alone-in-the-room"]['timer'].running):
+            elif self._warnings["alone-in-the-room"]['timer'].running:
                 self._warnings["alone-in-the-room"]['timer'].stop()
 
         def __displayMessageOnOSD(self, warningName):
-            if (constants.OSD_WARNING_MESSAGE_DURATION > self._warnings[warningName]["displayedFor"]):
+            if constants.OSD_WARNING_MESSAGE_DURATION > self._warnings[warningName]["displayedFor"]:
                 self._ui.showOSDMessage(getMessage(warningName), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL)
                 self._warnings[warningName]["displayedFor"] += constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL
             else:
@@ -466,7 +468,7 @@ class SyncplayUser(object):
         self.file = file_
 
     def isFileSame(self, file_):
-        if(not self.file):
+        if not self.file:
             return False
         sameName = utils.sameFilename(self.file['name'], file_['name'])
         sameSize = utils.sameFilesize(self.file['size'], file_['size'])
@@ -477,7 +479,7 @@ class SyncplayUser(object):
         return self.username.lower() < other.username.lower()
 
     def __repr__(self, *args, **kwargs):
-        if(self.file):
+        if self.file:
             return "{}: {} ({}, {})".format(self.username, self.file['name'], self.file['duration'], self.file['size'])
         else:
             return "{}".format(self.username)
@@ -491,60 +493,60 @@ class SyncplayUserlist(object):
         self._roomUsersChanged = True
 
     def isRoomSame(self, room):
-        if (room and self.currentUser.room and self.currentUser.room == room):
+        if room and self.currentUser.room and self.currentUser.room == room:
             return True
         else:
             return False
 
     def __showUserChangeMessage(self, username, room, file_, oldRoom=None):
-        if(room):
+        if room:
             if self.isRoomSame(room) or self.isRoomSame(oldRoom):
                 showOnOSD = constants.SHOW_SAME_ROOM_OSD
             else:
                 showOnOSD = constants.SHOW_DIFFERENT_ROOM_OSD
             hideFromOSD = not showOnOSD
-        if(room and not file_):
+        if room and not file_:
             message = getMessage("room-join-notification").format(username, room)
             self.ui.showMessage(message, hideFromOSD)
-        elif (room and file_):
+        elif room and file_:
             duration = utils.formatTime(file_['duration'])
             message = getMessage("playing-notification").format(username, file_['name'], duration)
-            if(self.currentUser.room <> room or self.currentUser.username == username):
+            if self.currentUser.room <> room or self.currentUser.username == username:
                 message += getMessage("playing-notification/room-addendum").format(room)
             self.ui.showMessage(message, hideFromOSD)
-            if(self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room):
+            if self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room:
                 message = getMessage("file-different-notification").format(username)
                 self.ui.showMessage(message, not constants.SHOW_OSD_WARNINGS)
                 differences = []
                 differentName = not utils.sameFilename(self.currentUser.file['name'], file_['name'])
                 differentSize = not utils.sameFilesize(self.currentUser.file['size'], file_['size'])
                 differentDuration = not utils.sameFileduration(self.currentUser.file['duration'], file_['duration'])
-                if(differentName):
+                if differentName:
                     differences.append("filename")
-                if(differentSize):
+                if differentSize:
                     differences.append("size")
-                if(differentDuration):
+                if differentDuration:
                     differences.append("duration")
                 message = getMessage("file-differences-notification") + ", ".join(differences)
                 self.ui.showMessage(message, not constants.SHOW_OSD_WARNINGS)
 
     def addUser(self, username, room, file_, noMessage=False):
-        if(username == self.currentUser.username):
+        if username == self.currentUser.username:
             return
         user = SyncplayUser(username, room, file_)
         self._users[username] = user
-        if(not noMessage):
+        if not noMessage:
             self.__showUserChangeMessage(username, room, file_)
         self.userListChange()
 
     def removeUser(self, username):
         hideFromOSD = not constants.SHOW_DIFFERENT_ROOM_OSD
-        if(self._users.has_key(username)):
+        if self._users.has_key(username):
             user = self._users[username]
             if user.room:
                 if self.isRoomSame(user.room):
                     hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
-        if(self._users.has_key(username)):
+        if self._users.has_key(username):
             self._users.pop(username)
             message = getMessage("left-notification").format(username)
             self.ui.showMessage(message, hideFromOSD)
@@ -553,20 +555,20 @@ class SyncplayUserlist(object):
         self.userListChange()
 
     def __displayModUserMessage(self, username, room, file_, user, oldRoom):
-        if (file_ and not user.isFileSame(file_)):
+        if file_ and not user.isFileSame(file_):
             self.__showUserChangeMessage(username, room, file_, oldRoom)
-        elif (room and room != user.room):
+        elif room and room != user.room:
             self.__showUserChangeMessage(username, room, None, oldRoom)
 
     def modUser(self, username, room, file_):
-        if(self._users.has_key(username)):
+        if self._users.has_key(username):
             user = self._users[username]
             oldRoom = user.room if user.room else None
             self.__displayModUserMessage(username, room, file_, user, oldRoom)
             user.room = room
             if file_:
                 user.file = file_
-        elif(username == self.currentUser.username):
+        elif username == self.currentUser.username:
             self.__showUserChangeMessage(username, room, file_)
         else:
             self.addUser(username, room, file_)
@@ -574,19 +576,19 @@ class SyncplayUserlist(object):
 
     def areAllFilesInRoomSame(self):
         for user in self._users.itervalues():
-            if(user.room == self.currentUser.room and user.file and not self.currentUser.isFileSame(user.file)):
+            if user.room == self.currentUser.room and user.file and not self.currentUser.isFileSame(user.file):
                 return False
         return True
 
     def areYouAloneInRoom(self):
         for user in self._users.itervalues():
-            if(user.room == self.currentUser.room):
+            if user.room == self.currentUser.room:
                 return False
         return True
 
     def isUserInYourRoom(self, username):
         for user in self._users.itervalues():
-            if(user.username == username and user.room == self.currentUser.room):
+            if user.username == username and user.room == self.currentUser.room:
                 return True
         return False
 
@@ -603,10 +605,10 @@ class SyncplayUserlist(object):
     def showUserList(self):
         rooms = {}
         for user in self._users.itervalues():
-            if(user.room not in rooms):
+            if user.room not in rooms:
                 rooms[user.room] = []
             rooms[user.room].append(user)
-        if(self.currentUser.room not in rooms):
+        if self.currentUser.room not in rooms:
                 rooms[self.currentUser.room] = []
         rooms[self.currentUser.room].append(self.currentUser)
         rooms = self.sortList(rooms)
@@ -628,14 +630,14 @@ class UiManager(object):
         self.lastError = ""
 
     def showMessage(self, message, noPlayer=False, noTimestamp=False):
-        if(not noPlayer): self.showOSDMessage(message)
+        if not noPlayer: self.showOSDMessage(message)
         self.__ui.showMessage(message, noTimestamp)
 
     def showUserList(self, currentUser, rooms):
         self.__ui.showUserList(currentUser, rooms)
 
     def showOSDMessage(self, message, duration=constants.OSD_DURATION):
-        if(constants.SHOW_OSD and self._client._player):
+        if constants.SHOW_OSD and self._client._player:
             self._client._player.displayMessage(message, duration * 1000)
 
     def showErrorMessage(self, message, criticalerror=False):

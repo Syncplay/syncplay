@@ -43,15 +43,15 @@ class VlcPlayer(BasePlayer):
             self._listener = self.__Listener(self, playerPath, filePath, args, self._vlcready, self._vlcclosed)
         except ValueError:
             self._client.ui.showErrorMessage(getMessage("vlc-failed-connection"), True)
-            self.reactor.callFromThread(self._client.stop, (True),)
+            self.reactor.callFromThread(self._client.stop, True,)
             return
         self._listener.setDaemon(True)
         self._listener.start()
-        if(not self._vlcready.wait(constants.VLC_OPEN_MAX_WAIT_TIME)):
+        if not self._vlcready.wait(constants.VLC_OPEN_MAX_WAIT_TIME):
             self._vlcready.set()
             self._client.ui.showErrorMessage(getMessage("vlc-failed-connection"), True)
-            self.reactor.callFromThread(self._client.stop, (True),)
-        self.reactor.callFromThread(self._client.initPlayer, (self),)
+            self.reactor.callFromThread(self._client.stop, True,)
+        self.reactor.callFromThread(self._client.initPlayer, self,)
 
     def _fileUpdateClearEvents(self):
         self._durationAsk.clear()
@@ -114,7 +114,7 @@ class VlcPlayer(BasePlayer):
         return all(ord(c) < 128 for c in s)
 
     def openFile(self, filePath):
-        if (self._isASCII(filePath) == True):
+        if self._isASCII(filePath) == True:
             self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii', 'ignore')))
         else:
             fileURL = self.getMRL(filePath)
@@ -130,39 +130,39 @@ class VlcPlayer(BasePlayer):
         if match:
             name, value = match.group('command'), match.group('argument')
 
-        if(line == "filepath-change-notification"):
+        if line == "filepath-change-notification":
             self._filechanged = True
             t = threading.Thread(target=self._onFileUpdate)
             t.setDaemon(True)
             t.start()
-        elif (name == "filepath" and value != "no-input"):
+        elif name == "filepath" and value != "no-input":
             self._filechanged = True
-            if("file://" in value):
+            if "file://" in value:
                 value = value.replace("file://", "")
-                if(not os.path.isfile(value)):
+                if not os.path.isfile(value):
                     value = value.lstrip("/")
             self._filepath = value
             self._pathAsk.set()
-        elif(name == "duration" and (value != "no-input")):
+        elif name == "duration" and (value != "no-input"):
             self._duration = float(value.replace(",", "."))
             self._durationAsk.set()
-        elif(name == "playstate"):
+        elif name == "playstate":
             self._paused = bool(value != 'playing') if(value != "no-input" and self._filechanged == False) else self._client.getGlobalPaused()
             self._pausedAsk.set()
-        elif(name == "position"):
+        elif name == "position":
             self._position = float(value.replace(",", ".")) if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPosition()
             self._positionAsk.set()
-        elif(name == "filename"):
+        elif name == "filename":
             self._filechanged = True
             self._filename = value.decode('utf-8')
             self._filenameAsk.set()
-        elif(line.startswith("interface-version: ")):
+        elif line.startswith("interface-version: "):
             interface_version = line[19:24]
-            if (int(interface_version.replace(".", "")) < int(constants.VLC_INTERFACE_MIN_VERSION.replace(".", ""))):
+            if int(interface_version.replace(".", "")) < int(constants.VLC_INTERFACE_MIN_VERSION.replace(".", "")):
                 self._client.ui.showErrorMessage(getMessage("vlc-interface-version-mismatch").format(str(interface_version), str(constants.VLC_INTERFACE_MIN_VERSION)))
-        elif (line[:16] == "VLC media player"):
+        elif line[:16] == "VLC media player":
             vlc_version = line[17:22]
-            if (int(vlc_version.replace(".", "")) < int(constants.VLC_MIN_VERSION.replace(".", ""))):
+            if int(vlc_version.replace(".", "")) < int(constants.VLC_MIN_VERSION.replace(".", "")):
                 self._client.ui.showErrorMessage(getMessage("vlc-version-mismatch").format(str(vlc_version), str(constants.VLC_MIN_VERSION)))
             self._vlcready.set()
             self._listener.sendLine("get-interface-version")
@@ -184,7 +184,7 @@ class VlcPlayer(BasePlayer):
 
     @staticmethod
     def isValidPlayerPath(path):
-        if("vlc" in path.lower() and VlcPlayer.getExpandedPath(path)):
+        if "vlc" in path.lower() and VlcPlayer.getExpandedPath(path):
             return True
         return False
 
@@ -218,14 +218,14 @@ class VlcPlayer(BasePlayer):
         self._positionAsk.set()
         self._vlcready.set()
         self._pausedAsk.set()
-        self.reactor.callFromThread(self._client.stop, (False),)
+        self.reactor.callFromThread(self._client.stop, False,)
 
     class __Listener(threading.Thread, asynchat.async_chat):
         def __init__(self, playerController, playerPath, filePath, args, vlcReady, vlcClosed):
             self.__playerController = playerController
             call = [playerPath]
-            if(filePath):
-                if (self.__playerController._isASCII(filePath) == True):
+            if filePath:
+                if self.__playerController._isASCII(filePath) == True:
                     call.append(filePath)
                 else:
                     call.append(self.__playerController.getMRL(filePath))
@@ -238,7 +238,7 @@ class VlcPlayer(BasePlayer):
                         for line in interfacefile:
                             if "local connectorversion" in line:
                                 interface_version = line[26:31]
-                                if (int(interface_version.replace(".", "")) >= int(constants.VLC_INTERFACE_MIN_VERSION.replace(".", ""))):
+                                if int(interface_version.replace(".", "")) >= int(constants.VLC_INTERFACE_MIN_VERSION.replace(".", "")):
                                     return True
                                 else:
                                     playerController._client.ui.showErrorMessage(getMessage("vlc-interface-oldversion-ignored"))
@@ -266,7 +266,7 @@ class VlcPlayer(BasePlayer):
                 playerController.SLAVE_ARGS.append('--lua-config=syncplay={{modulepath=\"{}\",port=\"{}\"}}'.format(playerController.vlcModulePath, str(playerController.vlcport)))
 
             call.extend(playerController.SLAVE_ARGS)
-            if(args):
+            if args:
                 call.extend(args)
 
             self._vlcready = vlcReady
@@ -317,11 +317,11 @@ class VlcPlayer(BasePlayer):
             self._ibuffer = []
 
         def sendLine(self, line):
-            if(self.connected):
+            if self.connected:
 #                print "send: {}".format(line)
                 try:
                     self.push(line + "\n")
                 except:
                     pass
-            if(line == "close-vlc"):
+            if line == "close-vlc":
                 self._vlcclosed.set()

@@ -16,11 +16,11 @@ from pprint import pprint
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False):
         print getMessage("welcome-server-notification").format(syncplay.version)
-        if(password):
+        if password:
             password = hashlib.md5(password).hexdigest()
         self.password = password
         self._motdFilePath = motdFilePath
-        if(not isolateRooms):
+        if not isolateRooms:
             self._roomManager = RoomManager()
         else:
             self._roomManager = PublicRoomManager()
@@ -40,7 +40,7 @@ class SyncFactory(Factory):
         if constants.WARN_OLD_CLIENTS:
             if int(clientVersion.replace(".", "")) < int(constants.RECENT_CLIENT_THRESHOLD.replace(".", "")):
                 oldClient = True
-        if(self._motdFilePath and os.path.isfile(self._motdFilePath)):
+        if self._motdFilePath and os.path.isfile(self._motdFilePath):
             tmpl = codecs.open(self._motdFilePath, "r", "utf-8-sig").read()
             args = dict(version=syncplay.version, userIp=userIp, username=username, room=room)
             try:
@@ -129,7 +129,7 @@ class RoomManager(object):
 
     def removeWatcher(self, watcher):
         oldRoom = watcher.getRoom()
-        if(oldRoom):
+        if oldRoom:
             oldRoom.removeWatcher(watcher)
             self._deleteRoomIfEmpty(oldRoom)
 
@@ -219,7 +219,7 @@ class Room(object):
         watcher.setRoom(self)
 
     def removeWatcher(self, watcher):
-        if(watcher.getName() not in self._watchers):
+        if watcher.getName() not in self._watchers:
             return
         del self._watchers[watcher.getName()]
         watcher.setRoom(None)
@@ -300,7 +300,7 @@ class Watcher(object):
             self._sendStateTimer.start(constants.SERVER_STATE_INTERVAL)
 
     def _deactivateStateTimer(self):
-        if(self._sendStateTimer and self._sendStateTimer.running):
+        if self._sendStateTimer and self._sendStateTimer.running:
             self._sendStateTimer.stop()
 
     def sendState(self, position, paused, doSeek, setBy, forcedUpdate):
@@ -321,7 +321,7 @@ class Watcher(object):
         if pauseChanged:
             self.getRoom().setPaused(Room.STATE_PAUSED if paused else Room.STATE_PLAYING, self)
         if position is not None:
-            if(not paused):
+            if not paused:
                 position += messageAge
             self.setPosition(position)
         if doSeek or pauseChanged:
@@ -332,7 +332,7 @@ class ConfigurationGetter(object):
     def getConfiguration(self):
         self._prepareArgParser()
         self._args = self._argparser.parse_args()
-        if(self._args.port == None):
+        if self._args.port == None:
             self._args.port = constants.DEFAULT_PORT
         return self._args
 

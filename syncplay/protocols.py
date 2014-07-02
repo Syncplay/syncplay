@@ -76,15 +76,15 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def handleHello(self, hello):
         username, roomName, version, motd = self._extractHelloArguments(hello)
-        if(not username or not roomName or not version):
+        if not username or not roomName or not version:
             self.dropWithError(getMessage("hello-server-error").format(hello))
-        elif(version.split(".")[0:2] != syncplay.version.split(".")[0:2]):
+        elif version.split(".")[0:2] != syncplay.version.split(".")[0:2]:
             self.dropWithError(getMessage("version-mismatch-server-error".format(hello)))
         else:
             self._client.setUsername(username)
             self._client.setRoom(roomName)
         self.logged = True
-        if(motd):
+        if motd:
             self._client.ui.showMessage(motd, True, True)
         self._client.ui.showMessage(getMessage("connected-successful-notification"))
         self._client.sendFile()
@@ -93,9 +93,9 @@ class SyncClientProtocol(JSONCommandProtocol):
         hello = {}
         hello["username"] = self._client.getUsername()
         password = self._client.getPassword()
-        if(password): hello["password"] = password
+        if password: hello["password"] = password
         room = self._client.getRoom()
-        if(room): hello["room"] = {"name" :room}
+        if room: hello["room"] = {"name" :room}
         hello["version"] = syncplay.version
         self.sendMessage({"Hello": hello})
 
@@ -105,10 +105,10 @@ class SyncClientProtocol(JSONCommandProtocol):
             settings = user[1]
             room = settings["room"]["name"] if settings.has_key("room") else None
             file_ = settings["file"] if settings.has_key("file") else None
-            if(settings.has_key("event")):
-                if(settings["event"].has_key("joined")):
+            if settings.has_key("event"):
+                if settings["event"].has_key("joined"):
                     self._client.userlist.addUser(username, room, file_)
-                elif(settings["event"].has_key("left")):
+                elif settings["event"].has_key("left"):
                     self._client.removeUser(username)
             else:
                 self._client.userlist.modUser(username, room, file_)
@@ -128,7 +128,7 @@ class SyncClientProtocol(JSONCommandProtocol):
     def sendRoomSetting(self, roomName, password=None):
         setting = {}
         setting["name"] = roomName
-        if(password): setting["password"] = password
+        if password: setting["password"] = password
         self.sendSet({"room": setting})
 
     def sendFileSetting(self, file_):
@@ -156,9 +156,9 @@ class SyncClientProtocol(JSONCommandProtocol):
         return position, paused, doSeek, setBy
 
     def _handleStatePing(self, state):
-        if (state["ping"].has_key("latencyCalculation")):
+        if state["ping"].has_key("latencyCalculation"):
             latencyCalculation = state["ping"]["latencyCalculation"]
-        if ("clientLatencyCalculation" in state["ping"]):
+        if "clientLatencyCalculation" in state["ping"]:
             timestamp = state["ping"]["clientLatencyCalculation"]
             senderRtt = state["ping"]["serverRtt"]
             self._pingService.receiveMessage(timestamp, senderRtt)
@@ -168,19 +168,19 @@ class SyncClientProtocol(JSONCommandProtocol):
     def handleState(self, state):
         position, paused, doSeek, setBy = None, None, None, None
         messageAge = 0
-        if(state.has_key("ignoringOnTheFly")):
+        if state.has_key("ignoringOnTheFly"):
             ignore = state["ignoringOnTheFly"]
-            if(ignore.has_key("server")):
+            if ignore.has_key("server"):
                 self.serverIgnoringOnTheFly = ignore["server"]
                 self.clientIgnoringOnTheFly = 0
-            elif(ignore.has_key("client")):
+            elif ignore.has_key("client"):
                 if(ignore['client']) == self.clientIgnoringOnTheFly:
                     self.clientIgnoringOnTheFly = 0
-        if(state.has_key("playstate")):
+        if state.has_key("playstate"):
             position, paused, doSeek, setBy = self._extractStatePlaystateArguments(state)
-        if(state.has_key("ping")):
+        if state.has_key("ping"):
             messageAge, latencyCalculation = self._handleStatePing(state)
-        if(position is not None and paused is not None and not self.clientIgnoringOnTheFly):
+        if position is not None and paused is not None and not self.clientIgnoringOnTheFly:
             self._client.updateGlobalState(position, paused, doSeek, setBy, messageAge)
         position, paused, doSeek, stateChange = self._client.getLocalState()
         self.sendState(position, paused, doSeek, latencyCalculation, stateChange)
@@ -189,24 +189,24 @@ class SyncClientProtocol(JSONCommandProtocol):
         state = {}
         positionAndPausedIsSet = position is not None and paused is not None
         clientIgnoreIsNotSet = self.clientIgnoringOnTheFly == 0 or self.serverIgnoringOnTheFly != 0
-        if(clientIgnoreIsNotSet and positionAndPausedIsSet):
+        if clientIgnoreIsNotSet and positionAndPausedIsSet:
             state["playstate"] = {}
             state["playstate"]["position"] = position
             state["playstate"]["paused"] = paused
-            if(doSeek): state["playstate"]["doSeek"] = doSeek
+            if doSeek: state["playstate"]["doSeek"] = doSeek
         state["ping"] = {}
-        if(latencyCalculation):
+        if latencyCalculation:
             state["ping"]["latencyCalculation"] = latencyCalculation
         state["ping"]["clientLatencyCalculation"] = self._pingService.newTimestamp()
         state["ping"]["clientRtt"] = self._pingService.getRtt()
-        if(stateChange):
+        if stateChange:
             self.clientIgnoringOnTheFly += 1
-        if(self.serverIgnoringOnTheFly or self.clientIgnoringOnTheFly):
+        if self.serverIgnoringOnTheFly or self.clientIgnoringOnTheFly:
             state["ignoringOnTheFly"] = {}
-            if(self.serverIgnoringOnTheFly):
+            if self.serverIgnoringOnTheFly:
                 state["ignoringOnTheFly"]["server"] = self.serverIgnoringOnTheFly
                 self.serverIgnoringOnTheFly = 0
-            if(self.clientIgnoringOnTheFly):
+            if self.clientIgnoringOnTheFly:
                 state["ignoringOnTheFly"]["client"] = self.clientIgnoringOnTheFly
         self.sendMessage({"State": state})
 
@@ -236,7 +236,7 @@ class SyncServerProtocol(JSONCommandProtocol):
     def requireLogged(f):  # @NoSelf
         @wraps(f)
         def wrapper(self, *args, **kwds):
-            if(not self._logged):
+            if not self._logged:
                 self.dropWithError(getMessage("not-known-server-error"))
             return f(self, *args, **kwds)
         return wrapper
@@ -258,7 +258,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         username = username.strip()
         serverPassword = hello["password"] if hello.has_key("password") else None
         room = hello["room"] if hello.has_key("room") else None
-        if(room):
+        if room:
             roomName = room["name"] if room.has_key("name") else None
             roomName = roomName.strip()
             roomPassword = room["password"] if room.has_key("password") else None
@@ -266,23 +266,23 @@ class SyncServerProtocol(JSONCommandProtocol):
         return username, serverPassword, roomName, roomPassword, version
 
     def _checkPassword(self, serverPassword):
-        if(self._factory.password):
-            if(not serverPassword):
+        if self._factory.password:
+            if not serverPassword:
                 self.dropWithError(getMessage("password-required-server-error"))
                 return False
-            if(serverPassword != self._factory.password):
+            if serverPassword != self._factory.password:
                 self.dropWithError(getMessage("wrong-password-server-error"))
                 return False
         return True
 
     def handleHello(self, hello):
         username, serverPassword, roomName, roomPassword, version = self._extractHelloArguments(hello)
-        if(not username or not roomName or not version):
+        if not username or not roomName or not version:
             self.dropWithError(getMessage("hello-server-error"))
-        elif(version.split(".")[0:2] != syncplay.version.split(".")[0:2]):
+        elif version.split(".")[0:2] != syncplay.version.split(".")[0:2]:
             self.dropWithError(getMessage("version-mismatch-server-error"))
         else:
-            if(not self._checkPassword(serverPassword)):
+            if not self._checkPassword(serverPassword):
                 return
             self._factory.addWatcher(self, username, roomName, roomPassword)
             self._logged = True
@@ -297,7 +297,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         hello["username"] = username
         userIp = self.transport.getPeer().host
         room = self._watcher.getRoom()
-        if(room): hello["room"] = {"name": room.getName()}
+        if room: hello["room"] = {"name": room.getName()}
         hello["version"] = syncplay.version
         hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
         self.sendMessage({"Hello": hello})
@@ -320,9 +320,9 @@ class SyncServerProtocol(JSONCommandProtocol):
         user = {}
         user[username] = {}
         user[username]["room"] = room
-        if(file_):
+        if file_:
             user[username]["file"] = file_
-        if(event):
+        if event:
             user[username]["event"] = event
         self.sendSet({"user": user})
 
@@ -346,7 +346,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         self.sendList()
 
     def sendState(self, position, paused, doSeek, setBy, forced=False):
-        if(self._clientLatencyCalculationArrivalTime):
+        if self._clientLatencyCalculationArrivalTime:
             processingTime = time.time() - self._clientLatencyCalculationArrivalTime
         else:
             processingTime = 0
@@ -360,23 +360,23 @@ class SyncServerProtocol(JSONCommandProtocol):
                 "latencyCalculation": self._pingService.newTimestamp(),
                 "serverRtt": self._pingService.getRtt()
                 }
-        if(self._clientLatencyCalculation):
+        if self._clientLatencyCalculation:
             ping["clientLatencyCalculation"] = self._clientLatencyCalculation + processingTime
             self._clientLatencyCalculation = 0
         state = {
                  "ping": ping,
                  "playstate": playstate,
                 }
-        if(forced):
+        if forced:
             self.serverIgnoringOnTheFly += 1
-        if(self.serverIgnoringOnTheFly or self.clientIgnoringOnTheFly):
+        if self.serverIgnoringOnTheFly or self.clientIgnoringOnTheFly:
             state["ignoringOnTheFly"] = {}
-            if(self.serverIgnoringOnTheFly):
+            if self.serverIgnoringOnTheFly:
                 state["ignoringOnTheFly"]["server"] = self.serverIgnoringOnTheFly
-            if(self.clientIgnoringOnTheFly):
+            if self.clientIgnoringOnTheFly:
                 state["ignoringOnTheFly"]["client"] = self.clientIgnoringOnTheFly
                 self.clientIgnoringOnTheFly = 0
-        if(self.serverIgnoringOnTheFly == 0 or forced):
+        if self.serverIgnoringOnTheFly == 0 or forced:
             self.sendMessage({"State": state})
 
 
@@ -389,22 +389,22 @@ class SyncServerProtocol(JSONCommandProtocol):
     @requireLogged
     def handleState(self, state):
         position, paused, doSeek, latencyCalculation = None, None, None, None
-        if(state.has_key("ignoringOnTheFly")):
+        if state.has_key("ignoringOnTheFly"):
             ignore = state["ignoringOnTheFly"]
-            if(ignore.has_key("server")):
-                if(self.serverIgnoringOnTheFly == ignore["server"]):
+            if ignore.has_key("server"):
+                if self.serverIgnoringOnTheFly == ignore["server"]:
                     self.serverIgnoringOnTheFly = 0
-            if(ignore.has_key("client")):
+            if ignore.has_key("client"):
                 self.clientIgnoringOnTheFly = ignore["client"]
-        if(state.has_key("playstate")):
+        if state.has_key("playstate"):
             position, paused, doSeek = self._extractStatePlaystateArguments(state)
-        if(state.has_key("ping")):
+        if state.has_key("ping"):
             latencyCalculation = state["ping"]["latencyCalculation"] if state["ping"].has_key("latencyCalculation") else 0
             clientRtt = state["ping"]["clientRtt"] if state["ping"].has_key("clientRtt") else 0
             self._clientLatencyCalculation = state["ping"]["clientLatencyCalculation"] if state["ping"].has_key("clientLatencyCalculation") else 0
             self._clientLatencyCalculationArrivalTime = time.time()
             self._pingService.receiveMessage(latencyCalculation, clientRtt)
-        if(self.serverIgnoringOnTheFly == 0):
+        if self.serverIgnoringOnTheFly == 0:
             self._watcher.updateState(position, paused, doSeek, self._pingService.getLastForwardDelay())
 
     def handleError(self, error):
@@ -424,15 +424,15 @@ class PingService(object):
         return time.time()
 
     def receiveMessage(self, timestamp, senderRtt):
-        if(not timestamp):
+        if not timestamp:
             return
         self._rtt = time.time() - timestamp
-        if(self._rtt < 0 or senderRtt < 0):
+        if self._rtt < 0 or senderRtt < 0:
             return
-        if(not self._avrRtt):
+        if not self._avrRtt:
             self._avrRtt = self._rtt
         self._avrRtt = self._avrRtt * PING_MOVING_AVERAGE_WEIGHT + self._rtt * (1 - PING_MOVING_AVERAGE_WEIGHT)
-        if(senderRtt < self._rtt):
+        if senderRtt < self._rtt:
             self._fd = self._avrRtt / 2 + (self._rtt - senderRtt)
         else:
             self._fd = self._avrRtt / 2

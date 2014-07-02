@@ -76,64 +76,64 @@ class ConfigurationGetter(object):
     def _validateArguments(self):
         def _isPortValid(varToTest):
             try:
-                if (varToTest == "" or varToTest is None):
+                if varToTest == "" or varToTest is None:
                     return False
-                if (str(varToTest).isdigit() == False):
+                if str(varToTest).isdigit() == False:
                     return False
                 varToTest = int(varToTest)
-                if (varToTest > 65535 or varToTest < 1):
+                if varToTest > 65535 or varToTest < 1:
                     return False
                 return True
             except:
                 return False
         for key in self._boolean:
-            if(self._config[key] == "True"):
+            if self._config[key] == "True":
                 self._config[key] = True
-            elif(self._config[key] == "False"):
+            elif self._config[key] == "False":
                 self._config[key] = False
         for key in self._required:
-            if(key == "playerPath"):
+            if key == "playerPath":
                 player = None
                 if self._config["playerPath"]:
                     player = self._playerFactory.getPlayerByPath(self._config["playerPath"])
-                if(player):
+                if player:
                     self._config["playerClass"] = player
                 else:
                     raise InvalidConfigValue("Player path is not set properly")
                 if player.__name__ in ['MpvPlayer', 'MplayerPlayer']:
                     if not self._config['file']:
                         raise InvalidConfigValue("File must be selected before starting your player")
-            elif(key == "host"):
+            elif key == "host":
                 self._config["host"], self._config["port"] = self._splitPortAndHost(self._config["host"])
                 hostNotValid = (self._config["host"] == "" or self._config["host"] is None)
                 portNotValid = (_isPortValid(self._config["port"]) == False)
-                if(hostNotValid):
+                if hostNotValid:
                     raise InvalidConfigValue("Hostname can't be empty")
-                elif(portNotValid):
+                elif portNotValid:
                     raise InvalidConfigValue("Port must be valid")
-            elif(self._config[key] == "" or self._config[key] is None):
+            elif self._config[key] == "" or self._config[key] is None:
                 raise InvalidConfigValue("{} can't be empty".format(key.capitalize()))
 
     def _overrideConfigWithArgs(self, args):
         for key, val in vars(args).items():
-            if(val):
-                if(key == "force_gui_prompt"):
+            if val:
+                if key == "force_gui_prompt":
                     key = "forceGuiPrompt"
-                if(key == "no_store"):
+                if key == "no_store":
                     key = "noStore"
-                if(key == "player_path"):
+                if key == "player_path":
                     key = "playerPath"
-                if(key == "_args"):
+                if key == "_args":
                     key = "playerArgs"
-                if(key == "no_gui"):
+                if key == "no_gui":
                     key = "noGui"
-                if(key == "clear_gui_data"):
+                if key == "clear_gui_data":
                     key = "clearGUIData"
                 self._config[key] = val
 
     def _splitPortAndHost(self, host):
         port = constants.DEFAULT_PORT if not self._config["port"] else self._config["port"]
-        if(host):
+        if host:
             if ':' in host:
                 host, port = host.split(':', 1)
                 try:
@@ -148,21 +148,21 @@ class ConfigurationGetter(object):
     def _checkForPortableFile(self):
         path = utils.findWorkingDir()
         for name in constants.CONFIG_NAMES:
-            if(os.path.isfile(os.path.join(path, name))):
+            if os.path.isfile(os.path.join(path, name)):
                 return os.path.join(path, name)
 
     def _getConfigurationFilePath(self):
         configFile = self._checkForPortableFile()
         if not configFile:
             for name in constants.CONFIG_NAMES:
-                if(configFile and os.path.isfile(configFile)):
+                if configFile and os.path.isfile(configFile):
                     break
-                if(os.name <> 'nt'):
+                if os.name <> 'nt':
                     configFile = os.path.join(os.getenv('HOME', '.'), name)
                 else:
                     configFile = os.path.join(os.getenv('APPDATA', '.'), name)
-            if(configFile and not os.path.isfile(configFile)):
-                if(os.name <> 'nt'):
+            if configFile and not os.path.isfile(configFile):
+                if os.name <> 'nt':
                     configFile = os.path.join(os.getenv('HOME', '.'), constants.DEFAULT_CONFIG_NAME_LINUX)
                 else:
                     configFile = os.path.join(os.getenv('APPDATA', '.'), constants.DEFAULT_CONFIG_NAME_WINDOWS)
@@ -171,16 +171,16 @@ class ConfigurationGetter(object):
 
     def _parseConfigFile(self, iniPath, createConfig=True):
         parser = SafeConfigParserUnicode()
-        if(not os.path.isfile(iniPath)):
-            if(createConfig):
+        if not os.path.isfile(iniPath):
+            if createConfig:
                 open(iniPath, 'w').close()
             else:
                 return
         parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in self._iniStructure.items():
-            if(parser.has_section(section)):
+            if parser.has_section(section):
                 for option in options:
-                    if(parser.has_option(section, option)):
+                    if parser.has_option(section, option):
                         self._config[option] = parser.get(section, option)
 
     def _checkConfig(self):
@@ -195,39 +195,39 @@ class ConfigurationGetter(object):
                 sys.exit()
 
     def _promptForMissingArguments(self, error=None):
-        if(self._config['noGui'] or not GuiConfiguration):
+        if self._config['noGui'] or not GuiConfiguration:
             if error:
                 print "{}!".format(error)
             print getMessage("missing-arguments-error")
             sys.exit()
-        elif(GuiConfiguration):
+        elif GuiConfiguration:
             gc = GuiConfiguration(self._config, error=error)
             gc.setAvailablePaths(self._playerFactory.getAvailablePlayerPaths())
             gc.run()
             return gc.getProcessedConfiguration()
 
     def __wasOptionChanged(self, parser, section, option):
-        if (parser.has_option(section, option)):
-            if (parser.get(section, option) != unicode(self._config[option])):
+        if parser.has_option(section, option):
+            if parser.get(section, option) != unicode(self._config[option]):
                 return True
         else:
             return True
 
     def _saveConfig(self, iniPath):
         changed = False
-        if(self._config['noStore']):
+        if self._config['noStore']:
             return
         parser = SafeConfigParserUnicode()
         parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in self._iniStructure.items():
-            if(not parser.has_section(section)):
+            if not parser.has_section(section):
                 parser.add_section(section)
                 changed = True
             for option in options:
-                if(self.__wasOptionChanged(parser, section, option)):
+                if self.__wasOptionChanged(parser, section, option):
                     changed = True
                 parser.set(section, option, unicode(self._config[option]).replace('%', '%%'))
-        if(changed):
+        if changed:
             parser.write(codecs.open(iniPath, "wb", "utf_8_sig"))
 
 
@@ -239,7 +239,7 @@ class ConfigurationGetter(object):
                 pass
 
             try:
-                if(self._config['noGui'] == False):
+                if self._config['noGui'] == False:
                     for key, value in self._promptForMissingArguments().items():
                         self._config[key] = value
             except GuiConfiguration.WindowClosed:
@@ -267,7 +267,7 @@ class ConfigurationGetter(object):
         for location in locations:
             for name in constants.CONFIG_NAMES:
                 path = location + os.path.sep + name
-                if(os.path.isfile(path) and (os.name == 'nt' or path != os.path.join(os.getenv('HOME', '.'), constants.DEFAULT_CONFIG_NAME_LINUX))):
+                if os.path.isfile(path) and (os.name == 'nt' or path != os.path.join(os.getenv('HOME', '.'), constants.DEFAULT_CONFIG_NAME_LINUX)):
                     loadedPaths.append("'" + os.path.normpath(path) + "'")
                     self._parseConfigFile(path, createConfig=False)
                     self._checkConfig()
@@ -298,23 +298,23 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("args-argument"))
         args = self._argparser.parse_args()
         self._overrideConfigWithArgs(args)
-        if(self._config['file'] and self._config['file'][:2] == "--"):
+        if self._config['file'] and self._config['file'][:2] == "--":
             self._config['playerArgs'].insert(0, self._config['file'])
             self._config['file'] = None
         # Arguments not validated yet - booleans are still text values
         if self._config['language']:
             setLanguage(self._config['language'])
-        if((self._config['forceGuiPrompt'] == "True" or not self._config['file']) and GuiConfiguration and not self._config['noGui']):
+        if (self._config['forceGuiPrompt'] == "True" or not self._config['file']) and GuiConfiguration and not self._config['noGui']:
             self._forceGuiPrompt()
         self._checkConfig()
         self._saveConfig(iniPath)
-        if(self._config['file']):
+        if self._config['file']:
             self._config['loadedRelativePaths'] = self._loadRelativeConfiguration()
         if self._config['language']:
             setLanguage(self._config['language'])
         if not GuiConfiguration:
             self._config['noGui'] = True
-        if(not self._config['noGui']):
+        if not self._config['noGui']:
             from syncplay.vendor import qt4reactor
             if QCoreApplication.instance() is None:
                 self.app = QtGui.QApplication(sys.argv)
@@ -336,5 +336,5 @@ class SafeConfigParserUnicode(SafeConfigParser):
                     continue
                 if (value is not None) or (self._optcre == self.OPTCRE):
                     key = " = ".join((key, unicode(value).replace('\n', '\n\t')))
-                fp.write("%s\n" % (key))
+                fp.write("%s\n" % key)
             fp.write("\n")

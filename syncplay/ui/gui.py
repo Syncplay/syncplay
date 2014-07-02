@@ -23,7 +23,7 @@ class MainWindow(QtGui.QMainWindow):
         message = message.replace("&lt;", "<span style=\"color:#367AA9;font-weight:bold;\">&lt;")
         message = message.replace("&gt;", "&gt;</span>")
         message = message.replace("\n", "<br />")
-        if(noTimestamp):
+        if noTimestamp:
             self.newMessage(message + "<br />")
         else:
             self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
@@ -36,7 +36,7 @@ class MainWindow(QtGui.QMainWindow):
         
         for room in rooms:
             roomitem = QtGui.QStandardItem(room)
-            if (room == currentUser.room):
+            if room == currentUser.room:
                 font = QtGui.QFont()
                 font.setWeight(QtGui.QFont.Bold)
                 roomitem.setFont(font)
@@ -47,9 +47,9 @@ class MainWindow(QtGui.QMainWindow):
             for user in rooms[room]:
                 useritem = QtGui.QStandardItem(user.username)
                 fileitem = QtGui.QStandardItem("")
-                if (user.file):
+                if user.file:
                     fileitem = QtGui.QStandardItem(u"{} ({})".format(user.file['name'], formatTime(user.file['duration'])))
-                    if (currentUser.file):                     
+                    if currentUser.file:
                         sameName = sameFilename(user.file['name'], currentUser.file['name'])
                         sameSize = sameFilesize(user.file['size'], currentUser.file['size'])
                         sameDuration = sameFileduration(user.file['duration'], currentUser.file['duration'])
@@ -57,20 +57,20 @@ class MainWindow(QtGui.QMainWindow):
                         differentName = not sameName
                         differentSize = not sameSize
                         differentDuration = not sameDuration
-                        if (sameName or sameRoom):
-                            if (differentSize and sameDuration):
+                        if sameName or sameRoom:
+                            if differentSize and sameDuration:
                                 fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("differentsize-note")))
-                            elif (differentSize and differentDuration):
+                            elif differentSize and differentDuration:
                                 fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("differentsizeandduration-note")))
-                            elif (differentDuration):
+                            elif differentDuration:
                                 fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("differentduration-note")))
-                            if (sameRoom and (differentName or differentSize or differentDuration)):
+                            if sameRoom and (differentName or differentSize or differentDuration):
                                 fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
                 else:
                     fileitem = QtGui.QStandardItem(getMessage("nofile-note"))
-                    if (room == currentUser.room):
+                    if room == currentUser.room:
                         fileitem.setForeground(QtGui.QBrush(QtGui.QColor('blue')))
-                if(currentUser.username == user.username):
+                if currentUser.username == user.username:
                     font = QtGui.QFont()
                     font.setWeight(QtGui.QFont.Bold)
                     useritem.setFont(font)
@@ -86,7 +86,7 @@ class MainWindow(QtGui.QMainWindow):
         self.listTreeView.resizeColumnToContents(1)
         
     def roomClicked(self, item):
-        while(item.parent().row() != -1):
+        while item.parent().row() != -1:
             item = item.parent()
         self.joinRoom(item.sibling(item.row(), 0).data())
     
@@ -114,18 +114,18 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 room = self._syncplayClient.defaultRoom
         self.roomInput.setText(room)
-        if(room != self._syncplayClient.getRoom()):
+        if room != self._syncplayClient.getRoom():
             self._syncplayClient.setRoom(room)
             self._syncplayClient.sendRoom()
 
     def seekPosition(self):
         s = re.match(constants.UI_SEEK_REGEX, self.seekInput.text())
-        if(s):
+        if s:
             sign = self._extractSign(s.group('sign'))
             t = utils.parseTime(s.group('time'))
-            if(t is None):
+            if t is None:
                 return
-            if(sign):
+            if sign:
                 t = self._syncplayClient.getGlobalPosition() + sign * t 
             self._syncplayClient.setPosition(t)
 
@@ -168,11 +168,11 @@ class MainWindow(QtGui.QMainWindow):
     def browseMediapath(self):
         self.loadMediaBrowseSettings()
         options = QtGui.QFileDialog.Options()
-        if (os.path.isdir(self.mediadirectory)):
+        if os.path.isdir(self.mediadirectory):
             defaultdirectory = self.mediadirectory
-        elif (os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation))):
+        elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)):
             defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)
-        elif (os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation))):
+        elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)):
             defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)
         else:
             defaultdirectory = ""
@@ -187,8 +187,8 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient._player.openFile(fileName)
             
     def _extractSign(self, m):
-        if(m):
-            if(m == "-"):
+        if m:
+            if m == "-":
                 return -1
             else:
                 return 1
@@ -201,14 +201,14 @@ class MainWindow(QtGui.QMainWindow):
                 "")
         if ok and newoffset != '':
             o = re.match(constants.UI_OFFSET_REGEX, "o " + newoffset)
-            if(o):
+            if o:
                 sign = self._extractSign(o.group('sign'))
                 t = utils.parseTime(o.group('time'))
-                if(t is None):
+                if t is None:
                     return
-                if (o.group('sign') == "/"):
+                if o.group('sign') == "/":
                         t =  self._syncplayClient.getPlayerPosition() - t
-                elif(sign):
+                elif sign:
                         t = self._syncplayClient.getUserOffset() + sign * t
                 self._syncplayClient.setUserOffset(t)
             else:
@@ -400,7 +400,7 @@ class MainWindow(QtGui.QMainWindow):
     def dragEnterEvent(self, event):
         data = event.mimeData()
         urls = data.urls()
-        if (urls and urls[0].scheme() == 'file'):
+        if urls and urls[0].scheme() == 'file':
             event.acceptProposedAction()
             
     def dropEvent(self, event):
@@ -410,7 +410,7 @@ class MainWindow(QtGui.QMainWindow):
             rewindFile = True
         data = event.mimeData()
         urls = data.urls()
-        if (urls and urls[0].scheme() == 'file'):
+        if urls and urls[0].scheme() == 'file':
             if sys.platform.startswith('linux'):
                 dropfilepath = unicode(urls[0].path())
             else:

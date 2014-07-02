@@ -515,7 +515,7 @@ class NSISScript(object):
         installFiles = self.prepareInstallListTemplate(fileList) 
         uninstallFiles = self.prepareDeleteListTemplate(fileList)
         
-        if(os.path.isfile(SETUP_SCRIPT_PATH)):
+        if os.path.isfile(SETUP_SCRIPT_PATH):
             raise RuntimeError("Cannot create setup script, file exists at {}".format(SETUP_SCRIPT_PATH))
         contents =  Template(NSIS_SCRIPT_TEMPLATE).substitute(
                                                               version = syncplay.version,
@@ -527,7 +527,7 @@ class NSISScript(object):
             outfile.write(contents)
         
     def compile(self):
-        if(not os.path.isfile(NSIS_COMPILE)):
+        if not os.path.isfile(NSIS_COMPILE):
             return "makensis.exe not found, won't create the installer"
         subproc = subprocess.Popen([NSIS_COMPILE, SETUP_SCRIPT_PATH], env=os.environ)
         subproc.communicate()
@@ -543,7 +543,7 @@ class NSISScript(object):
             totalSize += sum(os.path.getsize(os.path.join(root, file_)) for file_ in files)
             for file_ in files:
                 new_root = root.replace(OUT_DIR, "").strip("\\")
-                if(not fileList.has_key(new_root)):
+                if not fileList.has_key(new_root):
                     fileList[new_root] = []
                 fileList[new_root].append(file_)
         return fileList, totalSize          

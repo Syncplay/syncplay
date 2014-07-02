@@ -28,10 +28,10 @@ class ConsoleUI(threading.Thread):
             while True:
                 data = raw_input().decode(sys.stdin.encoding)
                 data = data.rstrip('\n\r')
-                if(not self.promptMode.isSet()):
+                if not self.promptMode.isSet():
                     self.PromptResult = data
                     self.promptMode.set()
-                elif(self._syncplayClient):
+                elif self._syncplayClient:
                     self._executeCommand(data)
         except EOFError:
             pass
@@ -50,12 +50,12 @@ class ConsoleUI(threading.Thread):
             self.showMessage(message, True)
             for user in rooms[room]:
                 username = "*<{}>*".format(user.username) if user == currentUser else "<{}>".format(user.username)
-                if(user.file):
+                if user.file:
                     message = u"{} is playing:".format(username)
                     self.showMessage(message, True)
                     message = u"    File: '{}' ({})".format(user.file['name'], formatTime(user.file['duration']))
-                    if(currentUser.file):
-                        if(user.file['name'] == currentUser.file['name'] and user.file['size'] != currentUser.file['size']):
+                    if currentUser.file:
+                        if user.file['name'] == currentUser.file['name'] and user.file['size'] != currentUser.file['size']:
                             message += " (their file size is different from yours!)"
                     self.showMessage(message, True)
                 else:
@@ -67,7 +67,7 @@ class ConsoleUI(threading.Thread):
 
     def showMessage(self, message, noTimestamp=False):
         message = message.encode(sys.stdout.encoding, 'replace')
-        if(noTimestamp):
+        if noTimestamp:
             print(message)
         else:
             print(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message)
@@ -79,8 +79,8 @@ class ConsoleUI(threading.Thread):
         print("ERROR:\t" + message)            
 
     def _extractSign(self, m):
-        if(m):
-            if(m == "-"):
+        if m:
+            if m == "-":
                 return -1
             else:
                 return 1
@@ -90,23 +90,23 @@ class ConsoleUI(threading.Thread):
     def _tryAdvancedCommands(self, data):
         o = re.match(constants.UI_OFFSET_REGEX, data)
         s = re.match(constants.UI_SEEK_REGEX, data)
-        if(o):
+        if o:
             sign = self._extractSign(o.group('sign'))
             t = utils.parseTime(o.group('time'))
-            if(t is None):
+            if t is None:
                 return
-            if (o.group('sign') == "/"):
+            if o.group('sign') == "/":
                     t =  self._syncplayClient.getPlayerPosition() - t
-            elif(sign):
+            elif sign:
                     t = self._syncplayClient.getUserOffset() + sign * t
             self._syncplayClient.setUserOffset(t)
             return True
         elif s:
             sign = self._extractSign(s.group('sign'))
             t = utils.parseTime(s.group('time'))
-            if(t is None):
+            if t is None:
                 return
-            if(sign):
+            if sign:
                 t = self._syncplayClient.getGlobalPosition() + sign * t 
             self._syncplayClient.setPosition(t)
             return True
@@ -114,17 +114,17 @@ class ConsoleUI(threading.Thread):
      
     def _executeCommand(self, data):
         command = re.match(constants.UI_COMMAND_REGEX, data)
-        if(not command):
+        if not command:
             return
-        if(command.group('command') in constants.COMMANDS_UNDO):
+        if command.group('command') in constants.COMMANDS_UNDO:
             tmp_pos = self._syncplayClient.getPlayerPosition()
             self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
-        elif (command.group('command') in constants.COMMANDS_LIST):
+        elif command.group('command') in constants.COMMANDS_LIST:
             self._syncplayClient.getUserList()
-        elif (command.group('command') in constants.COMMANDS_PAUSE):
+        elif command.group('command') in constants.COMMANDS_PAUSE:
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
-        elif (command.group('command') in constants.COMMANDS_ROOM):
+        elif command.group('command') in constants.COMMANDS_ROOM:
             room = command.group('parameter')
             if room == None:
                 if  self._syncplayClient.userlist.currentUser.file:
@@ -135,9 +135,9 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.setRoom(room)
             self._syncplayClient.sendRoom()
         else:
-            if(self._tryAdvancedCommands(data)):
+            if self._tryAdvancedCommands(data):
                 return
-            if (command.group('command') not in constants.COMMANDS_HELP):
+            if command.group('command') not in constants.COMMANDS_HELP:
                 self.showMessage(getMessage("unrecognized-command-notification"))
             self.showMessage(getMessage("commandlist-notification"), True)
             self.showMessage(getMessage("commandlist-notification/room"), True)
