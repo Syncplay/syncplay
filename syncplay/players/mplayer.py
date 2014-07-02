@@ -190,8 +190,7 @@ class MplayerPlayer(BasePlayer):
                 return path
 
     def notMplayer2(self):
-        print getMessage("mplayer2-required")
-        self._listener.sendLine('quit')
+        self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("mplayer2-required"), True)
         self.drop()
 
     def _takeLocksDown(self):
