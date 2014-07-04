@@ -104,6 +104,9 @@ en = {
       "clear-gui-data-argument" : 'resets path and window state GUI data stored as QSettings',
       "language-argument" :'language for Syncplay messages (en/pl)',
 
+      "version-argument" : 'prints your version',
+      "version-message" : "You're using Syncplay version {} ({})",
+
       # Client labels
       "config-window-title" : "Syncplay configuration",
 

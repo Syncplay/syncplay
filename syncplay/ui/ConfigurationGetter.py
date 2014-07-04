@@ -2,7 +2,7 @@ from ConfigParser import SafeConfigParser, DEFAULTSECT
 import argparse
 import os
 import sys
-from syncplay import constants, utils
+from syncplay import constants, utils, version, milestone
 from syncplay.messages import getMessage, setLanguage
 from syncplay.players.playerFactory import PlayerFactory
 import codecs
@@ -295,8 +295,12 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--language', metavar='language', type=str, help=getMessage("language-argument"))
         self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("file-argument"))
         self._argparser.add_argument('--clear-gui-data', action='store_true', help=getMessage("clear-gui-data-argument"))
+        self._argparser.add_argument('-v', '--version', action='store_true', help=getMessage("version-argument"))
         self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("args-argument"))
         args = self._argparser.parse_args()
+        if args.version:
+            print getMessage("version-message").format(version, milestone)
+            sys.exit()
         self._overrideConfigWithArgs(args)
         if self._config['file'] and self._config['file'][:2] == "--":
             self._config['playerArgs'].insert(0, self._config['file'])
