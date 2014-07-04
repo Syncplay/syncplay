@@ -93,7 +93,7 @@ class VlcPlayer(BasePlayer):
 
     def setPosition(self, value):
         self._position = value
-        self._listener.sendLine("set-position: {:n}".format(value))
+        self._listener.sendLine("set-position: {}".format(value))
 
     def setPaused(self, value):
         self._paused = value
