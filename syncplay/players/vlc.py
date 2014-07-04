@@ -77,7 +77,7 @@ class VlcPlayer(BasePlayer):
         self._positionAsk.clear()
         self._pausedAsk.clear()
         self._listener.sendLine(".")
-        if self._filechanged == False:
+        if not self._filechanged:
             self._positionAsk.wait()
             self._pausedAsk.wait()
             self._client.updatePlayerStatus(self._paused, self._position)
@@ -114,7 +114,7 @@ class VlcPlayer(BasePlayer):
         return all(ord(c) < 128 for c in s)
 
     def openFile(self, filePath):
-        if self._isASCII(filePath) == True:
+        if self._isASCII(filePath):
             self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii', 'ignore')))
         else:
             fileURL = self.getMRL(filePath)
@@ -135,16 +135,22 @@ class VlcPlayer(BasePlayer):
             t = threading.Thread(target=self._onFileUpdate)
             t.setDaemon(True)
             t.start()
-        elif name == "filepath" and value != "no-input":
+        elif name == "filepath":
             self._filechanged = True
-            if "file://" in value:
-                value = value.replace("file://", "")
-                if not os.path.isfile(value):
-                    value = value.lstrip("/")
-            self._filepath = value
+            if value == "no-input":
+                self._filepath = None
+            else:
+                if "file://" in value:
+                    value = value.replace("file://", "")
+                    if not os.path.isfile(value):
+                        value = value.lstrip("/")
+                self._filepath = value
             self._pathAsk.set()
-        elif name == "duration" and (value != "no-input"):
-            self._duration = float(value.replace(",", "."))
+        elif name == "duration":
+            if value == "no-input":
+                self._duration = 0
+            else:
+                self._duration = float(value.replace(",", "."))
             self._durationAsk.set()
         elif name == "playstate":
             self._paused = bool(value != 'playing') if(value != "no-input" and self._filechanged == False) else self._client.getGlobalPaused()
@@ -225,7 +231,7 @@ class VlcPlayer(BasePlayer):
             self.__playerController = playerController
             call = [playerPath]
             if filePath:
-                if self.__playerController._isASCII(filePath) == True:
+                if self.__playerController._isASCII(filePath):
                     call.append(filePath)
                 else:
                     call.append(self.__playerController.getMRL(filePath))
@@ -255,7 +261,7 @@ class VlcPlayer(BasePlayer):
                 playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('APPDATA', '.'), "VLC\\lua\\intf\\")
             playerController.vlcModulePath = playerController.vlcIntfPath + "modules/?.luac"
-            if _usevlcintf(playerController.vlcIntfPath, playerController.vlcIntfUserPath) == True:
+            if _usevlcintf(playerController.vlcIntfPath, playerController.vlcIntfUserPath):
                 playerController.SLAVE_ARGS.append('--lua-config=syncplay={{port=\"{}\"}}'.format(str(playerController.vlcport)))
             else:
                 if sys.platform.startswith('linux'):
