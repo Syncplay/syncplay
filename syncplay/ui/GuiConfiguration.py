@@ -122,6 +122,8 @@ class ConfigDialog(QtGui.QDialog):
                 defaultdirectory = os.environ["ProgramW6432"]
         elif sys.platform.startswith('linux'):
             defaultdirectory = "/usr/bin"
+        elif sys.platform.startswith('darwin'):
+            defaultdirectory = "/Applications/"
 
         fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,
                 "Browse for media player executable",
@@ -247,10 +249,10 @@ class ConfigDialog(QtGui.QDialog):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            if sys.platform.startswith('linux'):
-                dropfilepath = unicode(urls[0].path())
-            else:
+            if sys.platform.startswith('windows'):
                 dropfilepath = unicode(urls[0].path())[1:]  # Removes starting slash
+            else:
+                dropfilepath = unicode(urls[0].path())
             if dropfilepath[-4:].lower() == ".exe":
                 self.executablepathCombobox.setEditText(dropfilepath)
             else:
@@ -273,10 +275,10 @@ class ConfigDialog(QtGui.QDialog):
             self.datacleared = True
         self.QtGui = QtGui
         self.error = error
-        if sys.platform.startswith('linux'):
-            resourcespath = utils.findWorkingDir() + "/resources/"
-        else:
+        if sys.platform.startswith('windows'):
             resourcespath = utils.findWorkingDir() + "\\resources\\"
+        else:
+            resourcespath = utils.findWorkingDir() + "/resources/"
         self.resourcespath = resourcespath
 
         super(ConfigDialog, self).__init__()

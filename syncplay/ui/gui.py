@@ -411,10 +411,10 @@ class MainWindow(QtGui.QMainWindow):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            if sys.platform.startswith('linux'):
-                dropfilepath = unicode(urls[0].path())
-            else:
+            if sys.platform.startswith('win'):
                 dropfilepath = unicode(urls[0].path().replace("/", "\\"))[1:] # Removes starting slash
+            else:
+                dropfilepath = unicode(urls[0].path())
             if rewindFile == False:
                 self._syncplayClient._player.openFile(dropfilepath)
             else:
@@ -439,10 +439,10 @@ class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.QtGui = QtGui
-        if sys.platform.startswith('linux'):
-            self.resourcespath = utils.findWorkingDir() + "/resources/"
-        else:
+        if sys.platform.startswith('win'):
             self.resourcespath = utils.findWorkingDir() + "\\resources\\"
+        else:
+            self.resourcespath = utils.findWorkingDir() + "/resources/"
         self.setWindowTitle("Syncplay v" + version)
         self.mainLayout = QtGui.QVBoxLayout()
         self.addTopLayout(self)

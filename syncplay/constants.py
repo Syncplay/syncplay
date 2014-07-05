@@ -64,6 +64,7 @@ MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"C:\Program Files\mpv\mpv.exe", r"C:\Progra
 VLC_PATHS = [
     r"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
     r"C:\Program Files\VideoLAN\VLC\vlc.exe",
+    "/usr/bin/vlc",
     "/Applications/VLC.app/Contents/MacOS/VLC"
 ]
 
