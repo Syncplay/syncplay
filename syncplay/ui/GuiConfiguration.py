@@ -56,7 +56,7 @@ class ConfigDialog(QtGui.QDialog):
             self.setFixedSize(self.sizeHint())
 
     def runButtonTextUpdate(self):
-        if self.donotstoreCheckbox.isChecked():
+        if self.nostoreCheckbox.isChecked():
             self.runButton.setText(getMessage("run-label"))
         else:
             self.runButton.setText(getMessage("storeandrun-label"))
@@ -180,10 +180,8 @@ class ConfigDialog(QtGui.QDialog):
             self.saveMediaBrowseSettings()
 
     def _saveDataAndLeave(self):
+        self.processWidget(self, lambda w: self.saveValues(w))
         self.config['host'] = self.hostTextbox.text() if ":" in self.hostTextbox.text() else self.hostTextbox.text() + ":" + unicode(constants.DEFAULT_PORT)
-        self.config['name'] = self.usernameTextbox.text()
-        self.config['room'] = self.defaultroomTextbox.text()
-        self.config['password'] = self.serverpassTextbox.text()
         self.config['playerPath'] = unicode(self.executablepathCombobox.currentText())
         if self.mediapathTextbox.text() == "":
             self.config['file'] = None
@@ -191,22 +189,6 @@ class ConfigDialog(QtGui.QDialog):
             self.config['file'] = os.path.abspath(self.mediapathTextbox.text())
         else:
             self.config['file'] = unicode(self.mediapathTextbox.text())
-        if self.alwaysshowCheckbox.isChecked() == False:
-            self.config['forceGuiPrompt'] = True
-        else:
-            self.config['forceGuiPrompt'] = False
-        if self.donotstoreCheckbox.isChecked() == True:
-            self.config['noStore'] = True
-        else:
-            self.config['noStore'] = False
-        if self.dontslowwithmeCheckbox.isChecked() == True:
-            self.config['dontSlowDownWithMe'] = True
-        else:
-            self.config['dontSlowDownWithMe'] = False
-        if self.pauseonleaveCheckbox.isChecked() == True:
-            self.config['pauseOnLeave'] = True
-        else:
-            self.config['pauseOnLeave'] = False
 
         if not self.slowdownThresholdSpinbox.text:
             self.slowdownThresholdSpinbox.value = constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD
@@ -214,20 +196,6 @@ class ConfigDialog(QtGui.QDialog):
             self.rewindThresholdSpinbox.value = constants.DEFAULT_REWIND_THRESHOLD
         self.config['slowdownThreshold'] = self.slowdownThresholdSpinbox.value()
         self.config['rewindThreshold'] = self.rewindThresholdSpinbox.value()
-
-        if self.filenameprivacySendRawOption.isChecked() == True:
-            self.config['filenamePrivacyMode'] = constants.PRIVACY_SENDRAW_MODE
-        elif self.filenameprivacySendHashedOption.isChecked() == True:
-            self.config['filenamePrivacyMode'] = constants.PRIVACY_SENDHASHED_MODE
-        elif self.filenameprivacyDontSendOption.isChecked() == True:
-            self.config['filenamePrivacyMode'] = constants.PRIVACY_DONTSEND_MODE
-
-        if self.slowdownAutoOption.isChecked() == True:
-            self.config['slowMeOnDesync'] = constants.OPTION_AUTO
-        elif self.slowdownAlwaysOption.isChecked() == True:
-            self.config['slowMeOnDesync'] = constants.OPTION_ALWAYS
-        elif self.slowdownNeverOption.isChecked() == True:
-            self.config['slowMeOnDesync'] = constants.OPTION_NEVER
 
         self.pressedclosebutton = True
         self.close()
@@ -258,11 +226,62 @@ class ConfigDialog(QtGui.QDialog):
             else:
                 self.mediapathTextbox.setText(dropfilepath)
 
+    def processWidget(self, container, torun):
+        for widget in container.children():
+            self.processWidget(widget, torun)
+            if hasattr(widget, 'objectName') and widget.objectName() and widget.objectName()[:3] != "qt_":
+                torun(widget)
+
+    def loadTooltips(self, widget):
+        tooltipName = widget.objectName().lower().split(":")[0] + "-tooltip"
+        if tooltipName[:1] == "*" or tooltipName[:1] == "!":
+            tooltipName = tooltipName[1:]
+        widget.setToolTip(getMessage(tooltipName))
+
+    def loadValues(self, widget):
+        valueName = str(widget.objectName())
+        if valueName[:1] == "!":
+            return
+
+        if isinstance(widget, QCheckBox) and widget.objectName():
+            if valueName[:1] == "*":
+                valueName = valueName[1:]
+                inverted = True
+            else:
+                inverted = False
+            widget.setChecked(self.config[valueName] != inverted)
+        elif isinstance(widget, QRadioButton):
+            radioName, radioValue  = valueName.split(":")[1].split("=")
+            if self.config[radioName] == radioValue:
+                widget.setChecked(True)
+        elif isinstance(widget, QLineEdit):
+            widget.setText(self.config[valueName])
+
+    def saveValues(self, widget):
+        valueName = str(widget.objectName())
+        if valueName[:1] == "!":
+            return
+
+        if isinstance(widget, QCheckBox) and widget.objectName():
+            if valueName[:1] == "*":
+                valueName = valueName[1:]
+                inverted = True
+            else:
+                inverted = False
+            self.config[valueName] = widget.isChecked() != inverted
+        elif isinstance(widget, QRadioButton):
+            radioName, radioValue  = valueName.split(":")[1].split("=")
+            if widget.isChecked():
+                self.config[radioName] = radioValue
+        elif isinstance(widget, QLineEdit):
+            self.config[valueName] = widget.text()
+
     def __init__(self, config, playerpaths, error):
 
         from syncplay import utils
         self.config = config
         self.datacleared = False
+
         if config['clearGUIData'] == True:
             settings = QSettings("Syncplay", "PlayerList")
             settings.clear()
@@ -294,24 +313,29 @@ class ConfigDialog(QtGui.QDialog):
         else:
             host = config['host'] + ":" + str(config['port'])
 
+        ''' objectName notation:
+        "!A": Do not load/save config in main loop
+        (Radiobox) "A:B=C": Use A for label/tooltip, but B and C for config name and value'''
+
         self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
         self.hostTextbox = QLineEdit(host, self)
         self.hostLabel = QLabel(getMessage("host-label"), self)
-        self.usernameTextbox = QLineEdit(config['name'], self)
+        self.usernameTextbox = QLineEdit(self)
+        self.usernameTextbox.setObjectName("name")
         self.serverpassLabel = QLabel(getMessage("password-label"), self)
-        self.defaultroomTextbox = QLineEdit(config['room'], self)
-        self.usernameLabel = QLabel(getMessage("username-label"), self)
-        self.serverpassTextbox = QLineEdit(config['password'], self)
+        self.defaultroomTextbox = QLineEdit(self)
+        self.usernameLabel = QLabel(getMessage("name-label"), self)
+        self.serverpassTextbox = QLineEdit(self)
         self.defaultroomLabel = QLabel(getMessage("room-label"), self)
 
-        self.hostLabel.setToolTip(getMessage("host-tooltip"))
-        self.hostTextbox.setToolTip(getMessage("host-tooltip"))
-        self.usernameLabel.setToolTip(getMessage("username-tooltip"))
-        self.usernameTextbox.setToolTip(getMessage("username-tooltip"))
-        self.serverpassLabel.setToolTip(getMessage("password-tooltip"))
-        self.serverpassTextbox.setToolTip(getMessage("password-tooltip"))
-        self.defaultroomLabel.setToolTip(getMessage("room-tooltip"))
-        self.defaultroomTextbox.setToolTip(getMessage("room-tooltip"))
+        self.hostLabel.setObjectName("host")
+        self.hostTextbox.setObjectName("!host")
+        self.usernameLabel.setObjectName("name")
+        self.usernameTextbox.setObjectName("name")
+        self.serverpassLabel.setObjectName("password")
+        self.serverpassTextbox.setObjectName("password")
+        self.defaultroomLabel.setObjectName("room")
+        self.defaultroomTextbox.setObjectName("room")
 
         self.connectionSettingsLayout = QtGui.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
@@ -344,10 +368,10 @@ class ConfigDialog(QtGui.QDialog):
         self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'), getMessage("browse-label"))
         self.mediabrowseButton.clicked.connect(self.browseMediapath)
 
-        self.executablepathLabel.setToolTip(getMessage("executable-path-tooltip"))
-        self.executablepathCombobox.setToolTip(getMessage("executable-path-tooltip"))
-        self.mediapathLabel.setToolTip(getMessage("media-path-tooltip"))
-        self.mediapathTextbox.setToolTip(getMessage("media-path-tooltip"))
+        self.executablepathLabel.setObjectName("executable-path")
+        self.executablepathCombobox.setObjectName("executable-path")
+        self.mediapathLabel.setObjectName("media-path")
+        self.mediapathTextbox.setObjectName("!media-path")
 
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
@@ -392,10 +416,10 @@ class ConfigDialog(QtGui.QDialog):
         self.rewindThresholdSpinbox.setSuffix(getMessage("seconds-suffix"))
         self.rewindThresholdSpinbox.adjustSize()
 
-        self.slowdownThresholdLabel.setToolTip(getMessage("slowdown-threshold-tooltip"))
-        self.slowdownThresholdSpinbox.setToolTip(getMessage("slowdown-threshold-tooltip"))
-        self.rewindThresholdLabel.setToolTip(getMessage("rewind-threshold-tooltip"))
-        self.rewindThresholdSpinbox.setToolTip(getMessage("rewind-threshold-tooltip"))
+        self.slowdownThresholdLabel.setObjectName("slowdown-threshold")
+        self.slowdownThresholdSpinbox.setObjectName("slowdown-threshold")
+        self.rewindThresholdLabel.setObjectName("rewind-threshold")
+        self.rewindThresholdSpinbox.setObjectName("rewind-threshold")
 
         self.slowdownLabel = QLabel(getMessage("slowdown-label"), self)
         self.slowdownButtonGroup = QButtonGroup()
@@ -424,58 +448,30 @@ class ConfigDialog(QtGui.QDialog):
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendHashedOption)
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacyDontSendOption)
 
-        self.dontslowwithmeCheckbox = QCheckBox(getMessage("dontslowwithme-label"))
+        self.dontslowwithmeCheckbox = QCheckBox(getMessage("dontslowdownwithme-label"))
         self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
-        self.alwaysshowCheckbox = QCheckBox(getMessage("alwayshow-label"))
-        self.donotstoreCheckbox = QCheckBox(getMessage("donotstore-label"))
+        self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
+        self.nostoreCheckbox = QCheckBox(getMessage("nostore-label"))
 
-        filenamePrivacyMode = config['filenamePrivacyMode']
-        if filenamePrivacyMode == constants.PRIVACY_DONTSEND_MODE:
-            self.filenameprivacyDontSendOption.setChecked(True)
-        elif filenamePrivacyMode == constants.PRIVACY_SENDHASHED_MODE:
-            self.filenameprivacySendHashedOption.setChecked(True)
-        else:
-            self.filenameprivacySendRawOption.setChecked(True)
+        self.filenameprivacyLabel.setObjectName("filename-privacy")
+        self.filenameprivacySendRawOption.setObjectName("privacy-sendraw:filenamePrivacyMode="+ constants.PRIVACY_SENDRAW_MODE)
+        self.filenameprivacySendHashedOption.setObjectName("privacy-sendhashed:filenamePrivacyMode=" + constants.PRIVACY_SENDHASHED_MODE)
+        self.filenameprivacyDontSendOption.setObjectName("privacy-dontsend:filenamePrivacyMode=" + constants.PRIVACY_DONTSEND_MODE)
+        self.filesizeprivacyLabel.setObjectName("filesize-privacy")
+        self.filesizeprivacySendRawOption.setObjectName("privacy-sendraw:filesizePrivacyMode=" + constants.PRIVACY_SENDRAW_MODE)
+        self.filesizeprivacySendHashedOption.setObjectName("privacy-sendhashed:filesizePrivacyMode=" + constants.PRIVACY_SENDHASHED_MODE)
+        self.filesizeprivacyDontSendOption.setObjectName("privacy-dontsend:filesizePrivacyMode=" + constants.PRIVACY_DONTSEND_MODE)
 
-        filesizePrivacyMode = config['filesizePrivacyMode']
-        if filesizePrivacyMode == constants.PRIVACY_DONTSEND_MODE:
-            self.filesizeprivacyDontSendOption.setChecked(True)
-        elif filesizePrivacyMode == constants.PRIVACY_SENDHASHED_MODE:
-            self.filesizeprivacySendHashedOption.setChecked(True)
-        else:
-            self.filesizeprivacySendRawOption.setChecked(True)
 
-        if config['pauseOnLeave'] == True:
-            self.pauseonleaveCheckbox.setChecked(True)
+        self.slowdownLabel.setObjectName("slowdown")
+        self.slowdownAutoOption.setObjectName("slowdown-auto:slowMeOnDesync=" + constants.OPTION_AUTO)
+        self.slowdownAlwaysOption.setObjectName("slowdown-always:slowMeOnDesync=" + constants.OPTION_ALWAYS)
+        self.slowdownNeverOption.setObjectName("slowdown-never:slowMeOnDesync=" + constants.OPTION_NEVER)
 
-        self.filenameprivacyLabel.setToolTip(getMessage("filename-privacy-tooltip"))
-        self.filenameprivacySendRawOption.setToolTip(getMessage("privacy-sendraw-tooltip"))
-        self.filenameprivacySendHashedOption.setToolTip(getMessage("privacy-sendhashed-tooltip"))
-        self.filenameprivacyDontSendOption.setToolTip(getMessage("privacy-dontsend-tooltip"))
-        self.filesizeprivacyLabel.setToolTip(getMessage("filesize-privacy-tooltip"))
-        self.filesizeprivacySendRawOption.setToolTip(getMessage("privacy-sendraw-tooltip"))
-        self.filesizeprivacySendHashedOption.setToolTip(getMessage("privacy-sendhashed-tooltip"))
-        self.filesizeprivacyDontSendOption.setToolTip(getMessage("privacy-dontsend-tooltip"))
-
-        slowdownMode = config['slowMeOnDesync']
-        if slowdownMode == constants.OPTION_ALWAYS:
-            self.slowdownAlwaysOption.setChecked(True)
-        elif slowdownMode == constants.OPTION_NEVER:
-            self.slowdownNeverOption.setChecked(True)
-        else:
-            self.slowdownAutoOption.setChecked(True)
-        if config['dontSlowDownWithMe'] == True:
-            self.dontslowwithmeCheckbox.setChecked(True)
-
-        self.slowdownLabel.setToolTip(getMessage("slowdown-tooltip"))
-        self.slowdownAutoOption.setToolTip(getMessage("slowdown-auto-tooltip"))
-        self.slowdownAlwaysOption.setToolTip(getMessage("slowdown-always-tooltip"))
-        self.slowdownNeverOption.setToolTip(getMessage("slowdown-never-tooltip"))
-
-        self.dontslowwithmeCheckbox.setToolTip(getMessage("dontslowwithme-tooltip"))
-        self.pauseonleaveCheckbox.setToolTip(getMessage("pauseonleave-tooltip"))
-        self.alwaysshowCheckbox.setToolTip(getMessage("alwayshow-tooltip"))
-        self.donotstoreCheckbox.setToolTip(getMessage("donotstore-tooltip"))
+        self.dontslowwithmeCheckbox.setObjectName("dontSlowDownWithMe")
+        self.pauseonleaveCheckbox.setObjectName("pauseOnLeave")
+        self.alwaysshowCheckbox.setObjectName("*forceGuiPrompt")
+        self.nostoreCheckbox.setObjectName("noStore")
 
         self.moreSettingsLayout = QtGui.QGridLayout()
 
@@ -515,7 +511,7 @@ class ConfigDialog(QtGui.QDialog):
         self.moreSettingsLayout.addWidget(self.dontslowwithmeCheckbox, 4, 0, 1, 2)
         self.moreSettingsLayout.addWidget(self.pauseonleaveCheckbox, 5, 0, 1, 2)
         self.moreSettingsLayout.addWidget(self.alwaysshowCheckbox, 4, 2, 1, 2)
-        self.moreSettingsLayout.addWidget(self.donotstoreCheckbox, 5, 2, 1, 2)
+        self.moreSettingsLayout.addWidget(self.nostoreCheckbox, 5, 2, 1, 2)
 
 
         self.moreSettingsGroup.setLayout(self.moreSettingsLayout)
@@ -530,13 +526,10 @@ class ConfigDialog(QtGui.QDialog):
         self.showmoreCheckbox.toggled.connect(self.moreToggled)
         self.moreSettingsGroup.toggled.connect(self.moreToggled)
 
-        if config['forceGuiPrompt'] == False:
-            self.alwaysshowCheckbox.setChecked(True)
-
-        self.showmoreCheckbox.setToolTip(getMessage("more-tooltip"))
+        self.showmoreCheckbox.setObjectName("!more")
 
 
-        self.donotstoreCheckbox.toggled.connect(self.runButtonTextUpdate)
+        self.nostoreCheckbox.toggled.connect(self.runButtonTextUpdate)
 
         self.mainLayout = QtGui.QVBoxLayout()
         if error:
@@ -554,13 +547,12 @@ class ConfigDialog(QtGui.QDialog):
 
         self.topLayout = QtGui.QHBoxLayout()
         self.helpButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'help.png'), getMessage("help-label"))
-        self.helpButton.setToolTip(getMessage("help-tooltip"))
+        self.helpButton.setObjectName("help")
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.pressed.connect(self.openHelp)
         self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("storeandrun-label"))
         self.runButton.pressed.connect(self._saveDataAndLeave)
         if config['noStore'] == True:
-            self.donotstoreCheckbox.setChecked(True)
             self.runButton.setText(getMessage("run-label"))
         self.topLayout.addWidget(self.helpButton, Qt.AlignLeft)
         self.topLayout.addWidget(self.runButton, Qt.AlignRight)
@@ -571,6 +563,10 @@ class ConfigDialog(QtGui.QDialog):
         self.runButton.setFocus()
         self.setFixedSize(self.sizeHint())
         self.setAcceptDrops(True)
+
+        if constants.SHOW_TOOLTIPS:
+            self.processWidget(self, lambda w: self.loadTooltips(w))
+        self.processWidget(self, lambda w: self.loadValues(w))
 
         if self.datacleared == True:
             QtGui.QMessageBox.information(self, "Syncplay", getMessage("gui-data-cleared-notification"))

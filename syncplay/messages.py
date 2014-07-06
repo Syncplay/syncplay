@@ -112,7 +112,7 @@ en = {
 
       "connection-group-title" : "Connection settings",
       "host-label" : "Server address: ",
-      "username-label" :  "Username (optional):",
+      "name-label" :  "Username (optional):",
       "password-label" :  "Server password (if any):",
       "room-label" : "Default room: ",
 
@@ -135,10 +135,10 @@ en = {
       "slowdown-auto-option" : "Automatic",
       "slowdown-always-option" : "Always",
       "slowdown-never-option" : "Never",
-      "dontslowwithme-label" : "Never slow down or rewind others",
+      "dontslowdownwithme-label" : "Never slow down or rewind others",
       "pauseonleave-label" : "Pause when user leaves",
-      "alwayshow-label" : "Do not always show this dialog",
-      "donotstore-label" : "Do not store this configuration",
+      "forceguiprompt-label" : "Do not always show this dialog", # (Inverted)
+      "nostore-label" : "Do not store this configuration", # (Inverted)
 
       "help-label" : "Help",
       "run-label" : "Run Syncplay",
@@ -177,7 +177,7 @@ en = {
       # Tooltips
 
       "host-tooltip" : "Hostname or IP to connect to, optionally including port (e.g. syncplay.pl:8999). Only synchronised with people on same server/port.",
-      "username-tooltip" : "Nickname you will be known by. No registration, so can easily change later. Random name generated if none specified.",
+      "name-tooltip" : "Nickname you will be known by. No registration, so can easily change later. Random name generated if none specified.",
       "password-tooltip" : "Passwords are only needed for connecting to private servers.",
       "room-tooltip" : "Room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
 
@@ -196,10 +196,10 @@ en = {
       "slowdown-auto-tooltip" : "Slow down on desync unless it causes problems (i.e. MPC-HC).",
       "slowdown-always-tooltip" : "Always slow down on desync (even on players where this causes playback issues).",
       "slowdown-never-tooltip" : "Never slow down on desync (even on players where this is probably better than rewinding).",
-      "dontslowwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging.",
+      "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
-      "alwayshow-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.",
-      "donotstore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.",
+      "forceguiprompt-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.", # (Inverted)
+      "nostore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.", # (Inverted)
 
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
 
