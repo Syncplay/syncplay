@@ -306,7 +306,6 @@ class MpcHcApi:
 
 class MPCHCAPIPlayer(BasePlayer):
     speedSupported = False
-    speedRecommended = False
     
     def __init__(self, client):
         from twisted.internet import reactor
@@ -383,8 +382,6 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__mpcVersion = self._mpcApi.version.split('.')
         if self.__mpcVersion[0:3] == ['1', '6', '4']:
             self.__switchPauseCalls = True
-        if self.__mpcVersion[0:3] >= ['1', '6', '5']:
-            self.speedSupported = True            
         if filePath:
             self.openFile(filePath)
     

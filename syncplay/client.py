@@ -55,6 +55,12 @@ class SyncClientFactory(ClientFactory):
 
 class SyncplayClient(object):
     def __init__(self, playerClass, ui, config):
+        constants.SHOW_OSD = config['showOSD']
+        constants.SHOW_OSD_WARNINGS = config['showOSDWarnings']
+        constants.SHOW_SLOWDOWN_OSD = config['showSlowdownOSD']
+        constants.SHOW_DIFFERENT_ROOM_OSD = config['showDifferentRoomOSD']
+        constants.SHOW_SAME_ROOM_OSD = config['showSameRoomOSD']
+        constants.SHOW_DURATION_NOTIFICATION = config['showDurationNotification']
         self.lastLeftTime = 0
         self.lastLeftUser = u""
         self.protocolFactory = SyncClientFactory(self)
@@ -226,11 +232,10 @@ class SyncplayClient(object):
         self._lastGlobalUpdate = time.time()
         if doSeek:
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
-        if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindThreshold'] == 0.0:
+        if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindOnDesync'] == False:
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
-        if self._player.speedSupported and not doSeek and not paused:
-            if self._config['slowMeOnDesync'] == constants.OPTION_ALWAYS or (self._config['slowMeOnDesync'] == constants.OPTION_AUTO and self._player.speedRecommended):
-                madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
+        if (self._player.speedSupported and not doSeek and not paused and not self._config['slowOnDesync'] == False):
+            madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
         if paused == False and pauseChanged:
             madeChangeOnPlayer = self._serverUnpaused(setBy)
         elif paused == True and pauseChanged:
@@ -356,6 +361,9 @@ class SyncplayClient(object):
 
     def getRoom(self):
         return self.userlist.currentUser.room
+
+    def getConfig(self):
+        return self._config
 
     def getUserList(self):
         if self._protocol and self._protocol.logged:
@@ -501,7 +509,7 @@ class SyncplayUserlist(object):
     def __showUserChangeMessage(self, username, room, file_, oldRoom=None):
         if room:
             if self.isRoomSame(room) or self.isRoomSame(oldRoom):
-                showOnOSD = constants.SHOW_SAME_ROOM_OSD
+                showOnOSD = constants.SHOW_OSD_WARNINGS
             else:
                 showOnOSD = constants.SHOW_DIFFERENT_ROOM_OSD
             hideFromOSD = not showOnOSD

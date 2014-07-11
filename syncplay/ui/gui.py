@@ -5,13 +5,38 @@ from syncplay.messages import getMessage
 import sys
 import time
 import re
-import os 
+import os
+import threading
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration
 
 class MainWindow(QtGui.QMainWindow):
     def addClient(self, client):
         self._syncplayClient = client
         self.roomInput.setText(self._syncplayClient.getRoom())
+        self.config = self._syncplayClient.getConfig()
+        try:
+            if self.contactLabel and not self.config['showContactInfo']:
+                self.contactLabel.hide()
+            if not self.config['showButtonLabels']:
+                if constants.MERGE_PLAYPAUSE_BUTTONS:
+                    self.playpauseButton.setText("")
+                else:
+                    self.playButton.setText("")
+                    self.playButton.setFixedWidth(self.playButton.minimumSizeHint().width())
+                    self.pauseButton.setText("")
+                    self.pauseButton.setFixedWidth(self.pauseButton.minimumSizeHint().width())
+                self.roomButton.setText("")
+                self.roomButton.setFixedWidth(self.roomButton.minimumSizeHint().width())
+                self.seekButton.setText("")
+                self.seekButton.setFixedWidth(self.seekButton.minimumSizeHint().width())
+                self.unseekButton.setText("")
+                self.unseekButton.setFixedWidth(self.unseekButton.minimumSizeHint().width())
+                self.roomGroup.setFixedWidth(self.roomGroup.sizeHint().width())
+                self.seekGroup.setFixedWidth(self.seekGroup.minimumSizeHint().width())
+                self.miscGroup.setFixedWidth(self.miscGroup.minimumSizeHint().width())
+        except ():
+            pass
+
     
     def promptFor(self, prompt=">", message=""):
         #TODO: Prompt user
@@ -20,7 +45,7 @@ class MainWindow(QtGui.QMainWindow):
     def showMessage(self, message, noTimestamp=False):
         message = unicode(message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
-        message = message.replace("&lt;", "<span style=\"color:#367AA9;font-weight:bold;\">&lt;")
+        message = message.replace("&lt;", "<span style=\"{}\">&lt;".format(constants.STYLE_USERNAME))
         message = message.replace("&gt;", "&gt;</span>")
         message = message.replace("\n", "<br />")
         if noTimestamp:
@@ -65,11 +90,11 @@ class MainWindow(QtGui.QMainWindow):
                             elif differentDuration:
                                 fileitem = QtGui.QStandardItem(u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']), getMessage("differentduration-note")))
                             if sameRoom and (differentName or differentSize or differentDuration):
-                                fileitem.setForeground(QtGui.QBrush(QtGui.QColor('red')))
+                                fileitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
                 else:
                     fileitem = QtGui.QStandardItem(getMessage("nofile-note"))
                     if room == currentUser.room:
-                        fileitem.setForeground(QtGui.QBrush(QtGui.QColor('blue')))
+                        fileitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOFILEITEM_COLOR)))
                 if currentUser.username == user.username:
                     font = QtGui.QFont()
                     font.setWeight(QtGui.QFont.Bold)
@@ -102,7 +127,7 @@ class MainWindow(QtGui.QMainWindow):
             QtGui.QMessageBox.critical(self,"Syncplay", message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         message = message.replace("\n", "<br />")
-        message = "<span style=\"color:#FF0000;\">" + message + "</span>"
+        message = "<span style=\"{}\">".format(constants.STYLE_ERRORNOTIFICATION) + message + "</span>"
         self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
 
     def joinRoom(self, room = None):
@@ -230,7 +255,7 @@ class MainWindow(QtGui.QMainWindow):
 
         window.outputLayout = QtGui.QVBoxLayout()
         window.outputbox = QtGui.QTextEdit()
-        window.outputbox.setReadOnly(True)  
+        window.outputbox.setReadOnly(True)
         window.outputlabel = QtGui.QLabel(getMessage("notifications-heading-label"))
         window.outputFrame = QtGui.QFrame()
         window.outputFrame.setLineWidth(0)
@@ -252,17 +277,16 @@ class MainWindow(QtGui.QMainWindow):
         window.listLayout.setContentsMargins(0,0,0,0)
         window.listLayout.addWidget(window.listlabel)
         window.listLayout.addWidget(window.listTreeView)
-        if constants.SHOW_CONTACT_INFO:
-            window.contactLabel = QtGui.QLabel()
-            window.contactLabel.setWordWrap(True)
-            window.contactLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
-            window.contactLabel.setLineWidth(1)
-            window.contactLabel.setMidLineWidth(0)
-            window.contactLabel.setMargin(2)
-            window.contactLabel.setText(getMessage("contact-label"))
-            window.contactLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
-            window.contactLabel.setOpenExternalLinks(True)
-            window.listLayout.addWidget(window.contactLabel)
+        window.contactLabel = QtGui.QLabel()
+        window.contactLabel.setWordWrap(True)
+        window.contactLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
+        window.contactLabel.setLineWidth(1)
+        window.contactLabel.setMidLineWidth(0)
+        window.contactLabel.setMargin(2)
+        window.contactLabel.setText(getMessage("contact-label"))
+        window.contactLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
+        window.contactLabel.setOpenExternalLinks(True)
+        window.listLayout.addWidget(window.contactLabel)
         window.listFrame.setLayout(window.listLayout)
         
         window.topSplit.addWidget(window.outputFrame)

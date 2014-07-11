@@ -10,29 +10,33 @@ DEFAULT_CONFIG_NAME_WINDOWS = "syncplay.ini"
 DEFAULT_CONFIG_NAME_LINUX = ".syncplay"
 RECENT_CLIENT_THRESHOLD = "1.2.8"  #This and higher considered 'recent' clients (no warnings)
 WARN_OLD_CLIENTS = True  #Use MOTD to inform old clients to upgrade
-SHOW_OSD = True  # Sends Syncplay messages to media player OSD
-SHOW_OSD_WARNINGS = True  # Show warnings if playing different file, alone in room
-SHOW_SLOWDOWN_OSD = True  # Show notifications of slowing down / reverting on time difference
-SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room user is in
-SHOW_DIFFERENT_ROOM_OSD = False  # Show OSD notifications for events relating to room user is not in
 LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
 SHOW_BUTTON_LABELS = True  # If disabled, only shows icons for main GUI buttons
 SHOW_TOOLTIPS = True
 
+#Overriden by config
+SHOW_OSD = True  # Sends Syncplay messages to media player OSD
+SHOW_OSD_WARNINGS = True  # Show warnings if playing different file, alone in room
+SHOW_SLOWDOWN_OSD = True  # Show notifications of slowing down / reverting on time difference
+SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room user is in
+SHOW_DIFFERENT_ROOM_OSD = False  # Show OSD notifications for events relating to room user is not in
+SHOW_DURATION_NOTIFICATION = True
+
 #Changing these might be ok
 DEFAULT_REWIND_THRESHOLD = 4
+MINIMUM_REWIND_THRESHOLD = 3
 SEEK_THRESHOLD = 1
 SLOWDOWN_RATE = 0.95
 DEFAULT_SLOWDOWN_KICKIN_THRESHOLD = 1.5
+MINIMUM_SLOWDOWN_THRESHOLD = 1.3
 SLOWDOWN_RESET_THRESHOLD = 0.1
-MINIMUM_SLOWDOWN_THRESHOLD = 0.2
 DIFFFERENT_DURATION_THRESHOLD = 2.5
 PROTOCOL_TIMEOUT = 12.5
 RECONNECT_RETRIES = 10
 SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
-MERGE_PLAYPAUSE_BUTTONS = False
+MERGE_PLAYPAUSE_BUTTONS = True
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 #Usually there's no need to adjust these
 FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
@@ -87,6 +91,17 @@ VLC_MIN_PORT = 10000
 VLC_MAX_PORT = 55000
 
 #These are not changes you're looking for
+STYLE_TABLIST = "QListWidget::item { color: black; border-style: solid; border-width: 1px; border-radius: 2px; } QListWidget::item:selected { background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(242, 248, 255, 255), stop:1 rgba(208, 229, 255, 255)); border-color: #84ACDD; } QListWidget::item:!selected { border-color: transparent; } QListWidget::item:!selected:hover { background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(248, 248, 248, 255), stop:1 rgba(229, 229, 229, 255)); border-color: silver; }"
+STYLE_SUBCHECKBOX  = "QCheckBox, QLabel {{ margin-left: 8px; padding-left: 18px; background:url('{}') left no-repeat }}" #Graphic path
+STYLE_SUBLABEL  = "QCheckBox, QLabel {{ margin-left: 8px; padding-left: 14px; background:url('{}') left no-repeat }}" #Graphic path
+STYLE_ERRORLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: red; padding: 2px; background: #FFAAAA; }"
+STYLE_SUCCESSLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: green; padding: 2px; background: #AAFFAA; }"
+STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
+STYLE_USERNAME = "color: #367AA9; font-weight:bold;"
+STYLE_ERRORNOTIFICATION = "color: red;"
+STYLE_DIFFERENTITEM_COLOR = 'red'
+STYLE_NOFILEITEM_COLOR = 'blue'
+
 MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4']
 # --quiet works with both mpv 0.2 and 0.3
 MPV_SLAVE_ARGS = ['--slave-broken', '--hr-seek=always', '--quiet', '--keep-open']
@@ -104,6 +119,3 @@ PRIVACY_SENDRAW_MODE = "SendRaw"
 PRIVACY_SENDHASHED_MODE = "SendHashed"
 PRIVACY_DONTSEND_MODE = "DoNotSend"
 PRIVACY_HIDDENFILENAME = "**Hidden filename**"
-OPTION_AUTO = "Automatic"
-OPTION_ALWAYS = "Always"
-OPTION_NEVER = "Never"

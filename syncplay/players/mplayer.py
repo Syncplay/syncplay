@@ -8,7 +8,6 @@ import os
 
 class MplayerPlayer(BasePlayer):
     speedSupported = True
-    speedRecommended = True
     RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
     SLAVE_ARGS = constants.MPLAYER_SLAVE_ARGS
     POSITION_QUERY = 'time_pos'

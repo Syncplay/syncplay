@@ -4,6 +4,8 @@ from syncplay import constants
 en = {
 
       # Client notifications
+      "config-cleared-notification" : "Settings cleared. Changes will be saved when you store a valid configuration.",
+
       "relative-config-notification" : "Loaded relative configuration file(s): {}",
 
       "connection-attempt-notification" : "Attempting to connect to {}:{}",  # Port, IP
@@ -131,14 +133,25 @@ en = {
       "privacy-dontsend-option" : "Don't send",
       "filename-privacy-label" : "Filename information:",
       "filesize-privacy-label" : "File size information:",
-      "slowdown-label" : "Slow down on desync:",
-      "slowdown-auto-option" : "Automatic",
-      "slowdown-always-option" : "Always",
-      "slowdown-never-option" : "Never",
+      "slowondesync-label" : "Slow down on minor desync (not supported on MPC-HC)",
       "dontslowdownwithme-label" : "Never slow down or rewind others",
-      "pauseonleave-label" : "Pause when user leaves",
-      "forceguiprompt-label" : "Do not always show this dialog", # (Inverted)
-      "nostore-label" : "Do not store this configuration", # (Inverted)
+      "pauseonleave-label" : "Pause when user leaves (e.g. if they are disconnected)",
+      "forceguiprompt-label" : "Don't always show this dialog", # (Inverted)
+      "nostore-label" : "Don't store this configuration", # (Inverted)
+      "showosd-label" : "Enable OSD Messages",
+
+      "showosdwarnings-label" : "Include warnings (e.g. when files are different)",
+      "showsameroomosd-label" : "Include events in your room",
+      "showdifferentroomosd-label" : "Include events in other rooms",
+      "showslowdownosd-label" :"Include slowing down / reverting notification",
+      "showcontactinfo-label" : "Show contact info box",
+      "showbuttonlabels-label" : "Show labels on buttons",
+      "showtooltips-label" : "Show tooltips",
+      "showdurationnotification-label" : "Warn about media duration mismatches",
+      "basics-label" : "Basics",
+      "sync-label" : "Sync",
+      "messages-label" : "Messages",
+      "privacy-label" : "Privacy",
 
       "help-label" : "Help",
       "run-label" : "Run Syncplay",
@@ -186,20 +199,28 @@ en = {
 
       "more-tooltip" : "Display less frequently used settings.",
       "slowdown-threshold-tooltip" : "Time ahead of slowest client before temporarily reducing playback speed (default: {} secs).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
-      "rewind-threshold-tooltip" : "Time ahead slowest client before seeking to get back in sync (default: {} secs). 'Never' can result in major desync!".format(constants.DEFAULT_REWIND_THRESHOLD),
+      "rewind-threshold-tooltip" : "Time ahead slowest client before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_REWIND_THRESHOLD),
       "filename-privacy-tooltip" : "Privacy mode for sending currently playing filename to server.",
       "filesize-privacy-tooltip" : "Privacy mode for sending size of currently playing file to server.",
       "privacy-sendraw-tooltip" : "Send this information without obfuscation. This is the default option with most functionality.",
       "privacy-sendhashed-tooltip" : "Send a hashed version of the information, making it less visible to other clients.",
       "privacy-dontsend-tooltip" : "Do not send this information to the server. This provides for maximum privacy.",
-      "slowdown-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers.",
-      "slowdown-auto-tooltip" : "Slow down on desync unless it causes problems (i.e. MPC-HC).",
-      "slowdown-always-tooltip" : "Always slow down on desync (even on players where this causes playback issues).",
-      "slowdown-never-tooltip" : "Never slow down on desync (even on players where this is probably better than rewinding).",
+      "slowondesync-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers. Not supported on MPC-HC.",
       "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
+      "rewindondesync-label" : "Rewind on major desync (highly recommended)",
       "forceguiprompt-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.", # (Inverted)
       "nostore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.", # (Inverted)
+      "rewindondesync-tooltip" : "Jump back when needed to get back in sync. Disabling this option can result in major desyncs!",
+      "showosd-tooltip" : "Sends Syncplay messages to media player OSD.",
+      "showosdwarnings-tooltip" : "Show warnings if playing different file, alone in room.",
+      "showsameroomosd-tooltip" : "Show OSD notifications for events relating to room user is in.",
+      "showdifferentroomosd-tooltip" : "Show OSD notifications for events relating to room user is not in.",
+      "showslowdownosd-tooltip" :"Show notifications of slowing down / reverting on time difference.",
+      "showcontactinfo-tooltip" : "Show information box about contacting Syncplay developers in main Syncplay window.",
+      "showbuttonlabels-tooltip" : "Show the text alongside the icons for buttons in the main UI.",
+      "showtooltips-tooltip" : "Show tooltip help messages when you mouseover an input element in Syncplay.",
+      "showdurationnotification-tooltip" : "Useful for when a segment in a multi-part file is missing, but can result in false positives.",
 
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
 

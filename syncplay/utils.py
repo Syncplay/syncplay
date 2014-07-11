@@ -176,7 +176,9 @@ def sameFilesize (filesize1, filesize2):
         return False
 
 def sameFileduration (duration1, duration2):
-    if abs(round(duration1) - round(duration2)) < constants.DIFFFERENT_DURATION_THRESHOLD:
+    if not constants.SHOW_DURATION_NOTIFICATION:
+        return True
+    elif abs(round(duration1) - round(duration2)) < constants.DIFFFERENT_DURATION_THRESHOLD:
         return True
     else:
         return False

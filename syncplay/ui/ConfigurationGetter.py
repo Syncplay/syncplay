@@ -35,14 +35,27 @@ class ConfigurationGetter(object):
                         "playerClass": None,
                         "slowdownThreshold": constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD,
                         "rewindThreshold": constants.DEFAULT_REWIND_THRESHOLD,
-                        "slowMeOnDesync": constants.OPTION_AUTO,
+                        "rewindOnDesync": True,
+                        "slowOnDesync": True,
                         "dontSlowDownWithMe": False,
                         "filenamePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
                         "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
                         "pauseOnLeave": False,
                         "clearGUIData": False,
-                        "language" : ""
+                        "language" : "",
+                        "resetConfig" : False,
+                        "showOSD" : True,
+                        "showOSDWarnings" : True,
+                        "showSlowdownOSD" : True,
+                        "showDifferentRoomOSD" : False,
+                        "showSameRoomOSD" : True,
+                        "showContactInfo" : True,
+                        "showButtonLabels" : True,
+                        "showTooltips" : True,
+                        "showDurationNotification" : True
                         }
+
+        self._defaultConfig = self._config.copy()
 
         #
         # Custom validation in self._validateArguments
@@ -62,18 +75,39 @@ class ConfigurationGetter(object):
                          "noStore",
                          "dontSlowDownWithMe",
                          "pauseOnLeave",
-                         "clearGUIData"
+                         "clearGUIData",
+                         "rewindOnDesync",
+                         "slowOnDesync",
+                         "pauseOnLeave",
+                         "clearGUIData",
+                         "resetConfig",
+                         "showOSD",
+                         "showOSDWarnings",
+                         "showSlowdownOSD",
+                         "showDifferentRoomOSD",
+                         "showSameRoomOSD",
+                         "showContactInfo" ,
+                         "showButtonLabels",
+                         "showTooltips",
+                         "showDurationNotification"
                         ]
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "slowMeOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
+                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "slowOnDesync", "rewindOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
+                        "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showContactInfo" , "showButtonLabels", "showTooltips", "showDurationNotification"],
                         "general": ["language"]
                         }
 
         self._playerFactory = PlayerFactory()
 
     def _validateArguments(self):
+        if self._config['resetConfig']:
+            language = self._config['language']
+            self._config = self._defaultConfig
+            self._config['language'] = language
+            raise InvalidConfigValue("*"+getMessage("config-cleared-notification"))
+
         def _isPortValid(varToTest):
             try:
                 if varToTest == "" or varToTest is None:
