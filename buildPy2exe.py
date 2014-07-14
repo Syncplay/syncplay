@@ -144,8 +144,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     StrCpy $$CheckBox_Associate_State $${BST_CHECKED}
     StrCpy $$CheckBox_StartMenuShortcut_State $${BST_CHECKED}
     Call GetVLCDir
-    IfFileExists "$$VLC_Directory\vlc.exe" 0 +2
-    StrCpy $$CheckBox_VLC_State $${BST_CHECKED}
+    Call UpdateVLCCheckbox
 
     Call GetSize
     Call DriveSpace
@@ -292,12 +291,14 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
     VLC_Enabled:
     EnableWindow $$CheckBox_VLC 1
-    ;StrCpy $$CheckBox_VLC_State $${BST_CHECKED}
+    StrCpy $$CheckBox_VLC_State $${BST_CHECKED}
+    $${NSD_SetState} $$CheckBox_VLC $$CheckBox_VLC_State
     goto CheckboxUpdated
 
     VLC_Disabled:
     EnableWindow $$CheckBox_VLC 0
-    ;StrCpy $$CheckBox_VLC_State $${BST_UNCHECKED}
+    StrCpy $$CheckBox_VLC_State $${BST_UNCHECKED}
+    $${NSD_SetState} $$CheckBox_VLC $$CheckBox_VLC_State
 
     CheckboxUpdated:
   FunctionEnd
