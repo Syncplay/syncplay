@@ -59,6 +59,7 @@ class ConfigDialog(QtGui.QDialog):
             self.adjustSize()
             self.setFixedSize(self.sizeHint())
         self.moreToggling = False
+        self.setFixedWidth(self.minimumSizeHint().width())
 
     def runButtonTextUpdate(self):
         if self.nostoreCheckbox.isChecked():
