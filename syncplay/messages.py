@@ -154,6 +154,7 @@ en = {
       "privacy-label" : "Privacy",
 
       "help-label" : "Help",
+      "reset-label" : "Restore defaults",
       "run-label" : "Run Syncplay",
       "storeandrun-label" : "Store configuration and run Syncplay",
 
@@ -223,6 +224,7 @@ en = {
       "showdurationnotification-tooltip" : "Useful for when a segment in a multi-part file is missing, but can result in false positives.",
 
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
+      "reset-tooltip" : "Reset all settings to the default configuration.",
 
       "togglepause-tooltip" : "Pause/unpause media.",
       "play-tooltip" : "Unpause media.",
