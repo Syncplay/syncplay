@@ -317,7 +317,7 @@ class MainWindow(QtGui.QMainWindow):
         window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'), getMessage("joinroom-guibuttonlabel"))
         window.roomButton.pressed.connect(self.joinRoom)
         window.roomLayout = QtGui.QHBoxLayout()
-        window.roomInput.setMaximumWidth(150)
+        window.roomInput.setFixedWidth(150)
 
         self.roomButton.setToolTip(getMessage("joinroom-tooltip"))
         
@@ -338,8 +338,8 @@ class MainWindow(QtGui.QMainWindow):
         self.seekButton.setToolTip(getMessage("seektime-tooltip"))
         
         window.seekLayout = QtGui.QHBoxLayout()
-        window.seekInput.setMaximumWidth(50)
         window.seekInput.setText("0:00")
+        window.seekInput.setFixedWidth(60)
         
         window.seekLayout.addWidget(window.seekInput)
         window.seekLayout.addWidget(window.seekButton)
