@@ -241,25 +241,25 @@ class ConfigDialog(QtGui.QDialog):
                 torun(widget)
 
     def loadTooltips(self, widget):
-        tooltipName = widget.objectName().lower().split(":")[0] + "-tooltip"
-        if tooltipName[:1] == "*" or tooltipName[:1] == "!": # * is for notifications
+        tooltipName = widget.objectName().lower().split(constants.CONFIG_NAME_MARKER)[0] + "-tooltip"
+        if tooltipName[:1] == constants.INVERTED_STATE_MARKER or tooltipName[:1] == constants.LOAD_SAVE_MANUALLY_MARKER:
             tooltipName = tooltipName[1:]
         widget.setToolTip(getMessage(tooltipName))
 
     def loadValues(self, widget):
         valueName = str(widget.objectName())
-        if valueName[:1] == "!":
+        if valueName[:1] == constants.LOAD_SAVE_MANUALLY_MARKER:
             return
 
         if isinstance(widget, QCheckBox) and widget.objectName():
-            if valueName[:1] == "*":
+            if valueName[:1] == constants.INVERTED_STATE_MARKER:
                 valueName = valueName[1:]
                 inverted = True
             else:
                 inverted = False
             widget.setChecked(self.config[valueName] != inverted)
         elif isinstance(widget, QRadioButton):
-            radioName, radioValue  = valueName.split(":")[1].split("=")
+            radioName, radioValue  = valueName.split(constants.CONFIG_NAME_MARKER)[1].split(constants.CONFIG_VALUE_MARKER)
             if self.config[radioName] == radioValue:
                 widget.setChecked(True)
         elif isinstance(widget, QLineEdit):
@@ -267,18 +267,18 @@ class ConfigDialog(QtGui.QDialog):
 
     def saveValues(self, widget):
         valueName = str(widget.objectName())
-        if valueName[:1] == "!":
+        if valueName[:1] == constants.LOAD_SAVE_MANUALLY_MARKER:
             return
 
         if isinstance(widget, QCheckBox) and widget.objectName():
-            if valueName[:1] == "*":
+            if valueName[:1] == constants.INVERTED_STATE_MARKER:
                 valueName = valueName[1:]
                 inverted = True
             else:
                 inverted = False
             self.config[valueName] = widget.isChecked() != inverted
         elif isinstance(widget, QRadioButton):
-            radioName, radioValue  = valueName.split(":")[1].split("=")
+            radioName, radioValue  = valueName.split(constants.CONFIG_NAME_MARKER)[1].split(constants.CONFIG_VALUE_MARKER)
             if widget.isChecked():
                 self.config[radioName] = radioValue
         elif isinstance(widget, QLineEdit):
@@ -290,17 +290,13 @@ class ConfigDialog(QtGui.QDialog):
         resourcespath = self.resourcespath
         error = self.error
         if self.datacleared == True:
-            error = "*{}".format(getMessage("gui-data-cleared-notification"))
+            error = constants.ERROR_MESSAGE_MARKER + "{}".format(getMessage("gui-data-cleared-notification"))
         if config['host'] == None:
             host = ""
         elif ":" in config['host']:
             host = config['host']
         else:
             host = config['host'] + ":" + str(config['port'])
-
-        ''' objectName notation:
-        "!A": Do not load/save config in main loop
-        (Radiobox) "A:B=C": Use A for label/tooltip, but B and C for config name and value'''
 
         self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
         self.hostTextbox = QLineEdit(host, self)
@@ -314,7 +310,7 @@ class ConfigDialog(QtGui.QDialog):
         self.defaultroomLabel = QLabel(getMessage("room-label"), self)
 
         self.hostLabel.setObjectName("host")
-        self.hostTextbox.setObjectName("!host")
+        self.hostTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "host")
         self.usernameLabel.setObjectName("name")
         self.usernameTextbox.setObjectName("name")
         self.serverpassLabel.setObjectName("password")
@@ -355,7 +351,7 @@ class ConfigDialog(QtGui.QDialog):
         self.executablepathLabel.setObjectName("executable-path")
         self.executablepathCombobox.setObjectName("executable-path")
         self.mediapathLabel.setObjectName("media-path")
-        self.mediapathTextbox.setObjectName("!media-path")
+        self.mediapathTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "media-path")
 
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
@@ -368,13 +364,13 @@ class ConfigDialog(QtGui.QDialog):
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
 
         self.showmoreCheckbox = QCheckBox(getMessage("more-title"))
-        self.showmoreCheckbox.setObjectName("!more")
+        self.showmoreCheckbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "more")
 
         self.basicOptionsFrame = QtGui.QFrame()
         self.basicOptionsLayout = QtGui.QVBoxLayout()
         if error:
             self.errorLabel = QLabel(self)
-            if error[:1] != "*":
+            if error[:1] != constants.ERROR_MESSAGE_MARKER:
                 self.errorLabel.setStyleSheet(constants.STYLE_ERRORLABEL)
             else:
                 error = error[1:]
@@ -577,13 +573,13 @@ class ConfigDialog(QtGui.QDialog):
         self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacyDontSendOption)
 
         self.filenameprivacyLabel.setObjectName("filename-privacy")
-        self.filenameprivacySendRawOption.setObjectName("privacy-sendraw:filenamePrivacyMode="+ constants.PRIVACY_SENDRAW_MODE)
-        self.filenameprivacySendHashedOption.setObjectName("privacy-sendhashed:filenamePrivacyMode=" + constants.PRIVACY_SENDHASHED_MODE)
-        self.filenameprivacyDontSendOption.setObjectName("privacy-dontsend:filenamePrivacyMode=" + constants.PRIVACY_DONTSEND_MODE)
+        self.filenameprivacySendRawOption.setObjectName("privacy-sendraw" + constants.CONFIG_NAME_MARKER + "filenamePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDRAW_MODE)
+        self.filenameprivacySendHashedOption.setObjectName("privacy-sendhashed" + constants.CONFIG_NAME_MARKER + "filenamePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDHASHED_MODE)
+        self.filenameprivacyDontSendOption.setObjectName("privacy-dontsend" + constants.CONFIG_NAME_MARKER + "filenamePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_DONTSEND_MODE)
         self.filesizeprivacyLabel.setObjectName("filesize-privacy")
-        self.filesizeprivacySendRawOption.setObjectName("privacy-sendraw:filesizePrivacyMode=" + constants.PRIVACY_SENDRAW_MODE)
-        self.filesizeprivacySendHashedOption.setObjectName("privacy-sendhashed:filesizePrivacyMode=" + constants.PRIVACY_SENDHASHED_MODE)
-        self.filesizeprivacyDontSendOption.setObjectName("privacy-dontsend:filesizePrivacyMode=" + constants.PRIVACY_DONTSEND_MODE)
+        self.filesizeprivacySendRawOption.setObjectName("privacy-sendraw" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDRAW_MODE)
+        self.filesizeprivacySendHashedOption.setObjectName("privacy-sendhashed" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDHASHED_MODE)
+        self.filesizeprivacyDontSendOption.setObjectName("privacy-dontsend" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_DONTSEND_MODE)
 
         self.privacyLayout.addWidget(self.filenameprivacyLabel, 1, 0)
         self.privacyLayout.addWidget(self.filenameprivacySendRawOption, 1, 1, Qt.AlignLeft)
@@ -638,7 +634,7 @@ class ConfigDialog(QtGui.QDialog):
         self.bottomCheckboxLayout.addWidget(self.showmoreCheckbox)
         self.bottomCheckboxLayout.addWidget(self.alwaysshowCheckbox, 0, 1, Qt.AlignLeft)
         self.bottomCheckboxLayout.addWidget(self.nostoreCheckbox, 0, 2, Qt.AlignRight)
-        self.alwaysshowCheckbox.setObjectName("*forceGuiPrompt")
+        self.alwaysshowCheckbox.setObjectName(constants.INVERTED_STATE_MARKER + "forceGuiPrompt")
         self.nostoreCheckbox.setObjectName("noStore")
         self.nostoreCheckbox.toggled.connect(self.runButtonTextUpdate)
         self.bottomCheckboxFrame.setLayout(self.bottomCheckboxLayout)
