@@ -414,7 +414,10 @@ class ConfigDialog(QtGui.QDialog):
 
         self.slowdownThresholdSpinbox = QDoubleSpinBox()
         try:
-            self.slowdownThresholdSpinbox.setValue(float(config['slowdownThreshold']))
+            slowdownThreshold = float(config['slowdownThreshold'])
+            self.slowdownThresholdSpinbox.setValue(slowdownThreshold)
+            if slowdownThreshold < constants.MINIMUM_SLOWDOWN_THRESHOLD:
+                constants.MINIMUM_SLOWDOWN_THRESHOLD = slowdownThreshold
         except ValueError:
             self.slowdownThresholdSpinbox.setValue(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD)
         self.slowdownThresholdSpinbox.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
@@ -429,7 +432,10 @@ class ConfigDialog(QtGui.QDialog):
         self.rewindThresholdLabel.setStyleSheet(constants.STYLE_SUBLABEL.format(self.posixresourcespath + "bullet_black.png"))
         self.rewindThresholdSpinbox = QDoubleSpinBox()
         try:
-            self.rewindThresholdSpinbox.setValue(float(config['rewindThreshold']))
+            rewindThreshold = float(config['rewindThreshold'])
+            self.rewindThresholdSpinbox.setValue(rewindThreshold)
+            if rewindThreshold < constants.MINIMUM_REWIND_THRESHOLD:
+                constants.MINIMUM_REWIND_THRESHOLD = rewindThreshold
         except ValueError:
             self.rewindThresholdSpinbox.setValue(constants.DEFAULT_REWIND_THRESHOLD)
         self.rewindThresholdSpinbox.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
