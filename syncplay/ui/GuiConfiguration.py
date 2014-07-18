@@ -284,6 +284,21 @@ class ConfigDialog(QtGui.QDialog):
         elif isinstance(widget, QLineEdit):
             self.config[valueName] = widget.text()
 
+    def connectChildren(self, widget):
+        widgetName = str(widget.objectName())
+        if self.subitems.has_key(widgetName) and isinstance(widget, QCheckBox):
+            widget.stateChanged.connect(lambda: self.updateSubwidgets(self, widget))
+            self.updateSubwidgets(self, widget)
+
+    def updateSubwidgets(self, container, parentwidget, subwidgets=None):
+        widgetName = parentwidget.objectName()
+        if not subwidgets:
+            subwidgets = self.subitems[widgetName]
+        for widget in container.children():
+            self.updateSubwidgets(widget, parentwidget, subwidgets)
+            if hasattr(widget, 'objectName') and widget.objectName() and widget.objectName() in subwidgets:
+                widget.setDisabled(not parentwidget.isChecked())
+
     def addBasicTab(self):
         config = self.config
         playerpaths = self.playerpaths
@@ -459,6 +474,9 @@ class ConfigDialog(QtGui.QDialog):
         self.desyncSettingsLayout.addWidget(self.rewindThresholdLabel, 4, 0, 1, 1, Qt.AlignLeft)
         self.desyncSettingsLayout.addWidget(self.rewindThresholdSpinbox, 4, 1, Qt.AlignLeft)
 
+        self.subitems['slowOnDesync'] = ["slowdown-threshold"]
+        self.subitems['rewindOnDesync'] = ["rewind-threshold"]
+
         self.desyncSettingsLayout.setAlignment(Qt.AlignLeft)
         self.desyncSettingsGroup.setLayout(self.desyncSettingsLayout)
         self.desyncSettingsOptionsLayout.addWidget(self.desyncFrame)
@@ -517,6 +535,8 @@ class ConfigDialog(QtGui.QDialog):
         self.showOSDWarningsCheckbox.setObjectName("showOSDWarnings")
         self.showOSDWarningsCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "bullet_black.png"))
         self.osdSettingsLayout.addWidget(self.showOSDWarningsCheckbox)
+
+        self.subitems['showOSD'] = ["showSameRoomOSD", "showDifferentRoomOSD", "showSlowdownOSD", "showOSDWarnings"]
 
         self.osdSettingsGroup.setLayout(self.osdSettingsLayout)
         self.osdSettingsLayout.setAlignment(Qt.AlignTop)
@@ -702,6 +722,7 @@ class ConfigDialog(QtGui.QDialog):
         self.playerpaths = playerpaths
         self.datacleared = False
         self.config['resetConfig'] = False
+        self.subitems = {}
 
         if self.config['clearGUIData'] == True:
             self.config['clearGUIData'] = False
@@ -759,3 +780,4 @@ class ConfigDialog(QtGui.QDialog):
         if constants.SHOW_TOOLTIPS:
             self.processWidget(self, lambda w: self.loadTooltips(w))
         self.processWidget(self, lambda w: self.loadValues(w))
+        self.processWidget(self, lambda w: self.connectChildren(w))
