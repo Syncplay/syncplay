@@ -60,6 +60,7 @@ class ConfigDialog(QtGui.QDialog):
             self.setFixedSize(self.sizeHint())
         self.moreToggling = False
         self.setFixedWidth(self.minimumSizeHint().width())
+        self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
 
     def runButtonTextUpdate(self):
         if self.nostoreCheckbox.isChecked():
@@ -703,6 +704,7 @@ class ConfigDialog(QtGui.QDialog):
     def showEvent(self, *args, **kwargs):
         self.ensureTabListIsVisible()
         self.setFixedWidth(self.minimumSizeHint().width())
+        self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
 
     def clearGUIData(self, leaveMore=False):
         settings = QSettings("Syncplay", "PlayerList")
