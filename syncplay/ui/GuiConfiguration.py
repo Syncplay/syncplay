@@ -227,7 +227,7 @@ class ConfigDialog(QtGui.QDialog):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            if sys.platform.startswith('windows'):
+            if sys.platform.startswith('win'):
                 dropfilepath = unicode(urls[0].path())[1:]  # Removes starting slash
             else:
                 dropfilepath = unicode(urls[0].path())
