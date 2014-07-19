@@ -438,7 +438,6 @@ class ConfigDialog(QtGui.QDialog):
         except ValueError:
             self.slowdownThresholdSpinbox.setValue(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD)
         self.slowdownThresholdSpinbox.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.slowdownThresholdSpinbox.setFixedWidth(self.slowdownThresholdSpinbox.minimumSizeHint().width())
         self.slowdownThresholdSpinbox.setMinimum(constants.MINIMUM_SLOWDOWN_THRESHOLD)
         self.slowdownThresholdSpinbox.setSingleStep(0.1)
         self.slowdownThresholdSpinbox.setSuffix(getMessage("seconds-suffix"))
@@ -455,7 +454,6 @@ class ConfigDialog(QtGui.QDialog):
         except ValueError:
             self.rewindThresholdSpinbox.setValue(constants.DEFAULT_REWIND_THRESHOLD)
         self.rewindThresholdSpinbox.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.rewindThresholdSpinbox.setFixedWidth(self.rewindThresholdSpinbox.minimumSizeHint().width())
         self.rewindThresholdSpinbox.setMinimum(constants.MINIMUM_REWIND_THRESHOLD)
         self.rewindThresholdSpinbox.setSingleStep(0.1)
         self.rewindThresholdSpinbox.setSuffix(getMessage("seconds-suffix"))
