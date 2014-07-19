@@ -92,6 +92,11 @@ class ConfigurationGetter(object):
                          "showDurationNotification"
                         ]
 
+        self._numeric = [
+            "slowdownThreshold",
+            "rewindThreshold"
+        ]
+
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
                         "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "slowOnDesync", "rewindOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
@@ -125,6 +130,10 @@ class ConfigurationGetter(object):
                 self._config[key] = True
             elif self._config[key] == "False":
                 self._config[key] = False
+
+        for key in self._numeric:
+            self._config[key] = float(self._config[key])
+
         for key in self._required:
             if key == "playerPath":
                 player = None
