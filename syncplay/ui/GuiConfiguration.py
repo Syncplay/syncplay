@@ -702,6 +702,7 @@ class ConfigDialog(QtGui.QDialog):
 
     def showEvent(self, *args, **kwargs):
         self.ensureTabListIsVisible()
+        self.setFixedWidth(self.minimumSizeHint().width())
 
     def clearGUIData(self, leaveMore=False):
         settings = QSettings("Syncplay", "PlayerList")
@@ -782,4 +783,3 @@ class ConfigDialog(QtGui.QDialog):
             self.processWidget(self, lambda w: self.loadTooltips(w))
         self.processWidget(self, lambda w: self.loadValues(w))
         self.processWidget(self, lambda w: self.connectChildren(w))
-        self.setFixedWidth(self.minimumSizeHint().width())
