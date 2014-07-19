@@ -107,7 +107,6 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Var AvailibleSpaceGiB
   Var Drive
   Var VLC_Directory
-  Var VLC_Version
     
   !macro APP_ASSOCIATE EXT FileCLASS DESCRIPTION COMMANDTEXT COMMAND
     WriteRegStr HKCR ".$${EXT}" "" "$${FileCLASS}"
@@ -241,10 +240,6 @@ NSIS_SCRIPT_TEMPLATE = r"""
     	$${NSD_Check} $$CheckBox_QuickLaunchShortcut
     $${EndIf}
 
-    ReadRegStr $$VLC_Version HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VLC media player" "VersionMajor"
-    $${If} $$VLC_Version != "2"
-      EnableWindow $$CheckBox_VLC 0
-    $${EndIf}
     nsDialogs::Show
 
     $${NSD_FreeIcon} $$Icon_Syncplay_Handle
