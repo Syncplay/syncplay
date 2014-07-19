@@ -69,6 +69,7 @@ VLC_PATHS = [
     r"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
     r"C:\Program Files\VideoLAN\VLC\vlc.exe",
     "/usr/bin/vlc",
+    "/usr/bin/vlc-wrapper",
     "/Applications/VLC.app/Contents/MacOS/VLC"
 ]
 
