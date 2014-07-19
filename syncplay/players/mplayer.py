@@ -60,6 +60,7 @@ class MplayerPlayer(BasePlayer):
         self._client.updateFile(self._filename, self._duration, self._filepath)
 
     def _preparePlayer(self):
+        self.setPaused(True)
         self.reactor.callLater(0, self._client.initPlayer, self)
         self._onFileUpdate()
 
@@ -97,6 +98,7 @@ class MplayerPlayer(BasePlayer):
 
     def setPaused(self, value):
         if self._paused <> value:
+            self._paused = not self._paused
             self._listener.sendLine('pause')
 
     def _getFilename(self):

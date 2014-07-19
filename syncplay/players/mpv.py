@@ -12,6 +12,7 @@ class MpvPlayer(MplayerPlayer):
 
     def setPaused(self, value):
         if self._paused <> value:
+            self._paused = not self._paused
             self._listener.sendLine('cycle pause')
 
     @staticmethod
