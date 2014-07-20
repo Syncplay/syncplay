@@ -36,7 +36,7 @@ PROTOCOL_TIMEOUT = 12.5
 RECONNECT_RETRIES = 10
 SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
-MERGE_PLAYPAUSE_BUTTONS = True
+MERGE_PLAYPAUSE_BUTTONS = False
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 #Usually there's no need to adjust these
 FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
