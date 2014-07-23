@@ -1,6 +1,7 @@
 import subprocess
 import re
 import threading
+import time
 from syncplay.players.basePlayer import BasePlayer
 from syncplay import constants
 from syncplay.messages import getMessage
@@ -88,13 +89,14 @@ class MplayerPlayer(BasePlayer):
     def openFile(self, filePath):
         self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
         self._onFileUpdate()
-        if self._client.getGlobalPaused():
-            self._listener.sendLine('pause')
+        if self._paused != self._client.getGlobalPaused():
+            self.setPaused(self._client.getGlobalPaused())
         self.setPosition(self._client.getGlobalPosition())
 
     def setPosition(self, value):
         self._position = value
         self._setProperty(self.POSITION_QUERY, "{}".format(value))
+        time.sleep(0.03)
 
     def setPaused(self, value):
         if self._paused <> value:
