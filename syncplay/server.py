@@ -5,13 +5,11 @@ import syncplay
 from syncplay.protocols import SyncServerProtocol
 import time
 from syncplay import constants
-import threading
 from syncplay.messages import getMessage
 import codecs
 import os
 from string import Template
 import argparse
-from pprint import pprint
 
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False):
@@ -160,13 +158,13 @@ class PublicRoomManager(RoomManager):
         self.broadcastRoom(sender, what)
 
     def getAllWatchersForUser(self, sender):
-        room = sender.getRoom().getWatchers()
+        return sender.getRoom().getWatchers()
 
     def moveWatcher(self, watcher, room):
-        oldRoom = watcher.room
+        oldRoom = watcher.getRoom()
         l = lambda w: w.sendSetting(watcher.getName(), oldRoom, None, {"left": True})
         self.broadcast(watcher, l)
-        RoomManager.watcherSetRoom(self, watcher, room)
+        RoomManager.moveWatcher(self, watcher, room)
         watcher.setFile(watcher.getFile())
 
 
@@ -243,9 +241,9 @@ class Watcher(object):
         self._connector.setWatcher(self)
         reactor.callLater(0.1, self._scheduleSendState)
 
-    def setFile(self, file):
-        self._file = file
-        self._server.sendFileUpdate(self, file)
+    def setFile(self, file_):
+        self._file = file_
+        self._server.sendFileUpdate(self, file_)
 
     def setRoom(self, room):
         self._room = room
@@ -331,10 +329,10 @@ class Watcher(object):
 class ConfigurationGetter(object):
     def getConfiguration(self):
         self._prepareArgParser()
-        self._args = self._argparser.parse_args()
-        if self._args.port == None:
-            self._args.port = constants.DEFAULT_PORT
-        return self._args
+        args = self._argparser.parse_args()
+        if args.port is None:
+            args.port = constants.DEFAULT_PORT
+        return args
 
     def _prepareArgParser(self):
         self._argparser = argparse.ArgumentParser(description=getMessage("server-argument-description"),
