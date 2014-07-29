@@ -11,6 +11,7 @@ try:
     from PySide import QtGui  # @UnresolvedImport
     from PySide.QtCore import QCoreApplication
 except ImportError:
+    print getMessage("unable-import-gui-error")
     GuiConfiguration = None
 
 class InvalidConfigValue(Exception):

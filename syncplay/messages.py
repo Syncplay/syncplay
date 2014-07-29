@@ -76,6 +76,7 @@ en = {
        "hostname-empty-error" : "Hostname can't be empty",
        "empty-error" : "{} can't be empty",  # Configuration
        "media-player-error": "Media player error: \"{}\"",  # Error line
+       "unable-import-gui-error": "Could not import Gui libraries. To use them, please install PySide.",
 
        "arguments-missing-error" : "Some necessary arguments are missing, refer to --help",
 
