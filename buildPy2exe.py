@@ -1,11 +1,18 @@
 #!/usr/bin/env python
 #coding:utf8
+import sys
+try:
+    if (sys.version_info.major != 2) or (sys.version_info.minor < 7):
+        raise Exception("You must build Syncplay with Python 2.7!")
+except AttributeError:
+    import warnings
+    warnings.warn("You must build Syncplay with Python 2.7!")
+
 from distutils.core import setup
 from py2exe.build_exe import py2exe
 from string import Template
 
 import syncplay
-import sys
 import os
 import subprocess
 
