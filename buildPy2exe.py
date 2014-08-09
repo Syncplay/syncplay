@@ -600,6 +600,8 @@ info = dict(
     common_info,
     windows=[{"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")], 'dest_base': "Syncplay"}],
     console=['syncplayServer.py'],
+    # *** If you wish to make the Syncplay client use console mode (for --no-gui to work) then comment out the above two lines and uncomment the following line:
+    # console=['syncplayServer.py', {"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")], 'dest_base': "Syncplay"}],
     options={'py2exe': {
                          'dist_dir': OUT_DIR,
                          'packages': 'PySide.QtUiTools',
