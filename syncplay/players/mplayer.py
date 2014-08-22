@@ -23,6 +23,7 @@ class MplayerPlayer(BasePlayer):
         self._duration = None
         self._filename = None
         self._filepath = None
+        self.quitReason = None
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:
@@ -125,6 +126,9 @@ class MplayerPlayer(BasePlayer):
         return u'"{}"'.format(arg)
 
     def lineReceived(self, line):
+        if line == "Error parsing option slave-broken (option not found)":
+            self.quitReason = "This version of Syncplay is not compatible with mpv 0.5.0+. Use mpv 0.4.0 or check for an update to Syncplay."
+
         match = self.RE_ANSWER.match(line)
         if not match:
             return
@@ -149,7 +153,9 @@ class MplayerPlayer(BasePlayer):
             self._filenameAsk.set()
         elif name == "exiting":
             if value != 'Quit':
-                self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("media-player-error").format(value), True)
+                if self.quitReason == None:
+                    self.quitReason = getMessage("media-player-error").format(value)
+                self.reactor.callFromThread(self._client.ui.showErrorMessage, self.quitReason, True)
             self.drop()
 
     @staticmethod
