@@ -1,9 +1,13 @@
 from syncplay.players.mplayer import MplayerPlayer
 from syncplay import constants
-import os
+import os, sys
 
 class MpvPlayer(MplayerPlayer):
     SLAVE_ARGS = constants.MPV_SLAVE_ARGS
+    if sys.platform.startswith('win'):
+         SLAVE_ARGS.extend(constants.MPV_SLAVE_ARGS_WINDOWS)
+    else:
+         SLAVE_ARGS.extend(constants.MPV_SLAVE_ARGS_NONWINDOWS)
     POSITION_QUERY = 'time-pos'
     OSD_QUERY = 'show_text'
 
