@@ -71,6 +71,7 @@ en = {
       "server-timeout-error" : "Connection with server timed out",
        "mpc-slave-error" : "Unable to start MPC in slave mode!",
        "mpc-version-insufficient-error" : "MPC version not sufficient, please use `mpc-hc` >= `{}`",
+       "mpv-version-error" : "Syncplay is not compatible with this version of mpv. Please use a different version of mpv (e.g. Git HEAD).",
        "player-file-open-error" : "Player failed opening file",
        "player-path-error" : "Player path is not set properly",
        "hostname-empty-error" : "Hostname can't be empty",

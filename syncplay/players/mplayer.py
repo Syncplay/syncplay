@@ -127,7 +127,7 @@ class MplayerPlayer(BasePlayer):
 
     def lineReceived(self, line):
         if line == "Error parsing option slave-broken (option not found)":
-            self.quitReason = "This version of Syncplay is not compatible with mpv 0.5.0+ on Windows. Use mpv 0.4.3 or check for an update to Syncplay."
+            self.quitReason = getMessage("mpv-version-error")
 
         match = self.RE_ANSWER.match(line)
         if not match:
