@@ -167,7 +167,7 @@ en = {
       "undoseek-guibuttonlabel" : "Undo seek",
       "togglepause-guibuttonlabel" : "Toggle pause",
       "play-guibuttonlabel" : "Play",
-      "pause-guibuttonlabel" : "Play",
+      "pause-guibuttonlabel" : "Pause",
 
       "roomuser-heading-label" : "Room / User",
       "fileplayed-heading-label" : "File being played",
