@@ -126,7 +126,7 @@ class MplayerPlayer(BasePlayer):
         return u'"{}"'.format(arg)
 
     def lineReceived(self, line):
-        if line == "Error parsing option slave-broken (option not found)":
+        if "Error parsing option" in line:
             self.quitReason = getMessage("mpv-version-error")
 
         match = self.RE_ANSWER.match(line)
