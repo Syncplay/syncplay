@@ -109,7 +109,7 @@ MPV_SLAVE_ARGS = ['--hr-seek=always', '--quiet', '--keep-open']
 MPV_SLAVE_ARGS_WINDOWS = ['--slave-broken']
 MPV_SLAVE_ARGS_NONWINDOWS = ['--input-terminal=no','--input-file=/dev/stdin']
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
-                  '--play-and-pause']
+                  '--play-and-pause', '--start-time=0']
 VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
 VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_]+)(?:\: )?(?P<argument>.*))"
