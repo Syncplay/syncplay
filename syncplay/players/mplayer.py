@@ -10,7 +10,6 @@ import os
 class MplayerPlayer(BasePlayer):
     speedSupported = True
     RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
-    SLAVE_ARGS = constants.MPLAYER_SLAVE_ARGS
     POSITION_QUERY = 'time_pos'
     OSD_QUERY = 'osd_show_text'
 
@@ -153,7 +152,7 @@ class MplayerPlayer(BasePlayer):
             self._filenameAsk.set()
         elif name == "exiting":
             if value != 'Quit':
-                if self.quitReason == None:
+                if self.quitReason is None:
                     self.quitReason = getMessage("media-player-error").format(value)
                 self.reactor.callFromThread(self._client.ui.showErrorMessage, self.quitReason, True)
             self.drop()
@@ -175,6 +174,10 @@ class MplayerPlayer(BasePlayer):
     @staticmethod
     def getIconPath(path):
         return constants.MPLAYER_ICONPATH
+
+    @staticmethod
+    def getStartupArgs(path):
+        return constants.MPLAYER_SLAVE_ARGS
 
     @staticmethod
     def isValidPlayerPath(path):
@@ -225,7 +228,7 @@ class MplayerPlayer(BasePlayer):
                 filePath = os.path.realpath(filePath)
 
             call = [playerPath, filePath]
-            call.extend(playerController.SLAVE_ARGS)
+            call.extend(playerController.getStartupArgs(playerPath))
             if args:
                 call.extend(args)
             # At least mpv may output escape sequences which result in syncplay

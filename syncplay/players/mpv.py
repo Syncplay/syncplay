@@ -1,15 +1,13 @@
+import re
+import subprocess
 from syncplay.players.mplayer import MplayerPlayer
 from syncplay import constants
 import os, sys
 
 class MpvPlayer(MplayerPlayer):
-    SLAVE_ARGS = constants.MPV_SLAVE_ARGS
-    if sys.platform.startswith('win'):
-         SLAVE_ARGS.extend(constants.MPV_SLAVE_ARGS_WINDOWS)
-    else:
-         SLAVE_ARGS.extend(constants.MPV_SLAVE_ARGS_NONWINDOWS)
     POSITION_QUERY = 'time-pos'
     OSD_QUERY = 'show_text'
+    RE_VERSION = re.compile('.*mpv (\d)\.(\d)\.\d.*')
 
     def _setProperty(self, property_, value):
         self._listener.sendLine("no-osd set {} {}".format(property_, value))
@@ -22,6 +20,17 @@ class MpvPlayer(MplayerPlayer):
     @staticmethod
     def run(client, playerPath, filePath, args):
         return MpvPlayer(client, MpvPlayer.getExpandedPath(playerPath), filePath, args)
+
+    @staticmethod
+    def getStartupArgs(path):
+        ver = MpvPlayer.RE_VERSION.search(subprocess.check_output([path, '--version']))
+        new_mpv = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 5
+        args = constants.MPV_SLAVE_ARGS
+        if sys.platform.startswith('win') or not new_mpv:
+             args.extend(constants.MPV_SLAVE_ARGS_WINDOWS)
+        else:
+             args.extend(constants.MPV_SLAVE_ARGS_NONWINDOWS)
+        return args
 
     @staticmethod
     def getDefaultPlayerPathsList():
