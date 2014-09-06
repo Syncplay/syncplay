@@ -10,7 +10,6 @@ import socket
 import asynchat, asyncore
 import urllib
 from syncplay.messages import getMessage
-import time
 
 class VlcPlayer(BasePlayer):
     speedSupported = True
@@ -92,7 +91,7 @@ class VlcPlayer(BasePlayer):
 
     def setPosition(self, value):
         self._position = value
-        self._listener.sendLine("set-position: {}".format(value))
+        self._listener.sendLine("set-position: {:n}".format(value))
 
     def setPaused(self, value):
         self._paused = value
