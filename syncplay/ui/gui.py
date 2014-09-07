@@ -6,7 +6,6 @@ import sys
 import time
 import re
 import os
-import threading
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration
 
 class MainWindow(QtGui.QMainWindow):
@@ -210,7 +209,17 @@ class MainWindow(QtGui.QMainWindow):
             self.mediadirectory = os.path.dirname(fileName)
             self.saveMediaBrowseSettings()
             self._syncplayClient._player.openFile(fileName)
-            
+
+    def createControlledRoom(self):
+        self._syncplayClient.createControlledRoom()
+
+    def identifyAsController(self):
+        tooltip = "Enter controller password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):"
+        name =  "Identify as Room Controller"
+        controlpassword, ok = QtGui.QInputDialog.getText(self, name, tooltip, QtGui.QLineEdit.Normal, "")
+        if ok and controlpassword != '':
+            self._syncplayClient.identifyAsController(controlpassword)
+
     def _extractSign(self, m):
         if m:
             if m == "-":
@@ -390,6 +399,11 @@ class MainWindow(QtGui.QMainWindow):
         window.advancedMenu = QtGui.QMenu(getMessage("advanced-menu-label"), self)
         window.setoffsetAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'timeline_marker.png'),getMessage("setoffset-menu-label"))
         window.setoffsetAction.triggered.connect(self.setOffset)
+
+        window.createcontrolledroomAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'page_white_key.png'), "&Create controlled room suffix")
+        window.createcontrolledroomAction.triggered.connect(self.createControlledRoom)
+        window.identifyascontroller = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'key_go.png'), "&Identify as room controller")
+        window.identifyascontroller.triggered.connect(self.identifyAsController)
         window.menuBar.addMenu(window.advancedMenu)
         
         window.helpMenu = QtGui.QMenu(getMessage("help-menu-label"), self)
