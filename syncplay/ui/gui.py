@@ -126,6 +126,9 @@ class MainWindow(QtGui.QMainWindow):
     def userListChange(self):
         self._syncplayClient.showUserList()
 
+    def updateRoomName(self, room=""):
+        self.roomInput.setText(room)
+
     def showDebugMessage(self, message):
         print(message)
 

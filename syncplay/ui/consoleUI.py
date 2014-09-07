@@ -35,7 +35,10 @@ class ConsoleUI(threading.Thread):
                     self._executeCommand(data)
         except EOFError:
             pass
-        
+
+    def updateRoomName(self, room=""):
+        pass
+
     def promptFor(self, prompt=">", message=""):
         if message <> "":
             print(message)

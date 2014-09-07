@@ -1,15 +1,15 @@
 import hashlib
 import os.path
+import random
+import string
 import time
-import re
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants
 from syncplay.messages import getMessage
-import threading
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
-    PRIVACY_HIDDENFILENAME, FILENAME_STRIP_REGEX
+    PRIVACY_HIDDENFILENAME
 import collections
 
 class SyncClientFactory(ClientFactory):
@@ -67,8 +67,9 @@ class SyncplayClient(object):
         self.ui = UiManager(self, ui)
         self.userlist = SyncplayUserlist(self.ui, self)
         self._protocol = None
+        """:type : SyncClientProtocol|None"""
         self._player = None
-        if config['room'] == None or config['room'] == '':
+        if config['room'] is None or config['room'] == '':
             config['room'] = config['name']  # ticket #58
         self.defaultRoom = config['room']
         self.playerPositionBeforeLastSeek = 0.0
@@ -99,7 +100,8 @@ class SyncplayClient(object):
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
-            self.ui.showMessage(getMessage("relative-config-notification").format("; ".join(self._config['loadedRelativePaths'])), noPlayer=True, noTimestamp=True)
+            paths = "; ".join(self._config['loadedRelativePaths'])
+            self.ui.showMessage(getMessage("relative-config-notification").format(paths), noPlayer=True, noTimestamp=True)
 
     def initProtocol(self, protocol):
         self._protocol = protocol
@@ -234,7 +236,7 @@ class SyncplayClient(object):
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
         if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindOnDesync'] == False:
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
-        if (self._player.speedSupported and not doSeek and not paused and not self._config['slowOnDesync'] == False):
+        if self._player.speedSupported and not doSeek and not paused and not self._config['slowOnDesync'] == False:
             madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
         if paused == False and pauseChanged:
             madeChangeOnPlayer = self._serverUnpaused(setBy)
@@ -317,7 +319,6 @@ class SyncplayClient(object):
             size = os.path.getsize(path)
         except OSError:  # file not accessible (stream?)
             size = 0
-        rawfilename = filename
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
@@ -413,6 +414,41 @@ class SyncplayClient(object):
         reactor.callLater(0.1, reactor.stop)
         if promptForAction:
             self.ui.promptFor(getMessage("enter-to-exit-prompt"))
+
+    def createControlledRoom(self):
+        controlPassword = RoomPasswordGenerator.generate_password()
+        # TODO (Client): Send request to server; handle success and failure
+        # TODO (Server): Process request, send response
+        self.ui.showMessage("Attempting to create controlled room suffix with password '{}'...".format(controlPassword))
+        self._protocol.requestControlledRoom(controlPassword)
+
+    def controlledRoomCreated(self, controlPassword, roomName):
+        # NOTE (Client): Triggered by protocol to handle createControlledRoom when room is created
+        self.ui.showMessage("Created controlled room suffix '{}' with password '{}'. Please save this information for future reference!".format(roomName, controlPassword))
+        self.setRoom(roomName)
+        self.sendRoom()
+        self.ui.updateRoomName(roomName)
+
+    def controlledRoomCreationError(self, errormsg):
+        # NOTE (Client): Triggered by protocol to handle createControlledRoom if controlled rooms are not supported by server or if password is malformed
+        # NOTE (Server): Triggered by protocol to handle createControlledRoom if password is malformed
+        self.ui.showErrorMessage("Failed to create the controlled room suffix for the following reason: {}.".format(errormsg))
+
+    def identifyAsController(self, controlPassword):
+        # TODO (Client): Send identification to server; handle success and failure
+        # TODO (Server): Process request, send response
+        self.ui.showMessage("Identifying as room controller with password '{}'...".format(controlPassword))
+        self._protocol.requestControlledRoom(controlPassword)
+
+    def controllerIdentificationError(self, errormsg):
+        # NOTE (Client): Triggered by protocol handling identiedAsController, e.g. on server response or not supported error
+        # NOTE (Server): Relevant error given in response to identifyAsController if password is wrong
+        self.ui.showErrorMessage("Failed to identify as a room controller for the following reason: {}.".format(errormsg))
+
+    def notControllerError(self, errormsg):
+        # NOTE (Client): Trigger when client gets a "not controller" error from server (e.g. due to illegal pauses, unpauses and seeks)
+        # NOTE (Server): Give "not controller" error when users try to perform illegal pause, unpause or seek
+        self.ui.showErrorMessage("There are currently people with 'room controller' status in this room. As such, only they can pause, unpause and seek. If you want to perform these actions then you must either identify as a controller or join a different room. See http://syncplay.pl/guide/ for more details.")
 
     class _WarningManager(object):
         def __init__(self, player, userlist, ui):
@@ -662,5 +698,26 @@ class UiManager(object):
     def markEndOfUserlist(self):
         self.__ui.markEndOfUserlist()
 
+    def updateRoomName(self, room=""):
+        self.__ui.updateRoomName(room)
+
     def drop(self):
         self.__ui.drop()
+
+class RoomPasswordGenerator(object):
+    @staticmethod
+    def generate_password():
+        parts = (
+            RoomPasswordGenerator._get_random_letters(2),
+            RoomPasswordGenerator._get_random_numbers(3),
+            RoomPasswordGenerator._get_random_numbers(3)
+        )
+        return "{}-{}-{}".format(*parts)
+
+    @staticmethod
+    def _get_random_letters(quantity):
+        return ''.join(random.choice(string.ascii_uppercase) for _ in xrange(quantity))
+
+    @staticmethod
+    def _get_random_numbers(quantity):
+        return ''.join(random.choice(string.digits) for _ in xrange(quantity))
