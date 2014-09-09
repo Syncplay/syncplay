@@ -36,7 +36,6 @@ class VlcPlayer(BasePlayer):
         except:
             self._client.ui.showErrorMessage("Failed to determine locale. As a fallback Syncplay is using the following radix character: \".\".")
             self.radixChar = "."
-        print self.radixChar
 
         self._durationAsk = threading.Event()
         self._filenameAsk = threading.Event()
