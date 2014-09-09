@@ -29,6 +29,14 @@ class VlcPlayer(BasePlayer):
         self._filename = None
         self._filepath = None
         self._filechanged = False
+        try: # Hack to fix locale issue without importing locale library
+            self.radixChar = "{:n}".format(1.5)[1:2]
+            if self.radixChar == "" or self.radixChar == "1" or self.radixChar == "5":
+                raise ValueError
+        except:
+            self._client.ui.showErrorMessage("Failed to determine locale. As a fallback Syncplay is using the following radix character: \".\".")
+            self.radixChar = "."
+        print self.radixChar
 
         self._durationAsk = threading.Event()
         self._filenameAsk = threading.Event()
@@ -90,8 +98,7 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine("set-rate: {:.2n}".format(value))
 
     def setPosition(self, value):
-        self._position = value
-        self._listener.sendLine("set-position: {:n}".format(value))
+        self._listener.sendLine("set-position: {}".format(value).replace(".",self.radixChar))
 
     def setPaused(self, value):
         self._paused = value
