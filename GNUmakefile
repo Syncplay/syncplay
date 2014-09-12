@@ -18,8 +18,6 @@ endif
 	SHARE_PATH        = ${PREFIX}$(BASE_PATH)/share
 
 common:
-	-mkdir -p $(LIB_PATH)/syncplay/resources/
-	-mkdir -p $(LIB_PATH)/syncplay/resources/lua
 	-mkdir -p $(LIB_PATH)/syncplay/resources/lua/intf
 	-mkdir -p $(APP_SHORTCUT_PATH)
 	-mkdir -p $(SHARE_PATH)/app-install/icons
