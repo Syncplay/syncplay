@@ -70,7 +70,9 @@ VLC_PATHS = [
     r"C:\Program Files\VideoLAN\VLC\vlc.exe",
     "/usr/bin/vlc",
     "/usr/bin/vlc-wrapper",
-    "/Applications/VLC.app/Contents/MacOS/VLC"
+    "/Applications/VLC.app/Contents/MacOS/VLC",
+    "/usr/local/bin/vlc",
+    "/usr/local/bin/vlc-wrapper"
 ]
 
 VLC_ICONPATH = "vlc.png"
