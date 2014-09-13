@@ -128,6 +128,15 @@ class MplayerPlayer(BasePlayer):
         if "Error parsing option" in line:
             self.quitReason = getMessage("mpv-version-error")
 
+        if "Failed to get value of property" in line:
+            if "filename" in line:
+                self._getFilename()
+            elif "length" in line:
+                self._getLength()
+            elif "path" in line:
+                self._getFilepath()
+            return
+
         match = self.RE_ANSWER.match(line)
         if not match:
             return
