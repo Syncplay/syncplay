@@ -25,6 +25,7 @@ class MplayerPlayer(BasePlayer):
         self.quitReason = None
         self.lastLoadedTime = None
         self.fileLoaded = False
+        self._resetPosition = False
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:

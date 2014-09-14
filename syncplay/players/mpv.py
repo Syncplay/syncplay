@@ -19,7 +19,9 @@ class MpvPlayer(MplayerPlayer):
             self._listener.sendLine('cycle pause')
 
     def _storePosition(self, value):
-        if self._fileIsLoaded():
+        if self._resetPosition:
+            self._position = 0
+        elif self._fileIsLoaded():
             self._position = value
         else:
             self._position = self._client.getGlobalPosition()
@@ -63,13 +65,17 @@ class MpvPlayer(MplayerPlayer):
                 self._positionAsk.set()
 
         elif "Playing:" in line:
+            if self._position < 1:
+                self._resetPosition = True
             self._clearFileLoaded()
 
     def _onMPVFileUpdate(self):
         self.fileLoaded = True
         self.lastLoadedTime = time.time()
         self.reactor.callFromThread(self._client.updateFile, self._filename, self._duration, self._filepath)
-        self.reactor.callFromThread(self.setPosition, self._client.getGlobalPosition())
+        if not self._resetPosition:
+            self.reactor.callFromThread(self.setPosition, self._client.getGlobalPosition())
+        self._resetPosition = False
         if self._paused != self._client.getGlobalPaused():
             self.reactor.callFromThread(self._client.getGlobalPaused)
 
