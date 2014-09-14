@@ -18,6 +18,18 @@ class MpvPlayer(MplayerPlayer):
             self._paused = not self._paused
             self._listener.sendLine('cycle pause')
 
+    def _storePosition(self, value):
+        if self._fileIsLoaded():
+            self._position = value
+        else:
+            self._position = self._client.getGlobalPosition()
+
+    def _storePauseState(self, value):
+        if self._fileIsLoaded():
+            self._paused = bool(value == 'yes')
+        else:
+            self._paused = self._client.getGlobalPaused()
+
     def _onFileUpdate(self):
         pass
 
@@ -25,7 +37,11 @@ class MpvPlayer(MplayerPlayer):
         self.fileLoaded = False
         self.lastLoadedTime = None
 
-    def _handleMPVLines(self, line):
+    def _loadFile(self, filePath):
+        self._clearFileLoaded()
+        self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
+
+    def _handleUnknownLine(self, line):
         if "Error parsing option" in line:
             self.quitReason = getMessage("mpv-version-error")
 

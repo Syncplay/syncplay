@@ -67,9 +67,6 @@ class MplayerPlayer(BasePlayer):
         self.reactor.callLater(0, self._client.initPlayer, self)
         self._onFileUpdate()
 
-    def _onMPVFileUpdate(self):
-        pass
-
     def askForStatus(self):
         self._positionAsk.clear()
         self._pausedAsk.clear()
@@ -91,9 +88,11 @@ class MplayerPlayer(BasePlayer):
     def setSpeed(self, value):
         self._setProperty('speed', "{:.2f}".format(value))
 
-    def openFile(self, filePath):
-        self._clearFileLoaded()
+    def _loadFile(self, filePath):
         self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
+
+    def openFile(self, filePath):
+        self._loadFile(filePath)
         self._onFileUpdate()
         if self._paused != self._client.getGlobalPaused():
             self.setPaused(self._client.getGlobalPaused())
@@ -136,30 +135,29 @@ class MplayerPlayer(BasePlayer):
     def _clearFileLoaded(self):
         pass
 
-    def _handleMPVLines(self, line):
+    def _handleUnknownLine(self, line):
         pass
 
-    def lineReceived(self, line):
-        self._handleMPVLines(line)
+    def _storePosition(self, value):
+        self._position = value
 
+    def _storePauseState(self, value):
+        self._paused = value
+
+    def lineReceived(self, line):
         match = self.RE_ANSWER.match(line)
         if not match:
+            self._handleUnknownLine(line)
             return
 
         name, value =[m for m in match.groups() if m]
         name = name.lower()
 
         if name == self.POSITION_QUERY:
-            if self._fileIsLoaded():
-                self._position = float(value)
-            else:
-                self._position = self._client.getGlobalPosition()
+            self._storePosition(float(value))
             self._positionAsk.set()
         elif name == "pause":
-            if self._fileIsLoaded():
-                self._paused = bool(value == 'yes')
-            else:
-                self._paused = self._client.getGlobalPaused()
+            self._storePauseState(bool(value == 'yes'))
             self._pausedAsk.set()
         elif name == "length":
             self._duration = float(value)
