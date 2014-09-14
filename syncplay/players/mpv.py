@@ -26,7 +26,7 @@ class MpvPlayer(MplayerPlayer):
 
     def _storePauseState(self, value):
         if self._fileIsLoaded():
-            self._paused = bool(value == 'yes')
+            self._paused = value
         else:
             self._paused = self._client.getGlobalPaused()
 
