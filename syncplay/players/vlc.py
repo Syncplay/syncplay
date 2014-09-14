@@ -261,6 +261,11 @@ class VlcPlayer(BasePlayer):
             elif sys.platform.startswith('darwin'):
                 playerController.vlcIntfPath = "/Applications/VLC.app/Contents/MacOS/share/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), "Library/Application Support/org.videolan.vlc/lua/intf/")
+            elif 'bsd' in sys.platform or sys.platform.startswith('dragonfly'):
+                # *BSD ports/pkgs install to /usr/local by default.
+                # This should also work for all the other BSDs, such as OpenBSD or DragonFly.
+                playerController.vlcIntfPath = "/usr/local/lib/vlc/lua/intf/"
+                playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), ".local/share/vlc/lua/intf/")
             else:
                 playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('APPDATA', '.'), "VLC\\lua\\intf\\")

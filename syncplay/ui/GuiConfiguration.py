@@ -131,6 +131,8 @@ class ConfigDialog(QtGui.QDialog):
             defaultdirectory = "/usr/bin"
         elif sys.platform.startswith('darwin'):
             defaultdirectory = "/Applications/"
+        elif "bsd" in sys.platform or sys.platform.startswith('dragonfly'):
+            defaultdirectory = "/usr/local/bin"
 
         fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,
                 "Browse for media player executable",
