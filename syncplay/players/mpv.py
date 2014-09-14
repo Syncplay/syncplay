@@ -45,7 +45,6 @@ class MpvPlayer(MplayerPlayer):
             elif "time-pos" in line:
                 self.setPosition(self._client.getGlobalPosition())
                 self._positionAsk.set()
-            raise ValueError
 
         elif "Playing:" in line:
             self._clearFileLoaded()
