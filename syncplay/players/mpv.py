@@ -1,8 +1,9 @@
 import re
 import subprocess
 from syncplay.players.mplayer import MplayerPlayer
+from syncplay.messages import getMessage
 from syncplay import constants
-import os, sys
+import os, sys, time
 
 class MpvPlayer(MplayerPlayer):
     POSITION_QUERY = 'time-pos'
@@ -16,6 +17,52 @@ class MpvPlayer(MplayerPlayer):
         if self._paused <> value:
             self._paused = not self._paused
             self._listener.sendLine('cycle pause')
+
+    def _onFileUpdate(self):
+        pass
+
+    def _clearFileLoaded(self):
+        self.fileLoaded = False
+        self.lastLoadedTime = None
+
+    def _handleMPVLines(self, line):
+        if "Error parsing option" in line:
+            self.quitReason = getMessage("mpv-version-error")
+
+        elif line == "<SyncplayUpdateFile>":
+            self._clearFileLoaded()
+
+        elif line == "</SyncplayUpdateFile>":
+            self._onMPVFileUpdate()
+
+        elif "Failed to get value of property" in line:
+            if "filename" in line:
+                self._getFilename()
+            elif "length" in line:
+                self._getLength()
+            elif "path" in line:
+                self._getFilepath()
+            elif "time-pos" in line:
+                self.setPosition(self._client.getGlobalPosition())
+                self._positionAsk.set()
+            raise ValueError
+
+        elif "Playing:" in line:
+            self._clearFileLoaded()
+
+    def _onMPVFileUpdate(self):
+        self.fileLoaded = True
+        self.lastLoadedTime = time.time()
+        self.reactor.callFromThread(self._client.updateFile, self._filename, self._duration, self._filepath)
+        self.reactor.callFromThread(self.setPosition, self._client.getGlobalPosition())
+        if self._paused != self._client.getGlobalPaused():
+            self.reactor.callFromThread(self._client.getGlobalPaused)
+
+    def _fileIsLoaded(self):
+        if self.fileLoaded == True and self.lastLoadedTime != None and time.time() > (self.lastLoadedTime + constants.MPV_NEWFILE_IGNORE_TIME):
+            return True
+        else:
+            return False
 
     @staticmethod
     def run(client, playerPath, filePath, args):

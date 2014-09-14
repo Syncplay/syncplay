@@ -23,6 +23,8 @@ class MplayerPlayer(BasePlayer):
         self._filename = None
         self._filepath = None
         self.quitReason = None
+        self.lastLoadedTime = None
+        self.fileLoaded = False
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:
@@ -65,6 +67,9 @@ class MplayerPlayer(BasePlayer):
         self.reactor.callLater(0, self._client.initPlayer, self)
         self._onFileUpdate()
 
+    def _onMPVFileUpdate(self):
+        pass
+
     def askForStatus(self):
         self._positionAsk.clear()
         self._pausedAsk.clear()
@@ -87,6 +92,7 @@ class MplayerPlayer(BasePlayer):
         self._setProperty('speed', "{:.2f}".format(value))
 
     def openFile(self, filePath):
+        self._clearFileLoaded()
         self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
         self._onFileUpdate()
         if self._paused != self._client.getGlobalPaused():
@@ -124,18 +130,17 @@ class MplayerPlayer(BasePlayer):
         arg = arg.replace('"', '\\"')
         return u'"{}"'.format(arg)
 
-    def lineReceived(self, line):
-        if "Error parsing option" in line:
-            self.quitReason = getMessage("mpv-version-error")
+    def _fileIsLoaded(self):
+        return True
 
-        if "Failed to get value of property" in line:
-            if "filename" in line:
-                self._getFilename()
-            elif "length" in line:
-                self._getLength()
-            elif "path" in line:
-                self._getFilepath()
-            return
+    def _clearFileLoaded(self):
+        pass
+
+    def _handleMPVLines(self, line):
+        pass
+
+    def lineReceived(self, line):
+        self._handleMPVLines(line)
 
         match = self.RE_ANSWER.match(line)
         if not match:
@@ -145,10 +150,16 @@ class MplayerPlayer(BasePlayer):
         name = name.lower()
 
         if name == self.POSITION_QUERY:
-            self._position = float(value)
+            if self._fileIsLoaded():
+                self._position = float(value)
+            else:
+                self._position = self._client.getGlobalPosition()
             self._positionAsk.set()
         elif name == "pause":
-            self._paused = bool(value == 'yes')
+            if self._fileIsLoaded():
+                self._paused = bool(value == 'yes')
+            else:
+                self._paused = self._client.getGlobalPaused()
             self._pausedAsk.set()
         elif name == "length":
             self._duration = float(value)

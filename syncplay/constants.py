@@ -87,6 +87,7 @@ MPC_LOCK_WAIT_TIME = 0.2
 MPC_RETRY_WAIT_TIME = 0.01
 MPC_MAX_RETRIES = 30
 MPC_PAUSE_TOGGLE_DELAY = 0.05
+MPV_NEWFILE_IGNORE_TIME = 1
 VLC_OPEN_MAX_WAIT_TIME = 15
 VLC_MIN_PORT = 10000
 VLC_MAX_PORT = 55000
@@ -105,7 +106,7 @@ STYLE_NOFILEITEM_COLOR = 'blue'
 
 MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4']
 # --quiet works with both mpv 0.2 and 0.3
-MPV_SLAVE_ARGS = ['--hr-seek=always', '--quiet', '--keep-open']
+MPV_SLAVE_ARGS = ['--hr-seek=always', '--quiet', '--keep-open', '--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=length}\nANS_path=${path}\n</SyncplayUpdateFile>']
 MPV_SLAVE_ARGS_WINDOWS = ['--slave-broken']
 MPV_SLAVE_ARGS_NONWINDOWS = ['--input-terminal=no','--input-file=/dev/stdin']
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
