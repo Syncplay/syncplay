@@ -117,7 +117,7 @@ class VlcPlayer(BasePlayer):
     def _isASCII (self, s):
         return all(ord(c) < 128 for c in s)
 
-    def openFile(self, filePath):
+    def openFile(self, filePath, resetPosition=False):
         if self._isASCII(filePath):
             self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii', 'ignore')))
         else:

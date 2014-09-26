@@ -385,7 +385,7 @@ class MPCHCAPIPlayer(BasePlayer):
         if filePath:
             self.openFile(filePath)
     
-    def openFile(self, filePath):
+    def openFile(self, filePath, resetPosition=False):
         self._mpcApi.openFile(filePath)
         
     def displayMessage(self, message, duration = (constants.OSD_DURATION*1000)):

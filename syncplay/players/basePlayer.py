@@ -49,7 +49,7 @@ class BasePlayer(object):
     '''
     @type filePath: string 
     '''
-    def openFile(self, filePath):
+    def openFile(self, filePath, resetPosition=False):
         raise NotImplementedError()
     
     

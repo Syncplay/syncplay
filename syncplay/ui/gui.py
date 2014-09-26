@@ -443,7 +443,7 @@ class MainWindow(QtGui.QMainWindow):
                 self._syncplayClient._player.openFile(dropfilepath)
             else:
                 self._syncplayClient.setPosition(0)
-                self._syncplayClient._player.openFile(dropfilepath)
+                self._syncplayClient._player.openFile(dropfilepath, resetPosition=True)
                 self._syncplayClient.setPosition(0)
     
     def saveSettings(self):
