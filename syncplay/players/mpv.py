@@ -33,15 +33,34 @@ class MpvPlayer(MplayerPlayer):
             self._paused = self._client.getGlobalPaused()
 
     def _onFileUpdate(self):
-        pass
+        if not constants.MPV_NEW_VERSION:
+            oldFilename = self._filename
+            oldLength = self._duration
+            oldFilepath = self._filepath
+            self._fileUpdateClearEvents()
+            self._getFilename()
+            self._getLength()
+            self._getFilepath()
+            self._fileUpdateWaitEvents()
+            if (self._filename != oldFilename) or (self._duration != oldLength) or (self._filepath != oldFilepath):
+                self._client.updateFile(self._filename, self._duration, self._filepath)
 
     def _clearFileLoaded(self):
         self.fileLoaded = False
         self.lastLoadedTime = None
 
     def _loadFile(self, filePath):
-        self._clearFileLoaded()
+        if constants.MPV_NEW_VERSION:
+            self._clearFileLoaded()
         self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
+
+    def openFile(self, filePath, resetPosition=False):
+        if resetPosition:
+            self.lastResetTime = time.time()
+        self._loadFile(filePath)
+        if self._paused != self._client.getGlobalPaused():
+            self.setPaused(self._client.getGlobalPaused())
+        self.setPosition(self._client.getGlobalPosition())
 
     def _handleUnknownLine(self, line):
         if "Error parsing option" in line or "Error parsing commandline option" in line:
@@ -65,7 +84,13 @@ class MpvPlayer(MplayerPlayer):
                 self._positionAsk.set()
 
         elif "Playing:" in line:
-            self._clearFileLoaded()
+            if constants.MPV_NEW_VERSION:
+                self._clearFileLoaded()
+            else:
+                self.fileLoaded = True
+                if not self._recentlyReset():
+                    self._onMPVFileUpdate()
+                    self.reactor.callFromThread(self._onFileUpdate)
 
     def _recentlyReset(self):
         if not self.lastResetTime:
@@ -100,9 +125,11 @@ class MpvPlayer(MplayerPlayer):
             ver = MpvPlayer.RE_VERSION.search(subprocess.check_output([path, '--version']))
         except:
             ver = None
-        new_mpv = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 5
+        constants.MPV_NEW_VERSION = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 5
         args = constants.MPV_SLAVE_ARGS
-        if sys.platform.startswith('win') or not new_mpv:
+        if constants.MPV_NEW_VERSION or sys.platform.startswith('win'):
+            args.extend(constants.MPV_SLAVE_ARGS_NEW)
+        if sys.platform.startswith('win') or not constants.MPV_NEW_VERSION:
              args.extend(constants.MPV_SLAVE_ARGS_WINDOWS)
         else:
              args.extend(constants.MPV_SLAVE_ARGS_NONWINDOWS)
