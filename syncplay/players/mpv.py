@@ -44,7 +44,7 @@ class MpvPlayer(MplayerPlayer):
         self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
 
     def _handleUnknownLine(self, line):
-        if "Error parsing option" in line:
+        if "Error parsing option" in line or "Error parsing commandline option" in line:
             self.quitReason = getMessage("mpv-version-error")
 
         elif line == "<SyncplayUpdateFile>":
@@ -91,7 +91,10 @@ class MpvPlayer(MplayerPlayer):
 
     @staticmethod
     def getStartupArgs(path):
-        ver = MpvPlayer.RE_VERSION.search(subprocess.check_output([path, '--version']))
+        try:
+            ver = MpvPlayer.RE_VERSION.search(subprocess.check_output([path, '--version']))
+        except:
+            ver = None
         new_mpv = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 5
         args = constants.MPV_SLAVE_ARGS
         if sys.platform.startswith('win') or not new_mpv:
