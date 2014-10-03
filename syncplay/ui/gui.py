@@ -8,6 +8,43 @@ import re
 import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration
 
+class UserlistItemDelegate(QtGui.QStyledItemDelegate):
+    def __init__(self):
+        QtGui.QStyledItemDelegate.__init__(self)
+
+    def paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex):
+        column = indexQModelIndex.column()
+        if column == 0:
+            currentQAbstractItemModel = indexQModelIndex.model()
+            itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), 0, indexQModelIndex.parent())
+            if sys.platform.startswith('win'):
+                resourcespath = utils.findWorkingDir() + "\\resources\\"
+            else:
+                resourcespath = utils.findWorkingDir() + "/resources/"
+            controlIconQPixmap = QtGui.QPixmap(resourcespath + "controller.png")
+            tickIconQPixmap = QtGui.QPixmap(resourcespath + "tick.png")
+            crossIconQPixmap = QtGui.QPixmap(resourcespath + "cross.png")
+            roomController = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
+            userReady = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.USERITEM_READY_ROLE)
+
+            if roomController and not controlIconQPixmap.isNull():
+                itemQPainter.drawPixmap (
+                    optionQStyleOptionViewItem.rect.x()-32,
+                    optionQStyleOptionViewItem.rect.y(),
+                    controlIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
+
+            if userReady and not tickIconQPixmap.isNull():
+                itemQPainter.drawPixmap (
+                    (optionQStyleOptionViewItem.rect.x()-14),
+                    optionQStyleOptionViewItem.rect.y(),
+                    tickIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
+
+            elif userReady == False and not crossIconQPixmap.isNull():
+                itemQPainter.drawPixmap (
+                    (optionQStyleOptionViewItem.rect.x()-14),
+                    optionQStyleOptionViewItem.rect.y(),
+                    crossIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
+        QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
 class MainWindow(QtGui.QMainWindow):
     def addClient(self, client):
@@ -70,9 +107,18 @@ class MainWindow(QtGui.QMainWindow):
             roomitem.setFlags(roomitem.flags() & ~Qt.ItemIsEditable)
             blankitem.setFlags(blankitem.flags() & ~Qt.ItemIsEditable)
             usertreeRoot.appendRow((roomitem, blankitem))
+            #usercounter = 0 # UNCOMMENT FOR DEMONSTRATION
+
             for user in rooms[room]:
                 useritem = QtGui.QStandardItem(user.username)
-                fileitem = QtGui.QStandardItem("")
+                '''# UNCOMMENT FOR DEMONSTRATION
+                usercounter = usercounter + 1
+
+                if usercounter == 1:
+                    useritem.setData(True, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
+                    useritem.setData(True, Qt.UserRole + constants.USERITEM_READY_ROLE)
+                if usercounter == 2:
+                    useritem.setData(False, Qt.UserRole + constants.USERITEM_READY_ROLE)l'''
                 if user.file:
                     fileitem = QtGui.QStandardItem(
                         u"{} ({})".format(user.file['name'], formatTime(user.file['duration'])))
@@ -113,6 +159,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.listTreeModel = self._usertreebuffer
         self.listTreeView.setModel(self.listTreeModel)
+        self.listTreeView.setItemDelegate(UserlistItemDelegate())
         self.listTreeView.setItemsExpandable(False)
         self.listTreeView.expandAll()
         self.listTreeView.resizeColumnToContents(0)
@@ -290,6 +337,7 @@ class MainWindow(QtGui.QMainWindow):
         window.listTreeModel = QtGui.QStandardItemModel()
         window.listTreeView = QtGui.QTreeView()
         window.listTreeView.setModel(window.listTreeModel)
+        window.listTreeView.setIndentation(21)
         window.listTreeView.doubleClicked.connect(self.roomClicked)
         window.listlabel = QtGui.QLabel(getMessage("userlist-heading-label"))
         window.listFrame = QtGui.QFrame()
