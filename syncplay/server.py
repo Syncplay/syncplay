@@ -91,11 +91,11 @@ class SyncFactory(Factory):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True}) if w != watcher else None
         self._roomManager.broadcast(watcher, l)
 
-    def sendFileUpdate(self, watcher, file_):
+    def sendFileUpdate(self, watcher):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), watcher.getFile(), None)
         self._roomManager.broadcast(watcher, l)
 
-    def forcePositionUpdate(self, room, watcher, doSeek):
+    def forcePositionUpdate(self, watcher, doSeek):
         room = watcher.getRoom()
         paused, position = room.isPaused(), watcher.getPosition()
         setBy = watcher
@@ -263,7 +263,7 @@ class Watcher(object):
 
     def setFile(self, file_):
         self._file = file_
-        self._server.sendFileUpdate(self, file_)
+        self._server.sendFileUpdate(self)
 
     def setRoom(self, room):
         self._room = room
@@ -312,7 +312,7 @@ class Watcher(object):
 
     def _scheduleSendState(self):
         self._sendStateTimer = task.LoopingCall(self._askForStateUpdate)
-        self._sendStateTimer.start(constants.SERVER_STATE_INTERVAL, True)
+        self._sendStateTimer.start(constants.SERVER_STATE_INTERVAL)
 
     def _askForStateUpdate(self, doSeek=False, forcedUpdate=False):
         self._server.sendState(self, doSeek, forcedUpdate)
@@ -349,7 +349,7 @@ class Watcher(object):
                 position += messageAge
             self.setPosition(position)
         if doSeek or pauseChanged:
-            self._server.forcePositionUpdate(self._room, self, doSeek)
+            self._server.forcePositionUpdate(self, doSeek)
 
 
 class ConfigurationGetter(object):
