@@ -268,7 +268,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         return self._logged
 
     def _extractHelloArguments(self, hello):
-        roomName, roomPassword = None, None
+        roomName = None
         username = hello["username"] if hello.has_key("username") else None
         username = username.strip()
         serverPassword = hello["password"] if hello.has_key("password") else None
@@ -276,9 +276,8 @@ class SyncServerProtocol(JSONCommandProtocol):
         if room:
             roomName = room["name"] if room.has_key("name") else None
             roomName = roomName.strip()
-            roomPassword = room["password"] if room.has_key("password") else None
         version = hello["version"] if hello.has_key("version") else None
-        return username, serverPassword, roomName, roomPassword, version
+        return username, serverPassword, roomName, version
 
     def _checkPassword(self, serverPassword):
         if self._factory.password:
@@ -291,7 +290,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         return True
 
     def handleHello(self, hello):
-        username, serverPassword, roomName, roomPassword, version = self._extractHelloArguments(hello)
+        username, serverPassword, roomName, version = self._extractHelloArguments(hello)
         if not username or not roomName or not version:
             self.dropWithError(getMessage("hello-server-error"))
         elif version.split(".")[0:2] != syncplay.version.split(".")[0:2]:
@@ -299,7 +298,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         else:
             if not self._checkPassword(serverPassword):
                 return
-            self._factory.addWatcher(self, username, roomName, roomPassword)
+            self._factory.addWatcher(self, username, roomName)
             self._logged = True
             self.sendHello(version)
 

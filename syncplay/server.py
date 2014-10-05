@@ -62,7 +62,7 @@ class SyncFactory(Factory):
         else:
             return ""
 
-    def addWatcher(self, watcherProtocol, username, roomName, roomPassword):
+    def addWatcher(self, watcherProtocol, username, roomName):
         username = self._roomManager.findFreeUsername(username)
         watcher = Watcher(self, watcherProtocol, username)
         self.setWatcherRoom(watcher, roomName, asJoin=True)
