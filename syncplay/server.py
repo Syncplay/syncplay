@@ -110,13 +110,12 @@ class SyncFactory(Factory):
         room = watcher.getRoom()
         try:
             success = RoomPasswordProvider.check(room.getName(), password, self._salt)
-            # TODO: Authenticate watcher to make changes in the room
-            watcher.sendControlledRoomAuthStatus(success)
+            self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(success, watcher.getName()))
         except NotControlledRoom:
             newName = RoomPasswordProvider.getControlledRoomName(room.getName(), password, self._salt)
             watcher.sendNewControlledRoom(newName, password)
         except ValueError:
-            watcher.sendControlledRoomAuthStatus(False)
+            self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName()))
 
 
 class RoomManager(object):
@@ -301,8 +300,8 @@ class Watcher(object):
     def sendNewControlledRoom(self, roomName, password):
         self._connector.sendNewControlledRoom(roomName, password)
 
-    def sendControlledRoomAuthStatus(self, success):
-        self._connector.sendControlledRoomAuthStatus(success)
+    def sendControlledRoomAuthStatus(self, success, username):
+        self._connector.sendControlledRoomAuthStatus(success, username)
 
     def __lt__(self, b):
         if self.getPosition() is None or self._file is None:

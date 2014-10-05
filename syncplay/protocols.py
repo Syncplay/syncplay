@@ -122,9 +122,9 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self._SetUser(values)
             elif command == "controllerAuth":
                 if values['success']:
-                    self._client.controllerIdentificationSuccess()
+                    self._client.controllerIdentificationSuccess(values["user"])
                 else:
-                    self._client.controllerIdentificationError()
+                    self._client.controllerIdentificationError(values["user"])
             elif command == "newControlledRoom":
                 controlPassword = values['password']
                 roomName = values['roomName']
@@ -341,17 +341,17 @@ class SyncServerProtocol(JSONCommandProtocol):
             }
         })
 
-    def sendControlledRoomAuthStatus(self, success):
+    def sendControlledRoomAuthStatus(self, success, username):
         self.sendSet({
             "controllerAuth": {
+                "user": username,
                 "success": success
             }
         })
 
     def sendUserSetting(self, username, room, file_, event):
         room = {"name": room.getName()}
-        user = {}
-        user[username] = {}
+        user = {username: {}}
         user[username]["room"] = room
         if file_:
             user[username]["file"] = file_
@@ -388,7 +388,7 @@ class SyncServerProtocol(JSONCommandProtocol):
                      "paused": paused,
                      "doSeek": doSeek,
                      "setBy": setBy.getName()
-                    }
+        }
         ping = {
                 "latencyCalculation": self._pingService.newTimestamp(),
                 "serverRtt": self._pingService.getRtt()

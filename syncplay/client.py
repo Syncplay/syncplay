@@ -431,14 +431,14 @@ class SyncplayClient(object):
         self.ui.showMessage("Identifying as room controller with password '{}'...".format(controlPassword))
         self._protocol.requestControlledRoom(controlPassword)
 
-    def controllerIdentificationError(self):
-        self.ui.showErrorMessage("Failed to identify as a room controller.")
+    def controllerIdentificationError(self, username):
+        self.ui.showErrorMessage("<{}> failed to identify as a room controller.".format(username))
 
-    def controllerIdentificationSuccess(self):
+    def controllerIdentificationSuccess(self, username):
         # TODO: More UI stuff
-        self.ui.showErrorMessage("Authenticated as a room controller")
+        self.ui.showErrorMessage("<{}> authenticated as a room controller".format(username))
 
-    # TODO: A person authenticated as a room controller
+    # TODO: Mark person as a room controller
     # TODO: Disable UI's "Create new Controlled Room when in Controlled Room"
     # TODO: Disable authenticate when authenticated
 
