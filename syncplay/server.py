@@ -306,7 +306,7 @@ class Watcher(object):
     def __lt__(self, b):
         if self.getPosition() is None or self._file is None:
             return False
-        if b.getPosition is None or b._file is None:
+        if b.getPosition() is None or b.getFile() is None:
             return True
         return self.getPosition() < b.getPosition()
 
