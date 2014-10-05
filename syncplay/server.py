@@ -1,4 +1,6 @@
 import hashlib
+import random
+import re
 from twisted.internet import task, reactor
 from twisted.internet.protocol import Factory
 import syncplay
@@ -11,12 +13,18 @@ import os
 from string import Template
 import argparse
 
+# TODO: Check if room should have status of "Controlled room"
+# TODO: Make only controllers able to control a room
+# TODO: Send list of controllers
+# TODO: Broadcast information about controller auth
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False):
         print getMessage("welcome-server-notification").format(syncplay.version)
         if password:
             password = hashlib.md5(password).hexdigest()
         self.password = password
+        # TODO: Make salt come from more reasonable place
+        self._salt = str(random.random())
         self._motdFilePath = motdFilePath
         if not isolateRooms:
             self._roomManager = RoomManager()
@@ -97,6 +105,19 @@ class SyncFactory(Factory):
 
     def getAllWatchersForUser(self, forUser):
         return self._roomManager.getAllWatchersForUser(forUser)
+
+    def authRoomController(self, watcher, password):
+        room = watcher.getRoom()
+        try:
+            success = RoomPasswordProvider.check(room.getName(), password, self._salt)
+            # TODO: Authenticate watcher to make changes in the room
+            watcher.sendControlledRoomAuthStatus(success)
+        except NotControlledRoom:
+            newName = RoomPasswordProvider.getControlledRoomName(room.getName(), password, self._salt)
+            watcher.sendNewControlledRoom(newName, password)
+        except ValueError:
+            watcher.sendControlledRoomAuthStatus(False)
+
 
 class RoomManager(object):
     def __init__(self):
@@ -277,6 +298,12 @@ class Watcher(object):
     def sendSetting(self, user, room, file_, event):
         self._connector.sendUserSetting(user, room, file_, event)
 
+    def sendNewControlledRoom(self, roomName, password):
+        self._connector.sendNewControlledRoom(roomName, password)
+
+    def sendControlledRoomAuthStatus(self, success):
+        self._connector.sendControlledRoomAuthStatus(success)
+
     def __lt__(self, b):
         if self.getPosition() is None or self._file is None:
             return False
@@ -341,3 +368,33 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
+
+
+class RoomPasswordProvider(object):
+    CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
+    PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")
+
+    @staticmethod
+    def check(roomName, password, salt):
+        if not re.match(RoomPasswordProvider.PASSWORD_REGEX, password):
+            raise ValueError()
+
+        match = re.match(RoomPasswordProvider.CONTROLLED_ROOM_REGEX, roomName)
+        if not match:
+            raise NotControlledRoom()
+        roomHash = match.group(2)
+        computedHash = RoomPasswordProvider._computeRoomHash(match.group(1), password, salt)
+        return roomHash == computedHash
+
+    @staticmethod
+    def getControlledRoomName(roomName, password, salt):
+        return "+" + roomName + ":" + RoomPasswordProvider._computeRoomHash(roomName, password, salt)
+
+    @staticmethod
+    def _computeRoomHash(roomName, password, salt):
+        salt = hashlib.sha256(salt).hexdigest()
+        provisionalHash = hashlib.sha256(roomName + salt).hexdigest()
+        return hashlib.sha1(provisionalHash + salt + password).hexdigest()[:12].upper()
+
+class NotControlledRoom(Exception):
+    pass

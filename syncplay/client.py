@@ -417,38 +417,30 @@ class SyncplayClient(object):
 
     def createControlledRoom(self):
         controlPassword = RoomPasswordGenerator.generate_password()
-        # TODO (Client): Send request to server; handle success and failure
-        # TODO (Server): Process request, send response
         self.ui.showMessage("Attempting to create controlled room suffix with password '{}'...".format(controlPassword))
         self._protocol.requestControlledRoom(controlPassword)
 
     def controlledRoomCreated(self, controlPassword, roomName):
-        # NOTE (Client): Triggered by protocol to handle createControlledRoom when room is created
         self.ui.showMessage("Created controlled room suffix '{}' with password '{}'. Please save this information for future reference!".format(roomName, controlPassword))
         self.setRoom(roomName)
         self.sendRoom()
+        self._protocol.requestControlledRoom(controlPassword)
         self.ui.updateRoomName(roomName)
 
-    def controlledRoomCreationError(self, errormsg):
-        # NOTE (Client): Triggered by protocol to handle createControlledRoom if controlled rooms are not supported by server or if password is malformed
-        # NOTE (Server): Triggered by protocol to handle createControlledRoom if password is malformed
-        self.ui.showErrorMessage("Failed to create the controlled room suffix for the following reason: {}.".format(errormsg))
-
     def identifyAsController(self, controlPassword):
-        # TODO (Client): Send identification to server; handle success and failure
-        # TODO (Server): Process request, send response
         self.ui.showMessage("Identifying as room controller with password '{}'...".format(controlPassword))
         self._protocol.requestControlledRoom(controlPassword)
 
-    def controllerIdentificationError(self, errormsg):
-        # NOTE (Client): Triggered by protocol handling identiedAsController, e.g. on server response or not supported error
-        # NOTE (Server): Relevant error given in response to identifyAsController if password is wrong
-        self.ui.showErrorMessage("Failed to identify as a room controller for the following reason: {}.".format(errormsg))
+    def controllerIdentificationError(self):
+        self.ui.showErrorMessage("Failed to identify as a room controller.")
 
-    def notControllerError(self, errormsg):
-        # NOTE (Client): Trigger when client gets a "not controller" error from server (e.g. due to illegal pauses, unpauses and seeks)
-        # NOTE (Server): Give "not controller" error when users try to perform illegal pause, unpause or seek
-        self.ui.showErrorMessage("There are currently people with 'room controller' status in this room. As such, only they can pause, unpause and seek. If you want to perform these actions then you must either identify as a controller or join a different room. See http://syncplay.pl/guide/ for more details.")
+    def controllerIdentificationSuccess(self):
+        # TODO: More UI stuff
+        self.ui.showErrorMessage("Authenticated as a room controller")
+
+    # TODO: A person authenticated as a room controller
+    # TODO: Disable UI's "Create new Controlled Room when in Controlled Room"
+    # TODO: Disable authenticate when authenticated
 
     class _WarningManager(object):
         def __init__(self, player, userlist, ui):

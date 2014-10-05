@@ -114,13 +114,21 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self._client.userlist.modUser(username, room, file_)
 
     def handleSet(self, settings):
-        for set_ in settings.iteritems():
-            command = set_[0]
+        for (command, values) in settings.iteritems():
             if command == "room":
-                roomName = set_[1]["name"] if set_[1].has_key("name") else None
+                roomName = values["name"] if values.has_key("name") else None
                 self._client.setRoom(roomName)
             elif command == "user":
-                self._SetUser(set_[1])
+                self._SetUser(values)
+            elif command == "controllerAuth":
+                if values['success']:
+                    self._client.controllerIdentificationSuccess()
+                else:
+                    self._client.controllerIdentificationError()
+            elif command == "newControlledRoom":
+                controlPassword = values['password']
+                roomName = values['roomName']
+                self._client.controlledRoomCreated(controlPassword, roomName)
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -210,8 +218,15 @@ class SyncClientProtocol(JSONCommandProtocol):
                 state["ignoringOnTheFly"]["client"] = self.clientIgnoringOnTheFly
         self.sendMessage({"State": state})
 
+    def requestControlledRoom(self, password):
+        self.sendSet({
+            "controllerAuth": {
+                "password": password
+            }
+        })
+
     def handleError(self, error):
-        self.dropWithError(error["message"])  # TODO: more processing and fallbacking
+        self.dropWithError(error["message"])
 
     def sendError(self, message):
         self.sendMessage({"Error": {"message": message}})
@@ -311,9 +326,27 @@ class SyncServerProtocol(JSONCommandProtocol):
                 self._factory.setWatcherRoom(self._watcher, roomName)
             elif command == "file":
                 self._watcher.setFile(set_[1])
+            elif command == "controllerAuth":
+                password = set_[1]["password"] if set_[1].has_key("password") else None
+                self._factory.authRoomController(self._watcher, password)
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
+
+    def sendNewControlledRoom(self, roomName, password):
+        self.sendSet({
+            "newControlledRoom": {
+                "password": password,
+                "roomName": roomName
+            }
+        })
+
+    def sendControlledRoomAuthStatus(self, success):
+        self.sendSet({
+            "controllerAuth": {
+                "success": success
+            }
+        })
 
     def sendUserSetting(self, username, room, file_, event):
         room = {"name": room.getName()}
