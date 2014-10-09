@@ -383,7 +383,7 @@ class MainWindow(QtGui.QMainWindow):
         window.fileMenu = QtGui.QMenu(getMessage("file-menu-label"), self)
         window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'folder_explore.png'), getMessage("openmedia-menu-label"))
         window.openAction.triggered.connect(self.browseMediapath)
-        window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'), getMessage("file-menu-label"))
+        window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'), getMessage("exit-menu-label"))
         window.exitAction.triggered.connect(self.exitSyncplay)
         window.menuBar.addMenu(window.fileMenu)
         
