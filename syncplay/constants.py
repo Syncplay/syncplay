@@ -22,6 +22,7 @@ SHOW_SLOWDOWN_OSD = True  # Show notifications of slowing down / reverting on ti
 SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room user is in
 SHOW_DIFFERENT_ROOM_OSD = False  # Show OSD notifications for events relating to room user is not in
 SHOW_DURATION_NOTIFICATION = True
+DEBUG_MODE = False
 
 #Changing these might be ok
 DEFAULT_REWIND_THRESHOLD = 4

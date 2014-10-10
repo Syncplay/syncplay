@@ -61,6 +61,7 @@ class SyncplayClient(object):
         constants.SHOW_DIFFERENT_ROOM_OSD = config['showDifferentRoomOSD']
         constants.SHOW_SAME_ROOM_OSD = config['showSameRoomOSD']
         constants.SHOW_DURATION_NOTIFICATION = config['showDurationNotification']
+        constants.DEBUG_MODE = config['debug']
         self.lastLeftTime = 0
         self.lastLeftUser = u""
         self.protocolFactory = SyncClientFactory(self)
@@ -636,6 +637,10 @@ class UiManager(object):
         self._client = client
         self.__ui = ui
         self.lastError = ""
+
+    def showDebugMessage(self, message):
+        if constants.DEBUG_MODE and message.rstrip():
+            print "{}{}".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip())
 
     def showMessage(self, message, noPlayer=False, noTimestamp=False):
         if not noPlayer: self.showOSDMessage(message)

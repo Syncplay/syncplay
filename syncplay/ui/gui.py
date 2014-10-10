@@ -117,9 +117,6 @@ class MainWindow(QtGui.QMainWindow):
     
     def userListChange(self):
         self._syncplayClient.showUserList()
-    
-    def showDebugMessage(self, message):
-        print(message)
         
     def showErrorMessage(self, message, criticalerror = False):
         message = unicode(message)

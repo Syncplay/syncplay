@@ -30,6 +30,7 @@ class JSONCommandProtocol(LineReceiver):
         if not line:
             return
         try:
+            self._client.ui.showDebugMessage("client/server << {}".format(line))
             messages = json.loads(line)
         except:
             self.dropWithError(getMessage("not-json-server-error").format(line))
@@ -39,6 +40,7 @@ class JSONCommandProtocol(LineReceiver):
     def sendMessage(self, dict_):
         line = json.dumps(dict_)
         self.sendLine(line)
+        self._client.ui.showDebugMessage("client/server >> {}".format(line))
 
     def drop(self):
         self.transport.loseConnection()

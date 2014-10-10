@@ -130,6 +130,7 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine("get-filename")
 
     def lineReceived(self, line):
+        self._client.ui.showDebugMessage("player >> {}".format(line))
         match, name, value = self.RE_ANSWER.match(line), "", ""
         if match:
             name, value = match.group('command'), match.group('argument')
@@ -327,15 +328,14 @@ class VlcPlayer(BasePlayer):
             self.__playerController.drop()
 
         def found_terminator(self):
-#            print "received: {}".format("".join(self._ibuffer))
             self.__playerController.lineReceived("".join(self._ibuffer))
             self._ibuffer = []
 
         def sendLine(self, line):
             if self.connected:
-#                print "send: {}".format(line)
                 try:
                     self.push(line + "\n")
+                    self._client.ui.showDebugMessage("player >> {}".format(line))
                 except:
                     pass
             if line == "close-vlc":

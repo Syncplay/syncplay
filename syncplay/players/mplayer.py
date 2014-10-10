@@ -148,6 +148,8 @@ class MplayerPlayer(BasePlayer):
         self._paused = value
 
     def lineReceived(self, line):
+        if line:
+            self._client.ui.showDebugMessage("player << {}".format(line))
         match = self.RE_ANSWER.match(line)
         if not match:
             self._handleUnknownLine(line)
@@ -290,6 +292,7 @@ class MplayerPlayer(BasePlayer):
         def sendLine(self, line):
             try:
                 line = (line.decode('utf8') + u"\n").encode('utf8')
+                self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
                 self.__process.stdin.write(line)
             except IOError:
                 pass
