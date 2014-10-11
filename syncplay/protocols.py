@@ -386,7 +386,7 @@ class SyncServerProtocol(JSONCommandProtocol):
                      "position": position if position else 0,
                      "paused": paused,
                      "doSeek": doSeek,
-                     "setBy": setBy.getName()
+                     "setBy": setBy.getName() if setBy else None
         }
         ping = {
                 "latencyCalculation": self._pingService.newTimestamp(),

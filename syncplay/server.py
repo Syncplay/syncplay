@@ -13,10 +13,6 @@ import os
 from string import Template
 import argparse
 
-# TODO: Check if room should have status of "Controlled room"
-# TODO: Make only controllers able to control a room
-# TODO: Send list of controllers
-# TODO: Broadcast information about controller auth
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False):
         print getMessage("welcome-server-notification").format(syncplay.version)
@@ -73,6 +69,9 @@ class SyncFactory(Factory):
             self.sendJoinMessage(watcher)
         else:
             self.sendRoomSwitchMessage(watcher)
+        if RoomPasswordProvider.isControlledRoom(roomName):
+            for controller in watcher.getRoom().getControllers():
+                watcher.sendControlledRoomAuthStatus(True, controller)
 
     def sendRoomSwitchMessage(self, watcher):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, None)
@@ -97,11 +96,14 @@ class SyncFactory(Factory):
 
     def forcePositionUpdate(self, watcher, doSeek):
         room = watcher.getRoom()
-        paused, position = room.isPaused(), watcher.getPosition()
-        setBy = watcher
-        room.setPosition(watcher.getPosition(), setBy)
-        l = lambda w: w.sendState(position, paused, doSeek, setBy, True)
-        self._roomManager.broadcastRoom(watcher, l)
+        if room.canControl(watcher):
+            paused, position = room.isPaused(), watcher.getPosition()
+            setBy = watcher
+            l = lambda w: w.sendState(position, paused, doSeek, setBy, True)
+            room.setPosition(watcher.getPosition(), setBy)
+            self._roomManager.broadcastRoom(watcher, l)
+        else:
+            watcher.sendState(room.getPosition(), room.isPaused(), doSeek, room.getSetBy(), True)
 
     def getAllWatchersForUser(self, forUser):
         return self._roomManager.getAllWatchersForUser(forUser)
@@ -110,6 +112,8 @@ class SyncFactory(Factory):
         room = watcher.getRoom()
         try:
             success = RoomPasswordProvider.check(room.getName(), password, self._salt)
+            if success:
+                watcher.getRoom().addController(watcher)
             self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(success, watcher.getName()))
         except NotControlledRoom:
             newName = RoomPasswordProvider.getControlledRoomName(room.getName(), password, self._salt)
@@ -155,7 +159,10 @@ class RoomManager(object):
         if roomName in self._rooms:
             return self._rooms[roomName]
         else:
-            room = Room(roomName)
+            if RoomPasswordProvider.isControlledRoom(roomName):
+                room = ControlledRoom(roomName)
+            else:
+                room = Room(roomName)
             self._rooms[roomName] = room
             return room
 
@@ -248,6 +255,44 @@ class Room(object):
     def getSetBy(self):
         return self._setBy
 
+    def canControl(self, watcher):
+        return True
+
+class ControlledRoom(Room):
+    def __init__(self, name):
+        Room.__init__(self, name)
+        self._controllers = {}
+
+    def getPosition(self):
+        if self._controllers:
+            watcher = min(self._controllers.values())
+            self._setBy = watcher
+            return watcher.getPosition()
+        else:
+            return 0
+
+    def addController(self, watcher):
+        self._controllers[watcher.getName()] = watcher
+
+    def removeWatcher(self, watcher):
+        Room.removeWatcher(self, watcher)
+        if watcher.getName() in self._controllers:
+            del self._controllers[watcher.getName()]
+
+    def setPaused(self, paused=Room.STATE_PAUSED, setBy=None):
+        if self.canControl(setBy):
+            Room.setPaused(self, paused, setBy)
+
+    def setPosition(self, position, setBy=None):
+        if self.canControl(setBy):
+            Room.setPosition(self, position, setBy)
+
+    def canControl(self, watcher):
+        return watcher.getName() in self._controllers
+
+    def getControllers(self):
+        return self._controllers
+
 class Watcher(object):
     def __init__(self, server, connector, name):
         self._server = server
@@ -339,14 +384,18 @@ class Watcher(object):
             return False
         return self._room.isPaused() and not paused or not self._room.isPaused() and paused
 
+    def _updatePositionByAge(self, messageAge, paused, position):
+        if not paused:
+            position += messageAge
+        return position
+
     def updateState(self, position, paused, doSeek, messageAge):
         pauseChanged = self.__hasPauseChanged(paused)
         self._lastUpdatedOn = time.time()
         if pauseChanged:
             self.getRoom().setPaused(Room.STATE_PAUSED if paused else Room.STATE_PLAYING, self)
         if position is not None:
-            if not paused:
-                position += messageAge
+            position = self._updatePositionByAge(messageAge, paused, position)
             self.setPosition(position)
         if doSeek or pauseChanged:
             self._server.forcePositionUpdate(self, doSeek)
@@ -368,10 +417,13 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
 
-
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
     PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")
+
+    @staticmethod
+    def isControlledRoom(roomName):
+        return bool(re.match(RoomPasswordProvider.CONTROLLED_ROOM_REGEX, roomName))
 
     @staticmethod
     def check(roomName, password, salt):

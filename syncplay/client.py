@@ -225,7 +225,7 @@ class SyncplayClient(object):
 
     def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy):
         madeChangeOnPlayer = False
-        pauseChanged = paused != self.getGlobalPaused()
+        pauseChanged = paused != self.getGlobalPaused() or paused != self.getPlayerPaused()
         diff = self.getPlayerPosition() - position
         if self._lastGlobalUpdate is None:
             madeChangeOnPlayer = self._initPlayerState(position, paused)
