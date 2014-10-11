@@ -270,7 +270,7 @@ en = {
       "password-required-server-error" : "Password required",
       "wrong-password-server-error" : "Wrong password supplied",
       "hello-server-error" : "Not enough Hello arguments",
-      "version-mismatch-server-error" : "Mismatch between versions of client and server"
+      "version-mismatch-server-error" : "Mismatch between versions of client and server, please update your client or server software. Current client version is {}, while the server version: {}"
 
 
       }

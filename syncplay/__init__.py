@@ -1,3 +1,3 @@
-version = '1.2.9'
-milestone = 'Pineapple, Pulverize and Destroy!'
+version = '1.3.0'
+milestone = 'Akki'
 projectURL = 'http://syncplay.pl/'

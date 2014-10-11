@@ -78,7 +78,7 @@ class SyncFactory(Factory):
         self._roomManager.broadcast(watcher, l)
 
     def removeWatcher(self, watcher):
-        if watcher.getRoom():
+        if watcher and watcher.getRoom():
             self.sendLeftMessage(watcher)
             self._roomManager.removeWatcher(watcher)
 
