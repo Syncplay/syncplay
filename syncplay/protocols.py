@@ -294,15 +294,12 @@ class SyncServerProtocol(JSONCommandProtocol):
         if not username or not roomName or not version:
             self.dropWithError(getMessage("hello-server-error"))
             return
-        elif version.split(".")[0:2] != syncplay.version.split(".")[0:2]:
-            self.dropWithError(getMessage("version-mismatch-server-error").format(version, syncplay.version))
-            return
         else:
             if not self._checkPassword(serverPassword):
                 return
             self._factory.addWatcher(self, username, roomName)
             self._logged = True
-            self.sendHello(syncplay.version)
+            self.sendHello(version)
 
     def setWatcher(self, watcher):
         self._watcher = watcher
@@ -314,7 +311,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         userIp = self.transport.getPeer().host
         room = self._watcher.getRoom()
         if room: hello["room"] = {"name": room.getName()}
-        hello["version"] = syncplay.version
+        hello["version"] = clientVersion # syncplay.version - Don't BC with 1.2.x
         hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
         self.sendMessage({"Hello": hello})
 

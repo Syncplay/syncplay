@@ -94,7 +94,7 @@ class SyncFactory(Factory):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), watcher.getFile(), None)
         self._roomManager.broadcast(watcher, l)
 
-    def forcePositionUpdate(self, watcher, doSeek):
+    def forcePositionUpdate(self, watcher, doSeek, watcherPauseState):
         room = watcher.getRoom()
         if room.canControl(watcher):
             paused, position = room.isPaused(), watcher.getPosition()
@@ -103,7 +103,8 @@ class SyncFactory(Factory):
             room.setPosition(watcher.getPosition(), setBy)
             self._roomManager.broadcastRoom(watcher, l)
         else:
-            watcher.sendState(room.getPosition(), room.isPaused(), doSeek, room.getSetBy(), True)
+            watcher.sendState(room.getPosition(), watcherPauseState, False, watcher, True) # Fixes BC break with 1.2.x
+            watcher.sendState(room.getPosition(), room.isPaused(), True, room.getSetBy(), True)
 
     def getAllWatchersForUser(self, forUser):
         return self._roomManager.getAllWatchersForUser(forUser)
@@ -398,7 +399,7 @@ class Watcher(object):
             position = self._updatePositionByAge(messageAge, paused, position)
             self.setPosition(position)
         if doSeek or pauseChanged:
-            self._server.forcePositionUpdate(self, doSeek)
+            self._server.forcePositionUpdate(self, doSeek, paused)
 
 
 class ConfigurationGetter(object):
