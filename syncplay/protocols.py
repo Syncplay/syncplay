@@ -78,8 +78,6 @@ class SyncClientProtocol(JSONCommandProtocol):
         username, roomName, version, motd = self._extractHelloArguments(hello)
         if not username or not roomName or not version:
             self.dropWithError(getMessage("hello-server-error").format(hello))
-        elif version.split(".")[0:2] != syncplay.version.split(".")[0:2]:
-            self.dropWithError(getMessage("version-mismatch-server-error".format(hello)))
         else:
             self._client.setUsername(username)
             self._client.setRoom(roomName)
