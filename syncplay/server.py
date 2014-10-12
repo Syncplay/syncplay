@@ -1,6 +1,5 @@
 import hashlib
 import random
-import re
 from twisted.internet import task, reactor
 from twisted.internet.protocol import Factory
 import syncplay
@@ -402,6 +401,9 @@ class Watcher(object):
         if doSeek or pauseChanged:
             self._server.forcePositionUpdate(self, doSeek, paused)
 
+    def isController(self):
+        return RoomPasswordProvider.isControlledRoom(self._room.getName()) \
+            and self._room.canControl(self)
 
 class ConfigurationGetter(object):
     def getConfiguration(self):

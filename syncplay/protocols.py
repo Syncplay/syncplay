@@ -148,7 +148,8 @@ class SyncClientProtocol(JSONCommandProtocol):
             for user in room[1].iteritems():
                 userName = user[0]
                 file_ = user[1]['file'] if user[1]['file'] <> {} else None
-                self._client.userlist.addUser(userName, roomName, file_, noMessage=True)
+                isController = user[1]['controller'] if 'controller' in user[1] else False
+                self._client.userlist.addUser(userName, roomName, file_, noMessage=True, isController=isController)
         self._client.userlist.showUserList()
 
     def sendList(self):
@@ -360,7 +361,11 @@ class SyncServerProtocol(JSONCommandProtocol):
         if room:
             if room.getName() not in userlist:
                 userlist[room.getName()] = {}
-            userFile = { "position": 0, "file": watcher.getFile() if watcher.getFile() else {} }
+            userFile = {
+                "position": 0,
+                "file": watcher.getFile() if watcher.getFile() else {},
+                "controller": watcher.isController()
+            }
             userlist[room.getName()][watcher.getName()] = userFile
 
     def sendList(self):
