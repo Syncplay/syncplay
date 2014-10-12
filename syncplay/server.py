@@ -12,6 +12,7 @@ import codecs
 import os
 from string import Template
 import argparse
+from syncplay.utils import RoomPasswordProvider, NotControlledRoom
 
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False):
@@ -417,36 +418,3 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
-
-class RoomPasswordProvider(object):
-    CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
-    PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")
-
-    @staticmethod
-    def isControlledRoom(roomName):
-        return bool(re.match(RoomPasswordProvider.CONTROLLED_ROOM_REGEX, roomName))
-
-    @staticmethod
-    def check(roomName, password, salt):
-        if not re.match(RoomPasswordProvider.PASSWORD_REGEX, password):
-            raise ValueError()
-
-        match = re.match(RoomPasswordProvider.CONTROLLED_ROOM_REGEX, roomName)
-        if not match:
-            raise NotControlledRoom()
-        roomHash = match.group(2)
-        computedHash = RoomPasswordProvider._computeRoomHash(match.group(1), password, salt)
-        return roomHash == computedHash
-
-    @staticmethod
-    def getControlledRoomName(roomName, password, salt):
-        return "+" + roomName + ":" + RoomPasswordProvider._computeRoomHash(roomName, password, salt)
-
-    @staticmethod
-    def _computeRoomHash(roomName, password, salt):
-        salt = hashlib.sha256(salt).hexdigest()
-        provisionalHash = hashlib.sha256(roomName + salt).hexdigest()
-        return hashlib.sha1(provisionalHash + salt + password).hexdigest()[:12].upper()
-
-class NotControlledRoom(Exception):
-    pass
