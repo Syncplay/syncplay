@@ -435,6 +435,7 @@ class SyncplayClient(object):
         self.ui.showErrorMessage("<{}> failed to identify as a room controller.".format(username))
 
     def controllerIdentificationSuccess(self, username):
+        self.userlist.setUserAsController(username)
         # TODO: More UI stuff
         self.ui.showErrorMessage("<{}> authenticated as a room controller".format(username))
 
@@ -494,6 +495,7 @@ class SyncplayUser(object):
         self.username = username
         self.room = room
         self.file = file_
+        self._controller = False
 
     def setFile(self, filename, duration, size):
         file_ = {
@@ -519,6 +521,12 @@ class SyncplayUser(object):
             return "{}: {} ({}, {})".format(self.username, self.file['name'], self.file['duration'], self.file['size'])
         else:
             return "{}".format(self.username)
+
+    def setAsController(self):
+        self._controller = True
+
+    def isController(self):
+        return self._controller
 
 class SyncplayUserlist(object):
     def __init__(self, ui, client):
@@ -609,6 +617,11 @@ class SyncplayUserlist(object):
         else:
             self.addUser(username, room, file_)
         self.userListChange()
+
+    def setUserAsController(self, username):
+        if self._users.has_key(username):
+            user = self._users[username]
+            user.setAsController()
 
     def areAllFilesInRoomSame(self):
         for user in self._users.itervalues():
