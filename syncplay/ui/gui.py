@@ -6,7 +6,7 @@ import sys
 import time
 import re
 import os
-from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration
+from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider
 
 class UserlistItemDelegate(QtGui.QStyledItemDelegate):
     def __init__(self):
@@ -79,6 +79,19 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: Prompt user
         return None
 
+    def setControllerStatus(self, username, isController):
+        roomtocheck = 0
+        while self.listTreeModel.item(roomtocheck):
+            itemtocheck = 0
+            while self.listTreeModel.item(roomtocheck).child(itemtocheck):
+                item = self.listTreeModel.item(roomtocheck).child(itemtocheck)
+                if item.data(0) == username:
+                    item.setData(isController, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
+                    return
+                itemtocheck = itemtocheck + 1
+            roomtocheck += 1
+        self.listTreeView.resizeColumnToContents(True)
+
     def showMessage(self, message, noTimestamp=False):
         message = unicode(message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
@@ -107,21 +120,13 @@ class MainWindow(QtGui.QMainWindow):
             roomitem.setFlags(roomitem.flags() & ~Qt.ItemIsEditable)
             blankitem.setFlags(blankitem.flags() & ~Qt.ItemIsEditable)
             usertreeRoot.appendRow((roomitem, blankitem))
-            #usercounter = 0 # UNCOMMENT FOR DEMONSTRATION
 
             for user in rooms[room]:
                 useritem = QtGui.QStandardItem(user.username)
-                '''# UNCOMMENT FOR DEMONSTRATION
-                usercounter = usercounter + 1
-
-                if usercounter == 1:
-                    useritem.setData(True, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
-                    useritem.setData(True, Qt.UserRole + constants.USERITEM_READY_ROLE)
-                if usercounter == 2:
-                    useritem.setData(False, Qt.UserRole + constants.USERITEM_READY_ROLE)l'''
+                isController = user.isController()
+                useritem.setData(isController, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
                 if user.file:
-                    fileitem = QtGui.QStandardItem(
-                        u"{} ({})".format(user.file['name'], formatTime(user.file['duration'])))
+                    fileitem = QtGui.QStandardItem(u"{} ({})".format(user.file['name'], formatTime(user.file['duration'])))
                     if currentUser.file:
                         sameName = sameFilename(user.file['name'], currentUser.file['name'])
                         sameSize = sameFilesize(user.file['size'], currentUser.file['size'])

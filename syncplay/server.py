@@ -71,7 +71,7 @@ class SyncFactory(Factory):
             self.sendRoomSwitchMessage(watcher)
         if RoomPasswordProvider.isControlledRoom(roomName):
             for controller in watcher.getRoom().getControllers():
-                watcher.sendControlledRoomAuthStatus(True, controller)
+                watcher.sendControlledRoomAuthStatus(True, controller, roomName)
 
     def sendRoomSwitchMessage(self, watcher):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, None)
@@ -115,12 +115,12 @@ class SyncFactory(Factory):
             success = RoomPasswordProvider.check(room.getName(), password, self._salt)
             if success:
                 watcher.getRoom().addController(watcher)
-            self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(success, watcher.getName()))
+            self._roomManager.broadcast(watcher, lambda w: w.sendControlledRoomAuthStatus(success, watcher.getName(), room._name))
         except NotControlledRoom:
             newName = RoomPasswordProvider.getControlledRoomName(room.getName(), password, self._salt)
             watcher.sendNewControlledRoom(newName, password)
         except ValueError:
-            self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName()))
+            self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
 
 
 class RoomManager(object):
@@ -346,8 +346,8 @@ class Watcher(object):
     def sendNewControlledRoom(self, roomName, password):
         self._connector.sendNewControlledRoom(roomName, password)
 
-    def sendControlledRoomAuthStatus(self, success, username):
-        self._connector.sendControlledRoomAuthStatus(success, username)
+    def sendControlledRoomAuthStatus(self, success, username, room):
+        self._connector.sendControlledRoomAuthStatus(success, username, room)
 
     def __lt__(self, b):
         if self.getPosition() is None or self._file is None:

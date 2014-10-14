@@ -417,27 +417,29 @@ class SyncplayClient(object):
 
     def createControlledRoom(self):
         controlPassword = RoomPasswordGenerator.generate_password()
-        self.ui.showMessage("Attempting to create controlled room suffix with password '{}'...".format(controlPassword))
+        self.ui.showMessage(u"Attempting to create controlled room suffix with password '{}'...".format(controlPassword))
         self._protocol.requestControlledRoom(controlPassword)
 
     def controlledRoomCreated(self, controlPassword, roomName):
-        self.ui.showMessage("Created controlled room suffix '{}' with password '{}'. Please save this information for future reference!".format(roomName, controlPassword))
+        self.ui.showMessage(u"Created controlled room suffix '{}' with password '{}'. Please save this information for future reference!".format(roomName, controlPassword))
         self.setRoom(roomName)
         self.sendRoom()
         self._protocol.requestControlledRoom(controlPassword)
         self.ui.updateRoomName(roomName)
 
     def identifyAsController(self, controlPassword):
-        self.ui.showMessage("Identifying as room controller with password '{}'...".format(controlPassword))
+        self.ui.showMessage(u"Identifying as room controller with password '{}'...".format(controlPassword))
         self._protocol.requestControlledRoom(controlPassword)
 
-    def controllerIdentificationError(self, username):
-        self.ui.showErrorMessage("<{}> failed to identify as a room controller.".format(username))
+    def controllerIdentificationError(self, username, room):
+        self.ui.showErrorMessage(u"<{}> failed to identify as a room controller.".format(username))
 
-    def controllerIdentificationSuccess(self, username):
+    def controllerIdentificationSuccess(self, username, roomname):
         self.userlist.setUserAsController(username)
-        # TODO: More UI stuff
-        self.ui.showErrorMessage("<{}> authenticated as a room controller".format(username))
+        self.ui.setControllerStatus(username, isController=True)
+        if self.userlist.isRoomSame(roomname):
+            hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
+            self.ui.showMessage(u"<{}> authenticated as a room controller".format(username), hideFromOSD)
 
     # TODO: Mark person as a room controller
     # TODO: Disable UI's "Create new Controlled Room when in Controlled Room"
@@ -522,8 +524,8 @@ class SyncplayUser(object):
         else:
             return "{}".format(self.username)
 
-    def setAsController(self):
-        self._controller = True
+    def setControllerStatus(self, isController):
+        self._controller = isController
 
     def isController(self):
         return self._controller
@@ -574,12 +576,14 @@ class SyncplayUserlist(object):
                 message = getMessage("file-differences-notification") + ", ".join(differences)
                 self.ui.showMessage(message, not constants.SHOW_OSD_WARNINGS)
 
-    def addUser(self, username, room, file_, noMessage=False, isController=False):
+    def addUser(self, username, room, file_, noMessage=False, isController=None):
         if username == self.currentUser.username:
+            if isController is not None:
+                self.currentUser.setControllerStatus(isController)
             return
         user = SyncplayUser(username, room, file_)
-        if isController:
-            user.setAsController()
+        if isController is not None:
+            user.setControllerStatus(isController)
         self._users[username] = user
         if not noMessage:
             self.__showUserChangeMessage(username, room, file_)
@@ -610,6 +614,8 @@ class SyncplayUserlist(object):
         if self._users.has_key(username):
             user = self._users[username]
             oldRoom = user.room if user.room else None
+            if user.room != room:
+                user.setControllerStatus(isController=False)
             self.__displayModUserMessage(username, room, file_, user, oldRoom)
             user.room = room
             if file_:
@@ -621,9 +627,11 @@ class SyncplayUserlist(object):
         self.userListChange()
 
     def setUserAsController(self, username):
-        if self._users.has_key(username):
+        if self.currentUser.username == username:
+            self.currentUser.setControllerStatus(True)
+        elif self._users.has_key(username):
             user = self._users[username]
-            user.setAsController()
+            user.setControllerStatus(True)
 
     def areAllFilesInRoomSame(self):
         for user in self._users.itervalues():
@@ -690,6 +698,9 @@ class UiManager(object):
     def showOSDMessage(self, message, duration=constants.OSD_DURATION):
         if constants.SHOW_OSD and self._client._player:
             self._client._player.displayMessage(message, duration * 1000)
+
+    def setControllerStatus(self, username, isController):
+        self.__ui.setControllerStatus(username, isController)
 
     def showErrorMessage(self, message, criticalerror=False):
         if message <> self.lastError: # Avoid double call bug

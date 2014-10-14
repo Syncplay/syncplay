@@ -120,9 +120,9 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self._SetUser(values)
             elif command == "controllerAuth":
                 if values['success']:
-                    self._client.controllerIdentificationSuccess(values["user"])
+                    self._client.controllerIdentificationSuccess(values["user"], values["room"])
                 else:
-                    self._client.controllerIdentificationError(values["user"])
+                    self._client.controllerIdentificationError(values["user"], values["room"])
             elif command == "newControlledRoom":
                 controlPassword = values['password']
                 roomName = values['roomName']
@@ -338,10 +338,11 @@ class SyncServerProtocol(JSONCommandProtocol):
             }
         })
 
-    def sendControlledRoomAuthStatus(self, success, username):
+    def sendControlledRoomAuthStatus(self, success, username, roomname):
         self.sendSet({
             "controllerAuth": {
                 "user": username,
+                "room": roomname,
                 "success": success
             }
         })
