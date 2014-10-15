@@ -55,14 +55,17 @@ class ConsoleUI(threading.Thread):
             message = u"In room '{}':".format(room)
             self.showMessage(message, True)
             for user in rooms[room]:
-                username = "*<{}>*".format(user.username) if user == currentUser else "<{}>".format(user.username)
+                userflags = u""
+                if user.isController():
+                    userflags = userflags + u"(Controller) "
+                username = userflags + u"*<{}>*".format(user.username) if user == currentUser else userflags + u"<{}>".format(user.username)
                 if user.file:
                     message = u"{} is playing:".format(username)
                     self.showMessage(message, True)
                     message = u"    File: '{}' ({})".format(user.file['name'], formatTime(user.file['duration']))
                     if currentUser.file:
                         if user.file['name'] == currentUser.file['name'] and user.file['size'] != currentUser.file['size']:
-                            message += " (their file size is different from yours!)"
+                            message += u" (their file size is different from yours!)"
                     self.showMessage(message, True)
                 else:
                     message = u"{} is not playing a file".format(username)
@@ -140,6 +143,11 @@ class ConsoleUI(threading.Thread):
 
             self._syncplayClient.setRoom(room)
             self._syncplayClient.sendRoom()
+        elif command.group('command') in constants.COMMANDS_CREATE:
+            self._syncplayClient.createControlledRoom()
+        elif command.group('command') in constants.COMMANDS_IDENTIFY:
+            controlpassword = command.group('parameter')
+            self._syncplayClient.identifyAsController(controlpassword)
         else:
             if self._tryAdvancedCommands(data):
                 return
@@ -152,6 +160,8 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/pause"), True)
             self.showMessage(getMessage("commandlist-notification/seek"), True)
             self.showMessage(getMessage("commandlist-notification/help"), True)
+            self.showMessage(getMessage("commandlist-notification/create"), True)
+            self.showMessage(getMessage("commandlist-notification/identify"), True)
             self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)
             self.showMessage(getMessage("more-info-notification").format(syncplay.projectURL), True)
     
