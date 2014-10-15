@@ -193,7 +193,7 @@ class RoomPasswordProvider(object):
 
     @staticmethod
     def check(roomName, password, salt):
-        if not re.match(RoomPasswordProvider.PASSWORD_REGEX, password):
+        if not password or not re.match(RoomPasswordProvider.PASSWORD_REGEX, password):
             raise ValueError()
 
         match = re.match(RoomPasswordProvider.CONTROLLED_ROOM_REGEX, roomName)
