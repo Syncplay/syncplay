@@ -3,6 +3,7 @@ import os.path
 import random
 import string
 import time
+import re
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
@@ -427,7 +428,14 @@ class SyncplayClient(object):
         self._protocol.requestControlledRoom(controlPassword)
         self.ui.updateRoomName(roomName)
 
+    def stripControlPassword(self, controlPassword):
+        if controlPassword:
+            return re.sub(constants.CONTROL_PASSWORD_STRIP_REGEX, "", controlPassword).upper()
+        else:
+            return ""
+
     def identifyAsController(self, controlPassword):
+        controlPassword = self.stripControlPassword(controlPassword)
         self.ui.showMessage(u"Identifying as room controller with password '{}'...".format(controlPassword))
         self._protocol.requestControlledRoom(controlPassword)
 

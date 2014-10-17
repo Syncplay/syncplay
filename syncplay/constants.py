@@ -40,6 +40,7 @@ MERGE_PLAYPAUSE_BUTTONS = False
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 #Usually there's no need to adjust these
 FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
+CONTROL_PASSWORD_STRIP_REGEX = u"[^a-zA-Z0-9\-]"
 COMMANDS_UNDO = ["u", "undo", "revert"]
 COMMANDS_LIST = ["l", "list", "users"]
 COMMANDS_PAUSE = ["p", "play", "pause"]
