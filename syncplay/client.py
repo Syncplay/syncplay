@@ -416,16 +416,16 @@ class SyncplayClient(object):
         if promptForAction:
             self.ui.promptFor(getMessage("enter-to-exit-prompt"))
 
-    def createControlledRoom(self):
+    def createControlledRoom(self, roomName):
         controlPassword = RoomPasswordGenerator.generate_password()
-        self.ui.showMessage(u"Attempting to create controlled room suffix with password '{}'...".format(controlPassword))
-        self._protocol.requestControlledRoom(controlPassword)
+        self.ui.showMessage(u"Attempting to create controlled room '{}' with password '{}'...".format(roomName, controlPassword))
+        self._protocol.requestControlledRoom(roomName, controlPassword)
 
-    def controlledRoomCreated(self, controlPassword, roomName):
-        self.ui.showMessage(u"Created controlled room suffix '{}' with password '{}'. Please save this information for future reference!".format(roomName, controlPassword))
+    def controlledRoomCreated(self, roomName, controlPassword):
+        self.ui.showMessage(u"Created controlled room '{}' with password '{}'. Please save this information for future reference!".format(roomName, controlPassword))
         self.setRoom(roomName)
         self.sendRoom()
-        self._protocol.requestControlledRoom(controlPassword)
+        self._protocol.requestControlledRoom(roomName, controlPassword)
         self.ui.updateRoomName(roomName)
 
     def stripControlPassword(self, controlPassword):
@@ -437,7 +437,7 @@ class SyncplayClient(object):
     def identifyAsController(self, controlPassword):
         controlPassword = self.stripControlPassword(controlPassword)
         self.ui.showMessage(u"Identifying as room controller with password '{}'...".format(controlPassword))
-        self._protocol.requestControlledRoom(controlPassword)
+        self._protocol.requestControlledRoom(self.getRoom(), controlPassword)
 
     def controllerIdentificationError(self, username, room):
         self.ui.showErrorMessage(u"<{}> failed to identify as a room controller.".format(username))

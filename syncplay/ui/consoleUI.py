@@ -144,7 +144,11 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.setRoom(room)
             self._syncplayClient.sendRoom()
         elif command.group('command') in constants.COMMANDS_CREATE:
-            self._syncplayClient.createControlledRoom()
+            roombasename = command.group('parameter')
+            if roombasename == None:
+                roombasename = self._syncplayClient.getRoom()
+            roombasename = utils.stripRoomName(roombasename)
+            self._syncplayClient.createControlledRoom(roombasename)
         elif command.group('command') in constants.COMMANDS_AUTH:
             controlpassword = command.group('parameter')
             self._syncplayClient.identifyAsController(controlpassword)

@@ -109,15 +109,16 @@ class SyncFactory(Factory):
     def getAllWatchersForUser(self, forUser):
         return self._roomManager.getAllWatchersForUser(forUser)
 
-    def authRoomController(self, watcher, password):
+    def authRoomController(self, watcher, password, roomBaseName=None):
         room = watcher.getRoom()
+        roomName = roomBaseName if roomBaseName else room.getName()
         try:
-            success = RoomPasswordProvider.check(room.getName(), password, self._salt)
+            success = RoomPasswordProvider.check(roomName, password, self._salt)
             if success:
                 watcher.getRoom().addController(watcher)
             self._roomManager.broadcast(watcher, lambda w: w.sendControlledRoomAuthStatus(success, watcher.getName(), room._name))
         except NotControlledRoom:
-            newName = RoomPasswordProvider.getControlledRoomName(room.getName(), password, self._salt)
+            newName = RoomPasswordProvider.getControlledRoomName(roomName, password, self._salt)
             watcher.sendNewControlledRoom(newName, password)
         except ValueError:
             self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
@@ -343,8 +344,8 @@ class Watcher(object):
     def sendSetting(self, user, room, file_, event):
         self._connector.sendUserSetting(user, room, file_, event)
 
-    def sendNewControlledRoom(self, roomName, password):
-        self._connector.sendNewControlledRoom(roomName, password)
+    def sendNewControlledRoom(self, roomBaseName, password):
+        self._connector.sendNewControlledRoom(roomBaseName, password)
 
     def sendControlledRoomAuthStatus(self, success, username, room):
         self._connector.sendControlledRoomAuthStatus(success, username, room)

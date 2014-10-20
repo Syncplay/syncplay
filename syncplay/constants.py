@@ -41,6 +41,7 @@ SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear
 #Usually there's no need to adjust these
 FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
 CONTROL_PASSWORD_STRIP_REGEX = u"[^a-zA-Z0-9\-]"
+ROOM_NAME_STRIP_REGEX = u"^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
 COMMANDS_UNDO = ["u", "undo", "revert"]
 COMMANDS_LIST = ["l", "list", "users"]
 COMMANDS_PAUSE = ["p", "play", "pause"]

@@ -126,7 +126,7 @@ class SyncClientProtocol(JSONCommandProtocol):
             elif command == "newControlledRoom":
                 controlPassword = values['password']
                 roomName = values['roomName']
-                self._client.controlledRoomCreated(controlPassword, roomName)
+                self._client.controlledRoomCreated(roomName, controlPassword)
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -217,9 +217,10 @@ class SyncClientProtocol(JSONCommandProtocol):
                 state["ignoringOnTheFly"]["client"] = self.clientIgnoringOnTheFly
         self.sendMessage({"State": state})
 
-    def requestControlledRoom(self, password):
+    def requestControlledRoom(self, room, password):
         self.sendSet({
             "controllerAuth": {
+                "room": room,
                 "password": password
             }
         })
@@ -325,7 +326,8 @@ class SyncServerProtocol(JSONCommandProtocol):
                 self._watcher.setFile(set_[1])
             elif command == "controllerAuth":
                 password = set_[1]["password"] if set_[1].has_key("password") else None
-                self._factory.authRoomController(self._watcher, password)
+                room = set_[1]["room"] if set_[1].has_key("room") else None
+                self._factory.authRoomController(self._watcher, password, room)
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})

@@ -275,7 +275,11 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient._player.openFile(fileName)
 
     def createControlledRoom(self):
-        self._syncplayClient.createControlledRoom()
+        controlroom, ok = QtGui.QInputDialog.getText(self, "Create controlled room",
+                "Enter name of controlled room\r\n(see http://syncplay.pl/guide/ for usage instructions):", QtGui.QLineEdit.Normal,
+                utils.stripRoomName(self._syncplayClient.getRoom()))
+        if ok and controlroom != '':
+            self._syncplayClient.createControlledRoom(controlroom)
 
     def identifyAsController(self):
         tooltip = "Enter controller password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):"

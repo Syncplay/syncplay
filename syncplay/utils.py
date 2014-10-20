@@ -141,7 +141,19 @@ def blackholeStdoutForFrozenWindow():
 # Relate to file hashing / difference checking:
 
 def stripfilename(filename):
-    return re.sub(constants.FILENAME_STRIP_REGEX, "", filename)
+    if filename:
+        return re.sub(constants.FILENAME_STRIP_REGEX, "", filename)
+    else:
+        return ""
+
+def stripRoomName(RoomName):
+    if RoomName:
+        try:
+            return re.sub(constants.ROOM_NAME_STRIP_REGEX, "\g<roomnamebase>", RoomName)
+        except IndexError:
+            return RoomName
+    else:
+        return ""
 
 def hashFilename(filename):
     return hashlib.sha256(stripfilename(filename).encode('utf-8')).hexdigest()[:12]
@@ -196,6 +208,8 @@ class RoomPasswordProvider(object):
         if not password or not re.match(RoomPasswordProvider.PASSWORD_REGEX, password):
             raise ValueError()
 
+        if not roomName:
+            raise NotControlledRoom()
         match = re.match(RoomPasswordProvider.CONTROLLED_ROOM_REGEX, roomName)
         if not match:
             raise NotControlledRoom()

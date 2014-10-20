@@ -53,7 +53,7 @@ en = {
       "commandlist-notification/pause" : "\tp - toggle pause",
       "commandlist-notification/seek" : "\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec",
       "commandlist-notification/help" : "\th - this help",
-      "commandlist-notification/create" : "\tc - create controlled room using name of current room",
+      "commandlist-notification/create" : "\tc [name] - create controlled room using name of current room",
       "commandlist-notification/auth" : "\ta [password] - authenticate as room controller with controller password",
       "syncplay-version-notification" : "Syncplay version: {}",  # syncplay.version
       "more-info-notification" : "More info available at: {}",  # projectURL
