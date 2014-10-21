@@ -71,6 +71,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         username = hello["username"] if hello.has_key("username") else None
         roomName = hello["room"]["name"] if hello.has_key("room") else None
         version = hello["version"] if hello.has_key("version") else None
+        version = hello["realversion"] if hello.has_key("realversion") else version # Used for 1.2.X compatibility
         motd = hello["motd"] if hello.has_key("motd") else None
         return username, roomName, version, motd
 
@@ -94,7 +95,8 @@ class SyncClientProtocol(JSONCommandProtocol):
         if password: hello["password"] = password
         room = self._client.getRoom()
         if room: hello["room"] = {"name" :room}
-        hello["version"] = syncplay.version
+        hello["version"] = "1.2.255" # Used so newer clients work on 1.2.X server
+        hello["realversion"] = syncplay.version
         self.sendMessage({"Hello": hello})
 
     def _SetUser(self, users):
@@ -277,6 +279,7 @@ class SyncServerProtocol(JSONCommandProtocol):
             roomName = room["name"] if room.has_key("name") else None
             roomName = roomName.strip()
         version = hello["version"] if hello.has_key("version") else None
+        version = hello["realversion"] if hello.has_key("realversion") else version
         return username, serverPassword, roomName, version
 
     def _checkPassword(self, serverPassword):
@@ -311,7 +314,8 @@ class SyncServerProtocol(JSONCommandProtocol):
         userIp = self.transport.getPeer().host
         room = self._watcher.getRoom()
         if room: hello["room"] = {"name": room.getName()}
-        hello["version"] = clientVersion # syncplay.version - Don't BC with 1.2.x
+        hello["version"] = clientVersion # Used so 1.2.X client works on newer server
+        hello["realversion"] = syncplay.version
         hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
         self.sendMessage({"Hello": hello})
 
