@@ -444,10 +444,10 @@ class SyncplayClient(object):
 
     def controllerIdentificationSuccess(self, username, roomname):
         self.userlist.setUserAsController(username)
-        self.ui.setControllerStatus(username, isController=True)
         if self.userlist.isRoomSame(roomname):
             hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
             self.ui.showMessage(u"<{}> authenticated as a room controller".format(username), hideFromOSD)
+        self.ui.userListChange()
 
     # TODO: Mark person as a room controller
     # TODO: Disable UI's "Create new Controlled Room when in Controlled Room"

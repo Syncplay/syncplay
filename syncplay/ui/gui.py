@@ -79,19 +79,6 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: Prompt user
         return None
 
-    def setControllerStatus(self, username, isController):
-        roomtocheck = 0
-        while self.listTreeModel.item(roomtocheck):
-            itemtocheck = 0
-            while self.listTreeModel.item(roomtocheck).child(itemtocheck):
-                item = self.listTreeModel.item(roomtocheck).child(itemtocheck)
-                if item.data(0) == username:
-                    item.setData(isController, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
-                    return
-                itemtocheck = itemtocheck + 1
-            roomtocheck += 1
-        self.listTreeView.resizeColumnToContents(True)
-
     def showMessage(self, message, noTimestamp=False):
         message = unicode(message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")

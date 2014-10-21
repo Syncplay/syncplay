@@ -39,9 +39,6 @@ class ConsoleUI(threading.Thread):
     def updateRoomName(self, room=""):
         pass
 
-    def setControllerStatus(self, username, isController):
-        pass
-
     def promptFor(self, prompt=">", message=""):
         if message <> "":
             print(message)
