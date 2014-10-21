@@ -524,7 +524,10 @@ class SyncplayUser(object):
         return sameName and sameSize and sameDuration
 
     def __lt__(self, other):
-        return self.username.lower() < other.username.lower()
+        if self.isController() == other.isController():
+            return self.username.lower() < other.username.lower()
+        else:
+            return self.isController() > other.isController()
 
     def __repr__(self, *args, **kwargs):
         if self.file:
