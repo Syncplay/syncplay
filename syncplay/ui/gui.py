@@ -27,7 +27,7 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
                 resourcespath = utils.findWorkingDir() + "\\resources\\"
             else:
                 resourcespath = utils.findWorkingDir() + "/resources/"
-            controlIconQPixmap = QtGui.QPixmap(resourcespath + "bullet_key.png")
+            controlIconQPixmap = QtGui.QPixmap(resourcespath + "user_key.png")
             tickIconQPixmap = QtGui.QPixmap(resourcespath + "tick.png")
             crossIconQPixmap = QtGui.QPixmap(resourcespath + "cross.png")
             roomController = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
