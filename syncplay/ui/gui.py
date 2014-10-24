@@ -17,10 +17,6 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
         if column == 0:
             isRoomRow = indexQModelIndex.parent() == indexQModelIndex.parent().parent()
             itemQPainter.resetTransform()
-            if not isRoomRow:
-                transformer = QtGui.QTransform()
-                transformer.translate(21,0)
-                itemQPainter.setTransform(transformer)
             currentQAbstractItemModel = indexQModelIndex.model()
             itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), 0, indexQModelIndex.parent())
             if sys.platform.startswith('win'):
@@ -35,21 +31,23 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
 
             if roomController and not controlIconQPixmap.isNull():
                 itemQPainter.drawPixmap (
-                    optionQStyleOptionViewItem.rect.x()-14,
+                    optionQStyleOptionViewItem.rect.x()+6,
                     optionQStyleOptionViewItem.rect.y(),
                     controlIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
 
             if userReady and not tickIconQPixmap.isNull():
                 itemQPainter.drawPixmap (
-                    (optionQStyleOptionViewItem.rect.x()-28),
+                    (optionQStyleOptionViewItem.rect.x()-10),
                     optionQStyleOptionViewItem.rect.y(),
                     tickIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
 
             elif userReady == False and not crossIconQPixmap.isNull():
                 itemQPainter.drawPixmap (
-                    (optionQStyleOptionViewItem.rect.x()-28),
+                    (optionQStyleOptionViewItem.rect.x()-10),
                     optionQStyleOptionViewItem.rect.y(),
                     crossIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
+            if not isRoomRow:
+                optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+21)
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
 class MainWindow(QtGui.QMainWindow):
