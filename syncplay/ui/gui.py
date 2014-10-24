@@ -35,19 +35,19 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
 
             if roomController and not controlIconQPixmap.isNull():
                 itemQPainter.drawPixmap (
-                    optionQStyleOptionViewItem.rect.x()-32,
+                    optionQStyleOptionViewItem.rect.x()-14,
                     optionQStyleOptionViewItem.rect.y(),
                     controlIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
 
             if userReady and not tickIconQPixmap.isNull():
                 itemQPainter.drawPixmap (
-                    (optionQStyleOptionViewItem.rect.x()-14),
+                    (optionQStyleOptionViewItem.rect.x()-28),
                     optionQStyleOptionViewItem.rect.y(),
                     tickIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
 
             elif userReady == False and not crossIconQPixmap.isNull():
                 itemQPainter.drawPixmap (
-                    (optionQStyleOptionViewItem.rect.x()-14),
+                    (optionQStyleOptionViewItem.rect.x()-28),
                     optionQStyleOptionViewItem.rect.y(),
                     crossIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
