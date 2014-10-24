@@ -15,8 +15,6 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
     def paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex):
         column = indexQModelIndex.column()
         if column == 0:
-            isRoomRow = indexQModelIndex.parent() == indexQModelIndex.parent().parent()
-            itemQPainter.resetTransform()
             currentQAbstractItemModel = indexQModelIndex.model()
             itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), 0, indexQModelIndex.parent())
             if sys.platform.startswith('win'):
@@ -46,7 +44,8 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
                     (optionQStyleOptionViewItem.rect.x()-10),
                     optionQStyleOptionViewItem.rect.y(),
                     crossIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
-            if not isRoomRow:
+            isUserRow = indexQModelIndex.parent() != indexQModelIndex.parent().parent()
+            if isUserRow:
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+21)
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
