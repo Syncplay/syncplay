@@ -583,7 +583,8 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/mpc-hc.png','resources/mpc-hc64.png','resources/mplayer.png',
      'resources/mpv.png','resources/vlc.png', 'resources/house.png', 'resources/film_link.png',
      'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/bullet_black.png',
-     'resources/controller.png', 'resources/key_go.png', 'resources/page_white_key.png', 'resources/tick.png'
+     'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',
+     'resources/tick.png'
     ]
 resources = ["resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)
