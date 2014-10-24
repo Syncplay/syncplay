@@ -104,8 +104,7 @@ class MainWindow(QtGui.QMainWindow):
                 roomitem.setFont(font)
             blankitem = QtGui.QStandardItem("")
             roomitem.setFlags(roomitem.flags() & ~Qt.ItemIsEditable)
-            blankitem.setFlags(blankitem.flags() & ~Qt.ItemIsEditable)
-            usertreeRoot.appendRow((roomitem, blankitem))
+            usertreeRoot.appendRow(roomitem)
 
             for user in rooms[room]:
                 useritem = QtGui.QStandardItem(user.username)
@@ -149,6 +148,10 @@ class MainWindow(QtGui.QMainWindow):
         self.listTreeView.setItemDelegate(UserlistItemDelegate())
         self.listTreeView.setItemsExpandable(False)
         self.listTreeView.expandAll()
+        roomtocheck = 0
+        while self.listTreeModel.item(roomtocheck):
+            self.listTreeView.setFirstColumnSpanned(roomtocheck, self.listTreeView.rootIndex(), True)
+            roomtocheck += 1
         self.listTreeView.header().setStretchLastSection(False)
         self.listTreeView.header().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
         self.listTreeView.header().setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
