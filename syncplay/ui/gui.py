@@ -98,11 +98,11 @@ class MainWindow(QtGui.QMainWindow):
 
         for room in rooms:
             roomitem = QtGui.QStandardItem(room)
+            font = QtGui.QFont()
+            font.setItalic(True)
             if room == currentUser.room:
-                font = QtGui.QFont()
                 font.setWeight(QtGui.QFont.Bold)
-                roomitem.setFont(font)
-            blankitem = QtGui.QStandardItem("")
+            roomitem.setFont(font)
             roomitem.setFlags(roomitem.flags() & ~Qt.ItemIsEditable)
             usertreeRoot.appendRow(roomitem)
 
