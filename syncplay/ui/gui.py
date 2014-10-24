@@ -102,7 +102,7 @@ class MainWindow(QtGui.QMainWindow):
         for room in rooms:
             roomitem = QtGui.QStandardItem(room)
             font = QtGui.QFont()
-            font.setItalic(True)
+            font.setUnderline(True)
             if room == currentUser.room:
                 font.setWeight(QtGui.QFont.Bold)
             roomitem.setFont(font)
@@ -146,12 +146,14 @@ class MainWindow(QtGui.QMainWindow):
                     filesizeitem = QtGui.QStandardItem("")
                     if room == currentUser.room:
                         filenameitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOFILEITEM_COLOR)))
+                font = QtGui.QFont()
                 if currentUser.username == user.username:
-                    font = QtGui.QFont()
                     font.setWeight(QtGui.QFont.Bold)
-                    useritem.setFont(font)
-                elif isControlledRoom and not isController:
-                    useritem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOTCONTROLLER_COLOR)))
+                if isControlledRoom and not isController:
+                    font.setItalic(True)
+                    if currentUser.username == user.username:
+                        useritem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOTCONTROLLER_COLOR)))
+                useritem.setFont(font)
                 useritem.setFlags(useritem.flags() & ~Qt.ItemIsEditable)
                 filenameitem.setFlags(filenameitem.flags() & ~Qt.ItemIsEditable)
                 filesizeitem.setFlags(filesizeitem.flags() & ~Qt.ItemIsEditable)
