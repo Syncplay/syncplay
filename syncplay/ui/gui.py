@@ -6,7 +6,7 @@ import sys
 import time
 import re
 import os
-from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider
+from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize
 
 class UserlistItemDelegate(QtGui.QStyledItemDelegate):
     def __init__(self):
@@ -92,9 +92,8 @@ class MainWindow(QtGui.QMainWindow):
 
     def showUserList(self, currentUser, rooms):
         self._usertreebuffer = QtGui.QStandardItemModel()
-        self._usertreebuffer.setColumnCount(2)
         self._usertreebuffer.setHorizontalHeaderLabels(
-            (getMessage("roomuser-heading-label"), getMessage("fileplayed-heading-label")))
+            (getMessage("roomuser-heading-label"), getMessage("size-heading-label"), getMessage("duration-heading-label"), getMessage("filename-heading-label") ))
         usertreeRoot = self._usertreebuffer.invisibleRootItem()
 
         for room in rooms:
@@ -113,49 +112,54 @@ class MainWindow(QtGui.QMainWindow):
                 isController = user.isController()
                 useritem.setData(isController, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
                 if user.file:
-                    fileitem = QtGui.QStandardItem(u"{} ({})".format(user.file['name'], formatTime(user.file['duration'])))
+                    filesizeitem = QtGui.QStandardItem(formatSize(user.file['size']))
+                    filedurationitem = QtGui.QStandardItem("({})".format(formatTime(user.file['duration'])))
+                    filenameitem = QtGui.QStandardItem((user.file['name']))
                     if currentUser.file:
                         sameName = sameFilename(user.file['name'], currentUser.file['name'])
                         sameSize = sameFilesize(user.file['size'], currentUser.file['size'])
                         sameDuration = sameFileduration(user.file['duration'], currentUser.file['duration'])
                         sameRoom = room == currentUser.room
-                        differentName = not sameName
-                        differentSize = not sameSize
-                        differentDuration = not sameDuration
-                        if sameName or sameRoom:
-                            if differentSize and sameDuration:
-                                fileitem = QtGui.QStandardItem(
-                                    u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']),
-                                                           getMessage("differentsize-note")))
-                            elif differentSize and differentDuration:
-                                fileitem = QtGui.QStandardItem(
-                                    u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']),
-                                                           getMessage("differentsizeandduration-note")))
-                            elif differentDuration:
-                                fileitem = QtGui.QStandardItem(
-                                    u"{} ({}) ({})".format(user.file['name'], formatTime(user.file['duration']),
-                                                           getMessage("differentduration-note")))
-                            if sameRoom and (differentName or differentSize or differentDuration):
-                                fileitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                        if sameRoom:
+                            if not sameName:
+                                filenameitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                            if not sameSize:
+                                if currentUser.file is not None and formatSize(user.file['size']) == formatSize(currentUser.file['size']):
+                                    filesizeitem = QtGui.QStandardItem(formatSize(user.file['size'],precise=True))
+                                filesizeitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                            if not sameDuration:
+                                filedurationitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
                 else:
-                    fileitem = QtGui.QStandardItem(getMessage("nofile-note"))
+                    filenameitem = QtGui.QStandardItem(getMessage("nofile-note"))
+                    filedurationitem = QtGui.QStandardItem("")
+                    filesizeitem = QtGui.QStandardItem("")
                     if room == currentUser.room:
-                        fileitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOFILEITEM_COLOR)))
+                        filenameitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOFILEITEM_COLOR)))
                 if currentUser.username == user.username:
                     font = QtGui.QFont()
                     font.setWeight(QtGui.QFont.Bold)
                     useritem.setFont(font)
                 useritem.setFlags(useritem.flags() & ~Qt.ItemIsEditable)
-                fileitem.setFlags(fileitem.flags() & ~Qt.ItemIsEditable)
-                roomitem.appendRow((useritem, fileitem))
-
+                filenameitem.setFlags(filenameitem.flags() & ~Qt.ItemIsEditable)
+                filesizeitem.setFlags(filesizeitem.flags() & ~Qt.ItemIsEditable)
+                filedurationitem.setFlags(filedurationitem.flags() & ~Qt.ItemIsEditable)
+                roomitem.appendRow((useritem, filesizeitem, filedurationitem, filenameitem))
         self.listTreeModel = self._usertreebuffer
         self.listTreeView.setModel(self.listTreeModel)
         self.listTreeView.setItemDelegate(UserlistItemDelegate())
         self.listTreeView.setItemsExpandable(False)
         self.listTreeView.expandAll()
-        self.listTreeView.resizeColumnToContents(0)
-        self.listTreeView.resizeColumnToContents(1)
+        self.listTreeView.header().setStretchLastSection(False)
+        self.listTreeView.header().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
+        self.listTreeView.header().setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
+        self.listTreeView.header().setResizeMode(2, QtGui.QHeaderView.ResizeToContents)
+        self.listTreeView.header().setResizeMode(3, QtGui.QHeaderView.ResizeToContents)
+        NarrowTabsWidth = self.listTreeView.header().sectionSize(0)+self.listTreeView.header().sectionSize(1)+self.listTreeView.header().sectionSize(2)
+        if self.listTreeView.header().width() < (NarrowTabsWidth+self.listTreeView.header().sectionSize(3)):
+            self.listTreeView.header().resizeSection(3,self.listTreeView.header().width()-NarrowTabsWidth)
+        else:
+            self.listTreeView.header().setResizeMode(3, QtGui.QHeaderView.Stretch)
+        self.listTreeView.expandAll()
 
     def roomClicked(self, item):
         while item.parent().row() != -1:
@@ -356,8 +360,8 @@ class MainWindow(QtGui.QMainWindow):
 
         window.topSplit.addWidget(window.outputFrame)
         window.topSplit.addWidget(window.listFrame)
-        window.topSplit.setStretchFactor(0, 4)
-        window.topSplit.setStretchFactor(1, 5)
+        window.topSplit.setStretchFactor(0,4)
+        window.topSplit.setStretchFactor(1,5)
         window.mainLayout.addWidget(window.topSplit)
         window.topSplit.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
 

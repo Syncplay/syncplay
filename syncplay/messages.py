@@ -172,7 +172,9 @@ en = {
       "pause-guibuttonlabel" : "Pause",
 
       "roomuser-heading-label" : "Room / User",
-      "fileplayed-heading-label" : "File being played",
+      "size-heading-label" : "Size",
+      "duration-heading-label" : "Length",
+      "filename-heading-label" : "Filename",
       "notifications-heading-label" : "Notifications",
       "userlist-heading-label" : "List of who is playing what",
       "othercommands-heading-label" :  "Other commands",
@@ -191,6 +193,8 @@ en = {
 
       "setoffset-msgbox-label" : "Set offset",
       "offsetinfo-msgbox-label" : "Offset (see http://syncplay.pl/guide/ for usage instructions):",
+
+      "mebibyte-suffix" : " MiB",
 
       # Tooltips
 

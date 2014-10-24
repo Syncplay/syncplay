@@ -93,6 +93,19 @@ def formatTime(timeInSeconds, weeksAsTitles=True):
         formattedTime = "{0:} (Title {1:.0f})".format(formattedTime, title)
     return formattedTime
 
+def formatSize (bytes, precise=False):
+    if bytes == 0: # E.g. when file size privacy is enabled
+        return "???"
+    try:
+        mebibytes = int(bytes) / 1048576.0
+        if precise:
+            mebibytes = round(mebibytes, 1)
+        else:
+            mebibytes = int(mebibytes)
+        return str(mebibytes) + getMessage("mebibyte-suffix")
+    except: # E.g. when filesize is hashed
+        return "???"
+
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
     if not frozen:
