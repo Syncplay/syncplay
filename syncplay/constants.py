@@ -106,6 +106,7 @@ STYLE_USERNAME = "color: #367AA9; font-weight:bold;"
 STYLE_ERRORNOTIFICATION = "color: red;"
 STYLE_DIFFERENTITEM_COLOR = 'red'
 STYLE_NOFILEITEM_COLOR = 'blue'
+STYLE_NOTCONTROLLER_COLOR = 'grey'
 
 MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4']
 # --quiet works with both mpv 0.2 and 0.3
