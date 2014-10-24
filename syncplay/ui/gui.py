@@ -15,6 +15,12 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
     def paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex):
         column = indexQModelIndex.column()
         if column == 0:
+            isRoomRow = indexQModelIndex.parent() == indexQModelIndex.parent().parent()
+            itemQPainter.resetTransform()
+            if not isRoomRow:
+                transformer = QtGui.QTransform()
+                transformer.translate(21,0)
+                itemQPainter.setTransform(transformer)
             currentQAbstractItemModel = indexQModelIndex.model()
             itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), 0, indexQModelIndex.parent())
             if sys.platform.startswith('win'):
@@ -105,6 +111,12 @@ class MainWindow(QtGui.QMainWindow):
             roomitem.setFont(font)
             roomitem.setFlags(roomitem.flags() & ~Qt.ItemIsEditable)
             usertreeRoot.appendRow(roomitem)
+            isControlledRoom = RoomPasswordProvider.isControlledRoom(room)
+
+            if isControlledRoom:
+                roomitem.setIcon(QtGui.QIcon(self.resourcespath + 'lock.png'))
+            else:
+                roomitem.setIcon(QtGui.QIcon(self.resourcespath + 'bullet_black.png'))
 
             for user in rooms[room]:
                 useritem = QtGui.QStandardItem(user.username)
@@ -147,6 +159,7 @@ class MainWindow(QtGui.QMainWindow):
         self.listTreeView.setModel(self.listTreeModel)
         self.listTreeView.setItemDelegate(UserlistItemDelegate())
         self.listTreeView.setItemsExpandable(False)
+        self.listTreeView.setRootIsDecorated(False)
         self.listTreeView.expandAll()
         roomtocheck = 0
         while self.listTreeModel.item(roomtocheck):
