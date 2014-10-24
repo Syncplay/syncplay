@@ -111,7 +111,10 @@ class MainWindow(QtGui.QMainWindow):
             isControlledRoom = RoomPasswordProvider.isControlledRoom(room)
 
             if isControlledRoom:
-                roomitem.setIcon(QtGui.QIcon(self.resourcespath + 'lock.png'))
+                if room == currentUser.room and currentUser.isController():
+                    roomitem.setIcon(QtGui.QIcon(self.resourcespath + 'lock_open.png'))
+                else:
+                    roomitem.setIcon(QtGui.QIcon(self.resourcespath + 'lock.png'))
             else:
                 roomitem.setIcon(QtGui.QIcon(self.resourcespath + 'bullet_black.png'))
 
