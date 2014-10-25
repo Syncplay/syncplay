@@ -108,6 +108,7 @@ class MainWindow(QtGui.QMainWindow):
         for room in rooms:
             roomitem = QtGui.QStandardItem(room)
             font = QtGui.QFont()
+            font.setItalic(True)
             if room == currentUser.room:
                 font.setWeight(QtGui.QFont.Bold)
             roomitem.setFont(font)
