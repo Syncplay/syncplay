@@ -122,7 +122,7 @@ class MainWindow(QtGui.QMainWindow):
                 else:
                     roomitem.setIcon(QtGui.QIcon(self.resourcespath + 'lock.png'))
             else:
-                roomitem.setIcon(QtGui.QIcon(self.resourcespath + 'bullet_black.png'))
+                roomitem.setIcon(QtGui.QIcon(self.resourcespath + 'chevrons_right.png'))
 
             for user in rooms[room]:
                 useritem = QtGui.QStandardItem(user.username)
