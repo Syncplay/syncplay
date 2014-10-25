@@ -194,7 +194,7 @@ en = {
       "setoffset-msgbox-label" : "Set offset",
       "offsetinfo-msgbox-label" : "Offset (see http://syncplay.pl/guide/ for usage instructions):",
 
-      "mebibyte-suffix" : " MiB",
+      "megabyte-suffix" : " MB",
 
       # Tooltips
 

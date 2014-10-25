@@ -97,12 +97,12 @@ def formatSize (bytes, precise=False):
     if bytes == 0: # E.g. when file size privacy is enabled
         return "???"
     try:
-        mebibytes = int(bytes) / 1048576.0
+        megabytes = int(bytes) / 1000000.0
         if precise:
-            mebibytes = round(mebibytes, 1)
+            megabytes = round(megabytes, 1)
         else:
-            mebibytes = int(mebibytes)
-        return str(mebibytes) + getMessage("mebibyte-suffix")
+            megabytes = int(megabytes)
+        return str(megabytes) + getMessage("megabyte-suffix")
     except: # E.g. when filesize is hashed
         return "???"
 
