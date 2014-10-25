@@ -108,7 +108,6 @@ class MainWindow(QtGui.QMainWindow):
         for room in rooms:
             roomitem = QtGui.QStandardItem(room)
             font = QtGui.QFont()
-            font.setUnderline(True)
             if room == currentUser.room:
                 font.setWeight(QtGui.QFont.Bold)
             roomitem.setFont(font)
@@ -137,15 +136,20 @@ class MainWindow(QtGui.QMainWindow):
                         sameSize = sameFilesize(user.file['size'], currentUser.file['size'])
                         sameDuration = sameFileduration(user.file['duration'], currentUser.file['duration'])
                         sameRoom = room == currentUser.room
+                        underlinefont = QtGui.QFont()
+                        underlinefont.setUnderline(True)
                         if sameRoom:
                             if not sameName:
                                 filenameitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                                filenameitem.setFont(underlinefont)
                             if not sameSize:
                                 if currentUser.file is not None and formatSize(user.file['size']) == formatSize(currentUser.file['size']):
                                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size'],precise=True))
+                                filesizeitem.setFont(underlinefont)
                                 filesizeitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
                             if not sameDuration:
                                 filedurationitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                                filedurationitem.setFont(underlinefont)
                 else:
                     filenameitem = QtGui.QStandardItem(getMessage("nofile-note"))
                     filedurationitem = QtGui.QStandardItem("")
@@ -156,7 +160,6 @@ class MainWindow(QtGui.QMainWindow):
                 if currentUser.username == user.username:
                     font.setWeight(QtGui.QFont.Bold)
                 if isControlledRoom and not isController:
-                    font.setItalic(True)
                     if currentUser.username == user.username:
                         useritem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOTCONTROLLER_COLOR)))
                 useritem.setFont(font)
