@@ -12,6 +12,12 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
     def __init__(self):
         QtGui.QStyledItemDelegate.__init__(self)
 
+    def sizeHint(self, option, index):
+        size = QtGui.QStyledItemDelegate.sizeHint(self, option, index)
+        if (index.column() == 0):
+            size.setWidth(size.width() + constants.USERLIST_GUI_USERNAME_OFFSET)
+        return size
+
     def paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex):
         column = indexQModelIndex.column()
         if column == 0:
@@ -46,7 +52,7 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
                     crossIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
             isUserRow = indexQModelIndex.parent() != indexQModelIndex.parent().parent()
             if isUserRow:
-                optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+21)
+                optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+constants.USERLIST_GUI_USERNAME_OFFSET)
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
 class MainWindow(QtGui.QMainWindow):
@@ -171,14 +177,9 @@ class MainWindow(QtGui.QMainWindow):
             roomtocheck += 1
         self.listTreeView.header().setStretchLastSection(False)
         self.listTreeView.header().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        namecolumnwidth = self.listTreeView.header().sectionSize(0) + 40
-        if self.listTreeView.header().sectionSize(0) == self.listTreeView.header().sectionSizeHint(0):
-            namecolumnwidth = namecolumnwidth - 20
         self.listTreeView.header().setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
         self.listTreeView.header().setResizeMode(2, QtGui.QHeaderView.ResizeToContents)
         self.listTreeView.header().setResizeMode(3, QtGui.QHeaderView.ResizeToContents)
-        self.listTreeView.header().setResizeMode(0, QtGui.QHeaderView.Fixed)
-        self.listTreeView.header().resizeSection(0,namecolumnwidth)
         NarrowTabsWidth = self.listTreeView.header().sectionSize(0)+self.listTreeView.header().sectionSize(1)+self.listTreeView.header().sectionSize(2)
         if self.listTreeView.header().width() < (NarrowTabsWidth+self.listTreeView.header().sectionSize(3)):
             self.listTreeView.header().resizeSection(3,self.listTreeView.header().width()-NarrowTabsWidth)

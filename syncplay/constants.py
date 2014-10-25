@@ -108,6 +108,8 @@ STYLE_DIFFERENTITEM_COLOR = 'red'
 STYLE_NOFILEITEM_COLOR = 'blue'
 STYLE_NOTCONTROLLER_COLOR = 'grey'
 
+USERLIST_GUI_USERNAME_OFFSET = 21 # Pixels
+
 MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4']
 # --quiet works with both mpv 0.2 and 0.3
 MPV_SLAVE_ARGS = ['--hr-seek=always', '--quiet', '--keep-open']
