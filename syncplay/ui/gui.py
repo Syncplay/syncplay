@@ -171,9 +171,14 @@ class MainWindow(QtGui.QMainWindow):
             roomtocheck += 1
         self.listTreeView.header().setStretchLastSection(False)
         self.listTreeView.header().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
+        namecolumnwidth = self.listTreeView.header().sectionSize(0) + 40
+        if self.listTreeView.header().sectionSize(0) == self.listTreeView.header().sectionSizeHint(0):
+            namecolumnwidth = namecolumnwidth - 20
         self.listTreeView.header().setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
         self.listTreeView.header().setResizeMode(2, QtGui.QHeaderView.ResizeToContents)
         self.listTreeView.header().setResizeMode(3, QtGui.QHeaderView.ResizeToContents)
+        self.listTreeView.header().setResizeMode(0, QtGui.QHeaderView.Fixed)
+        self.listTreeView.header().resizeSection(0,namecolumnwidth)
         NarrowTabsWidth = self.listTreeView.header().sectionSize(0)+self.listTreeView.header().sectionSize(1)+self.listTreeView.header().sectionSize(2)
         if self.listTreeView.header().width() < (NarrowTabsWidth+self.listTreeView.header().sectionSize(3)):
             self.listTreeView.header().resizeSection(3,self.listTreeView.header().width()-NarrowTabsWidth)
