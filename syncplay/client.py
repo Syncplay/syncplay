@@ -6,6 +6,7 @@ import time
 import re
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
+from functools import wraps
 from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants
 from syncplay.messages import getMessage
@@ -62,6 +63,7 @@ class SyncplayClient(object):
         constants.SHOW_DIFFERENT_ROOM_OSD = config['showDifferentRoomOSD']
         constants.SHOW_SAME_ROOM_OSD = config['showSameRoomOSD']
         constants.SHOW_DURATION_NOTIFICATION = config['showDurationNotification']
+        self.serverVersion = "0.0.0"
         self.lastLeftTime = 0
         self.lastLeftUser = u""
         self.protocolFactory = SyncClientFactory(self)
@@ -335,6 +337,9 @@ class SyncplayClient(object):
             size = 0
         return filename, size
 
+    def setServerVersion(self, version):
+        self.serverVersion = version
+
     def sendFile(self):
         file_ = self.userlist.currentUser.file
         if self._protocol and self._protocol.logged and file_:
@@ -416,6 +421,18 @@ class SyncplayClient(object):
         if promptForAction:
             self.ui.promptFor(getMessage("enter-to-exit-prompt"))
 
+    def requireMinServerVersion(minVersion):
+        def requireMinVersionDecorator(f):
+            @wraps(f)
+            def wrapper(self, *args, **kwds):
+                if int(self.serverVersion.replace(".", "")) < int(minVersion.replace(".", "")):
+                    self.ui.showErrorMessage(u"This feature is not supported by the server. The feature requires a  server running Syncplay {}+, but the server is running Syncplay {}.".format(minVersion, self.serverVersion))
+                    return
+                return f(self, *args, **kwds)
+            return wrapper
+        return requireMinVersionDecorator
+
+    @requireMinServerVersion("1.3.0")
     def createControlledRoom(self, roomName):
         controlPassword = RoomPasswordGenerator.generate_password()
         self.ui.showMessage(u"Attempting to create controlled room '{}' with password '{}'...".format(roomName, controlPassword))
@@ -434,6 +451,7 @@ class SyncplayClient(object):
         else:
             return ""
 
+    @requireMinServerVersion("1.3.0")
     def identifyAsController(self, controlPassword):
         controlPassword = self.stripControlPassword(controlPassword)
         self.ui.showMessage(u"Identifying as room controller with password '{}'...".format(controlPassword))
