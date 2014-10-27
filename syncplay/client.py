@@ -63,6 +63,8 @@ class SyncplayClient(object):
         constants.SHOW_DIFFERENT_ROOM_OSD = config['showDifferentRoomOSD']
         constants.SHOW_SAME_ROOM_OSD = config['showSameRoomOSD']
         constants.SHOW_DURATION_NOTIFICATION = config['showDurationNotification']
+        self.controlpasswords = {}
+        self.lastControlPasswordAttempt = None
         self.serverVersion = "0.0.0"
         self.lastLeftTime = 0
         self.lastLeftUser = u""
@@ -365,6 +367,17 @@ class SyncplayClient(object):
         if self._protocol and self._protocol.logged and room:
             self._protocol.sendRoomSetting(room)
             self.getUserList()
+        self.reIdentifyAsController()
+
+    def reIdentifyAsController(self):
+        room = self.userlist.currentUser.room
+        if utils.RoomPasswordProvider.isControlledRoom(room):
+            storedRoomPassword = self.getControlledRoomPassword(room)
+            if storedRoomPassword:
+                self.identifyAsController(storedRoomPassword)
+
+    def connected(self):
+        self.reIdentifyAsController()
 
     def getRoom(self):
         return self.userlist.currentUser.room
@@ -436,6 +449,7 @@ class SyncplayClient(object):
     def createControlledRoom(self, roomName):
         controlPassword = RoomPasswordGenerator.generate_password()
         self.ui.showMessage(u"Attempting to create controlled room '{}' with password '{}'...".format(roomName, controlPassword))
+        self.lastControlPasswordAttempt = controlPassword
         self._protocol.requestControlledRoom(roomName, controlPassword)
 
     def controlledRoomCreated(self, roomName, controlPassword):
@@ -455,6 +469,7 @@ class SyncplayClient(object):
     def identifyAsController(self, controlPassword):
         controlPassword = self.stripControlPassword(controlPassword)
         self.ui.showMessage(u"Identifying as room controller with password '{}'...".format(controlPassword))
+        self.lastControlPasswordAttempt = controlPassword
         self._protocol.requestControlledRoom(self.getRoom(), controlPassword)
 
     def controllerIdentificationError(self, username, room):
@@ -465,11 +480,17 @@ class SyncplayClient(object):
         if self.userlist.isRoomSame(roomname):
             hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
             self.ui.showMessage(u"<{}> authenticated as a room controller".format(username), hideFromOSD)
+            if username == self.userlist.currentUser.username:
+                self.storeControlPassword(roomname, self.lastControlPasswordAttempt)
         self.ui.userListChange()
 
-    # TODO: Mark person as a room controller
-    # TODO: Disable UI's "Create new Controlled Room when in Controlled Room"
-    # TODO: Disable authenticate when authenticated
+    def storeControlPassword(self, room, password):
+        if password:
+            self.controlpasswords[room] = password
+
+    def getControlledRoomPassword(self, room):
+        if self.controlpasswords.has_key(room):
+            return self.controlpasswords[room]
 
     class _WarningManager(object):
         def __init__(self, player, userlist, ui):

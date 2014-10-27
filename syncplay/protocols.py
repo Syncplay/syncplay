@@ -86,6 +86,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         if motd:
             self._client.ui.showMessage(motd, True, True)
         self._client.ui.showMessage(getMessage("connected-successful-notification"))
+        self._client.connected()
         self._client.sendFile()
         self._client.setServerVersion(version)
 
