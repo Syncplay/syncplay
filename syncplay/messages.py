@@ -282,13 +282,13 @@ de = {
       "commandlist-notification/pause" : "\tp - toggle pause",
       "commandlist-notification/seek" : "\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec",
       "commandlist-notification/help" : "\th - this help",
-      "syncplay-version-notification" : "Syncplay version: {}",  # syncplay.version
-      "more-info-notification" : "More info available at: {}",  # projectURL
+      "syncplay-version-notification" : "Syncplay Version: {}",  # syncplay.version
+      "more-info-notification" : "Weitere Informationen auf: {}",  # projectURL
 
-      "gui-data-cleared-notification" : "Syncplay has cleared the path and window state data used by the GUI.",
+      "gui-data-cleared-notification" : "Syncplay hat die Pfad und Fensterdaten der Syncplay-GUI zurückgesetzt.",
 
-      "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above.",  # VLC version, VLC min version
-      "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above.",  # VLC interface version, VLC interface min version
+      "vlc-version-mismatch": "Warnung: Du nutzt VLC Version {}, aber Syncplay wurde für VLC ab Version {} entwickelt.",  # VLC version, VLC min version
+      "vlc-interface-version-mismatch": "Warnung: Du nutzt Version {} des VLC-Syncplay interface-Moduls, Syncplay benötigt aber mindestens Version {}.",  # VLC interface version, VLC interface min version
       "vlc-interface-oldversion-ignored": "Warning: Syncplay detected that an old version version of the Syncplay interface module for VLC was installed in the VLC directory. As such, if you are running VLC 2.0 then it will be ignored in favour of the syncplay.lua module contained within the Syncplay directory, but this will mean that other custom interface scripts and extensions will not work. Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
       "vlc-interface-not-installed": "Warning: The Syncplay interface module for VLC was not found in the VLC directory. As such, if you are running VLC 2.0 then VLC will use the syncplay.lua module contained within the Syncplay directory, but this will mean that other custom interface scripts and extensions will not work. Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
 
@@ -379,8 +379,8 @@ de = {
       "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
 
-      "more-tooltip" : "Display less frequently used settings.",
-      "filename-privacy-tooltip" : "Privacy mode for sending currently playing filename to server.",
+      "more-tooltip" : "Weitere Einstellungen anzeigen.",
+      "filename-privacy-tooltip" : "Privacy-Modus for sending currently playing filename to server.",
       "filesize-privacy-tooltip" : "Privacy mode for sending size of currently playing file to server.",
       "privacy-sendraw-tooltip" : "Send this information without obfuscation. This is the default option with most functionality.",
       "privacy-sendhashed-tooltip" : "Send a hashed version of the information, making it less visible to other clients.",
@@ -392,15 +392,15 @@ de = {
       "alwayshow-tooltip" : "Configuration dialogue is always shown, even when opening a file with Syncplay.",
       "donotstore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.",
 
-      "help-tooltip" : "Opens the Syncplay.pl user guide.",
+      "help-tooltip" : "Öffnet Hilfe auf syncplay.pl [Englisch]",
 
       # Server messages to client
-      "new-syncplay-available-motd-message" : "<NOTICE> You are using Syncplay {} but a newer version is available from http://syncplay.pl </NOTICE>",  # ClientVersion
+      "new-syncplay-available-motd-message" : "<NOTICE> Du nutzt Syncplay Version {}, aber es gibt eine neuere Version auf http://syncplay.pl</NOTICE>",  # ClientVersion
 
       # Server notifications
-      "welcome-server-notification" : "Welcome to Syncplay server, ver. {0}",  # version
-      "client-connected-room-server-notification" : "{0}({2}) connected to room '{1}'",  # username, host, room
-      "client-left-server-notification" : "{0} left server",  # name
+      "welcome-server-notification" : "Willkommen zum Syncplay-Server, v. {0}",  # version
+      "client-connected-room-server-notification" : "{0}({2}) hat den Raum '{1}' betreten",  # username, host, room
+      "client-left-server-notification" : "{0} hat den Server verlassen",  # name
 
 
       # Server arguments
