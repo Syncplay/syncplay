@@ -1,4 +1,4 @@
-from PySide import QtGui  # @UnresolvedImport
+from PySide import QtGui
 from PySide.QtCore import Qt, QSettings, QSize, QPoint
 from syncplay import utils, constants, version
 from syncplay.messages import getMessage
@@ -56,6 +56,19 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
 class MainWindow(QtGui.QMainWindow):
+    class topSplitter(QtGui.QSplitter):
+        def createHandle(self):
+            return self.topSplitterHandle(self.orientation(), self)
+
+        class topSplitterHandle(QtGui.QSplitterHandle):
+            def mouseReleaseEvent(self, event):
+                QtGui.QSplitterHandle.mouseReleaseEvent(self, event)
+                self.parent().parent().parent().updateListGeometry()
+
+            def mouseMoveEvent(self, event):
+                QtGui.QSplitterHandle.mouseMoveEvent(self, event)
+                self.parent().parent().parent().updateListGeometry()
+
     def addClient(self, client):
         self._syncplayClient = client
         self.roomInput.setText(self._syncplayClient.getRoom())
@@ -69,7 +82,6 @@ class MainWindow(QtGui.QMainWindow):
                 self.hideMiscLabels()
         except ():
             pass
-
 
     def promptFor(self, prompt=">", message=""):
         # TODO: Prompt user
@@ -165,21 +177,24 @@ class MainWindow(QtGui.QMainWindow):
         self.updateListGeometry()
 
     def updateListGeometry(self):
-        roomtocheck = 0
-        while self.listTreeModel.item(roomtocheck):
-            self.listTreeView.setFirstColumnSpanned(roomtocheck, self.listTreeView.rootIndex(), True)
-            roomtocheck += 1
-        self.listTreeView.header().setStretchLastSection(False)
-        self.listTreeView.header().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        self.listTreeView.header().setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
-        self.listTreeView.header().setResizeMode(2, QtGui.QHeaderView.ResizeToContents)
-        self.listTreeView.header().setResizeMode(3, QtGui.QHeaderView.ResizeToContents)
-        NarrowTabsWidth = self.listTreeView.header().sectionSize(0)+self.listTreeView.header().sectionSize(1)+self.listTreeView.header().sectionSize(2)
-        if self.listTreeView.header().width() < (NarrowTabsWidth+self.listTreeView.header().sectionSize(3)):
-            self.listTreeView.header().resizeSection(3,self.listTreeView.header().width()-NarrowTabsWidth)
-        else:
-            self.listTreeView.header().setResizeMode(3, QtGui.QHeaderView.Stretch)
-        self.listTreeView.expandAll()
+        try:
+            roomtocheck = 0
+            while self.listTreeModel.item(roomtocheck):
+                self.listTreeView.setFirstColumnSpanned(roomtocheck, self.listTreeView.rootIndex(), True)
+                roomtocheck += 1
+            self.listTreeView.header().setStretchLastSection(False)
+            self.listTreeView.header().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
+            self.listTreeView.header().setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
+            self.listTreeView.header().setResizeMode(2, QtGui.QHeaderView.ResizeToContents)
+            self.listTreeView.header().setResizeMode(3, QtGui.QHeaderView.ResizeToContents)
+            NarrowTabsWidth = self.listTreeView.header().sectionSize(0)+self.listTreeView.header().sectionSize(1)+self.listTreeView.header().sectionSize(2)
+            if self.listTreeView.header().width() < (NarrowTabsWidth+self.listTreeView.header().sectionSize(3)):
+                self.listTreeView.header().resizeSection(3,self.listTreeView.header().width()-NarrowTabsWidth)
+            else:
+                self.listTreeView.header().setResizeMode(3, QtGui.QHeaderView.Stretch)
+            self.listTreeView.expandAll()
+        except:
+            pass
 
     def roomClicked(self, item):
         while item.parent().row() != -1:
@@ -402,7 +417,7 @@ class MainWindow(QtGui.QMainWindow):
         self.close()
 
     def addTopLayout(self, window):
-        window.topSplit = QtGui.QSplitter(Qt.Horizontal)
+        window.topSplit = self.topSplitter(Qt.Horizontal, self)
 
         window.outputLayout = QtGui.QVBoxLayout()
         window.outputbox = QtGui.QTextEdit()
