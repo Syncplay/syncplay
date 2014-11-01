@@ -1,5 +1,5 @@
 from PySide import QtGui  # @UnresolvedImport
-from PySide.QtCore import Qt, QSettings, QSize, QPoint  # @UnresolvedImport
+from PySide.QtCore import Qt, QSettings, QSize, QPoint
 from syncplay import utils, constants, version
 from syncplay.messages import getMessage
 import sys
@@ -60,26 +60,13 @@ class MainWindow(QtGui.QMainWindow):
         self._syncplayClient = client
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
+        constants.SHOW_BUTTON_LABELS = self.config['showButtonLabels']
         try:
             if self.contactLabel and not self.config['showContactInfo']:
                 self.contactLabel.hide()
-            if not self.config['showButtonLabels']:
-                if constants.MERGE_PLAYPAUSE_BUTTONS:
-                    self.playpauseButton.setText("")
-                else:
-                    self.playButton.setText("")
-                    self.playButton.setFixedWidth(self.playButton.minimumSizeHint().width())
-                    self.pauseButton.setText("")
-                    self.pauseButton.setFixedWidth(self.pauseButton.minimumSizeHint().width())
-                self.roomButton.setText("")
-                self.roomButton.setFixedWidth(self.roomButton.minimumSizeHint().width())
-                self.seekButton.setText("")
-                self.seekButton.setFixedWidth(self.seekButton.minimumSizeHint().width())
-                self.unseekButton.setText("")
-                self.unseekButton.setFixedWidth(self.unseekButton.minimumSizeHint().width())
-                self.roomGroup.setFixedWidth(self.roomGroup.sizeHint().width())
-                self.seekGroup.setFixedWidth(self.seekGroup.minimumSizeHint().width())
-                self.miscGroup.setFixedWidth(self.miscGroup.minimumSizeHint().width())
+            if not constants.SHOW_BUTTON_LABELS:
+                self.hideRoomSeekLabels()
+                self.hideMiscLabels()
         except ():
             pass
 
@@ -175,6 +162,9 @@ class MainWindow(QtGui.QMainWindow):
         self.listTreeView.setItemsExpandable(False)
         self.listTreeView.setRootIsDecorated(False)
         self.listTreeView.expandAll()
+        self.updateListGeometry()
+
+    def updateListGeometry(self):
         roomtocheck = 0
         while self.listTreeModel.item(roomtocheck):
             self.listTreeView.setFirstColumnSpanned(roomtocheck, self.listTreeView.rootIndex(), True)
@@ -261,6 +251,69 @@ class MainWindow(QtGui.QMainWindow):
     def closeEvent(self, event):
         self.exitSyncplay()
         self.saveSettings()
+
+    def setupSizes(self):
+        self.hideRoomSeekLabels()
+        self.miscThreshold = self.seekGroup.sizeHint().width()+self.roomGroup.sizeHint().width()+self.miscGroup.sizeHint().width()+30
+        self.hideMiscLabels()
+        self.setMinimumWidth(self.seekGroup.sizeHint().width()+self.roomGroup.sizeHint().width()+self.miscGroup.sizeHint().width()+30)
+        self.seekGroup.setMinimumWidth(self.seekGroup.sizeHint().width())
+        self.roomGroup.setMinimumWidth(self.roomGroup.sizeHint().width())
+        self.miscGroup.setMinimumWidth(self.miscGroup.sizeHint().width())
+        self.showRoomSeekLabels()
+        self.showMiscLabels()
+        windowMaximumWidth = self.maximumWidth()
+        self.seekGroup.setMaximumWidth(self.seekGroup.sizeHint().width())
+        self.roomGroup.setMaximumWidth(self.roomGroup.sizeHint().width())
+        self.miscGroup.setMaximumWidth(self.miscGroup.sizeHint().width())
+        self.setMaximumWidth(windowMaximumWidth)
+        self.roomSeekThreshold = self.mainLayout.sizeHint().width()
+
+    def hideRoomSeekLabels(self):
+        self.roomButton.setText("")
+        self.seekButton.setText("")
+
+    def hideMiscLabels(self):
+        self.unseekButton.setText("")
+        if constants.MERGE_PLAYPAUSE_BUTTONS:
+            self.playpauseButton.setText("")
+        else:
+            self.playButton.setText("")
+            self.pauseButton.setText("")
+
+    def showRoomSeekLabels(self):
+        if not constants.SHOW_BUTTON_LABELS:
+            return
+        self.roomButton.setText(getMessage("joinroom-guibuttonlabel"))
+        self.seekButton.setText(getMessage("seektime-guibuttonlabel"))
+
+    def showMiscLabels(self):
+        self.unseekButton.setText(getMessage("undoseek-guibuttonlabel"))
+        if not constants.SHOW_BUTTON_LABELS:
+            return
+        if constants.MERGE_PLAYPAUSE_BUTTONS:
+            self.playpauseButton.setText(getMessage("togglepause-guibuttonlabel"))
+        else:
+            self.playButton.setText(getMessage("play-guibuttonlabel"))
+            self.pauseButton.setText(getMessage("pause-guibuttonlabel"))
+
+    def resizeEvent(self,resizeEvent):
+        self.updateListGeometry()
+        if self.roomGroup and self.miscThreshold:
+            currentWidth = self.mainFrame.size().width()
+            if currentWidth < self.miscThreshold:
+                 if self.unseekButton.text() != "":
+                    self.hideMiscLabels()
+            else:
+                if self.unseekButton.text() == "":
+                    self.showMiscLabels()
+
+            if currentWidth < self.roomSeekThreshold:
+                if self.roomButton.text() != "":
+                    self.hideRoomSeekLabels()
+            else:
+                if self.roomButton.text() == "":
+                    self.showRoomSeekLabels()
 
     def loadMediaBrowseSettings(self):
         settings = QSettings("Syncplay", "MediaBrowseDialog")
@@ -402,9 +455,9 @@ class MainWindow(QtGui.QMainWindow):
         window.addSeekBox(MainWindow)
         window.addMiscBox(MainWindow)
 
-        window.bottomLayout.addWidget(window.roomGroup, Qt.AlignLeft)
-        window.bottomLayout.addWidget(window.seekGroup, Qt.AlignLeft)
-        window.bottomLayout.addWidget(window.miscGroup, Qt.AlignLeft)
+        window.bottomLayout.addWidget(window.roomGroup)
+        window.bottomLayout.addWidget(window.seekGroup)
+        window.bottomLayout.addWidget(window.miscGroup)
 
         window.mainLayout.addLayout(window.bottomLayout, Qt.AlignLeft)
 
@@ -425,7 +478,7 @@ class MainWindow(QtGui.QMainWindow):
         window.roomLayout.addWidget(window.roomButton)
 
         window.roomGroup.setLayout(window.roomLayout)
-        window.roomGroup.setFixedSize(window.roomGroup.sizeHint())
+        window.roomGroup.setFixedHeight(window.roomGroup.sizeHint().height())
 
     def addSeekBox(self, window):
         window.seekGroup = QtGui.QGroupBox(getMessage("seek-heading-label"))
@@ -446,7 +499,7 @@ class MainWindow(QtGui.QMainWindow):
         window.seekLayout.addWidget(window.seekButton)
 
         window.seekGroup.setLayout(window.seekLayout)
-        window.seekGroup.setFixedSize(window.seekGroup.sizeHint())
+        window.seekGroup.setFixedHeight(window.seekGroup.sizeHint().height())
 
     def addMiscBox(self, window):
         window.miscGroup = QtGui.QGroupBox(getMessage("othercommands-heading-label"))
@@ -479,7 +532,7 @@ class MainWindow(QtGui.QMainWindow):
             self.pauseButton.setToolTip(getMessage("pause-tooltip"))
 
         window.miscGroup.setLayout(window.miscLayout)
-        window.miscGroup.setFixedSize(window.miscGroup.sizeHint())
+        window.miscGroup.setFixedHeight(window.miscGroup.sizeHint().height())
 
 
     def addMenubar(self, window):
@@ -589,6 +642,7 @@ class MainWindow(QtGui.QMainWindow):
         self.addBottomLayout(self)
         self.addMenubar(self)
         self.addMainFrame(self)
+        self.setupSizes()
         self.loadSettings()
         self.setWindowIcon(QtGui.QIcon(self.resourcespath + "syncplay.png"))
         self.setWindowFlags(
