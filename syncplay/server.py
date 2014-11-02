@@ -11,16 +11,18 @@ import codecs
 import os
 from string import Template
 import argparse
-from syncplay.utils import RoomPasswordProvider, NotControlledRoom
+from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator
 
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None, isolateRooms=False):
+    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None):
         print getMessage("welcome-server-notification").format(syncplay.version)
         if password:
             password = hashlib.md5(password).hexdigest()
         self.password = password
-        # TODO: Make salt come from more reasonable place
-        self._salt = str(random.random())
+        if salt is None:
+            salt = RandomStringGenerator.generate_server_salt()
+            print getMessage("no-salt-notification").format(salt)
+        self._salt = salt
         self._motdFilePath = motdFilePath
         if not isolateRooms:
             self._roomManager = RoomManager()
@@ -420,4 +422,5 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--port', metavar='port', type=str, nargs='?', help=getMessage("server-port-argument"))
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
+        self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))

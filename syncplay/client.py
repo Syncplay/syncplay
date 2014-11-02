@@ -1,7 +1,5 @@
 import hashlib
 import os.path
-import random
-import string
 import time
 import re
 from twisted.internet.protocol import ClientFactory
@@ -447,7 +445,8 @@ class SyncplayClient(object):
 
     @requireMinServerVersion("1.3.0")
     def createControlledRoom(self, roomName):
-        controlPassword = RoomPasswordGenerator.generate_password()
+        controlPassword = utils.RandomStringGenerator.generate_room_
+        password()
         self.ui.showMessage(u"Attempting to create controlled room '{}' with password '{}'...".format(roomName, controlPassword))
         self.lastControlPasswordAttempt = controlPassword
         self._protocol.requestControlledRoom(roomName, controlPassword)
@@ -772,20 +771,4 @@ class UiManager(object):
     def drop(self):
         self.__ui.drop()
 
-class RoomPasswordGenerator(object):
-    @staticmethod
-    def generate_password():
-        parts = (
-            RoomPasswordGenerator._get_random_letters(2),
-            RoomPasswordGenerator._get_random_numbers(3),
-            RoomPasswordGenerator._get_random_numbers(3)
-        )
-        return "{}-{}-{}".format(*parts)
 
-    @staticmethod
-    def _get_random_letters(quantity):
-        return ''.join(random.choice(string.ascii_uppercase) for _ in xrange(quantity))
-
-    @staticmethod
-    def _get_random_numbers(quantity):
-        return ''.join(random.choice(string.digits) for _ in xrange(quantity))

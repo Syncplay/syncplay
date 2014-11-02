@@ -7,6 +7,8 @@ import sys
 import os
 import itertools
 import hashlib
+import random
+import string
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -240,6 +242,31 @@ class RoomPasswordProvider(object):
         salt = hashlib.sha256(salt).hexdigest()
         provisionalHash = hashlib.sha256(roomName + salt).hexdigest()
         return hashlib.sha1(provisionalHash + salt + password).hexdigest()[:12].upper()
+
+class RandomStringGenerator(object):
+    @staticmethod
+    def generate_room_password():
+        parts = (
+            RandomStringGenerator._get_random_letters(2),
+            RandomStringGenerator._get_random_numbers(3),
+            RandomStringGenerator._get_random_numbers(3)
+        )
+        return "{}-{}-{}".format(*parts)
+
+    @staticmethod
+    def generate_server_salt():
+        parts = (
+            RandomStringGenerator._get_random_letters(10),
+        )
+        return "{}".format(*parts)
+
+    @staticmethod
+    def _get_random_letters(quantity):
+        return ''.join(random.choice(string.ascii_uppercase) for _ in xrange(quantity))
+
+    @staticmethod
+    def _get_random_numbers(quantity):
+        return ''.join(random.choice(string.digits) for _ in xrange(quantity))
 
 class NotControlledRoom(Exception):
     pass
