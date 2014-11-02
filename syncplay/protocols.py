@@ -30,7 +30,7 @@ class JSONCommandProtocol(LineReceiver):
         if not line:
             return
         try:
-            self._client.ui.showDebugMessage("client/server << {}".format(line))
+            self.showDebugMessage("client/server << {}".format(line))
             messages = json.loads(line)
         except:
             self.dropWithError(getMessage("not-json-server-error").format(line))
@@ -40,7 +40,7 @@ class JSONCommandProtocol(LineReceiver):
     def sendMessage(self, dict_):
         line = json.dumps(dict_)
         self.sendLine(line)
-        self._client.ui.showDebugMessage("client/server >> {}".format(line))
+        self.showDebugMessage("client/server >> {}".format(line))
 
     def drop(self):
         self.transport.loseConnection()
@@ -56,6 +56,9 @@ class SyncClientProtocol(JSONCommandProtocol):
         self.serverIgnoringOnTheFly = 0
         self.logged = False
         self._pingService = PingService()
+
+    def showDebugMessage(self, line):
+        self._client.ui.showDebugMessage(line)
 
     def connectionMade(self):
         self._client.initProtocol(self)
@@ -242,6 +245,9 @@ class SyncServerProtocol(JSONCommandProtocol):
                 self.dropWithError(getMessage("not-known-server-error"))
             return f(self, *args, **kwds)
         return wrapper
+
+    def showDebugMessage(self, line):
+        pass
 
     def dropWithError(self, error):
         print getMessage("client-drop-server-error").format(self.transport.getPeer().host, error)
