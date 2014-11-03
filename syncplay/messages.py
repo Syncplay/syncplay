@@ -272,16 +272,16 @@ de = {
 
       "mplayer-file-required-notification" : "Syncplay für mplayer benötigt eine Datei-Angabe beim Start",
       "mplayer-file-required-notification/example" : "Nutzungsbeispiel: syncplay [optionen] [url|pfad/]dateiname",
-      "mplayer2-required" : "Syncplay ist inkompatibel zu MPlayer 1.x, bitte nutze mplayer2 oder mpv",
+      "mplayer2-required" : "Syncplay ist inkompatibel zu MPlayer 1.x, bitte nutze MPlayer2 oder mpv",
 
       "unrecognized-command-notification" : "Unbekannter Befehl",
       "commandlist-notification" : "Verfügbare Befehle:",
       "commandlist-notification/room" : "\tr [Name] - Raum ändern",
       "commandlist-notification/list" : "\tl - Nutzerliste anzeigen",
-      "commandlist-notification/undo" : "\tu - letzter Zeitsprung rückgängig",
-      "commandlist-notification/pause" : "\tp - pausieren / weiter",
+      "commandlist-notification/undo" : "\tu - Letzter Zeitsprung rückgängig",
+      "commandlist-notification/pause" : "\tp - Pausieren / weiter",
       "commandlist-notification/seek" : "\t[s][+-]Zeit - zu einer bestimmten Zeit spulen, ohne + oder - wird als absolute Zeit gewertet; Angabe in Sekungen oder Minuten:Sekunden",
-      "commandlist-notification/help" : "\th - Dies Hilfe",
+      "commandlist-notification/help" : "\th - Diese Hilfe",
       "syncplay-version-notification" : "Syncplay Version: {}",  # syncplay.version
       "more-info-notification" : "Weitere Informationen auf: {}",  # projectURL
 
@@ -322,7 +322,7 @@ de = {
       # Client arguments
       "argument-description" : 'Anwendung, um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren.',
       "argument-epilog" : 'Wenn keine Optionen angegeben sind, werden die _config-Werte verwendet',
-      "nogui-argument" : 'keine GUI anzeigen',
+      "nogui-argument" : 'Keine GUI anzeigen',
       "host-argument" : 'Server\'-Addresse',
       "name-argument" : 'Gewünschter Nutzername',
       "debug-argument" : 'Debug-Modus',
@@ -350,9 +350,9 @@ de = {
       "browse-label" : "Durchsuchen",
 
       "more-title" : "Mehr Einstellungen zeigen",
-      "privacy-sendraw-option" : "roh senden",
+      "privacy-sendraw-option" : "Klartext senden",
       "privacy-sendhashed-option" : "Hash senden",
-      "privacy-dontsend-option" : "nicht senden",
+      "privacy-dontsend-option" : "Nicht senden",
       "filename-privacy-label" : "Dateiname:",
       "filesize-privacy-label" : "Dateigröße:",
       "slowdown-label" : "Verlangsamen wenn nicht synchron",
@@ -367,7 +367,7 @@ de = {
       "storeandrun-label" : "Konfiguration speichern und Syncplay starten",
 
       "roomuser-heading-label" : "Raum / Benutzer",
-      "fileplayed-heading-label" : "gespielte Datei",
+      "fileplayed-heading-label" : "Gespielte Datei",
 
       # Tooltips
 
