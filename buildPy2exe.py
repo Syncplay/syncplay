@@ -20,6 +20,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\English.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Polish.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\German.nlf"
   
   Name "Syncplay $version"
   OutFile "Syncplay $version Setup.exe"
@@ -55,6 +56,14 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^Desktop $${LANG_POLISH} "Pulpit"
   LangString ^QuickLaunchBar $${LANG_POLISH} "Pasek szybkiego uruchamiania"
   LangString ^UninstConfig $${LANG_POLISH} "Usun plik konfiguracyjny."
+  
+  LangString ^Associate $${LANG_GERMAN} "Syncplay mit Multimedia-Dateien assoziieren."
+  LangString ^VLC $${LANG_GERMAN} "Syncplay-Interface für VLC istallieren (ab VLC-Version 2.x.x)"
+  LangString ^Shortcut $${LANG_GERMAN} "Erstelle Verknüpfungen an folgenden Orten:"
+  LangString ^StartMenu $${LANG_GERMAN} "Start Menü"
+  LangString ^Desktop $${LANG_GERMAN} "Desktop"
+  LangString ^QuickLaunchBar $${LANG_GERMAN} "Schnellstartleiste"
+  LangString ^UninstConfig $${LANG_GERMAN} "Konfigurationsdatei löschen."
   
   PageEx license
     LicenseData resources\license.txt
@@ -155,6 +164,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push English
     Push $${LANG_POLISH}
     Push Polski
+    Push $${LANG_GERMAN}
+    Push Deutsch
     Push A ; A means auto count languages
     LangDLL::LangDialog "Installer Language" "Please select the language of the installer"
     Pop $$LANGUAGE
