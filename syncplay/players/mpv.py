@@ -66,6 +66,10 @@ class MpvPlayer(MplayerPlayer):
         if "Error parsing option" in line or "Error parsing commandline option" in line:
             self.quitReason = getMessage("mpv-version-error")
 
+        elif "Could not open pipe at '/dev/stdin'" in line:
+            self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("mpv-version-error"), True)
+            self.drop()
+
         elif line == "<SyncplayUpdateFile>":
             self._clearFileLoaded()
 
