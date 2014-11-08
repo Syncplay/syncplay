@@ -68,15 +68,6 @@ class MplayerPlayer(BasePlayer):
         self.reactor.callLater(0, self._client.initPlayer, self)
         self._onFileUpdate()
 
-    def askForStatus(self):
-        self._positionAsk.clear()
-        self._pausedAsk.clear()
-        self._getPaused()
-        self._getPosition()
-        self._positionAsk.wait()
-        self._pausedAsk.wait()
-        self._client.updatePlayerStatus(self._paused, self._position)
-
     def _setProperty(self, property_, value):
         self._listener.sendLine("set_property {} {}".format(property_, value))
 
@@ -291,7 +282,9 @@ class MplayerPlayer(BasePlayer):
 
         def sendLine(self, line):
             try:
-                line = (line.decode('utf8') + u"\n").encode('utf8')
+                if not isinstance(line, unicode):
+                    line = line.decode('utf8')
+                line = (line + u"\n").encode('utf8')
                 self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
                 self.__process.stdin.write(line)
             except IOError:
