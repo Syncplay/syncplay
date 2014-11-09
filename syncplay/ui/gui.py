@@ -432,10 +432,7 @@ class MainWindow(QtGui.QMainWindow):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            if sys.platform.startswith('win'):
-                dropfilepath = unicode(urls[0].path().replace("/", "\\"))[1:] # Removes starting slash
-            else:
-                dropfilepath = unicode(urls[0].path())
+            dropfilepath = unicode(event.mimeData().urls()[0].toLocalFile())
             if rewindFile == False:
                 self._syncplayClient._player.openFile(dropfilepath)
             else:
