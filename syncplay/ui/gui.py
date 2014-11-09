@@ -461,8 +461,7 @@ class MainWindow(QtGui.QMainWindow):
             self.resourcespath = utils.findWorkingDir() + "\\resources\\"
         else:
             self.resourcespath = utils.findWorkingDir() + "/resources/"
-        if sys.platform.startswith('darwin'):
-            self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
+        self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
         self.setWindowTitle("Syncplay v" + version)
         self.mainLayout = QtGui.QVBoxLayout()
         self.addTopLayout(self)
@@ -471,8 +470,6 @@ class MainWindow(QtGui.QMainWindow):
         self.addMainFrame(self)
         self.loadSettings()
         self.setWindowIcon(QtGui.QIcon(self.resourcespath + "syncplay.png"))
-        self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.AA_DontUseNativeMenuBar & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.show()
-        if sys.platform.startswith('darwin'):
-            self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
         self.setAcceptDrops(True)
