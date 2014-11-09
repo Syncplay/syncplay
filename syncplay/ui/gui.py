@@ -473,5 +473,7 @@ class MainWindow(QtGui.QMainWindow):
         self.loadSettings()
         self.setWindowIcon(QtGui.QIcon(self.resourcespath + "syncplay.png"))
         self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
+        if sys.platform.startswith('darwin'):
+            self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
         self.show()
         self.setAcceptDrops(True)
