@@ -96,6 +96,15 @@ class MpvPlayer(MplayerPlayer):
                     self._onMPVFileUpdate()
                     self.reactor.callFromThread(self._onFileUpdate)
 
+    def askForStatus(self):
+        self._positionAsk.clear()
+        self._pausedAsk.clear()
+        self._getPaused()
+        self._getPosition()
+        self._positionAsk.wait()
+        self._pausedAsk.wait()
+        self._client.updatePlayerStatus(self._paused, self._position)
+
     def _recentlyReset(self):
         if not self.lastResetTime:
             return False
