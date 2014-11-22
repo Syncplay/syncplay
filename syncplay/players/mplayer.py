@@ -25,7 +25,6 @@ class MplayerPlayer(BasePlayer):
         self.quitReason = None
         self.lastLoadedTime = None
         self.fileLoaded = False
-        self.lastResetTime = None
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:
@@ -93,8 +92,7 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
 
     def openFile(self, filePath, resetPosition=False):
-        if resetPosition:
-            self.lastResetTime = time.time()
+        self._filepath = filePath
         self._loadFile(filePath)
         self._onFileUpdate()
         if self._paused != self._client.getGlobalPaused():
@@ -134,9 +132,6 @@ class MplayerPlayer(BasePlayer):
 
     def _fileIsLoaded(self):
         return True
-
-    def _clearFileLoaded(self):
-        pass
 
     def _handleUnknownLine(self, line):
         pass
