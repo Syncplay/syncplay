@@ -229,7 +229,7 @@ class ConfigDialog(QtGui.QDialog):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            dropfilepath = unicode(event.mimeData().urls()[0].toLocalFile())
+            dropfilepath = os.path.abspath(unicode(event.mimeData().urls()[0].toLocalFile()))
             if dropfilepath[-4:].lower() == ".exe":
                 self.executablepathCombobox.setEditText(dropfilepath)
             else:
