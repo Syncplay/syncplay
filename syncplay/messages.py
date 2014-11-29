@@ -106,7 +106,7 @@ en = {
       "file-argument" : 'file to play',
       "args-argument" : 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
       "clear-gui-data-argument" : 'resets path and window state GUI data stored as QSettings',
-      "language-argument" :'language for Syncplay messages (en/pl)',
+      "language-argument" :'language for Syncplay messages (en/pl/ru)',
 
       "version-argument" : 'prints your version',
       "version-message" : "You're using Syncplay version {} ({})",
@@ -312,9 +312,277 @@ pl = {
       "server-timeout-error" : u"Przekroczono czas oczekiwania na odpowiedź serwera"
       }
 
+ru = {
+
+      # Client notifications
+      "config-cleared-notification" : u"Настройки сброшены. Изменения вступят в силу при сохранении корректной конфигурации.",
+
+      "relative-config-notification" : u"Загружен(ы) файл(ы) относительной конфигурации: {}",
+
+      "connection-attempt-notification" : u"Подключение к {}:{}",  # Port, IP
+      "reconnection-attempt-notification" : u"Соединение с сервером потеряно, переподключение",
+      "disconnection-notification" : u"Отключились от сервера",
+      "connection-failed-notification" : u"Не удалось подключиться к серверу",
+      "connected-successful-notification" : u"Соединение с сервером установлено",
+      "retrying-notification" : u"%s, следующая попытка через %d секунд(ы)...",  # Seconds
+
+      "rewind-notification" : u"Перемотано из-за разницы во времени с <{}>",  # User
+      "slowdown-notification" : u"Воспроизведение замедлено из-за разницы во времени с <{}>",  # User
+      "revert-notification" : u"Возвращаемся к нормальной скорости воспроизведения",
+
+      "pause-notification" : u"<{}> приостановил(а) воспроизведение",  # User
+      "unpause-notification" : u"<{}> возобновил(а) воспроизведение",  # User
+      "seek-notification" : u"<{}> перемотал с {} на {}",  # User, from time, to time
+
+      "current-offset-notification" : u"Текущее смещение: {} секунд(ы)",  # Offset
+
+      "room-join-notification" : u"<{}> зашел(зашла) в комнату: '{}'",  # User
+      "left-notification" : u"<{}> покинул(а) комнату",  # User
+      "left-paused-notification" : u"<{}> покинул(а) комнату, <{}> приостановил(а) воспроизведение",  # User who left, User who paused
+      "playing-notification" : u"<{}> включил '{}' ({})",  # User, file, duration
+      "playing-notification/room-addendum" : u" в комнате: '{}'",  # Room
+
+      "file-different-notification" : u"Вероятно, файл, который Вы смотрите, отличается от того, который смотрит <{}>.",  # User
+      "file-differences-notification" : u"Ваш файл отличается: ",
+      "room-files-not-same" : u"Не все пользователи в этой комнате смотрят один и тот же файл.",
+      "alone-in-the-room" : u"В этой комнате кроме Вас никого нет.",
+
+      "different-filesize-notification" : u" (размер Вашего файла не совпадает с размером их файла!)",
+      "file-played-by-notification" : u"Файл: {} просматривают:",  # File
+      "notplaying-notification" : u"Люди, которые не смотрят ничего:",
+      "userlist-room-notification" : u"В комнате '{}':",  # Room
+
+      "mplayer-file-required-notification" : u"Для использования Syncplay с mplayer необходимо передать файл в качестве параметра",
+      "mplayer-file-required-notification/example" : u"Пример использования: syncplay [options] [url|path/]filename",
+      "mplayer2-required" : u"Syncplay не совместим с MPlayer 1.x, пожалуйста, используйте mplayer2 или mpv",
+
+      "unrecognized-command-notification" : u"Неизвестная команда.",
+      "commandlist-notification" : u"Доступные команды:",
+      "commandlist-notification/room" : u"\tr [name] - сменить комнату",
+      "commandlist-notification/list" : u"\tl - показать список пользователей",
+      "commandlist-notification/undo" : u"\tu - отменить последнюю перемотку",
+      "commandlist-notification/pause" : u"\tp - вкл./выкл. паузу",
+      "commandlist-notification/seek" : u"\t[s][+-]time - перемотать к заданному моменту времени, если не указан + или -, то время считается абсолютным (от начала файла) в секундах или мин:сек",
+      "commandlist-notification/help" : u"\th - помощь",
+      "syncplay-version-notification" : u"Версия Syncplay: {}",  # syncplay.version
+      "more-info-notification" : u"Больше информации на {}",  # projectURL
+
+      "gui-data-cleared-notification" : u"Syncplay очистил путь и информацию о состоянии окна, использованного GUI.",
+
+      "vlc-version-mismatch" : u"Внимание: Вы используете VLC устаревшей версии {}. К сожалению, Syncplay способен работать с VLC {} и выше.",  # VLC version, VLC min version
+      "vlc-interface-version-mismatch" : u"Внимание: В используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше.",  # VLC interface version, VLC interface min version
+      "vlc-interface-oldversion-ignored" : u"Внимание: Syncplay обнаружил, что старая версия модуля интерфейса Syncplay для VLC уже установлена в директорию VLC. По существу, если Вы используете VLC 2.0, то предпочтение будет отдано файлу syncplay.lua, содержащемуся в директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
+      "vlc-interface-not-installed" : u"Внимание: Модуль интерфейса Syncplay для VLC не обнаружен в директории VLC. По существу, если Вы используете VLC 2.0, то VLC будет использовать модуль syncplay.lua из директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
+
+      # Client prompts
+      "enter-to-exit-prompt" : u"Для выхода нажмите Enter\n",
+
+      # Client errors
+      "missing-arguments-error" : u"Некоторые необходимые аргументы отсутствуют, обратитесь к --help",
+      "server-timeout-error" : u"Подключение к серверу превысило лимит времени",
+      "mpc-slave-error" : u"Невозможно запустить MPC в slave режиме!",
+      "mpc-version-insufficient-error" : u"Версия MPC слишком старая, пожалуйста, используйте `mpc-hc` >= `{}`",
+      "mpv-version-error" : u"Syncplay не совместим с данной версией mpv. Пожалуйста, используйте другую версию mpv (лучше свежайшую).",
+      "player-file-open-error" : u"Проигрыватель не может открыть файл.",
+      "player-path-error" : u"Путь к проигрывателю задан неверно.",
+      "hostname-empty-error" : u"Имя пользователя не может быть пустым.",
+      "empty-error" : u"{} не может быть пустым.",  # Configuration
+      "media-player-error" : u"Ошибка Media player: \"{}\"",  # Error line
+      "unable-import-gui-error" : u"Невозможно импортировать библиотеки GUI (графического интерфейса). Необходимо установить PySide, иначе графический интерфейс не будет работать.",
+
+      "arguments-missing-error" : u"Некоторые необходимые аргументы отсутствуют, обратитесь к --help",
+
+      "unable-to-start-client-error" : u"Невозможно запустить клиент",
+
+      "not-json-error" : u"Не является закодированной json-строкой\n",
+      "hello-arguments-error" : u"Не хватает аргументов Hello\n",
+      "version-mismatch-error" : u"Конфликт версий между клиентом и сервером\n",
+      "vlc-failed-connection" : u"Ошибка подключения к VLC. Если у Вас не установлен syncplay.lua, то обратитесь к http://syncplay.pl/LUA/ за инструкциями.",
+      "vlc-failed-noscript" : u"VLC сообщает, что скрипт интерфейса syncplay.lua не установлен. Пожалуйста, обратитесь к http://syncplay.pl/LUA/ за инструкциями.",
+      "vlc-failed-versioncheck" : u"Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
+      "vlc-failed-other" : u"Во время загрузки скрипта интерфейса syncplay.lua в VLC произошла следующая ошибка: {}",  # Syncplay Error
+
+      # Client arguments
+      "argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет.',
+      "argument-epilog" : u'Если параметр не будет передан, то будет использоваться значение, указанное в _config.',
+      "nogui-argument" : u'не использовать GUI',
+      "host-argument" : u'адрес сервера',
+      "name-argument" : u'желательное имя пользователя',
+      "debug-argument" : u'режим отладки',
+      "force-gui-prompt-argument" : u'показать окно настройки',
+      "no-store-argument" : u'не сохранять данные в .syncplay',
+      "room-argument" : u'начальная комната',
+      "password-argument" : u'пароль для доступа к серверу',
+      "player-path-argument" : u'путь к исполняемому файлу Вашего проигрывателя',
+      "file-argument" : u'воспроизводимый файл',
+      "args-argument" : u'параметры проигрывателя; если нужно передать параметры, начинающиеся с - , то сначала пишите \'--\'',
+      "clear-gui-data-argument" : u'сбрасывает путь и данные о состоянии окна GUI, хранимые как QSettings',
+      "language-argument" : u'язык сообщений Syncplay (en/pl/ru)',
+
+      "version-argument" : u'выводит номер версии',
+      "version-message" : u"Вы используете Syncplay версии {} ({})",
+
+      # Client labels
+      "config-window-title" : u"Настройка Syncplay",
+
+      "connection-group-title" : u"Параметры подключения",
+      "host-label" : u"Адрес сервера: ",
+      "name-label" : u"Имя пользователя (не обязательно):",
+      "password-label" : u"Пароль к серверу (если требуется):",
+      "room-label" : u"Начальная комната: ",
+
+      "media-setting-title" : u"Параметры проигрывателя",
+      "executable-path-label" : u"Путь к проигрывателю:",
+      "media-path-label" : u"Путь к видеофайлу:",
+      "browse-label" : u"Выбрать",
+
+      "more-title" : u"Больше настроек",
+      "slowdown-threshold-label" : u"Предел для замедления:",
+      "rewind-threshold-label" : u"Предел для перемотки:",
+      "never-rewind-value" : u"Никогда",
+      "seconds-suffix" : u" секунд(ы)",
+      "privacy-sendraw-option" : u"отпр. как есть",
+      "privacy-sendhashed-option" : u"отпр. хэш",
+      "privacy-dontsend-option" : u"не отпр.",
+      "filename-privacy-label" : u"Имя файла:",
+      "filesize-privacy-label" : u"Размер файла:",
+      "slowondesync-label" : u"Замедлять при небольших рассинхронизациях (не поддерживаетя в MPC-HC)",
+      "rewindondesync-label" : u"Перемотка при больших рассинхронизациях (настоятельно рекомендуется)",
+      "dontslowdownwithme-label" : u"Никогда не замедлять или перематывать видео другим",
+      "pauseonleave-label" : u"Приостанавливать, когда кто-то уходит (например, отключился)",
+      "forceguiprompt-label" : u"Не показывать больше этот диалог", # (Inverted)
+      "nostore-label" : u"Не сохранять текущую конфигурацию", # (Inverted)
+      "showosd-label" : u"Включить экранные сообщения (поверх видео)",
+
+      "showosdwarnings-label" : u"Показывать предупреждения (напр., когда файлы не совпадают)",
+      "showsameroomosd-label" : u"Показывать события Вашей комнаты",
+      "showdifferentroomosd-label" : u"Показывать события других комнат",
+      "showslowdownosd-label" : u"Показывать уведомления о замедлении/перемотке",
+      "showcontactinfo-label" : u"Отображать контактную информацию разработчиков",
+      "showbuttonlabels-label" : u"Отображать надписи на кнопках",
+      "showtooltips-label" : u"Отображать всплывающие подсказки",
+      "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
+      "basics-label" : u"Основное",
+      "sync-label" : u"Синхронизация",
+      "messages-label" : u"Сообщения",
+      "privacy-label" : u"Приватность",
+
+      "help-label" : u"Помощь",
+      "reset-label" : u"Сброс настроек",
+      "run-label" : u"Запустить Syncplay",
+      "storeandrun-label" : u"Сохранить настройки и зап. Syncplay",
+
+      "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues/new\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> за инорфмацией, помощью и обновлениями!",
+
+      "joinroom-guibuttonlabel" : u"Зайти в комнату",
+      "seektime-guibuttonlabel" : u"Перемотать",
+      "undoseek-guibuttonlabel" : u"Отменить перемотку",
+      "togglepause-guibuttonlabel" : u"Вкл./выкл. паузу",
+      "play-guibuttonlabel" : u"Play",
+      "pause-guibuttonlabel" : u"Пауза",
+
+      "roomuser-heading-label" : u"Комната / Пользователь",
+      "fileplayed-heading-label" : u"Воспроизводимый файл",
+      "notifications-heading-label" : u"Уведомления",
+      "userlist-heading-label" : u"Кто что смотрит",
+      "othercommands-heading-label" : u"Другие команды",
+      "room-heading-label" : u"Комната",
+      "seek-heading-label" : u"Перемотка",
+
+      "browseformedia-label" : u"Выбрать видеофайл",
+
+      "file-menu-label" : u"&Файл", # & precedes shortcut key
+      "openmedia-menu-label" : u"&Открыть видеофайл",
+      "exit-menu-label" : u"&Выход",
+      "advanced-menu-label" : u"&Дополнительно",
+      "setoffset-menu-label" : u"Установить &смещение",
+      "help-menu-label" : u"&Помощь",
+      "userguide-menu-label" : u"&Руководство Пользователя",
+
+      "setoffset-msgbox-label" : u"Установить смещение",
+      "offsetinfo-msgbox-label" : u"Смещение (см. как использовать на http://syncplay.pl/guide/):",
+
+      # Tooltips
+
+      "host-tooltip" : u"Имя или IP-адрес, к которому будет произведено подключение, может содержать номер порта (напр., syncplay.pl:8999). Синхронизация возможна только в рамках одного сервера/порта.",
+      "name-tooltip" : u"Имя, под которым Вы будете известны. Регистриция не требуется, так что имя пользователя можно легко сменить в любой момент. Будет сгенерировано случайным образом, если не указать.",
+      "password-tooltip" : u"Пароли нужны для подключения к приватным серверам.",
+      "room-tooltip" : u"Комната, в которую Вы попадете сразу после подключения. Можно не указывать. Синхронизация возможна только между людьми в одной и той же комнате.",
+
+      "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, VLC, mplayer2 или mpv).",
+      "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mpv и mplayer2.",
+
+      "more-tooltip" : u"Показать дополнительные настройки.",
+      "slowdown-threshold-tooltip" : u"Отставание самого медленного клиента, необходимое для временного уменьшения скорости видео (по умолчанию: {} сек.).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
+      "rewind-threshold-tooltip" : u"Отставание самого медленного клиента, необходимое для перемотки назад в целях синхронизации (по умолчанию: {} сек.).".format(constants.DEFAULT_REWIND_THRESHOLD),
+      "filename-privacy-tooltip" : u"Режим приватности для передачи имени воспроизводимого файла на сервер.",
+      "filesize-privacy-tooltip" : u"Режим приватности для передачи размера воспроизводимого файла на сервер.",
+      "privacy-sendraw-tooltip" : u"Отправляет эту информацию без шифрования. Рекомендуемая опция с наибольшей функциональностью.",
+      "privacy-sendhashed-tooltip" : u"Отправляет хэш-сумму этой информации, делая ее невидимой для других пользователей.",
+      "privacy-dontsend-tooltip" : u"Не отправлять эту информацию на сервер. Предоставляет наибольшую приватность.",
+      "slowondesync-tooltip" : u"Временно уменьшить скорость воспроизведения в целях синхронизации с другими зрителями. Не поддерживается в MPC-HC.",
+      "dontslowdownwithme-tooltip" : u"Ваши лаги не будут влиять на других зрителей.",
+      "pauseonleave-tooltip" : u"Приостановить воспроизведение, если Вы покинули комнату или кто-то из зрителей отключился от сервера.",
+      "forceguiprompt-tooltip" : u"Окно настройки не будет отображаться при открытии файла в Syncplay.", # (Inverted)
+      "nostore-tooltip" : u"Запустить Syncplay с данной конфигурацией, но не сохранять изменения навсегда.", # (Inverted)
+      "rewindondesync-tooltip" : u"Перематывать назад, когда это необходимо для синхронизации. Отключение этой опции может привести к большим рассинхронизациям!",
+      "showosd-tooltip" : u"Отправлять сообщения Syncplay в видеопроигрыватель и отображать их поверх видео (OSD - On Screen Display).",
+      "showosdwarnings-tooltip" : u"Показывать OSC-предупреждения, если проигрываются разные файлы или если Вы в комнате больше никого нет.",
+      "showsameroomosd-tooltip" : u"Показывать OSD-уведомления о событиях, относящихся к комнате, в которой Вы находитесь.",
+      "showdifferentroomosd-tooltip" : u"Показывать OSD-уведомления о событиях, относящихся к любым другим комнатам.",
+      "showslowdownosd-tooltip" : u"Показывать уведомления о замедлении или перемотке в целях синхронизации.",
+      "showcontactinfo-tooltip" : u"Показывать информационных блок с контактной информацией разработчиков Syncplay на главном окне Syncplay.",
+      "showbuttonlabels-tooltip" : u"Показывать текст рядом с иконками на кнопках в основном пользовательском интерфейсе.",
+      "showtooltips-tooltip" : u"Показывать всплывающие подсказки при наведении мыши на некоторые элементы в окне Syncplay.",
+      "showdurationnotification-tooltip" : u"Полезно, когда сегмент составного файла отсутствует. Возможны ложные срабатывания.",
+
+      "help-tooltip" : u"Открыть Руководство Пользователя на Syncplay.pl.",
+      "reset-tooltip" : u"Сбрасывает все настройки Syncplay в начальное состояние.",
+
+      "togglepause-tooltip" : u"Приостановить/продолжить просмотр.",
+      "play-tooltip" : u"Продолжить просмотр.",
+      "pause-tooltip" : u"Приостановить просмотр.",
+      "undoseek-tooltip" : u"Перейти к тому месту, которое Вы просматривали до перемотки.",
+      "joinroom-tooltip" : u"Покинуть комнату и зайти в другую, указанную комнату.",
+      "seektime-tooltip" : u"Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",
+
+      # In-userlist notes (GUI)
+      "differentsize-note" : u"Размер файла не совпадает!",
+      "differentsizeandduration-note" : u"Размер и продолжительность файла не совпадают!",
+      "differentduration-note" : u"Продолжительность файла не совпадает!",
+      "nofile-note" : u"(Ничего не воспроизводим)",
+
+      # Server messages to client
+      "new-syncplay-available-motd-message" : u"<NOTICE> Вы используете Syncplay версии {}. Доступна более новая версия на http://syncplay.pl/ . </NOTICE>",  # ClientVersion
+		
+      # Server arguments
+      "server-argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет. Серверная часть',
+      "server-argument-epilog" : u'Если параметр не будет передан, то будет использоваться значение, указанное в _config.',
+      "server-port-argument" : u'номер TCP порта сервера',
+      "server-password-argument" : u'пароль к серверу',
+      "server-isolate-room-argument" : u'должны ли комнаты быть изолированными?',
+      "server-motd-argument" : u"путь к файлу, из которого будет извлекаться MOTD-сообщение",
+      "server-messed-up-motd-unescaped-placeholders" : u"MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
+      "server-messed-up-motd-too-long" : u"MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
+      "server-irc-verbose" : u"Должен ли сервер активно сообщать о всех событиях в комнатах?",
+      "server-irc-config" : u"Путь к конфигурационным файлам IRC-бота.",
+
+      # Server errors
+      "unknown-command-server-error" : u"Неизвестная команда: {}",  # message
+      "not-json-server-error" : u"Не является закодированной json-строкой: {}",  # message
+      "not-known-server-error" : u"Данную команду могут выполнять только авторизованные пользователи.",
+      "client-drop-server-error" : u"Клиент отключен с ошибкой: {} -- {}",  # host, error
+      "password-required-server-error" : u"Необходимо указать пароль.",
+      "wrong-password-server-error" : u"Указан неверный пароль.",
+      "hello-server-error" : u"Не хватает аргументов Hello.",
+      "version-mismatch-server-error" : u"Конфликт версий между клиентом и сервером."
+
+      }
+	  
 messages = {
            "en": en,
            "pl": pl,
+           "ru": ru,
            "current": None
            }
 

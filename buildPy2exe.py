@@ -27,6 +27,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\English.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Polish.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Russian.nlf"
   
   Name "Syncplay $version"
   OutFile "Syncplay $version Setup.exe"
@@ -47,6 +48,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_POLISH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_POLISH} "FileDescription" "Syncplay"
   
+  VIAddVersionKey /LANG=$${LANG_RUSSIAN} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_RUSSIAN} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_RUSSIAN} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_RUSSIAN} "FileDescription" "Syncplay"
+  
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
   LangString ^VLC $${LANG_ENGLISH} "Install Syncplay interface for VLC 2 and above"
@@ -66,6 +72,16 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^Desktop $${LANG_POLISH} "Pulpit"
   LangString ^QuickLaunchBar $${LANG_POLISH} "Pasek szybkiego uruchamiania"
   LangString ^UninstConfig $${LANG_POLISH} "Usun plik konfiguracyjny."
+  
+  LangString ^SyncplayLanguage $${LANG_RUSSIAN} "ru"
+  LangString ^Associate $${LANG_RUSSIAN} "Ассоциировать Syncplay с видеофайлами"
+  LangString ^VLC $${LANG_RUSSIAN} "Установить интерфейс Syncplay для VLC 2+"
+  LangString ^BrowseVLCBtn $${LANG_RUSSIAN} "Укажите папку VLC"
+  LangString ^Shortcut $${LANG_RUSSIAN} "Создать ярлыки:"
+  LangString ^StartMenu $${LANG_RUSSIAN} "в меню Пуск"
+  LangString ^Desktop $${LANG_RUSSIAN} "на рабочем столе"
+  LangString ^QuickLaunchBar $${LANG_RUSSIAN} "в меню быстрого запуска"
+  LangString ^UninstConfig $${LANG_RUSSIAN} "Удалить файл настроек."
   
   PageEx license
     LicenseData resources\license.txt
@@ -164,6 +180,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push English
     Push $${LANG_POLISH}
     Push Polski
+	Push $${LANG_RUSSIAN}
+    Push Russian
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE
