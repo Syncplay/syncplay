@@ -16,7 +16,7 @@ import syncplay
 import os
 import subprocess
 
-p = "C:\\Program Files (x86)\\NSIS\\makensis.exe" #TODO: how to move that into proper place, huh
+p = "C:\\Program Files (x86)\\NSIS\\Unicode\\makensis.exe" #TODO: how to move that into proper place, huh
 NSIS_COMPILE = p if os.path.isfile(p) else "makensis.exe"
 OUT_DIR = "syncplay v{}".format(syncplay.version)
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
@@ -28,7 +28,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\English.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Polish.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Russian.nlf"
-  
+
   Name "Syncplay $version"
   OutFile "Syncplay $version Setup.exe"
   InstallDir $$PROGRAMFILES\Syncplay
@@ -36,23 +36,23 @@ NSIS_SCRIPT_TEMPLATE = r"""
   XPStyle on
   Icon resources\icon.ico ;Change DIR
   SetCompressor /SOLID lzma
-     
+
   VIProductVersion "$version.0"
   VIAddVersionKey /LANG=$${LANG_ENGLISH} "ProductName" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_ENGLISH} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_ENGLISH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_ENGLISH} "FileDescription" "Syncplay"
-  
+
   VIAddVersionKey /LANG=$${LANG_POLISH} "ProductName" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_POLISH} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_POLISH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_POLISH} "FileDescription" "Syncplay"
-  
+
   VIAddVersionKey /LANG=$${LANG_RUSSIAN} "ProductName" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_RUSSIAN} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_RUSSIAN} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_RUSSIAN} "FileDescription" "Syncplay"
-  
+
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
   LangString ^VLC $${LANG_ENGLISH} "Install Syncplay interface for VLC 2 and above"
@@ -62,7 +62,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^Desktop $${LANG_ENGLISH} "Desktop"
   LangString ^QuickLaunchBar $${LANG_ENGLISH} "Quick Launch Bar"
   LangString ^UninstConfig $${LANG_ENGLISH} "Delete configuration file."
-    
+
   LangString ^SyncplayLanguage $${LANG_POLISH} "pl"
   LangString ^Associate $${LANG_POLISH} "Skojarz Syncplaya z multimediami"
   LangString ^VLC $${LANG_POLISH} "Zainstaluj interface Syncplaya dla VLC 2+"
@@ -72,7 +72,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^Desktop $${LANG_POLISH} "Pulpit"
   LangString ^QuickLaunchBar $${LANG_POLISH} "Pasek szybkiego uruchamiania"
   LangString ^UninstConfig $${LANG_POLISH} "Usun plik konfiguracyjny."
-  
+
   LangString ^SyncplayLanguage $${LANG_RUSSIAN} "ru"
   LangString ^Associate $${LANG_RUSSIAN} "Ассоциировать Syncplay с видеофайлами"
   LangString ^VLC $${LANG_RUSSIAN} "Установить интерфейс Syncplay для VLC 2+"
@@ -82,16 +82,16 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^Desktop $${LANG_RUSSIAN} "на рабочем столе"
   LangString ^QuickLaunchBar $${LANG_RUSSIAN} "в меню быстрого запуска"
   LangString ^UninstConfig $${LANG_RUSSIAN} "Удалить файл настроек."
-  
+
   PageEx license
     LicenseData resources\license.txt
   PageExEnd
   Page custom DirectoryCustom DirectoryCustomLeave
   Page instFiles
-  
+
   UninstPage custom un.installConfirm un.installConfirmLeave
   UninstPage instFiles
-  
+
   Var Dialog
   Var Icon_Syncplay
   Var Icon_Syncplay_Handle
@@ -114,7 +114,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Var Label_Size
   Var Label_Space
   Var Text_Directory
-  
+
   Var Uninst_Dialog
   Var Uninst_Icon
   Var Uninst_Icon_Handle
@@ -123,14 +123,14 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Var Uninst_Text_Directory
   Var Uninst_CheckBox_Config
   Var Uninst_CheckBox_Config_State
-  
+
   Var Size
   Var SizeHex
   Var AvailibleSpace
   Var AvailibleSpaceGiB
   Var Drive
   Var VLC_Directory
-    
+
   !macro APP_ASSOCIATE EXT FileCLASS DESCRIPTION COMMANDTEXT COMMAND
     WriteRegStr HKCR ".$${EXT}" "" "$${FileCLASS}"
     WriteRegStr HKCR "$${FileCLASS}" "" `$${DESCRIPTION}`
@@ -138,23 +138,23 @@ NSIS_SCRIPT_TEMPLATE = r"""
     WriteRegStr HKCR "$${FileCLASS}\shell\open" "" `$${COMMANDTEXT}`
     WriteRegStr HKCR "$${FileCLASS}\shell\open\command" "" `$${COMMAND}`
   !macroend
-  
+
   !macro APP_UNASSOCIATE EXT FileCLASS
     ; Backup the previously associated File class
     ReadRegStr $$R0 HKCR ".$${EXT}" `$${FileCLASS}_backup`
     WriteRegStr HKCR ".$${EXT}" "" "$$R0"
     DeleteRegKey HKCR `$${FileCLASS}`
   !macroend
-  
+
   !macro ASSOCIATE EXT
     !insertmacro APP_ASSOCIATE "$${EXT}" "Syncplay.$${EXT}" "$$INSTDIR\Syncplay.exe,%1%" \
     "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
   !macroend
-  
+
   !macro UNASSOCIATE EXT
     !insertmacro APP_UNASSOCIATE "$${EXT}" "Syncplay.$${EXT}"
   !macroend
-  
+
   ;Prevents from running more than one instance of installer and sets default state of checkboxes
   Function .onInit
     System::Call 'kernel32::CreateMutexA(i 0, i 0, t "SyncplayMutex") i .r1 ?e'
@@ -181,7 +181,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push $${LANG_POLISH}
     Push Polski
 	Push $${LANG_RUSSIAN}
-    Push Russian
+    Push Русский
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE
@@ -234,13 +234,13 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${NSD_CreateLabel} 8u 85u 187u 10u "$$(^Shortcut)"
     Pop $$Label_Shortcut
 
-    $${NSD_CreateCheckbox} 8u 98u 50u 10u "$$(^StartMenu)"
+    $${NSD_CreateCheckbox} 8u 98u 60u 10u "$$(^StartMenu)"
     Pop $$CheckBox_StartMenuShortcut
 
-    $${NSD_CreateCheckbox} 68u 98u 50u 10u "$$(^Desktop)"
+    $${NSD_CreateCheckbox} 78u 98u 70u 10u "$$(^Desktop)"
     Pop $$CheckBox_DesktopShortcut
 
-    $${NSD_CreateCheckbox} 128u 98u 150u 10u "$$(^QuickLaunchBar)"
+    $${NSD_CreateCheckbox} 158u 98u 130u 10u "$$(^QuickLaunchBar)"
     Pop $$CheckBox_QuickLaunchShortcut
 
     $${If} $$CheckBox_Associate_State == $${BST_CHECKED}
@@ -494,18 +494,18 @@ NSIS_SCRIPT_TEMPLATE = r"""
     IfFileExists "$$VLC_Directory\lua\intf\syncplay.lua" 0 +2
     Delete $$VLC_Directory\lua\intf\syncplay.lua
   FunctionEnd
-  
+
   Section "Install"
     SetOverwrite on
     SetOutPath $$INSTDIR
     WriteUninstaller uninstall.exe
-    
+
     $installFiles
-    
+
     Call InstallOptions
     Call WriteRegistry
   SectionEnd
-     
+
   Section "Uninstall"
     Call un.AssociateDel
     Call un.InstallOptions
