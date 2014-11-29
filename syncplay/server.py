@@ -11,7 +11,7 @@ import codecs
 import os
 from string import Template
 import argparse
-from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator
+from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion
 
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None):
@@ -42,7 +42,7 @@ class SyncFactory(Factory):
     def getMotd(self, userIp, username, room, clientVersion):
         oldClient = False
         if constants.WARN_OLD_CLIENTS:
-            if int(clientVersion.replace(".", "")) < int(constants.RECENT_CLIENT_THRESHOLD.replace(".", "")):
+            if not meetsMinVersion(clientVersion, constants.RECENT_CLIENT_THRESHOLD):
                 oldClient = True
         if self._motdFilePath and os.path.isfile(self._motdFilePath):
             tmpl = codecs.open(self._motdFilePath, "r", "utf-8-sig").read()

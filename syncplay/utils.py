@@ -210,6 +210,13 @@ def sameFileduration (duration1, duration2):
     else:
         return False
 
+def meetsMinVersion(version, minVersion):
+    def versiontotuple(ver):
+        return tuple(map(int, ver.split(".")))
+    versionTuple = versiontotuple(version)
+    minVersionTuple = versiontotuple(minVersion)
+    return versionTuple >= minVersionTuple
+
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
     PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")

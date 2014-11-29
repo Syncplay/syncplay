@@ -436,14 +436,14 @@ class SyncplayClient(object):
         def requireMinVersionDecorator(f):
             @wraps(f)
             def wrapper(self, *args, **kwds):
-                if int(self.serverVersion.replace(".", "")) < int(minVersion.replace(".", "")):
+                if not utils.meetsMinVersion(self.serverVersion,minVersion):
                     self.ui.showErrorMessage(u"This feature is not supported by the server. The feature requires a  server running Syncplay {}+, but the server is running Syncplay {}.".format(minVersion, self.serverVersion))
                     return
                 return f(self, *args, **kwds)
             return wrapper
         return requireMinVersionDecorator
 
-    @requireMinServerVersion("1.3.0")
+    @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
     def createControlledRoom(self, roomName):
         controlPassword = utils.RandomStringGenerator.generate_room_password()
         self.ui.showMessage(u"Attempting to create controlled room '{}' with password '{}'...".format(roomName, controlPassword))
@@ -463,7 +463,7 @@ class SyncplayClient(object):
         else:
             return ""
 
-    @requireMinServerVersion("1.3.0")
+    @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
     def identifyAsController(self, controlPassword):
         controlPassword = self.stripControlPassword(controlPassword)
         self.ui.showMessage(getMessage("identifying-as-controller-notification").format(controlPassword))

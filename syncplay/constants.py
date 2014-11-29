@@ -52,6 +52,7 @@ COMMANDS_AUTH = ['a','auth']
 MPC_MIN_VER = "1.6.4"
 VLC_MIN_VERSION = "2.0.0"
 VLC_INTERFACE_MIN_VERSION = "0.2.1"
+CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
 MPC_PATHS = [
     r"C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
     r"C:\Program Files\MPC-HC\mpc-hc.exe",
