@@ -73,7 +73,6 @@ class MainWindow(QtGui.QMainWindow):
         self._syncplayClient = client
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
-        constants.SHOW_BUTTON_LABELS = self.config['showButtonLabels']
         try:
             if self.contactLabel and not self.config['showContactInfo']:
                 self.contactLabel.hide()
