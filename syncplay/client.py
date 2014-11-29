@@ -190,6 +190,13 @@ class SyncplayClient(object):
         madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
+    def _fastforwardPlayerDueToTimeDifference(self, position, setBy):
+        hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
+        self.setPosition(position + constants.FASTFORWARD_EXTRA_TIME)
+        self.ui.showMessage(getMessage("fastforward-notification").format(setBy), hideFromOSD)
+        madeChangeOnPlayer = True
+        return madeChangeOnPlayer
+
     def _serverUnpaused(self, setBy):
         hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
         self._player.setPaused(False)
@@ -247,6 +254,9 @@ class SyncplayClient(object):
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
         if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindOnDesync'] == False:
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
+        if diff < (self._config['fastforwardThreshold'] * -1) and not doSeek and not  self._config['fastforwardOnDesync'] == False:
+            if utils.RoomPasswordProvider.isControlledRoom(self.getRoom()) and not self.userlist.currentUser.isController():
+                madeChangeOnPlayer = self._fastforwardPlayerDueToTimeDifference(position, setBy)
         if self._player.speedSupported and not doSeek and not paused and not self._config['slowOnDesync'] == False:
             madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
         if paused == False and pauseChanged:

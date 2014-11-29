@@ -36,8 +36,10 @@ class ConfigurationGetter(object):
                         "playerClass": None,
                         "slowdownThreshold": constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD,
                         "rewindThreshold": constants.DEFAULT_REWIND_THRESHOLD,
+                        "fastforwardThreshold": constants.DEFAULT_FASTFORWARD_THRESHOLD,
                         "rewindOnDesync": True,
                         "slowOnDesync": True,
+                        "fastforwardOnDesync": True,
                         "dontSlowDownWithMe": False,
                         "filenamePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
                         "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
@@ -91,12 +93,13 @@ class ConfigurationGetter(object):
 
         self._numeric = [
             "slowdownThreshold",
-            "rewindThreshold"
+            "rewindThreshold",
+            "fastforwardThreshold",
         ]
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "slowOnDesync", "rewindOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
+                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showContactInfo" , "showDurationNotification"],
                         "general": ["language"]
                         }

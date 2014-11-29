@@ -16,6 +16,7 @@ en = {
       "retrying-notification" : "%s, Retrying in %d seconds...",  # Seconds
 
       "rewind-notification" : "Rewinded due to time difference with <{}>",  # User
+      "fastforward-notification" : "Fast-forwarded due to time difference with <{}>",  # User
       "slowdown-notification" : "Slowing down due to time difference with <{}>",  # User
       "revert-notification" : "Reverting speed back to normal",
 
@@ -134,6 +135,7 @@ en = {
       "more-title" : "Show more settings",
       "slowdown-threshold-label" : "Slow down threshold:",
       "rewind-threshold-label" : "Rewind threshold:",
+      "fastforward-threshold-label" : "Fast-forward threshold:",
       "never-rewind-value" : "Never",
       "seconds-suffix" : " secs",
       "privacy-sendraw-option" : "Send raw",
@@ -226,6 +228,7 @@ en = {
       "more-tooltip" : "Display less frequently used settings.",
       "slowdown-threshold-tooltip" : "Time ahead of slowest client before temporarily reducing playback speed (default: {} secs).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
       "rewind-threshold-tooltip" : "Time ahead slowest client before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_REWIND_THRESHOLD),
+      "fastforward-threshold-tooltip" : "Time behind room controller before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD),
       "filename-privacy-tooltip" : "Privacy mode for sending currently playing filename to server.",
       "filesize-privacy-tooltip" : "Privacy mode for sending size of currently playing file to server.",
       "privacy-sendraw-tooltip" : "Send this information without obfuscation. This is the default option with most functionality.",
@@ -235,9 +238,11 @@ en = {
       "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
       "rewindondesync-label" : "Rewind on major desync (highly recommended)",
+      "fastforwardondesync-label" : "Fast-forward if lagging behind room controller (recommended)",
       "forceguiprompt-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.", # (Inverted)
       "nostore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.", # (Inverted)
       "rewindondesync-tooltip" : "Jump back when needed to get back in sync. Disabling this option can result in major desyncs!",
+      "fastforwardondesync-tooltip" : "Jump forward when needed to get back in sync. Disabling this option can result in major desyncs!",
       "showosd-tooltip" : "Sends Syncplay messages to media player OSD.",
       "showosdwarnings-tooltip" : "Show warnings if playing different file, alone in room.",
       "showsameroomosd-tooltip" : "Show OSD notifications for events relating to room user is in.",
