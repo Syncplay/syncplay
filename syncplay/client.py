@@ -692,7 +692,8 @@ class SyncplayUserlist(object):
     def areAllFilesInRoomSame(self):
         for user in self._users.itervalues():
             if user.room == self.currentUser.room and user.file and not self.currentUser.isFileSame(user.file):
-                return False
+                if user.isController() or not utils.RoomPasswordProvider.isControlledRoom(user.room):
+                    return False
         return True
 
     def areYouAloneInRoom(self):
