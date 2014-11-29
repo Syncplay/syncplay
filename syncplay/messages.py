@@ -106,7 +106,7 @@ en = {
       "file-argument" : 'file to play',
       "args-argument" : 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
       "clear-gui-data-argument" : 'resets path and window state GUI data stored as QSettings',
-      "language-argument" :'language for Syncplay messages (en/pl/ru)',
+      "language-argument" :'language for Syncplay messages (de/en/pl/ru)',
 
       "version-argument" : 'prints your version',
       "version-message" : "You're using Syncplay version {} ({})",
@@ -578,11 +578,205 @@ ru = {
       "version-mismatch-server-error" : u"Конфликт версий между клиентом и сервером."
 
       }
+
+de = {
+
+      # Client notifications
+      "relative-config-notification" : u"Relative Konfigurationsdatei(en) geladen: {}",
+
+      "connection-attempt-notification" : u"Versuche zu verbinden nach {}:{}",  # Port, IP
+      "reconnection-attempt-notification" : u"Verbindung zum Server verloren, versuche erneut",
+      "disconnection-notification" : u"Verbindung zum Server beendet",
+      "connection-failed-notification" : u"Verbindung zum Server fehlgeschlagen",
+      "connected-successful-notification" : u"Erfolgreich mit Server verbunden",
+      "retrying-notification" : u"%s, versuche erneut in %d Sekunden...",  # Seconds
+
+      "rewind-notification" : u"Zurückgespult wegen Zeitdifferenz mit <{}>",  # User
+      "slowdown-notification" : u"Verlangsamt wegen Zeitdifferenz mit <{}>",  # User
+      "revert-notification" : u"Normalgeschwindigkeit",
+
+      "pause-notification" : u"<{}> pausierte",  # User
+      "unpause-notification" : u"<{}> startete",  # User
+      "seek-notification" : u"<{}> sprang von {} nach {}",  # User, from time, to time
+
+      "current-offset-notification" : u"Aktueller Offset: {} Sekunden",  # Offset
+
+      "room-join-notification" : u"<{}> hat den Raum '{}' betreten",  # User
+      "left-notification" : u"<{}> ist gegangen",  # User
+      "playing-notification" : u"<{}> spielt '{}' ({})",  # User, file, duration
+      "playing-notification/room-addendum" :  u" in Raum: '{}'",  # Room
+
+      "file-different-notification" : u"Deine Datei scheint sich von <{}>s zu unterscheiden",  # User
+      "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: ",
+      "room-files-not-same" : u"Nicht alle Dateien im Raum sind gleich",
+      "alone-in-the-room": u"Du bist alleine im Raum",
+
+      "different-filesize-notification" : u" (ihre Dateigröße ist anders als deine!)",
+      "file-played-by-notification" : u"Datei: {} wird gespielt von:",  # File
+      "notplaying-notification" : u"Personen im Raum, die keine Dateien spielen:",
+      "userlist-room-notification" :  u"In Raum '{}':",  # Room
+
+      "mplayer-file-required-notification" : u"Syncplay für mplayer benötigt eine Datei-Angabe beim Start",
+      "mplayer-file-required-notification/example" : u"Nutzungsbeispiel: syncplay [optionen] [url|pfad/]dateiname",
+      "mplayer2-required" : u"Syncplay ist inkompatibel zu MPlayer 1.x, bitte nutze MPlayer2 oder mpv",
+
+      "unrecognized-command-notification" : u"Unbekannter Befehl",
+      "commandlist-notification" : u"Verfügbare Befehle:",
+      "commandlist-notification/room" : u"\tr [Name] - Raum ändern",
+      "commandlist-notification/list" : u"\tl - Nutzerliste anzeigen",
+      "commandlist-notification/undo" : u"\tu - Letzter Zeitsprung rückgängig",
+      "commandlist-notification/pause" : u"\tp - Pausieren / weiter",
+      "commandlist-notification/seek" : u"\t[s][+-]Zeit - zu einer bestimmten Zeit spulen, ohne + oder - wird als absolute Zeit gewertet; Angabe in Sekungen oder Minuten:Sekunden",
+      "commandlist-notification/help" : u"\th - Diese Hilfe",
+      "syncplay-version-notification" : u"Syncplay Version: {}",  # syncplay.version
+      "more-info-notification" : u"Weitere Informationen auf: {}",  # projectURL
+
+      "gui-data-cleared-notification" : u"Syncplay hat die Pfad und Fensterdaten der Syncplay-GUI zurückgesetzt.",
+
+      "vlc-version-mismatch": u"Warnung: Du nutzt VLC Version {}, aber Syncplay wurde für VLC ab Version {} entwickelt.",  # VLC version, VLC min version
+      "vlc-interface-version-mismatch": u"Warnung: Du nutzt Version {} des VLC-Syncplay Interface-Moduls, Syncplay benötigt aber mindestens Version {}.",  # VLC interface version, VLC interface min version
+      "vlc-interface-oldversion-ignored": u"Warnung: Syncplay hat bemerkt, dass eine alte Version des Syncplay Interface-Moduls für VLC im VLC-Verzeichnis installiert ist. Daher wird, wenn du VLC 2.0 nutzt, die syncplay.lua die mit Syncplay mitgeliefert wurde, verwendet. Dies bedeutet allerdings, dass keine anderen Interface-Skripts und Erweiterungen geladen werden. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du Details zur Installation des syncplay.lua-Skripts.",
+      "vlc-interface-not-installed": u"Warnung: Es wurde kein Syncplay Interface-Modul für VLC im VLC-Verzeichnis gefunden. Daher wird, wenn du VLC 2.0 nutzt, die syncplay.lua die mit Syncplay mitgeliefert wurde, verwendet. Dies bedeutet allerdings, dass keine anderen Interface-Skripts und Erweiterungen geladen werden. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du  Details zur Installation des syncplay.lua-Skripts.",
+
+      # Client prompts
+      "enter-to-exit-prompt" : u"Enter drücken zum Beenden\n",
+
+      # Client errors
+      "missing-arguments-error" : u"Notwendige Argumente fehlen, siehe --help",
+      "server-timeout-error" : u"Timeout: Verbindung zum Server fehlgeschlagen",
+       "mpc-slave-error" : u"Kann MPC nicht im Slave-Modus starten!",
+       "mpc-version-insufficient-error" : u"MPC-Version nicht ausreichend, bitte nutze `mpc-hc` >= `{}`",
+       "player-file-open-error" : u"Fehler beim Öffnen der Datei durch den Player",
+       "player-path-error" : u"Ungültiger Player-Pfad",
+       "hostname-empty-error" : u"Hostname darf nicht leer sein",
+       "empty-error" : u"{} darf nicht leer sein",  # Configuration
+
+       "arguments-missing-error" : u"Notwendige Argumente fehlen, siehe --help",
+
+       "unable-to-start-client-error" : u"Client kann nicht gestartet werden",
+
+       "not-json-error" : u"Kein JSON-String\n",
+       "hello-arguments-error" : u"Zu wenige Hello-Argumente\n",
+       "version-mismatch-error" : u"Verschiedene Versionen auf Client und Server\n",
+       "vlc-error-echo": u"VLC-Fehler: {}",  # VLC error line
+       "vlc-unicode-loadfile-error" : u"Die Datei kann nicht durch Syncplay geladen werden, da sie nicht-ASCII Zeichen enthält. Bitte öffne die Datei mit VLC.",
+       "vlc-failed-connection": u"Kann nicht zu VLC verbinden. Wenn du syncplay.lua nicht installiert hast, findest du auf http://syncplay.pl/LUA/ für eine Anleitung.",
+       "vlc-failed-noscript": u"Laut VLC ist das syncplay.lua Interface-Skript nicht installiert. Auf http://syncplay.pl/LUA/ findest du eine Anleitung.",
+       "vlc-failed-versioncheck": u"Diese VLC-Version wird von Syncplay nicht unterstützt. Bitte nutze VLC 2.0",
+       "vlc-failed-other" : u"Beim Laden des syncplay.lua Interface-Skripts durch VLC trat folgender Fehler auf: {}",  # Syncplay Error
+
+      # Client arguments
+      "argument-description" : u'Anwendung, um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren.',
+      "argument-epilog" : u'Wenn keine Optionen angegeben sind, werden die _config-Werte verwendet',
+      "nogui-argument" : u'Keine GUI anzeigen',
+      "host-argument" : u'Server\'-Addresse',
+      "name-argument" : u'Gewünschter Nutzername',
+      "debug-argument" : u'Debug-Modus',
+      "force-gui-prompt-argument" : u'Einstellungsfenster anzeigen',
+      "no-store-argument" : u'keine Werte in .syncplay speichern',
+      "room-argument" : u'Standard-Raum',
+      "password-argument" : u'Server-Passwort',
+      "player-path-argument" : u'Pfad zum Player',
+      "file-argument" : u'Zu spielende Datei',
+      "args-argument" : u'Player-Einstellungen; Wenn du Einstellungen, die mit - beginnen, nutzen willst, stelle ein einzelnes \'--\'-Argument davor',
+      "clear-gui-data-argument" : u'Setzt die Pfad- und GUI-Fenster-Daten, die in den QSettings gespeichert sind, zurück',
+
+      # Client labels
+      "config-window-title" : u"Syncplay Konfiguration",
+
+      "connection-group-title" : u"Verbindungseinstellungen",
+      "host-label" : u"Server-Adresse: ",
+      "username-label" :  u"Benutzername (optional):",
+      "password-label" :  u"Server-Passwort (falls nötig):",
+      "room-label" : u"Standard-Raum: ",
+
+      "media-setting-title" : u"Media-Player Einstellungen",
+      "executable-path-label" : u"Pfad zum Media-Player:",
+      "media-path-label" : u"Pfad zur Datei:",
+      "browse-label" : u"Durchsuchen",
+
+      "more-title" : u"Mehr Einstellungen zeigen",
+      "privacy-sendraw-option" : u"Klartext senden",
+      "privacy-sendhashed-option" : u"Hash senden",
+      "privacy-dontsend-option" : u"Nicht senden",
+      "filename-privacy-label" : u"Dateiname:",
+      "filesize-privacy-label" : u"Dateigröße:",
+      "slowdown-label" : u"Verlangsamen wenn nicht synchron",
+      "dontslowwithme-label" : u"Nie verlangsamen oder andere zurückspulen",
+      "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
+      "rewind-label" : u"Zurückspulen bei großer Zeitdifferent (empfohlen)",
+      "alwayshow-label" : u"Diesen Dialog immer anzeigen",
+      "donotstore-label" : u"Diese Konfiguration nicht speichern",
+
+      "help-label" : u"Hilfe",
+      "run-label" : u"Syncplay starten",
+      "storeandrun-label" : u"Konfiguration speichern und Syncplay starten",
+
+      "roomuser-heading-label" : u"Raum / Benutzer",
+      "fileplayed-heading-label" : u"Gespielte Datei",
+
+      # Tooltips
+
+      "host-tooltip" : u"Hostname oder IP zu der verbunden werden soll. Ptional mit Port (z.B.. syncplay.pl:8999). Synchronisation findet nur mit Personen auf dem selben Server und Port statt.",
+      "username-tooltip" : u"Dein Benutzername. Keine Registrierung, kann einfach geändert werden. Bei fehlender Angabe wird ein zufälliger Name generiert.",
+      "password-tooltip" : u"Passwörter sind nur bei Verbindung zu privaten Servern nötig.",
+      "room-tooltip" : u"Der Raum, der betreten werden soll, kann ein x-beliebiger sein. Allerdings werden nur Clients im selben Raum synchronisiert.",
+
+      "executable-path-tooltip" : u"Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, VLC, mplayer2 or mpv).",
+      "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
+
+      "more-tooltip" : u"Weitere Einstellungen anzeigen.",
+      "filename-privacy-tooltip" : u"Privat-Modus beim senden des Namens der aktuellen Datei zum Server.",
+      "filesize-privacy-tooltip" : u"Privat-Modus beim senden der Größe der aktuellen Datei zum Server.",
+      "privacy-sendraw-tooltip" : u"Die Information im Klartext übertragen. Dies ist die Standard-Einstellung mit der besten Funktionalität.",
+      "privacy-sendhashed-tooltip" : u"Die Informationen gehasht übertragen, um sie für andere Clients schwerer lesbar zu machen.",
+      "privacy-dontsend-tooltip" : u"Diese Information nicht übertragen. Dies garantiert den größtmöglichen Datanschutz.",
+      "slowdown-tooltip" : u"Reduziert die Abspielgeschwindigkeit zeitweise, um dich wieder synchron zu den anderen Clients zu machen.",
+      "dontslowwithme-tooltip" : u"Lässt andere nicht langsamer werden oder zurückspringen, wenn deine Wiedergabe hängt.",
+      "pauseonleave-tooltip" : u"Wiedergabe anhalten, wenn deine Verbindung verloren geht oder jemand den Raum verlässt.",
+      "rewind-tooltip" : u"In der Zeit zurückspringen zum wiederherstellen der Synchronität. Empfohlen.",
+      "alwayshow-tooltip" : u"Der Konfigurations-Dislog wird immer angezeigt. Sogar, wenn du eine Datei mit Syncplay öffnest.",
+      "donotstore-tooltip" : u"Syncplay mit den angegebenen Einstellungen starten, diese aber nicht fauerhaft speichern.",
+
+      "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
+
+      # Server messages to client
+      "new-syncplay-available-motd-message" : u"<NOTICE> Du nutzt Syncplay Version {}, aber es gibt eine neuere Version auf http://syncplay.pl</NOTICE>",  # ClientVersion
+
+      # Server notifications
+      "welcome-server-notification" : u"Willkommen zum Syncplay-Server, v. {0}",  # version
+      "client-connected-room-server-notification" : u"{0}({2}) hat den Raum '{1}' betreten",  # username, host, room
+      "client-left-server-notification" : u"{0} hat den Server verlassen",  # name
+
+
+      # Server arguments
+      "server-argument-description" : u'Anwendung, um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren. Server',
+      "server-argument-epilog" : u'Wenn keine Optionen angegeben sind, werden die _config-Werte verwendet',
+      "server-port-argument" : u'Server TCP-Port',
+      "server-password-argument" : u'Server Passwort',
+      "server-isolate-room-argument" : u'Sollen die Räume isoliert sein?',
+      "server-motd-argument": u"Pfad zur Datei, von der die Nachricht des Tages geladen wird",
+      "server-messed-up-motd-unescaped-placeholders": u"Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
+      "server-messed-up-motd-too-long": u"Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
+      "server-irc-verbose": u"Soll der Server aktiv über Änderungen in den Räumen informieren",
+      "server-irc-config": u"Pfad zu den config-Dateien des irc bot",
+
+      # Server errors
+      "unknown-command-server-error" : u"Unbekannter Befehl {}",  # message
+      "not-json-server-error" : u"Kein JSON-String {}",  # message
+      "not-known-server-error" : u"Der Server muss dich kennen, bevor du diesen Befehl nutzen kannst",
+      "client-drop-server-error" : u"Client verloren: {} -- {}",  # host, error
+      "password-required-server-error" : u"Passwort nötig",
+      "hello-server-error" : u"Zu wenige Hello-Argumente",
+      "version-mismatch-server-error" : u"Verschiedene Versionen auf Client und Server",
+      "wrong-password-server-error" : u"Ungültiges Passwort"
+      }
 	  
 messages = {
            "en": en,
            "pl": pl,
            "ru": ru,
+           "de": de,
            "current": None
            }
 
