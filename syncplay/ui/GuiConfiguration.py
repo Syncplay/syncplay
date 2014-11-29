@@ -406,7 +406,7 @@ class ConfigDialog(QtGui.QDialog):
         self.syncSettingsFrame = QtGui.QFrame()
         self.syncSettingsLayout = QtGui.QVBoxLayout()
 
-        self.desyncSettingsGroup = QtGui.QGroupBox("If others are lagging behind...")
+        self.desyncSettingsGroup = QtGui.QGroupBox(getMessage("sync-lagging-title"))
         self.desyncOptionsFrame = QtGui.QFrame()
         self.desyncSettingsOptionsLayout = QtGui.QHBoxLayout()
         config = self.config
@@ -480,7 +480,7 @@ class ConfigDialog(QtGui.QDialog):
         self.syncSettingsLayout.addWidget(self.desyncSettingsGroup)
         self.desyncFrame.setLayout(self.syncSettingsLayout)
 
-        self.othersyncSettingsGroup = QtGui.QGroupBox("Other sync options")
+        self.othersyncSettingsGroup = QtGui.QGroupBox(getMessage("sync-other-title"))
         self.othersyncOptionsFrame = QtGui.QFrame()
         self.othersyncSettingsLayout = QtGui.QGridLayout()
 
@@ -505,7 +505,7 @@ class ConfigDialog(QtGui.QDialog):
         self.messageLayout = QtGui.QVBoxLayout()
 
         # OSD
-        self.osdSettingsGroup = QtGui.QGroupBox("On-screen Display settings")
+        self.osdSettingsGroup = QtGui.QGroupBox(getMessage("messages-osd-title"))
         self.osdSettingsLayout = QtGui.QVBoxLayout()
         self.osdSettingsFrame = QtGui.QFrame()
 
@@ -541,7 +541,7 @@ class ConfigDialog(QtGui.QDialog):
 
         # Other display
 
-        self.displaySettingsGroup = QtGui.QGroupBox("Other display settings")
+        self.displaySettingsGroup = QtGui.QGroupBox(getMessage("messages-other-title"))
         self.displaySettingsLayout = QtGui.QVBoxLayout()
         self.displaySettingsFrame = QtGui.QFrame()
 
@@ -571,7 +571,7 @@ class ConfigDialog(QtGui.QDialog):
         self.stackedLayout.addWidget(self.messageFrame)
 
     def addPrivacyTab(self):
-        self.privacySettingsGroup = QtGui.QGroupBox("Privacy settings")
+        self.privacySettingsGroup = QtGui.QGroupBox(getMessage("privacy-title"))
         self.privacySettingsLayout = QtGui.QVBoxLayout()
         self.privacySettingsFrame = QtGui.QFrame()
         self.privacyFrame = QtGui.QFrame()

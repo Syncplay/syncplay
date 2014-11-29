@@ -152,8 +152,13 @@ en = {
       "showdurationnotification-label" : "Warn about media duration mismatches",
       "basics-label" : "Basics",
       "sync-label" : "Sync",
+      "sync-lagging-title" : "If others are lagging behind...",
+      "sync-other-title" : "Other sync options",
       "messages-label" : "Messages",
+      "messages-osd-title" : "On-screen Display settings",
+      "messages-other-title" : "Other display settings",
       "privacy-label" : "Privacy",
+      "privacy-title" : "Privacy settings",
 
       "help-label" : "Help",
       "reset-label" : "Restore defaults",
