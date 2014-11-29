@@ -160,8 +160,7 @@ class MainWindow(QtGui.QMainWindow):
                 if currentUser.username == user.username:
                     font.setWeight(QtGui.QFont.Bold)
                 if isControlledRoom and not isController:
-                    if currentUser.username == user.username:
-                        useritem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOTCONTROLLER_COLOR)))
+                    useritem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOTCONTROLLER_COLOR)))
                 useritem.setFont(font)
                 useritem.setFlags(useritem.flags() & ~Qt.ItemIsEditable)
                 filenameitem.setFlags(filenameitem.flags() & ~Qt.ItemIsEditable)
