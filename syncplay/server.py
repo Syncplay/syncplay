@@ -1,4 +1,5 @@
 import hashlib
+import random
 from twisted.internet import task, reactor
 from twisted.internet.protocol import Factory
 import syncplay
@@ -10,13 +11,18 @@ import codecs
 import os
 from string import Template
 import argparse
+from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion
 
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None, isolateRooms=False):
+    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None):
         print getMessage("welcome-server-notification").format(syncplay.version)
         if password:
             password = hashlib.md5(password).hexdigest()
         self.password = password
+        if salt is None:
+            salt = RandomStringGenerator.generate_server_salt()
+            print getMessage("no-salt-notification").format(salt)
+        self._salt = salt
         self._motdFilePath = motdFilePath
         if not isolateRooms:
             self._roomManager = RoomManager()
@@ -36,7 +42,7 @@ class SyncFactory(Factory):
     def getMotd(self, userIp, username, room, clientVersion):
         oldClient = False
         if constants.WARN_OLD_CLIENTS:
-            if int(clientVersion.replace(".", "")) < int(constants.RECENT_CLIENT_THRESHOLD.replace(".", "")):
+            if not meetsMinVersion(clientVersion, constants.RECENT_CLIENT_THRESHOLD):
                 oldClient = True
         if self._motdFilePath and os.path.isfile(self._motdFilePath):
             tmpl = codecs.open(self._motdFilePath, "r", "utf-8-sig").read()
@@ -54,7 +60,7 @@ class SyncFactory(Factory):
         else:
             return ""
 
-    def addWatcher(self, watcherProtocol, username, roomName, roomPassword):
+    def addWatcher(self, watcherProtocol, username, roomName):
         username = self._roomManager.findFreeUsername(username)
         watcher = Watcher(self, watcherProtocol, username)
         self.setWatcherRoom(watcher, roomName, asJoin=True)
@@ -65,13 +71,16 @@ class SyncFactory(Factory):
             self.sendJoinMessage(watcher)
         else:
             self.sendRoomSwitchMessage(watcher)
+        if RoomPasswordProvider.isControlledRoom(roomName):
+            for controller in watcher.getRoom().getControllers():
+                watcher.sendControlledRoomAuthStatus(True, controller, roomName)
 
     def sendRoomSwitchMessage(self, watcher):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, None)
         self._roomManager.broadcast(watcher, l)
 
     def removeWatcher(self, watcher):
-        if watcher.getRoom():
+        if watcher and watcher.getRoom():
             self.sendLeftMessage(watcher)
             self._roomManager.removeWatcher(watcher)
 
@@ -83,20 +92,39 @@ class SyncFactory(Factory):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True}) if w != watcher else None
         self._roomManager.broadcast(watcher, l)
 
-    def sendFileUpdate(self, watcher, file_):
+    def sendFileUpdate(self, watcher):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), watcher.getFile(), None)
         self._roomManager.broadcast(watcher, l)
 
-    def forcePositionUpdate(self, room, watcher, doSeek):
+    def forcePositionUpdate(self, watcher, doSeek, watcherPauseState):
         room = watcher.getRoom()
-        paused, position = room.isPaused(), watcher.getPosition()
-        setBy = watcher
-        room.setPosition(watcher.getPosition(), setBy)
-        l = lambda w: w.sendState(position, paused, doSeek, setBy, True)
-        self._roomManager.broadcastRoom(watcher, l)
+        if room.canControl(watcher):
+            paused, position = room.isPaused(), watcher.getPosition()
+            setBy = watcher
+            l = lambda w: w.sendState(position, paused, doSeek, setBy, True)
+            room.setPosition(watcher.getPosition(), setBy)
+            self._roomManager.broadcastRoom(watcher, l)
+        else:
+            watcher.sendState(room.getPosition(), watcherPauseState, False, watcher, True) # Fixes BC break with 1.2.x
+            watcher.sendState(room.getPosition(), room.isPaused(), True, room.getSetBy(), True)
 
     def getAllWatchersForUser(self, forUser):
         return self._roomManager.getAllWatchersForUser(forUser)
+
+    def authRoomController(self, watcher, password, roomBaseName=None):
+        room = watcher.getRoom()
+        roomName = roomBaseName if roomBaseName else room.getName()
+        try:
+            success = RoomPasswordProvider.check(roomName, password, self._salt)
+            if success:
+                watcher.getRoom().addController(watcher)
+            self._roomManager.broadcast(watcher, lambda w: w.sendControlledRoomAuthStatus(success, watcher.getName(), room._name))
+        except NotControlledRoom:
+            newName = RoomPasswordProvider.getControlledRoomName(roomName, password, self._salt)
+            watcher.sendNewControlledRoom(newName, password)
+        except ValueError:
+            self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
+
 
 class RoomManager(object):
     def __init__(self):
@@ -135,7 +163,10 @@ class RoomManager(object):
         if roomName in self._rooms:
             return self._rooms[roomName]
         else:
-            room = Room(roomName)
+            if RoomPasswordProvider.isControlledRoom(roomName):
+                room = ControlledRoom(roomName)
+            else:
+                room = Room(roomName)
             self._rooms[roomName] = room
             return room
 
@@ -228,6 +259,44 @@ class Room(object):
     def getSetBy(self):
         return self._setBy
 
+    def canControl(self, watcher):
+        return True
+
+class ControlledRoom(Room):
+    def __init__(self, name):
+        Room.__init__(self, name)
+        self._controllers = {}
+
+    def getPosition(self):
+        if self._controllers:
+            watcher = min(self._controllers.values())
+            self._setBy = watcher
+            return watcher.getPosition()
+        else:
+            return 0
+
+    def addController(self, watcher):
+        self._controllers[watcher.getName()] = watcher
+
+    def removeWatcher(self, watcher):
+        Room.removeWatcher(self, watcher)
+        if watcher.getName() in self._controllers:
+            del self._controllers[watcher.getName()]
+
+    def setPaused(self, paused=Room.STATE_PAUSED, setBy=None):
+        if self.canControl(setBy):
+            Room.setPaused(self, paused, setBy)
+
+    def setPosition(self, position, setBy=None):
+        if self.canControl(setBy):
+            Room.setPosition(self, position, setBy)
+
+    def canControl(self, watcher):
+        return watcher.getName() in self._controllers
+
+    def getControllers(self):
+        return self._controllers
+
 class Watcher(object):
     def __init__(self, server, connector, name):
         self._server = server
@@ -243,7 +312,7 @@ class Watcher(object):
 
     def setFile(self, file_):
         self._file = file_
-        self._server.sendFileUpdate(self, file_)
+        self._server.sendFileUpdate(self)
 
     def setRoom(self, room):
         self._room = room
@@ -277,16 +346,22 @@ class Watcher(object):
     def sendSetting(self, user, room, file_, event):
         self._connector.sendUserSetting(user, room, file_, event)
 
+    def sendNewControlledRoom(self, roomBaseName, password):
+        self._connector.sendNewControlledRoom(roomBaseName, password)
+
+    def sendControlledRoomAuthStatus(self, success, username, room):
+        self._connector.sendControlledRoomAuthStatus(success, username, room)
+
     def __lt__(self, b):
         if self.getPosition() is None or self._file is None:
             return False
-        if b.getPosition is None or b._file is None:
+        if b.getPosition() is None or b.getFile() is None:
             return True
         return self.getPosition() < b.getPosition()
 
     def _scheduleSendState(self):
         self._sendStateTimer = task.LoopingCall(self._askForStateUpdate)
-        self._sendStateTimer.start(constants.SERVER_STATE_INTERVAL, True)
+        self._sendStateTimer.start(constants.SERVER_STATE_INTERVAL)
 
     def _askForStateUpdate(self, doSeek=False, forcedUpdate=False):
         self._server.sendState(self, doSeek, forcedUpdate)
@@ -313,18 +388,25 @@ class Watcher(object):
             return False
         return self._room.isPaused() and not paused or not self._room.isPaused() and paused
 
+    def _updatePositionByAge(self, messageAge, paused, position):
+        if not paused:
+            position += messageAge
+        return position
+
     def updateState(self, position, paused, doSeek, messageAge):
         pauseChanged = self.__hasPauseChanged(paused)
         self._lastUpdatedOn = time.time()
         if pauseChanged:
             self.getRoom().setPaused(Room.STATE_PAUSED if paused else Room.STATE_PLAYING, self)
         if position is not None:
-            if not paused:
-                position += messageAge
+            position = self._updatePositionByAge(messageAge, paused, position)
             self.setPosition(position)
         if doSeek or pauseChanged:
-            self._server.forcePositionUpdate(self._room, self, doSeek)
+            self._server.forcePositionUpdate(self, doSeek, paused)
 
+    def isController(self):
+        return RoomPasswordProvider.isControlledRoom(self._room.getName()) \
+            and self._room.canControl(self)
 
 class ConfigurationGetter(object):
     def getConfiguration(self):
@@ -340,4 +422,5 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--port', metavar='port', type=str, nargs='?', help=getMessage("server-port-argument"))
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
+        self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))

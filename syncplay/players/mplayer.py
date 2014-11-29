@@ -145,6 +145,14 @@ class MplayerPlayer(BasePlayer):
     def lineReceived(self, line):
         if line:
             self._client.ui.showDebugMessage("player << {}".format(line))
+        if "Failed to get value of property" in line:
+            if "filename" in line:
+                self._getFilename()
+            elif "length" in line:
+                self._getLength()
+            elif "path" in line:
+                self._getFilepath()
+            return
         match = self.RE_ANSWER.match(line)
         if not match:
             self._handleUnknownLine(line)

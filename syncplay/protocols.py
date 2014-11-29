@@ -76,6 +76,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         username = hello["username"] if hello.has_key("username") else None
         roomName = hello["room"]["name"] if hello.has_key("room") else None
         version = hello["version"] if hello.has_key("version") else None
+        version = hello["realversion"] if hello.has_key("realversion") else version # Used for 1.2.X compatibility
         motd = hello["motd"] if hello.has_key("motd") else None
         return username, roomName, version, motd
 
@@ -83,8 +84,6 @@ class SyncClientProtocol(JSONCommandProtocol):
         username, roomName, version, motd = self._extractHelloArguments(hello)
         if not username or not roomName or not version:
             self.dropWithError(getMessage("hello-server-error").format(hello))
-        elif version.split(".")[0:2] != syncplay.version.split(".")[0:2]:
-            self.dropWithError(getMessage("version-mismatch-server-error".format(hello)))
         else:
             self._client.setUsername(username)
             self._client.setRoom(roomName)
@@ -92,7 +91,9 @@ class SyncClientProtocol(JSONCommandProtocol):
         if motd:
             self._client.ui.showMessage(motd, True, True)
         self._client.ui.showMessage(getMessage("connected-successful-notification"))
+        self._client.connected()
         self._client.sendFile()
+        self._client.setServerVersion(version)
 
     def sendHello(self):
         hello = {}
@@ -101,7 +102,8 @@ class SyncClientProtocol(JSONCommandProtocol):
         if password: hello["password"] = password
         room = self._client.getRoom()
         if room: hello["room"] = {"name" :room}
-        hello["version"] = syncplay.version
+        hello["version"] = "1.2.255" # Used so newer clients work on 1.2.X server
+        hello["realversion"] = syncplay.version
         self.sendMessage({"Hello": hello})
 
     def _SetUser(self, users):
@@ -119,13 +121,21 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self._client.userlist.modUser(username, room, file_)
 
     def handleSet(self, settings):
-        for set_ in settings.iteritems():
-            command = set_[0]
+        for (command, values) in settings.iteritems():
             if command == "room":
-                roomName = set_[1]["name"] if set_[1].has_key("name") else None
+                roomName = values["name"] if values.has_key("name") else None
                 self._client.setRoom(roomName)
             elif command == "user":
-                self._SetUser(set_[1])
+                self._SetUser(values)
+            elif command == "controllerAuth":
+                if values['success']:
+                    self._client.controllerIdentificationSuccess(values["user"], values["room"])
+                else:
+                    self._client.controllerIdentificationError(values["user"], values["room"])
+            elif command == "newControlledRoom":
+                controlPassword = values['password']
+                roomName = values['roomName']
+                self._client.controlledRoomCreated(roomName, controlPassword)
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -147,7 +157,8 @@ class SyncClientProtocol(JSONCommandProtocol):
             for user in room[1].iteritems():
                 userName = user[0]
                 file_ = user[1]['file'] if user[1]['file'] <> {} else None
-                self._client.userlist.addUser(userName, roomName, file_, noMessage=True)
+                isController = user[1]['controller'] if 'controller' in user[1] else False
+                self._client.userlist.addUser(userName, roomName, file_, noMessage=True, isController=isController)
         self._client.userlist.showUserList()
 
     def sendList(self):
@@ -215,8 +226,16 @@ class SyncClientProtocol(JSONCommandProtocol):
                 state["ignoringOnTheFly"]["client"] = self.clientIgnoringOnTheFly
         self.sendMessage({"State": state})
 
+    def requestControlledRoom(self, room, password):
+        self.sendSet({
+            "controllerAuth": {
+                "room": room,
+                "password": password
+            }
+        })
+
     def handleError(self, error):
-        self.dropWithError(error["message"])  # TODO: more processing and fallbacking
+        self.dropWithError(error["message"])
 
     def sendError(self, message):
         self.sendMessage({"Error": {"message": message}})
@@ -261,7 +280,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         return self._logged
 
     def _extractHelloArguments(self, hello):
-        roomName, roomPassword = None, None
+        roomName = None
         username = hello["username"] if hello.has_key("username") else None
         username = username.strip()
         serverPassword = hello["password"] if hello.has_key("password") else None
@@ -269,9 +288,9 @@ class SyncServerProtocol(JSONCommandProtocol):
         if room:
             roomName = room["name"] if room.has_key("name") else None
             roomName = roomName.strip()
-            roomPassword = room["password"] if room.has_key("password") else None
         version = hello["version"] if hello.has_key("version") else None
-        return username, serverPassword, roomName, roomPassword, version
+        version = hello["realversion"] if hello.has_key("realversion") else version
+        return username, serverPassword, roomName, version
 
     def _checkPassword(self, serverPassword):
         if self._factory.password:
@@ -284,15 +303,14 @@ class SyncServerProtocol(JSONCommandProtocol):
         return True
 
     def handleHello(self, hello):
-        username, serverPassword, roomName, roomPassword, version = self._extractHelloArguments(hello)
+        username, serverPassword, roomName, version = self._extractHelloArguments(hello)
         if not username or not roomName or not version:
             self.dropWithError(getMessage("hello-server-error"))
-        elif version.split(".")[0:2] != syncplay.version.split(".")[0:2]:
-            self.dropWithError(getMessage("version-mismatch-server-error"))
+            return
         else:
             if not self._checkPassword(serverPassword):
                 return
-            self._factory.addWatcher(self, username, roomName, roomPassword)
+            self._factory.addWatcher(self, username, roomName)
             self._logged = True
             self.sendHello(version)
 
@@ -306,7 +324,8 @@ class SyncServerProtocol(JSONCommandProtocol):
         userIp = self.transport.getPeer().host
         room = self._watcher.getRoom()
         if room: hello["room"] = {"name": room.getName()}
-        hello["version"] = syncplay.version
+        hello["version"] = clientVersion # Used so 1.2.X client works on newer server
+        hello["realversion"] = syncplay.version
         hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
         self.sendMessage({"Hello": hello})
 
@@ -319,14 +338,34 @@ class SyncServerProtocol(JSONCommandProtocol):
                 self._factory.setWatcherRoom(self._watcher, roomName)
             elif command == "file":
                 self._watcher.setFile(set_[1])
+            elif command == "controllerAuth":
+                password = set_[1]["password"] if set_[1].has_key("password") else None
+                room = set_[1]["room"] if set_[1].has_key("room") else None
+                self._factory.authRoomController(self._watcher, password, room)
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
 
+    def sendNewControlledRoom(self, roomName, password):
+        self.sendSet({
+            "newControlledRoom": {
+                "password": password,
+                "roomName": roomName
+            }
+        })
+
+    def sendControlledRoomAuthStatus(self, success, username, roomname):
+        self.sendSet({
+            "controllerAuth": {
+                "user": username,
+                "room": roomname,
+                "success": success
+            }
+        })
+
     def sendUserSetting(self, username, room, file_, event):
         room = {"name": room.getName()}
-        user = {}
-        user[username] = {}
+        user = {username: {}}
         user[username]["room"] = room
         if file_:
             user[username]["file"] = file_
@@ -339,7 +378,11 @@ class SyncServerProtocol(JSONCommandProtocol):
         if room:
             if room.getName() not in userlist:
                 userlist[room.getName()] = {}
-            userFile = { "position": 0, "file": watcher.getFile() if watcher.getFile() else {} }
+            userFile = {
+                "position": 0,
+                "file": watcher.getFile() if watcher.getFile() else {},
+                "controller": watcher.isController()
+            }
             userlist[room.getName()][watcher.getName()] = userFile
 
     def sendList(self):
@@ -362,8 +405,8 @@ class SyncServerProtocol(JSONCommandProtocol):
                      "position": position if position else 0,
                      "paused": paused,
                      "doSeek": doSeek,
-                     "setBy": setBy.getName()
-                    }
+                     "setBy": setBy.getName() if setBy else None
+        }
         ping = {
                 "latencyCalculation": self._pingService.newTimestamp(),
                 "serverRtt": self._pingService.getRtt()

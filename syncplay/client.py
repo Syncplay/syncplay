@@ -4,12 +4,12 @@ import time
 import re
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
+from functools import wraps
 from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants
-from syncplay.messages import getMessage, getMissingStrings
-import threading
+from syncplay.messages import getMissingStrings, getMessage
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
-    PRIVACY_HIDDENFILENAME, FILENAME_STRIP_REGEX
+    PRIVACY_HIDDENFILENAME
 import collections
 
 class SyncClientFactory(ClientFactory):
@@ -62,14 +62,20 @@ class SyncplayClient(object):
         constants.SHOW_SAME_ROOM_OSD = config['showSameRoomOSD']
         constants.SHOW_DURATION_NOTIFICATION = config['showDurationNotification']
         constants.DEBUG_MODE = config['debug']
+
+        self.controlpasswords = {}
+        self.lastControlPasswordAttempt = None
+        self.serverVersion = "0.0.0"
+
         self.lastLeftTime = 0
         self.lastLeftUser = u""
         self.protocolFactory = SyncClientFactory(self)
         self.ui = UiManager(self, ui)
         self.userlist = SyncplayUserlist(self.ui, self)
         self._protocol = None
+        """:type : SyncClientProtocol|None"""
         self._player = None
-        if config['room'] == None or config['room'] == '':
+        if config['room'] is None or config['room'] == '':
             config['room'] = config['name']  # ticket #58
         self.defaultRoom = config['room']
         self.playerPositionBeforeLastSeek = 0.0
@@ -100,7 +106,8 @@ class SyncplayClient(object):
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
-            self.ui.showMessage(getMessage("relative-config-notification").format("; ".join(self._config['loadedRelativePaths'])), noPlayer=True, noTimestamp=True)
+            paths = "; ".join(self._config['loadedRelativePaths'])
+            self.ui.showMessage(getMessage("relative-config-notification").format(paths), noPlayer=True, noTimestamp=True)
 
         if constants.DEBUG_MODE and constants.WARN_ABOUT_MISSING_STRINGS:
             missingStrings = getMissingStrings()
@@ -229,7 +236,7 @@ class SyncplayClient(object):
 
     def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy):
         madeChangeOnPlayer = False
-        pauseChanged = paused != self.getGlobalPaused()
+        pauseChanged = paused != self.getGlobalPaused() or paused != self.getPlayerPaused()
         diff = self.getPlayerPosition() - position
         if self._lastGlobalUpdate is None:
             madeChangeOnPlayer = self._initPlayerState(position, paused)
@@ -240,7 +247,7 @@ class SyncplayClient(object):
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
         if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindOnDesync'] == False:
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
-        if (self._player.speedSupported and not doSeek and not paused and not self._config['slowOnDesync'] == False):
+        if self._player.speedSupported and not doSeek and not paused and not self._config['slowOnDesync'] == False:
             madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
         if paused == False and pauseChanged:
             madeChangeOnPlayer = self._serverUnpaused(setBy)
@@ -323,7 +330,6 @@ class SyncplayClient(object):
             size = os.path.getsize(path)
         except OSError:  # file not accessible (stream?)
             size = 0
-        rawfilename = filename
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
@@ -338,6 +344,9 @@ class SyncplayClient(object):
         elif self._config['filesizePrivacyMode'] == PRIVACY_DONTSEND_MODE:
             size = 0
         return filename, size
+
+    def setServerVersion(self, version):
+        self.serverVersion = version
 
     def sendFile(self):
         file_ = self.userlist.currentUser.file
@@ -364,6 +373,17 @@ class SyncplayClient(object):
         if self._protocol and self._protocol.logged and room:
             self._protocol.sendRoomSetting(room)
             self.getUserList()
+        self.reIdentifyAsController()
+
+    def reIdentifyAsController(self):
+        room = self.userlist.currentUser.room
+        if utils.RoomPasswordProvider.isControlledRoom(room):
+            storedRoomPassword = self.getControlledRoomPassword(room)
+            if storedRoomPassword:
+                self.identifyAsController(storedRoomPassword)
+
+    def connected(self):
+        self.reIdentifyAsController()
 
     def getRoom(self):
         return self.userlist.currentUser.room
@@ -420,6 +440,64 @@ class SyncplayClient(object):
         if promptForAction:
             self.ui.promptFor(getMessage("enter-to-exit-prompt"))
 
+    def requireMinServerVersion(minVersion):
+        def requireMinVersionDecorator(f):
+            @wraps(f)
+            def wrapper(self, *args, **kwds):
+                if not utils.meetsMinVersion(self.serverVersion,minVersion):
+                    self.ui.showErrorMessage(u"This feature is not supported by the server. The feature requires a  server running Syncplay {}+, but the server is running Syncplay {}.".format(minVersion, self.serverVersion))
+                    return
+                return f(self, *args, **kwds)
+            return wrapper
+        return requireMinVersionDecorator
+
+    @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
+    def createControlledRoom(self, roomName):
+        controlPassword = utils.RandomStringGenerator.generate_room_password()
+        self.ui.showMessage(u"Attempting to create controlled room '{}' with password '{}'...".format(roomName, controlPassword))
+        self.lastControlPasswordAttempt = controlPassword
+        self._protocol.requestControlledRoom(roomName, controlPassword)
+
+    def controlledRoomCreated(self, roomName, controlPassword):
+        self.ui.showMessage(u"Created controlled room '{}' with password '{}'. Please save this information for future reference!".format(roomName, controlPassword))
+        self.setRoom(roomName)
+        self.sendRoom()
+        self._protocol.requestControlledRoom(roomName, controlPassword)
+        self.ui.updateRoomName(roomName)
+
+    def stripControlPassword(self, controlPassword):
+        if controlPassword:
+            return re.sub(constants.CONTROL_PASSWORD_STRIP_REGEX, "", controlPassword).upper()
+        else:
+            return ""
+
+    @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
+    def identifyAsController(self, controlPassword):
+        controlPassword = self.stripControlPassword(controlPassword)
+        self.ui.showMessage(getMessage("identifying-as-controller-notification").format(controlPassword))
+        self.lastControlPasswordAttempt = controlPassword
+        self._protocol.requestControlledRoom(self.getRoom(), controlPassword)
+
+    def controllerIdentificationError(self, username, room):
+        self.ui.showErrorMessage(getMessage("failed-to-identify-as-controller-notification").format(username))
+
+    def controllerIdentificationSuccess(self, username, roomname):
+        self.userlist.setUserAsController(username)
+        if self.userlist.isRoomSame(roomname):
+            hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
+            self.ui.showMessage(getMessage("authenticated-as-controller-notification").format(username), hideFromOSD)
+            if username == self.userlist.currentUser.username:
+                self.storeControlPassword(roomname, self.lastControlPasswordAttempt)
+        self.ui.userListChange()
+
+    def storeControlPassword(self, room, password):
+        if password:
+            self.controlpasswords[room] = password
+
+    def getControlledRoomPassword(self, room):
+        if self.controlpasswords.has_key(room):
+            return self.controlpasswords[room]
+
     class _WarningManager(object):
         def __init__(self, player, userlist, ui):
             self._player = player
@@ -472,6 +550,7 @@ class SyncplayUser(object):
         self.username = username
         self.room = room
         self.file = file_
+        self._controller = False
 
     def setFile(self, filename, duration, size):
         file_ = {
@@ -490,13 +569,22 @@ class SyncplayUser(object):
         return sameName and sameSize and sameDuration
 
     def __lt__(self, other):
-        return self.username.lower() < other.username.lower()
+        if self.isController() == other.isController():
+            return self.username.lower() < other.username.lower()
+        else:
+            return self.isController() > other.isController()
 
     def __repr__(self, *args, **kwargs):
         if self.file:
             return "{}: {} ({}, {})".format(self.username, self.file['name'], self.file['duration'], self.file['size'])
         else:
             return "{}".format(self.username)
+
+    def setControllerStatus(self, isController):
+        self._controller = isController
+
+    def isController(self):
+        return self._controller
 
 class SyncplayUserlist(object):
     def __init__(self, ui, client):
@@ -544,10 +632,14 @@ class SyncplayUserlist(object):
                 message = getMessage("file-differences-notification") + ", ".join(differences)
                 self.ui.showMessage(message, not constants.SHOW_OSD_WARNINGS)
 
-    def addUser(self, username, room, file_, noMessage=False):
+    def addUser(self, username, room, file_, noMessage=False, isController=None):
         if username == self.currentUser.username:
+            if isController is not None:
+                self.currentUser.setControllerStatus(isController)
             return
         user = SyncplayUser(username, room, file_)
+        if isController is not None:
+            user.setControllerStatus(isController)
         self._users[username] = user
         if not noMessage:
             self.__showUserChangeMessage(username, room, file_)
@@ -578,6 +670,8 @@ class SyncplayUserlist(object):
         if self._users.has_key(username):
             user = self._users[username]
             oldRoom = user.room if user.room else None
+            if user.room != room:
+                user.setControllerStatus(isController=False)
             self.__displayModUserMessage(username, room, file_, user, oldRoom)
             user.room = room
             if file_:
@@ -587,6 +681,13 @@ class SyncplayUserlist(object):
         else:
             self.addUser(username, room, file_)
         self.userListChange()
+
+    def setUserAsController(self, username):
+        if self.currentUser.username == username:
+            self.currentUser.setControllerStatus(True)
+        elif self._users.has_key(username):
+            user = self._users[username]
+            user.setControllerStatus(True)
 
     def areAllFilesInRoomSame(self):
         for user in self._users.itervalues():
@@ -658,6 +759,9 @@ class UiManager(object):
         if constants.SHOW_OSD and self._client._player:
             self._client._player.displayMessage(message, duration * 1000)
 
+    def setControllerStatus(self, username, isController):
+        self.__ui.setControllerStatus(username, isController)
+
     def showErrorMessage(self, message, criticalerror=False):
         if message <> self.lastError: # Avoid double call bug
             self.lastError = message
@@ -672,5 +776,10 @@ class UiManager(object):
     def markEndOfUserlist(self):
         self.__ui.markEndOfUserlist()
 
+    def updateRoomName(self, room=""):
+        self.__ui.updateRoomName(room)
+
     def drop(self):
         self.__ui.drop()
+
+

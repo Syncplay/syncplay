@@ -42,14 +42,19 @@ MERGE_PLAYPAUSE_BUTTONS = False
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 #Usually there's no need to adjust these
 FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
+CONTROL_PASSWORD_STRIP_REGEX = u"[^a-zA-Z0-9\-]"
+ROOM_NAME_STRIP_REGEX = u"^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
 COMMANDS_UNDO = ["u", "undo", "revert"]
 COMMANDS_LIST = ["l", "list", "users"]
 COMMANDS_PAUSE = ["p", "play", "pause"]
 COMMANDS_ROOM = ["r", "room"]
 COMMANDS_HELP = ['help', 'h', '?', '/?', r'\?']
+COMMANDS_CREATE = ['c','create']
+COMMANDS_AUTH = ['a','auth']
 MPC_MIN_VER = "1.6.4"
 VLC_MIN_VERSION = "2.0.0"
 VLC_INTERFACE_MIN_VERSION = "0.2.1"
+CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
 MPC_PATHS = [
     r"C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
     r"C:\Program Files\MPC-HC\mpc-hc.exe",
@@ -99,8 +104,8 @@ VLC_MAX_PORT = 55000
 
 #These are not changes you're looking for
 STYLE_TABLIST = "QListWidget::item { color: black; border-style: solid; border-width: 1px; border-radius: 2px; } QListWidget::item:selected { background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(242, 248, 255, 255), stop:1 rgba(208, 229, 255, 255)); border-color: #84ACDD; } QListWidget::item:!selected { border-color: transparent; } QListWidget::item:!selected:hover { background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(248, 248, 248, 255), stop:1 rgba(229, 229, 229, 255)); border-color: silver; }"
-STYLE_SUBCHECKBOX  = "QCheckBox, QLabel {{ margin-left: 8px; padding-left: 18px; background:url('{}') left no-repeat }}" #Graphic path
-STYLE_SUBLABEL  = "QCheckBox, QLabel {{ margin-left: 8px; padding-left: 14px; background:url('{}') left no-repeat }}" #Graphic path
+STYLE_SUBCHECKBOX  = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 21px; background:url('{}') left no-repeat }}" #Graphic path
+STYLE_SUBLABEL  = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 16px; background:url('{}') left no-repeat }}" #Graphic path
 STYLE_ERRORLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: red; padding: 2px; background: #FFAAAA; }"
 STYLE_SUCCESSLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: green; padding: 2px; background: #AAFFAA; }"
 STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
@@ -108,6 +113,9 @@ STYLE_USERNAME = "color: #367AA9; font-weight:bold;"
 STYLE_ERRORNOTIFICATION = "color: red;"
 STYLE_DIFFERENTITEM_COLOR = 'red'
 STYLE_NOFILEITEM_COLOR = 'blue'
+STYLE_NOTCONTROLLER_COLOR = 'grey'
+
+USERLIST_GUI_USERNAME_OFFSET = 21 # Pixels
 
 MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4', '-af', 'scaletempo']
 # --quiet works with both mpv 0.2 and 0.3
@@ -135,3 +143,5 @@ ERROR_MESSAGE_MARKER = "*"
 LOAD_SAVE_MANUALLY_MARKER = "!"
 CONFIG_NAME_MARKER = ":"
 CONFIG_VALUE_MARKER = "="
+USERITEM_CONTROLLER_ROLE = 0
+USERITEM_READY_ROLE = 1
