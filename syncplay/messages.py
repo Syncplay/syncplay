@@ -235,7 +235,7 @@ en = {
       "privacy-sendhashed-tooltip" : "Send a hashed version of the information, making it less visible to other clients.",
       "privacy-dontsend-tooltip" : "Do not send this information to the server. This provides for maximum privacy.",
       "slowondesync-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers. Not supported on MPC-HC.",
-      "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging.",
+      "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room controllers.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
       "rewindondesync-label" : "Rewind on major desync (highly recommended)",
       "fastforwardondesync-label" : "Fast-forward if lagging behind room controller (recommended)",
