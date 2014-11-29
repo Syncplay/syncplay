@@ -553,15 +553,6 @@ class ConfigDialog(QtGui.QDialog):
         self.showcontactinfoCheckbox.setObjectName("showContactInfo")
         self.displaySettingsLayout.addWidget(self.showcontactinfoCheckbox)
 
-        self.showButtonLabelsCheckbox = QCheckBox(getMessage("showbuttonlabels-label"))
-        self.showButtonLabelsCheckbox.setObjectName("showButtonLabels")
-        self.displaySettingsLayout.addWidget(self.showButtonLabelsCheckbox)
-
-        self.showTooltipsCheckbox = QCheckBox(getMessage("showtooltips-label"))
-        self.showTooltipsCheckbox.setObjectName("showTooltips")
-        self.displaySettingsLayout.addWidget(self.showTooltipsCheckbox)
-
-
         self.displaySettingsGroup.setLayout(self.displaySettingsLayout)
         self.displaySettingsLayout.setAlignment(Qt.AlignTop)
         self.messageLayout.addWidget(self.displaySettingsGroup)
