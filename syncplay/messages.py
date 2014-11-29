@@ -31,8 +31,12 @@ en = {
       "playing-notification" : "<{}> is playing '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" :  " in room: '{}'",  # Room
 
+      "identifying-as-controller-notification" : u"Identifying as room controller with password '{}'...",
+      "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room controller.",
+      "authenticated-as-controller-notification" : u"<{}> authenticated as a room controller",
+
       "file-different-notification" : "File you are playing appears to be different from <{}>'s",  # User
-      "file-differences-notification" : "Your file differs in the following way(s): ",
+      "file-differences-notification" : "Your file differs in the following way(s): ", # controlPassword
       "room-files-not-same" : "Not all files played in the room are the same",
       "alone-in-the-room": "You're alone in the room",
 
@@ -188,11 +192,21 @@ en = {
       "exit-menu-label" : "E&xit",
       "advanced-menu-label" : "&Advanced",
       "setoffset-menu-label" : "Set &offset",
+      "createcontrolledroom-menu-label" : "&Create controlled room",
+      "identifyascontroller-menu-label" : "&Identify as room controller",
+
       "help-menu-label" : "&Help",
       "userguide-menu-label" : "Open user &guide",
 
       "setoffset-msgbox-label" : "Set offset",
       "offsetinfo-msgbox-label" : "Offset (see http://syncplay.pl/guide/ for usage instructions):",
+
+
+      "createcontrolledroom-msgbox-label" : "Create controlled room",
+      "controlledroominfo-msgbox-label" : "Enter name of controlled room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
+
+      "identifyascontroller-msgbox-label" : "Identify as Room Controller",
+      "identifyinfo-msgbox-label" : "Enter controller password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
 
       "megabyte-suffix" : " MB",
 

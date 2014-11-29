@@ -445,8 +445,7 @@ class SyncplayClient(object):
 
     @requireMinServerVersion("1.3.0")
     def createControlledRoom(self, roomName):
-        controlPassword = utils.RandomStringGenerator.generate_room_
-        password()
+        controlPassword = utils.RandomStringGenerator.generate_room_password()
         self.ui.showMessage(u"Attempting to create controlled room '{}' with password '{}'...".format(roomName, controlPassword))
         self.lastControlPasswordAttempt = controlPassword
         self._protocol.requestControlledRoom(roomName, controlPassword)
@@ -467,18 +466,18 @@ class SyncplayClient(object):
     @requireMinServerVersion("1.3.0")
     def identifyAsController(self, controlPassword):
         controlPassword = self.stripControlPassword(controlPassword)
-        self.ui.showMessage(u"Identifying as room controller with password '{}'...".format(controlPassword))
+        self.ui.showMessage(getMessage("identifying-as-controller-notification").format(controlPassword))
         self.lastControlPasswordAttempt = controlPassword
         self._protocol.requestControlledRoom(self.getRoom(), controlPassword)
 
     def controllerIdentificationError(self, username, room):
-        self.ui.showErrorMessage(u"<{}> failed to identify as a room controller.".format(username))
+        self.ui.showErrorMessage(getMessage("failed-to-identify-as-controller-notification").format(username))
 
     def controllerIdentificationSuccess(self, username, roomname):
         self.userlist.setUserAsController(username)
         if self.userlist.isRoomSame(roomname):
             hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
-            self.ui.showMessage(u"<{}> authenticated as a room controller".format(username), hideFromOSD)
+            self.ui.showMessage(getMessage("authenticated-as-controller-notification").format(username), hideFromOSD)
             if username == self.userlist.currentUser.username:
                 self.storeControlPassword(roomname, self.lastControlPasswordAttempt)
         self.ui.userListChange()

@@ -364,16 +364,16 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient._player.openFile(fileName)
 
     def createControlledRoom(self):
-        controlroom, ok = QtGui.QInputDialog.getText(self, "Create controlled room",
-                "Enter name of controlled room\r\n(see http://syncplay.pl/guide/ for usage instructions):", QtGui.QLineEdit.Normal,
+        controlroom, ok = QtGui.QInputDialog.getText(self, getMessage("createcontrolledroom-msgbox-label"),
+                getMessage("controlledroominfo-msgbox-label"), QtGui.QLineEdit.Normal,
                 utils.stripRoomName(self._syncplayClient.getRoom()))
         if ok and controlroom != '':
             self._syncplayClient.createControlledRoom(controlroom)
 
     def identifyAsController(self):
-        tooltip = "Enter controller password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):"
-        name = "Identify as Room Controller"
-        controlpassword, ok = QtGui.QInputDialog.getText(self, name, tooltip, QtGui.QLineEdit.Normal, "")
+        msgboxtitle = getMessage("identifyascontroller-msgbox-label")
+        msgboxtext = getMessage("identifyinfo-msgbox-label")
+        controlpassword, ok = QtGui.QInputDialog.getText(self, msgboxtitle, msgboxtext, QtGui.QLineEdit.Normal, "")
         if ok and controlpassword != '':
             self._syncplayClient.identifyAsController(controlpassword)
 
@@ -568,10 +568,10 @@ class MainWindow(QtGui.QMainWindow):
         window.setoffsetAction.triggered.connect(self.setOffset)
 
         window.createcontrolledroomAction = window.advancedMenu.addAction(
-            QtGui.QIcon(self.resourcespath + 'page_white_key.png'), "&Create controlled room suffix")
+            QtGui.QIcon(self.resourcespath + 'page_white_key.png'), getMessage("createcontrolledroom-menu-label"))
         window.createcontrolledroomAction.triggered.connect(self.createControlledRoom)
         window.identifyascontroller = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'key_go.png'),
-                                                                    "&Identify as room controller")
+                                                                    getMessage("identifyascontroller-menu-label"))
         window.identifyascontroller.triggered.connect(self.identifyAsController)
         window.menuBar.addMenu(window.advancedMenu)
 
