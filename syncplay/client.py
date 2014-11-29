@@ -6,7 +6,7 @@ from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants
-from syncplay.messages import getMessage
+from syncplay.messages import getMessage, getMissingStrings
 import threading
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME, FILENAME_STRIP_REGEX
@@ -101,6 +101,11 @@ class SyncplayClient(object):
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
             self.ui.showMessage(getMessage("relative-config-notification").format("; ".join(self._config['loadedRelativePaths'])), noPlayer=True, noTimestamp=True)
+
+        if constants.DEBUG_MODE and constants.WARN_ABOUT_MISSING_STRINGS:
+            missingStrings = getMissingStrings()
+            if missingStrings is not None and missingStrings is not "":
+                self.ui.showDebugMessage("MISSING STRINGS DETECTED:\n{}".format(missingStrings))
 
     def initProtocol(self, protocol):
         self._protocol = protocol

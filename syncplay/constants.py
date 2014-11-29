@@ -14,6 +14,7 @@ LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
 SHOW_BUTTON_LABELS = True  # If disabled, only shows icons for main GUI buttons
 SHOW_TOOLTIPS = True
+WARN_ABOUT_MISSING_STRINGS = False # (If debug mode is enabled)
 
 #Overriden by config
 SHOW_OSD = True  # Sends Syncplay messages to media player OSD

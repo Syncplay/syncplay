@@ -783,6 +783,15 @@ messages = {
 def setLanguage(lang):
     messages["current"] = lang
 
+def getMissingStrings():
+    missingStrings = ""
+    for lang in messages:
+        if lang != "en" and lang != "current":
+            for message in messages["en"]:
+                if not messages[lang].has_key(message):
+                    missingStrings = missingStrings + "({}) Missing: {}\n".format(lang, message)
+    return missingStrings
+
 def getMessage(type_, locale=None):
     if constants.SHOW_BUTTON_LABELS == False:
         if "-guibuttonlabel" in type_:
