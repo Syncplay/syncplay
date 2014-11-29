@@ -534,12 +534,10 @@ class MainWindow(QtGui.QMainWindow):
             window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'),
                                                   getMessage("play-guibuttonlabel"))
             window.playButton.pressed.connect(self.play)
-            window.playButton.setMaximumWidth(60)
             window.miscLayout.addWidget(window.playButton)
             window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),
                                                    getMessage("pause-guibuttonlabel"))
             window.pauseButton.pressed.connect(self.pause)
-            window.pauseButton.setMaximumWidth(60)
             window.miscLayout.addWidget(window.pauseButton)
             self.playButton.setToolTip(getMessage("play-tooltip"))
             self.pauseButton.setToolTip(getMessage("pause-tooltip"))
