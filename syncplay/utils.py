@@ -99,7 +99,7 @@ def formatSize (bytes, precise=False):
     if bytes == 0: # E.g. when file size privacy is enabled
         return "???"
     try:
-        megabytes = int(bytes) / 1000000.0
+        megabytes = int(bytes) / 1048576.0 # Technically this is a mebibyte, but whatever
         if precise:
             megabytes = round(megabytes, 1)
         else:
