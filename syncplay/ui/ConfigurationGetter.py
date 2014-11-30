@@ -144,20 +144,20 @@ class ConfigurationGetter(object):
                 if player:
                     self._config["playerClass"] = player
                 else:
-                    raise InvalidConfigValue("Player path is not set properly")
+                    raise InvalidConfigValue(getMessage("player-path-config-error"))
                 if player.__name__ in ['MpvPlayer', 'MplayerPlayer']:
                     if not self._config['file']:
-                        raise InvalidConfigValue("File must be selected before starting your player")
+                        raise InvalidConfigValue(getMessage("no-file-path-config-error"))
             elif key == "host":
                 self._config["host"], self._config["port"] = self._splitPortAndHost(self._config["host"])
                 hostNotValid = (self._config["host"] == "" or self._config["host"] is None)
                 portNotValid = (_isPortValid(self._config["port"]) == False)
                 if hostNotValid:
-                    raise InvalidConfigValue("Hostname can't be empty")
+                    raise InvalidConfigValue(getMessage("no-hostname-config-error"))
                 elif portNotValid:
-                    raise InvalidConfigValue("Port must be valid")
+                    raise InvalidConfigValue(getMessage("invalid-port-config-error"))
             elif self._config[key] == "" or self._config[key] is None:
-                raise InvalidConfigValue("{} can't be empty".format(key.capitalize()))
+                raise InvalidConfigValue(getMessage("empty-value-config-error").format(key.capitalize()))
 
     def _overrideConfigWithArgs(self, args):
         for key, val in vars(args).items():

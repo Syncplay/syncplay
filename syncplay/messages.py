@@ -92,6 +92,12 @@ en = {
 
        "unable-to-start-client-error" : "Unable to start client",
 
+       "player-path-config-error": "Player path is not set properly",
+       "no-file-path-config-error" :"File must be selected before starting your player",
+       "no-hostname-config-error": "Hostname can't be empty",
+       "invalid-port-config-error" : "Port must be valid",
+       "empty-value-config-error" : "{} can't be empty", # Config option
+
        "not-json-error" : "Not a json encoded string\n",
        "hello-arguments-error" : "Not enough Hello arguments\n",
        "version-mismatch-error" : "Mismatch between versions of client and server\n",
