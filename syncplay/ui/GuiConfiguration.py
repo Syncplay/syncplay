@@ -77,13 +77,22 @@ class ConfigDialog(QtGui.QDialog):
         if "http://" in path:
             return True
 
+    def safenormcaseandpath(self, path):
+        if self._isURL(path):
+            return path
+        else:
+            return os.path.normcase(os.path.normpath(path))
+
     def _tryToFillPlayerPath(self, playerpath, playerpathlist):
         settings = QSettings("Syncplay", "PlayerList")
         settings.beginGroup("PlayerList")
         savedPlayers = settings.value("PlayerList", [])
         if not isinstance(savedPlayers, list):
             savedPlayers = []
-        playerpathlist = list(set(os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist + savedPlayers)))
+        else:
+            for i, savedPlayer in enumerate(savedPlayers):
+                savedPlayers[i] = self.safenormcaseandpath(savedPlayer)
+        playerpathlist = list(set(playerpathlist + savedPlayers))
         settings.endGroup()
         foundpath = ""
 
@@ -103,9 +112,11 @@ class ConfigDialog(QtGui.QDialog):
                     self.executablepathCombobox.addItem(foundpath)
 
         for path in playerpathlist:
-            if self._isURL(playerpath):
-                foundpath = path
-                self.executablepathCombobox.addItem(path)
+            if self._isURL(path):
+                if foundpath == "":
+                    foundpath = path
+                if path != playerpath:
+                    self.executablepathCombobox.addItem(path)
 
             elif os.path.isfile(path) and os.path.normcase(os.path.normpath(path)) != os.path.normcase(os.path.normpath(foundpath)):
                 self.executablepathCombobox.addItem(path)
@@ -114,12 +125,8 @@ class ConfigDialog(QtGui.QDialog):
 
         if foundpath != "":
             settings.beginGroup("PlayerList")
-            if self._isURL(foundpath):
-                playerpathlist.append(foundpath)
-                settings.setValue("PlayerList", list(set(path) for path in set(playerpathlist)))
-            else:
-                playerpathlist.append(os.path.normcase(os.path.normpath(foundpath)))
-                settings.setValue("PlayerList", list(set(os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist))))
+            playerpathlist.append(self.safenormcaseandpath(foundpath))
+            settings.setValue("PlayerList", list(set(playerpathlist)))
             settings.endGroup()
         return foundpath
 

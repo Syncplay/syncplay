@@ -60,25 +60,25 @@ VLC_MIN_VERSION = "2.0.0"
 VLC_INTERFACE_MIN_VERSION = "0.2.1"
 CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
 MPC_PATHS = [
-    r"C:\Program Files (x86)\MPC-HC\mpc-hc.exe",
-    r"C:\Program Files\MPC-HC\mpc-hc.exe",
-    r"C:\Program Files\MPC-HC\mpc-hc64.exe",
-    r"C:\Program Files\Media Player Classic - Home Cinema\mpc-hc.exe",
-    r"C:\Program Files\Media Player Classic - Home Cinema\mpc-hc64.exe",
-    r"C:\Program Files (x86)\Media Player Classic - Home Cinema\mpc-hc.exe",
-    r"C:\Program Files (x86)\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
-    r"C:\Program Files\K-Lite Codec Pack\Media Player Classic\mpc-hc.exe",
-    r"C:\Program Files (x86)\Combined Community Codec Pack\MPC\mpc-hc.exe",
-    r"C:\Program Files\Combined Community Codec Pack\MPC\mpc-hc.exe",
-    r"C:\Program Files\MPC HomeCinema (x64)\mpc-hc64.exe",
+    r"c:\program files (x86)\mpc-hc\mpc-hc.exe",
+    r"c:\program files\mpc-hc\mpc-hc.exe",
+    r"c:\program files\mpc-hc\mpc-hc64.exe",
+    r"c:\program files\media player classic - home cinema\mpc-hc.exe",
+    r"c:\program files\media player classic - home cinema\mpc-hc64.exe",
+    r"c:\program files (x86)\media player classic - home cinema\mpc-hc.exe",
+    r"c:\program files (x86)\k-lite codec pack\media player classic\mpc-hc.exe",
+    r"c:\program files\k-lite codec pack\media Player classic\mpc-hc.exe",
+    r"c:\program files (x86)\combined community codec pack\mpc\mpc-hc.exe",
+    r"c:\program files\combined community codec pack\mpc\mpc-hc.exe",
+    r"c:\program files\mpc homecinema (x64)\mpc-hc64.exe",
 ]
 MPLAYER_PATHS = ["mplayer2", "mplayer"]
-MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"C:\Program Files\mpv\mpv.exe", r"C:\Program Files\mpv-player\mpv.exe",
-             r"C:\Program Files (x86)\mpv\mpv.exe", r"C:\Program Files (x86)\mpv-player\mpv.exe",
+MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"c:\program files\mpv\mpv.exe", r"c:\program files\mpv-player\mpv.exe",
+             r"c:\program Files (x86)\mpv\mpv.exe", r"c:\program Files (x86)\mpv-player\mpv.exe",
              "/Applications/mpv.app/Contents/MacOS/mpv"]
 VLC_PATHS = [
-    r"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
-    r"C:\Program Files\VideoLAN\VLC\vlc.exe",
+    r"c:\program files (x86)\videolan\vlc\vlc.exe",
+    r"c:\program files\videolan\vlc\vlc.exe",
     "/usr/bin/vlc",
     "/usr/bin/vlc-wrapper",
     "/Applications/VLC.app/Contents/MacOS/VLC",
