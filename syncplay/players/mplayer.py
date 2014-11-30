@@ -9,6 +9,7 @@ import os
 
 class MplayerPlayer(BasePlayer):
     speedSupported = True
+    customOpenDialog = False
     RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
     POSITION_QUERY = 'time_pos'
     OSD_QUERY = 'osd_show_text'

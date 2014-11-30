@@ -341,6 +341,10 @@ class MainWindow(QtGui.QMainWindow):
         settings.endGroup()
 
     def browseMediapath(self):
+        if self._syncplayClient._player.customOpenDialog == True:
+            self._syncplayClient._player.openCustomOpenDialog()
+            return
+
         self.loadMediaBrowseSettings()
         options = QtGui.QFileDialog.Options()
         if os.path.isdir(self.mediadirectory):

@@ -13,6 +13,7 @@ from syncplay.messages import getMessage
 
 class VlcPlayer(BasePlayer):
     speedSupported = True
+    customOpenDialog = False
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS
     if not sys.platform.startswith('darwin'):

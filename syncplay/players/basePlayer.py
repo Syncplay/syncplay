@@ -82,7 +82,13 @@ class BasePlayer(object):
     @staticmethod
     def getExpandedPath(path):
         raise NotImplementedError()
-    
+
+    '''
+    Opens a custom media browse dialog, and then changes to that media if appropriate
+    '''
+    @staticmethod
+    def openCustomOpenDialog(self):
+        raise NotImplementedError()
     
 class DummyPlayer(BasePlayer):
 
