@@ -71,6 +71,9 @@ class ConfigDialog(QtGui.QDialog):
         self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/client/")
 
     def _isURL(self, path):
+        if path is None:
+            return False
+
         if "http://" in path:
             return True
 
