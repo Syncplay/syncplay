@@ -551,6 +551,11 @@ class ConfigDialog(QtGui.QDialog):
         self.showSameRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showSameRoomOSDCheckbox)
 
+        self.showNonControllerOSDCheckbox = QCheckBox(getMessage("shownoncontrollerosd-label"))
+        self.showNonControllerOSDCheckbox.setObjectName("showNonControllerOSD")
+        self.showNonControllerOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.osdSettingsLayout.addWidget(self.showNonControllerOSDCheckbox)
+
         self.showDifferentRoomOSDCheckbox = QCheckBox(getMessage("showdifferentroomosd-label"))
         self.showDifferentRoomOSDCheckbox.setObjectName("showDifferentRoomOSD")
         self.showDifferentRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))

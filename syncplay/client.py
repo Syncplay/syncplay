@@ -596,6 +596,10 @@ class SyncplayUser(object):
     def isController(self):
         return self._controller
 
+    def canControl(self):
+        if self.isController() or not utils.RoomPasswordProvider.isControlledRoom(self.room):
+            return True
+
 class SyncplayUserlist(object):
     def __init__(self, ui, client):
         self.currentUser = SyncplayUser()
@@ -616,31 +620,33 @@ class SyncplayUserlist(object):
                 showOnOSD = constants.SHOW_OSD_WARNINGS
             else:
                 showOnOSD = constants.SHOW_DIFFERENT_ROOM_OSD
+            if constants.SHOW_NONCONTROLLER_OSD == False and self.canControl(username) == False:
+                showOnOSD = False
             hideFromOSD = not showOnOSD
-        if room and not file_:
-            message = getMessage("room-join-notification").format(username, room)
-            self.ui.showMessage(message, hideFromOSD)
-        elif room and file_:
-            duration = utils.formatTime(file_['duration'])
-            message = getMessage("playing-notification").format(username, file_['name'], duration)
-            if self.currentUser.room <> room or self.currentUser.username == username:
-                message += getMessage("playing-notification/room-addendum").format(room)
-            self.ui.showMessage(message, hideFromOSD)
-            if self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room:
-                message = getMessage("file-different-notification").format(username)
-                self.ui.showMessage(message, not constants.SHOW_OSD_WARNINGS)
-                differences = []
-                differentName = not utils.sameFilename(self.currentUser.file['name'], file_['name'])
-                differentSize = not utils.sameFilesize(self.currentUser.file['size'], file_['size'])
-                differentDuration = not utils.sameFileduration(self.currentUser.file['duration'], file_['duration'])
-                if differentName:
-                    differences.append("filename")
-                if differentSize:
-                    differences.append("size")
-                if differentDuration:
-                    differences.append("duration")
-                message = getMessage("file-differences-notification") + ", ".join(differences)
-                self.ui.showMessage(message, not constants.SHOW_OSD_WARNINGS)
+            if not file_:
+                message = getMessage("room-join-notification").format(username, room)
+                self.ui.showMessage(message, hideFromOSD)
+            else:
+                duration = utils.formatTime(file_['duration'])
+                message = getMessage("playing-notification").format(username, file_['name'], duration)
+                if self.currentUser.room <> room or self.currentUser.username == username:
+                    message += getMessage("playing-notification/room-addendum").format(room)
+                self.ui.showMessage(message, hideFromOSD)
+                if self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room:
+                    message = getMessage("file-different-notification").format(username)
+                    self.ui.showMessage(message, hideFromOSD)
+                    differences = []
+                    differentName = not utils.sameFilename(self.currentUser.file['name'], file_['name'])
+                    differentSize = not utils.sameFilesize(self.currentUser.file['size'], file_['size'])
+                    differentDuration = not utils.sameFileduration(self.currentUser.file['duration'], file_['duration'])
+                    if differentName:
+                        differences.append("filename")
+                    if differentSize:
+                        differences.append("size")
+                    if differentDuration:
+                        differences.append("duration")
+                    message = getMessage("file-differences-notification") + ", ".join(differences)
+                    self.ui.showMessage(message, hideFromOSD)
 
     def addUser(self, username, room, file_, noMessage=False, isController=None):
         if username == self.currentUser.username:
@@ -702,7 +708,7 @@ class SyncplayUserlist(object):
     def areAllFilesInRoomSame(self):
         for user in self._users.itervalues():
             if user.room == self.currentUser.room and user.file and not self.currentUser.isFileSame(user.file):
-                if user.isController() or not utils.RoomPasswordProvider.isControlledRoom(user.room):
+                if user.canControl():
                     return False
         return True
 
@@ -715,6 +721,15 @@ class SyncplayUserlist(object):
     def isUserInYourRoom(self, username):
         for user in self._users.itervalues():
             if user.username == username and user.room == self.currentUser.room:
+                return True
+        return False
+
+    def canControl(self, username):
+        if self.currentUser.username == username and self.currentUser.canControl():
+            return True
+
+        for user in self._users.itervalues():
+            if user.username == username and user.canControl():
                 return True
         return False
 

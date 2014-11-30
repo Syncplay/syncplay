@@ -21,6 +21,7 @@ SHOW_OSD = True  # Sends Syncplay messages to media player OSD
 SHOW_OSD_WARNINGS = True  # Show warnings if playing different file, alone in room
 SHOW_SLOWDOWN_OSD = True  # Show notifications of slowing down / reverting on time difference
 SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room user is in
+SHOW_NONCONTROLLER_OSD = False # Show OSD notifications for non-controllers in controlled rooms
 SHOW_DIFFERENT_ROOM_OSD = False  # Show OSD notifications for events relating to room user is not in
 SHOW_DURATION_NOTIFICATION = True
 DEBUG_MODE = False

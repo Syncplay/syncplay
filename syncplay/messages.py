@@ -154,6 +154,7 @@ en = {
 
       "showosdwarnings-label" : "Include warnings (e.g. when files are different)",
       "showsameroomosd-label" : "Include events in your room",
+      "shownoncontrollerosd-label" : "Include events from non-controllers in controlled rooms",
       "showdifferentroomosd-label" : "Include events in other rooms",
       "showslowdownosd-label" :"Include slowing down / reverting notification",
       "showcontactinfo-label" : "Show contact info box",
@@ -249,6 +250,7 @@ en = {
       "showosd-tooltip" : "Sends Syncplay messages to media player OSD.",
       "showosdwarnings-tooltip" : "Show warnings if playing different file, alone in room.",
       "showsameroomosd-tooltip" : "Show OSD notifications for events relating to room user is in.",
+      "shownoncontrollerosd-tooltip" : "Show OSD notifications for events relating to non-controllers who are in controllerd rooms.",
       "showdifferentroomosd-tooltip" : "Show OSD notifications for events relating to room user is not in.",
       "showslowdownosd-tooltip" :"Show notifications of slowing down / reverting on time difference.",
       "showcontactinfo-tooltip" : "Show information box about contacting Syncplay developers in main Syncplay window.",

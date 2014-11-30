@@ -52,6 +52,7 @@ class ConfigurationGetter(object):
                         "showSlowdownOSD" : True,
                         "showDifferentRoomOSD" : False,
                         "showSameRoomOSD" : True,
+                        "showNonControllerOSD" : False,
                         "showContactInfo" : True,
                         "showDurationNotification" : True
                         }
@@ -87,6 +88,7 @@ class ConfigurationGetter(object):
                          "showSlowdownOSD",
                          "showDifferentRoomOSD",
                          "showSameRoomOSD",
+                         "showNonControllerOSD",
                          "showContactInfo" ,
                          "showDurationNotification"
                         ]
@@ -100,7 +102,7 @@ class ConfigurationGetter(object):
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
                         "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
-                        "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showContactInfo" , "showDurationNotification"],
+                        "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showContactInfo" , "showDurationNotification"],
                         "general": ["language"]
                         }
 
