@@ -828,6 +828,10 @@ def getMissingStrings():
             for message in messages["en"]:
                 if not messages[lang].has_key(message):
                     missingStrings = missingStrings + "({}) Missing: {}\n".format(lang, message)
+            for message in messages[lang]:
+                if not messages["en"].has_key(message):
+                    missingStrings = missingStrings + "({}) Unused: {}\n".format(lang, message)
+
     return missingStrings
 
 def getMessage(type_, locale=None):
