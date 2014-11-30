@@ -717,7 +717,7 @@ de = {
 
       "connection-group-title" : u"Verbindungseinstellungen",
       "host-label" : u"Server-Adresse: ",
-      "username-label" :  u"Benutzername (optional):",
+      "name-label" :  u"Benutzername (optional):",
       "password-label" :  u"Server-Passwort (falls nötig):",
       "room-label" : u"Standard-Raum: ",
 
@@ -749,7 +749,7 @@ de = {
       # Tooltips
 
       "host-tooltip" : u"Hostname oder IP zu der verbunden werden soll. Ptional mit Port (z.B.. syncplay.pl:8999). Synchronisation findet nur mit Personen auf dem selben Server und Port statt.",
-      "username-tooltip" : u"Dein Benutzername. Keine Registrierung, kann einfach geändert werden. Bei fehlender Angabe wird ein zufälliger Name generiert.",
+      "name-tooltip" : u"Dein Benutzername. Keine Registrierung, kann einfach geändert werden. Bei fehlender Angabe wird ein zufälliger Name generiert.",
       "password-tooltip" : u"Passwörter sind nur bei Verbindung zu privaten Servern nötig.",
       "room-tooltip" : u"Der Raum, der betreten werden soll, kann ein x-beliebiger sein. Allerdings werden nur Clients im selben Raum synchronisiert.",
 
