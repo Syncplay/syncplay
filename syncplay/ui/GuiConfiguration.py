@@ -379,6 +379,7 @@ class ConfigDialog(QtGui.QDialog):
         self.connectionSettingsLayout.addWidget(self.defaultroomLabel, 3, 0)
         self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
+        self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
 
         self.mediaplayerSettingsGroup = QtGui.QGroupBox(getMessage("media-setting-title"))
         self.executableiconImage = QtGui.QImage()
@@ -430,8 +431,11 @@ class ConfigDialog(QtGui.QDialog):
             self.errorLabel.setAlignment(Qt.AlignCenter)
 
             self.basicOptionsLayout.addWidget(self.errorLabel, 0, 0)
+        self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
+        self.basicOptionsLayout.setAlignment(Qt.AlignTop)
         self.basicOptionsLayout.addWidget(self.connectionSettingsGroup)
         self.basicOptionsLayout.addSpacing(12)
+        self.mediaplayerSettingsGroup.setMaximumHeight(self.mediaplayerSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.addWidget(self.mediaplayerSettingsGroup)
 
         self.basicOptionsFrame.setLayout(self.basicOptionsLayout)
@@ -555,6 +559,7 @@ class ConfigDialog(QtGui.QDialog):
         self.subitems['fastforwardOnDesync'] = ["fastforward-threshold"]
 
         self.othersyncSettingsGroup.setLayout(self.othersyncSettingsLayout)
+        self.othersyncSettingsGroup.setMaximumHeight(self.othersyncSettingsGroup.minimumSizeHint().height())
         self.syncSettingsLayout.addWidget(self.othersyncSettingsGroup)
 
         self.syncSettingsFrame.setLayout(self.syncSettingsLayout)
@@ -603,29 +608,25 @@ class ConfigDialog(QtGui.QDialog):
         self.subitems['showOSD'] = ["showSameRoomOSD", "showDifferentRoomOSD", "showSlowdownOSD", "showOSDWarnings"]
 
         self.osdSettingsGroup.setLayout(self.osdSettingsLayout)
+        self.osdSettingsGroup.setMaximumHeight(self.osdSettingsGroup.minimumSizeHint().height())
         self.osdSettingsLayout.setAlignment(Qt.AlignTop)
         self.messageLayout.addWidget(self.osdSettingsGroup)
 
         # Other display
 
         self.displaySettingsGroup = QtGui.QGroupBox(getMessage("messages-other-title"))
-        self.displaySettingsLayout = QtGui.QVBoxLayout()
+        self.displaySettingsLayout = QtGui.QGridLayout()
         self.displaySettingsLayout.setAlignment(Qt.AlignTop)
         self.displaySettingsFrame = QtGui.QFrame()
 
         self.showDurationNotificationCheckbox = QCheckBox(getMessage("showdurationnotification-label"))
         self.showDurationNotificationCheckbox.setObjectName("showDurationNotification")
-        self.displaySettingsLayout.addWidget(self.showDurationNotificationCheckbox)
+        self.displaySettingsLayout.addWidget(self.showDurationNotificationCheckbox, 0, 0, 1, 2)
 
         self.showcontactinfoCheckbox = QCheckBox(getMessage("showcontactinfo-label"))
         self.showcontactinfoCheckbox.setObjectName("showContactInfo")
-        self.displaySettingsLayout.addWidget(self.showcontactinfoCheckbox)
+        self.displaySettingsLayout.addWidget(self.showcontactinfoCheckbox, 1, 0, 1, 2)
 
-        self.languageFrame = QtGui.QFrame()
-        self.languageFrame.setContentsMargins(0,0,0,0)
-        self.languageLayout = QtGui.QHBoxLayout()
-        self.languageLayout.setSpacing(0)
-        self.languageLayout.setAlignment(Qt.AlignTop)
         self.languageLabel = QLabel(getMessage("language-label"), self)
         self.languageCombobox = QtGui.QComboBox(self)
         self.languages = getLanguages()
@@ -634,15 +635,15 @@ class ConfigDialog(QtGui.QDialog):
             if lang == self.config['language']:
                 self.languageCombobox.setCurrentIndex(self.languageCombobox.count()-1)
         self.languageCombobox.currentIndexChanged.connect(self.languageChanged)
-        self.languageLayout.addWidget(self.languageLabel)
-        self.languageLayout.addWidget(self.languageCombobox)
-        self.languageFrame.setLayout(self.languageLayout)
-        self.languageFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.displaySettingsLayout.addWidget(self.languageFrame)
+        self.displaySettingsLayout.addWidget(self.languageLabel, 2, 0, 1, 1)
+        self.displaySettingsLayout.addWidget(self.languageCombobox, 2, 1, 1, 1)
+
         self.languageLabel.setObjectName("language")
         self.languageCombobox.setObjectName("language")
 
+
         self.displaySettingsGroup.setLayout(self.displaySettingsLayout)
+        self.displaySettingsGroup.setMaximumHeight(self.displaySettingsGroup.minimumSizeHint().height())
         self.displaySettingsLayout.setAlignment(Qt.AlignTop)
         self.messageLayout.addWidget(self.displaySettingsGroup)
 
