@@ -5,7 +5,7 @@ from syncplay.players.playerFactory import PlayerFactory
 
 import os
 import sys
-from syncplay.messages import getMessage
+from syncplay.messages import getMessage, getLanguages, setLanguage
 from syncplay import constants
 
 class GuiConfiguration:
@@ -112,6 +112,9 @@ class ConfigDialog(QtGui.QDialog):
         else:
             self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(QtGui.QImage()))
 
+    def languageChanged(self):
+        setLanguage(unicode(self.languageCombobox.itemData(self.languageCombobox.currentIndex())))
+        QtGui.QMessageBox.information(self, "Syncplay", getMessage("language-changed-msgbox-label"))
 
     def browsePlayerpath(self):
         options = QtGui.QFileDialog.Options()
@@ -194,6 +197,7 @@ class ConfigDialog(QtGui.QDialog):
         else:
             self.config['host'] = None
         self.config['playerPath'] = unicode(self.executablepathCombobox.currentText())
+        self.config['language'] = unicode(self.languageCombobox.itemData(self.languageCombobox.currentIndex()))
         if self.mediapathTextbox.text() == "":
             self.config['file'] = None
         elif os.path.isfile(os.path.abspath(self.mediapathTextbox.text())):
@@ -572,6 +576,7 @@ class ConfigDialog(QtGui.QDialog):
 
         self.displaySettingsGroup = QtGui.QGroupBox(getMessage("messages-other-title"))
         self.displaySettingsLayout = QtGui.QVBoxLayout()
+        self.displaySettingsLayout.setAlignment(Qt.AlignTop)
         self.displaySettingsFrame = QtGui.QFrame()
 
         self.showDurationNotificationCheckbox = QCheckBox(getMessage("showdurationnotification-label"))
@@ -581,6 +586,27 @@ class ConfigDialog(QtGui.QDialog):
         self.showcontactinfoCheckbox = QCheckBox(getMessage("showcontactinfo-label"))
         self.showcontactinfoCheckbox.setObjectName("showContactInfo")
         self.displaySettingsLayout.addWidget(self.showcontactinfoCheckbox)
+
+        self.languageFrame = QtGui.QFrame()
+        self.languageFrame.setContentsMargins(0,0,0,0)
+        self.languageLayout = QtGui.QHBoxLayout()
+        self.languageLayout.setSpacing(0)
+        self.languageLayout.setAlignment(Qt.AlignTop)
+        self.languageLabel = QLabel(getMessage("language-label"), self)
+        self.languageCombobox = QtGui.QComboBox(self)
+        self.languages = getLanguages()
+        for lang in self.languages:
+            self.languageCombobox.addItem(self.languages[lang], lang)
+            if lang == self.config['language']:
+                self.languageCombobox.setCurrentIndex(self.languageCombobox.count()-1)
+        self.languageCombobox.currentIndexChanged.connect(self.languageChanged)
+        self.languageLayout.addWidget(self.languageLabel)
+        self.languageLayout.addWidget(self.languageCombobox)
+        self.languageFrame.setLayout(self.languageLayout)
+        self.languageFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.displaySettingsLayout.addWidget(self.languageFrame)
+        self.languageLabel.setObjectName("language")
+        self.languageCombobox.setObjectName("language")
 
         self.displaySettingsGroup.setLayout(self.displaySettingsLayout)
         self.displaySettingsLayout.setAlignment(Qt.AlignTop)
@@ -720,6 +746,7 @@ class ConfigDialog(QtGui.QDialog):
         self.ensureTabListIsVisible()
         self.setFixedWidth(self.minimumSizeHint().width())
         self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
+        self.languageLabel.setFixedWidth(self.languageLabel.width())
 
     def clearGUIData(self, leaveMore=False):
         settings = QSettings("Syncplay", "PlayerList")

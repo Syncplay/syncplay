@@ -2,7 +2,8 @@
 from syncplay import constants
 
 en = {
-
+      "LANGUAGE" : "English",
+      
       # Client notifications
       "config-cleared-notification" : "Settings cleared. Changes will be saved when you store a valid configuration.",
 
@@ -64,6 +65,7 @@ en = {
       "more-info-notification" : "More info available at: {}",  # projectURL
 
       "gui-data-cleared-notification" : "Syncplay has cleared the path and window state data used by the GUI.",
+      "language-changed-msgbox-label" : "Language will be changed when you run Syncplay.",
 
       "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above.",  # VLC version, VLC min version
       "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above.",  # VLC interface version, VLC interface min version
@@ -155,6 +157,7 @@ en = {
       "showdifferentroomosd-label" : "Include events in other rooms",
       "showslowdownosd-label" :"Include slowing down / reverting notification",
       "showcontactinfo-label" : "Show contact info box",
+      "language-label" : "Language",
       "showdurationnotification-label" : "Warn about media duration mismatches",
       "basics-label" : "Basics",
       "sync-label" : "Sync",
@@ -252,6 +255,7 @@ en = {
       "showbuttonlabels-tooltip" : "Show the text alongside the icons for buttons in the main UI.",
       "showtooltips-tooltip" : "Show tooltip help messages when you mouseover an input element in Syncplay.",
       "showdurationnotification-tooltip" : "Useful for when a segment in a multi-part file is missing, but can result in false positives.",
+      "language-tooltip" : u"Language to be used by Syncplay.",
 
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
       "reset-tooltip" : "Reset all settings to the default configuration.",
@@ -302,6 +306,8 @@ en = {
 
 pl = {
 
+      "LANGUAGE" : "Polski", # (Polish)
+
       # Client notifications
       "connection-attempt-notification" : u"Próba połączenia z {}:{}", # Port, IP
       "reconnection-attempt-notification" : u"Połączenie z serwerem zostało przerwane, ponowne łączenie",
@@ -338,6 +344,7 @@ pl = {
       }
 
 ru = {
+      "LANGUAGE" : u"Русский", #  (Russian)
 
       # Client notifications
       "config-cleared-notification" : u"Настройки сброшены. Изменения вступят в силу при сохранении корректной конфигурации.",
@@ -603,6 +610,7 @@ ru = {
       }
 
 de = {
+      "LANGUAGE" : u"Deutsch", # (German)
 
       # Client notifications
       "relative-config-notification" : u"Relative Konfigurationsdatei(en) geladen: {}",
@@ -794,22 +802,29 @@ de = {
       "version-mismatch-server-error" : u"Verschiedene Versionen auf Client und Server",
       "wrong-password-server-error" : u"Ungültiges Passwort"
       }
-	  
+
 messages = {
            "en": en,
            "pl": pl,
            "ru": ru,
            "de": de,
-           "current": None
+           "CURRENT": None
            }
 
+def getLanguages():
+    langList = {}
+    for lang in messages:
+        if lang != "CURRENT":
+            langList[lang] = getMessage("LANGUAGE", lang)
+    return langList
+
 def setLanguage(lang):
-    messages["current"] = lang
+    messages["CURRENT"] = lang
 
 def getMissingStrings():
     missingStrings = ""
     for lang in messages:
-        if lang != "en" and lang != "current":
+        if lang != "en" and lang != "CURRENT":
             for message in messages["en"]:
                 if not messages[lang].has_key(message):
                     missingStrings = missingStrings + "({}) Missing: {}\n".format(lang, message)
@@ -822,7 +837,7 @@ def getMessage(type_, locale=None):
     if constants.SHOW_TOOLTIPS == False:
         if "-tooltip" in type_:
             return ""
-    lang = messages["current"]
+    lang = messages["CURRENT"]
     if locale and messages.has_key(locale):
         if messages[locale].has_key(type_):
             return unicode(messages[locale][type_])
