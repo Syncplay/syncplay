@@ -525,14 +525,14 @@ class ConfigDialog(QtGui.QDialog):
         self.othersyncOptionsFrame = QtGui.QFrame()
         self.othersyncSettingsLayout = QtGui.QGridLayout()
 
+        self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
+        self.othersyncSettingsLayout.addWidget(self.pauseonleaveCheckbox, 1, 0, 1, 2, Qt.AlignLeft)
+        self.pauseonleaveCheckbox.setObjectName("pauseOnLeave")
+
         self.dontslowwithmeCheckbox = QCheckBox(getMessage("dontslowdownwithme-label"))
         self.dontslowwithmeCheckbox.setObjectName("dontSlowDownWithMe")
 
-        self.othersyncSettingsLayout.addWidget(self.dontslowwithmeCheckbox, 1, 0, 1, 2, Qt.AlignLeft)
-
-        self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
-        self.othersyncSettingsLayout.addWidget(self.pauseonleaveCheckbox, 2, 0, 1, 2, Qt.AlignLeft)
-        self.pauseonleaveCheckbox.setObjectName("pauseOnLeave")
+        self.othersyncSettingsLayout.addWidget(self.dontslowwithmeCheckbox, 2, 0, 1, 2, Qt.AlignLeft)
 
         self.fastforwardThresholdLabel.setObjectName("fastforward-threshold")
         self.fastforwardThresholdSpinbox.setObjectName("fastforward-threshold")
