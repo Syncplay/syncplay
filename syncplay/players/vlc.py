@@ -201,7 +201,7 @@ class VlcPlayer(BasePlayer):
         return False
 
     @staticmethod
-    def getFilePathErrors(filePath):
+    def getPlayerPathErrors(playerPath, filePath):
         return None
 
     @staticmethod

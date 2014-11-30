@@ -145,9 +145,9 @@ class ConfigurationGetter(object):
                     self._config["playerClass"] = player
                 else:
                     raise InvalidConfigValue(getMessage("player-path-config-error"))
-                fileErrors = player.getFilePathErrors(self._config['file'] if self._config['file'] else None)
-                if fileErrors:
-                    raise InvalidConfigValue(fileErrors)
+                playerPathErrors = player.getPlayerPathErrors(self._config["playerPath"], self._config['file'] if self._config['file'] else None)
+                if playerPathErrors:
+                    raise InvalidConfigValue(playerPathErrors)
             elif key == "host":
                 self._config["host"], self._config["port"] = self._splitPortAndHost(self._config["host"])
                 hostNotValid = (self._config["host"] == "" or self._config["host"] is None)

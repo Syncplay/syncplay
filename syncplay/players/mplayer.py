@@ -213,7 +213,7 @@ class MplayerPlayer(BasePlayer):
         return False
 
     @staticmethod
-    def getFilePathErrors(filePath):
+    def getPlayerPathErrors(playerPath, filePath):
         if not filePath:
             return getMessage("no-file-path-config-error")
 

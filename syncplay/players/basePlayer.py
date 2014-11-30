@@ -91,15 +91,14 @@ class BasePlayer(object):
         raise NotImplementedError()
 
     '''
+    @type playerPath: string
     @type filePath: string
     @return errorMessage: string
 
-    Checks if the player has any problems with the given file (or lack of file)
-    If a problem is detected then it returns the error message
-    If the file is fine then it returns None
+    Checks if the player has any problems with the given player/file path
     '''
     @staticmethod
-    def getFilePathErrors(filePath):
+    def getPlayerPathErrors(playerPath, filePath):
         raise NotImplementedError()
 
 class DummyPlayer(BasePlayer):
@@ -121,5 +120,5 @@ class DummyPlayer(BasePlayer):
         return path
 
     @staticmethod
-    def getFilePathErrors(filePath):
+    def getPlayerPathErrors(playerPath, filePath):
         return None
