@@ -152,7 +152,7 @@ en = {
       "filename-privacy-label" : "Filename information:",
       "filesize-privacy-label" : "File size information:",
       "slowondesync-label" : "Slow down on minor desync (not supported on MPC-HC)",
-      "dontslowdownwithme-label" : "Never slow down or rewind others",
+      "dontslowdownwithme-label" : "Never slow down or rewind others (experimental)",
       "pauseonleave-label" : "Pause when user leaves (e.g. if they are disconnected)",
       "forceguiprompt-label" : "Don't always show this dialog", # (Inverted)
       "nostore-label" : "Don't store this configuration", # (Inverted)
