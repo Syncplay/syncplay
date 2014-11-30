@@ -16,6 +16,12 @@ import syncplay
 import os
 import subprocess
 
+from syncplay.messages import getMissingStrings
+missingStrings = getMissingStrings()
+if missingStrings is not None and missingStrings is not "":
+    import warnings
+    warnings.warn("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
+
 p = "C:\\Program Files (x86)\\NSIS\\Unicode\\makensis.exe" #TODO: how to move that into proper place, huh
 NSIS_COMPILE = p if os.path.isfile(p) else "makensis.exe"
 OUT_DIR = "syncplay v{}".format(syncplay.version)

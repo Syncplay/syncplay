@@ -112,7 +112,7 @@ class SyncplayClient(object):
         if constants.DEBUG_MODE and constants.WARN_ABOUT_MISSING_STRINGS:
             missingStrings = getMissingStrings()
             if missingStrings is not None and missingStrings is not "":
-                self.ui.showDebugMessage("MISSING STRINGS DETECTED:\n{}".format(missingStrings))
+                self.ui.showDebugMessage("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
 
     def initProtocol(self, protocol):
         self._protocol = protocol
