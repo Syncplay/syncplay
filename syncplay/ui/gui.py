@@ -555,7 +555,7 @@ class MainWindow(QtGui.QMainWindow):
         window.openAction.triggered.connect(self.browseMediapath)
 
         window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'),
-                                                      getMessage("file-menu-label"))
+                                                      getMessage("exit-menu-label"))
         window.exitAction.triggered.connect(self.exitSyncplay)
         window.menuBar.addMenu(window.fileMenu)
 
