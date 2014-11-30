@@ -653,7 +653,7 @@ class SyncplayUserlist(object):
         self._users[username] = user
         if not noMessage:
             self.__showUserChangeMessage(username, room, file_)
-        self.userListChange()
+        self.userListChange(room)
 
     def removeUser(self, username):
         hideFromOSD = not constants.SHOW_DIFFERENT_ROOM_OSD
@@ -690,7 +690,7 @@ class SyncplayUserlist(object):
             self.__showUserChangeMessage(username, room, file_)
         else:
             self.addUser(username, room, file_)
-        self.userListChange()
+        self.userListChange(room)
 
     def setUserAsController(self, username):
         if self.currentUser.username == username:
@@ -718,8 +718,9 @@ class SyncplayUserlist(object):
                 return True
         return False
 
-    def userListChange(self):
-        self._roomUsersChanged = True
+    def userListChange(self, room = None):
+        if room is not None and self.isRoomSame(room):
+            self._roomUsersChanged = True
         self.ui.userListChange()
 
     def roomStateConfirmed(self):
