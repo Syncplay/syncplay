@@ -242,11 +242,11 @@ en = {
       "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room controllers.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
       "rewindondesync-label" : "Rewind on major desync (highly recommended)",
-      "fastforwardondesync-label" : "Fast-forward if lagging behind room controller (recommended)",
+      "fastforwardondesync-label" : "Fast-forward if lagging behind (recommended)",
       "forceguiprompt-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.", # (Inverted)
       "nostore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.", # (Inverted)
       "rewindondesync-tooltip" : "Jump back when needed to get back in sync. Disabling this option can result in major desyncs!",
-      "fastforwardondesync-tooltip" : "Jump forward when needed to get back in sync. Disabling this option can result in major desyncs!",
+      "fastforwardondesync-tooltip" : "Jump forward when out of sync with room controller (or your pretend position if 'Never slow down or rewind others' enabled).",
       "showosd-tooltip" : "Sends Syncplay messages to media player OSD.",
       "showosdwarnings-tooltip" : "Show warnings if playing different file, alone in room.",
       "showsameroomosd-tooltip" : "Show OSD notifications for events relating to room user is in.",
