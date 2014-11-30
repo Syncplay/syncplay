@@ -89,7 +89,19 @@ class BasePlayer(object):
     @staticmethod
     def openCustomOpenDialog(self):
         raise NotImplementedError()
-    
+
+    '''
+    @type filePath: string
+    @return errorMessage: string
+
+    Checks if the player has any problems with the given file (or lack of file)
+    If a problem is detected then it returns the error message
+    If the file is fine then it returns None
+    '''
+    @staticmethod
+    def getFilePathErrors(filePath):
+        raise NotImplementedError()
+
 class DummyPlayer(BasePlayer):
 
     @staticmethod
@@ -107,3 +119,7 @@ class DummyPlayer(BasePlayer):
     @staticmethod
     def getExpandedPath(path):
         return path
+
+    @staticmethod
+    def getFilePathErrors(filePath):
+        return None

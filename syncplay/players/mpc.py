@@ -333,6 +333,10 @@ class MPCHCAPIPlayer(BasePlayer):
         self._mpcApi.sendRawCommand(MpcHcApi.CMD_CLOSEAPP, "")
 
     @staticmethod
+    def getFilePathErrors(filePath):
+        return None
+
+    @staticmethod
     def run(client, playerPath, filePath, args):
         args.extend(['/open', '/new'])
         mpc = MPCHCAPIPlayer(client)

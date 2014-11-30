@@ -201,6 +201,10 @@ class VlcPlayer(BasePlayer):
         return False
 
     @staticmethod
+    def getFilePathErrors(filePath):
+        return None
+
+    @staticmethod
     def getIconPath(path):
         return constants.VLC_ICONPATH
 

@@ -145,9 +145,9 @@ class ConfigurationGetter(object):
                     self._config["playerClass"] = player
                 else:
                     raise InvalidConfigValue(getMessage("player-path-config-error"))
-                if player.__name__ in ['MpvPlayer', 'MplayerPlayer']:
-                    if not self._config['file']:
-                        raise InvalidConfigValue(getMessage("no-file-path-config-error"))
+                fileErrors = player.getFilePathErrors(self._config['file'] if self._config['file'] else None)
+                if fileErrors:
+                    raise InvalidConfigValue(fileErrors)
             elif key == "host":
                 self._config["host"], self._config["port"] = self._splitPortAndHost(self._config["host"])
                 hostNotValid = (self._config["host"] == "" or self._config["host"] is None)

@@ -213,6 +213,11 @@ class MplayerPlayer(BasePlayer):
         return False
 
     @staticmethod
+    def getFilePathErrors(filePath):
+        if not filePath:
+            return getMessage("no-file-path-config-error")
+
+    @staticmethod
     def getExpandedPath(playerPath):
         if not os.path.isfile(playerPath):
             if os.path.isfile(playerPath + u"mplayer.exe"):
