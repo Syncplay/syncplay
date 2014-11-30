@@ -250,6 +250,10 @@ class ConfigDialog(QtGui.QDialog):
         if self.pressedclosebutton == False:
             sys.exit()
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+           sys.exit()
+
     def dragEnterEvent(self, event):
         data = event.mimeData()
         urls = data.urls()
