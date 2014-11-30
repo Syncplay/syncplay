@@ -223,7 +223,7 @@ class ConfigDialog(QtGui.QDialog):
             self.config['host'] = self.hostTextbox.text() if ":" in self.hostTextbox.text() else self.hostTextbox.text() + ":" + unicode(constants.DEFAULT_PORT)
         else:
             self.config['host'] = None
-        self.config['playerPath'] = unicode(self.executablepathCombobox.currentText())
+        self.config['playerPath'] = unicode(self.safenormcaseandpath(self.executablepathCombobox.currentText()))
         self.config['language'] = unicode(self.languageCombobox.itemData(self.languageCombobox.currentIndex()))
         if self.mediapathTextbox.text() == "":
             self.config['file'] = None
@@ -249,8 +249,6 @@ class ConfigDialog(QtGui.QDialog):
     def closeEvent(self, event):
         if self.pressedclosebutton == False:
             sys.exit()
-            raise GuiConfiguration.WindowClosed
-            event.accept()
 
     def dragEnterEvent(self, event):
         data = event.mimeData()
