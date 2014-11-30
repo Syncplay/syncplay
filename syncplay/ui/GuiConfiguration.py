@@ -70,6 +70,10 @@ class ConfigDialog(QtGui.QDialog):
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/client/")
 
+    def _isURL(self, path):
+        if "http://" in path:
+            return True
+
     def _tryToFillPlayerPath(self, playerpath, playerpathlist):
         settings = QSettings("Syncplay", "PlayerList")
         settings.beginGroup("PlayerList")
@@ -81,25 +85,38 @@ class ConfigDialog(QtGui.QDialog):
         foundpath = ""
 
         if playerpath != None and playerpath != "":
-            if not os.path.isfile(playerpath):
-                expandedpath = PlayerFactory().getExpandedPlayerPathByPath(playerpath)
-                if expandedpath != None and os.path.isfile(expandedpath):
-                    playerpath = expandedpath
-
-            if os.path.isfile(playerpath):
+            if self._isURL(playerpath):
                 foundpath = playerpath
                 self.executablepathCombobox.addItem(foundpath)
 
+            else:
+                if not os.path.isfile(playerpath):
+                    expandedpath = PlayerFactory().getExpandedPlayerPathByPath(playerpath)
+                    if expandedpath != None and os.path.isfile(expandedpath):
+                        playerpath = expandedpath
+
+                if os.path.isfile(playerpath):
+                    foundpath = playerpath
+                    self.executablepathCombobox.addItem(foundpath)
+
         for path in playerpathlist:
-            if os.path.isfile(path) and os.path.normcase(os.path.normpath(path)) != os.path.normcase(os.path.normpath(foundpath)):
+            if self._isURL(playerpath):
+                foundpath = path
+                self.executablepathCombobox.addItem(path)
+
+            elif os.path.isfile(path) and os.path.normcase(os.path.normpath(path)) != os.path.normcase(os.path.normpath(foundpath)):
                 self.executablepathCombobox.addItem(path)
                 if foundpath == "":
                     foundpath = path
 
         if foundpath != "":
             settings.beginGroup("PlayerList")
-            playerpathlist.append(os.path.normcase(os.path.normpath(foundpath)))
-            settings.setValue("PlayerList", list(set(os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist))))
+            if self._isURL(foundpath):
+                playerpathlist.append(foundpath)
+                settings.setValue("PlayerList", list(set(path) for path in set(playerpathlist)))
+            else:
+                playerpathlist.append(os.path.normcase(os.path.normpath(foundpath)))
+                settings.setValue("PlayerList", list(set(os.path.normcase(os.path.normpath(path)) for path in set(playerpathlist))))
             settings.endGroup()
         return foundpath
 
