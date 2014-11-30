@@ -434,7 +434,7 @@ class ConfigDialog(QtGui.QDialog):
         self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.setAlignment(Qt.AlignTop)
         self.basicOptionsLayout.addWidget(self.connectionSettingsGroup)
-        self.basicOptionsLayout.addSpacing(12)
+        self.basicOptionsLayout.addSpacing(17)
         self.mediaplayerSettingsGroup.setMaximumHeight(self.mediaplayerSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.addWidget(self.mediaplayerSettingsGroup)
 
