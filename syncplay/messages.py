@@ -41,7 +41,7 @@ en = {
       "file-differences-notification" : "Your file differs in the following way(s): ", # controlPassword
       "room-files-not-same" : "Not all files played in the room are the same",
       "alone-in-the-room": "You're alone in the room",
-
+#
       "different-filesize-notification" : " (their file size is different from yours!)",
       "file-played-by-notification" : "File: {} is being played by:",  # File
       "notplaying-notification" : "People who are not playing any file:",
@@ -822,16 +822,16 @@ de = {
       "userguide-menu-label" : u"&Benutzerhandbuch öffnen",
 
       "setoffset-msgbox-label" : u"Set offset", # TODO: Translate into German
-      "offsetinfo-msgbox-label" : u"Offset (see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into German
+      "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung):", # TODO: Translate into German
 
 
-      "createcontrolledroom-msgbox-label" : u"Create controlled room", # TODO: Translate into German
-      "controlledroominfo-msgbox-label" : u"Enter name of controlled room\r\n(see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into German
+      "createcontrolledroom-msgbox-label" : u"Geführten Raum erstellen",
+      "controlledroominfo-msgbox-label" : u"Namen des geführten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung):",
 
-      "identifyascontroller-msgbox-label" : u"Identify as Room Controller", # TODO: Translate into German
-      "identifyinfo-msgbox-label" : u"Enter controller password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into German
+      "identifyascontroller-msgbox-label" : u"Als Raumleiter identifizieren",
+      "identifyinfo-msgbox-label" : u"Passwort des geführten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung):",
 
-      "megabyte-suffix" : u" MB", # TODO: Translate into German (or is MB fine?)
+      "megabyte-suffix" : u" MB",
 
       # Tooltips
 
@@ -844,9 +844,9 @@ de = {
       "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
 
       "more-tooltip" : u"Weitere Einstellungen anzeigen.",
-      "slowdown-threshold-tooltip" : u"Time ahead of slowest client before temporarily reducing playback speed (default: {} secs).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD), # Todo: Translate into German
-      "rewind-threshold-tooltip" : u"Time ahead slowest client before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_REWIND_THRESHOLD), # Todo: Translate into German
-      "fastforward-threshold-tooltip" : u"Time behind room controller before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD), # Todo: Translate into German
+      "slowdown-threshold-tooltip" : u"Time ahead of slowest client before temporarily reducing playback speed (default: {} secs).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD), # TODO: Translate into German
+      "rewind-threshold-tooltip" : u"Time ahead slowest client before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_REWIND_THRESHOLD), # TODO: Translate into German
+      "fastforward-threshold-tooltip" : u"Time behind room controller before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD), # TODO: Translate into German
       "filename-privacy-tooltip" : u"Privat-Modus beim senden des Namens der aktuellen Datei zum Server.",
       "filesize-privacy-tooltip" : u"Privat-Modus beim senden der Größe der aktuellen Datei zum Server.",
       "privacy-sendraw-tooltip" : u"Die Information im Klartext übertragen. Dies ist die Standard-Einstellung mit der besten Funktionalität.",
@@ -855,9 +855,9 @@ de = {
       "slowondesync-tooltip" : u"Reduziert die Abspielgeschwindigkeit zeitweise, um dich wieder synchron zu den anderen Clients zu machen.",
       "dontslowdownwithme-tooltip" : u"Lässt andere nicht langsamer werden oder zurückspringen, wenn deine Wiedergabe hängt.",
       "pauseonleave-tooltip" : u"Wiedergabe anhalten, wenn deine Verbindung verloren geht oder jemand den Raum verlässt.",
-      "rewindondesync-label" : u"Zurückspulen bei großer Zeitdifferent (empfohlen)",
-      "fastforwardondesync-label" : u"Fast-forward if lagging behind (recommended)", # TODO: Translate into German
-      "forceguiprompt-tooltip" : u"Configuration dialogue is not shown when opening a file with Syncplay.", # TODO: Translate into German (was "Der Konfigurations-Dislog wird immer angezeigt. Sogar, wenn du eine Datei mit Syncplay öffnest." but logic is now inverted)
+      "rewindondesync-label" : u"Zurückspulen bei großer Zeitdifferenz (empfohlen)",
+      "fastforwardondesync-label" : u"Vorspulen wenn laggierend (empfohlen)",
+      "forceguiprompt-tooltip" : u"Der Konfigurationsdialog wird nicht angezeigt wird nicht angezeigt, wenn eine Datei mit Syncplay geöffnet wird.",
       "nostore-tooltip" : u"Syncplay mit den angegebenen Einstellungen starten, diese aber nicht fauerhaft speichern.",
       "rewindondesync-tooltip" : u"In der Zeit zurückspringen zum wiederherstellen der Synchronität. Empfohlen.",
       "fastforwardondesync-tooltip" : u"Jump forward when out of sync with room controller (or your pretend position if 'Never slow down or rewind others' enabled).", # Translate into German (if you want)
@@ -869,23 +869,23 @@ de = {
       "showslowdownosd-tooltip" : u"Show notifications of slowing down / reverting on time difference.", # TODO: Translate into German (if you want)
       "showcontactinfo-tooltip" : u"Show information box about contacting Syncplay developers in main Syncplay window.", # TODO: Translate into German (if you want)
       "showdurationnotification-tooltip" : u"Useful for when a segment in a multi-part file is missing, but can result in false positives.", # TODO: Translate into German (if you want)
-      "language-tooltip" : u"Language to be used by Syncplay.", # TODO: Translate into German (if you want)
+      "language-tooltip" : u"Die verwendete Sprache von Syncplay",
 
       "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
-      "reset-tooltip" : u"Reset all settings to the default configuration.", # TODO: Translate into German
+      "reset-tooltip" : u"Alle Einstellungen auf Standardwerte zurücksetzen.",
 
-      "togglepause-tooltip" : u"Pause/unpause media.", # TODO: Translate into German (if you want)
-      "play-tooltip" : u"Unpause media.", # TODO: Translate into German (if you want)
-      "pause-tooltip" : u"Pause media.", # TODO: Translate into German (if you want)
+      "togglepause-tooltip" : u"Datei (ent)pausieren",
+      "play-tooltip" : u"Fortsetzen",
+      "pause-tooltip" : u"Pausieren",
       "undoseek-tooltip" : u"Seek to where you were before the most recent seek.", # TODO: Translate into German(if you want)
       "joinroom-tooltip" : u"Leave current room and joins specified room.", # TODO: Translate into German(if you want)
-      "seektime-tooltip" : u"Jump to specified time (in seconds / min:sec). Use +/- for relative seek.", # TODO: Translate into German
+      "seektime-tooltip" : u"Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
 
       # In-userlist notes (GUI)
-      "differentsize-note" : u"Different size!", # TODO: Translate into German
-      "differentsizeandduration-note" : u"Different size and duration!", # TODO: Translate into German
-      "differentduration-note" : u"Different duration!", # TODO: Translate into German
-      "nofile-note" : u"(No file being played)", # TODO: Translate into German
+      "differentsize-note" : u"Verschiedene Größe!",
+      "differentsizeandduration-note" : u"Verschiedene Größe und Dauer!",
+      "differentduration-note" : u"Verschiedene Dauer!",
+      "nofile-note" : u"(keine Datei wird abgespielt)",
 
       # Server messages to client
       "new-syncplay-available-motd-message" : u"<NOTICE> Du nutzt Syncplay Version {}, aber es gibt eine neuere Version auf http://syncplay.pl</NOTICE>",  # ClientVersion
@@ -894,7 +894,7 @@ de = {
       "welcome-server-notification" : u"Willkommen zum Syncplay-Server, v. {0}",  # version
       "client-connected-room-server-notification" : u"{0}({2}) hat den Raum '{1}' betreten",  # username, host, room
       "client-left-server-notification" : u"{0} hat den Server verlassen",  # name
-      "no-salt-notification" : "PLEASE NOTE: To allow room control passwords generated by this server instance to still work when the server is restarted, please add the following command line argument when running the Syncplay server in the future: --salt {}", #Salt  # TODO: Translate into German
+      "no-salt-notification" : "WICHTIGER HINWEIS: Damit von dem Server generierte Passwörter für geführte Räume auch nach einem Serverneustart funktionieren, starte den Server mit dem folgenden Parameter: --salt {}", #Salt
 
       # Server arguments
       "server-argument-description" : u'Anwendung, um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren. Server',
@@ -902,7 +902,7 @@ de = {
       "server-port-argument" : u'Server TCP-Port',
       "server-password-argument" : u'Server Passwort',
       "server-isolate-room-argument" : u'Sollen die Räume isoliert sein?',
-      "server-salt-argument" : u"random string used to generate controlled room passwords", # TODO: Translate into German
+      "server-salt-argument" : u"zufällige Zeichenkette, die zur Erstellung von Passwörtern verwendet wird",
       "server-motd-argument": u"Pfad zur Datei, von der die Nachricht des Tages geladen wird",
       "server-messed-up-motd-unescaped-placeholders": u"Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
       "server-messed-up-motd-too-long": u"Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
