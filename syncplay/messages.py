@@ -260,8 +260,6 @@ en = {
       "showdifferentroomosd-tooltip" : "Show OSD notifications for events relating to room user is not in.",
       "showslowdownosd-tooltip" :"Show notifications of slowing down / reverting on time difference.",
       "showcontactinfo-tooltip" : "Show information box about contacting Syncplay developers in main Syncplay window.",
-      "showbuttonlabels-tooltip" : "Show the text alongside the icons for buttons in the main UI.",
-      "showtooltips-tooltip" : "Show tooltip help messages when you mouseover an input element in Syncplay.",
       "showdurationnotification-tooltip" : "Useful for when a segment in a multi-part file is missing, but can result in false positives.",
       "language-tooltip" : u"Language to be used by Syncplay.",
 
@@ -520,7 +518,6 @@ ru = {
       "pause-guibuttonlabel" : u"Пауза",
 
       "roomuser-heading-label" : u"Комната / Пользователь",
-      "fileplayed-heading-label" : u"Воспроизводимый файл",
       "notifications-heading-label" : u"Уведомления",
       "userlist-heading-label" : u"Кто что смотрит",
       "othercommands-heading-label" : u"Другие команды",
@@ -570,8 +567,6 @@ ru = {
       "showdifferentroomosd-tooltip" : u"Показывать OSD-уведомления о событиях, относящихся к любым другим комнатам.",
       "showslowdownosd-tooltip" : u"Показывать уведомления о замедлении или перемотке в целях синхронизации.",
       "showcontactinfo-tooltip" : u"Показывать информационных блок с контактной информацией разработчиков Syncplay на главном окне Syncplay.",
-      "showbuttonlabels-tooltip" : u"Показывать текст рядом с иконками на кнопках в основном пользовательском интерфейсе.",
-      "showtooltips-tooltip" : u"Показывать всплывающие подсказки при наведении мыши на некоторые элементы в окне Syncplay.",
       "showdurationnotification-tooltip" : u"Полезно, когда сегмент составного файла отсутствует. Возможны ложные срабатывания.",
 
       "help-tooltip" : u"Открыть Руководство Пользователя на Syncplay.pl.",
@@ -602,8 +597,6 @@ ru = {
       "server-motd-argument" : u"путь к файлу, из которого будет извлекаться MOTD-сообщение",
       "server-messed-up-motd-unescaped-placeholders" : u"MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
       "server-messed-up-motd-too-long" : u"MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
-      "server-irc-verbose" : u"Должен ли сервер активно сообщать о всех событиях в комнатах?",
-      "server-irc-config" : u"Путь к конфигурационным файлам IRC-бота.",
 
       # Server errors
       "unknown-command-server-error" : u"Неизвестная команда: {}",  # message
@@ -613,7 +606,6 @@ ru = {
       "password-required-server-error" : u"Необходимо указать пароль.",
       "wrong-password-server-error" : u"Указан неверный пароль.",
       "hello-server-error" : u"Не хватает аргументов Hello.",
-      "version-mismatch-server-error" : u"Конфликт версий между клиентом и сервером."
 
       }
 
