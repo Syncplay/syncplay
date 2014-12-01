@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb
  Project: http://syncplay.pl/
- Version: 0.2.2
+ Version: 0.2.3
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -78,16 +78,7 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 --]==========================================================================]
 
-local modulepath = config["modulepath"]
-if(modulepath ~= nil) and (modulepath ~= "") then
-    -- Workaround for when the script is not being run from the usual VLC intf folder.
-    package.path = modulepath
-    pcall(require,"common")
-else
-    require "common"
-end
-
-local connectorversion = "0.2.2"
+local connectorversion = "0.2.3"
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
 local loopsleepduration = 5000 -- Pause for every event loop (uses microseconds)
 local quitcheckfrequency = 20 -- Check whether VLC has closed every X loops
@@ -119,9 +110,32 @@ local newtitle = 0
 
 local running = true
 
+function radixsafe_tonumber(str)
+    -- Version of tonumber that works with any radix character (but not thousand seperators)
+    -- Based on the public domain VLC common.lua us_tonumber() function
+	str = string.gsub(tostring(str), "[^0-9]", ".")
+    local s, i, d = string.match(str, "^([+-]?)(%d*)%.?(%d*)$")
+    if not s or not i or not d then
+        return nil
+    end
+
+    if s == "-" then
+        s = -1
+    else
+        s = 1
+    end
+    if i == "" then
+        i = "0"
+    end
+    if d == nil or d == "" then
+        d = "0"
+    end
+    return s * (tonumber(i) + tonumber(d)/(10^string.len(d)))
+end
+
 -- Start hosting Syncplay interface.
 
-port = tonumber(config["port"])
+port = radixsafe_tonumber(config["port"])
 if (port == nil or port < 1) then port = 4123 end
 
 function quit_vlc()
@@ -256,12 +270,12 @@ function set_time ( timetoset)
     if input then
         local response, errormsg, realtime, titletrack
         realtime = timetoset % titlemultiplier
-        oldtitle = tonumber(get_var("title", 0))
+        oldtitle = radixsafe_tonumber(get_var("title", 0))
         newtitle = (timetoset - realtime) / titlemultiplier
         if oldtitle ~= newtitle and newtitle > -1 then
-            set_var("title", tonumber(newtitle))
+            set_var("title", radixsafe_tonumber(newtitle))
         end
-        errormsg = set_var("time", tonumber(realtime))
+        errormsg = set_var("time", radixsafe_tonumber(realtime))
         return errormsg
 	else
 	    return noinput
@@ -393,7 +407,7 @@ function display_osd ( argument )
     if input then
         osdarray = get_args(argument,3)
         --position, duration, message -> message, , position, duration (converted from seconds to microseconds)
-        local osdduration = tonumber(osdarray[2]) * 1000 * 1000
+        local osdduration = radixsafe_tonumber(osdarray[2]) * 1000 * 1000
         vlc.osd.message(osdarray[3],channel1,osdarray[1],osdduration)
     else
         errormsg = noinput
@@ -425,11 +439,11 @@ function do_command ( command, argument)
     elseif command == "get-filepath"          then response           = "filepath"..msgseperator..errormerge(get_filepath())..msgterminator
     elseif command == "get-filename"          then response           = "filename"..msgseperator..errormerge(get_filename())..msgterminator
     elseif command == "get-title"             then response           = "title"..msgseperator..errormerge(get_var("title", 0))..msgterminator
-    elseif command == "set-position"          then           errormsg = set_time(tonumber(argument))
-    elseif command == "seek-within-title"     then           errormsg = set_var("time", tonumber(argument))
+    elseif command == "set-position"          then           errormsg = set_time(radixsafe_tonumber(argument))
+    elseif command == "seek-within-title"     then           errormsg = set_var("time", radixsafe_tonumber(argument))
     elseif command == "set-playstate"         then           errormsg = set_playstate(argument)
-    elseif command == "set-rate"              then           errormsg = set_var("rate", tonumber(argument))
-    elseif command == "set-title"             then           errormsg = set_var("title", tonumber(argument))
+    elseif command == "set-rate"              then           errormsg = set_var("rate", radixsafe_tonumber(argument))
+    elseif command == "set-title"             then           errormsg = set_var("title", radixsafe_tonumber(argument))
     elseif command == "display-osd"           then           errormsg = display_osd(argument)
     elseif command == "load-file"             then response           = load_file(argument)
     elseif command == "close-vlc"             then                      quit_vlc()
@@ -471,7 +485,7 @@ function set_playstate(argument)
 end
 
 if string.sub(vlc.misc.version(),1,2) == "1." then
-    vlc.msg.err("This version of VLC is not known to support version " .. connectorversion .. " of the Syncplay interface module on Windows. Please use VLC 2+.")
+    vlc.msg.err("This version of VLC is not known to support the Syncplay interface module. Please use VLC 2+.")
     quit_vlc()
 else
     l = vlc.net.listen_tcp(host, port)

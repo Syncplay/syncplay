@@ -306,6 +306,7 @@ class MpcHcApi:
 
 class MPCHCAPIPlayer(BasePlayer):
     speedSupported = False
+    customOpenDialog = False
     
     def __init__(self, client):
         from twisted.internet import reactor
@@ -330,6 +331,10 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__positionUpdate.set()
         self.__versionUpdate.set()
         self._mpcApi.sendRawCommand(MpcHcApi.CMD_CLOSEAPP, "")
+
+    @staticmethod
+    def getPlayerPathErrors(playerPath, filePath):
+        return None
 
     @staticmethod
     def run(client, playerPath, filePath, args):
@@ -385,7 +390,7 @@ class MPCHCAPIPlayer(BasePlayer):
         if filePath:
             self.openFile(filePath)
     
-    def openFile(self, filePath):
+    def openFile(self, filePath, resetPosition=False):
         self._mpcApi.openFile(filePath)
         
     def displayMessage(self, message, duration = (constants.OSD_DURATION*1000)):

@@ -49,7 +49,7 @@ class BasePlayer(object):
     '''
     @type filePath: string 
     '''
-    def openFile(self, filePath):
+    def openFile(self, filePath, resetPosition=False):
         raise NotImplementedError()
     
     
@@ -82,8 +82,25 @@ class BasePlayer(object):
     @staticmethod
     def getExpandedPath(path):
         raise NotImplementedError()
-    
-    
+
+    '''
+    Opens a custom media browse dialog, and then changes to that media if appropriate
+    '''
+    @staticmethod
+    def openCustomOpenDialog(self):
+        raise NotImplementedError()
+
+    '''
+    @type playerPath: string
+    @type filePath: string
+    @return errorMessage: string
+
+    Checks if the player has any problems with the given player/file path
+    '''
+    @staticmethod
+    def getPlayerPathErrors(playerPath, filePath):
+        raise NotImplementedError()
+
 class DummyPlayer(BasePlayer):
 
     @staticmethod
@@ -101,3 +118,7 @@ class DummyPlayer(BasePlayer):
     @staticmethod
     def getExpandedPath(path):
         return path
+
+    @staticmethod
+    def getPlayerPathErrors(playerPath, filePath):
+        return None

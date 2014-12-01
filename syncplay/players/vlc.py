@@ -10,10 +10,10 @@ import socket
 import asynchat, asyncore
 import urllib
 from syncplay.messages import getMessage
-import time
 
 class VlcPlayer(BasePlayer):
     speedSupported = True
+    customOpenDialog = False
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS
     if not sys.platform.startswith('darwin'):
@@ -30,6 +30,13 @@ class VlcPlayer(BasePlayer):
         self._filename = None
         self._filepath = None
         self._filechanged = False
+        try: # Hack to fix locale issue without importing locale library
+            self.radixChar = "{:n}".format(1.5)[1:2]
+            if self.radixChar == "" or self.radixChar == "1" or self.radixChar == "5":
+                raise ValueError
+        except:
+            self._client.ui.showErrorMessage("Failed to determine locale. As a fallback Syncplay is using the following radix character: \".\".")
+            self.radixChar = "."
 
         self._durationAsk = threading.Event()
         self._filenameAsk = threading.Event()
@@ -91,8 +98,7 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine("set-rate: {:.2n}".format(value))
 
     def setPosition(self, value):
-        self._position = value
-        self._listener.sendLine("set-position: {}".format(value))
+        self._listener.sendLine("set-position: {}".format(value).replace(".",self.radixChar))
 
     def setPaused(self, value):
         self._paused = value
@@ -112,7 +118,7 @@ class VlcPlayer(BasePlayer):
     def _isASCII (self, s):
         return all(ord(c) < 128 for c in s)
 
-    def openFile(self, filePath):
+    def openFile(self, filePath, resetPosition=False):
         if self._isASCII(filePath):
             self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii', 'ignore')))
         else:
@@ -125,6 +131,7 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine("get-filename")
 
     def lineReceived(self, line):
+        self._client.ui.showDebugMessage("player >> {}".format(line))
         match, name, value = self.RE_ANSWER.match(line), "", ""
         if match:
             name, value = match.group('command'), match.group('argument')
@@ -192,6 +199,10 @@ class VlcPlayer(BasePlayer):
         if "vlc" in path.lower() and VlcPlayer.getExpandedPath(path):
             return True
         return False
+
+    @staticmethod
+    def getPlayerPathErrors(playerPath, filePath):
+        return None
 
     @staticmethod
     def getIconPath(path):
@@ -322,15 +333,14 @@ class VlcPlayer(BasePlayer):
             self.__playerController.drop()
 
         def found_terminator(self):
-#            print "received: {}".format("".join(self._ibuffer))
             self.__playerController.lineReceived("".join(self._ibuffer))
             self._ibuffer = []
 
         def sendLine(self, line):
             if self.connected:
-#                print "send: {}".format(line)
                 try:
                     self.push(line + "\n")
+                    self._client.ui.showDebugMessage("player >> {}".format(line))
                 except:
                     pass
             if line == "close-vlc":

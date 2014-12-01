@@ -7,6 +7,8 @@ import sys
 import os
 import itertools
 import hashlib
+import random
+import string
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -93,6 +95,19 @@ def formatTime(timeInSeconds, weeksAsTitles=True):
         formattedTime = "{0:} (Title {1:.0f})".format(formattedTime, title)
     return formattedTime
 
+def formatSize (bytes, precise=False):
+    if bytes == 0: # E.g. when file size privacy is enabled
+        return "???"
+    try:
+        megabytes = int(bytes) / 1048576.0 # Technically this is a mebibyte, but whatever
+        if precise:
+            megabytes = round(megabytes, 1)
+        else:
+            megabytes = int(megabytes)
+        return str(megabytes) + getMessage("megabyte-suffix")
+    except: # E.g. when filesize is hashed
+        return "???"
+
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
     if not frozen:
@@ -141,7 +156,19 @@ def blackholeStdoutForFrozenWindow():
 # Relate to file hashing / difference checking:
 
 def stripfilename(filename):
-    return re.sub(constants.FILENAME_STRIP_REGEX, "", filename)
+    if filename:
+        return re.sub(constants.FILENAME_STRIP_REGEX, "", filename)
+    else:
+        return ""
+
+def stripRoomName(RoomName):
+    if RoomName:
+        try:
+            return re.sub(constants.ROOM_NAME_STRIP_REGEX, "\g<roomnamebase>", RoomName)
+        except IndexError:
+            return RoomName
+    else:
+        return ""
 
 def hashFilename(filename):
     return hashlib.sha256(stripfilename(filename).encode('utf-8')).hexdigest()[:12]
@@ -182,3 +209,69 @@ def sameFileduration (duration1, duration2):
         return True
     else:
         return False
+
+def meetsMinVersion(version, minVersion):
+    def versiontotuple(ver):
+        return tuple(map(int, ver.split(".")))
+    return versiontotuple(version) >= versiontotuple(minVersion)
+
+class RoomPasswordProvider(object):
+    CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
+    PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")
+
+    @staticmethod
+    def isControlledRoom(roomName):
+        return bool(re.match(RoomPasswordProvider.CONTROLLED_ROOM_REGEX, roomName))
+
+    @staticmethod
+    def check(roomName, password, salt):
+        if not password or not re.match(RoomPasswordProvider.PASSWORD_REGEX, password):
+            raise ValueError()
+
+        if not roomName:
+            raise NotControlledRoom()
+        match = re.match(RoomPasswordProvider.CONTROLLED_ROOM_REGEX, roomName)
+        if not match:
+            raise NotControlledRoom()
+        roomHash = match.group(2)
+        computedHash = RoomPasswordProvider._computeRoomHash(match.group(1), password, salt)
+        return roomHash == computedHash
+
+    @staticmethod
+    def getControlledRoomName(roomName, password, salt):
+        return "+" + roomName + ":" + RoomPasswordProvider._computeRoomHash(roomName, password, salt)
+
+    @staticmethod
+    def _computeRoomHash(roomName, password, salt):
+        roomName = roomName.encode('utf8')
+        salt = hashlib.sha256(salt).hexdigest()
+        provisionalHash = hashlib.sha256(roomName + salt).hexdigest()
+        return hashlib.sha1(provisionalHash + salt + password).hexdigest()[:12].upper()
+
+class RandomStringGenerator(object):
+    @staticmethod
+    def generate_room_password():
+        parts = (
+            RandomStringGenerator._get_random_letters(2),
+            RandomStringGenerator._get_random_numbers(3),
+            RandomStringGenerator._get_random_numbers(3)
+        )
+        return "{}-{}-{}".format(*parts)
+
+    @staticmethod
+    def generate_server_salt():
+        parts = (
+            RandomStringGenerator._get_random_letters(10),
+        )
+        return "{}".format(*parts)
+
+    @staticmethod
+    def _get_random_letters(quantity):
+        return ''.join(random.choice(string.ascii_uppercase) for _ in xrange(quantity))
+
+    @staticmethod
+    def _get_random_numbers(quantity):
+        return ''.join(random.choice(string.digits) for _ in xrange(quantity))
+
+class NotControlledRoom(Exception):
+    pass

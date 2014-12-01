@@ -9,8 +9,8 @@ import os
 
 class MplayerPlayer(BasePlayer):
     speedSupported = True
+    customOpenDialog = False
     RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
-    SLAVE_ARGS = constants.MPLAYER_SLAVE_ARGS
     POSITION_QUERY = 'time_pos'
     OSD_QUERY = 'osd_show_text'
 
@@ -23,6 +23,9 @@ class MplayerPlayer(BasePlayer):
         self._duration = None
         self._filename = None
         self._filepath = None
+        self.quitReason = None
+        self.lastLoadedTime = None
+        self.fileLoaded = False
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:
@@ -86,8 +89,12 @@ class MplayerPlayer(BasePlayer):
     def setSpeed(self, value):
         self._setProperty('speed', "{:.2f}".format(value))
 
-    def openFile(self, filePath):
+    def _loadFile(self, filePath):
         self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
+
+    def openFile(self, filePath, resetPosition=False):
+        self._filepath = filePath
+        self._loadFile(filePath)
         self._onFileUpdate()
         if self._paused != self._client.getGlobalPaused():
             self.setPaused(self._client.getGlobalPaused())
@@ -124,19 +131,42 @@ class MplayerPlayer(BasePlayer):
         arg = arg.replace('"', '\\"')
         return u'"{}"'.format(arg)
 
+    def _fileIsLoaded(self):
+        return True
+
+    def _handleUnknownLine(self, line):
+        pass
+
+    def _storePosition(self, value):
+        self._position = value
+
+    def _storePauseState(self, value):
+        self._paused = value
+
     def lineReceived(self, line):
+        if line:
+            self._client.ui.showDebugMessage("player << {}".format(line))
+        if "Failed to get value of property" in line:
+            if "filename" in line:
+                self._getFilename()
+            elif "length" in line:
+                self._getLength()
+            elif "path" in line:
+                self._getFilepath()
+            return
         match = self.RE_ANSWER.match(line)
         if not match:
+            self._handleUnknownLine(line)
             return
 
         name, value =[m for m in match.groups() if m]
         name = name.lower()
 
         if name == self.POSITION_QUERY:
-            self._position = float(value)
+            self._storePosition(float(value))
             self._positionAsk.set()
         elif name == "pause":
-            self._paused = bool(value == 'yes')
+            self._storePauseState(bool(value == 'yes'))
             self._pausedAsk.set()
         elif name == "length":
             self._duration = float(value)
@@ -149,7 +179,9 @@ class MplayerPlayer(BasePlayer):
             self._filenameAsk.set()
         elif name == "exiting":
             if value != 'Quit':
-                self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("media-player-error").format(value), True)
+                if self.quitReason is None:
+                    self.quitReason = getMessage("media-player-error").format(value)
+                self.reactor.callFromThread(self._client.ui.showErrorMessage, self.quitReason, True)
             self.drop()
 
     @staticmethod
@@ -171,10 +203,19 @@ class MplayerPlayer(BasePlayer):
         return constants.MPLAYER_ICONPATH
 
     @staticmethod
+    def getStartupArgs(path):
+        return constants.MPLAYER_SLAVE_ARGS
+
+    @staticmethod
     def isValidPlayerPath(path):
         if "mplayer" in path and MplayerPlayer.getExpandedPath(path):
             return True
         return False
+
+    @staticmethod
+    def getPlayerPathErrors(playerPath, filePath):
+        if not filePath:
+            return getMessage("no-file-path-config-error")
 
     @staticmethod
     def getExpandedPath(playerPath):
@@ -219,7 +260,7 @@ class MplayerPlayer(BasePlayer):
                 filePath = os.path.realpath(filePath)
 
             call = [playerPath, filePath]
-            call.extend(playerController.SLAVE_ARGS)
+            call.extend(playerController.getStartupArgs(playerPath))
             if args:
                 call.extend(args)
             # At least mpv may output escape sequences which result in syncplay
@@ -259,7 +300,10 @@ class MplayerPlayer(BasePlayer):
 
         def sendLine(self, line):
             try:
-                line = (line.decode('utf8') + u"\n").encode('utf8')
+                if not isinstance(line, unicode):
+                    line = line.decode('utf8')
+                line = (line + u"\n").encode('utf8')
+                self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
                 self.__process.stdin.write(line)
             except IOError:
                 pass

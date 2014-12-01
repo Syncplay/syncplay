@@ -36,8 +36,10 @@ class ConfigurationGetter(object):
                         "playerClass": None,
                         "slowdownThreshold": constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD,
                         "rewindThreshold": constants.DEFAULT_REWIND_THRESHOLD,
+                        "fastforwardThreshold": constants.DEFAULT_FASTFORWARD_THRESHOLD,
                         "rewindOnDesync": True,
                         "slowOnDesync": True,
+                        "fastforwardOnDesync": True,
                         "dontSlowDownWithMe": False,
                         "filenamePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
                         "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
@@ -50,9 +52,8 @@ class ConfigurationGetter(object):
                         "showSlowdownOSD" : True,
                         "showDifferentRoomOSD" : False,
                         "showSameRoomOSD" : True,
+                        "showNonControllerOSD" : False,
                         "showContactInfo" : True,
-                        "showButtonLabels" : True,
-                        "showTooltips" : True,
                         "showDurationNotification" : True
                         }
 
@@ -87,21 +88,21 @@ class ConfigurationGetter(object):
                          "showSlowdownOSD",
                          "showDifferentRoomOSD",
                          "showSameRoomOSD",
+                         "showNonControllerOSD",
                          "showContactInfo" ,
-                         "showButtonLabels",
-                         "showTooltips",
                          "showDurationNotification"
                         ]
 
         self._numeric = [
             "slowdownThreshold",
-            "rewindThreshold"
+            "rewindThreshold",
+            "fastforwardThreshold",
         ]
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "slowOnDesync", "rewindOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
-                        "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showContactInfo" , "showButtonLabels", "showTooltips", "showDurationNotification"],
+                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
+                        "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showContactInfo" , "showDurationNotification"],
                         "general": ["language"]
                         }
 
@@ -143,20 +144,20 @@ class ConfigurationGetter(object):
                 if player:
                     self._config["playerClass"] = player
                 else:
-                    raise InvalidConfigValue("Player path is not set properly")
-                if player.__name__ in ['MpvPlayer', 'MplayerPlayer']:
-                    if not self._config['file']:
-                        raise InvalidConfigValue("File must be selected before starting your player")
+                    raise InvalidConfigValue(getMessage("player-path-config-error"))
+                playerPathErrors = player.getPlayerPathErrors(self._config["playerPath"], self._config['file'] if self._config['file'] else None)
+                if playerPathErrors:
+                    raise InvalidConfigValue(playerPathErrors)
             elif key == "host":
                 self._config["host"], self._config["port"] = self._splitPortAndHost(self._config["host"])
                 hostNotValid = (self._config["host"] == "" or self._config["host"] is None)
                 portNotValid = (_isPortValid(self._config["port"]) == False)
                 if hostNotValid:
-                    raise InvalidConfigValue("Hostname can't be empty")
+                    raise InvalidConfigValue(getMessage("no-hostname-config-error"))
                 elif portNotValid:
-                    raise InvalidConfigValue("Port must be valid")
+                    raise InvalidConfigValue(getMessage("invalid-port-config-error"))
             elif self._config[key] == "" or self._config[key] is None:
-                raise InvalidConfigValue("{} can't be empty".format(key.capitalize()))
+                raise InvalidConfigValue(getMessage("empty-value-config-error").format(key.capitalize()))
 
     def _overrideConfigWithArgs(self, args):
         for key, val in vars(args).items():

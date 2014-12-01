@@ -4,9 +4,27 @@ ifndef VLC_SUPPORT
 	VLC_SUPPORT = true
 endif
 
+ifeq ($(shell uname)),FreeBSD)
+	BSD          = true
+endif
+ifeq ($(shell uname)),NetBSD)
+	BSD          = true
+endif
+ifeq ($(shell uname)),OpenBSD)
+	BSD          = true
+endif
+ifeq ($(shell uname)),DragonFly)
+	BSD          = true
+endif
+
 ifeq ($(SINGLE_USER),false)
+ifneq ($(BSD),true)
 	BASE_PATH    = /usr
 	VLC_LIB_PATH = ${PREFIX}/usr/lib
+else
+	BASE_PATH    = /usr/local
+	VLC_LIB_PATH = ${PREFIX}/usr/local/lib	
+endif
 else
 	BASE_PATH    = ${HOME}/.local
 	VLC_LIB_PATH = ${HOME}/.local/share
@@ -18,8 +36,6 @@ endif
 	SHARE_PATH        = ${PREFIX}$(BASE_PATH)/share
 
 common:
-	-mkdir -p $(LIB_PATH)/syncplay/resources/
-	-mkdir -p $(LIB_PATH)/syncplay/resources/lua
 	-mkdir -p $(LIB_PATH)/syncplay/resources/lua/intf
 	-mkdir -p $(APP_SHORTCUT_PATH)
 	-mkdir -p $(SHARE_PATH)/app-install/icons
