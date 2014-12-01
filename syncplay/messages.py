@@ -667,8 +667,8 @@ de = {
       "commandlist-notification/pause" : u"\tp - Pausieren / weiter",
       "commandlist-notification/seek" : u"\t[s][+-]Zeit - zu einer bestimmten Zeit spulen, ohne + oder - wird als absolute Zeit gewertet; Angabe in Sekungen oder Minuten:Sekunden",
       "commandlist-notification/help" : u"\th - Diese Hilfe",
-      "commandlist-notification/create" : "\tc [name] - create controlled room using name of current room", # TODO: Translate into German
-      "commandlist-notification/auth" : "\ta [password] - authenticate as room controller with controller password", # TODO: Translate into German
+      "commandlist-notification/create" : u"\tc [name] - create controlled room using name of current room", # TODO: Translate into German
+      "commandlist-notification/auth" : u"\ta [password] - authenticate as room controller with controller password", # TODO: Translate into German
       "syncplay-version-notification" : u"Syncplay Version: {}",  # syncplay.version
       "more-info-notification" : u"Weitere Informationen auf: {}",  # projectURL
 
@@ -693,7 +693,7 @@ de = {
        "player-path-error" : u"Ungültiger Player-Pfad",
        "hostname-empty-error" : u"Hostname darf nicht leer sein",
        "empty-error" : u"{} darf nicht leer sein",  # Configuration
-       "media-player-error": "Media player error: \"{}\"",  # Error line # TODO: Translate into German
+       "media-player-error": u"Media player error: \"{}\"",  # Error line # TODO: Translate into German
        "unable-import-gui-error": u"Could not import GUI libraries. If you do not have PySide installed then you will need to install it for the GUI to work.", # TODO: Translate into German
 
        "arguments-missing-error" : u"Notwendige Argumente fehlen, siehe --help",
@@ -731,8 +731,8 @@ de = {
       "clear-gui-data-argument" : u'Setzt die Pfad- und GUI-Fenster-Daten, die in den QSettings gespeichert sind, zurück',
       "language-argument" : u'language for Syncplay messages (de/en/pl/ru)', # TODO: Translate into German
 
-      "version-argument" : 'prints your version', # TODO: Translate into German
-      "version-message" : "You're using Syncplay version {} ({})", # TODO: Translate into German
+      "version-argument" : u'prints your version', # TODO: Translate into German
+      "version-message" : u"You're using Syncplay version {} ({})", # TODO: Translate into German
 
       # Client labels
       "config-window-title" : u"Syncplay Konfiguration",
@@ -753,7 +753,7 @@ de = {
       "rewind-threshold-label" : u"Rewind threshold:", # TODO: Translate into German
       "fastforward-threshold-label" : u"Fast-forward threshold:", # TODO: Translate into German
       "never-rewind-value" : u"Never", # TODO: Translate into German
-      "seconds-suffix" : " secs", # TODO: Translate into German
+      "seconds-suffix" : u" secs", # TODO: Translate into German (if needed)
       "privacy-sendraw-option" : u"Klartext senden",
       "privacy-sendhashed-option" : u"Hash senden",
       "privacy-dontsend-option" : u"Nicht senden",
@@ -785,7 +785,7 @@ de = {
       "privacy-title" : u"Privacy settings", # TODO: Translate into German
 
       "help-label" : u"Hilfe",
-      "reset-label" : "Restore defaults", # TODO: Translate into German
+      "reset-label" : u"Restore defaults", # TODO: Translate into German
       "run-label" : u"Syncplay starten",
       "storeandrun-label" : u"Konfiguration speichern und Syncplay starten",
 
@@ -805,8 +805,8 @@ de = {
       "notifications-heading-label" : u"Notifications", # TODO: Translate into German
       "userlist-heading-label" : u"List of who is playing what", # TODO: Translate into German
       "othercommands-heading-label" :  u"Other commands", # TODO: Translate into German
-      "room-heading-label" :  "Room", # TODO: Translate into German
-      "seek-heading-label" :  "Seek", # TODO: Translate into German
+      "room-heading-label" :  u"Room", # TODO: Translate into German
+      "seek-heading-label" :  u"Seek", # TODO: Translate into German
 
       "browseformedia-label" : u"Browse for media files", # TODO: Translate into German
 
@@ -831,7 +831,7 @@ de = {
       "identifyascontroller-msgbox-label" : u"Identify as Room Controller", # TODO: Translate into German
       "identifyinfo-msgbox-label" : u"Enter controller password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into German
 
-      "megabyte-suffix" : " MB", # TODO: Translate into German (or is MB fine?)
+      "megabyte-suffix" : u" MB", # TODO: Translate into German (or is MB fine?)
 
       # Tooltips
 
@@ -872,7 +872,7 @@ de = {
       "language-tooltip" : u"Language to be used by Syncplay.", # TODO: Translate into German (if you want)
 
       "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
-      "reset-tooltip" : "Reset all settings to the default configuration.", # TODO: Translate into German
+      "reset-tooltip" : u"Reset all settings to the default configuration.", # TODO: Translate into German
 
       "togglepause-tooltip" : u"Pause/unpause media.", # TODO: Translate into German (if you want)
       "play-tooltip" : u"Unpause media.", # TODO: Translate into German (if you want)
@@ -902,7 +902,7 @@ de = {
       "server-port-argument" : u'Server TCP-Port',
       "server-password-argument" : u'Server Passwort',
       "server-isolate-room-argument" : u'Sollen die Räume isoliert sein?',
-      "server-salt-argument" : "random string used to generate controlled room passwords", # TODO: Translate into German
+      "server-salt-argument" : u"random string used to generate controlled room passwords", # TODO: Translate into German
       "server-motd-argument": u"Pfad zur Datei, von der die Nachricht des Tages geladen wird",
       "server-messed-up-motd-unescaped-placeholders": u"Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
       "server-messed-up-motd-too-long": u"Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
