@@ -613,7 +613,7 @@ de = {
       "LANGUAGE" : u"Deutsch", # (German)
 
       # Client notifications
-      "config-cleared-notification" : u"Settings cleared. Changes will be saved when you store a valid configuration.", # TODO: Translate into German
+      "config-cleared-notification" : u"Einstellungen gelöscht.  Änderungen werden gespeichert, wenn du eine gültige Konfiguration speicherst.",
 
       "relative-config-notification" : u"Relative Konfigurationsdatei(en) geladen: {}",
 
@@ -625,7 +625,7 @@ de = {
       "retrying-notification" : u"%s, versuche erneut in %d Sekunden...",  # Seconds
 
       "rewind-notification" : u"Zurückgespult wegen Zeitdifferenz mit <{}>",  # User
-	  "fastforward-notification" : u"Fast-forwarded due to time difference with <{}>",  # User # TODO: Translate into German
+      "fastforward-notification" : u"Vorgespult wegen Zeitdifferenz mit <{}>",  # User
       "slowdown-notification" : u"Verlangsamt wegen Zeitdifferenz mit <{}>",  # User
       "revert-notification" : u"Normalgeschwindigkeit",
 
@@ -637,13 +637,13 @@ de = {
 
       "room-join-notification" : u"<{}> hat den Raum '{}' betreten",  # User
       "left-notification" : u"<{}> ist gegangen",  # User
-      "left-paused-notification" : u"<{}> left, <{}> paused",  # User who left, User who paused # TODO: Translate into German
+      "left-paused-notification" : u"<{}> ist gegangen, <{}> pausierte",  # User who left, User who paused
       "playing-notification" : u"<{}> spielt '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" :  u" in Raum: '{}'",  # Room
 
-      "identifying-as-controller-notification" : u"Identifying as room controller with password '{}'...", # TODO: Translate into German
-      "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room controller.", # TODO: Translate into German
-      "authenticated-as-controller-notification" : u"<{}> authenticated as a room controller", # TODO: Translate into German
+      "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room controller"
+      "failed-to-identify-as-controller-notification" : u"<{}> konnte sich nicht als Raumleiter identifizieren.",
+      "authenticated-as-controller-notification" : u"<{}> authentifizierte sich als Raumleiter",
 
       "file-different-notification" : u"Deine Datei scheint sich von <{}>s zu unterscheiden",  # User
       "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: ", # controlPassword
@@ -667,13 +667,13 @@ de = {
       "commandlist-notification/pause" : u"\tp - Pausieren / weiter",
       "commandlist-notification/seek" : u"\t[s][+-]Zeit - zu einer bestimmten Zeit spulen, ohne + oder - wird als absolute Zeit gewertet; Angabe in Sekungen oder Minuten:Sekunden",
       "commandlist-notification/help" : u"\th - Diese Hilfe",
-      "commandlist-notification/create" : u"\tc [name] - create controlled room using name of current room", # TODO: Translate into German
-      "commandlist-notification/auth" : u"\ta [password] - authenticate as room controller with controller password", # TODO: Translate into German
+      "commandlist-notification/create" : u"\tc [name] - erstelle geführten Raum mit dem aktuellen Raumnamen",
+      "commandlist-notification/auth" : u"\ta [password] - authentifiziere als Raumleiter mit Passwort",
       "syncplay-version-notification" : u"Syncplay Version: {}",  # syncplay.version
       "more-info-notification" : u"Weitere Informationen auf: {}",  # projectURL
 
       "gui-data-cleared-notification" : u"Syncplay hat die Pfad und Fensterdaten der Syncplay-GUI zurückgesetzt.",
-      "language-changed-msgbox-label" : u"Language will be changed when you run Syncplay.", # TODO: Translate into German
+      "language-changed-msgbox-label" : u"Die Sprache wird geändert, wenn du Syncplay neu startest.",
 
       "vlc-version-mismatch": u"Warnung: Du nutzt VLC Version {}, aber Syncplay wurde für VLC ab Version {} entwickelt.",  # VLC version, VLC min version
       "vlc-interface-version-mismatch": u"Warnung: Du nutzt Version {} des VLC-Syncplay Interface-Moduls, Syncplay benötigt aber mindestens Version {}.",  # VLC interface version, VLC interface min version
@@ -688,23 +688,23 @@ de = {
       "server-timeout-error" : u"Timeout: Verbindung zum Server fehlgeschlagen",
        "mpc-slave-error" : u"Kann MPC nicht im Slave-Modus starten!",
        "mpc-version-insufficient-error" : u"MPC-Version nicht ausreichend, bitte nutze `mpc-hc` >= `{}`",
-       "mpv-version-error" : "Syncplay is not compatible with this version of mpv. Please use a different version of mpv (e.g. Git HEAD).", # TODO: Translate into German
+       "mpv-version-error" : "Syncplay ist nicht kompatibel mit dieser Version von mpv.  Bitte benutze eine andere Version (z.B. Git HEAD).",
        "player-file-open-error" : u"Fehler beim Öffnen der Datei durch den Player",
        "player-path-error" : u"Ungültiger Player-Pfad",
        "hostname-empty-error" : u"Hostname darf nicht leer sein",
        "empty-error" : u"{} darf nicht leer sein",  # Configuration
-       "media-player-error": u"Media player error: \"{}\"",  # Error line # TODO: Translate into German
-       "unable-import-gui-error": u"Could not import GUI libraries. If you do not have PySide installed then you will need to install it for the GUI to work.", # TODO: Translate into German
+       "media-player-error": u"Player-Fehler: \"{}\"",  # Error line
+       "unable-import-gui-error": u"Konnte die GUI-Bibliotheken nicht importieren.  Wenn du PySide nicht installiert hast, solltest du dies tun, damit die grafische Oberfläche funktioniert.",
 
        "arguments-missing-error" : u"Notwendige Argumente fehlen, siehe --help",
 
        "unable-to-start-client-error" : u"Client kann nicht gestartet werden",
 
-       "player-path-config-error": u"Player path is not set properly", # TODO: Translate into German
-       "no-file-path-config-error": u"File must be selected before starting your player", # TODO: Translate into German
-       "no-hostname-config-error": u"Hostname can't be empty", # TODO: Translate into German
-       "invalid-port-config-error" : u"Port must be valid", # TODO: Translate into German
-       "empty-value-config-error" : u"{} can't be empty", # Config option # TODO: Translate into German
+       "player-path-config-error": u"Player-Pfad ist nicht ordnungsgemäß gesetzt.",
+       "no-file-path-config-error": u"Es muss eine Datei ausgewählt werden, bevor der Player gestartet wird.",
+       "no-hostname-config-error": u"Hostname darf nicht leer sein",
+       "invalid-port-config-error" : u"Port muss gültig sein",
+       "empty-value-config-error" : u"{} darf nicht leer sein", # Config option
 
        "not-json-error" : u"Kein JSON-String\n",
        "hello-arguments-error" : u"Zu wenige Hello-Argumente\n",
@@ -729,10 +729,10 @@ de = {
       "file-argument" : u'Zu spielende Datei',
       "args-argument" : u'Player-Einstellungen; Wenn du Einstellungen, die mit - beginnen, nutzen willst, stelle ein einzelnes \'--\'-Argument davor',
       "clear-gui-data-argument" : u'Setzt die Pfad- und GUI-Fenster-Daten, die in den QSettings gespeichert sind, zurück',
-      "language-argument" : u'language for Syncplay messages (de/en/pl/ru)', # TODO: Translate into German
+      "language-argument" : u'Sprache für Syncplay-Nachrichten (de/en/pl/ru)',
 
-      "version-argument" : u'prints your version', # TODO: Translate into German
-      "version-message" : u"You're using Syncplay version {} ({})", # TODO: Translate into German
+      "version-argument" : u'gibt deine Version aus',
+      "version-message" : u"Du verwendest Syncplay version {} ({})",
 
       # Client labels
       "config-window-title" : u"Syncplay Konfiguration",
@@ -749,77 +749,77 @@ de = {
       "browse-label" : u"Durchsuchen",
 
       "more-title" : u"Mehr Einstellungen zeigen",
-      "slowdown-threshold-label" : u"Slow down threshold:", # TODO: Translate into German
-      "rewind-threshold-label" : u"Rewind threshold:", # TODO: Translate into German
-      "fastforward-threshold-label" : u"Fast-forward threshold:", # TODO: Translate into German
-      "never-rewind-value" : u"Never", # TODO: Translate into German
-      "seconds-suffix" : u" secs", # TODO: Translate into German (if needed)
+      "slowdown-threshold-label" : u"Verlangsamungs-Grenzwert:",
+      "rewind-threshold-label" : u"Zurückspul-Grenzwert:",
+      "fastforward-threshold-label" : u"Vorspul-Grenzwert:",
+      "never-rewind-value" : u"Niemals",
+      "seconds-suffix" : u" sek",
       "privacy-sendraw-option" : u"Klartext senden",
       "privacy-sendhashed-option" : u"Hash senden",
       "privacy-dontsend-option" : u"Nicht senden",
       "filename-privacy-label" : u"Dateiname:",
       "filesize-privacy-label" : u"Dateigröße:",
-      "slowondesync-label" : u"Verlangsamen wenn nicht synchron", # TODO: Update new wording into German (should translate to "Slow down on minor desync (not supported on MPC-HC)")
-       "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen", # TODO: Update new wording into German (should state "Experimental" in brackets at the end)
+      "slowondesync-label" : u"Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC)", # TODO: Update new wording into German (should translate to "Slow down on minor desync (not supported on MPC-HC)")
+       "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentiell)",
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
-      "forceguiprompt-label" : u"Don't always show this dialog", # TODO: Translate into German (previous was "Diesen Dialog immer anzeigen" but the logic is now inverted)
+      "forceguiprompt-label" : u"Diesen Dialog nicht mehr anzeigen",
       "nostore-label" : u"Diese Konfiguration nicht speichern",
-      "showosd-label" : u"Enable OSD Messages", # TODO: Translate into German
+      "showosd-label" : u"OSD-Nachrichten anzeigen",
 
-      "showosdwarnings-label" : u"Include warnings (e.g. when files are different)", # TODO: Translate into German
-      "showsameroomosd-label" : u"Include events in your room", # TODO: Translate into German
-      "shownoncontrollerosd-label" : u"Include events from non-controllers in controlled rooms", # TODO: Translate into German
-      "showdifferentroomosd-label" : u"Include events in other rooms", # TODO: Translate into German
-      "showslowdownosd-label" : u"Include slowing down / reverting notification", # TODO: Translate into German
-      "showcontactinfo-label" : u"Show contact info box", # TODO: Translate into German
-      "language-label" : u"Language", # TODO: Translate into German
-      "showdurationnotification-label" : u"Warn about media duration mismatches", # TODO: Translate into German
-      "basics-label" : u"Basics", # TODO: Translate into German
-      "sync-label" : u"Sync", # TODO: Translate into German
-      "sync-lagging-title" : u"If others are lagging behind...", # TODO: Translate into German
-      "sync-other-title" : u"Other sync options", # TODO: Translate into German
-      "messages-label" : u"Messages", # TODO: Translate into German
-      "messages-osd-title" : u"On-screen Display settings", # TODO: Translate into German
-      "messages-other-title" : u"Other display settings", # TODO: Translate into German
-      "privacy-label" : u"Privacy", # TODO: Translate into German
-      "privacy-title" : u"Privacy settings", # TODO: Translate into German
+      "showosdwarnings-label" : u"Zeige Warnungen (z.B. wenn Dateien verschieden)",
+      "showsameroomosd-label" : u"Zeige Ereignisse in deinem Raum",
+      "shownoncontrollerosd-label" : u"Zeige Ereignisse von nicht geführten Räumen in geführten Räumen.",
+      "showdifferentroomosd-label" : u"Zeige Ereignisse in anderen Räumen",
+      "showslowdownosd-label" : u"Zeige Verlangsamungs/Zurücksetzungs-Benachrichtigung",
+      "showcontactinfo-label" : u"Zeige Kontaktinformationsbox",
+      "language-label" : u"Sprache",
+      "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
+      "basics-label" : u"Basics",
+      "sync-label" : u"Synchronisation",
+      "sync-lagging-title" : u"Wenn andere laggen...", # TODO: Translate into German
+      "sync-other-title" : u"Weitere Synchronisationsoptionen",
+      "messages-label" : u"Nachrichten",
+      "messages-osd-title" : u"On-Screen-Display-Einstellungen",
+      "messages-other-title" : u"Weitere Display-Einstellungen",
+      "privacy-label" : u"Privatsphäre",
+      "privacy-title" : u"Privatsphäreneinstellungen",
 
       "help-label" : u"Hilfe",
-      "reset-label" : u"Restore defaults", # TODO: Translate into German
+      "reset-label" : u"Standardwerte zurücksetzen",
       "run-label" : u"Syncplay starten",
       "storeandrun-label" : u"Konfiguration speichern und Syncplay starten",
 
-      "contact-label" : u"Have an idea, bug report or feedback? E-mail <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC channel</a> on irc.freenode.net or <a href=\"https://github.com/Uriziel/syncplay/issues/new\">raise an issue via GitHub</a>. Also check out <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> for info, help and updates.", #TODO: Translate into German
+      "contact-label" : u"Have an idea, bug report or feedback? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues/new\">öffne ein neues Issue auf GitHub</a>. Also check out <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> for info, help and updates.", #TODO: Translate into German even more
 
-      "joinroom-guibuttonlabel" : u"Join room", # TODO: Translate into German
-      "seektime-guibuttonlabel" : u"Seek to time", # TODO: Translate into German
-      "undoseek-guibuttonlabel" : u"Undo seek", # TODO: Translate into German
-      "togglepause-guibuttonlabel" : u"Toggle pause", # TODO: Translate into German
-      "play-guibuttonlabel" : u"Play", # TODO: Translate into German
-      "pause-guibuttonlabel" : u"Pause", # TODO: Translate into German
+      "joinroom-guibuttonlabel" : u"Raum beitreten",
+      "seektime-guibuttonlabel" : u"Spule zu Zeit",
+      "undoseek-guibuttonlabel" : u"Rückgängig",
+      "togglepause-guibuttonlabel" : u"Pause umschalten",
+      "play-guibuttonlabel" : u"Wiedergabe",
+      "pause-guibuttonlabel" : u"Pause",
 
       "roomuser-heading-label" : u"Raum / Benutzer",
-      "size-heading-label" : u"Size", # TODO: Translate into German (Note: This is size as in filesize)
-      "duration-heading-label" : u"Length", # TODO: Translate into German (Note: This is length as in file duration)
-      "filename-heading-label" : u"Filename", # TODO: Translate into German
-      "notifications-heading-label" : u"Notifications", # TODO: Translate into German
-      "userlist-heading-label" : u"List of who is playing what", # TODO: Translate into German
-      "othercommands-heading-label" :  u"Other commands", # TODO: Translate into German
-      "room-heading-label" :  u"Room", # TODO: Translate into German
+      "size-heading-label" : u"Größe",
+      "duration-heading-label" : u"Länge",
+      "filename-heading-label" : u"Dateiname",
+      "notifications-heading-label" : u"Benachrichtigungen",
+      "userlist-heading-label" : u"Liste wer was spielt",
+      "othercommands-heading-label" :  u"Andere Befehle",
+      "room-heading-label" :  u"Raum",
       "seek-heading-label" :  u"Seek", # TODO: Translate into German
 
       "browseformedia-label" : u"Browse for media files", # TODO: Translate into German
 
-      "file-menu-label" : u"&File", # & precedes shortcut key  # TODO: Translate into German
-      "openmedia-menu-label" : u"&Open media file", # TODO: Translate into German
-      "exit-menu-label" : u"E&xit", # TODO: Translate into German
-      "advanced-menu-label" : u"&Advanced", # TODO: Translate into German
+      "file-menu-label" : u"&Datei", # & precedes shortcut key
+      "openmedia-menu-label" : u"&Mediendatei öffnen...",
+      "exit-menu-label" : u"&Beenden",
+      "advanced-menu-label" : u"&Erweitert",
       "setoffset-menu-label" : u"Set &offset", # TODO: Translate into German
-      "createcontrolledroom-menu-label" : u"&Create controlled room", # TODO: Translate into German
-      "identifyascontroller-menu-label" : u"&Identify as room controller", # TODO: Translate into German
+      "createcontrolledroom-menu-label" : u"&Geführten Raum erstellen",
+      "identifyascontroller-menu-label" : u"Als Raumleiter &identifizieren",
 
-      "help-menu-label" : u"&Help", # TODO: Translate into German
-      "userguide-menu-label" : u"Open user &guide", # TODO: Translate into German
+      "help-menu-label" : u"&Hilfe",
+      "userguide-menu-label" : u"&Benutzerhandbuch öffnen",
 
       "setoffset-msgbox-label" : u"Set offset", # TODO: Translate into German
       "offsetinfo-msgbox-label" : u"Offset (see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into German
