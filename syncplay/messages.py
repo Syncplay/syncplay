@@ -740,12 +740,12 @@ de = {
       "privacy-dontsend-option" : u"Nicht senden",
       "filename-privacy-label" : u"Dateiname:",
       "filesize-privacy-label" : u"Dateigröße:",
-      "slowdown-label" : u"Verlangsamen wenn nicht synchron",
-      "dontslowwithme-label" : u"Nie verlangsamen oder andere zurückspulen",
+      "slowondesync-label" : u"Verlangsamen wenn nicht synchron", # TODO: Update new wording into German (should translate to "Slow down on minor desync (not supported on MPC-HC)")
+      "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen",
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
-      "rewind-label" : u"Zurückspulen bei großer Zeitdifferent (empfohlen)",
-      "alwayshow-label" : u"Diesen Dialog immer anzeigen",
-      "donotstore-label" : u"Diese Konfiguration nicht speichern",
+      "rewindondesync-label" : u"Zurückspulen bei großer Zeitdifferent (empfohlen)",
+      "forceguiprompt-label" : u"Don't always show this dialog", # TODO: Translate into German (previous was "Diesen Dialog immer anzeigen" but the logic is now inverted)
+      "nostore-label" : u"Diese Konfiguration nicht speichern",
 
       "help-label" : u"Hilfe",
       "run-label" : u"Syncplay starten",
@@ -770,12 +770,12 @@ de = {
       "privacy-sendraw-tooltip" : u"Die Information im Klartext übertragen. Dies ist die Standard-Einstellung mit der besten Funktionalität.",
       "privacy-sendhashed-tooltip" : u"Die Informationen gehasht übertragen, um sie für andere Clients schwerer lesbar zu machen.",
       "privacy-dontsend-tooltip" : u"Diese Information nicht übertragen. Dies garantiert den größtmöglichen Datanschutz.",
-      "slowdown-tooltip" : u"Reduziert die Abspielgeschwindigkeit zeitweise, um dich wieder synchron zu den anderen Clients zu machen.",
-      "dontslowwithme-tooltip" : u"Lässt andere nicht langsamer werden oder zurückspringen, wenn deine Wiedergabe hängt.",
+      "slowondesync-tooltip" : u"Reduziert die Abspielgeschwindigkeit zeitweise, um dich wieder synchron zu den anderen Clients zu machen.",
+      "dontslowdownwithme-tooltip" : u"Lässt andere nicht langsamer werden oder zurückspringen, wenn deine Wiedergabe hängt.",
       "pauseonleave-tooltip" : u"Wiedergabe anhalten, wenn deine Verbindung verloren geht oder jemand den Raum verlässt.",
-      "rewind-tooltip" : u"In der Zeit zurückspringen zum wiederherstellen der Synchronität. Empfohlen.",
-      "alwayshow-tooltip" : u"Der Konfigurations-Dislog wird immer angezeigt. Sogar, wenn du eine Datei mit Syncplay öffnest.",
-      "donotstore-tooltip" : u"Syncplay mit den angegebenen Einstellungen starten, diese aber nicht fauerhaft speichern.",
+      "rewindondesync-tooltip" : u"In der Zeit zurückspringen zum wiederherstellen der Synchronität. Empfohlen.",
+      "forceguiprompt-tooltip" : u"Configuration dialogue is not shown when opening a file with Syncplay.", # TODO: Translate into German (was "Der Konfigurations-Dislog wird immer angezeigt. Sogar, wenn du eine Datei mit Syncplay öffnest." but logic is now inverted)
+      "nostore-tooltip" : u"Syncplay mit den angegebenen Einstellungen starten, diese aber nicht fauerhaft speichern.",
 
       "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
 
