@@ -697,8 +697,6 @@ de = {
        "not-json-error" : u"Kein JSON-String\n",
        "hello-arguments-error" : u"Zu wenige Hello-Argumente\n",
        "version-mismatch-error" : u"Verschiedene Versionen auf Client und Server\n",
-       "vlc-error-echo": u"VLC-Fehler: {}",  # VLC error line
-       "vlc-unicode-loadfile-error" : u"Die Datei kann nicht durch Syncplay geladen werden, da sie nicht-ASCII Zeichen enthält. Bitte öffne die Datei mit VLC.",
        "vlc-failed-connection": u"Kann nicht zu VLC verbinden. Wenn du syncplay.lua nicht installiert hast, findest du auf http://syncplay.pl/LUA/ für eine Anleitung.",
        "vlc-failed-noscript": u"Laut VLC ist das syncplay.lua Interface-Skript nicht installiert. Auf http://syncplay.pl/LUA/ findest du eine Anleitung.",
        "vlc-failed-versioncheck": u"Diese VLC-Version wird von Syncplay nicht unterstützt. Bitte nutze VLC 2.0",
@@ -752,7 +750,6 @@ de = {
       "storeandrun-label" : u"Konfiguration speichern und Syncplay starten",
 
       "roomuser-heading-label" : u"Raum / Benutzer",
-      "fileplayed-heading-label" : u"Gespielte Datei",
 
       # Tooltips
 
@@ -797,8 +794,6 @@ de = {
       "server-motd-argument": u"Pfad zur Datei, von der die Nachricht des Tages geladen wird",
       "server-messed-up-motd-unescaped-placeholders": u"Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
       "server-messed-up-motd-too-long": u"Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
-      "server-irc-verbose": u"Soll der Server aktiv über Änderungen in den Räumen informieren",
-      "server-irc-config": u"Pfad zu den config-Dateien des irc bot",
 
       # Server errors
       "unknown-command-server-error" : u"Unbekannter Befehl {}",  # message
@@ -807,7 +802,6 @@ de = {
       "client-drop-server-error" : u"Client verloren: {} -- {}",  # host, error
       "password-required-server-error" : u"Passwort nötig",
       "hello-server-error" : u"Zu wenige Hello-Argumente",
-      "version-mismatch-server-error" : u"Verschiedene Versionen auf Client und Server",
       "wrong-password-server-error" : u"Ungültiges Passwort"
       }
 
