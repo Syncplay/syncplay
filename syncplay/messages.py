@@ -646,7 +646,7 @@ de = {
       "authenticated-as-controller-notification" : u"<{}> authenticated as a room controller", # TODO: Translate into German
 
       "file-different-notification" : u"Deine Datei scheint sich von <{}>s zu unterscheiden",  # User
-      "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: ",
+      "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: ", # controlPassword
       "room-files-not-same" : u"Nicht alle Dateien im Raum sind gleich",
       "alone-in-the-room": u"Du bist alleine im Raum",
 
@@ -760,7 +760,7 @@ de = {
       "filename-privacy-label" : u"Dateiname:",
       "filesize-privacy-label" : u"Dateigröße:",
       "slowondesync-label" : u"Verlangsamen wenn nicht synchron", # TODO: Update new wording into German (should translate to "Slow down on minor desync (not supported on MPC-HC)")
-      "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen",
+       "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen", # TODO: Update new wording into German (should state "Experimental" in brackets at the end)
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
       "forceguiprompt-label" : u"Don't always show this dialog", # TODO: Translate into German (previous was "Diesen Dialog immer anzeigen" but the logic is now inverted)
       "nostore-label" : u"Diese Konfiguration nicht speichern",
