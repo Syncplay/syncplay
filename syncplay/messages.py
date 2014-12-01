@@ -926,7 +926,7 @@ de = {
       "play-tooltip" : u"Fortsetzen",
       "pause-tooltip" : u"Pausieren",
       "undoseek-tooltip" : u"Den letzten Spulvorgang rückgängig machen.",
-      "joinroom-tooltip" : u"Den aktuellen Raum verlassen und stattdessen den angegebenen betreten."
+      "joinroom-tooltip" : u"Den aktuellen Raum verlassen und stattdessen den angegebenen betreten.",
       "seektime-tooltip" : u"Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
 
       # In-userlist notes (GUI)
