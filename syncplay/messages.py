@@ -759,7 +759,7 @@ de = {
       "privacy-dontsend-option" : u"Nicht senden",
       "filename-privacy-label" : u"Dateiname:",
       "filesize-privacy-label" : u"Dateigröße:",
-      "slowondesync-label" : u"Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC)", # TODO: Update new wording into German (should translate to "Slow down on minor desync (not supported on MPC-HC)")
+      "slowondesync-label" : u"Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC)",
        "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentiell)",
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
       "forceguiprompt-label" : u"Diesen Dialog nicht mehr anzeigen",
@@ -776,7 +776,7 @@ de = {
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
       "basics-label" : u"Basics",
       "sync-label" : u"Synchronisation",
-      "sync-lagging-title" : u"Wenn andere laggen...", # TODO: Translate into German
+      "sync-lagging-title" : u"Wenn andere laggen...",
       "sync-other-title" : u"Weitere Synchronisationsoptionen",
       "messages-label" : u"Nachrichten",
       "messages-osd-title" : u"On-Screen-Display-Einstellungen",
@@ -822,7 +822,7 @@ de = {
       "userguide-menu-label" : u"&Benutzerhandbuch öffnen",
 
       "setoffset-msgbox-label" : u"Set offset", # TODO: Translate into German
-      "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung):", # TODO: Translate into German
+      "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung):",
 
 
       "createcontrolledroom-msgbox-label" : u"Geführten Raum erstellen",
@@ -861,7 +861,7 @@ de = {
       "nostore-tooltip" : u"Syncplay mit den angegebenen Einstellungen starten, diese aber nicht fauerhaft speichern.",
       "rewindondesync-tooltip" : u"In der Zeit zurückspringen zum wiederherstellen der Synchronität. Empfohlen.",
       "fastforwardondesync-tooltip" : u"Jump forward when out of sync with room controller (or your pretend position if 'Never slow down or rewind others' enabled).", # Translate into German (if you want)
-      "showosd-tooltip" : u"Sends Syncplay messages to media player OSD.", # Translate into German (if you want)
+      "showosd-tooltip" : u"Sends Syncplay messages to media player OSD.", # TODO: Translate into German (if you want)
       "showosdwarnings-tooltip" : u"Show warnings if playing different file, alone in room.", # TODO: Translate into German (if you want)
       "showsameroomosd-tooltip" : u"Show OSD notifications for events relating to room user is in.", # TODO: Translate into German (if you want)
       "shownoncontrollerosd-tooltip" : u"Show OSD notifications for events relating to non-controllers who are in controllerd rooms.", # Translate into German (if you want)
