@@ -869,7 +869,7 @@ de = {
       "help-menu-label" : u"&Hilfe",
       "userguide-menu-label" : u"&Benutzerhandbuch öffnen",
 
-      "setoffset-msgbox-label" : u"Offset einstellen", # TODO: Translate into German
+      "setoffset-msgbox-label" : u"Offset einstellen",
       "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
 
