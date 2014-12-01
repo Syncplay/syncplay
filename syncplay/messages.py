@@ -365,6 +365,7 @@ ru = {
       "retrying-notification" : u"%s, следующая попытка через %d секунд(ы)...",  # Seconds
 
       "rewind-notification" : u"Перемотано из-за разницы во времени с <{}>",  # User
+      "fastforward-notification" : "Fast-forwarded due to time difference with <{}>",  # User # TODO: Translate into Russian
       "slowdown-notification" : u"Воспроизведение замедлено из-за разницы во времени с <{}>",  # User
       "revert-notification" : u"Возвращаемся к нормальной скорости воспроизведения",
 
@@ -379,6 +380,10 @@ ru = {
       "left-paused-notification" : u"<{}> покинул(а) комнату, <{}> приостановил(а) воспроизведение",  # User who left, User who paused
       "playing-notification" : u"<{}> включил '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" : u" в комнате: '{}'",  # Room
+
+      "identifying-as-controller-notification" : u"Identifying as room controller with password '{}'...", # TODO: Translate into Russian
+      "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room controller.", # TODO: Translate into Russian
+      "authenticated-as-controller-notification" : u"<{}> authenticated as a room controller", # TODO: Translate into Russian
 
       "file-different-notification" : u"Вероятно, файл, который Вы смотрите, отличается от того, который смотрит <{}>.",  # User
       "file-differences-notification" : u"Ваш файл отличается: ",
@@ -402,10 +407,13 @@ ru = {
       "commandlist-notification/pause" : u"\tp - вкл./выкл. паузу",
       "commandlist-notification/seek" : u"\t[s][+-]time - перемотать к заданному моменту времени, если не указан + или -, то время считается абсолютным (от начала файла) в секундах или мин:сек",
       "commandlist-notification/help" : u"\th - помощь",
+      "commandlist-notification/create" : u"\tc [name] - create controlled room using name of current room", # TODO: Translate into Russian
+      "commandlist-notification/auth" : u"\ta [password] - authenticate as room controller with controller password", # TODO: Translate into Russian
       "syncplay-version-notification" : u"Версия Syncplay: {}",  # syncplay.version
       "more-info-notification" : u"Больше информации на {}",  # projectURL
 
       "gui-data-cleared-notification" : u"Syncplay очистил путь и информацию о состоянии окна, использованного GUI.",
+      "language-changed-msgbox-label" : u"Language will be changed when you run Syncplay.",
 
       "vlc-version-mismatch" : u"Внимание: Вы используете VLC устаревшей версии {}. К сожалению, Syncplay способен работать с VLC {} и выше.",  # VLC version, VLC min version
       "vlc-interface-version-mismatch" : u"Внимание: В используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше.",  # VLC interface version, VLC interface min version
@@ -431,6 +439,12 @@ ru = {
       "arguments-missing-error" : u"Некоторые необходимые аргументы отсутствуют, обратитесь к --help",
 
       "unable-to-start-client-error" : u"Невозможно запустить клиент",
+
+      "player-path-config-error": u"Player path is not set properly", # TODO: Translate into Russian
+      "no-file-path-config-error" : u"File must be selected before starting your player", # TODO: Translate into Russian
+      "no-hostname-config-error": u"Hostname can't be empty", # TODO: Translate into Russian
+      "invalid-port-config-error" : u"Port must be valid", # TODO: Translate into Russian
+      "empty-value-config-error" : u"{} can't be empty", # Config option # TODO: Translate into Russian
 
       "not-json-error" : u"Не является закодированной json-строкой\n",
       "hello-arguments-error" : u"Не хватает аргументов Hello\n",
@@ -477,6 +491,7 @@ ru = {
       "more-title" : u"Больше настроек",
       "slowdown-threshold-label" : u"Предел для замедления:",
       "rewind-threshold-label" : u"Предел для перемотки:",
+      "fastforward-threshold-label" : u"Fast-forward threshold:", # TODO: Translate into Russian
       "never-rewind-value" : u"Никогда",
       "seconds-suffix" : u" секунд(ы)",
       "privacy-sendraw-option" : u"отпр. как есть",
@@ -486,22 +501,30 @@ ru = {
       "filesize-privacy-label" : u"Размер файла:",
       "slowondesync-label" : u"Замедлять при небольших рассинхронизациях (не поддерживаетя в MPC-HC)",
       "rewindondesync-label" : u"Перемотка при больших рассинхронизациях (настоятельно рекомендуется)",
-      "dontslowdownwithme-label" : u"Никогда не замедлять или перематывать видео другим",
+      "dontslowdownwithme-label" : u"Никогда не замедлять или перематывать видео другим", # TODO: Update new wording into Russian (should state "Experimental" in brackets at the end)
       "pauseonleave-label" : u"Приостанавливать, когда кто-то уходит (например, отключился)",
+      "fastforwardondesync-label" : u"Fast-forward if lagging behind (recommended)", # TODO: Translate into Russian
       "forceguiprompt-label" : u"Не показывать больше этот диалог", # (Inverted)
       "nostore-label" : u"Не сохранять текущую конфигурацию", # (Inverted)
       "showosd-label" : u"Включить экранные сообщения (поверх видео)",
 
       "showosdwarnings-label" : u"Показывать предупреждения (напр., когда файлы не совпадают)",
       "showsameroomosd-label" : u"Показывать события Вашей комнаты",
+      "shownoncontrollerosd-label" : "Include events from non-controllers in controlled rooms", # TODO: Translate into Russiannc
       "showdifferentroomosd-label" : u"Показывать события других комнат",
       "showslowdownosd-label" : u"Показывать уведомления о замедлении/перемотке",
       "showcontactinfo-label" : u"Отображать контактную информацию разработчиков",
+      "language-label" : u"Language", # TODO: Translate ito Russian
       "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
       "basics-label" : u"Основное",
       "sync-label" : u"Синхронизация",
+      "sync-lagging-title" : u"If others are lagging behind...", # TODO: Translate into Russian
+      "sync-other-title" : u"Other sync options", # TODO: Translate into Russian
       "messages-label" : u"Сообщения",
+      "messages-osd-title" : u"On-screen Display settings", # TODO: Translate into Russian
+      "messages-other-title" : u"Other display settings", # TODO: Translate into Russian
       "privacy-label" : u"Приватность",
+      "privacy-title" : u"Privacy settings", # TODO: Translate into Russian
 
       "help-label" : u"Помощь",
       "reset-label" : u"Сброс настроек",
@@ -518,6 +541,9 @@ ru = {
       "pause-guibuttonlabel" : u"Пауза",
 
       "roomuser-heading-label" : u"Комната / Пользователь",
+      "size-heading-label" : "Size", # TODO: Translate into Russian
+      "duration-heading-label" : "Length", # TODO: Translate into Russian
+      "filename-heading-label" : "Filename", # TODO: Translate into Russian
       "notifications-heading-label" : u"Уведомления",
       "userlist-heading-label" : u"Кто что смотрит",
       "othercommands-heading-label" : u"Другие команды",
@@ -531,11 +557,22 @@ ru = {
       "exit-menu-label" : u"&Выход",
       "advanced-menu-label" : u"&Дополнительно",
       "setoffset-menu-label" : u"Установить &смещение",
+      "createcontrolledroom-menu-label" : u"&Create controlled room", # TODO: Translate into Russianv
+      "identifyascontroller-menu-label" : u"&Identify as room controller", # TODO: Translate into Russian
+
       "help-menu-label" : u"&Помощь",
       "userguide-menu-label" : u"&Руководство Пользователя",
 
       "setoffset-msgbox-label" : u"Установить смещение",
       "offsetinfo-msgbox-label" : u"Смещение (см. как использовать на http://syncplay.pl/guide/):",
+
+      "createcontrolledroom-msgbox-label" : u"Create controlled room", # TODO: Translate into Russian
+      "controlledroominfo-msgbox-label" : u"Enter name of controlled room\r\n(see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into Russian
+
+      "identifyascontroller-msgbox-label" : u"Identify as Room Controller", # TODO: Translate into Russian
+      "identifyinfo-msgbox-label" : u"Enter controller password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into Russian
+
+      "megabyte-suffix" : " MB", # Technically it is a mebibyte # TODO: Translate into Russian
 
       # Tooltips
 
@@ -550,6 +587,7 @@ ru = {
       "more-tooltip" : u"Показать дополнительные настройки.",
       "slowdown-threshold-tooltip" : u"Отставание самого медленного клиента, необходимое для временного уменьшения скорости видео (по умолчанию: {} сек.).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
       "rewind-threshold-tooltip" : u"Отставание самого медленного клиента, необходимое для перемотки назад в целях синхронизации (по умолчанию: {} сек.).".format(constants.DEFAULT_REWIND_THRESHOLD),
+      "fastforward-threshold-tooltip" : u"Time behind room controller before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD),  # TODO: Translate into Russian
       "filename-privacy-tooltip" : u"Режим приватности для передачи имени воспроизводимого файла на сервер.",
       "filesize-privacy-tooltip" : u"Режим приватности для передачи размера воспроизводимого файла на сервер.",
       "privacy-sendraw-tooltip" : u"Отправляет эту информацию без шифрования. Рекомендуемая опция с наибольшей функциональностью.",
@@ -561,13 +599,16 @@ ru = {
       "forceguiprompt-tooltip" : u"Окно настройки не будет отображаться при открытии файла в Syncplay.", # (Inverted)
       "nostore-tooltip" : u"Запустить Syncplay с данной конфигурацией, но не сохранять изменения навсегда.", # (Inverted)
       "rewindondesync-tooltip" : u"Перематывать назад, когда это необходимо для синхронизации. Отключение этой опции может привести к большим рассинхронизациям!",
+      "fastforwardondesync-tooltip" : u"Jump forward when out of sync with room controller (or your pretend position if 'Never slow down or rewind others' enabled).", # TODO: Translate into Russian
       "showosd-tooltip" : u"Отправлять сообщения Syncplay в видеопроигрыватель и отображать их поверх видео (OSD - On Screen Display).",
       "showosdwarnings-tooltip" : u"Показывать OSC-предупреждения, если проигрываются разные файлы или если Вы в комнате больше никого нет.",
       "showsameroomosd-tooltip" : u"Показывать OSD-уведомления о событиях, относящихся к комнате, в которой Вы находитесь.",
+      "shownoncontrollerosd-tooltip" : u"Show OSD notifications for events relating to non-controllers who are in controllerd rooms.", # TODO: Translate into Russian
       "showdifferentroomosd-tooltip" : u"Показывать OSD-уведомления о событиях, относящихся к любым другим комнатам.",
       "showslowdownosd-tooltip" : u"Показывать уведомления о замедлении или перемотке в целях синхронизации.",
       "showcontactinfo-tooltip" : u"Показывать информационных блок с контактной информацией разработчиков Syncplay на главном окне Syncplay.",
       "showdurationnotification-tooltip" : u"Полезно, когда сегмент составного файла отсутствует. Возможны ложные срабатывания.",
+      "language-tooltip" : u"Language to be used by Syncplay.", # TODO: Translate into Russian
 
       "help-tooltip" : u"Открыть Руководство Пользователя на Syncplay.pl.",
       "reset-tooltip" : u"Сбрасывает все настройки Syncplay в начальное состояние.",
@@ -587,13 +628,20 @@ ru = {
 
       # Server messages to client
       "new-syncplay-available-motd-message" : u"<NOTICE> Вы используете Syncplay версии {}. Доступна более новая версия на http://syncplay.pl/ . </NOTICE>",  # ClientVersion
-		
+
+      # Server notifications
+      "welcome-server-notification" : u"Welcome to Syncplay server, ver. {0}",  # version # TODO: Translate into Russian
+      "client-connected-room-server-notification" : u"{0}({2}) connected to room '{1}'",  # username, host, room # TODO: Translate into Russian
+      "client-left-server-notification" : u"{0} left server",  # name # TODO: Translate into Russian
+      "no-salt-notification" : u"PLEASE NOTE: To allow room control passwords generated by this server instance to still work when the server is restarted, please add the following command line argument when running the Syncplay server in the future: --salt {}", #Salt # TODO: Translate into Russian
+
       # Server arguments
       "server-argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет. Серверная часть',
       "server-argument-epilog" : u'Если параметр не будет передан, то будет использоваться значение, указанное в _config.',
       "server-port-argument" : u'номер TCP порта сервера',
       "server-password-argument" : u'пароль к серверу',
       "server-isolate-room-argument" : u'должны ли комнаты быть изолированными?',
+      "server-salt-argument" : u"random string used to generate controlled room passwords", # TODO: Translate into Russian (note: as you may already be aware, 'salt' means Соль (криптография))
       "server-motd-argument" : u"путь к файлу, из которого будет извлекаться MOTD-сообщение",
       "server-messed-up-motd-unescaped-placeholders" : u"MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
       "server-messed-up-motd-too-long" : u"MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
