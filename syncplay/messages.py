@@ -256,7 +256,7 @@ en = {
       "showosd-tooltip" : "Sends Syncplay messages to media player OSD.",
       "showosdwarnings-tooltip" : "Show warnings if playing different file, alone in room.",
       "showsameroomosd-tooltip" : "Show OSD notifications for events relating to room user is in.",
-      "shownoncontrollerosd-tooltip" : "Show OSD notifications for events relating to non-controllers who are in controllerd rooms.",
+      "shownoncontrollerosd-tooltip" : "Show OSD notifications for events relating to non-controllers who are in controlled rooms.",
       "showdifferentroomosd-tooltip" : "Show OSD notifications for events relating to room user is not in.",
       "showslowdownosd-tooltip" :"Show notifications of slowing down / reverting on time difference.",
       "showcontactinfo-tooltip" : "Show information box about contacting Syncplay developers in main Syncplay window.",
@@ -704,7 +704,7 @@ de = {
       "userlist-room-notification" :  u"In Raum '{}':",  # Room
 
       "mplayer-file-required-notification" : u"Syncplay für mplayer benötigt eine Datei-Angabe beim Start",
-      "mplayer-file-required-notification/example" : u"Nutzungsbeispiel: syncplay [optionen] [url|pfad/]dateiname",
+      "mplayer-file-required-notification/example" : u"Anwendungsbeispiel: syncplay [optionen] [url|pfad/]Dateiname",
       "mplayer2-required" : u"Syncplay ist inkompatibel zu MPlayer 1.x, bitte nutze MPlayer2 oder mpv",
 
       "unrecognized-command-notification" : u"Unbekannter Befehl",
@@ -713,9 +713,9 @@ de = {
       "commandlist-notification/list" : u"\tl - Nutzerliste anzeigen",
       "commandlist-notification/undo" : u"\tu - Letzter Zeitsprung rückgängig",
       "commandlist-notification/pause" : u"\tp - Pausieren / weiter",
-      "commandlist-notification/seek" : u"\t[s][+-]Zeit - zu einer bestimmten Zeit spulen, ohne + oder - wird als absolute Zeit gewertet; Angabe in Sekungen oder Minuten:Sekunden",
+      "commandlist-notification/seek" : u"\t[s][+-]Zeit - zu einer bestimmten Zeit spulen, ohne + oder - wird als absolute Zeit gewertet; Angabe in Sekunden oder Minuten:Sekunden",
       "commandlist-notification/help" : u"\th - Diese Hilfe",
-      "commandlist-notification/create" : u"\tc [name] - erstelle geführten Raum mit dem aktuellen Raumnamen",
+      "commandlist-notification/create" : u"\tc [name] - erstelle zentral gesteuerten Raum mit dem aktuellen Raumnamen",
       "commandlist-notification/auth" : u"\ta [password] - authentifiziere als Raumleiter mit Passwort",
       "syncplay-version-notification" : u"Syncplay Version: {}",  # syncplay.version
       "more-info-notification" : u"Weitere Informationen auf: {}",  # projectURL
@@ -766,7 +766,7 @@ de = {
       "argument-description" : u'Anwendung, um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren.',
       "argument-epilog" : u'Wenn keine Optionen angegeben sind, werden die _config-Werte verwendet',
       "nogui-argument" : u'Keine GUI anzeigen',
-      "host-argument" : u'Server\'-Addresse',
+      "host-argument" : u'Server\'-Adresse',
       "name-argument" : u'Gewünschter Nutzername',
       "debug-argument" : u'Debug-Modus',
       "force-gui-prompt-argument" : u'Einstellungsfenster anzeigen',
@@ -808,7 +808,7 @@ de = {
       "filename-privacy-label" : u"Dateiname:",
       "filesize-privacy-label" : u"Dateigröße:",
       "slowondesync-label" : u"Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC)",
-       "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentiell)",
+       "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentell)",
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
       "forceguiprompt-label" : u"Diesen Dialog nicht mehr anzeigen",
       "nostore-label" : u"Diese Konfiguration nicht speichern",
@@ -819,7 +819,7 @@ de = {
       "shownoncontrollerosd-label" : u"Zeige Ereignisse von nicht geführten Räumen in geführten Räumen.",
       "showdifferentroomosd-label" : u"Zeige Ereignisse in anderen Räumen",
       "showslowdownosd-label" : u"Zeige Verlangsamungs/Zurücksetzungs-Benachrichtigung",
-      "showcontactinfo-label" : u"Zeige Kontaktinformationsbox",
+      "showcontactinfo-label" : u"Zeige Kontaktinformationen",
       "language-label" : u"Sprache",
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
       "basics-label" : u"Basics",
@@ -827,7 +827,7 @@ de = {
       "sync-lagging-title" : u"Wenn andere laggen...",
       "sync-other-title" : u"Weitere Synchronisationsoptionen",
       "messages-label" : u"Nachrichten",
-      "messages-osd-title" : u"On-Screen-Display-Einstellungen",
+      "messages-osd-title" : u"OSD-(OnScreenDisplay)-Einstellungen",
       "messages-other-title" : u"Weitere Display-Einstellungen",
       "privacy-label" : u"Privatsphäre",
       "privacy-title" : u"Privatsphäreneinstellungen",
@@ -837,7 +837,7 @@ de = {
       "run-label" : u"Syncplay starten",
       "storeandrun-label" : u"Konfiguration speichern und Syncplay starten",
 
-      "contact-label" : u"Have an idea, bug report or feedback? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues/new\">öffne ein neues Issue auf GitHub</a>. Also check out <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> for info, help and updates.", #TODO: Translate into German even more
+      "contact-label" : u"Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues/new\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates.",
 
       "joinroom-guibuttonlabel" : u"Raum beitreten",
       "seektime-guibuttonlabel" : u"Spule zu Zeit",
@@ -851,39 +851,39 @@ de = {
       "duration-heading-label" : u"Länge",
       "filename-heading-label" : u"Dateiname",
       "notifications-heading-label" : u"Benachrichtigungen",
-      "userlist-heading-label" : u"Liste wer was spielt",
+      "userlist-heading-label" : u"Liste der gespielten Dateien",
       "othercommands-heading-label" :  u"Andere Befehle",
       "room-heading-label" :  u"Raum",
-      "seek-heading-label" :  u"Seek", # TODO: Translate into German
+      "seek-heading-label" :  u"Spulen",
 
-      "browseformedia-label" : u"Browse for media files", # TODO: Translate into German
+      "browseformedia-label" : u"Nach Mediendateien durchsuchen",
 
       "file-menu-label" : u"&Datei", # & precedes shortcut key
       "openmedia-menu-label" : u"&Mediendatei öffnen...",
       "exit-menu-label" : u"&Beenden",
       "advanced-menu-label" : u"&Erweitert",
-      "setoffset-menu-label" : u"Set &offset", # TODO: Translate into German
-      "createcontrolledroom-menu-label" : u"&Geführten Raum erstellen",
+      "setoffset-menu-label" : u"&Offset einstellen",
+      "createcontrolledroom-menu-label" : u"&Zentral gesteuerten Raum erstellen",
       "identifyascontroller-menu-label" : u"Als Raumleiter &identifizieren",
 
       "help-menu-label" : u"&Hilfe",
       "userguide-menu-label" : u"&Benutzerhandbuch öffnen",
 
-      "setoffset-msgbox-label" : u"Set offset", # TODO: Translate into German
-      "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung):",
+      "setoffset-msgbox-label" : u"Offset einstellen", # TODO: Translate into German
+      "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
 
-      "createcontrolledroom-msgbox-label" : u"Geführten Raum erstellen",
-      "controlledroominfo-msgbox-label" : u"Namen des geführten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung):",
+      "createcontrolledroom-msgbox-label" : u"Zentral gesteuerten Raum erstellen",
+      "controlledroominfo-msgbox-label" : u"Namen des zentral gesteuerten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
       "identifyascontroller-msgbox-label" : u"Als Raumleiter identifizieren",
-      "identifyinfo-msgbox-label" : u"Passwort des geführten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung):",
+      "identifyinfo-msgbox-label" : u"Passwort des zentral gesteuerten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
       "megabyte-suffix" : u" MB",
 
       # Tooltips
 
-      "host-tooltip" : u"Hostname oder IP zu der verbunden werden soll. Ptional mit Port (z.B.. syncplay.pl:8999). Synchronisation findet nur mit Personen auf dem selben Server und Port statt.",
+      "host-tooltip" : u"Hostname oder IP zu der verbunden werden soll. Optional mit Port (z.B.. syncplay.pl:8999). Synchronisation findet nur mit Personen auf dem selben Server und Port statt.",
       "name-tooltip" : u"Dein Benutzername. Keine Registrierung, kann einfach geändert werden. Bei fehlender Angabe wird ein zufälliger Name generiert.",
       "password-tooltip" : u"Passwörter sind nur bei Verbindung zu privaten Servern nötig.",
       "room-tooltip" : u"Der Raum, der betreten werden soll, kann ein x-beliebiger sein. Allerdings werden nur Clients im selben Raum synchronisiert.",
@@ -892,41 +892,41 @@ de = {
       "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
 
       "more-tooltip" : u"Weitere Einstellungen anzeigen.",
-      "slowdown-threshold-tooltip" : u"Time ahead of slowest client before temporarily reducing playback speed (default: {} secs).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD), # TODO: Translate into German
-      "rewind-threshold-tooltip" : u"Time ahead slowest client before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_REWIND_THRESHOLD), # TODO: Translate into German
-      "fastforward-threshold-tooltip" : u"Time behind room controller before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD), # TODO: Translate into German
-      "filename-privacy-tooltip" : u"Privat-Modus beim senden des Namens der aktuellen Datei zum Server.",
-      "filesize-privacy-tooltip" : u"Privat-Modus beim senden der Größe der aktuellen Datei zum Server.",
+      "slowdown-threshold-tooltip" : u"Zeitvorsprung zum langsamsten Client, ab dem die Wiedergabe verlangsamt wird (Standard: {} sek).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
+      "rewind-threshold-tooltip" : u"Zeitvorsprung zum langsamsten Client, ab dem zur Wiederherstellung der Synchronität gesprungen wird (Standard: {} sek).".format(constants.DEFAULT_REWIND_THRESHOLD),
+      "fastforward-threshold-tooltip" : u"Zeitvorsprung zum Raumleiter, ab dem zur Wiederherstellung der Synchronität gesprungen wird (Standard: {} sek).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD),
+      "filename-privacy-tooltip" : u"Privatheitsmodus beim Senden des Namens der aktuellen Datei zum Server.",
+      "filesize-privacy-tooltip" : u"Privatheitsmodus beim Senden der Größe der aktuellen Datei zum Server.",
       "privacy-sendraw-tooltip" : u"Die Information im Klartext übertragen. Dies ist die Standard-Einstellung mit der besten Funktionalität.",
       "privacy-sendhashed-tooltip" : u"Die Informationen gehasht übertragen, um sie für andere Clients schwerer lesbar zu machen.",
       "privacy-dontsend-tooltip" : u"Diese Information nicht übertragen. Dies garantiert den größtmöglichen Datanschutz.",
-      "slowondesync-tooltip" : u"Reduziert die Abspielgeschwindigkeit zeitweise, um dich wieder synchron zu den anderen Clients zu machen.",
+      "slowondesync-tooltip" : u"Reduziert die Abspielgeschwindigkeit zeitweise, um die Synchronität zu den anderen Clients wiederherzustellen.",
       "rewindondesync-label" : u"Zurückspulen bei großer Zeitdifferenz (empfohlen)",
-      "fastforwardondesync-label" : u"Vorspulen wenn laggierend (empfohlen)",
+      "fastforwardondesync-label" : u"Vorspulen wenn das Video lagt (empfohlen)",
       "dontslowdownwithme-tooltip" : u"Lässt andere nicht langsamer werden oder zurückspringen, wenn deine Wiedergabe hängt.",
       "pauseonleave-tooltip" : u"Wiedergabe anhalten, wenn deine Verbindung verloren geht oder jemand den Raum verlässt.",
-      "forceguiprompt-tooltip" : u"Der Konfigurationsdialog wird nicht angezeigt wird nicht angezeigt, wenn eine Datei mit Syncplay geöffnet wird.",
-      "nostore-tooltip" : u"Syncplay mit den angegebenen Einstellungen starten, diese aber nicht fauerhaft speichern.",
-      "rewindondesync-tooltip" : u"In der Zeit zurückspringen zum wiederherstellen der Synchronität. Empfohlen.",
-      "fastforwardondesync-tooltip" : u"Jump forward when out of sync with room controller (or your pretend position if 'Never slow down or rewind others' enabled).", # Translate into German (if you want)
-      "showosd-tooltip" : u"Sends Syncplay messages to media player OSD.", # TODO: Translate into German (if you want)
-      "showosdwarnings-tooltip" : u"Show warnings if playing different file, alone in room.", # TODO: Translate into German (if you want)
-      "showsameroomosd-tooltip" : u"Show OSD notifications for events relating to room user is in.", # TODO: Translate into German (if you want)
-      "shownoncontrollerosd-tooltip" : u"Show OSD notifications for events relating to non-controllers who are in controllerd rooms.", # Translate into German (if you want)
-      "showdifferentroomosd-tooltip" : u"Show OSD notifications for events relating to room user is not in.", # TODO: Translate into German (if you want)
-      "showslowdownosd-tooltip" : u"Show notifications of slowing down / reverting on time difference.", # TODO: Translate into German (if you want)
-      "showcontactinfo-tooltip" : u"Show information box about contacting Syncplay developers in main Syncplay window.", # TODO: Translate into German (if you want)
-      "showdurationnotification-tooltip" : u"Useful for when a segment in a multi-part file is missing, but can result in false positives.", # TODO: Translate into German (if you want)
+      "forceguiprompt-tooltip" : u"Der Konfigurationsdialog wird nicht angezeigt, wenn eine Datei mit Syncplay geöffnet wird.",
+      "nostore-tooltip" : u"Syncplay mit den angegebenen Einstellungen starten, diese aber nicht dauerhaft speichern.",
+      "rewindondesync-tooltip" : u"Zum Wiederherstellen der Synchronität in der Zeit zurückspringen (empfohlen)",
+      "fastforwardondesync-tooltip" : u"Nach vorne springen, wenn asynchron zum Raumleiter (oder deine vorgetäuschte Position, falls 'Niemals verlangsamen oder andere zurückspulen' aktiviert ist).",
+      "showosd-tooltip" : u"Syncplay-Nachrichten auf dem OSD (= OnScreenDisplay, ein eingeblendetes Textfeld) des Players anzeigen.",
+      "showosdwarnings-tooltip" : u"Warnungen bei Unterschiedlichen Dateien oder Alleinsein im Raum anzeigen.",
+      "showsameroomosd-tooltip" : u"OSD-Meldungen über Ereignisse im selben Raum anzeigen.",
+      "shownoncontrollerosd-tooltip" : u"OSD-Meldungen bei Ereignissen verursacht durch nicht-Raumleiter in zentral gesteuerten Räumen anzeigen.",
+      "showdifferentroomosd-tooltip" : u"OSD-Meldungen zu anderen Räumen als dem aktuell betretenen anzeigen.",
+      "showslowdownosd-tooltip" : u"Meldungen bei Geschwindigkeitsänderung anzeigen.",
+      "showcontactinfo-tooltip" : u"Kontaktinformationen zu den Syncplay-Entwicklern im Hauptfenster anzeigen.",
+      "showdurationnotification-tooltip" : u"Nützlich, wenn z.B. ein Teil eines mehrteiligen Videos fehlt, kann jedoch auch fehlerhaft anschlagen.",
       "language-tooltip" : u"Die verwendete Sprache von Syncplay",
 
       "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
       "reset-tooltip" : u"Alle Einstellungen auf Standardwerte zurücksetzen.",
 
-      "togglepause-tooltip" : u"Datei (ent)pausieren",
+      "togglepause-tooltip" : u"Datei starten/pausieren",
       "play-tooltip" : u"Fortsetzen",
       "pause-tooltip" : u"Pausieren",
-      "undoseek-tooltip" : u"Seek to where you were before the most recent seek.", # TODO: Translate into German(if you want)
-      "joinroom-tooltip" : u"Leave current room and joins specified room.", # TODO: Translate into German(if you want)
+      "undoseek-tooltip" : u"Den letzten Spulvorgang rückgängig machen.",
+      "joinroom-tooltip" : u"Den aktuellen Raum verlassen und stattdessen den angegebenen betreten."
       "seektime-tooltip" : u"Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
 
       # In-userlist notes (GUI)
