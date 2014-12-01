@@ -38,10 +38,10 @@ en = {
       "authenticated-as-controller-notification" : u"<{}> authenticated as a room controller",
 
       "file-different-notification" : "File you are playing appears to be different from <{}>'s",  # User
-      "file-differences-notification" : "Your file differs in the following way(s): ", # controlPassword
+      "file-differences-notification" : "Your file differs in the following way(s): ",
       "room-files-not-same" : "Not all files played in the room are the same",
       "alone-in-the-room": "You're alone in the room",
-#
+
       "different-filesize-notification" : " (their file size is different from yours!)",
       "file-played-by-notification" : "File: {} is being played by:",  # File
       "notplaying-notification" : "People who are not playing any file:",
@@ -152,6 +152,8 @@ en = {
       "filename-privacy-label" : "Filename information:",
       "filesize-privacy-label" : "File size information:",
       "slowondesync-label" : "Slow down on minor desync (not supported on MPC-HC)",
+      "rewindondesync-label" : "Rewind on major desync (highly recommended)",
+      "fastforwardondesync-label" : "Fast-forward if lagging behind (recommended)",
       "dontslowdownwithme-label" : "Never slow down or rewind others (experimental)",
       "pauseonleave-label" : "Pause when user leaves (e.g. if they are disconnected)",
       "forceguiprompt-label" : "Don't always show this dialog", # (Inverted)
@@ -247,8 +249,6 @@ en = {
       "slowondesync-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers. Not supported on MPC-HC.",
       "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room controllers.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
-      "rewindondesync-label" : "Rewind on major desync (highly recommended)",
-      "fastforwardondesync-label" : "Fast-forward if lagging behind (recommended)",
       "forceguiprompt-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.", # (Inverted)
       "nostore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.", # (Inverted)
       "rewindondesync-tooltip" : "Jump back when needed to get back in sync. Disabling this option can result in major desyncs!",
@@ -694,7 +694,7 @@ de = {
       "authenticated-as-controller-notification" : u"<{}> authentifizierte sich als Raumleiter",
 
       "file-different-notification" : u"Deine Datei scheint sich von <{}>s zu unterscheiden",  # User
-      "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: ", # controlPassword
+      "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: ",
       "room-files-not-same" : u"Nicht alle Dateien im Raum sind gleich",
       "alone-in-the-room": u"Du bist alleine im Raum",
 
@@ -901,10 +901,10 @@ de = {
       "privacy-sendhashed-tooltip" : u"Die Informationen gehasht übertragen, um sie für andere Clients schwerer lesbar zu machen.",
       "privacy-dontsend-tooltip" : u"Diese Information nicht übertragen. Dies garantiert den größtmöglichen Datanschutz.",
       "slowondesync-tooltip" : u"Reduziert die Abspielgeschwindigkeit zeitweise, um dich wieder synchron zu den anderen Clients zu machen.",
-      "dontslowdownwithme-tooltip" : u"Lässt andere nicht langsamer werden oder zurückspringen, wenn deine Wiedergabe hängt.",
-      "pauseonleave-tooltip" : u"Wiedergabe anhalten, wenn deine Verbindung verloren geht oder jemand den Raum verlässt.",
       "rewindondesync-label" : u"Zurückspulen bei großer Zeitdifferenz (empfohlen)",
       "fastforwardondesync-label" : u"Vorspulen wenn laggierend (empfohlen)",
+      "dontslowdownwithme-tooltip" : u"Lässt andere nicht langsamer werden oder zurückspringen, wenn deine Wiedergabe hängt.",
+      "pauseonleave-tooltip" : u"Wiedergabe anhalten, wenn deine Verbindung verloren geht oder jemand den Raum verlässt.",
       "forceguiprompt-tooltip" : u"Der Konfigurationsdialog wird nicht angezeigt wird nicht angezeigt, wenn eine Datei mit Syncplay geöffnet wird.",
       "nostore-tooltip" : u"Syncplay mit den angegebenen Einstellungen starten, diese aber nicht fauerhaft speichern.",
       "rewindondesync-tooltip" : u"In der Zeit zurückspringen zum wiederherstellen der Synchronität. Empfohlen.",
