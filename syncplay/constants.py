@@ -15,6 +15,7 @@ SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
 SHOW_BUTTON_LABELS = True  # If disabled, only shows icons for main GUI buttons
 SHOW_TOOLTIPS = True
 WARN_ABOUT_MISSING_STRINGS = False # (If debug mode is enabled)
+FALLBACK_INITIAL_LANGUAGE = "en"
 
 #Overriden by config
 SHOW_OSD = True  # Sends Syncplay messages to media player OSD

@@ -1002,9 +1002,9 @@ def getInitialLanguage():
         systemLocale = locale.getdefaultlocale("language")[0]
         initialLanguage = systemLocale.split("_")[0]
         if not messages.has_key(systemLocale):
-            initialLanguage = "en"
+            initialLanguage = constants.FALLBACK_INITIAL_LANGUAGE
     except:
-        initialLanguage = "en"
+        initialLanguage = constants.FALLBACK_INITIAL_LANGUAGE
     return initialLanguage
 
 def getMessage(type_, locale=None):
