@@ -996,6 +996,17 @@ def getMissingStrings():
 
     return missingStrings
 
+def getInitialLanguage():
+    import locale
+    try:
+        systemLocale = locale.getdefaultlocale("language")[0]
+        initialLanguage = systemLocale.split("_")[0]
+        if not messages.has_key(systemLocale):
+            initialLanguage = "en"
+    except:
+        initialLanguage = "en"
+    return initialLanguage
+
 def getMessage(type_, locale=None):
     if constants.SHOW_BUTTON_LABELS == False:
         if "-guibuttonlabel" in type_:
@@ -1003,6 +1014,10 @@ def getMessage(type_, locale=None):
     if constants.SHOW_TOOLTIPS == False:
         if "-tooltip" in type_:
             return ""
+
+    if not messages.has_key(messages["CURRENT"]):
+        setLanguage(getInitialLanguage())
+
     lang = messages["CURRENT"]
     if locale and messages.has_key(locale):
         if messages[locale].has_key(type_):
