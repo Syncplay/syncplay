@@ -3,7 +3,7 @@ import argparse
 import os
 import sys
 from syncplay import constants, utils, version, milestone
-from syncplay.messages import getMessage, setLanguage
+from syncplay.messages import getMessage, setLanguage, isValidLanguage
 from syncplay.players.playerFactory import PlayerFactory
 import codecs
 try:
@@ -115,6 +115,9 @@ class ConfigurationGetter(object):
             self._config = self._defaultConfig
             self._config['language'] = language
             raise InvalidConfigValue("*"+getMessage("config-cleared-notification"))
+
+        if not isValidLanguage(self._config['language']):
+            self._config['language'] = ""
 
         def _isPortValid(varToTest):
             try:
