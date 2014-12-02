@@ -1002,7 +1002,7 @@ def getMissingStrings():
 def getInitialLanguage():
     import locale
     try:
-        initialLanguage = locale.getdefaultlocale("language")[0].split("_")[0]
+        initialLanguage = locale.getdefaultlocale()[0].split("_")[0]
         if not messages.has_key(initialLanguage):
             initialLanguage = constants.FALLBACK_INITIAL_LANGUAGE
     except:
