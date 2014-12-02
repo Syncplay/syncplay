@@ -80,6 +80,7 @@ class ConfigurationGetter(object):
                          "clearGUIData",
                          "rewindOnDesync",
                          "slowOnDesync",
+                         "fastforwardOnDesync",
                          "pauseOnLeave",
                          "clearGUIData",
                          "resetConfig",
