@@ -167,7 +167,7 @@ en = {
       "showslowdownosd-label" :"Include slowing down / reverting notification",
       "showcontactinfo-label" : "Show contact info box",
       "language-label" : "Language",
-      "automatic-language" : "Automatic",
+      "automatic-language" : "Automatic ({})", # Automatic language #
       "showdurationnotification-label" : "Warn about media duration mismatches",
       "basics-label" : "Basics",
       "sync-label" : "Sync",
@@ -516,7 +516,7 @@ ru = {
       "showslowdownosd-label" : u"Показывать уведомления о замедлении/перемотке",
       "showcontactinfo-label" : u"Отображать контактную информацию разработчиков",
       "language-label" : u"Language", # TODO: Translate ito Russian
-      "automatic-language" : "Automatic", # TODO: Translate ito Russian
+      "automatic-language" : "Automatic ({})", # Automatic language # TODO: Translate ito Russian
       "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
       "basics-label" : u"Основное",
       "sync-label" : u"Синхронизация",
@@ -823,7 +823,7 @@ de = {
       "showslowdownosd-label" : u"Zeige Verlangsamungs/Zurücksetzungs-Benachrichtigung",
       "showcontactinfo-label" : u"Zeige Kontaktinformationen",
       "language-label" : u"Sprache",
-      "automatic-language" : "Automatic", # TODO: Translate into German (Automatisch?)
+      "automatic-language" : "Automatic ({})", # Automatic language # TODO: Translate into German (Automatisch?)
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
       "basics-label" : u"Basics",
       "sync-label" : u"Synchronisation",
@@ -1002,9 +1002,8 @@ def getMissingStrings():
 def getInitialLanguage():
     import locale
     try:
-        systemLocale = locale.getdefaultlocale("language")[0]
-        initialLanguage = systemLocale.split("_")[0]
-        if not messages.has_key(systemLocale):
+        initialLanguage = locale.getdefaultlocale("language")[0].split("_")[0]
+        if not messages.has_key(initialLanguage):
             initialLanguage = constants.FALLBACK_INITIAL_LANGUAGE
     except:
         initialLanguage = constants.FALLBACK_INITIAL_LANGUAGE

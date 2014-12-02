@@ -5,7 +5,7 @@ from syncplay.players.playerFactory import PlayerFactory
 
 import os
 import sys
-from syncplay.messages import getMessage, getLanguages, setLanguage, isValidLanguage
+from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
 from syncplay import constants
 
 class GuiConfiguration:
@@ -629,7 +629,7 @@ class ConfigDialog(QtGui.QDialog):
 
         self.languageLabel = QLabel(getMessage("language-label"), self)
         self.languageCombobox = QtGui.QComboBox(self)
-        self.languageCombobox.addItem(getMessage("automatic-language"))
+        self.languageCombobox.addItem(getMessage("automatic-language").format(getMessage("LANGUAGE", getInitialLanguage())))
 
         self.languages = getLanguages()
         for lang in self.languages:
