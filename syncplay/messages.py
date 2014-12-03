@@ -511,12 +511,12 @@ ru = {
 
       "showosdwarnings-label" : u"Показывать предупреждения (напр., когда файлы не совпадают)",
       "showsameroomosd-label" : u"Показывать события Вашей комнаты",
-      "shownoncontrollerosd-label" : "Include events from non-controllers in controlled rooms", # TODO: Translate into Russiannc
+      "shownoncontrollerosd-label" : "Include events from non-controllers in controlled rooms", # TODO: Translate into Russiann
       "showdifferentroomosd-label" : u"Показывать события других комнат",
       "showslowdownosd-label" : u"Показывать уведомления о замедлении/перемотке",
       "showcontactinfo-label" : u"Отображать контактную информацию разработчиков",
-      "language-label" : u"Language", # TODO: Translate ito Russian
-      "automatic-language" : "Automatic ({})", # Automatic language # TODO: Translate ito Russian
+      "language-label" : u"Language", # TODO: Translate into Russian
+      "automatic-language" : "Automatic ({})", # Automatic language # TODO: Translate into Russian
       "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
       "basics-label" : u"Основное",
       "sync-label" : u"Синхронизация",
@@ -823,7 +823,7 @@ de = {
       "showslowdownosd-label" : u"Zeige Verlangsamungs/Zurücksetzungs-Benachrichtigung",
       "showcontactinfo-label" : u"Zeige Kontaktinformationen",
       "language-label" : u"Sprache",
-      "automatic-language" : "Automatic ({})", # Automatic language # TODO: Translate into German (Automatisch?)
+      "automatic-language" : "Automatisch ({})", # Automatic language
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
       "basics-label" : u"Basics",
       "sync-label" : u"Synchronisation",
