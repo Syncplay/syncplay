@@ -256,12 +256,12 @@ class SyncplayClient(object):
         if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindOnDesync'] == False:
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
         if self._config['fastforwardOnDesync'] and (self.userlist.currentUser.canControl() == False or self._config['dontSlowDownWithMe'] == True):
-            if diff < constants.FASTFORWARD_BEHIND_THRESHOLD and not doSeek:
+            if diff < (constants.FASTFORWARD_BEHIND_THRESHOLD * -1) and not doSeek:
                 if self.behindFirstDetected is None:
                     self.behindFirstDetected = time.time()
                 else:
                     durationBehind = time.time() - self.behindFirstDetected
-                    if (durationBehind > self._config['fastforwardThreshold']) and (diff < (self._config['fastforwardThreshold'] * -1)):
+                    if (durationBehind > (self._config['fastforwardThreshold']-constants.FASTFORWARD_BEHIND_THRESHOLD)) and (diff < (self._config['fastforwardThreshold'] * -1)):
                         madeChangeOnPlayer = self._fastforwardPlayerDueToTimeDifference(position, setBy)
                         self.behindFirstDetected = time.time() + constants.FASTFORWARD_RESET_THRESHOLD
             else:
