@@ -58,6 +58,7 @@ COMMANDS_ROOM = ["r", "room"]
 COMMANDS_HELP = ['help', 'h', '?', '/?', r'\?']
 COMMANDS_CREATE = ['c','create']
 COMMANDS_AUTH = ['a','auth']
+COMMANDS_READY = ['re']
 MPC_MIN_VER = "1.6.4"
 VLC_MIN_VERSION = "2.0.0"
 VLC_INTERFACE_MIN_VERSION = "0.2.1"

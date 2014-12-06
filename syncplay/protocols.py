@@ -136,6 +136,9 @@ class SyncClientProtocol(JSONCommandProtocol):
                 controlPassword = values['password']
                 roomName = values['roomName']
                 self._client.controlledRoomCreated(roomName, controlPassword)
+            elif command == "ready":
+                user, isReady = values["username"], values["isReady"]
+                self._client.setReady(user, isReady)
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -158,7 +161,8 @@ class SyncClientProtocol(JSONCommandProtocol):
                 userName = user[0]
                 file_ = user[1]['file'] if user[1]['file'] <> {} else None
                 isController = user[1]['controller'] if 'controller' in user[1] else False
-                self._client.userlist.addUser(userName, roomName, file_, noMessage=True, isController=isController)
+                isReady = user[1]['isReady'] if 'isReady' in user[1] else False
+                self._client.userlist.addUser(userName, roomName, file_, noMessage=True, isController=isController, isReady=isReady)
         self._client.userlist.showUserList()
 
     def sendList(self):
@@ -231,6 +235,13 @@ class SyncClientProtocol(JSONCommandProtocol):
             "controllerAuth": {
                 "room": room,
                 "password": password
+            }
+        })
+
+    def setReady(self, isReady):
+        self.sendSet({
+            "ready": {
+                "isReady": isReady
             }
         })
 
@@ -342,6 +353,8 @@ class SyncServerProtocol(JSONCommandProtocol):
                 password = set_[1]["password"] if set_[1].has_key("password") else None
                 room = set_[1]["room"] if set_[1].has_key("room") else None
                 self._factory.authRoomController(self._watcher, password, room)
+            elif command == "ready":
+                self._factory.setReady(self._watcher, set_[1]['isReady'])
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -363,6 +376,15 @@ class SyncServerProtocol(JSONCommandProtocol):
             }
         })
 
+
+    def sendSetReady(self, username, isReady):
+        self.sendSet({
+            "ready": {
+                "username": username,
+                "isReady": isReady
+            }
+        })
+
     def sendUserSetting(self, username, room, file_, event):
         room = {"name": room.getName()}
         user = {username: {}}
@@ -381,7 +403,8 @@ class SyncServerProtocol(JSONCommandProtocol):
             userFile = {
                 "position": 0,
                 "file": watcher.getFile() if watcher.getFile() else {},
-                "controller": watcher.isController()
+                "controller": watcher.isController(),
+                "isReady": watcher.isReady()
             }
             userlist[room.getName()][watcher.getName()] = userFile
 

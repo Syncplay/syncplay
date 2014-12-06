@@ -459,6 +459,17 @@ class SyncplayClient(object):
         if promptForAction:
             self.ui.promptFor(getMessage("enter-to-exit-prompt"))
 
+    def toggleReady(self):
+        self._protocol.setReady(not self.userlist.currentUser.isReady())
+
+    def setReady(self, username, isReady):
+        self.userlist.setReady(username, isReady)
+        if isReady:
+            message = "<{}> I'm ready".format(username)
+        else:
+            message = "<{}> I'm not ready".format(username)
+        self.ui.showMessage(message)
+
     def requireMinServerVersion(minVersion):
         def requireMinVersionDecorator(f):
             @wraps(f)
@@ -523,17 +534,17 @@ class SyncplayClient(object):
             self._userlist = userlist
             self._ui = ui
             self._warnings = {
-                            "room-files-not-same": {
-                                                     "timer": task.LoopingCall(self.__displayMessageOnOSD,
-                                                                               "room-files-not-same",),
-                                                     "displayedFor": 0,
-                                                    },
-                            "alone-in-the-room": {
-                                                     "timer": task.LoopingCall(self.__displayMessageOnOSD,
-                                                                               "alone-in-the-room",),
-                                                     "displayedFor": 0,
-                                                    },
-                            }
+                "room-files-not-same": {
+                    "timer": task.LoopingCall(self.__displayMessageOnOSD,
+                                              "room-files-not-same", ),
+                    "displayedFor": 0,
+                },
+                "alone-in-the-room": {
+                    "timer": task.LoopingCall(self.__displayMessageOnOSD,
+                                              "alone-in-the-room", ),
+                    "displayedFor": 0,
+                },
+            }
         def checkWarnings(self):
             self._checkIfYouReAloneInTheRoom()
             self._checkRoomForSameFiles()
@@ -566,6 +577,7 @@ class SyncplayClient(object):
 
 class SyncplayUser(object):
     def __init__(self, username=None, room=None, file_=None):
+        self.ready = False
         self.username = username
         self.room = room
         self.file = file_
@@ -573,10 +585,10 @@ class SyncplayUser(object):
 
     def setFile(self, filename, duration, size):
         file_ = {
-                 "name": filename,
-                 "duration": duration,
-                 "size":size
-                 }
+            "name": filename,
+            "duration": duration,
+            "size": size
+        }
         self.file = file_
 
     def isFileSame(self, file_):
@@ -610,6 +622,12 @@ class SyncplayUser(object):
             return True
         else:
             return False
+
+    def isReady(self):
+        return self.ready
+
+    def setReady(self, ready):
+        self.ready = ready
 
 class SyncplayUserlist(object):
     def __init__(self, ui, client):
@@ -659,15 +677,18 @@ class SyncplayUserlist(object):
                     message = getMessage("file-differences-notification") + ", ".join(differences)
                     self.ui.showMessage(message, hideFromOSD)
 
-    def addUser(self, username, room, file_, noMessage=False, isController=None):
+    def addUser(self, username, room, file_, noMessage=False, isController=None, isReady=False):
         if username == self.currentUser.username:
             if isController is not None:
                 self.currentUser.setControllerStatus(isController)
+            self.currentUser.setReady(isReady)
             return
         user = SyncplayUser(username, room, file_)
         if isController is not None:
             user.setControllerStatus(isController)
         self._users[username] = user
+        user.setReady(isReady)
+
         if not noMessage:
             self.__showUserChangeMessage(username, room, file_)
         self.userListChange(room)
@@ -743,6 +764,12 @@ class SyncplayUserlist(object):
             if user.username == username and user.canControl():
                 return True
         return False
+
+    def setReady(self, username, isReady):
+        if self.currentUser.username == username:
+            self.currentUser.setReady(isReady)
+        elif self._users.has_key(username):
+            self._users[username].setReady(isReady)
 
     def userListChange(self, room = None):
         if room is not None and self.isRoomSame(room):

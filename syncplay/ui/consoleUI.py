@@ -54,7 +54,10 @@ class ConsoleUI(threading.Thread):
             for user in rooms[room]:
                 userflags = u""
                 if user.isController():
-                    userflags = userflags + u"(Controller) "
+                    userflags += u"(Controller) "
+                if user.isReady():
+                    userflags += u"(Ready) "
+
                 username = userflags + u"*<{}>*".format(user.username) if user == currentUser else userflags + u"<{}>".format(user.username)
                 if user.file:
                     message = u"{} is playing:".format(username)
@@ -149,6 +152,8 @@ class ConsoleUI(threading.Thread):
         elif command.group('command') in constants.COMMANDS_AUTH:
             controlpassword = command.group('parameter')
             self._syncplayClient.identifyAsController(controlpassword)
+        elif command.group('command') in constants.COMMANDS_READY:
+            self._syncplayClient.toggleReady()
         else:
             if self._tryAdvancedCommands(data):
                 return

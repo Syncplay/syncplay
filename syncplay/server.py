@@ -125,6 +125,9 @@ class SyncFactory(Factory):
         except ValueError:
             self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
 
+    def setReady(self, watcher, isReady):
+        watcher.setReady(isReady)
+        self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), isReady))
 
 class RoomManager(object):
     def __init__(self):
@@ -299,6 +302,7 @@ class ControlledRoom(Room):
 
 class Watcher(object):
     def __init__(self, server, connector, name):
+        self._ready = False
         self._server = server
         self._connector = connector
         self._name = name
@@ -321,6 +325,12 @@ class Watcher(object):
         else:
             self._resetStateTimer()
             self._askForStateUpdate(True, True)
+
+    def setReady(self, ready):
+        self._ready = ready
+
+    def isReady(self):
+        return self._ready
 
     def getRoom(self):
         return self._room
@@ -351,6 +361,9 @@ class Watcher(object):
 
     def sendControlledRoomAuthStatus(self, success, username, room):
         self._connector.sendControlledRoomAuthStatus(success, username, room)
+
+    def sendSetReady(self, username, isReady):
+        self._connector.sendSetReady(username, isReady)
 
     def __lt__(self, b):
         if self.getPosition() is None or self._file is None:
