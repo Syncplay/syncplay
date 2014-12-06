@@ -505,9 +505,9 @@ class SyncplayClient(object):
                 showOnOSD = False
             hideFromOSD = not showOnOSD
             if isReady:
-                message = "<{}> I'm ready".format(username)
+                message = getMessage("user-ready-notification").format(username)
             else:
-                message = "<{}> I'm not ready".format(username)
+                message = getMessage("user-not-ready-notification").format(username)
             self.ui.showMessage(message, hideFromOSD)
 
     @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)

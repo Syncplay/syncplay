@@ -33,6 +33,9 @@ en = {
       "playing-notification" : "<{}> is playing '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" :  " in room: '{}'",  # Room
 
+      "user-ready-notification" : "<{}> I'm ready", # Username
+      "user-not-ready-notification" : "<{}> I'm ready", # Username
+
       "identifying-as-controller-notification" : u"Identifying as room controller with password '{}'...",
       "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room controller.",
       "authenticated-as-controller-notification" : u"<{}> authenticated as a room controller",
