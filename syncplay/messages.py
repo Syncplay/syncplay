@@ -164,7 +164,7 @@ en = {
       "showsameroomosd-label" : "Include events in your room",
       "shownoncontrollerosd-label" : "Include events from non-controllers in controlled rooms",
       "showdifferentroomosd-label" : "Include events in other rooms",
-      "showslowdownosd-label" :"Include slowing down / reverting notification",
+      "showslowdownosd-label" :"Include slowing down / reverting notifications",
       "showcontactinfo-label" : "Show contact info box",
       "language-label" : "Language",
       "automatic-language" : "Automatic ({})", # Automatic language #
