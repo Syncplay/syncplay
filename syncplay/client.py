@@ -159,7 +159,7 @@ class SyncplayClient(object):
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
         self._playerPosition = position
         self._playerPaused = paused
-        if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
+        if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION) and self.userlist.currentUser.canControl():
             lastPausedDiff = time.time() - self.lastPausedOnLeaveTime if self.lastPausedOnLeaveTime else None
             if lastPausedDiff is not None and lastPausedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
                 self.lastPausedOnLeaveTime = None
@@ -499,11 +499,16 @@ class SyncplayClient(object):
         self.userlist.setReady(username, isReady)
         self.ui.userListChange()
         if oldReadyState != isReady:
+            showOnOSD = constants.SHOW_OSD_WARNINGS
+            if constants.SHOW_NONCONTROLLER_OSD == False and self.userlist.canControl(username) == False and self.userlist.currentUser.isController() == False:
+                # Ignore SHOW_NONCONTROLLER_OSD setting if user is controller, because they need to know who is/isn't ready
+                showOnOSD = False
+            hideFromOSD = not showOnOSD
             if isReady:
                 message = "<{}> I'm ready".format(username)
             else:
                 message = "<{}> I'm not ready".format(username)
-            self.ui.showMessage(message)
+            self.ui.showMessage(message, hideFromOSD)
 
     @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
     def createControlledRoom(self, roomName):
