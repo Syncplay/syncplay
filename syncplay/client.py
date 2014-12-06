@@ -68,6 +68,7 @@ class SyncplayClient(object):
         self.serverVersion = "0.0.0"
 
         self.lastLeftTime = 0
+        self.lastPausedOnLeaveTime = None
         self.lastLeftUser = u""
         self.protocolFactory = SyncClientFactory(self)
         self.ui = UiManager(self, ui)
@@ -158,6 +159,12 @@ class SyncplayClient(object):
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
         self._playerPosition = position
         self._playerPaused = paused
+        if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
+            lastPausedDiff = time.time() - self.lastPausedOnLeaveTime if self.lastPausedOnLeaveTime else None
+            if lastPausedDiff is not None and lastPausedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
+                self.lastPausedOnLeaveTime = None
+            else:
+                self.changeReadyState(not self.getPlayerPaused())
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
             if (pauseChange or seeked) and self._protocol:
@@ -303,6 +310,7 @@ class SyncplayClient(object):
     def onDisconnect(self):
         if self._config['pauseOnLeave']:
             self.setPaused(True)
+            self.lastPausedOnLeaveTime = time.time()
 
     def removeUser(self, username):
         if self.userlist.isUserInYourRoom(username):
@@ -477,6 +485,12 @@ class SyncplayClient(object):
     @requireMinServerVersion(constants.USER_READY_MIN_VERSION)
     def toggleReady(self):
         self._protocol.setReady(not self.userlist.currentUser.isReady())
+
+    @requireMinServerVersion(constants.USER_READY_MIN_VERSION)
+    def changeReadyState(self, newState):
+        oldState = self.userlist.currentUser.isReady()
+        if newState != oldState:
+            self.toggleReady()
 
     def setReady(self, username, isReady):
         oldReadyState = self.userlist.isReady(username)

@@ -163,6 +163,7 @@ class MainWindow(QtGui.QMainWindow):
                 font = QtGui.QFont()
                 if currentUser.username == user.username:
                     font.setWeight(QtGui.QFont.Bold)
+                    self.updateReadyState(currentUser.isReady())
                 if isControlledRoom and not isController:
                     useritem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOTCONTROLLER_COLOR)))
                 useritem.setFont(font)
@@ -198,6 +199,11 @@ class MainWindow(QtGui.QMainWindow):
             self.listTreeView.expandAll()
         except:
             pass
+
+    def updateReadyState(self, newState):
+        oldState = self.readyCheckbox.isChecked()
+        if newState != oldState:
+            self.readyCheckbox.setChecked(newState)
 
     def roomClicked(self, item):
         while item.parent().row() != -1:
@@ -621,8 +627,7 @@ class MainWindow(QtGui.QMainWindow):
         self.listbox.moveCursor(QtGui.QTextCursor.End)
 
     def changeReadyState(self):
-        if self.readyCheckbox.isChecked() != self._syncplayClient.userlist.currentUser.isReady():
-            self._syncplayClient.toggleReady()
+        self._syncplayClient.changeReadyState(self.readyCheckbox.isChecked())
 
     def dragEnterEvent(self, event):
         data = event.mimeData()

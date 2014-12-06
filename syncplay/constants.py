@@ -48,6 +48,7 @@ WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
 MERGE_PLAYPAUSE_BUTTONS = False
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 #Usually there's no need to adjust these
+LAST_PAUSED_DIFF_THRESHOLD = 2
 FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
 CONTROL_PASSWORD_STRIP_REGEX = u"[^a-zA-Z0-9\-]"
 ROOM_NAME_STRIP_REGEX = u"^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
