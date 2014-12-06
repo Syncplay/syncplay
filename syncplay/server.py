@@ -302,7 +302,7 @@ class ControlledRoom(Room):
 
 class Watcher(object):
     def __init__(self, server, connector, name):
-        self._ready = False
+        self._ready = None
         self._server = server
         self._connector = connector
         self._name = name

@@ -161,7 +161,7 @@ class SyncClientProtocol(JSONCommandProtocol):
                 userName = user[0]
                 file_ = user[1]['file'] if user[1]['file'] <> {} else None
                 isController = user[1]['controller'] if 'controller' in user[1] else False
-                isReady = user[1]['isReady'] if 'isReady' in user[1] else False
+                isReady = user[1]['isReady'] if 'isReady' in user[1] else None
                 self._client.userlist.addUser(userName, roomName, file_, noMessage=True, isController=isController, isReady=isReady)
         self._client.userlist.showUserList()
 

@@ -402,6 +402,10 @@ class SyncplayClient(object):
                 self.identifyAsController(storedRoomPassword)
 
     def connected(self):
+        if self.userlist.currentUser.isReady() is not None:
+            self._protocol.setReady(self.userlist.currentUser.isReady())
+        else:
+            self._protocol.setReady(False)
         self.reIdentifyAsController()
 
     def getRoom(self):
@@ -459,17 +463,6 @@ class SyncplayClient(object):
         if promptForAction:
             self.ui.promptFor(getMessage("enter-to-exit-prompt"))
 
-    def toggleReady(self):
-        self._protocol.setReady(not self.userlist.currentUser.isReady())
-
-    def setReady(self, username, isReady):
-        self.userlist.setReady(username, isReady)
-        if isReady:
-            message = "<{}> I'm ready".format(username)
-        else:
-            message = "<{}> I'm not ready".format(username)
-        self.ui.showMessage(message)
-
     def requireMinServerVersion(minVersion):
         def requireMinVersionDecorator(f):
             @wraps(f)
@@ -480,6 +473,23 @@ class SyncplayClient(object):
                 return f(self, *args, **kwds)
             return wrapper
         return requireMinVersionDecorator
+
+    @requireMinServerVersion(constants.USER_READY_MIN_VERSION)
+    def toggleReady(self):
+        self._protocol.setReady(not self.userlist.currentUser.isReady())
+
+    def setReady(self, username, isReady):
+        oldReadyState = self.userlist.isReady(username)
+        if oldReadyState is None:
+            oldReadyState = False
+        self.userlist.setReady(username, isReady)
+        self.ui.userListChange()
+        if oldReadyState != isReady:
+            if isReady:
+                message = "<{}> I'm ready".format(username)
+            else:
+                message = "<{}> I'm not ready".format(username)
+            self.ui.showMessage(message)
 
     @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
     def createControlledRoom(self, roomName):
@@ -577,7 +587,7 @@ class SyncplayClient(object):
 
 class SyncplayUser(object):
     def __init__(self, username=None, room=None, file_=None):
-        self.ready = False
+        self.ready = None
         self.username = username
         self.room = room
         self.file = file_
@@ -763,6 +773,15 @@ class SyncplayUserlist(object):
         for user in self._users.itervalues():
             if user.username == username and user.canControl():
                 return True
+        return False
+
+    def isReady(self, username):
+        if self.currentUser.username == username:
+            return self.currentUser.isReady()
+
+        for user in self._users.itervalues():
+            if user.username == username:
+                return user.isReady()
         return False
 
     def setReady(self, username, isReady):

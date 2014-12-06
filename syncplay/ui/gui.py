@@ -125,7 +125,13 @@ class MainWindow(QtGui.QMainWindow):
             for user in rooms[room]:
                 useritem = QtGui.QStandardItem(user.username)
                 isController = user.isController()
+                sameRoom = room == currentUser.room
+                if sameRoom:
+                    isReady = user.isReady()
+                else:
+                    isReady = None
                 useritem.setData(isController, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
+                useritem.setData(isReady, Qt.UserRole + constants.USERITEM_READY_ROLE)
                 if user.file:
                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size']))
                     filedurationitem = QtGui.QStandardItem("({})".format(formatTime(user.file['duration'])))
@@ -134,7 +140,6 @@ class MainWindow(QtGui.QMainWindow):
                         sameName = sameFilename(user.file['name'], currentUser.file['name'])
                         sameSize = sameFilesize(user.file['size'], currentUser.file['size'])
                         sameDuration = sameFileduration(user.file['duration'], currentUser.file['duration'])
-                        sameRoom = room == currentUser.room
                         underlinefont = QtGui.QFont()
                         underlinefont.setUnderline(True)
                         if sameRoom:
@@ -446,6 +451,15 @@ class MainWindow(QtGui.QMainWindow):
         window.listLayout.setContentsMargins(0, 0, 0, 0)
         window.listLayout.addWidget(window.listlabel)
         window.listLayout.addWidget(window.listTreeView)
+
+        window.readyCheckbox = QtGui.QCheckBox()
+        readyFont = QtGui.QFont()
+        readyFont.setWeight(QtGui.QFont.Bold)
+        window.readyCheckbox.setText("I'm ready to watch!")
+        window.readyCheckbox.setFont(readyFont)
+        window.readyCheckbox.toggled.connect(self.changeReadyState)
+        window.listLayout.addWidget(window.readyCheckbox, Qt.AlignRight)
+
         window.contactLabel = QtGui.QLabel()
         window.contactLabel.setWordWrap(True)
         window.contactLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
@@ -605,6 +619,10 @@ class MainWindow(QtGui.QMainWindow):
         self.listbox.moveCursor(QtGui.QTextCursor.End)
         self.listbox.insertHtml(item)
         self.listbox.moveCursor(QtGui.QTextCursor.End)
+
+    def changeReadyState(self):
+        if self.readyCheckbox.isChecked() != self._syncplayClient.userlist.currentUser.isReady():
+            self._syncplayClient.toggleReady()
 
     def dragEnterEvent(self, event):
         data = event.mimeData()
