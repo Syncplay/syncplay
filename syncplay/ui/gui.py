@@ -202,7 +202,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def updateReadyState(self, newState):
         oldState = self.readyCheckbox.isChecked()
-        if newState != oldState:
+        if newState != oldState and newState != None:
             self.readyCheckbox.setChecked(newState)
 
     def roomClicked(self, item):
