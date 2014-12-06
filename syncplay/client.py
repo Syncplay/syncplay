@@ -413,7 +413,7 @@ class SyncplayClient(object):
         if self.userlist.currentUser.isReady() is not None:
             self._protocol.setReady(self.userlist.currentUser.isReady())
         else:
-            self._protocol.setReady(False)
+            self._protocol.setReady(self._config['readyAtStart'])
         self.reIdentifyAsController()
 
     def getRoom(self):

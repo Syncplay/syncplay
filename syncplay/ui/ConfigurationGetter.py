@@ -44,6 +44,7 @@ class ConfigurationGetter(object):
                         "filenamePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
                         "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
                         "pauseOnLeave": False,
+                        "readyAtStart": False,
                         "clearGUIData": False,
                         "language" : "",
                         "resetConfig" : False,
@@ -77,6 +78,7 @@ class ConfigurationGetter(object):
                          "noStore",
                          "dontSlowDownWithMe",
                          "pauseOnLeave",
+                         "readyAtStart",
                          "clearGUIData",
                          "rewindOnDesync",
                          "slowOnDesync",
@@ -102,7 +104,7 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave"],
+                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave", "readyAtStart"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showContactInfo" , "showDurationNotification"],
                         "general": ["language"]
                         }

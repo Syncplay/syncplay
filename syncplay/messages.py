@@ -156,6 +156,7 @@ en = {
       "fastforwardondesync-label" : "Fast-forward if lagging behind (recommended)",
       "dontslowdownwithme-label" : "Never slow down or rewind others (experimental)",
       "pauseonleave-label" : "Pause when user leaves (e.g. if they are disconnected)",
+      "readyatstart-label" : "Set me as 'ready to watch' by default",
       "forceguiprompt-label" : "Don't always show this dialog", # (Inverted)
       "nostore-label" : "Don't store this configuration", # (Inverted)
       "showosd-label" : "Enable OSD Messages",
@@ -250,6 +251,7 @@ en = {
       "slowondesync-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers. Not supported on MPC-HC.",
       "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room controllers.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
+      "readyatstart-tooltip" : "Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)",
       "forceguiprompt-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.", # (Inverted)
       "nostore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.", # (Inverted)
       "rewindondesync-tooltip" : "Jump back when needed to get back in sync. Disabling this option can result in major desyncs!",
