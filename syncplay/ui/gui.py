@@ -201,9 +201,10 @@ class MainWindow(QtGui.QMainWindow):
             pass
 
     def updateReadyState(self, newState):
-        oldState = self.readyCheckbox.isChecked()
+        oldState = self.readyPushButton.isChecked()
         if newState != oldState and newState != None:
-            self.readyCheckbox.setChecked(newState)
+            self.readyPushButton.setChecked(newState)
+        self.updateReadyIcon()
 
     def roomClicked(self, item):
         while item.parent().row() != -1:
@@ -458,13 +459,15 @@ class MainWindow(QtGui.QMainWindow):
         window.listLayout.addWidget(window.listlabel)
         window.listLayout.addWidget(window.listTreeView)
 
-        window.readyCheckbox = QtGui.QCheckBox()
+        window.readyPushButton = QtGui.QPushButton()
         readyFont = QtGui.QFont()
         readyFont.setWeight(QtGui.QFont.Bold)
-        window.readyCheckbox.setText("I'm ready to watch!")
-        window.readyCheckbox.setFont(readyFont)
-        window.readyCheckbox.toggled.connect(self.changeReadyState)
-        window.listLayout.addWidget(window.readyCheckbox, Qt.AlignRight)
+        window.readyPushButton.setCheckable(True)
+        window.readyPushButton.setAutoExclusive(True)
+        window.readyPushButton.toggled.connect(self.changeReadyState)
+        window.readyPushButton.setFont(readyFont)
+        window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON)
+        window.listLayout.addWidget(window.readyPushButton, Qt.AlignRight)
 
         window.contactLabel = QtGui.QLabel()
         window.contactLabel.setWordWrap(True)
@@ -627,7 +630,17 @@ class MainWindow(QtGui.QMainWindow):
         self.listbox.moveCursor(QtGui.QTextCursor.End)
 
     def changeReadyState(self):
-        self._syncplayClient.changeReadyState(self.readyCheckbox.isChecked())
+        self.updateReadyIcon()
+        self._syncplayClient.changeReadyState(self.readyPushButton.isChecked())
+
+    def updateReadyIcon(self):
+        ready = self.readyPushButton.isChecked()
+        if ready:
+            self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
+            self.readyPushButton.setText("I'm ready to watch! (Click to toggle)")
+        else:
+            self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'cross_checkbox.png'))
+            self.readyPushButton.setText("I'm not ready to watch! (Click to toggle)")
 
     def dragEnterEvent(self, event):
         data = event.mimeData()
