@@ -164,7 +164,7 @@ class SyncplayClient(object):
             if lastPausedDiff is not None and lastPausedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
                 self.lastPausedOnLeaveTime = None
             else:
-                self.changeReadyState(not self.getPlayerPaused())
+                self.changeReadyState(not self.getPlayerPaused(), manuallyInitiated=False)
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
             if (pauseChange or seeked) and self._protocol:
@@ -410,10 +410,8 @@ class SyncplayClient(object):
                 self.identifyAsController(storedRoomPassword)
 
     def connected(self):
-        if self.userlist.currentUser.isReady() is not None:
-            self._protocol.setReady(self.userlist.currentUser.isReady())
-        else:
-            self._protocol.setReady(self._config['readyAtStart'])
+        readyState = self._config['readyAtStart'] if self.userlist.currentUser.isReady() is None else self.userlist.currentUser.isReady()
+        self._protocol.setReady(readyState, manuallyInitiated=False)
         self.reIdentifyAsController()
 
     def getRoom(self):
@@ -483,22 +481,22 @@ class SyncplayClient(object):
         return requireMinVersionDecorator
 
     @requireMinServerVersion(constants.USER_READY_MIN_VERSION)
-    def toggleReady(self):
-        self._protocol.setReady(not self.userlist.currentUser.isReady())
+    def toggleReady(self, manuallyInitiated=True):
+        self._protocol.setReady(not self.userlist.currentUser.isReady(), manuallyInitiated)
 
     @requireMinServerVersion(constants.USER_READY_MIN_VERSION)
-    def changeReadyState(self, newState):
+    def changeReadyState(self, newState, manuallyInitiated=True):
         oldState = self.userlist.currentUser.isReady()
         if newState != oldState:
-            self.toggleReady()
+            self.toggleReady(manuallyInitiated)
 
-    def setReady(self, username, isReady):
+    def setReady(self, username, isReady, manuallyInitiated=True):
         oldReadyState = self.userlist.isReady(username)
         if oldReadyState is None:
             oldReadyState = False
         self.userlist.setReady(username, isReady)
         self.ui.userListChange()
-        if oldReadyState != isReady:
+        if manuallyInitiated and oldReadyState != isReady:
             showOnOSD = constants.SHOW_OSD_WARNINGS
             if constants.SHOW_NONCONTROLLER_OSD == False and self.userlist.canControl(username) == False and self.userlist.currentUser.isController() == False:
                 # Ignore SHOW_NONCONTROLLER_OSD setting if user is controller, because they need to know who is/isn't ready

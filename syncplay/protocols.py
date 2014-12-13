@@ -138,7 +138,8 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self._client.controlledRoomCreated(roomName, controlPassword)
             elif command == "ready":
                 user, isReady = values["username"], values["isReady"]
-                self._client.setReady(user, isReady)
+                manuallyInitiated = values["manuallyInitiated"] if values.has_key("manuallyInitiated") else True
+                self._client.setReady(user, isReady, manuallyInitiated)
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -238,10 +239,11 @@ class SyncClientProtocol(JSONCommandProtocol):
             }
         })
 
-    def setReady(self, isReady):
+    def setReady(self, isReady, manuallyInitiated=True):
         self.sendSet({
             "ready": {
-                "isReady": isReady
+                "isReady": isReady,
+                "manuallyInitiated": manuallyInitiated
             }
         })
 
@@ -354,7 +356,8 @@ class SyncServerProtocol(JSONCommandProtocol):
                 room = set_[1]["room"] if set_[1].has_key("room") else None
                 self._factory.authRoomController(self._watcher, password, room)
             elif command == "ready":
-                self._factory.setReady(self._watcher, set_[1]['isReady'])
+                manuallyInitiated = set_[1]['manuallyInitiated'] if set_[1].has_key("manuallyInitiated") else False
+                self._factory.setReady(self._watcher, set_[1]['isReady'], manuallyInitiated=manuallyInitiated)
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -377,11 +380,12 @@ class SyncServerProtocol(JSONCommandProtocol):
         })
 
 
-    def sendSetReady(self, username, isReady):
+    def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self.sendSet({
             "ready": {
                 "username": username,
-                "isReady": isReady
+                "isReady": isReady,
+                "manuallyInitiated": manuallyInitiated
             }
         })
 
