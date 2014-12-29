@@ -65,7 +65,7 @@ MPC_MIN_VER = "1.6.4"
 VLC_MIN_VERSION = "2.0.0"
 VLC_INTERFACE_MIN_VERSION = "0.2.4"
 CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
-USER_READY_MIN_VERSION = "1.3.1"
+USER_READY_MIN_VERSION = "1.3.0"
 MPC_PATHS = [
     r"c:\program files (x86)\mpc-hc\mpc-hc.exe",
     r"c:\program files\mpc-hc\mpc-hc.exe",
