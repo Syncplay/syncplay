@@ -166,7 +166,7 @@ en = {
       "nostore-label" : "Don't store this configuration", # (Inverted)
       "showosd-label" : "Enable OSD Messages",
 
-      "showosdwarnings-label" : "Include warnings (e.g. when files are different)",
+      "showosdwarnings-label" : "Include warnings (e.g. when files are different, users not ready)",
       "showsameroomosd-label" : "Include events in your room",
       "shownoncontrollerosd-label" : "Include events from non-controllers in controlled rooms",
       "showdifferentroomosd-label" : "Include events in other rooms",
@@ -264,7 +264,7 @@ en = {
       "rewindondesync-tooltip" : "Jump back when needed to get back in sync. Disabling this option can result in major desyncs!",
       "fastforwardondesync-tooltip" : "Jump forward when out of sync with room controller (or your pretend position if 'Never slow down or rewind others' enabled).",
       "showosd-tooltip" : "Sends Syncplay messages to media player OSD.",
-      "showosdwarnings-tooltip" : "Show warnings if playing different file, alone in room.",
+      "showosdwarnings-tooltip" : "Show warnings if playing different file, alone in room, users not ready, etc.",
       "showsameroomosd-tooltip" : "Show OSD notifications for events relating to room user is in.",
       "shownoncontrollerosd-tooltip" : "Show OSD notifications for events relating to non-controllers who are in controlled rooms.",
       "showdifferentroomosd-tooltip" : "Show OSD notifications for events relating to room user is not in.",
