@@ -1,7 +1,8 @@
 # You might want to change these
 DEFAULT_PORT = 8999
 OSD_DURATION = 3
-OSD_WARNING_MESSAGE_DURATION = 15
+OSD_WARNING_MESSAGE_DURATION = 5
+NO_SECONDARY_OSD_WARNING_DURATION = 15
 MPC_OSD_POSITION = 2  #Right corner, 1 for left
 MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "
@@ -62,7 +63,7 @@ COMMANDS_AUTH = ['a','auth']
 COMMANDS_READY = ['re']
 MPC_MIN_VER = "1.6.4"
 VLC_MIN_VERSION = "2.0.0"
-VLC_INTERFACE_MIN_VERSION = "0.2.1"
+VLC_INTERFACE_MIN_VERSION = "0.2.4"
 CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
 USER_READY_MIN_VERSION = "1.3.1"
 MPC_PATHS = [
@@ -141,7 +142,7 @@ VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance', '--no-one-instance-when-started-fr
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
 VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_]+)(?:\: )?(?P<argument>.*))"
 UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
-UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
+UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,9}(?:[^\d\.](?:\d{1,9})){0,2}(?:\.(?:\d{1,3}))?)$"
 UI_SEEK_REGEX = r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
 PARSE_TIME_REGEX = r'(:?(?:(?P<hours>\d+?)[^\d\.])?(?:(?P<minutes>\d+?))?[^\d\.])?(?P<seconds>\d+?)(?:\.(?P<miliseconds>\d+?))?$'
 SERVER_MAX_TEMPLATE_LENGTH = 10000

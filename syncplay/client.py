@@ -106,7 +106,7 @@ class SyncplayClient(object):
         self._speedChanged = False
         self.behindFirstDetected = None
 
-        self._warnings = self._WarningManager(self._player, self.userlist, self.ui)
+        self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
             paths = "; ".join(self._config['loadedRelativePaths'])
             self.ui.showMessage(getMessage("relative-config-notification").format(paths), noPlayer=True, noTimestamp=True)
@@ -126,6 +126,8 @@ class SyncplayClient(object):
 
     def initPlayer(self, player):
         self._player = player
+        if not self._player.secondaryOSDSupported:
+            constants.OSD_WARNING_MESSAGE_DURATION = constants.NO_SECONDARY_OSD_WARNING_DURATION
         self.scheduleAskPlayer()
 
     def scheduleAskPlayer(self, when=constants.PLAYER_ASK_DELAY):
@@ -496,17 +498,20 @@ class SyncplayClient(object):
             oldReadyState = False
         self.userlist.setReady(username, isReady)
         self.ui.userListChange()
-        if manuallyInitiated and oldReadyState != isReady:
-            showOnOSD = constants.SHOW_OSD_WARNINGS
-            if constants.SHOW_NONCONTROLLER_OSD == False and self.userlist.canControl(username) == False and self.userlist.currentUser.isController() == False:
-                # Ignore SHOW_NONCONTROLLER_OSD setting if user is controller, because they need to know who is/isn't ready
-                showOnOSD = False
-            hideFromOSD = not showOnOSD
-            if isReady:
-                message = getMessage("user-ready-notification").format(username)
-            else:
-                message = getMessage("user-not-ready-notification").format(username)
-            self.ui.showMessage(message, hideFromOSD)
+        if oldReadyState != isReady:
+            self._warnings.checkReadyStates()
+            if manuallyInitiated:
+                showOnOSD = constants.SHOW_OSD_WARNINGS
+                if constants.SHOW_NONCONTROLLER_OSD == False and self.userlist.canControl(username) == False and self.userlist.currentUser.isController() == False:
+                    # Ignore SHOW_NONCONTROLLER_OSD setting if user is controller, because they need to know who is/isn't ready
+                    showOnOSD = False
+                hideFromOSD = not showOnOSD
+                if isReady:
+                    message = getMessage("user-ready-notification").format(username)
+                else:
+                    message = getMessage("user-not-ready-notification").format(username)
+                self.ui.showMessage(message, hideFromOSD, False)
+
 
     @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
     def createControlledRoom(self, roomName):
@@ -556,51 +561,107 @@ class SyncplayClient(object):
             return self.controlpasswords[room]
 
     class _WarningManager(object):
-        def __init__(self, player, userlist, ui):
+        def __init__(self, player, userlist, ui, client):
+            self._client = client
             self._player = player
             self._userlist = userlist
             self._ui = ui
             self._warnings = {
                 "room-files-not-same": {
-                    "timer": task.LoopingCall(self.__displayMessageOnOSD,
-                                              "room-files-not-same", ),
+                    "timer": task.LoopingCall(self.__displayMessageOnOSD, "room-files-not-same",
+                                              lambda: self._checkRoomForSameFiles(OSDOnly=True),),
                     "displayedFor": 0,
                 },
                 "alone-in-the-room": {
-                    "timer": task.LoopingCall(self.__displayMessageOnOSD,
-                                              "alone-in-the-room", ),
+                    "timer": task.LoopingCall(self.__displayMessageOnOSD, "alone-in-the-room",
+                                              lambda: self._checkIfYouReAloneInTheRoom(OSDOnly=True)),
+                    "displayedFor": 0,
+                },
+                "not-all-ready": {
+                    "timer": task.LoopingCall(self.__displayMessageOnOSD, "not-all-ready",
+                                              lambda: self.checkReadyStates(),),
                     "displayedFor": 0,
                 },
             }
-        def checkWarnings(self):
-            self._checkIfYouReAloneInTheRoom()
-            self._checkRoomForSameFiles()
+            self.pausedTimer = task.LoopingCall(self.__displayPausedMessagesOnOSD)
+            self.pausedTimer.start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
 
-        def _checkRoomForSameFiles(self):
+        def checkWarnings(self):
+            self._checkIfYouReAloneInTheRoom(OSDOnly=False)
+            self._checkRoomForSameFiles(OSDOnly=False)
+            self.checkReadyStates()
+
+        def _checkRoomForSameFiles(self, OSDOnly):
             if not self._userlist.areAllFilesInRoomSame():
-                self._ui.showMessage(getMessage("room-files-not-same"), True)
-                if constants.SHOW_OSD_WARNINGS and not self._warnings["room-files-not-same"]['timer'].running:
-                    self._warnings["room-files-not-same"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
+                self._displayReadySameWarning()
+                if not OSDOnly:
+                    self._ui.showMessage(getMessage("room-files-not-same"), True)
+                    if constants.SHOW_OSD_WARNINGS and not self._warnings["room-files-not-same"]['timer'].running:
+                        self._warnings["room-files-not-same"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
             elif self._warnings["room-files-not-same"]['timer'].running:
                 self._warnings["room-files-not-same"]['timer'].stop()
 
-        def _checkIfYouReAloneInTheRoom(self):
+        def _checkIfYouReAloneInTheRoom(self, OSDOnly):
             if self._userlist.areYouAloneInRoom():
-                self._ui.showMessage(getMessage("alone-in-the-room"), True)
-                if constants.SHOW_OSD_WARNINGS and not self._warnings["alone-in-the-room"]['timer'].running:
-                    self._warnings["alone-in-the-room"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
+                self._ui.showOSDMessage(getMessage("alone-in-the-room"), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True)
+                if not OSDOnly:
+                    self._ui.showMessage(getMessage("alone-in-the-room"), True)
+                    if constants.SHOW_OSD_WARNINGS and not self._warnings["alone-in-the-room"]['timer'].running:
+                        self._warnings["alone-in-the-room"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
             elif self._warnings["alone-in-the-room"]['timer'].running:
                 self._warnings["alone-in-the-room"]['timer'].stop()
 
-        def __displayMessageOnOSD(self, warningName):
+        def checkReadyStates(self):
+            if not self._client:
+                return
+
+            if self._client.getPlayerPaused() or not self._userlist.currentUser.isReady():
+                self._warnings["not-all-ready"]["displayedFor"] = 0
+            if self._userlist.areYouAloneInRoom() or not self._userlist.currentUser.canControl():
+                if self._warnings["not-all-ready"]['timer'].running:
+                    self._warnings["not-all-ready"]['timer'].stop()
+            elif not self._userlist.areAllUsersInRoomReady():
+                self._displayReadySameWarning()
+                if constants.SHOW_OSD_WARNINGS and not self._warnings["not-all-ready"]['timer'].running:
+                    self._warnings["not-all-ready"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
+            elif self._warnings["not-all-ready"]['timer'].running:
+                self._warnings["not-all-ready"]['timer'].stop()
+                self._displayReadySameWarning()
+            elif self._client.getPlayerPaused() or not self._userlist.currentUser.isReady():
+                self._displayReadySameWarning()
+
+        def _displayReadySameWarning(self):
+            if not self._userlist.areAllFilesInRoomSame():
+                if self._userlist.currentUser.canControl():
+                    if self._userlist.areAllUsersInRoomReady():
+                        osdMessage = u"{}; {}".format(getMessage("room-files-not-same"), getMessage("all-users-ready"))
+                    else:
+                        osdMessage = u"{}; {}".format(getMessage("room-files-not-same"), getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady()))
+                else:
+                    osdMessage = getMessage("room-files-not-same")
+            elif self._userlist.areAllUsersInRoomReady():
+                osdMessage = getMessage("all-users-ready")
+            else:
+                osdMessage = getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady())
+            self._ui.showOSDMessage(osdMessage, constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True)
+
+        def __displayMessageOnOSD(self, warningName, warningFunction):
             if constants.OSD_WARNING_MESSAGE_DURATION > self._warnings[warningName]["displayedFor"]:
-                self._ui.showOSDMessage(getMessage(warningName), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL)
+                warningFunction()
                 self._warnings[warningName]["displayedFor"] += constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL
             else:
                 self._warnings[warningName]["displayedFor"] = 0
-                self._warnings[warningName]["timer"].stop()
+                try:
+                    self._warnings[warningName]["timer"].stop()
+                except:
+                    pass
 
-
+        def __displayPausedMessagesOnOSD(self):
+            if self._client and self._client._player and self._client._player.secondaryOSDSupported and self._userlist.currentUser.file and self._client.getPlayerPaused():
+                self._checkRoomForSameFiles(OSDOnly=True)
+                self.checkReadyStates()
+            elif not self._userlist.currentUser.isReady(): # CurrentUser should always be reminded they are set to not ready
+                self.checkReadyStates()
 
 class SyncplayUser(object):
     def __init__(self, username=None, room=None, file_=None):
@@ -764,11 +825,31 @@ class SyncplayUserlist(object):
             user = self._users[username]
             user.setControllerStatus(True)
 
-    def areAllFilesInRoomSame(self):
+    def areAllUsersInRoomReady(self):
+        if not self.currentUser.canControl():
+            return True
+        if not self.currentUser.isReady():
+            return False
         for user in self._users.itervalues():
-            if user.room == self.currentUser.room and user.file and not self.currentUser.isFileSame(user.file):
-                if user.canControl():
-                    return False
+            if user.room == self.currentUser.room and user.isReady() == False:
+                return False
+        return True
+
+    def usersInRoomNotReady(self):
+        notReady = []
+        if not self.currentUser.isReady():
+            notReady.append(self.currentUser.username)
+        for user in self._users.itervalues():
+            if user.room == self.currentUser.room and user.isReady() == False:
+                notReady.append(user.username)
+        return ", ".join(notReady)
+
+    def areAllFilesInRoomSame(self):
+        if self.currentUser.file:
+            for user in self._users.itervalues():
+                if user.room == self.currentUser.room and user.file and not self.currentUser.isFileSame(user.file):
+                    if user.canControl():
+                        return False
         return True
 
     def areYouAloneInRoom(self):
@@ -843,22 +924,38 @@ class UiManager(object):
     def __init__(self, client, ui):
         self._client = client
         self.__ui = ui
+        self.lastPrimaryOSDMessage = None
+        self.lastPrimaryOSDEndTime = None
+        self.lastSecondaryOSDMessage = None
+        self.lastSecondaryOSDEndTime = None
         self.lastError = ""
 
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():
             print "{}{}".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip())
 
-    def showMessage(self, message, noPlayer=False, noTimestamp=False):
-        if not noPlayer: self.showOSDMessage(message)
+    def showMessage(self, message, noPlayer=False, noTimestamp=False, secondaryOSD=False):
+        if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, secondaryOSD=secondaryOSD)
         self.__ui.showMessage(message, noTimestamp)
 
     def showUserList(self, currentUser, rooms):
         self.__ui.showUserList(currentUser, rooms)
 
-    def showOSDMessage(self, message, duration=constants.OSD_DURATION):
-        if constants.SHOW_OSD and self._client._player:
-            self._client._player.displayMessage(message, duration * 1000)
+    def showOSDMessage(self, message, duration=constants.OSD_DURATION, secondaryOSD=False):
+        if constants.SHOW_OSD and self._client and self._client._player:
+            if not self._client._player.secondaryOSDSupported:
+                if secondaryOSD:
+                    message = u"({})".format(message)
+                    self.lastSecondaryOSDMessage = message
+                    self.lastSecondaryOSDEndTime = time.time() + constants.NO_SECONDARY_OSD_WARNING_DURATION
+                    if self.lastPrimaryOSDEndTime and time.time() < self.lastPrimaryOSDEndTime:
+                        message = u"{}; {}".format(message, self.lastPrimaryOSDMessage)
+                else:
+                    self.lastPrimaryOSDMessage = message
+                    self.lastPrimaryOSDEndTime = time.time() + constants.OSD_DURATION
+                    if self.lastSecondaryOSDEndTime and time.time() < self.lastSecondaryOSDEndTime:
+                        message = u"{}; {}".format(self.lastSecondaryOSDMessage, message)
+            self._client._player.displayMessage(message, duration * 1000, secondaryOSD)
 
     def setControllerStatus(self, username, isController):
         self.__ui.setControllerStatus(username, isController)

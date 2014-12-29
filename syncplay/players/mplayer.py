@@ -10,6 +10,8 @@ import os
 class MplayerPlayer(BasePlayer):
     speedSupported = True
     customOpenDialog = False
+    secondaryOSDSupported = False
+
     RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
     POSITION_QUERY = 'time_pos'
     OSD_QUERY = 'osd_show_text'
@@ -83,7 +85,7 @@ class MplayerPlayer(BasePlayer):
     def _getProperty(self, property_):
         self._listener.sendLine("get_property {}".format(property_))
 
-    def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000)):
+    def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), secondaryOSD=False):
         self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
 
     def setSpeed(self, value):

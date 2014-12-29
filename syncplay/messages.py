@@ -35,6 +35,8 @@ en = {
 
       "user-ready-notification" : "<{}> I'm ready", # Username
       "user-not-ready-notification" : "<{}> I'm not ready", # Username
+      "not-all-ready" : "Not ready: {}", # Usernames
+      "all-users-ready" : "Everyone is ready",
 
       "identifying-as-controller-notification" : u"Identifying as room controller with password '{}'...",
       "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room controller.",
@@ -42,7 +44,7 @@ en = {
 
       "file-different-notification" : "File you are playing appears to be different from <{}>'s",  # User
       "file-differences-notification" : "Your file differs in the following way(s): ",
-      "room-files-not-same" : "Not all files played in the room are the same",
+      "room-files-not-same" : "Not all files the same",
       "alone-in-the-room": "You're alone in the room",
 
       "different-filesize-notification" : " (their file size is different from yours!)",
@@ -348,13 +350,18 @@ ru = {
       "playing-notification" : u"<{}> включил '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" : u" в комнате: '{}'",  # Room
 
+      "user-ready-notification" : "<{}> I'm ready", # Username # TODO: Translate into Russian
+      "user-not-ready-notification" : "<{}> I'm not ready", # Username # TODO: Translate into Russian
+      "not-all-ready" : "Not ready: {}", # Usernames # TODO: Translate into Russian
+      "all-users-ready" : "Everyone is ready", # TODO: Translate into Russian
+
       "identifying-as-controller-notification" : u"Identifying as room controller with password '{}'...", # TODO: Translate into Russian
       "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room controller.", # TODO: Translate into Russian
       "authenticated-as-controller-notification" : u"<{}> authenticated as a room controller", # TODO: Translate into Russian
 
       "file-different-notification" : u"Вероятно, файл, который Вы смотрите, отличается от того, который смотрит <{}>.",  # User
       "file-differences-notification" : u"Ваш файл отличается: ",
-      "room-files-not-same" : u"Не все пользователи в этой комнате смотрят один и тот же файл.",
+      "room-files-not-same" : u"Не все пользователи в этой комнате смотрят один и тот же файл.",  # TODO: Make shorter if possible (to fit better on OSD), e.g. say "Not all files same" or "File mismatch"
       "alone-in-the-room" : u"В этой комнате кроме Вас никого нет.",
 
       "different-filesize-notification" : u" (размер Вашего файла не совпадает с размером их файла!)",
@@ -657,13 +664,18 @@ de = {
       "playing-notification" : u"<{}> spielt '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" :  u" in Raum: '{}'",  # Room
 
+      "user-ready-notification" : "<{}> I'm ready", # Username # TODO: Translate into German
+      "user-not-ready-notification" : "<{}> I'm not ready", # Username # TODO: Translate into German
+      "not-all-ready" : "Not ready: {}", # Usernames # TODO: Translate into German
+      "all-users-ready" : "Everyone is ready", # TODO: Translate into German
+
       "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room controller"
       "failed-to-identify-as-controller-notification" : u"<{}> konnte sich nicht als Raumleiter identifizieren.",
       "authenticated-as-controller-notification" : u"<{}> authentifizierte sich als Raumleiter",
 
       "file-different-notification" : u"Deine Datei scheint sich von <{}>s zu unterscheiden",  # User
       "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: ",
-      "room-files-not-same" : u"Nicht alle Dateien im Raum sind gleich",
+      "room-files-not-same" : u"Nicht alle Dateien im Raum sind gleich", # TODO: Make shorter if possible (to fit better on OSD), e.g. say "Not all files same" or "File mismatch"
       "alone-in-the-room": u"Du bist alleine im Raum",
 
       "different-filesize-notification" : u" (ihre Dateigröße ist anders als deine!)",

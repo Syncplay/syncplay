@@ -14,6 +14,8 @@ from syncplay.messages import getMessage
 class VlcPlayer(BasePlayer):
     speedSupported = True
     customOpenDialog = False
+    secondaryOSDSupported = True
+
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS
     if not sys.platform.startswith('darwin'):
@@ -83,16 +85,19 @@ class VlcPlayer(BasePlayer):
         self._positionAsk.clear()
         self._pausedAsk.clear()
         self._listener.sendLine(".")
-        if not self._filechanged:
+        if self._filename and not self._filechanged:
             self._positionAsk.wait()
             self._pausedAsk.wait()
             self._client.updatePlayerStatus(self._paused, self._position)
         else:
             self._client.updatePlayerStatus(self._client.getGlobalPaused(), self._client.getGlobalPosition())
 
-    def displayMessage(self, message, duration=constants.OSD_DURATION * 1000):
+    def displayMessage(self, message, duration=constants.OSD_DURATION * 1000, secondaryOSD=False):
         duration /= 1000
-        self._listener.sendLine('display-osd: {}, {}, {}'.format('top-right', duration, message.encode('utf8')))
+        if secondaryOSD == False:
+            self._listener.sendLine('display-osd: {}, {}, {}'.format('top-right', duration, message.encode('utf8')))
+        else:
+            self._listener.sendLine('display-secondary-osd: {}, {}, {}'.format('center', duration, message.encode('utf8')))
 
     def setSpeed(self, value):
         self._listener.sendLine("set-rate: {:.2n}".format(value))
@@ -131,7 +136,10 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine("get-filename")
 
     def lineReceived(self, line):
-        self._client.ui.showDebugMessage("player >> {}".format(line))
+        try:
+            self._client.ui.showDebugMessage("player << {}".format(line))
+        except:
+            pass
         match, name, value = self.RE_ANSWER.match(line), "", ""
         if match:
             name, value = match.group('command'), match.group('argument')
@@ -340,7 +348,7 @@ class VlcPlayer(BasePlayer):
             if self.connected:
                 try:
                     self.push(line + "\n")
-                    self._client.ui.showDebugMessage("player >> {}".format(line))
+                    self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
                 except:
                     pass
             if line == "close-vlc":
