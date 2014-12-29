@@ -765,7 +765,7 @@ class SyncplayUserlist(object):
                     message = getMessage("file-differences-notification") + ", ".join(differences)
                     self.ui.showMessage(message, hideFromOSD)
 
-    def addUser(self, username, room, file_, noMessage=False, isController=None, isReady=False):
+    def addUser(self, username, room, file_, noMessage=False, isController=None, isReady=None):
         if username == self.currentUser.username:
             if isController is not None:
                 self.currentUser.setControllerStatus(isController)
