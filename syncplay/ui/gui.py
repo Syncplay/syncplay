@@ -637,10 +637,10 @@ class MainWindow(QtGui.QMainWindow):
         ready = self.readyPushButton.isChecked()
         if ready:
             self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
-            self.readyPushButton.setText("I'm ready to watch! (Click to toggle)")
+            self.readyPushButton.setText(getMessage("ready-guipushbuttonlabel"))
         else:
             self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'cross_checkbox.png'))
-            self.readyPushButton.setText("I'm not ready to watch! (Click to toggle)")
+            self.readyPushButton.setText(getMessage("notready-guipushbuttonlabel"))
 
     def dragEnterEvent(self, event):
         data = event.mimeData()

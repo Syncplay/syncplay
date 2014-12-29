@@ -198,6 +198,8 @@ en = {
       "togglepause-guibuttonlabel" : "Toggle pause",
       "play-guibuttonlabel" : "Play",
       "pause-guibuttonlabel" : "Pause",
+      "ready-guipushbuttonlabel" : u"I'm ready to watch! (Click to toggle)",
+      "notready-guipushbuttonlabel" : u"I'm not ready to watch! (Click to toggle)",
 
       "roomuser-heading-label" : "Room / User",
       "size-heading-label" : "Size",
@@ -477,6 +479,7 @@ ru = {
       "rewindondesync-label" : u"Перемотка при больших рассинхронизациях (настоятельно рекомендуется)",
       "dontslowdownwithme-label" : u"Никогда не замедлять или перематывать видео другим", # TODO: Update new wording into Russian (should state "Experimental" in brackets at the end)
       "pauseonleave-label" : u"Приостанавливать, когда кто-то уходит (например, отключился)",
+      "readyatstart-label" : "Set me as 'ready to watch' by default", # TODO: Translate into Russian
       "fastforwardondesync-label" : u"Fast-forward if lagging behind (recommended)", # TODO: Translate into Russian
       "forceguiprompt-label" : u"Не показывать больше этот диалог", # (Inverted)
       "nostore-label" : u"Не сохранять текущую конфигурацию", # (Inverted)
@@ -514,6 +517,8 @@ ru = {
       "togglepause-guibuttonlabel" : u"Вкл./выкл. паузу",
       "play-guibuttonlabel" : u"Play",
       "pause-guibuttonlabel" : u"Пауза",
+      "ready-guipushbuttonlabel" : u"I'm ready to watch! (Click to toggle)", # TODO: Translate into Russian
+      "notready-guipushbuttonlabel" : u"I'm not ready to watch! (Click to toggle)", # TODO: Translate into Russian
 
       "roomuser-heading-label" : u"Комната / Пользователь",
       "size-heading-label" : "Size", # TODO: Translate into Russian
@@ -571,6 +576,7 @@ ru = {
       "slowondesync-tooltip" : u"Временно уменьшить скорость воспроизведения в целях синхронизации с другими зрителями. Не поддерживается в MPC-HC.",
       "dontslowdownwithme-tooltip" : u"Ваши лаги не будут влиять на других зрителей.",
       "pauseonleave-tooltip" : u"Приостановить воспроизведение, если Вы покинули комнату или кто-то из зрителей отключился от сервера.",
+      "readyatstart-tooltip" : "Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)", # TODO: Translate into Russian
       "forceguiprompt-tooltip" : u"Окно настройки не будет отображаться при открытии файла в Syncplay.", # (Inverted)
       "nostore-tooltip" : u"Запустить Syncplay с данной конфигурацией, но не сохранять изменения навсегда.", # (Inverted)
       "rewindondesync-tooltip" : u"Перематывать назад, когда это необходимо для синхронизации. Отключение этой опции может привести к большим рассинхронизациям!",
@@ -790,6 +796,7 @@ de = {
       "slowondesync-label" : u"Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC)",
        "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentell)",
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
+      "readyatstart-label" : "Set me as 'ready to watch' by default", # TODO: Translate into German
       "forceguiprompt-label" : u"Diesen Dialog nicht mehr anzeigen",
       "nostore-label" : u"Diese Konfiguration nicht speichern",
       "showosd-label" : u"OSD-Nachrichten anzeigen",
@@ -826,6 +833,8 @@ de = {
       "togglepause-guibuttonlabel" : u"Pause umschalten",
       "play-guibuttonlabel" : u"Wiedergabe",
       "pause-guibuttonlabel" : u"Pause",
+      "ready-guipushbuttonlabel" : u"I'm ready to watch! (Click to toggle)", # TODO: Translate into German
+      "notready-guipushbuttonlabel" : u"I'm not ready to watch! (Click to toggle)", # TODO: Translate into German
 
       "roomuser-heading-label" : u"Raum / Benutzer",
       "size-heading-label" : u"Größe",
@@ -886,6 +895,7 @@ de = {
       "fastforwardondesync-label" : u"Vorspulen wenn das Video lagt (empfohlen)",
       "dontslowdownwithme-tooltip" : u"Lässt andere nicht langsamer werden oder zurückspringen, wenn deine Wiedergabe hängt.",
       "pauseonleave-tooltip" : u"Wiedergabe anhalten, wenn deine Verbindung verloren geht oder jemand den Raum verlässt.",
+      "readyatstart-tooltip" : "Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)", #TODO: Translate into German
       "forceguiprompt-tooltip" : u"Der Konfigurationsdialog wird nicht angezeigt, wenn eine Datei mit Syncplay geöffnet wird.",
       "nostore-tooltip" : u"Syncplay mit den angegebenen Einstellungen starten, diese aber nicht dauerhaft speichern.",
       "rewindondesync-tooltip" : u"Zum Wiederherstellen der Synchronität in der Zeit zurückspringen (empfohlen)",
