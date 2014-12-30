@@ -942,6 +942,8 @@ class UiManager(object):
         self.__ui.showUserList(currentUser, rooms)
 
     def showOSDMessage(self, message, duration=constants.OSD_DURATION, secondaryOSD=False):
+        if secondaryOSD and not constants.SHOW_OSD_WARNINGS:
+            return
         if constants.SHOW_OSD and self._client and self._client._player:
             if not self._client._player.secondaryOSDSupported:
                 if secondaryOSD:
