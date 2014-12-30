@@ -500,18 +500,6 @@ class SyncplayClient(object):
         self.ui.userListChange()
         if oldReadyState != isReady:
             self._warnings.checkReadyStates()
-            if manuallyInitiated:
-                showOnOSD = constants.SHOW_OSD_WARNINGS
-                if constants.SHOW_NONCONTROLLER_OSD == False and self.userlist.canControl(username) == False and self.userlist.currentUser.isController() == False:
-                    # Ignore SHOW_NONCONTROLLER_OSD setting if user is controller, because they need to know who is/isn't ready
-                    showOnOSD = False
-                hideFromOSD = not showOnOSD
-                if isReady:
-                    message = getMessage("user-ready-notification").format(username)
-                else:
-                    message = getMessage("user-not-ready-notification").format(username)
-                self.ui.showMessage(message, hideFromOSD, False)
-
 
     @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
     def createControlledRoom(self, roomName):

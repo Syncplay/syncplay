@@ -33,8 +33,6 @@ en = {
       "playing-notification" : "<{}> is playing '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" :  " in room: '{}'",  # Room
 
-      "user-ready-notification" : "<{}> I'm ready", # Username
-      "user-not-ready-notification" : "<{}> I'm not ready", # Username
       "not-all-ready" : "Not ready: {}", # Usernames
       "all-users-ready" : "Everyone is ready",
 
@@ -358,8 +356,6 @@ ru = {
       "playing-notification" : u"<{}> включил '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" : u" в комнате: '{}'",  # Room
 
-      "user-ready-notification" : u"<{}> I'm ready", # Username # TODO: Translate into Russian
-      "user-not-ready-notification" : u"<{}> I'm not ready", # Username # TODO: Translate into Russian
       "not-all-ready" : u"Not ready: {}", # Usernames # TODO: Translate into Russian
       "all-users-ready" : u"Everyone is ready", # TODO: Translate into Russian
 
@@ -682,8 +678,6 @@ de = {
       "playing-notification" : u"<{}> spielt '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" :  u" in Raum: '{}'",  # Room
 
-      "user-ready-notification" : u"<{}> I'm ready", # Username # TODO: Translate into German
-      "user-not-ready-notification" : u"<{}> I'm not ready", # Username # TODO: Translate into German
       "not-all-ready" : u"Not ready: {}", # Usernames # TODO: Translate into German
       "all-users-ready" : u"Everyone is ready", # TODO: Translate into German
 
