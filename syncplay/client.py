@@ -631,12 +631,14 @@ class SyncplayClient(object):
                 self._displayReadySameWarning()
 
         def _displayReadySameWarning(self):
+            if not self._client._player:
+                return
             if not self._userlist.areAllFilesInRoomSame():
                 if self._userlist.currentUser.canControl():
                     if self._userlist.areAllUsersInRoomReady():
-                        osdMessage = u"{}; {}".format(getMessage("room-files-not-same"), getMessage("all-users-ready"))
+                        osdMessage = u"{}{}{}".format(getMessage("room-files-not-same"), self._client._player.osdMessageSeparator, getMessage("all-users-ready"))
                     else:
-                        osdMessage = u"{}; {}".format(getMessage("room-files-not-same"), getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady()))
+                        osdMessage = u"{}{}{}".format(getMessage("room-files-not-same"), self._client._player.osdMessageSeparator, getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady()))
                 else:
                     osdMessage = getMessage("room-files-not-same")
             elif self._userlist.areAllUsersInRoomReady():
@@ -944,6 +946,8 @@ class UiManager(object):
     def showOSDMessage(self, message, duration=constants.OSD_DURATION, secondaryOSD=False):
         if secondaryOSD and not constants.SHOW_OSD_WARNINGS:
             return
+        if not self._client._player:
+            return
         if constants.SHOW_OSD and self._client and self._client._player:
             if not self._client._player.secondaryOSDSupported:
                 if secondaryOSD:
@@ -951,12 +955,12 @@ class UiManager(object):
                     self.lastSecondaryOSDMessage = message
                     self.lastSecondaryOSDEndTime = time.time() + constants.NO_SECONDARY_OSD_WARNING_DURATION
                     if self.lastPrimaryOSDEndTime and time.time() < self.lastPrimaryOSDEndTime:
-                        message = u"{}; {}".format(message, self.lastPrimaryOSDMessage)
+                        message = u"{}{}{}".format(message, self._client._player.osdMessageSeparator, self.lastPrimaryOSDMessage)
                 else:
                     self.lastPrimaryOSDMessage = message
                     self.lastPrimaryOSDEndTime = time.time() + constants.OSD_DURATION
                     if self.lastSecondaryOSDEndTime and time.time() < self.lastSecondaryOSDEndTime:
-                        message = u"{}; {}".format(self.lastSecondaryOSDMessage, message)
+                        message = u"{}{}{}".format(self.lastSecondaryOSDMessage, self._client._player.osdMessageSeparator, message)
             self._client._player.displayMessage(message, duration * 1000, secondaryOSD)
 
     def setControllerStatus(self, username, isController):

@@ -15,6 +15,7 @@ class VlcPlayer(BasePlayer):
     speedSupported = True
     customOpenDialog = False
     secondaryOSDSupported = True
+    osdMessageSeparator = "; "
 
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS

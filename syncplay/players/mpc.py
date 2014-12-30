@@ -308,6 +308,7 @@ class MPCHCAPIPlayer(BasePlayer):
     speedSupported = False
     secondaryOSDSupported = False
     customOpenDialog = False
+    osdMessageSeparator = "; "
     
     def __init__(self, client):
         from twisted.internet import reactor
