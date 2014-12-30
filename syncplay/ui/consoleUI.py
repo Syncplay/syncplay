@@ -152,7 +152,7 @@ class ConsoleUI(threading.Thread):
         elif command.group('command') in constants.COMMANDS_AUTH:
             controlpassword = command.group('parameter')
             self._syncplayClient.identifyAsController(controlpassword)
-        elif command.group('command') in constants.COMMANDS_READY:
+        elif command.group('command') in constants.COMMANDS_TOGGLE:
             self._syncplayClient.toggleReady()
         else:
             if self._tryAdvancedCommands(data):
@@ -166,6 +166,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/pause"), True)
             self.showMessage(getMessage("commandlist-notification/seek"), True)
             self.showMessage(getMessage("commandlist-notification/help"), True)
+            self.showMessage(getMessage("commandlist-notification/toggle"), True)
             self.showMessage(getMessage("commandlist-notification/create"), True)
             self.showMessage(getMessage("commandlist-notification/auth"), True)
             self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)

@@ -64,6 +64,7 @@ en = {
       "commandlist-notification/pause" : "\tp - toggle pause",
       "commandlist-notification/seek" : "\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec",
       "commandlist-notification/help" : "\th - this help",
+      "commandlist-notification/toggle" : u"\tt - toggles whether you are ready to watch or not",
       "commandlist-notification/create" : "\tc [name] - create controlled room using name of current room",
       "commandlist-notification/auth" : "\ta [password] - authenticate as room controller with controller password",
       "syncplay-version-notification" : "Syncplay version: {}",  # syncplay.version
@@ -383,6 +384,7 @@ ru = {
       "commandlist-notification/pause" : u"\tp - вкл./выкл. паузу",
       "commandlist-notification/seek" : u"\t[s][+-]time - перемотать к заданному моменту времени, если не указан + или -, то время считается абсолютным (от начала файла) в секундах или мин:сек",
       "commandlist-notification/help" : u"\th - помощь",
+      "commandlist-notification/toggle" : u"\tt - toggles whether you are ready to watch or not", # TODO: Translate into Russian
       "commandlist-notification/create" : u"\tc [name] - create controlled room using name of current room", # TODO: Translate into Russian
       "commandlist-notification/auth" : u"\ta [password] - authenticate as room controller with controller password", # TODO: Translate into Russian
       "syncplay-version-notification" : u"Версия Syncplay: {}",  # syncplay.version
@@ -701,6 +703,7 @@ de = {
       "commandlist-notification/pause" : u"\tp - Pausieren / weiter",
       "commandlist-notification/seek" : u"\t[s][+-]Zeit - zu einer bestimmten Zeit spulen, ohne + oder - wird als absolute Zeit gewertet; Angabe in Sekunden oder Minuten:Sekunden",
       "commandlist-notification/help" : u"\th - Diese Hilfe",
+      "commandlist-notification/toggle" : u"\tt - toggles whether you are ready to watch or not", # TODO: Translate into German
       "commandlist-notification/create" : u"\tc [name] - erstelle zentral gesteuerten Raum mit dem aktuellen Raumnamen",
       "commandlist-notification/auth" : u"\ta [password] - authentifiziere als Raumleiter mit Passwort",
       "syncplay-version-notification" : u"Syncplay Version: {}",  # syncplay.version
