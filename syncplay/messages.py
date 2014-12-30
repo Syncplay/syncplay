@@ -48,9 +48,14 @@ en = {
       "alone-in-the-room": "You're alone in the room",
 
       "different-filesize-notification" : " (their file size is different from yours!)",
+      "userlist-playing-notification" : "{} is playing:", #Username
       "file-played-by-notification" : "File: {} is being played by:",  # File
+      "no-file-played-notification" : "{} is not playing a file", # Username
       "notplaying-notification" : "People who are not playing any file:",
       "userlist-room-notification" :  "In room '{}':",  # Room
+      "userlist-file-notification" : "File",
+      "controller-userlist-userflag" : "Controller",
+      "ready-userlist-userflag" : "Ready",
 
       "mplayer-file-required-notification" : "Syncplay using mplayer requires you to provide file when starting",
       "mplayer-file-required-notification/example" : "Usage example: syncplay [options] [url|path/]filename",
@@ -337,7 +342,7 @@ ru = {
       "retrying-notification" : u"%s, следующая попытка через %d секунд(ы)...",  # Seconds
 
       "rewind-notification" : u"Перемотано из-за разницы во времени с <{}>",  # User
-      "fastforward-notification" : "Fast-forwarded due to time difference with <{}>",  # User # TODO: Translate into Russian
+      "fastforward-notification" : u"Fast-forwarded due to time difference with <{}>",  # User # TODO: Translate into Russian
       "slowdown-notification" : u"Воспроизведение замедлено из-за разницы во времени с <{}>",  # User
       "revert-notification" : u"Возвращаемся к нормальной скорости воспроизведения",
 
@@ -353,10 +358,10 @@ ru = {
       "playing-notification" : u"<{}> включил '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" : u" в комнате: '{}'",  # Room
 
-      "user-ready-notification" : "<{}> I'm ready", # Username # TODO: Translate into Russian
-      "user-not-ready-notification" : "<{}> I'm not ready", # Username # TODO: Translate into Russian
-      "not-all-ready" : "Not ready: {}", # Usernames # TODO: Translate into Russian
-      "all-users-ready" : "Everyone is ready", # TODO: Translate into Russian
+      "user-ready-notification" : u"<{}> I'm ready", # Username # TODO: Translate into Russian
+      "user-not-ready-notification" : u"<{}> I'm not ready", # Username # TODO: Translate into Russian
+      "not-all-ready" : u"Not ready: {}", # Usernames # TODO: Translate into Russian
+      "all-users-ready" : u"Everyone is ready", # TODO: Translate into Russian
 
       "identifying-as-controller-notification" : u"Identifying as room controller with password '{}'...", # TODO: Translate into Russian
       "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room controller.", # TODO: Translate into Russian
@@ -368,9 +373,14 @@ ru = {
       "alone-in-the-room" : u"В этой комнате кроме Вас никого нет.",
 
       "different-filesize-notification" : u" (размер Вашего файла не совпадает с размером их файла!)",
+      "userlist-playing-notification" : u"{} is playing:", #Username # TODO: Translate into Russian (same as playing-notification?)
       "file-played-by-notification" : u"Файл: {} просматривают:",  # File
+      "no-file-played-notification" : u"{} is not playing a file", # Username # TODO: Translate into Russian
       "notplaying-notification" : u"Люди, которые не смотрят ничего:",
       "userlist-room-notification" : u"В комнате '{}':",  # Room
+      "userlist-file-notification" : u"File", # TODO: Translate into Russian (Файл?)
+      "controller-userlist-userflag" : u"Controller", # TODO: Translate into Russian (this is to indicate a user is a controller in the ConsoleUI userlist)
+      "ready-userlist-userflag" : u"Ready", # TODO: Translate into Russian (this is to indicate a user is ready to watch in the ConsoleUI userlist)
 
       "mplayer-file-required-notification" : u"Для использования Syncplay с mplayer необходимо передать файл в качестве параметра",
       "mplayer-file-required-notification/example" : u"Пример использования: syncplay [options] [url|path/]filename",
@@ -481,7 +491,7 @@ ru = {
       "rewindondesync-label" : u"Перемотка при больших рассинхронизациях (настоятельно рекомендуется)",
       "dontslowdownwithme-label" : u"Никогда не замедлять или перематывать видео другим", # TODO: Update new wording into Russian (should state "Experimental" in brackets at the end)
       "pauseonleave-label" : u"Приостанавливать, когда кто-то уходит (например, отключился)",
-      "readyatstart-label" : "Set me as 'ready to watch' by default", # TODO: Translate into Russian
+      "readyatstart-label" : u"Set me as 'ready to watch' by default", # TODO: Translate into Russian
       "fastforwardondesync-label" : u"Fast-forward if lagging behind (recommended)", # TODO: Translate into Russian
       "forceguiprompt-label" : u"Не показывать больше этот диалог", # (Inverted)
       "nostore-label" : u"Не сохранять текущую конфигурацию", # (Inverted)
@@ -489,12 +499,12 @@ ru = {
 
       "showosdwarnings-label" : u"Показывать предупреждения (напр., когда файлы не совпадают)",
       "showsameroomosd-label" : u"Показывать события Вашей комнаты",
-      "shownoncontrollerosd-label" : "Include events from non-controllers in controlled rooms", # TODO: Translate into Russiann
+      "shownoncontrollerosd-label" : u"Include events from non-controllers in controlled rooms", # TODO: Translate into Russiann
       "showdifferentroomosd-label" : u"Показывать события других комнат",
       "showslowdownosd-label" : u"Показывать уведомления о замедлении/перемотке",
       "showcontactinfo-label" : u"Отображать контактную информацию разработчиков",
       "language-label" : u"Language", # TODO: Translate into Russian
-      "automatic-language" : "Automatic ({})", # Automatic language # TODO: Translate into Russian
+      "automatic-language" : u"Automatic ({})", # Automatic language # TODO: Translate into Russian
       "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
       "basics-label" : u"Основное",
       "sync-label" : u"Синхронизация",
@@ -523,9 +533,9 @@ ru = {
       "notready-guipushbuttonlabel" : u"I'm not ready to watch! (Click to toggle)", # TODO: Translate into Russian
 
       "roomuser-heading-label" : u"Комната / Пользователь",
-      "size-heading-label" : "Size", # TODO: Translate into Russian
-      "duration-heading-label" : "Length", # TODO: Translate into Russian
-      "filename-heading-label" : "Filename", # TODO: Translate into Russian
+      "size-heading-label" : u"Size", # TODO: Translate into Russian
+      "duration-heading-label" : u"Length", # TODO: Translate into Russian
+      "filename-heading-label" : u"Filename", # TODO: Translate into Russian
       "notifications-heading-label" : u"Уведомления",
       "userlist-heading-label" : u"Кто что смотрит",
       "othercommands-heading-label" : u"Другие команды",
@@ -554,7 +564,7 @@ ru = {
       "identifyascontroller-msgbox-label" : u"Identify as Room Controller", # TODO: Translate into Russian
       "identifyinfo-msgbox-label" : u"Enter controller password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into Russian
 
-      "megabyte-suffix" : " MB", # Technically it is a mebibyte # TODO: Translate into Russian
+      "megabyte-suffix" : u" MB", # Technically it is a mebibyte # TODO: Translate into Russian
 
       # Tooltips
 
@@ -578,7 +588,7 @@ ru = {
       "slowondesync-tooltip" : u"Временно уменьшить скорость воспроизведения в целях синхронизации с другими зрителями. Не поддерживается в MPC-HC.",
       "dontslowdownwithme-tooltip" : u"Ваши лаги не будут влиять на других зрителей.",
       "pauseonleave-tooltip" : u"Приостановить воспроизведение, если Вы покинули комнату или кто-то из зрителей отключился от сервера.",
-      "readyatstart-tooltip" : "Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)", # TODO: Translate into Russian
+      "readyatstart-tooltip" : u"Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)", # TODO: Translate into Russian
       "forceguiprompt-tooltip" : u"Окно настройки не будет отображаться при открытии файла в Syncplay.", # (Inverted)
       "nostore-tooltip" : u"Запустить Syncplay с данной конфигурацией, но не сохранять изменения навсегда.", # (Inverted)
       "rewindondesync-tooltip" : u"Перематывать назад, когда это необходимо для синхронизации. Отключение этой опции может привести к большим рассинхронизациям!",
@@ -672,10 +682,10 @@ de = {
       "playing-notification" : u"<{}> spielt '{}' ({})",  # User, file, duration
       "playing-notification/room-addendum" :  u" in Raum: '{}'",  # Room
 
-      "user-ready-notification" : "<{}> I'm ready", # Username # TODO: Translate into German
-      "user-not-ready-notification" : "<{}> I'm not ready", # Username # TODO: Translate into German
-      "not-all-ready" : "Not ready: {}", # Usernames # TODO: Translate into German
-      "all-users-ready" : "Everyone is ready", # TODO: Translate into German
+      "user-ready-notification" : u"<{}> I'm ready", # Username # TODO: Translate into German
+      "user-not-ready-notification" : u"<{}> I'm not ready", # Username # TODO: Translate into German
+      "not-all-ready" : u"Not ready: {}", # Usernames # TODO: Translate into German
+      "all-users-ready" : u"Everyone is ready", # TODO: Translate into German
 
       "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room controller"
       "failed-to-identify-as-controller-notification" : u"<{}> konnte sich nicht als Raumleiter identifizieren.",
@@ -687,9 +697,14 @@ de = {
       "alone-in-the-room": u"Du bist alleine im Raum",
 
       "different-filesize-notification" : u" (ihre Dateigröße ist anders als deine!)",
+      "userlist-playing-notification" : u"{} is playing:", #Username # TODO: Translate into German (same as playing-notification?)
       "file-played-by-notification" : u"Datei: {} wird gespielt von:",  # File
+      "no-file-played-notification" : u"{} is not playing a file", # Username # TODO: Translate into German
       "notplaying-notification" : u"Personen im Raum, die keine Dateien spielen:",
       "userlist-room-notification" :  u"In Raum '{}':",  # Room
+      "userlist-file-notification" : u"File", # TODO: Translate into German (Datei?)
+      "controller-userlist-userflag" : u"Controller", # TODO: Translate into German (this is to indicate a user is a controller in the ConsoleUI userlist)
+      "ready-userlist-userflag" : u"Ready", # TODO: Translate into Germany (this is to indicate a user is ready to watch in the ConsoleUI userlist)
 
       "mplayer-file-required-notification" : u"Syncplay für mplayer benötigt eine Datei-Angabe beim Start",
       "mplayer-file-required-notification/example" : u"Anwendungsbeispiel: syncplay [optionen] [url|pfad/]Dateiname",
@@ -725,7 +740,7 @@ de = {
       "server-timeout-error" : u"Timeout: Verbindung zum Server fehlgeschlagen",
        "mpc-slave-error" : u"Kann MPC nicht im Slave-Modus starten!",
        "mpc-version-insufficient-error" : u"MPC-Version nicht ausreichend, bitte nutze `mpc-hc` >= `{}`",
-       "mpv-version-error" : "Syncplay ist nicht kompatibel mit dieser Version von mpv.  Bitte benutze eine andere Version (z.B. Git HEAD).",
+       "mpv-version-error" : u"Syncplay ist nicht kompatibel mit dieser Version von mpv.  Bitte benutze eine andere Version (z.B. Git HEAD).",
        "player-file-open-error" : u"Fehler beim Öffnen der Datei durch den Player",
        "player-path-error" : u"Ungültiger Player-Pfad",
        "hostname-empty-error" : u"Hostname darf nicht leer sein",
@@ -799,7 +814,7 @@ de = {
       "slowondesync-label" : u"Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC)",
        "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentell)",
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
-      "readyatstart-label" : "Set me as 'ready to watch' by default", # TODO: Translate into German
+      "readyatstart-label" : u"Set me as 'ready to watch' by default", # TODO: Translate into German
       "forceguiprompt-label" : u"Diesen Dialog nicht mehr anzeigen",
       "nostore-label" : u"Diese Konfiguration nicht speichern",
       "showosd-label" : u"OSD-Nachrichten anzeigen",
@@ -811,7 +826,7 @@ de = {
       "showslowdownosd-label" : u"Zeige Verlangsamungs/Zurücksetzungs-Benachrichtigung",
       "showcontactinfo-label" : u"Zeige Kontaktinformationen",
       "language-label" : u"Sprache",
-      "automatic-language" : "Automatisch ({})", # Automatic language
+      "automatic-language" : u"Automatisch ({})", # Automatic language
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
       "basics-label" : u"Basics",
       "sync-label" : u"Synchronisation",
@@ -898,7 +913,7 @@ de = {
       "fastforwardondesync-label" : u"Vorspulen wenn das Video lagt (empfohlen)",
       "dontslowdownwithme-tooltip" : u"Lässt andere nicht langsamer werden oder zurückspringen, wenn deine Wiedergabe hängt.",
       "pauseonleave-tooltip" : u"Wiedergabe anhalten, wenn deine Verbindung verloren geht oder jemand den Raum verlässt.",
-      "readyatstart-tooltip" : "Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)", #TODO: Translate into German
+      "readyatstart-tooltip" : u"Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)", #TODO: Translate into German
       "forceguiprompt-tooltip" : u"Der Konfigurationsdialog wird nicht angezeigt, wenn eine Datei mit Syncplay geöffnet wird.",
       "nostore-tooltip" : u"Syncplay mit den angegebenen Einstellungen starten, diese aber nicht dauerhaft speichern.",
       "rewindondesync-tooltip" : u"Zum Wiederherstellen der Synchronität in der Zeit zurückspringen (empfohlen)",
@@ -936,7 +951,7 @@ de = {
       "welcome-server-notification" : u"Willkommen zum Syncplay-Server, v. {0}",  # version
       "client-connected-room-server-notification" : u"{0}({2}) hat den Raum '{1}' betreten",  # username, host, room
       "client-left-server-notification" : u"{0} hat den Server verlassen",  # name
-      "no-salt-notification" : "WICHTIGER HINWEIS: Damit von dem Server generierte Passwörter für geführte Räume auch nach einem Serverneustart funktionieren, starte den Server mit dem folgenden Parameter: --salt {}", #Salt
+      "no-salt-notification" : u"WICHTIGER HINWEIS: Damit von dem Server generierte Passwörter für geführte Räume auch nach einem Serverneustart funktionieren, starte den Server mit dem folgenden Parameter: --salt {}", #Salt
 
       # Server arguments
       "server-argument-description" : u'Anwendung, um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren. Server',
