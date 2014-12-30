@@ -951,7 +951,6 @@ class UiManager(object):
         if constants.SHOW_OSD and self._client and self._client._player:
             if not self._client._player.secondaryOSDSupported:
                 if secondaryOSD:
-                    message = u"({})".format(message)
                     self.lastSecondaryOSDMessage = message
                     self.lastSecondaryOSDEndTime = time.time() + constants.NO_SECONDARY_OSD_WARNING_DURATION
                     if self.lastPrimaryOSDEndTime and time.time() < self.lastPrimaryOSDEndTime:
