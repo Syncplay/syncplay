@@ -600,7 +600,6 @@ class SyncplayClient(object):
         def checkReadyStates(self):
             if not self._client:
                 return
-
             if self._client.getPlayerPaused() or not self._userlist.currentUser.isReady():
                 self._warnings["not-all-ready"]["displayedFor"] = 0
             if self._userlist.areYouAloneInRoom() or not self._userlist.currentUser.canControl():
@@ -646,7 +645,7 @@ class SyncplayClient(object):
                     pass
 
         def __displayPausedMessagesOnOSD(self):
-            if self._client and self._client._player and self._client._player.secondaryOSDSupported and self._userlist.currentUser.file and self._client.getPlayerPaused():
+            if self._client and self._client._player and self._client.getPlayerPaused():
                 self._checkRoomForSameFiles(OSDOnly=True)
                 self.checkReadyStates()
             elif not self._userlist.currentUser.isReady(): # CurrentUser should always be reminded they are set to not ready
