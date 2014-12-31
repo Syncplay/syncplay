@@ -7,7 +7,7 @@ en = {
       # Client notifications
       "config-cleared-notification" : "Settings cleared. Changes will be saved when you store a valid configuration.",
 
-      "relative-config-notification" : "Loaded relative configuration file(s): {}",
+      "relative-config-notification" : u"Loaded relative configuration file(s): {}",
 
       "connection-attempt-notification" : "Attempting to connect to {}:{}",  # Port, IP
       "reconnection-attempt-notification" : "Connection with server lost, attempting to reconnect",
@@ -21,36 +21,39 @@ en = {
       "slowdown-notification" : "Slowing down due to time difference with <{}>",  # User
       "revert-notification" : "Reverting speed back to normal",
 
-      "pause-notification" : "<{}> paused",  # User
-      "unpause-notification" : "<{}> unpaused",  # User
-      "seek-notification" : "<{}> jumped from {} to {}",  # User, from time, to time
+      "pause-notification" : u"<{}> paused",  # User
+      "unpause-notification" : u"<{}> unpaused",  # User
+      "seek-notification" : u"<{}> jumped from {} to {}",  # User, from time, to time
 
       "current-offset-notification" : "Current offset: {} seconds",  # Offset
 
-      "room-join-notification" : "<{}> has joined the room: '{}'",  # User
-      "left-notification" : "<{}> has left",  # User
-      "left-paused-notification" : "<{}> left, <{}> paused",  # User who left, User who paused
-      "playing-notification" : "<{}> is playing '{}' ({})",  # User, file, duration
-      "playing-notification/room-addendum" :  " in room: '{}'",  # Room
+      "room-join-notification" : u"<{}> has joined the room: '{}'",  # User
+      "left-notification" : u"<{}> has left",  # User
+      "left-paused-notification" : u"<{}> left, <{}> paused",  # User who left, User who paused
+      "playing-notification" : u"<{}> is playing '{}' ({})",  # User, file, duration
+      "playing-notification/room-addendum" :  u" in room: '{}'",  # Room
 
-      "not-all-ready" : "Not ready: {}", # Usernames
-      "all-users-ready" : "Everyone is ready",
+      "not-all-ready" : u"Not ready: {}", # Usernames
+      "all-users-ready" : u"Everyone is ready",
 
       "identifying-as-controller-notification" : u"Identifying as room controller with password '{}'...",
       "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room controller.",
       "authenticated-as-controller-notification" : u"<{}> authenticated as a room controller",
 
       "file-different-notification" : "File you are playing appears to be different from <{}>'s",  # User
-      "file-differences-notification" : "Your file differs in the following way(s): ",
-      "room-files-not-same" : "Not all files the same",
-      "alone-in-the-room": "You're alone in the room",
+      "file-differences-notification" : u"Your file differs in the following way(s): {}", # Differences
+      "room-file-differences" : u"File differences: {}", # File differences (filename, size, and/or duration)
+      "file-difference-filename" : u"name",
+      "file-difference-filesize" : u"size",
+      "file-difference-duration" : u"duration",
+      "alone-in-the-room": u"You're alone in the room",
 
-      "different-filesize-notification" : " (their file size is different from yours!)",
-      "userlist-playing-notification" : "{} is playing:", #Username
-      "file-played-by-notification" : "File: {} is being played by:",  # File
-      "no-file-played-notification" : "{} is not playing a file", # Username
+      "different-filesize-notification" : u" (their file size is different from yours!)",
+      "userlist-playing-notification" : u"{} is playing:", #Username
+      "file-played-by-notification" : u"File: {} is being played by:",  # File
+      "no-file-played-notification" : u"{} is not playing a file", # Username
       "notplaying-notification" : "People who are not playing any file:",
-      "userlist-room-notification" :  "In room '{}':",  # Room
+      "userlist-room-notification" :  u"In room '{}':",  # Room
       "userlist-file-notification" : "File",
       "controller-userlist-userflag" : "Controller",
       "ready-userlist-userflag" : "Ready",
@@ -364,8 +367,11 @@ ru = {
       "authenticated-as-controller-notification" : u"<{}> authenticated as a room controller", # TODO: Translate into Russian
 
       "file-different-notification" : u"Вероятно, файл, который Вы смотрите, отличается от того, который смотрит <{}>.",  # User
-      "file-differences-notification" : u"Ваш файл отличается: ",
-      "room-files-not-same" : u"Не все пользователи в этой комнате смотрят один и тот же файл.",  # TODO: Make shorter if possible (to fit better on OSD), e.g. say "Not all files same" or "File mismatch"
+      "file-differences-notification" : u"Ваш файл отличается: {}", # Differences
+      "room-file-differences" : u"File differences: {}", # File differences (filename, size, and/or duration)
+      "file-difference-filename" : u"name", # TODO: Translate into Russian
+      "file-difference-filesize" : u"size", # TODO: Translate into Russian
+      "file-difference-duration" : u"duration", # TODO: Translate into Russian
       "alone-in-the-room" : u"В этой комнате кроме Вас никого нет.",
 
       "different-filesize-notification" : u" (размер Вашего файла не совпадает с размером их файла!)",
@@ -686,8 +692,11 @@ de = {
       "authenticated-as-controller-notification" : u"<{}> authentifizierte sich als Raumleiter",
 
       "file-different-notification" : u"Deine Datei scheint sich von <{}>s zu unterscheiden",  # User
-      "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: ",
-      "room-files-not-same" : u"Nicht alle Dateien im Raum sind gleich", # TODO: Make shorter if possible (to fit better on OSD), e.g. say "Not all files same" or "File mismatch"
+      "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: {}",
+      "room-file-differences" : u"File differences: {}", # File differences (filename, size, and/or duration) # TODO: Translate into German
+      "file-difference-filename" : u"name", # TODO: Translate into German
+      "file-difference-filesize" : u"size", # TODO: Translate into German
+      "file-difference-duration" : u"duration", # TODO: Translate into German
       "alone-in-the-room": u"Du bist alleine im Raum",
 
       "different-filesize-notification" : u" (ihre Dateigröße ist anders als deine!)",

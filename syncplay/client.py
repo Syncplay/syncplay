@@ -389,7 +389,7 @@ class SyncplayClient(object):
             import random
             random.seed()
             random_number = random.randrange(1000, 9999)
-            self.userlist.currentUser.username = "Anonymous" + str(random_number)
+            self.userlist.currentUser.username = "Anonymous" + str(random_number) # Not localised as this would give away locale
 
     def getUsername(self):
         return self.userlist.currentUser.username
@@ -555,8 +555,8 @@ class SyncplayClient(object):
             self._userlist = userlist
             self._ui = ui
             self._warnings = {
-                "room-files-not-same": {
-                    "timer": task.LoopingCall(self.__displayMessageOnOSD, "room-files-not-same",
+                "room-file-differences": {
+                    "timer": task.LoopingCall(self.__displayMessageOnOSD, "room-file-differences",
                                               lambda: self._checkRoomForSameFiles(OSDOnly=True),),
                     "displayedFor": 0,
                 },
@@ -582,12 +582,10 @@ class SyncplayClient(object):
         def _checkRoomForSameFiles(self, OSDOnly):
             if not self._userlist.areAllFilesInRoomSame():
                 self._displayReadySameWarning()
-                if not OSDOnly:
-                    self._ui.showMessage(getMessage("room-files-not-same"), True)
-                    if constants.SHOW_OSD_WARNINGS and not self._warnings["room-files-not-same"]['timer'].running:
-                        self._warnings["room-files-not-same"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
-            elif self._warnings["room-files-not-same"]['timer'].running:
-                self._warnings["room-files-not-same"]['timer'].stop()
+                if not OSDOnly and constants.SHOW_OSD_WARNINGS and not self._warnings["room-file-differences"]['timer'].running:
+                    self._warnings["room-file-differences"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
+            elif self._warnings["room-file-differences"]['timer'].running:
+                self._warnings["room-file-differences"]['timer'].stop()
 
         def _checkIfYouReAloneInTheRoom(self, OSDOnly):
             if self._userlist.areYouAloneInRoom():
@@ -622,13 +620,14 @@ class SyncplayClient(object):
             if not self._client._player:
                 return
             if not self._userlist.areAllFilesInRoomSame():
+                fileDifferencesMessage = getMessage("room-file-differences").format(self._userlist.getFileDifferencesForRoom())
                 if self._userlist.currentUser.canControl():
                     if self._userlist.areAllUsersInRoomReady():
-                        osdMessage = u"{}{}{}".format(getMessage("room-files-not-same"), self._client._player.osdMessageSeparator, getMessage("all-users-ready"))
+                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("all-users-ready"))
                     else:
-                        osdMessage = u"{}{}{}".format(getMessage("room-files-not-same"), self._client._player.osdMessageSeparator, getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady()))
+                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady()))
                 else:
-                    osdMessage = getMessage("room-files-not-same")
+                    osdMessage = fileDifferencesMessage
             elif self._userlist.areAllUsersInRoomReady():
                 osdMessage = getMessage("all-users-ready")
             else:
@@ -740,20 +739,36 @@ class SyncplayUserlist(object):
                     message += getMessage("playing-notification/room-addendum").format(room)
                 self.ui.showMessage(message, hideFromOSD)
                 if self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room:
-                    message = getMessage("file-different-notification").format(username)
-                    self.ui.showMessage(message, hideFromOSD)
-                    differences = []
-                    differentName = not utils.sameFilename(self.currentUser.file['name'], file_['name'])
-                    differentSize = not utils.sameFilesize(self.currentUser.file['size'], file_['size'])
-                    differentDuration = not utils.sameFileduration(self.currentUser.file['duration'], file_['duration'])
-                    if differentName:
-                        differences.append("filename")
-                    if differentSize:
-                        differences.append("size")
-                    if differentDuration:
-                        differences.append("duration")
-                    message = getMessage("file-differences-notification") + ", ".join(differences)
-                    self.ui.showMessage(message, hideFromOSD)
+                    message = getMessage("file-differences-notification").format(self.getFileDifferencesForUser(self.currentUser.file, file_))
+                    self.ui.showMessage(message, True)
+                    
+    def getFileDifferencesForUser(self, currentUserFile, otherUserFile):
+        differences = []
+        differentName     = not utils.sameFilename(currentUserFile['name'], otherUserFile['name'])
+        differentSize     = not utils.sameFilesize(currentUserFile['size'], otherUserFile['size'])                  
+        differentDuration = not utils.sameFileduration(currentUserFile['duration'], otherUserFile['duration'])
+        if differentName:     differences.append(getMessage("file-difference-filename"))
+        if differentSize:     differences.append(getMessage("file-difference-filesize"))
+        if differentDuration: differences.append(getMessage("file-difference-duration"))
+        return ", ".join(differences)
+
+    def getFileDifferencesForRoom(self):
+        differences = []
+        differentName = False
+        differentSize = False
+        differentDuration = False
+        for otherUser in self._users.itervalues():
+            if otherUser.room == self.currentUser.room:
+                if not utils.sameFilename(self.currentUser.file['name'], otherUser.file['name']):
+                    differentName = True
+                if not utils.sameFilesize(self.currentUser.file['size'], otherUser.file['size']):
+                    differentSize = True
+                if not utils.sameFileduration(self.currentUser.file['duration'], otherUser.file['duration']):
+                    differentDuration = True
+        if differentName:     differences.append(getMessage("file-difference-filename"))
+        if differentSize:     differences.append(getMessage("file-difference-filesize"))
+        if differentDuration: differences.append(getMessage("file-difference-duration"))
+        return ", ".join(differences)
 
     def addUser(self, username, room, file_, noMessage=False, isController=None, isReady=None):
         if username == self.currentUser.username:
