@@ -587,6 +587,9 @@ class SyncplayClient(object):
             elif self._warnings["room-file-differences"]['timer'].running:
                 self._warnings["room-file-differences"]['timer'].stop()
 
+        def _checkIfYouAreOnlyUserInRoomWhoSupportsReadiness(self):
+            self._userlist._onlyUserInRoomWhoSupportsReadiness()
+        
         def _checkIfYouReAloneInTheRoom(self, OSDOnly):
             if self._userlist.areYouAloneInRoom():
                 self._ui.showOSDMessage(getMessage("alone-in-the-room"), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True)
@@ -596,6 +599,14 @@ class SyncplayClient(object):
                         self._warnings["alone-in-the-room"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
             elif self._warnings["alone-in-the-room"]['timer'].running:
                 self._warnings["alone-in-the-room"]['timer'].stop()
+                
+        def isReadinessSupported(self):
+            if not utils.meetsMinVersion(self._client.serverVersion,constants.USER_READY_MIN_VERSION):
+                return False
+            elif self._userlist.onlyUserInRoomWhoSupportsReadiness():
+                return False
+            else:
+                return True
 
         def checkReadyStates(self):
             if not self._client:
@@ -618,20 +629,23 @@ class SyncplayClient(object):
         def _displayReadySameWarning(self):
             if not self._client._player:
                 return
+            osdMessage = None
             if not self._userlist.areAllFilesInRoomSame():
                 fileDifferencesMessage = getMessage("room-file-differences").format(self._userlist.getFileDifferencesForRoom())
-                if self._userlist.currentUser.canControl():
+                if self._userlist.currentUser.canControl() and self.isReadinessSupported():
                     if self._userlist.areAllUsersInRoomReady():
                         osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("all-users-ready"))
                     else:
                         osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady()))
                 else:
                     osdMessage = fileDifferencesMessage
-            elif self._userlist.areAllUsersInRoomReady():
-                osdMessage = getMessage("all-users-ready")
-            else:
-                osdMessage = getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady())
-            self._ui.showOSDMessage(osdMessage, constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True)
+            elif self.isReadinessSupported():
+                if self._userlist.areAllUsersInRoomReady():
+                    osdMessage = getMessage("all-users-ready")
+                else:
+                    osdMessage = getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady())
+            if osdMessage:
+                self._ui.showOSDMessage(osdMessage, constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True)
 
         def __displayMessageOnOSD(self, warningName, warningFunction):
             if constants.OSD_WARNING_MESSAGE_DURATION > self._warnings[warningName]["displayedFor"]:
@@ -861,6 +875,12 @@ class SyncplayUserlist(object):
             if user.room == self.currentUser.room:
                 return False
         return True
+    
+    def onlyUserInRoomWhoSupportsReadiness(self):
+        for user in self._users.itervalues():
+            if user.room == self.currentUser.room and user.isReady() is not None:
+                return False
+        return True
 
     def isUserInYourRoom(self, username):
         for user in self._users.itervalues():
@@ -884,7 +904,7 @@ class SyncplayUserlist(object):
         for user in self._users.itervalues():
             if user.username == username:
                 return user.isReady()
-        return False
+        return None
 
     def setReady(self, username, isReady):
         if self.currentUser.username == username:
