@@ -377,6 +377,13 @@ class MainWindow(QtGui.QMainWindow):
             self.saveMediaBrowseSettings()
             self._syncplayClient._player.openFile(fileName)
 
+    def promptForStreamURL(self):
+        streamURL, ok = QtGui.QInputDialog.getText(self, getMessage("promptforstreamurl-msgbox-label"),
+                                                   getMessage("promptforstreamurlinfo-msgbox-label"), QtGui.QLineEdit.Normal,
+                                                   "")
+        if ok and streamURL != '':
+            self._syncplayClient._player.openFile(streamURL)
+
     def createControlledRoom(self):
         controlroom, ok = QtGui.QInputDialog.getText(self, getMessage("createcontrolledroom-msgbox-label"),
                 getMessage("controlledroominfo-msgbox-label"), QtGui.QLineEdit.Normal,
@@ -580,6 +587,9 @@ class MainWindow(QtGui.QMainWindow):
         window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'folder_explore.png'),
                                                       getMessage("openmedia-menu-label"))
         window.openAction.triggered.connect(self.browseMediapath)
+        window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'world_explore.png'),
+                                                      getMessage("openstreamurl-menu-label"))
+        window.openAction.triggered.connect(self.promptForStreamURL)
 
         window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'),
                                                       getMessage("exit-menu-label"))

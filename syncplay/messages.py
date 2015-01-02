@@ -222,6 +222,7 @@ en = {
 
       "file-menu-label" : "&File", # & precedes shortcut key
       "openmedia-menu-label" : "&Open media file",
+      "openstreamurl-menu-label" : "Open &media stream URL",
       "exit-menu-label" : "E&xit",
       "advanced-menu-label" : "&Advanced",
       "setoffset-menu-label" : "Set &offset",
@@ -234,6 +235,8 @@ en = {
       "setoffset-msgbox-label" : "Set offset",
       "offsetinfo-msgbox-label" : "Offset (see http://syncplay.pl/guide/ for usage instructions):",
 
+      "promptforstreamurl-msgbox-label" : "Open media stream URL",
+      "promptforstreamurlinfo-msgbox-label" : "Stream URL",
 
       "createcontrolledroom-msgbox-label" : "Create controlled room",
       "controlledroominfo-msgbox-label" : "Enter name of controlled room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
@@ -548,10 +551,11 @@ ru = {
 
       "file-menu-label" : u"&Файл", # & precedes shortcut key
       "openmedia-menu-label" : u"&Открыть видеофайл",
+      "openstreamurl-menu-label" : u"Open &media stream URL", # TODO: Translate into Russian
       "exit-menu-label" : u"&Выход",
       "advanced-menu-label" : u"&Дополнительно",
       "setoffset-menu-label" : u"Установить &смещение",
-      "createcontrolledroom-menu-label" : u"&Create controlled room", # TODO: Translate into Russianv
+      "createcontrolledroom-menu-label" : u"&Create controlled room", # TODO: Translate into Russian
       "identifyascontroller-menu-label" : u"&Identify as room controller", # TODO: Translate into Russian
 
       "help-menu-label" : u"&Помощь",
@@ -559,6 +563,9 @@ ru = {
 
       "setoffset-msgbox-label" : u"Установить смещение",
       "offsetinfo-msgbox-label" : u"Смещение (см. как использовать на http://syncplay.pl/guide/):",
+
+      "promptforstreamurl-msgbox-label" : u"Open media stream URL", # TODO: Translate into Russian
+      "promptforstreamurlinfo-msgbox-label" : u"Stream URL", # TODO: Translate into Russian
 
       "createcontrolledroom-msgbox-label" : u"Create controlled room", # TODO: Translate into Russian
       "controlledroominfo-msgbox-label" : u"Enter name of controlled room\r\n(see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into Russian
@@ -871,6 +878,7 @@ de = {
 
       "file-menu-label" : u"&Datei", # & precedes shortcut key
       "openmedia-menu-label" : u"&Mediendatei öffnen...",
+      "openstreamurl-menu-label" : u"Open &media stream URL", # TODO: Translate into German
       "exit-menu-label" : u"&Beenden",
       "advanced-menu-label" : u"&Erweitert",
       "setoffset-menu-label" : u"&Offset einstellen",
@@ -883,6 +891,8 @@ de = {
       "setoffset-msgbox-label" : u"Offset einstellen",
       "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
+      "promptforstreamurl-msgbox-label" : u"Open media stream URL", # TODO: Translate into German
+      "promptforstreamurlinfo-msgbox-label" : u"Stream URL", # TODO: Translate into German
 
       "createcontrolledroom-msgbox-label" : u"Zentral gesteuerten Raum erstellen",
       "controlledroominfo-msgbox-label" : u"Namen des zentral gesteuerten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",

@@ -624,7 +624,8 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/mpv.png','resources/vlc.png', 'resources/house.png', 'resources/film_link.png',
      'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/chevrons_right.png',
      'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',
-     'resources/tick.png', 'resources/lock_open.png', 'resources/cross_checkbox.png', 'resources/tick_checkbox.png'
+     'resources/tick.png', 'resources/lock_open.png', 'resources/cross_checkbox.png', 'resources/tick_checkbox.png',
+     'resources/world_explore.png'
     ]
 resources = ["resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)
