@@ -47,6 +47,8 @@ class ConfigurationGetter(object):
                         "readyAtStart": False,
                         "clearGUIData": False,
                         "language" : "",
+                        "checkForUpdatesAutomatically" : None,
+                        "lastCheckedForUpdates" : "",
                         "resetConfig" : False,
                         "showOSD" : True,
                         "showOSDWarnings" : True,
@@ -95,6 +97,9 @@ class ConfigurationGetter(object):
                          "showContactInfo" ,
                          "showDurationNotification"
                         ]
+        self._tristate = [
+            "checkForUpdatesAutomatically"
+        ]
 
         self._numeric = [
             "slowdownThreshold",
@@ -106,7 +111,7 @@ class ConfigurationGetter(object):
                         "server_data": ["host", "port", "password"],
                         "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave", "readyAtStart"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showContactInfo" , "showDurationNotification"],
-                        "general": ["language"]
+                        "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
                         }
 
         self._playerFactory = PlayerFactory()
@@ -138,6 +143,14 @@ class ConfigurationGetter(object):
                 self._config[key] = True
             elif self._config[key] == "False":
                 self._config[key] = False
+
+        for key in self._tristate:
+            if self._config[key] == "True":
+                self._config[key] = True
+            elif self._config[key] == "False":
+                self._config[key] = False
+            elif self._config[key] == "None":
+                self._config[key] = None
 
         for key in self._numeric:
             self._config[key] = float(self._config[key])

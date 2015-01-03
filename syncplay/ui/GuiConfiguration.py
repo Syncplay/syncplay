@@ -1,8 +1,8 @@
 from PySide import QtCore, QtGui
-from PySide.QtCore import QSettings, Qt, QCoreApplication
+from PySide.QtCore import QSettings, Qt, QCoreApplication, QUrl
 from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton, QDoubleSpinBox
 from syncplay.players.playerFactory import PlayerFactory
-
+from datetime import datetime
 import os
 import sys
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
@@ -34,6 +34,15 @@ class ConfigDialog(QtGui.QDialog):
 
     pressedclosebutton = False
     moreToggling = False
+
+    def automaticUpdatePromptCheck(self):
+        if self.automaticupdatesCheckbox.checkState() == Qt.PartiallyChecked and not self.nostoreCheckbox.isChecked():
+            reply = QtGui.QMessageBox.question(self, "Syncplay",
+                    getMessage("promptforupdate-label"), QtGui.QMessageBox.StandardButton.Yes | QtGui.QMessageBox.StandardButton.No)
+            if reply == QtGui.QMessageBox.Yes:
+                self.automaticupdatesCheckbox.setChecked(True)
+            else:
+                self.automaticupdatesCheckbox.setChecked(False)
 
     def moreToggled(self):
         if self.moreToggling == False:
@@ -68,7 +77,7 @@ class ConfigDialog(QtGui.QDialog):
             self.runButton.setText(getMessage("storeandrun-label"))
 
     def openHelp(self):
-        self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/client/")
+        self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
 
     def _isURL(self, path):
         if path is None:
@@ -170,6 +179,17 @@ class ConfigDialog(QtGui.QDialog):
         if fileName:
             self.executablepathCombobox.setEditText(os.path.normpath(fileName))
 
+    def loadLastUpdateCheckDate(self):
+        settings = QSettings("Syncplay", "Interface")
+        settings.beginGroup("Update")
+        self.lastCheckedForUpdates = settings.value("lastChecked", None)
+        if self.lastCheckedForUpdates:
+            if self.config["lastCheckedForUpdates"] is not None and self.config["lastCheckedForUpdates"] is not "":
+                if self.lastCheckedForUpdates > datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f"):
+                    self.config["lastCheckedForUpdates"] = str(self.lastCheckedForUpdates)
+            else:
+                self.config["lastCheckedForUpdates"] = str(self.lastCheckedForUpdates)
+
     def loadMediaBrowseSettings(self):
         settings = QSettings("Syncplay", "MediaBrowseDialog")
         settings.beginGroup("MediaBrowseDialog")
@@ -218,6 +238,9 @@ class ConfigDialog(QtGui.QDialog):
             self.saveMediaBrowseSettings()
 
     def _saveDataAndLeave(self):
+        self.automaticUpdatePromptCheck()
+        self.loadLastUpdateCheckDate()
+
         self.processWidget(self, lambda w: self.saveValues(w))
         if self.hostTextbox.text():
             self.config['host'] = self.hostTextbox.text() if ":" in self.hostTextbox.text() else self.hostTextbox.text() + ":" + unicode(constants.DEFAULT_PORT)
@@ -293,7 +316,12 @@ class ConfigDialog(QtGui.QDialog):
                 inverted = True
             else:
                 inverted = False
-            widget.setChecked(self.config[valueName] != inverted)
+            if self.config[valueName] is None:
+                widget.setTristate(True)
+                widget.setCheckState(Qt.PartiallyChecked)
+                widget.stateChanged.connect(lambda: widget.setTristate(False))
+            else:
+                widget.setChecked(self.config[valueName] != inverted)
         elif isinstance(widget, QRadioButton):
             radioName, radioValue  = valueName.split(constants.CONFIG_NAME_MARKER)[1].split(constants.CONFIG_VALUE_MARKER)
             if self.config[radioName] == radioValue:
@@ -307,12 +335,15 @@ class ConfigDialog(QtGui.QDialog):
             return
 
         if isinstance(widget, QCheckBox) and widget.objectName():
-            if valueName[:1] == constants.INVERTED_STATE_MARKER:
-                valueName = valueName[1:]
-                inverted = True
+            if widget.checkState() == Qt.PartiallyChecked:
+                self.config[valueName] = None
             else:
-                inverted = False
-            self.config[valueName] = widget.isChecked() != inverted
+                if valueName[:1] == constants.INVERTED_STATE_MARKER:
+                    valueName = valueName[1:]
+                    inverted = True
+                else:
+                    inverted = False
+                self.config[valueName] = widget.isChecked() != inverted
         elif isinstance(widget, QRadioButton):
             radioName, radioValue  = valueName.split(constants.CONFIG_NAME_MARKER)[1].split(constants.CONFIG_VALUE_MARKER)
             if widget.isChecked():
@@ -691,6 +722,9 @@ class ConfigDialog(QtGui.QDialog):
         self.filesizeprivacySendHashedOption.setObjectName("privacy-sendhashed" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDHASHED_MODE)
         self.filesizeprivacyDontSendOption.setObjectName("privacy-dontsend" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_DONTSEND_MODE)
 
+        self.automaticupdatesCheckbox = QCheckBox(getMessage("checkforupdatesautomatically-label"))
+        self.automaticupdatesCheckbox.setObjectName("checkForUpdatesAutomatically")
+
         self.privacyLayout.addWidget(self.filenameprivacyLabel, 1, 0)
         self.privacyLayout.addWidget(self.filenameprivacySendRawOption, 1, 1, Qt.AlignLeft)
         self.privacyLayout.addWidget(self.filenameprivacySendHashedOption, 1, 2, Qt.AlignLeft)
@@ -699,6 +733,7 @@ class ConfigDialog(QtGui.QDialog):
         self.privacyLayout.addWidget(self.filesizeprivacySendRawOption, 2, 1, Qt.AlignLeft)
         self.privacyLayout.addWidget(self.filesizeprivacySendHashedOption, 2, 2, Qt.AlignLeft)
         self.privacyLayout.addWidget(self.filesizeprivacyDontSendOption, 2, 3, Qt.AlignLeft)
+        self.privacyLayout.addWidget(self.automaticupdatesCheckbox, 3, 0, 1, 3, Qt.AlignLeft)
 
         self.privacyFrame.setLayout(self.privacyLayout)
         self.privacySettingsGroup.setLayout(self.privacyLayout)
@@ -796,6 +831,10 @@ class ConfigDialog(QtGui.QDialog):
         settings.clear()
         settings = QSettings("Syncplay", "MainWindow")
         settings.clear()
+        settings = QSettings("Syncplay", "Interface")
+        settings.beginGroup("Update")
+        settings.setValue("lastChecked", None)
+        settings.endGroup()
         if not leaveMore:
             settings = QSettings("Syncplay", "MoreSettings")
             settings.clear()

@@ -1,12 +1,14 @@
 from PySide import QtGui
-from PySide.QtCore import Qt, QSettings, QSize, QPoint
+from PySide.QtCore import Qt, QSettings, QSize, QPoint, QUrl
 from syncplay import utils, constants, version
 from syncplay.messages import getMessage
 import sys
 import time
+from datetime import datetime
 import re
 import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize
+lastCheckedForUpdates = None
 
 class UserlistItemDelegate(QtGui.QStyledItemDelegate):
     def __init__(self):
@@ -81,6 +83,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.hideMiscLabels()
         except ():
             pass
+        self.automaticUpdateCheck()
 
     def promptFor(self, prompt=">", message=""):
         # TODO: Prompt user
@@ -428,11 +431,11 @@ class MainWindow(QtGui.QMainWindow):
 
     def openUserGuide(self):
         if sys.platform.startswith('linux'):
-            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/linux/")
+            self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/linux/"))
         elif sys.platform.startswith('win'):
-            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/windows/")
+            self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/windows/"))
         else:
-            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
+            self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/"))
 
     def drop(self):
         self.close()
@@ -613,6 +616,9 @@ class MainWindow(QtGui.QMainWindow):
         window.userguideAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'),
                                                            getMessage("userguide-menu-label"))
         window.userguideAction.triggered.connect(self.openUserGuide)
+        window.updateAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'application_get.png'),
+                                                           getMessage("update-menu-label"))
+        window.updateAction.triggered.connect(self.userCheckForUpdates)
 
         window.menuBar.addMenu(window.helpMenu)
         window.mainLayout.setMenuBar(window.menuBar)
@@ -652,6 +658,47 @@ class MainWindow(QtGui.QMainWindow):
             self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'cross_checkbox.png'))
             self.readyPushButton.setText(getMessage("notready-guipushbuttonlabel"))
 
+    def automaticUpdateCheck(self):
+        if not self.config['checkForUpdatesAutomatically']:
+            return
+        if self.config['lastCheckedForUpdates']:
+            configLastChecked = datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f")
+            if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates:
+                self.lastCheckedForUpdates = configLastChecked
+            currentDateTime = datetime.utcnow()
+        if self.lastCheckedForUpdates is None:
+            self.checkForUpdates()
+        else:
+            timeDelta = currentDateTime - self.lastCheckedForUpdates
+            if timeDelta.total_seconds() > constants.AUTOMATIC_UPDATE_CHECK_FREQUENCY:
+                self.checkForUpdates()
+
+    def userCheckForUpdates(self):
+        self.checkForUpdates(userInitiated=True)
+
+    def checkForUpdates(self, userInitiated=False):
+        self.lastCheckedForUpdates = datetime.utcnow()
+        updateStatus, updateMessage, updateURL = self._syncplayClient.checkForUpdate()
+        if updateMessage is None:
+            if updateStatus == "uptodate":
+                updateMessage = getMessage("syncplay-uptodate-notification")
+            elif updateStatus == "updateavailale":
+                updateMessage = getMessage("syncplay-updateavailable-notification")
+            else:
+                import syncplay
+                updateMessage = getMessage("update-check-failed-notification").format(syncplay.version)
+                if userInitiated == True:
+                    updateURL = constants.SYNCPLAY_DOWNLOAD_URL
+        if updateURL is not None:
+            reply = QtGui.QMessageBox.question(self, "Syncplay",
+                                        updateMessage, QtGui.QMessageBox.StandardButton.Yes | QtGui.QMessageBox.StandardButton.No)
+            if reply == QtGui.QMessageBox.Yes:
+                self.QtGui.QDesktopServices.openUrl(QUrl(updateURL))
+        elif userInitiated:
+            QtGui.QMessageBox.information(self, "Syncplay", updateMessage)
+        else:
+            self.showMessage(updateMessage)
+
     def dragEnterEvent(self, event):
         data = event.mimeData()
         urls = data.urls()
@@ -680,6 +727,10 @@ class MainWindow(QtGui.QMainWindow):
         settings.setValue("size", self.size())
         settings.setValue("pos", self.pos())
         settings.endGroup()
+        settings = QSettings("Syncplay", "Interface")
+        settings.beginGroup("Update")
+        settings.setValue("lastChecked", self.lastCheckedForUpdates)
+        settings.endGroup()
 
     def loadSettings(self):
         settings = QSettings("Syncplay", "MainWindow")
@@ -687,6 +738,9 @@ class MainWindow(QtGui.QMainWindow):
         self.resize(settings.value("size", QSize(700, 500)))
         self.move(settings.value("pos", QPoint(200, 200)))
         settings.endGroup()
+        settings = QSettings("Syncplay", "Interface")
+        settings.beginGroup("Update")
+        self.lastCheckedForUpdates = settings.value("lastChecked", None)
 
     def __init__(self):
         super(MainWindow, self).__init__()

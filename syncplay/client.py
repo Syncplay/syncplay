@@ -548,6 +548,21 @@ class SyncplayClient(object):
         if self.controlpasswords.has_key(room):
             return self.controlpasswords[room]
 
+    def checkForUpdate(self):
+        try:
+            import urllib, syncplay, sys, messages, json
+            params = urllib.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
+                                   'language': messages.messages["CURRENT"], 'platform': sys.platform})
+            print params
+
+            f = urllib.urlopen(constants.SYNCPLAY_UPDATE_URL.format(params))
+            response = f.read()
+            response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","\"").replace("&#8221;","\"") # Fix Wordpress
+            response = json.loads(response)
+            return response["version-status"], response["version-message"] if response.has_key("version-message") else None, response["version-url"] if response.has_key("version-url") else None
+        except:
+            return "failed", getMessage("update-check-failed-notification").format(syncplay.version), constants.SYNCPLAY_DOWNLOAD_URL
+
     class _WarningManager(object):
         def __init__(self, player, userlist, ui, client):
             self._client = client

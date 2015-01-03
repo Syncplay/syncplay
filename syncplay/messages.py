@@ -57,6 +57,10 @@ en = {
       "userlist-file-notification" : "File",
       "controller-userlist-userflag" : "Controller",
       "ready-userlist-userflag" : "Ready",
+      
+      "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version
+      "syncplay-uptodate-notification" : u"Syncplay is up to date",
+      "syncplay-updateavailable-notification" : u"A new version of Syncplay is available. Do you want to download it?",
 
       "mplayer-file-required-notification" : "Syncplay using mplayer requires you to provide file when starting",
       "mplayer-file-required-notification/example" : "Usage example: syncplay [options] [url|path/]filename",
@@ -78,6 +82,7 @@ en = {
 
       "gui-data-cleared-notification" : "Syncplay has cleared the path and window state data used by the GUI.",
       "language-changed-msgbox-label" : "Language will be changed when you run Syncplay.",
+      "promptforupdate-label" : u"Is it okay for Syncplay to automatically check for updates from time to time?",
 
       "vlc-version-mismatch": "Warning: You are running VLC version {}, but Syncplay is designed to run on VLC {} and above.",  # VLC version, VLC min version
       "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above.",  # VLC interface version, VLC interface min version
@@ -163,6 +168,7 @@ en = {
       "privacy-dontsend-option" : "Don't send",
       "filename-privacy-label" : "Filename information:",
       "filesize-privacy-label" : "File size information:",
+      "checkforupdatesautomatically-label" : "Check for updates automatically",
       "slowondesync-label" : "Slow down on minor desync (not supported on MPC-HC)",
       "rewindondesync-label" : "Rewind on major desync (highly recommended)",
       "fastforwardondesync-label" : "Fast-forward if lagging behind (recommended)",
@@ -231,6 +237,7 @@ en = {
 
       "help-menu-label" : "&Help",
       "userguide-menu-label" : "Open user &guide",
+      "update-menu-label" : "Check for &update",
 
       "setoffset-msgbox-label" : "Set offset",
       "offsetinfo-msgbox-label" : "Offset (see http://syncplay.pl/guide/ for usage instructions):",
@@ -265,6 +272,7 @@ en = {
       "privacy-sendraw-tooltip" : "Send this information without obfuscation. This is the default option with most functionality.",
       "privacy-sendhashed-tooltip" : "Send a hashed version of the information, making it less visible to other clients.",
       "privacy-dontsend-tooltip" : "Do not send this information to the server. This provides for maximum privacy.",
+      "checkforupdatesautomatically-tooltip" : "Regularly check with the Syncplay website to see whether a new version of Syncplay is available.",
       "slowondesync-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers. Not supported on MPC-HC.",
       "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room controllers.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
@@ -386,6 +394,10 @@ ru = {
       "userlist-file-notification" : u"File", # TODO: Translate into Russian (Файл?)
       "controller-userlist-userflag" : u"Controller", # TODO: Translate into Russian (this is to indicate a user is a controller in the ConsoleUI userlist)
       "ready-userlist-userflag" : u"Ready", # TODO: Translate into Russian (this is to indicate a user is ready to watch in the ConsoleUI userlist)
+      
+      "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version # TODO: Translate into Russian
+      "syncplay-uptodate-notification" : u"Syncplay is up to date", # TODO: Translate into Russian
+      "syncplay-updateavailable-notification" : u"A new version of Syncplay is available. Do you want to download it?", # TODO: Translate into Russian
 
       "mplayer-file-required-notification" : u"Для использования Syncplay с mplayer необходимо передать файл в качестве параметра",
       "mplayer-file-required-notification/example" : u"Пример использования: syncplay [options] [url|path/]filename",
@@ -406,7 +418,8 @@ ru = {
       "more-info-notification" : u"Больше информации на {}",  # projectURL
 
       "gui-data-cleared-notification" : u"Syncplay очистил путь и информацию о состоянии окна, использованного GUI.",
-      "language-changed-msgbox-label" : u"Language will be changed when you run Syncplay.",
+      "language-changed-msgbox-label" : u"Language will be changed when you run Syncplay.", # TODO: Translate into Russian
+      "promptforupdate-label" : u"Is it okay for Syncplay to automatically check for updates from time to time?", # TODO: Translate into Russian
 
       "vlc-version-mismatch" : u"Внимание: Вы используете VLC устаревшей версии {}. К сожалению, Syncplay способен работать с VLC {} и выше.",  # VLC version, VLC min version
       "vlc-interface-version-mismatch" : u"Внимание: В используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше.",  # VLC interface version, VLC interface min version
@@ -492,6 +505,7 @@ ru = {
       "privacy-dontsend-option" : u"не отпр.",
       "filename-privacy-label" : u"Имя файла:",
       "filesize-privacy-label" : u"Размер файла:",
+      "checkforupdatesautomatically-label" : u"Проверять обновления автоматически", # TODO: Confirm Russian translation
       "slowondesync-label" : u"Замедлять при небольших рассинхронизациях (не поддерживаетя в MPC-HC)",
       "rewindondesync-label" : u"Перемотка при больших рассинхронизациях (настоятельно рекомендуется)",
       "dontslowdownwithme-label" : u"Никогда не замедлять или перематывать видео другим", # TODO: Update new wording into Russian (should state "Experimental" in brackets at the end)
@@ -560,6 +574,7 @@ ru = {
 
       "help-menu-label" : u"&Помощь",
       "userguide-menu-label" : u"&Руководство Пользователя",
+      "update-menu-label" : u"Check for &update", # TODO: Translate into Russian
 
       "setoffset-msgbox-label" : u"Установить смещение",
       "offsetinfo-msgbox-label" : u"Смещение (см. как использовать на http://syncplay.pl/guide/):",
@@ -594,6 +609,7 @@ ru = {
       "privacy-sendraw-tooltip" : u"Отправляет эту информацию без шифрования. Рекомендуемая опция с наибольшей функциональностью.",
       "privacy-sendhashed-tooltip" : u"Отправляет хэш-сумму этой информации, делая ее невидимой для других пользователей.",
       "privacy-dontsend-tooltip" : u"Не отправлять эту информацию на сервер. Предоставляет наибольшую приватность.",
+      "checkforupdatesautomatically-tooltip" : u"Regularly check with the Syncplay website to see whether a new version of Syncplay is available.", # TODO: Translate into Russian
       "slowondesync-tooltip" : u"Временно уменьшить скорость воспроизведения в целях синхронизации с другими зрителями. Не поддерживается в MPC-HC.",
       "dontslowdownwithme-tooltip" : u"Ваши лаги не будут влиять на других зрителей.",
       "pauseonleave-tooltip" : u"Приостановить воспроизведение, если Вы покинули комнату или кто-то из зрителей отключился от сервера.",
@@ -714,7 +730,11 @@ de = {
       "userlist-room-notification" :  u"In Raum '{}':",  # Room
       "userlist-file-notification" : u"File", # TODO: Translate into German (Datei?)
       "controller-userlist-userflag" : u"Controller", # TODO: Translate into German (this is to indicate a user is a controller in the ConsoleUI userlist)
-      "ready-userlist-userflag" : u"Ready", # TODO: Translate into Germany (this is to indicate a user is ready to watch in the ConsoleUI userlist)
+      "ready-userlist-userflag" : u"Ready", # TODO: Translate into German (this is to indicate a user is ready to watch in the ConsoleUI userlist)
+      
+      "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version # TODO: Translate into German
+        "syncplay-uptodate-notification" : u"Syncplay is up to date", # TODO: Translate into German
+      "syncplay-updateavailable-notification" : u"A new version of Syncplay is available. Do you want to download it?", # TODO: Translate into German
 
       "mplayer-file-required-notification" : u"Syncplay für mplayer benötigt eine Datei-Angabe beim Start",
       "mplayer-file-required-notification/example" : u"Anwendungsbeispiel: syncplay [optionen] [url|pfad/]Dateiname",
@@ -736,6 +756,7 @@ de = {
 
       "gui-data-cleared-notification" : u"Syncplay hat die Pfad und Fensterdaten der Syncplay-GUI zurückgesetzt.",
       "language-changed-msgbox-label" : u"Die Sprache wird geändert, wenn du Syncplay neu startest.",
+      "promptforupdate-label" : u"Is it okay for Syncplay to automatically check for updates from time to time?", # TODO: Translate into German
 
       "vlc-version-mismatch": u"Warnung: Du nutzt VLC Version {}, aber Syncplay wurde für VLC ab Version {} entwickelt.",  # VLC version, VLC min version
       "vlc-interface-version-mismatch": u"Warnung: Du nutzt Version {} des VLC-Syncplay Interface-Moduls, Syncplay benötigt aber mindestens Version {}.",  # VLC interface version, VLC interface min version
@@ -821,6 +842,7 @@ de = {
       "privacy-dontsend-option" : u"Nicht senden",
       "filename-privacy-label" : u"Dateiname:",
       "filesize-privacy-label" : u"Dateigröße:",
+      "checkforupdatesautomatically-label" : u"Automatisch nach Updates suche", # TODO: Confirm German translation
       "slowondesync-label" : u"Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC)",
        "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentell)",
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
@@ -887,6 +909,7 @@ de = {
 
       "help-menu-label" : u"&Hilfe",
       "userguide-menu-label" : u"&Benutzerhandbuch öffnen",
+      "update-menu-label" : u"Check for &update", # TODO: Translate into Russian
 
       "setoffset-msgbox-label" : u"Offset einstellen",
       "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
@@ -921,6 +944,7 @@ de = {
       "privacy-sendraw-tooltip" : u"Die Information im Klartext übertragen. Dies ist die Standard-Einstellung mit der besten Funktionalität.",
       "privacy-sendhashed-tooltip" : u"Die Informationen gehasht übertragen, um sie für andere Clients schwerer lesbar zu machen.",
       "privacy-dontsend-tooltip" : u"Diese Information nicht übertragen. Dies garantiert den größtmöglichen Datanschutz.",
+      "checkforupdatesautomatically-tooltip" : u"Regularly check with the Syncplay website to see whether a new version of Syncplay is available.", # TODO: Translate into German
       "slowondesync-tooltip" : u"Reduziert die Abspielgeschwindigkeit zeitweise, um die Synchronität zu den anderen Clients wiederherzustellen.",
       "rewindondesync-label" : u"Zurückspulen bei großer Zeitdifferenz (empfohlen)",
       "fastforwardondesync-label" : u"Vorspulen wenn das Video lagt (empfohlen)",
