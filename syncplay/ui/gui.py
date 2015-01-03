@@ -689,13 +689,13 @@ class MainWindow(QtGui.QMainWindow):
             self.autoPlayPushButton.setText(getMessage("noautoplay-guipushbuttonlabel"))
 
     def automaticUpdateCheck(self):
+        currentDateTime = datetime.utcnow()
         if not self.config['checkForUpdatesAutomatically']:
             return
         if self.config['lastCheckedForUpdates']:
             configLastChecked = datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f")
             if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates:
                 self.lastCheckedForUpdates = configLastChecked
-            currentDateTime = datetime.utcnow()
         if self.lastCheckedForUpdates is None:
             self.checkForUpdates()
         else:
