@@ -678,7 +678,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def checkForUpdates(self, userInitiated=False):
         self.lastCheckedForUpdates = datetime.utcnow()
-        updateStatus, updateMessage, updateURL = self._syncplayClient.checkForUpdate()
+        updateStatus, updateMessage, updateURL = self._syncplayClient.checkForUpdate(userInitiated)
         if updateMessage is None:
             if updateStatus == "uptodate":
                 updateMessage = getMessage("syncplay-uptodate-notification")

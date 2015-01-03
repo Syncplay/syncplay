@@ -548,12 +548,11 @@ class SyncplayClient(object):
         if self.controlpasswords.has_key(room):
             return self.controlpasswords[room]
 
-    def checkForUpdate(self):
+    def checkForUpdate(self, userInitiated):
         try:
             import urllib, syncplay, sys, messages, json
             params = urllib.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
-                                   'language': messages.messages["CURRENT"], 'platform': sys.platform})
-            print params
+                                   'language': messages.messages["CURRENT"], 'platform': sys.platform, 'userInitiated': userInitiated})
 
             f = urllib.urlopen(constants.SYNCPLAY_UPDATE_URL.format(params))
             response = f.read()
