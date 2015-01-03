@@ -211,10 +211,8 @@ en = {
       "togglepause-guibuttonlabel" : "Toggle pause",
       "play-guibuttonlabel" : "Play",
       "pause-guibuttonlabel" : "Pause",
-      "ready-guipushbuttonlabel" : u"I'm ready to watch! (Click to toggle)",
-      "notready-guipushbuttonlabel" : u"I'm not ready to watch! (Click to toggle)",
+      "ready-guipushbuttonlabel" : u"I'm ready to watch!",
       "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready",
-      "noautoplay-guipushbuttonlabel" : u"Don't auto-play when everyone is ready",
 
       "roomuser-heading-label" : "Room / User",
       "size-heading-label" : "Size",
@@ -550,10 +548,8 @@ ru = {
       "togglepause-guibuttonlabel" : u"Вкл./выкл. паузу",
       "play-guibuttonlabel" : u"Play",
       "pause-guibuttonlabel" : u"Пауза",
-      "ready-guipushbuttonlabel" : u"I'm ready to watch! (Click to toggle)", # TODO: Translate into Russian
-      "notready-guipushbuttonlabel" : u"I'm not ready to watch! (Click to toggle)", # TODO: Translate into Russian
+      "ready-guipushbuttonlabel" : u"I'm ready to watch!", # TODO: Translate into Russian
       "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready", # TODO: Translate into Russian
-      "noautoplay-guipushbuttonlabel" : u"Don't auto-play when everyone is ready", # TODO: Translate into Russian
 
       "roomuser-heading-label" : u"Комната / Пользователь",
       "size-heading-label" : u"Size", # TODO: Translate into Russian
@@ -887,10 +883,8 @@ de = {
       "togglepause-guibuttonlabel" : u"Pause umschalten",
       "play-guibuttonlabel" : u"Wiedergabe",
       "pause-guibuttonlabel" : u"Pause",
-      "ready-guipushbuttonlabel" : u"I'm ready to watch! (Click to toggle)", # TODO: Translate into German
-      "notready-guipushbuttonlabel" : u"I'm not ready to watch! (Click to toggle)", # TODO: Translate into German
+      "ready-guipushbuttonlabel" : u"I'm ready to watch!", # TODO: Translate into German
       "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready", # TODO: Translate into German
-      "noautoplay-guipushbuttonlabel" : u"Don't auto-play when everyone is ready", # TODO: Translate into German
 
       "roomuser-heading-label" : u"Raum / Benutzer",
       "size-heading-label" : u"Größe",

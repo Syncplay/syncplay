@@ -478,6 +478,7 @@ class MainWindow(QtGui.QMainWindow):
         window.readyPushButton = QtGui.QPushButton()
         readyFont = QtGui.QFont()
         readyFont.setWeight(QtGui.QFont.Bold)
+        window.readyPushButton.setText(getMessage("ready-guipushbuttonlabel"))
         window.readyPushButton.setCheckable(True)
         window.readyPushButton.setAutoExclusive(False)
         window.readyPushButton.toggled.connect(self.changeReadyState)
@@ -488,6 +489,7 @@ class MainWindow(QtGui.QMainWindow):
         window.autoPlayPushButton = QtGui.QPushButton()
         autoPlayFont = QtGui.QFont()
         autoPlayFont.setWeight(QtGui.QFont.Bold)
+        window.autoPlayPushButton.setText(getMessage("autoplay-guipushbuttonlabel"))
         window.autoPlayPushButton.setCheckable(True)
         window.autoPlayPushButton.setAutoExclusive(False)
         window.autoPlayPushButton.toggled.connect(self.changeAutoPlayState)
@@ -674,19 +676,15 @@ class MainWindow(QtGui.QMainWindow):
         ready = self.readyPushButton.isChecked()
         if ready:
             self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
-            self.readyPushButton.setText(getMessage("ready-guipushbuttonlabel"))
         else:
-            self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'cross_checkbox.png'))
-            self.readyPushButton.setText(getMessage("notready-guipushbuttonlabel"))
+            self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'empty_checkbox.png'))
 
     def updateAutoPlayIcon(self):
         ready = self.autoPlayPushButton.isChecked()
         if ready:
             self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
-            self.autoPlayPushButton.setText(getMessage("autoplay-guipushbuttonlabel"))
         else:
-            self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'cross_checkbox.png'))
-            self.autoPlayPushButton.setText(getMessage("noautoplay-guipushbuttonlabel"))
+            self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'empty_checkbox.png'))
 
     def automaticUpdateCheck(self):
         currentDateTime = datetime.utcnow()
