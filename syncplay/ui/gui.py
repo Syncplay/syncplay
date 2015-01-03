@@ -209,6 +209,12 @@ class MainWindow(QtGui.QMainWindow):
             self.readyPushButton.setChecked(newState)
         self.updateReadyIcon()
 
+    def updateAutoPlayState(self, newState):
+        oldState = self.autoPlayPushButton.isChecked()
+        if newState != oldState and newState != None:
+            self.autoPlayPushButton.setChecked(newState)
+        self.updateAutoPlayIcon()
+
     def roomClicked(self, item):
         while item.parent().row() != -1:
             item = item.parent()
@@ -473,11 +479,22 @@ class MainWindow(QtGui.QMainWindow):
         readyFont = QtGui.QFont()
         readyFont.setWeight(QtGui.QFont.Bold)
         window.readyPushButton.setCheckable(True)
-        window.readyPushButton.setAutoExclusive(True)
+        window.readyPushButton.setAutoExclusive(False)
         window.readyPushButton.toggled.connect(self.changeReadyState)
         window.readyPushButton.setFont(readyFont)
         window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON)
         window.listLayout.addWidget(window.readyPushButton, Qt.AlignRight)
+
+        window.autoPlayPushButton = QtGui.QPushButton()
+        autoPlayFont = QtGui.QFont()
+        autoPlayFont.setWeight(QtGui.QFont.Bold)
+        window.autoPlayPushButton.setCheckable(True)
+        window.autoPlayPushButton.setAutoExclusive(False)
+        window.autoPlayPushButton.toggled.connect(self.changeAutoPlayState)
+        window.autoPlayPushButton.setFont(autoPlayFont)
+        window.autoPlayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON)
+        window.listLayout.addWidget(window.autoPlayPushButton, Qt.AlignRight)
+        self.updateAutoPlayIcon()
 
         window.contactLabel = QtGui.QLabel()
         window.contactLabel.setWordWrap(True)
@@ -649,6 +666,10 @@ class MainWindow(QtGui.QMainWindow):
         self.updateReadyIcon()
         self._syncplayClient.changeReadyState(self.readyPushButton.isChecked())
 
+    def changeAutoPlayState(self):
+        self.updateAutoPlayIcon()
+        self._syncplayClient.changeAutoPlayState(self.autoPlayPushButton.isChecked())
+
     def updateReadyIcon(self):
         ready = self.readyPushButton.isChecked()
         if ready:
@@ -657,6 +678,15 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'cross_checkbox.png'))
             self.readyPushButton.setText(getMessage("notready-guipushbuttonlabel"))
+
+    def updateAutoPlayIcon(self):
+        ready = self.autoPlayPushButton.isChecked()
+        if ready:
+            self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
+            self.autoPlayPushButton.setText(getMessage("autoplay-guipushbuttonlabel"))
+        else:
+            self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'cross_checkbox.png'))
+            self.autoPlayPushButton.setText(getMessage("noautoplay-guipushbuttonlabel"))
 
     def automaticUpdateCheck(self):
         if not self.config['checkForUpdatesAutomatically']:

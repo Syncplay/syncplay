@@ -105,6 +105,7 @@ class SyncplayClient(object):
         self._userOffset = 0.0
         self._speedChanged = False
         self.behindFirstDetected = None
+        self.autoPlay = False
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
@@ -310,6 +311,7 @@ class SyncplayClient(object):
         self.ui.showMessage(getMessage("current-offset-notification").format(self._userOffset))
 
     def onDisconnect(self):
+        self.resetAutoPlayState()
         if self._config['pauseOnLeave']:
             self.setPaused(True)
             self.lastPausedOnLeaveTime = time.time()
@@ -396,6 +398,7 @@ class SyncplayClient(object):
 
     def setRoom(self, roomName):
         self.userlist.currentUser.room = roomName
+        self.resetAutoPlayState()
 
     def sendRoom(self):
         room = self.userlist.currentUser.room
@@ -481,6 +484,18 @@ class SyncplayClient(object):
                 return f(self, *args, **kwds)
             return wrapper
         return requireMinVersionDecorator
+
+    def changeAutoPlayState(self, newState):
+        self.autoPlay = newState
+        self.autoPlayCheck()
+
+    def autoPlayCheck(self):
+        if self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady():
+            self.setPaused(False)
+
+    def resetAutoPlayState(self):
+        self.autoPlay = False
+        self.ui.updateAutoPlayState(False)
 
     @requireMinServerVersion(constants.USER_READY_MIN_VERSION)
     def toggleReady(self, manuallyInitiated=True):
@@ -613,14 +628,6 @@ class SyncplayClient(object):
                         self._warnings["alone-in-the-room"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
             elif self._warnings["alone-in-the-room"]['timer'].running:
                 self._warnings["alone-in-the-room"]['timer'].stop()
-                
-        def isReadinessSupported(self):
-            if not utils.meetsMinVersion(self._client.serverVersion,constants.USER_READY_MIN_VERSION):
-                return False
-            elif self._userlist.onlyUserInRoomWhoSupportsReadiness():
-                return False
-            else:
-                return True
 
         def checkReadyStates(self):
             if not self._client:
@@ -646,14 +653,14 @@ class SyncplayClient(object):
             osdMessage = None
             if not self._userlist.areAllFilesInRoomSame():
                 fileDifferencesMessage = getMessage("room-file-differences").format(self._userlist.getFileDifferencesForRoom())
-                if self._userlist.currentUser.canControl() and self.isReadinessSupported():
+                if self._userlist.currentUser.canControl() and self._userlist.isReadinessSupported():
                     if self._userlist.areAllUsersInRoomReady():
                         osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("all-users-ready"))
                     else:
                         osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady()))
                 else:
                     osdMessage = fileDifferencesMessage
-            elif self.isReadinessSupported():
+            elif self._userlist.isReadinessSupported():
                 if self._userlist.areAllUsersInRoomReady():
                     osdMessage = getMessage("all-users-ready")
                 else:
@@ -740,6 +747,14 @@ class SyncplayUserlist(object):
         self.ui = ui
         self._client = client
         self._roomUsersChanged = True
+
+    def isReadinessSupported(self):
+        if not utils.meetsMinVersion(self._client.serverVersion,constants.USER_READY_MIN_VERSION):
+            return False
+        elif self.onlyUserInRoomWhoSupportsReadiness():
+            return False
+        else:
+            return True
 
     def isRoomSame(self, room):
         if room and self.currentUser.room and self.currentUser.room == room:
@@ -925,6 +940,7 @@ class SyncplayUserlist(object):
             self.currentUser.setReady(isReady)
         elif self._users.has_key(username):
             self._users[username].setReady(isReady)
+        self._client.autoPlayCheck()
 
     def userListChange(self, room = None):
         if room is not None and self.isRoomSame(room):
@@ -948,6 +964,7 @@ class SyncplayUserlist(object):
         rooms[self.currentUser.room].append(self.currentUser)
         rooms = self.sortList(rooms)
         self.ui.showUserList(self.currentUser, rooms)
+        self._client.autoPlayCheck()
 
     def clearList(self):
         self._users = {}
@@ -975,6 +992,9 @@ class UiManager(object):
     def showMessage(self, message, noPlayer=False, noTimestamp=False, secondaryOSD=False):
         if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, secondaryOSD=secondaryOSD)
         self.__ui.showMessage(message, noTimestamp)
+
+    def updateAutoPlayState(self, newState):
+        self.__ui.updateAutoPlayState(newState)
 
     def showUserList(self, currentUser, rooms):
         self.__ui.showUserList(currentUser, rooms)

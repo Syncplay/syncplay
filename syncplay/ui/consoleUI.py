@@ -39,6 +39,9 @@ class ConsoleUI(threading.Thread):
     def updateRoomName(self, room=""):
         pass
 
+    def updateAutoPlayState(self, newState):
+        pass
+
     def promptFor(self, prompt=">", message=""):
         if message <> "":
             print(message)
