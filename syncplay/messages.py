@@ -168,14 +168,14 @@ en = {
       "privacy-dontsend-option" : "Don't send",
       "filename-privacy-label" : "Filename information:",
       "filesize-privacy-label" : "File size information:",
-      "checkforupdatesautomatically-label" : "Check for updates automatically",
+      "checkforupdatesautomatically-label" : "Check for Syncplay updates automatically",
       "slowondesync-label" : "Slow down on minor desync (not supported on MPC-HC)",
-      "rewindondesync-label" : "Rewind on major desync (highly recommended)",
+      "rewindondesync-label" : "Rewind on major desync (recommended)",
       "fastforwardondesync-label" : "Fast-forward if lagging behind (recommended)",
       "dontslowdownwithme-label" : "Never slow down or rewind others (experimental)",
       "pauseonleave-label" : "Pause when user leaves (e.g. if they are disconnected)",
       "readyatstart-label" : "Set me as 'ready to watch' by default",
-      "forceguiprompt-label" : "Don't always show this dialog", # (Inverted)
+      "forceguiprompt-label" : "Don't always show the Syncplay configuration window", # (Inverted)
       "nostore-label" : "Don't store this configuration", # (Inverted)
       "showosd-label" : "Enable OSD Messages",
 
@@ -185,17 +185,20 @@ en = {
       "showdifferentroomosd-label" : "Include events in other rooms",
       "showslowdownosd-label" :"Include slowing down / reverting notifications",
       "showcontactinfo-label" : "Show contact info box",
-      "language-label" : "Language",
+      "language-label" : "Language:",
       "automatic-language" : "Automatic ({})", # Automatic language #
       "showdurationnotification-label" : "Warn about media duration mismatches",
       "basics-label" : "Basics",
+      "misc-label" : u"Misc",
+      "core-behaviour-title" : "Core room behaviour",
+      "syncplay-internals-title" : u"Syncplay internals",
       "sync-label" : "Sync",
-      "sync-lagging-title" : "If others are lagging behind...",
-      "sync-other-title" : "Other sync options",
+      "sync-otherslagging-title" : "If others are lagging behind...",
+      "sync-youlaggging-title" : "If you are lagging behind...",
       "messages-label" : "Messages",
       "messages-osd-title" : "On-screen Display settings",
       "messages-other-title" : "Other display settings",
-      "privacy-label" : "Privacy",
+      "privacy-label" : "Privacy", # Currently unused, but will be brought back if more space is needed in Misc tab
       "privacy-title" : "Privacy settings",
 
       "help-label" : "Help",
@@ -522,13 +525,16 @@ ru = {
       "showdifferentroomosd-label" : u"Показывать события других комнат",
       "showslowdownosd-label" : u"Показывать уведомления о замедлении/перемотке",
       "showcontactinfo-label" : u"Отображать контактную информацию разработчиков",
-      "language-label" : u"Language", # TODO: Translate into Russian
+      "language-label" : u"Language:", # TODO: Translate into Russian
       "automatic-language" : u"Automatic ({})", # Automatic language # TODO: Translate into Russian
       "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
       "basics-label" : u"Основное",
+      "misc-label" : u"Misc", # TODO: Translate into Russian
+      "core-behaviour-title" : "Core room behaviour", # TODO: Translate into Russian
+      "syncplay-internals-title" : u"Syncplay internals", # TODO: Translate into Russian
       "sync-label" : u"Синхронизация",
-      "sync-lagging-title" : u"If others are lagging behind...", # TODO: Translate into Russian
-      "sync-other-title" : u"Other sync options", # TODO: Translate into Russian
+      "sync-otherslagging-title" : u"If others are lagging behind...", # TODO: Translate into Russian
+      "sync-youlaggging-title" : u"If you are lagging behind...", # TODO: Translate into Russian
       "messages-label" : u"Сообщения",
       "messages-osd-title" : u"On-screen Display settings", # TODO: Translate into Russian
       "messages-other-title" : u"Other display settings", # TODO: Translate into Russian
@@ -857,13 +863,16 @@ de = {
       "showdifferentroomosd-label" : u"Zeige Ereignisse in anderen Räumen",
       "showslowdownosd-label" : u"Zeige Verlangsamungs/Zurücksetzungs-Benachrichtigung",
       "showcontactinfo-label" : u"Zeige Kontaktinformationen",
-      "language-label" : u"Sprache",
+      "language-label" : u"Sprache:",
       "automatic-language" : u"Automatisch ({})", # Automatic language
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
       "basics-label" : u"Basics",
+      "misc-label" : u"Misc", # TODO: Translate into German
+      "core-behaviour-title" : u"Core room behaviour", # TODO: Translate into German
+      "syncplay-internals-title" : u"Syncplay internals", # TODO: Translate into German
       "sync-label" : u"Synchronisation",
-      "sync-lagging-title" : u"Wenn andere laggen...",
-      "sync-other-title" : u"Weitere Synchronisationsoptionen",
+      "sync-otherslagging-title" : u"Wenn andere laggen...",
+      "sync-youlaggging-title" : u"If you are lagging behind...", # TODO: Translate into German
       "messages-label" : u"Nachrichten",
       "messages-osd-title" : u"OSD-(OnScreenDisplay)-Einstellungen",
       "messages-other-title" : u"Weitere Display-Einstellungen",

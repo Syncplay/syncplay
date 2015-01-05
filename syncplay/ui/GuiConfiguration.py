@@ -52,7 +52,6 @@ class ConfigDialog(QtGui.QDialog):
                 self.tabListFrame.show()
                 self.resetButton.show()
                 self.nostoreCheckbox.show()
-                self.alwaysshowCheckbox.show()
                 self.saveMoreState(True)
                 self.tabListWidget.setCurrentRow(0)
                 self.ensureTabListIsVisible()
@@ -60,7 +59,6 @@ class ConfigDialog(QtGui.QDialog):
                 self.tabListFrame.hide()
                 self.resetButton.hide()
                 self.nostoreCheckbox.hide()
-                self.alwaysshowCheckbox.hide()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
 
@@ -465,18 +463,104 @@ class ConfigDialog(QtGui.QDialog):
         self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.setAlignment(Qt.AlignTop)
         self.basicOptionsLayout.addWidget(self.connectionSettingsGroup)
-        self.basicOptionsLayout.addSpacing(17)
+        self.basicOptionsLayout.addSpacing(5)
         self.mediaplayerSettingsGroup.setMaximumHeight(self.mediaplayerSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.addWidget(self.mediaplayerSettingsGroup)
 
         self.basicOptionsFrame.setLayout(self.basicOptionsLayout)
         self.stackedLayout.addWidget(self.basicOptionsFrame)
 
+    def addMiscTab(self):
+        self.miscFrame = QtGui.QFrame()
+        self.miscLayout = QtGui.QVBoxLayout()
+        self.miscFrame.setLayout(self.miscLayout)
+
+        self.coreSettingsGroup = QtGui.QGroupBox(getMessage("core-behaviour-title"))
+        self.coreSettingsLayout = QtGui.QVBoxLayout()
+        self.coreSettingsGroup.setLayout(self.coreSettingsLayout)
+
+        self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
+        self.pauseonleaveCheckbox.setObjectName("pauseOnLeave")
+        self.coreSettingsLayout.addWidget(self.pauseonleaveCheckbox)
+
+        self.readyatstartCheckbox = QCheckBox(getMessage("readyatstart-label"))
+        self.readyatstartCheckbox.setObjectName("readyAtStart")
+        self.coreSettingsLayout.addWidget(self.readyatstartCheckbox)
+
+        self.internalSettingsGroup = QtGui.QGroupBox(getMessage("syncplay-internals-title"))
+        self.internalSettingsLayout = QtGui.QVBoxLayout()
+        self.internalSettingsGroup.setLayout(self.internalSettingsLayout)
+
+        self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
+        self.alwaysshowCheckbox.setObjectName(constants.INVERTED_STATE_MARKER + "forceGuiPrompt")
+        self.internalSettingsLayout.addWidget(self.alwaysshowCheckbox)
+
+        self.automaticupdatesCheckbox = QCheckBox(getMessage("checkforupdatesautomatically-label"))
+        self.automaticupdatesCheckbox.setObjectName("checkForUpdatesAutomatically")
+        self.internalSettingsLayout.addWidget(self.automaticupdatesCheckbox)
+
+        ### Privacy:
+
+        self.privacySettingsGroup = QtGui.QGroupBox(getMessage("privacy-title"))
+        self.privacySettingsLayout = QtGui.QVBoxLayout()
+        self.privacySettingsFrame = QtGui.QFrame()
+        self.privacyFrame = QtGui.QFrame()
+        self.privacyLayout = QtGui.QGridLayout()
+
+        self.filenameprivacyLabel = QLabel(getMessage("filename-privacy-label"), self)
+        self.filenameprivacyButtonGroup = QButtonGroup()
+        self.filenameprivacySendRawOption = QRadioButton(getMessage("privacy-sendraw-option"))
+        self.filenameprivacySendHashedOption = QRadioButton(getMessage("privacy-sendhashed-option"))
+        self.filenameprivacyDontSendOption = QRadioButton(getMessage("privacy-dontsend-option"))
+        self.filenameprivacyButtonGroup.addButton(self.filenameprivacySendRawOption)
+        self.filenameprivacyButtonGroup.addButton(self.filenameprivacySendHashedOption)
+        self.filenameprivacyButtonGroup.addButton(self.filenameprivacyDontSendOption)
+
+        self.filesizeprivacyLabel = QLabel(getMessage("filesize-privacy-label"), self)
+        self.filesizeprivacyButtonGroup = QButtonGroup()
+        self.filesizeprivacySendRawOption = QRadioButton(getMessage("privacy-sendraw-option"))
+        self.filesizeprivacySendHashedOption = QRadioButton(getMessage("privacy-sendhashed-option"))
+        self.filesizeprivacyDontSendOption = QRadioButton(getMessage("privacy-dontsend-option"))
+        self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendRawOption)
+        self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendHashedOption)
+        self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacyDontSendOption)
+
+        self.filenameprivacyLabel.setObjectName("filename-privacy")
+        self.filenameprivacySendRawOption.setObjectName("privacy-sendraw" + constants.CONFIG_NAME_MARKER + "filenamePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDRAW_MODE)
+        self.filenameprivacySendHashedOption.setObjectName("privacy-sendhashed" + constants.CONFIG_NAME_MARKER + "filenamePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDHASHED_MODE)
+        self.filenameprivacyDontSendOption.setObjectName("privacy-dontsend" + constants.CONFIG_NAME_MARKER + "filenamePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_DONTSEND_MODE)
+        self.filesizeprivacyLabel.setObjectName("filesize-privacy")
+        self.filesizeprivacySendRawOption.setObjectName("privacy-sendraw" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDRAW_MODE)
+        self.filesizeprivacySendHashedOption.setObjectName("privacy-sendhashed" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDHASHED_MODE)
+        self.filesizeprivacyDontSendOption.setObjectName("privacy-dontsend" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_DONTSEND_MODE)
+
+        self.privacyLayout.addWidget(self.filenameprivacyLabel, 1, 0)
+        self.privacyLayout.addWidget(self.filenameprivacySendRawOption, 1, 1, Qt.AlignLeft)
+        self.privacyLayout.addWidget(self.filenameprivacySendHashedOption, 1, 2, Qt.AlignLeft)
+        self.privacyLayout.addWidget(self.filenameprivacyDontSendOption, 1, 3, Qt.AlignLeft)
+        self.privacyLayout.addWidget(self.filesizeprivacyLabel, 2, 0)
+        self.privacyLayout.addWidget(self.filesizeprivacySendRawOption, 2, 1, Qt.AlignLeft)
+        self.privacyLayout.addWidget(self.filesizeprivacySendHashedOption, 2, 2, Qt.AlignLeft)
+        self.privacyLayout.addWidget(self.filesizeprivacyDontSendOption, 2, 3, Qt.AlignLeft)
+
+        self.privacyFrame.setLayout(self.privacyLayout)
+        self.privacySettingsGroup.setLayout(self.privacyLayout)
+        self.privacySettingsGroup.setMaximumHeight(self.privacySettingsGroup.minimumSizeHint().height())
+        self.privacySettingsLayout.addWidget(self.privacySettingsGroup)
+        self.privacySettingsLayout.setAlignment(Qt.AlignTop)
+        self.privacyFrame.setLayout(self.privacySettingsLayout)
+
+        self.miscLayout.addWidget(self.coreSettingsGroup)
+        self.miscLayout.addWidget(self.internalSettingsGroup)
+        self.miscLayout.addWidget(self.privacySettingsGroup)
+        self.miscLayout.setAlignment(Qt.AlignTop)
+        self.stackedLayout.addWidget(self.miscFrame)
+
     def addSyncTab(self):
         self.syncSettingsFrame = QtGui.QFrame()
         self.syncSettingsLayout = QtGui.QVBoxLayout()
 
-        self.desyncSettingsGroup = QtGui.QGroupBox(getMessage("sync-lagging-title"))
+        self.desyncSettingsGroup = QtGui.QGroupBox(getMessage("sync-otherslagging-title"))
         self.desyncOptionsFrame = QtGui.QFrame()
         self.desyncSettingsOptionsLayout = QtGui.QHBoxLayout()
         config = self.config
@@ -565,20 +649,12 @@ class ConfigDialog(QtGui.QDialog):
         self.desyncSettingsLayout.setAlignment(Qt.AlignLeft)
         self.desyncSettingsGroup.setLayout(self.desyncSettingsLayout)
         self.desyncSettingsOptionsLayout.addWidget(self.desyncFrame)
-        self.syncSettingsLayout.addWidget(self.desyncSettingsGroup)
+
         self.desyncFrame.setLayout(self.syncSettingsLayout)
 
-        self.othersyncSettingsGroup = QtGui.QGroupBox(getMessage("sync-other-title"))
+        self.othersyncSettingsGroup = QtGui.QGroupBox(getMessage("sync-youlaggging-title"))
         self.othersyncOptionsFrame = QtGui.QFrame()
         self.othersyncSettingsLayout = QtGui.QGridLayout()
-
-        self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
-        self.othersyncSettingsLayout.addWidget(self.pauseonleaveCheckbox, 1, 0, 1, 2, Qt.AlignLeft)
-        self.pauseonleaveCheckbox.setObjectName("pauseOnLeave")
-
-        self.readyatstartCheckbox = QCheckBox(getMessage("readyatstart-label"))
-        self.othersyncSettingsLayout.addWidget(self.readyatstartCheckbox, 2, 0, 1, 2, Qt.AlignLeft)
-        self.readyatstartCheckbox.setObjectName("readyAtStart")
 
         self.dontslowwithmeCheckbox = QCheckBox(getMessage("dontslowdownwithme-label"))
         self.dontslowwithmeCheckbox.setObjectName("dontSlowDownWithMe")
@@ -588,6 +664,7 @@ class ConfigDialog(QtGui.QDialog):
         self.fastforwardThresholdLabel.setObjectName("fastforward-threshold")
         self.fastforwardThresholdSpinbox.setObjectName("fastforward-threshold")
 
+        self.othersyncSettingsLayout.setAlignment(Qt.AlignLeft)
         self.othersyncSettingsLayout.addWidget(self.fastforwardCheckbox, 4, 0,1,2, Qt.AlignLeft)
         self.othersyncSettingsLayout.addWidget(self.fastforwardThresholdLabel, 5, 0, 1, 1, Qt.AlignLeft)
         self.othersyncSettingsLayout.addWidget(self.fastforwardThresholdSpinbox, 5, 1, Qt.AlignLeft)
@@ -596,7 +673,7 @@ class ConfigDialog(QtGui.QDialog):
         self.othersyncSettingsGroup.setLayout(self.othersyncSettingsLayout)
         self.othersyncSettingsGroup.setMaximumHeight(self.othersyncSettingsGroup.minimumSizeHint().height())
         self.syncSettingsLayout.addWidget(self.othersyncSettingsGroup)
-
+        self.syncSettingsLayout.addWidget(self.desyncSettingsGroup)
         self.syncSettingsFrame.setLayout(self.syncSettingsLayout)
         self.desyncSettingsGroup.setMaximumHeight(self.desyncSettingsGroup.minimumSizeHint().height())
         self.syncSettingsLayout.setAlignment(Qt.AlignTop)
@@ -605,6 +682,7 @@ class ConfigDialog(QtGui.QDialog):
     def addMessageTab(self):
         self.messageFrame = QtGui.QFrame()
         self.messageLayout = QtGui.QVBoxLayout()
+        self.messageLayout.setAlignment(Qt.AlignTop)
 
         # OSD
         self.osdSettingsGroup = QtGui.QGroupBox(getMessage("messages-osd-title"))
@@ -650,34 +728,17 @@ class ConfigDialog(QtGui.QDialog):
         # Other display
 
         self.displaySettingsGroup = QtGui.QGroupBox(getMessage("messages-other-title"))
-        self.displaySettingsLayout = QtGui.QGridLayout()
+        self.displaySettingsLayout = QtGui.QVBoxLayout()
         self.displaySettingsLayout.setAlignment(Qt.AlignTop)
         self.displaySettingsFrame = QtGui.QFrame()
 
         self.showDurationNotificationCheckbox = QCheckBox(getMessage("showdurationnotification-label"))
         self.showDurationNotificationCheckbox.setObjectName("showDurationNotification")
-        self.displaySettingsLayout.addWidget(self.showDurationNotificationCheckbox, 0, 0, 1, 2)
+        self.displaySettingsLayout.addWidget(self.showDurationNotificationCheckbox)
 
         self.showcontactinfoCheckbox = QCheckBox(getMessage("showcontactinfo-label"))
         self.showcontactinfoCheckbox.setObjectName("showContactInfo")
-        self.displaySettingsLayout.addWidget(self.showcontactinfoCheckbox, 1, 0, 1, 2)
-
-        self.languageLabel = QLabel(getMessage("language-label"), self)
-        self.languageCombobox = QtGui.QComboBox(self)
-        self.languageCombobox.addItem(getMessage("automatic-language").format(getMessage("LANGUAGE", getInitialLanguage())))
-
-        self.languages = getLanguages()
-        for lang in self.languages:
-            self.languageCombobox.addItem(self.languages[lang], lang)
-            if lang == self.config['language']:
-                self.languageCombobox.setCurrentIndex(self.languageCombobox.count()-1)
-        self.languageCombobox.currentIndexChanged.connect(self.languageChanged)
-        self.displaySettingsLayout.addWidget(self.languageLabel, 2, 0, 1, 1)
-        self.displaySettingsLayout.addWidget(self.languageCombobox, 2, 1, 1, 1)
-
-        self.languageLabel.setObjectName("language")
-        self.languageCombobox.setObjectName("language")
-
+        self.displaySettingsLayout.addWidget(self.showcontactinfoCheckbox)
 
         self.displaySettingsGroup.setLayout(self.displaySettingsLayout)
         self.displaySettingsGroup.setMaximumHeight(self.displaySettingsGroup.minimumSizeHint().height())
@@ -687,61 +748,6 @@ class ConfigDialog(QtGui.QDialog):
         # messageFrame
         self.messageFrame.setLayout(self.messageLayout)
         self.stackedLayout.addWidget(self.messageFrame)
-
-    def addPrivacyTab(self):
-        self.privacySettingsGroup = QtGui.QGroupBox(getMessage("privacy-title"))
-        self.privacySettingsLayout = QtGui.QVBoxLayout()
-        self.privacySettingsFrame = QtGui.QFrame()
-        self.privacyFrame = QtGui.QFrame()
-        self.privacyLayout = QtGui.QGridLayout()
-
-        self.filenameprivacyLabel = QLabel(getMessage("filename-privacy-label"), self)
-        self.filenameprivacyButtonGroup = QButtonGroup()
-        self.filenameprivacySendRawOption = QRadioButton(getMessage("privacy-sendraw-option"))
-        self.filenameprivacySendHashedOption = QRadioButton(getMessage("privacy-sendhashed-option"))
-        self.filenameprivacyDontSendOption = QRadioButton(getMessage("privacy-dontsend-option"))
-        self.filenameprivacyButtonGroup.addButton(self.filenameprivacySendRawOption)
-        self.filenameprivacyButtonGroup.addButton(self.filenameprivacySendHashedOption)
-        self.filenameprivacyButtonGroup.addButton(self.filenameprivacyDontSendOption)
-
-        self.filesizeprivacyLabel = QLabel(getMessage("filesize-privacy-label"), self)
-        self.filesizeprivacyButtonGroup = QButtonGroup()
-        self.filesizeprivacySendRawOption = QRadioButton(getMessage("privacy-sendraw-option"))
-        self.filesizeprivacySendHashedOption = QRadioButton(getMessage("privacy-sendhashed-option"))
-        self.filesizeprivacyDontSendOption = QRadioButton(getMessage("privacy-dontsend-option"))
-        self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendRawOption)
-        self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacySendHashedOption)
-        self.filesizeprivacyButtonGroup.addButton(self.filesizeprivacyDontSendOption)
-
-        self.filenameprivacyLabel.setObjectName("filename-privacy")
-        self.filenameprivacySendRawOption.setObjectName("privacy-sendraw" + constants.CONFIG_NAME_MARKER + "filenamePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDRAW_MODE)
-        self.filenameprivacySendHashedOption.setObjectName("privacy-sendhashed" + constants.CONFIG_NAME_MARKER + "filenamePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDHASHED_MODE)
-        self.filenameprivacyDontSendOption.setObjectName("privacy-dontsend" + constants.CONFIG_NAME_MARKER + "filenamePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_DONTSEND_MODE)
-        self.filesizeprivacyLabel.setObjectName("filesize-privacy")
-        self.filesizeprivacySendRawOption.setObjectName("privacy-sendraw" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDRAW_MODE)
-        self.filesizeprivacySendHashedOption.setObjectName("privacy-sendhashed" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDHASHED_MODE)
-        self.filesizeprivacyDontSendOption.setObjectName("privacy-dontsend" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_DONTSEND_MODE)
-
-        self.automaticupdatesCheckbox = QCheckBox(getMessage("checkforupdatesautomatically-label"))
-        self.automaticupdatesCheckbox.setObjectName("checkForUpdatesAutomatically")
-
-        self.privacyLayout.addWidget(self.filenameprivacyLabel, 1, 0)
-        self.privacyLayout.addWidget(self.filenameprivacySendRawOption, 1, 1, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.filenameprivacySendHashedOption, 1, 2, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.filenameprivacyDontSendOption, 1, 3, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.filesizeprivacyLabel, 2, 0)
-        self.privacyLayout.addWidget(self.filesizeprivacySendRawOption, 2, 1, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.filesizeprivacySendHashedOption, 2, 2, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.filesizeprivacyDontSendOption, 2, 3, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.automaticupdatesCheckbox, 3, 0, 1, 3, Qt.AlignLeft)
-
-        self.privacyFrame.setLayout(self.privacyLayout)
-        self.privacySettingsGroup.setLayout(self.privacyLayout)
-        self.privacySettingsGroup.setMaximumHeight(self.privacySettingsGroup.minimumSizeHint().height())
-        self.privacySettingsLayout.addWidget(self.privacySettingsGroup)
-        self.privacySettingsLayout.setAlignment(Qt.AlignTop)
-        self.privacyFrame.setLayout(self.privacySettingsLayout)
-        self.stackedLayout.addWidget(self.privacyFrame)
 
     def addBottomLayout(self):
         config = self.config
@@ -772,14 +778,40 @@ class ConfigDialog(QtGui.QDialog):
 
         self.bottomCheckboxFrame = QtGui.QFrame()
         self.bottomCheckboxFrame.setContentsMargins(0,0,0,0)
-        self.bottomCheckboxLayout = QtGui.QGridLayout()
-        self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
+        self.bottomCheckboxLayout = QtGui.QHBoxLayout()
+
+        self.languageFrame = QtGui.QFrame()
+        self.languageLayout = QtGui.QGridLayout()
+        self.languageFrame.setLayout(self.languageLayout)
+        self.languageLayout.setAlignment(Qt.AlignRight)
 
         self.nostoreCheckbox = QCheckBox(getMessage("nostore-label"))
-        self.bottomCheckboxLayout.addWidget(self.showmoreCheckbox)
-        self.bottomCheckboxLayout.addWidget(self.alwaysshowCheckbox, 0, 1, Qt.AlignLeft)
-        self.bottomCheckboxLayout.addWidget(self.nostoreCheckbox, 0, 2, Qt.AlignRight)
-        self.alwaysshowCheckbox.setObjectName(constants.INVERTED_STATE_MARKER + "forceGuiPrompt")
+
+        self.morenostoreFrame = QtGui.QFrame()
+        self.morenostoreLayout = QtGui.QHBoxLayout()
+        self.morenostoreLayout.setContentsMargins(0,0,0,0)
+        self.morenostoreFrame.setLayout(self.morenostoreLayout)
+        self.morenostoreLayout.setAlignment(Qt.AlignLeft)
+        self.morenostoreLayout.addWidget(self.showmoreCheckbox, Qt.AlignLeft)
+        self.morenostoreLayout.addWidget(self.nostoreCheckbox, Qt.AlignLeft)
+
+        self.languageLayout.setContentsMargins(0,0,0,0)
+        self.languageLabel = QLabel(getMessage("language-label"), self)
+        self.languageCombobox = QtGui.QComboBox(self)
+        self.languageCombobox.addItem(getMessage("automatic-language").format(getMessage("LANGUAGE", getInitialLanguage())))
+        self.languageCombobox.setObjectName("language")
+        self.languageLabel.setObjectName("language")
+
+        self.languages = getLanguages()
+        for lang in self.languages:
+            self.languageCombobox.addItem(self.languages[lang], lang)
+            if lang == self.config['language']:
+                self.languageCombobox.setCurrentIndex(self.languageCombobox.count()-1)
+        self.languageCombobox.currentIndexChanged.connect(self.languageChanged)
+        self.languageLayout.addWidget(self.languageLabel, Qt.AlignRight, 0, 0)
+        self.languageLayout.addWidget(self.languageCombobox, Qt.AlignRight, 1, 0)
+        self.bottomCheckboxLayout.addWidget(self.morenostoreFrame, Qt.AlignRight)
+        self.bottomCheckboxLayout.addWidget(self.languageFrame, Qt.AlignRight)
         self.nostoreCheckbox.setObjectName("noStore")
         self.nostoreCheckbox.toggled.connect(self.runButtonTextUpdate)
         self.bottomCheckboxFrame.setLayout(self.bottomCheckboxLayout)
@@ -790,9 +822,9 @@ class ConfigDialog(QtGui.QDialog):
         self.tabListFrame = QtGui.QFrame()
         self.tabListWidget = QtGui.QListWidget()
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "house.png"),getMessage("basics-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "cog.png"),getMessage("misc-label")))
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "film_link.png"),getMessage("sync-label")))
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "comments.png"),getMessage("messages-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "eye.png"),getMessage("privacy-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
         self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width())
@@ -822,7 +854,6 @@ class ConfigDialog(QtGui.QDialog):
         self.ensureTabListIsVisible()
         self.setFixedWidth(self.minimumSizeHint().width())
         self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
-        self.languageLabel.setFixedWidth(self.languageLabel.width())
 
     def clearGUIData(self, leaveMore=False):
         settings = QSettings("Syncplay", "PlayerList")
@@ -878,9 +909,9 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.setContentsMargins(0,0,0,0)
 
         self.addBasicTab()
+        self.addMiscTab()
         self.addSyncTab()
         self.addMessageTab()
-        self.addPrivacyTab()
         self.tabList()
 
         self.mainLayout.addWidget(self.stackedFrame, 0, 1)
@@ -890,7 +921,6 @@ class ConfigDialog(QtGui.QDialog):
         if self.getMoreState() == False:
             self.tabListFrame.hide()
             self.nostoreCheckbox.hide()
-            self.alwaysshowCheckbox.hide()
             self.resetButton.hide()
         else:
             self.showmoreCheckbox.setChecked(True)
