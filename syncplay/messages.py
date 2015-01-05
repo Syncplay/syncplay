@@ -184,7 +184,6 @@ en = {
       "shownoncontrollerosd-label" : "Include events from non-controllers in controlled rooms",
       "showdifferentroomosd-label" : "Include events in other rooms",
       "showslowdownosd-label" :"Include slowing down / reverting notifications",
-      "showcontactinfo-label" : "Show contact info box",
       "language-label" : "Language:",
       "automatic-language" : "Default ({})", # Default language
       "showdurationnotification-label" : "Warn about media duration mismatches",
@@ -206,7 +205,7 @@ en = {
       "run-label" : "Run Syncplay",
       "storeandrun-label" : "Store configuration and run Syncplay",
 
-      "contact-label" : "Have an idea, bug report or feedback? E-mail <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC channel</a> on irc.freenode.net or <a href=\"https://github.com/Uriziel/syncplay/issues/new\">raise an issue via GitHub</a>. Also check out <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> for info, help and updates.",
+      "contact-label" : "<small><em>Have an idea, bug report or feedback? E-mail <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC channel</a> on irc.freenode.net or <a href=\"https://github.com/Uriziel/syncplay/issues/new\">raise an issue via GitHub</a>. Also check out <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> for info, help and updates.</em></small><br /><br />",
 
       "joinroom-guibuttonlabel" : "Join room",
       "seektime-guibuttonlabel" : "Seek to time",
@@ -290,7 +289,6 @@ en = {
       "shownoncontrollerosd-tooltip" : "Show OSD notifications for events relating to non-controllers who are in controlled rooms.",
       "showdifferentroomosd-tooltip" : "Show OSD notifications for events relating to room user is not in.",
       "showslowdownosd-tooltip" :"Show notifications of slowing down / reverting on time difference.",
-      "showcontactinfo-tooltip" : "Show information box about contacting Syncplay developers in main Syncplay window.",
       "showdurationnotification-tooltip" : "Useful for when a segment in a multi-part file is missing, but can result in false positives.",
       "language-tooltip" : u"Language to be used by Syncplay.",
 
@@ -524,7 +522,6 @@ ru = {
       "shownoncontrollerosd-label" : u"Include events from non-controllers in controlled rooms", # TODO: Translate into Russiann
       "showdifferentroomosd-label" : u"Показывать события других комнат",
       "showslowdownosd-label" : u"Показывать уведомления о замедлении/перемотке",
-      "showcontactinfo-label" : u"Отображать контактную информацию разработчиков",
       "language-label" : u"Language:", # TODO: Translate into Russian
       "automatic-language" : u"Default ({})", # Automatic language # TODO: Translate into Russian
       "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
@@ -546,7 +543,7 @@ ru = {
       "run-label" : u"Запустить Syncplay",
       "storeandrun-label" : u"Сохранить настройки и зап. Syncplay",
 
-      "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues/new\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> за инорфмацией, помощью и обновлениями!",
+      "contact-label" : u"<small><em>Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues/new\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> за инорфмацией, помощью и обновлениями! </em></small><br /><br />",
 
       "joinroom-guibuttonlabel" : u"Зайти в комнату",
       "seektime-guibuttonlabel" : u"Перемотать",
@@ -630,7 +627,6 @@ ru = {
       "shownoncontrollerosd-tooltip" : u"Show OSD notifications for events relating to non-controllers who are in controllerd rooms.", # TODO: Translate into Russian
       "showdifferentroomosd-tooltip" : u"Показывать OSD-уведомления о событиях, относящихся к любым другим комнатам.",
       "showslowdownosd-tooltip" : u"Показывать уведомления о замедлении или перемотке в целях синхронизации.",
-      "showcontactinfo-tooltip" : u"Показывать информационных блок с контактной информацией разработчиков Syncplay на главном окне Syncplay.",
       "showdurationnotification-tooltip" : u"Полезно, когда сегмент составного файла отсутствует. Возможны ложные срабатывания.",
       "language-tooltip" : u"Language to be used by Syncplay.", # TODO: Translate into Russian
 
@@ -862,7 +858,6 @@ de = {
       "shownoncontrollerosd-label" : u"Zeige Ereignisse von nicht geführten Räumen in geführten Räumen.",
       "showdifferentroomosd-label" : u"Zeige Ereignisse in anderen Räumen",
       "showslowdownosd-label" : u"Zeige Verlangsamungs/Zurücksetzungs-Benachrichtigung",
-      "showcontactinfo-label" : u"Zeige Kontaktinformationen",
       "language-label" : u"Sprache:",
       "automatic-language" : u"Automatisch ({})", # Default language # TODO: Change to German translation of "default"
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
@@ -884,7 +879,7 @@ de = {
       "run-label" : u"Syncplay starten",
       "storeandrun-label" : u"Konfiguration speichern und Syncplay starten",
 
-      "contact-label" : u"Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues/new\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates.",
+      "contact-label" : u"<small><em>Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues/new\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates. </em></small><br /><br />",
 
       "joinroom-guibuttonlabel" : u"Raum beitreten",
       "seektime-guibuttonlabel" : u"Spule zu Zeit",
@@ -970,7 +965,6 @@ de = {
       "shownoncontrollerosd-tooltip" : u"OSD-Meldungen bei Ereignissen verursacht durch nicht-Raumleiter in zentral gesteuerten Räumen anzeigen.",
       "showdifferentroomosd-tooltip" : u"OSD-Meldungen zu anderen Räumen als dem aktuell betretenen anzeigen.",
       "showslowdownosd-tooltip" : u"Meldungen bei Geschwindigkeitsänderung anzeigen.",
-      "showcontactinfo-tooltip" : u"Kontaktinformationen zu den Syncplay-Entwicklern im Hauptfenster anzeigen.",
       "showdurationnotification-tooltip" : u"Nützlich, wenn z.B. ein Teil eines mehrteiligen Videos fehlt, kann jedoch auch fehlerhaft anschlagen.",
       "language-tooltip" : u"Die verwendete Sprache von Syncplay",
 

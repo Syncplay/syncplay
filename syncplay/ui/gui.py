@@ -76,8 +76,6 @@ class MainWindow(QtGui.QMainWindow):
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
         try:
-            if self.contactLabel and not self.config['showContactInfo']:
-                self.contactLabel.hide()
             if not constants.SHOW_BUTTON_LABELS:
                 self.hideRoomSeekLabels()
                 self.hideMiscLabels()
@@ -96,7 +94,7 @@ class MainWindow(QtGui.QMainWindow):
         message = message.replace("&gt;", "&gt;</span>")
         message = message.replace("\n", "<br />")
         if noTimestamp:
-            self.newMessage(message + "<br />")
+            self.newMessage("{}<br />".format(message))
         else:
             self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
 
@@ -450,8 +448,16 @@ class MainWindow(QtGui.QMainWindow):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)
 
         window.outputLayout = QtGui.QVBoxLayout()
-        window.outputbox = QtGui.QTextEdit()
+        window.outputbox = QtGui.QTextBrowser()
         window.outputbox.setReadOnly(True)
+        print window.outputbox.textInteractionFlags()
+        window.outputbox.setTextInteractionFlags(window.outputbox.textInteractionFlags() | Qt.TextSelectableByKeyboard)
+        window.outputbox.setOpenExternalLinks(True)
+        window.outputbox.unsetCursor()
+        window.outputbox.moveCursor(QtGui.QTextCursor.End)
+        window.outputbox.insertHtml(getMessage("contact-label"))
+        window.outputbox.moveCursor(QtGui.QTextCursor.End)
+
         window.outputlabel = QtGui.QLabel(getMessage("notifications-heading-label"))
         window.outputFrame = QtGui.QFrame()
         window.outputFrame.setLineWidth(0)
@@ -498,16 +504,6 @@ class MainWindow(QtGui.QMainWindow):
         window.listLayout.addWidget(window.autoPlayPushButton, Qt.AlignRight)
         self.updateAutoPlayIcon()
 
-        window.contactLabel = QtGui.QLabel()
-        window.contactLabel.setWordWrap(True)
-        window.contactLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
-        window.contactLabel.setLineWidth(1)
-        window.contactLabel.setMidLineWidth(0)
-        window.contactLabel.setMargin(2)
-        window.contactLabel.setText(getMessage("contact-label"))
-        window.contactLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
-        window.contactLabel.setOpenExternalLinks(True)
-        window.listLayout.addWidget(window.contactLabel)
         window.listFrame.setLayout(window.listLayout)
 
         window.topSplit.addWidget(window.outputFrame)

@@ -736,10 +736,6 @@ class ConfigDialog(QtGui.QDialog):
         self.showDurationNotificationCheckbox.setObjectName("showDurationNotification")
         self.displaySettingsLayout.addWidget(self.showDurationNotificationCheckbox)
 
-        self.showcontactinfoCheckbox = QCheckBox(getMessage("showcontactinfo-label"))
-        self.showcontactinfoCheckbox.setObjectName("showContactInfo")
-        self.displaySettingsLayout.addWidget(self.showcontactinfoCheckbox)
-
         self.displaySettingsGroup.setLayout(self.displaySettingsLayout)
         self.displaySettingsGroup.setMaximumHeight(self.displaySettingsGroup.minimumSizeHint().height())
         self.displaySettingsLayout.setAlignment(Qt.AlignTop)

@@ -94,7 +94,6 @@ class ConfigurationGetter(object):
                          "showDifferentRoomOSD",
                          "showSameRoomOSD",
                          "showNonControllerOSD",
-                         "showContactInfo" ,
                          "showDurationNotification"
                         ]
         self._tristate = [
@@ -110,7 +109,7 @@ class ConfigurationGetter(object):
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
                         "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave", "readyAtStart"],
-                        "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showContactInfo" , "showDurationNotification"],
+                        "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showDurationNotification"],
                         "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
                         }
 
