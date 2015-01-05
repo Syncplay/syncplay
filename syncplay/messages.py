@@ -186,7 +186,7 @@ en = {
       "showslowdownosd-label" :"Include slowing down / reverting notifications",
       "showcontactinfo-label" : "Show contact info box",
       "language-label" : "Language:",
-      "automatic-language" : "Automatic ({})", # Automatic language #
+      "automatic-language" : "Default ({})", # Default language
       "showdurationnotification-label" : "Warn about media duration mismatches",
       "basics-label" : "Basics",
       "misc-label" : u"Misc",
@@ -526,7 +526,7 @@ ru = {
       "showslowdownosd-label" : u"Показывать уведомления о замедлении/перемотке",
       "showcontactinfo-label" : u"Отображать контактную информацию разработчиков",
       "language-label" : u"Language:", # TODO: Translate into Russian
-      "automatic-language" : u"Automatic ({})", # Automatic language # TODO: Translate into Russian
+      "automatic-language" : u"Default ({})", # Automatic language # TODO: Translate into Russian
       "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
       "basics-label" : u"Основное",
       "misc-label" : u"Misc", # TODO: Translate into Russian
@@ -864,7 +864,7 @@ de = {
       "showslowdownosd-label" : u"Zeige Verlangsamungs/Zurücksetzungs-Benachrichtigung",
       "showcontactinfo-label" : u"Zeige Kontaktinformationen",
       "language-label" : u"Sprache:",
-      "automatic-language" : u"Automatisch ({})", # Automatic language
+      "automatic-language" : u"Automatisch ({})", # Default language # TODO: Change to German translation of "default"
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
       "basics-label" : u"Basics",
       "misc-label" : u"Misc", # TODO: Translate into German
