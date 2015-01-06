@@ -516,13 +516,13 @@ class MainWindow(QtGui.QMainWindow):
     def addBottomLayout(self, window):
         window.bottomLayout = QtGui.QHBoxLayout()
 
-        window.addRoomBox(MainWindow)
         window.addSeekBox(MainWindow)
         window.addMiscBox(MainWindow)
+        window.addRoomBox(MainWindow)
 
-        window.bottomLayout.addWidget(window.roomGroup)
         window.bottomLayout.addWidget(window.seekGroup)
         window.bottomLayout.addWidget(window.miscGroup)
+        window.bottomLayout.addWidget(window.roomGroup)
 
         window.mainLayout.addLayout(window.bottomLayout, Qt.AlignLeft)
 
