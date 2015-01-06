@@ -205,7 +205,7 @@ en = {
       "run-label" : "Run Syncplay",
       "storeandrun-label" : "Store configuration and run Syncplay",
 
-      "contact-label" : "<small><em>Have an idea, bug report or feedback? E-mail <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC channel</a> on irc.freenode.net or <a href=\"https://github.com/Uriziel/syncplay/issues/new\">raise an issue via GitHub</a>. Also check out <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> for info, help and updates.</em></small><br /><br />",
+      "contact-label" : "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues/new\"><nobr>raise an issue</nobr></a> via GitHub or visit <a href=\"http://syncplay.pl/\"><nobr>http://syncplay.pl/</nobr></a>",
 
       "joinroom-guibuttonlabel" : "Join room",
       "seektime-guibuttonlabel" : "Seek to time",

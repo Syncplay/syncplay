@@ -455,7 +455,7 @@ class MainWindow(QtGui.QMainWindow):
         window.outputbox.setOpenExternalLinks(True)
         window.outputbox.unsetCursor()
         window.outputbox.moveCursor(QtGui.QTextCursor.End)
-        window.outputbox.insertHtml(getMessage("contact-label"))
+        window.outputbox.insertHtml(constants.STYLE_CONTACT_INFO.format(getMessage("contact-label")))
         window.outputbox.moveCursor(QtGui.QTextCursor.End)
 
         window.outputlabel = QtGui.QLabel(getMessage("notifications-heading-label"))
