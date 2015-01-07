@@ -543,7 +543,7 @@ ru = {
       "run-label" : u"Запустить Syncplay",
       "storeandrun-label" : u"Сохранить настройки и зап. Syncplay",
 
-      "contact-label" : u"<small><em>Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues/new\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> за инорфмацией, помощью и обновлениями! </em></small><br /><br />",
+      "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues/new\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> за инорфмацией, помощью и обновлениями!",
 
       "joinroom-guibuttonlabel" : u"Зайти в комнату",
       "seektime-guibuttonlabel" : u"Перемотать",
@@ -879,7 +879,7 @@ de = {
       "run-label" : u"Syncplay starten",
       "storeandrun-label" : u"Konfiguration speichern und Syncplay starten",
 
-      "contact-label" : u"<small><em>Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues/new\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates. </em></small><br /><br />",
+      "contact-label" : u"Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues/new\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates.",
 
       "joinroom-guibuttonlabel" : u"Raum beitreten",
       "seektime-guibuttonlabel" : u"Spule zu Zeit",

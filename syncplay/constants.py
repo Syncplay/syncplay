@@ -123,7 +123,7 @@ STYLE_SUCCESSLABEL = "QLabel { color : black; border-style: outset; border-width
 STYLE_READY_PUSHBUTTON = "QPushButton { text-align: left; padding: 10px 5px 10px 5px;}"
 STYLE_AUTO_PLAY_PUSHBUTTON = "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }"
 STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
-STYLE_CONTACT_INFO = "<span style=\"color: grey\"><strong><small>{}</span><br /><br />" # Contact info message
+STYLE_CONTACT_INFO = u"<span style=\"color: grey\"><strong><small>{}</span><br /><br />" # Contact info message
 STYLE_USERNAME = "color: #367AA9; font-weight:bold;"
 STYLE_ERRORNOTIFICATION = "color: red;"
 STYLE_DIFFERENTITEM_COLOR = 'red'
