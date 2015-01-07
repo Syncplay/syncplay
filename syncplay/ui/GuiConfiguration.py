@@ -729,16 +729,40 @@ class ConfigDialog(QtGui.QDialog):
 
         self.displaySettingsGroup = QtGui.QGroupBox(getMessage("messages-other-title"))
         self.displaySettingsLayout = QtGui.QVBoxLayout()
-        self.displaySettingsLayout.setAlignment(Qt.AlignTop)
+        self.displaySettingsLayout.setAlignment(Qt.AlignTop & Qt.AlignLeft)
         self.displaySettingsFrame = QtGui.QFrame()
 
         self.showDurationNotificationCheckbox = QCheckBox(getMessage("showdurationnotification-label"))
         self.showDurationNotificationCheckbox.setObjectName("showDurationNotification")
         self.displaySettingsLayout.addWidget(self.showDurationNotificationCheckbox)
 
+        self.languageFrame = QtGui.QFrame()
+        self.languageLayout = QtGui.QHBoxLayout()
+        self.languageLayout.setContentsMargins(0, 0, 0, 0)
+        self.languageFrame.setLayout(self.languageLayout)
+        self.languageFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.languageLayout.setAlignment(Qt.AlignTop & Qt.AlignLeft)
+        self.languageLabel = QLabel(getMessage("language-label"), self)
+        self.languageCombobox = QtGui.QComboBox(self)
+        self.languageCombobox.addItem(getMessage("automatic-language").format(getMessage("LANGUAGE", getInitialLanguage())))
+
+        self.languages = getLanguages()
+        for lang in self.languages:
+            self.languageCombobox.addItem(self.languages[lang], lang)
+            if lang == self.config['language']:
+                self.languageCombobox.setCurrentIndex(self.languageCombobox.count()-1)
+        self.languageCombobox.currentIndexChanged.connect(self.languageChanged)
+        self.languageLayout.addWidget(self.languageLabel, 1, 0)
+        self.languageLayout.addWidget(self.languageCombobox, 1, 1)
+        self.displaySettingsLayout.addWidget(self.languageFrame)
+
+        self.languageLabel.setObjectName("language")
+        self.languageCombobox.setObjectName("language")
+        self.languageFrame.setMaximumWidth(self.languageFrame.minimumSizeHint().width())
+
         self.displaySettingsGroup.setLayout(self.displaySettingsLayout)
         self.displaySettingsGroup.setMaximumHeight(self.displaySettingsGroup.minimumSizeHint().height())
-        self.displaySettingsLayout.setAlignment(Qt.AlignTop)
+        self.displaySettingsLayout.setAlignment(Qt.AlignTop & Qt.AlignLeft)
         self.messageLayout.addWidget(self.displaySettingsGroup)
 
         # messageFrame
@@ -774,43 +798,17 @@ class ConfigDialog(QtGui.QDialog):
 
         self.bottomCheckboxFrame = QtGui.QFrame()
         self.bottomCheckboxFrame.setContentsMargins(0,0,0,0)
-        self.bottomCheckboxLayout = QtGui.QHBoxLayout()
-
-        self.languageFrame = QtGui.QFrame()
-        self.languageLayout = QtGui.QGridLayout()
-        self.languageFrame.setLayout(self.languageLayout)
-        self.languageLayout.setAlignment(Qt.AlignRight)
+        self.bottomCheckboxLayout = QtGui.QGridLayout()
+        self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
 
         self.nostoreCheckbox = QCheckBox(getMessage("nostore-label"))
-
-        self.morenostoreFrame = QtGui.QFrame()
-        self.morenostoreLayout = QtGui.QHBoxLayout()
-        self.morenostoreLayout.setContentsMargins(0,0,0,0)
-        self.morenostoreFrame.setLayout(self.morenostoreLayout)
-        self.morenostoreLayout.setAlignment(Qt.AlignLeft)
-        self.morenostoreLayout.addWidget(self.showmoreCheckbox, Qt.AlignLeft)
-        self.morenostoreLayout.addWidget(self.nostoreCheckbox, Qt.AlignLeft)
-
-        self.languageLayout.setContentsMargins(0,0,0,0)
-        self.languageLabel = QLabel(getMessage("language-label"), self)
-        self.languageCombobox = QtGui.QComboBox(self)
-        self.languageCombobox.addItem(getMessage("automatic-language").format(getMessage("LANGUAGE", getInitialLanguage())))
-        self.languageCombobox.setObjectName("language")
-        self.languageLabel.setObjectName("language")
-
-        self.languages = getLanguages()
-        for lang in self.languages:
-            self.languageCombobox.addItem(self.languages[lang], lang)
-            if lang == self.config['language']:
-                self.languageCombobox.setCurrentIndex(self.languageCombobox.count()-1)
-        self.languageCombobox.currentIndexChanged.connect(self.languageChanged)
-        self.languageLayout.addWidget(self.languageLabel, Qt.AlignRight, 0, 0)
-        self.languageLayout.addWidget(self.languageCombobox, Qt.AlignRight, 1, 0)
-        self.bottomCheckboxLayout.addWidget(self.morenostoreFrame, Qt.AlignRight)
-        self.bottomCheckboxLayout.addWidget(self.languageFrame, Qt.AlignRight)
+        self.bottomCheckboxLayout.addWidget(self.showmoreCheckbox)
+        self.bottomCheckboxLayout.addWidget(self.nostoreCheckbox, 0, 2, Qt.AlignRight)
+        self.alwaysshowCheckbox.setObjectName(constants.INVERTED_STATE_MARKER + "forceGuiPrompt")
         self.nostoreCheckbox.setObjectName("noStore")
         self.nostoreCheckbox.toggled.connect(self.runButtonTextUpdate)
         self.bottomCheckboxFrame.setLayout(self.bottomCheckboxLayout)
+
         self.mainLayout.addWidget(self.bottomCheckboxFrame, 2, 0, 1, 2)
 
     def tabList(self):
