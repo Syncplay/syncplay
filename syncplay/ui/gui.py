@@ -450,7 +450,6 @@ class MainWindow(QtGui.QMainWindow):
         window.outputLayout = QtGui.QVBoxLayout()
         window.outputbox = QtGui.QTextBrowser()
         window.outputbox.setReadOnly(True)
-        print window.outputbox.textInteractionFlags()
         window.outputbox.setTextInteractionFlags(window.outputbox.textInteractionFlags() | Qt.TextSelectableByKeyboard)
         window.outputbox.setOpenExternalLinks(True)
         window.outputbox.unsetCursor()
