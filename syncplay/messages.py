@@ -213,7 +213,6 @@ en = {
       "joinroom-menu-label" : "Join room",
       "seektime-menu-label" : "Seek to time",
       "undoseek-menu-label" : "Undo seek",
-      "togglepause-menu-label" : "Toggle pause",
       "play-menu-label" : "Play",
       "pause-menu-label" : "Pause",
       "autoplay-menu-label" : u"Auto-play when everyone is ready",
@@ -574,6 +573,8 @@ ru = {
       "createcontrolledroom-menu-label" : u"&Create controlled room", # TODO: Translate into Russian
       "identifyascontroller-menu-label" : u"&Identify as room controller", # TODO: Translate into Russian
 
+      "playback-menu-label" : u"&Playback", # TODO: Translate into Russian
+
       "help-menu-label" : u"&Помощь",
       "userguide-menu-label" : u"&Руководство Пользователя",
       "update-menu-label" : u"Check for &update", # TODO: Translate into Russian
@@ -882,7 +883,6 @@ de = {
       "joinroom-menu-label" : u"Raum beitreten",
       "seektime-menu-label" : u"Spule zu Zeit",
       "undoseek-menu-label" : u"Rückgängig",
-      "togglepause-menu-label" : u"Pause umschalten",
       "play-menu-label" : u"Wiedergabe",
       "pause-menu-label" : u"Pause",
       "autoplay-menu-label" : u"Auto-play when everyone is ready", # TODO: Translate into German
@@ -907,9 +907,11 @@ de = {
       "createcontrolledroom-menu-label" : u"&Zentral gesteuerten Raum erstellen",
       "identifyascontroller-menu-label" : u"Als Raumleiter &identifizieren",
 
+      "playback-menu-label" : u"&Playback", # TODO: Translate into German
+
       "help-menu-label" : u"&Hilfe",
       "userguide-menu-label" : u"&Benutzerhandbuch öffnen",
-      "update-menu-label" : u"Check for &update", # TODO: Translate into Russian
+      "update-menu-label" : u"Check for &update", # TODO: Translate into German
 
       "setoffset-msgbox-label" : u"Offset einstellen",
       "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
