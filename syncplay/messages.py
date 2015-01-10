@@ -123,6 +123,9 @@ en = {
        "vlc-failed-versioncheck": "This version of VLC is not supported by Syncplay. Please use VLC 2.",
        "vlc-failed-other" : "When trying to load the syncplay.lua interface script VLC has provided the following error: {}",  # Syncplay Error
 
+       "invalid-seek-value" : u"Invalid seek value",
+       "invalid-offset-value" : u"Invalid offset value",
+
       # Client arguments
       "argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
       "argument-epilog" : 'If no options supplied _config values will be used',
@@ -207,14 +210,15 @@ en = {
 
       "contact-label" : "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues/new\"><nobr>raise an issue</nobr></a> via GitHub or visit <a href=\"http://syncplay.pl/\"><nobr>http://syncplay.pl/</nobr></a>",
 
-      "joinroom-guibuttonlabel" : "Join room",
-      "seektime-guibuttonlabel" : "Seek to time",
-      "undoseek-guibuttonlabel" : "Undo seek",
-      "togglepause-guibuttonlabel" : "Toggle pause",
-      "play-guibuttonlabel" : "Play",
-      "pause-guibuttonlabel" : "Pause",
+      "joinroom-menu-label" : "Join room",
+      "seektime-menu-label" : "Seek to time",
+      "undoseek-menu-label" : "Undo seek",
+      "togglepause-menu-label" : "Toggle pause",
+      "play-menu-label" : "Play",
+      "pause-menu-label" : "Pause",
+      "autoplay-menu-label" : u"Auto-play when everyone is ready",
+
       "ready-guipushbuttonlabel" : u"I'm ready to watch!",
-      "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready",
 
       "roomuser-heading-label" : "Room / User",
       "size-heading-label" : "Size",
@@ -222,9 +226,6 @@ en = {
       "filename-heading-label" : "Filename",
       "notifications-heading-label" : "Notifications",
       "userlist-heading-label" : "List of who is playing what",
-      "othercommands-heading-label" :  "Other commands",
-      "room-heading-label" :  "Room",
-      "seek-heading-label" :  "Seek",
 
       "browseformedia-label" : "Browse for media files",
 
@@ -236,6 +237,8 @@ en = {
       "setoffset-menu-label" : "Set &offset",
       "createcontrolledroom-menu-label" : "&Create controlled room",
       "identifyascontroller-menu-label" : "&Identify as room controller",
+
+      "playback-menu-label" : u"&Playback",
 
       "help-menu-label" : "&Help",
       "userguide-menu-label" : "Open user &guide",
@@ -295,12 +298,8 @@ en = {
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
       "reset-tooltip" : "Reset all settings to the default configuration.",
 
-      "togglepause-tooltip" : "Pause/unpause media.",
-      "play-tooltip" : "Unpause media.",
-      "pause-tooltip" : "Pause media.",
-      "undoseek-tooltip" : "Seek to where you were before the most recent seek.",
       "joinroom-tooltip" : "Leave current room and joins specified room.",
-      "seektime-tooltip" : "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",
+      "seektime-msgbox-label" : "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",
 
       # In-userlist notes (GUI)
       "differentsize-note" : "Different size!",
@@ -461,6 +460,9 @@ ru = {
       "vlc-failed-versioncheck" : u"Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
       "vlc-failed-other" : u"Во время загрузки скрипта интерфейса syncplay.lua в VLC произошла следующая ошибка: {}",  # Syncplay Error
 
+       "invalid-seek-value" : u"Invalid seek value", # TODO: Translate into Russian
+       "invalid-offset-value" : u"Invalid offset value", # TODO: Translate into Russian
+
       # Client arguments
       "argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет.',
       "argument-epilog" : u'Если параметр не будет передан, то будет использоваться значение, указанное в _config.',
@@ -545,14 +547,14 @@ ru = {
 
       "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues/new\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> за инорфмацией, помощью и обновлениями!",
 
-      "joinroom-guibuttonlabel" : u"Зайти в комнату",
-      "seektime-guibuttonlabel" : u"Перемотать",
-      "undoseek-guibuttonlabel" : u"Отменить перемотку",
-      "togglepause-guibuttonlabel" : u"Вкл./выкл. паузу",
-      "play-guibuttonlabel" : u"Play",
-      "pause-guibuttonlabel" : u"Пауза",
+      "joinroom-menu-label" : u"Зайти в комнату",
+      "seektime-menu-label" : u"Перемотать",
+      "undoseek-menu-label" : u"Отменить перемотку",
+      "play-menu-label" : u"Play",
+      "pause-menu-label" : u"Пауза",
+      "autoplay-menu-label" : u"Auto-play when everyone is ready", # TODO: Translate into Russian
+
       "ready-guipushbuttonlabel" : u"I'm ready to watch!", # TODO: Translate into Russian
-      "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready", # TODO: Translate into Russian
 
       "roomuser-heading-label" : u"Комната / Пользователь",
       "size-heading-label" : u"Size", # TODO: Translate into Russian
@@ -560,9 +562,6 @@ ru = {
       "filename-heading-label" : u"Filename", # TODO: Translate into Russian
       "notifications-heading-label" : u"Уведомления",
       "userlist-heading-label" : u"Кто что смотрит",
-      "othercommands-heading-label" : u"Другие команды",
-      "room-heading-label" : u"Комната",
-      "seek-heading-label" : u"Перемотка",
 
       "browseformedia-label" : u"Выбрать видеофайл",
 
@@ -633,12 +632,8 @@ ru = {
       "help-tooltip" : u"Открыть Руководство Пользователя на Syncplay.pl.",
       "reset-tooltip" : u"Сбрасывает все настройки Syncplay в начальное состояние.",
 
-      "togglepause-tooltip" : u"Приостановить/продолжить просмотр.",
-      "play-tooltip" : u"Продолжить просмотр.",
-      "pause-tooltip" : u"Приостановить просмотр.",
-      "undoseek-tooltip" : u"Перейти к тому месту, которое Вы просматривали до перемотки.",
       "joinroom-tooltip" : u"Покинуть комнату и зайти в другую, указанную комнату.",
-      "seektime-tooltip" : u"Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",
+      "seektime-msgbox-label" : u"Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",
 
       # In-userlist notes (GUI)
       "differentsize-note" : u"Размер файла не совпадает!",
@@ -799,6 +794,9 @@ de = {
        "vlc-failed-versioncheck": u"Diese VLC-Version wird von Syncplay nicht unterstützt. Bitte nutze VLC 2.0",
        "vlc-failed-other" : u"Beim Laden des syncplay.lua Interface-Skripts durch VLC trat folgender Fehler auf: {}",  # Syncplay Error
 
+       "invalid-seek-value" : u"Invalid seek value", # TODO: Translate into German
+       "invalid-offset-value" : u"Invalid offset value", # TODO: Translate into German
+
       # Client arguments
       "argument-description" : u'Anwendung, um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren.',
       "argument-epilog" : u'Wenn keine Optionen angegeben sind, werden die _config-Werte verwendet',
@@ -881,14 +879,15 @@ de = {
 
       "contact-label" : u"Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues/new\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates.",
 
-      "joinroom-guibuttonlabel" : u"Raum beitreten",
-      "seektime-guibuttonlabel" : u"Spule zu Zeit",
-      "undoseek-guibuttonlabel" : u"Rückgängig",
-      "togglepause-guibuttonlabel" : u"Pause umschalten",
-      "play-guibuttonlabel" : u"Wiedergabe",
-      "pause-guibuttonlabel" : u"Pause",
+      "joinroom-menu-label" : u"Raum beitreten",
+      "seektime-menu-label" : u"Spule zu Zeit",
+      "undoseek-menu-label" : u"Rückgängig",
+      "togglepause-menu-label" : u"Pause umschalten",
+      "play-menu-label" : u"Wiedergabe",
+      "pause-menu-label" : u"Pause",
+      "autoplay-menu-label" : u"Auto-play when everyone is ready", # TODO: Translate into German
+
       "ready-guipushbuttonlabel" : u"I'm ready to watch!", # TODO: Translate into German
-      "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready", # TODO: Translate into German
 
       "roomuser-heading-label" : u"Raum / Benutzer",
       "size-heading-label" : u"Größe",
@@ -896,9 +895,6 @@ de = {
       "filename-heading-label" : u"Dateiname",
       "notifications-heading-label" : u"Benachrichtigungen",
       "userlist-heading-label" : u"Liste der gespielten Dateien",
-      "othercommands-heading-label" :  u"Andere Befehle",
-      "room-heading-label" :  u"Raum",
-      "seek-heading-label" :  u"Spulen",
 
       "browseformedia-label" : u"Nach Mediendateien durchsuchen",
 
@@ -971,12 +967,8 @@ de = {
       "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
       "reset-tooltip" : u"Alle Einstellungen auf Standardwerte zurücksetzen.",
 
-      "togglepause-tooltip" : u"Datei starten/pausieren",
-      "play-tooltip" : u"Fortsetzen",
-      "pause-tooltip" : u"Pausieren",
-      "undoseek-tooltip" : u"Den letzten Spulvorgang rückgängig machen.",
       "joinroom-tooltip" : u"Den aktuellen Raum verlassen und stattdessen den angegebenen betreten.",
-      "seektime-tooltip" : u"Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
+      "seektime-msgbox-label" : u"Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
 
       # In-userlist notes (GUI)
       "differentsize-note" : u"Verschiedene Größe!",

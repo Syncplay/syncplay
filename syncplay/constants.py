@@ -47,7 +47,6 @@ PROTOCOL_TIMEOUT = 12.5
 RECONNECT_RETRIES = 10
 SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
-MERGE_PLAYPAUSE_BUTTONS = False
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 #Usually there's no need to adjust these
 LAST_PAUSED_DIFF_THRESHOLD = 2
@@ -121,7 +120,6 @@ STYLE_SUBLABEL  = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 16px; ba
 STYLE_ERRORLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: red; padding: 2px; background: #FFAAAA; }"
 STYLE_SUCCESSLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: green; padding: 2px; background: #AAFFAA; }"
 STYLE_READY_PUSHBUTTON = "QPushButton { text-align: left; padding: 10px 5px 10px 5px;}"
-STYLE_AUTO_PLAY_PUSHBUTTON = "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }"
 STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
 STYLE_CONTACT_INFO = u"<span style=\"color: grey\"><strong><small>{}</span><br /><br />" # Contact info message
 STYLE_USERNAME = "color: #367AA9; font-weight:bold;"
