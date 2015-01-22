@@ -235,6 +235,7 @@ en = {
       "openstreamurl-menu-label" : "Open &media stream URL",
       "exit-menu-label" : "E&xit",
       "advanced-menu-label" : "&Advanced",
+      "window-menu-label" : "&Window",
       "setoffset-menu-label" : "Set &offset",
       "createcontrolledroom-menu-label" : "&Create controlled room",
       "identifyascontroller-menu-label" : "&Identify as room controller",
@@ -574,6 +575,7 @@ ru = {
       "openstreamurl-menu-label" : u"Open &media stream URL", # TODO: Translate into Russian
       "exit-menu-label" : u"&Выход",
       "advanced-menu-label" : u"&Дополнительно",
+      "window-menu-label" : u"&Window", # TODO: Translate into Russian
       "setoffset-menu-label" : u"Установить &смещение",
       "createcontrolledroom-menu-label" : u"&Create controlled room", # TODO: Translate into Russian
       "identifyascontroller-menu-label" : u"&Identify as room controller", # TODO: Translate into Russian
@@ -910,6 +912,7 @@ de = {
       "openstreamurl-menu-label" : u"Open &media stream URL", # TODO: Translate into German
       "exit-menu-label" : u"&Beenden",
       "advanced-menu-label" : u"&Erweitert",
+      "window-menu-label" : u"&Window", # TODO: Translate into German
       "setoffset-menu-label" : u"&Offset einstellen",
       "createcontrolledroom-menu-label" : u"&Zentral gesteuerten Raum erstellen",
       "identifyascontroller-menu-label" : u"Als Raumleiter &identifizieren",

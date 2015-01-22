@@ -556,14 +556,18 @@ class MainWindow(QtGui.QMainWindow):
                                                                     getMessage("identifyascontroller-menu-label"))
         window.identifyascontroller.triggered.connect(self.identifyAsController)
 
-        window.playbackAction = window.advancedMenu.addAction(getMessage("playbackbuttons-menu-label"))
+        # Window menu
+
+        window.windowMenu = QtGui.QMenu(getMessage("window-menu-label"), self)
+
+        window.playbackAction = window.windowMenu.addAction(getMessage("playbackbuttons-menu-label"))
         window.playbackAction.setCheckable(True)
         window.playbackAction.triggered.connect(self.updatePlaybackFrameVisibility)
 
-        window.autoplayAction = window.advancedMenu.addAction(getMessage("autoplay-menu-label"))
+        window.autoplayAction = window.windowMenu.addAction(getMessage("autoplay-menu-label"))
         window.autoplayAction.setCheckable(True)
         window.autoplayAction.triggered.connect(self.updateAutoplayVisibility)
-        window.menuBar.addMenu(window.advancedMenu)
+        window.menuBar.addMenu(window.windowMenu)
 
 
         # Help menu
