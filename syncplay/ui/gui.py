@@ -708,7 +708,6 @@ class MainWindow(QtGui.QMainWindow):
         settings.setValue("size", self.size())
         settings.setValue("pos", self.pos())
         settings.setValue("showPlaybackButtons", self.playbackAction.isChecked())
-        print settings.value("showPlaybackButtons")
         settings.setValue("showAutoPlayButton", self.autoplayAction.isChecked())
         settings.endGroup()
         settings = QSettings("Syncplay", "Interface")
@@ -721,7 +720,6 @@ class MainWindow(QtGui.QMainWindow):
         settings.beginGroup("MainWindow")
         self.resize(settings.value("size", QSize(700, 500)))
         self.move(settings.value("pos", QPoint(200, 200)))
-        print settings.value("showPlaybackButtons", "False")
         if settings.value("showPlaybackButtons", "false") == "true":
             self.playbackAction.setChecked(True)
             self.updatePlaybackFrameVisibility()
