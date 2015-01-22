@@ -215,7 +215,9 @@ en = {
       "undoseek-menu-label" : "Undo seek",
       "play-menu-label" : "Play",
       "pause-menu-label" : "Pause",
-      "autoplay-menu-label" : u"Auto-play when everyone is ready",
+      "playbackbuttons-menu-label" : u"Show playback buttons",
+      "autoplay-menu-label" : u"Show auto-play button",
+      "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready",
 
       "ready-guipushbuttonlabel" : u"I'm ready to watch!",
 
@@ -551,7 +553,10 @@ ru = {
       "undoseek-menu-label" : u"Отменить перемотку",
       "play-menu-label" : u"Play",
       "pause-menu-label" : u"Пауза",
-      "autoplay-menu-label" : u"Auto-play when everyone is ready", # TODO: Translate into Russian
+      "playbackbuttons-menu-label" : u"Show playback buttons",  # TODO: Translate into Russian
+      "autoplay-menu-label" : u"Show auto-play button", # TODO: Translate into Russian
+      "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready", # TODO: Translate into Russian
+
 
       "ready-guipushbuttonlabel" : u"I'm ready to watch!", # TODO: Translate into Russian
 
@@ -885,7 +890,9 @@ de = {
       "undoseek-menu-label" : u"Rückgängig",
       "play-menu-label" : u"Wiedergabe",
       "pause-menu-label" : u"Pause",
-      "autoplay-menu-label" : u"Auto-play when everyone is ready", # TODO: Translate into German
+      "playbackbuttons-menu-label" : u"Show playback buttons",  # TODO: Translate into German
+      "autoplay-menu-label" : u"Show auto-play button", # TODO: Translate into German
+      "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready", # TODO: Translate into German
 
       "ready-guipushbuttonlabel" : u"I'm ready to watch!", # TODO: Translate into German
 

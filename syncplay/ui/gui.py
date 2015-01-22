@@ -207,11 +207,6 @@ class MainWindow(QtGui.QMainWindow):
             self.readyPushButton.setChecked(newState)
         self.updateReadyIcon()
 
-    def updateAutoPlayState(self, newState):
-        oldState = self.autoplayAction.isChecked()
-        if newState != oldState and newState != None:
-            self.autoplayAction.setChecked(newState)
-
     def roomClicked(self, item):
         while item.parent().row() != -1:
             item = item.parent()
@@ -438,6 +433,23 @@ class MainWindow(QtGui.QMainWindow):
         window.roomFrame.setMaximumHeight(window.roomFrame.sizeHint().height())
         window.listLayout.addWidget(window.roomFrame, Qt.AlignRight)
 
+        window.listFrame.setLayout(window.listLayout)
+
+        window.topSplit.addWidget(window.outputFrame)
+        window.topSplit.addWidget(window.listFrame)
+        window.topSplit.setStretchFactor(0,4)
+        window.topSplit.setStretchFactor(1,5)
+        window.mainLayout.addWidget(window.topSplit)
+        window.topSplit.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+
+    def addBottomLayout(self, window):
+        window.bottomLayout = QtGui.QHBoxLayout()
+        window.bottomFrame = QtGui.QFrame()
+        window.bottomFrame.setLayout(window.bottomLayout)
+        window.bottomLayout.setContentsMargins(0,0,0,0)
+
+        self.addPlaybackLayout(window)
+
         window.readyPushButton = QtGui.QPushButton()
         readyFont = QtGui.QFont()
         readyFont.setWeight(QtGui.QFont.Bold)
@@ -448,15 +460,55 @@ class MainWindow(QtGui.QMainWindow):
         window.readyPushButton.setFont(readyFont)
         window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON)
         window.listLayout.addWidget(window.readyPushButton, Qt.AlignRight)
+        window.autoPlayPushButton = QtGui.QPushButton()
+        window.autoPlayPushButton.setVisible(False)
+        autoPlayFont = QtGui.QFont()
+        autoPlayFont.setWeight(QtGui.QFont.Bold)
+        window.autoPlayPushButton.setText(getMessage("autoplay-guipushbuttonlabel"))
+        window.autoPlayPushButton.setCheckable(True)
+        window.autoPlayPushButton.setAutoExclusive(False)
+        window.autoPlayPushButton.toggled.connect(self.changeAutoPlayState)
+        window.autoPlayPushButton.setFont(autoPlayFont)
+        window.autoPlayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON)
+        window.listLayout.addWidget(window.autoPlayPushButton, Qt.AlignRight)
+        self.updateAutoPlayIcon()
+        window.mainLayout.addWidget(window.bottomFrame, Qt.AlignLeft)
+        window.bottomFrame.setMaximumHeight(window.bottomFrame.minimumSizeHint().height())
 
-        window.listFrame.setLayout(window.listLayout)
+    def addPlaybackLayout(self, window):
+        window.playbackFrame = QtGui.QFrame()
+        window.playbackFrame.setVisible(False)
+        window.playbackFrame.setContentsMargins(0,0,0,0)
+        window.playbackLayout = QtGui.QHBoxLayout()
+        window.playbackLayout.setAlignment(Qt.AlignLeft)
+        window.playbackLayout.setContentsMargins(0,0,0,0)
+        window.playbackFrame.setLayout(window.playbackLayout)
+        window.seekInput = QtGui.QLineEdit()
+        window.seekInput.returnPressed.connect(self.seekPosition)
+        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'), "")
+        window.seekButton.setToolTip(getMessage("seektime-menu-label"))
+        window.seekButton.pressed.connect(self.seekPosition)
+        window.seekInput.setText("0:00")
+        window.seekInput.setFixedWidth(60)
+        window.playbackLayout.addWidget(window.seekInput)
+        window.playbackLayout.addWidget(window.seekButton)
+        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'), "")
+        window.unseekButton.setToolTip(getMessage("undoseek-menu-label"))
+        window.unseekButton.pressed.connect(self.undoSeek)
 
-        window.topSplit.addWidget(window.outputFrame)
-        window.topSplit.addWidget(window.listFrame)
-        window.topSplit.setStretchFactor(0,4)
-        window.topSplit.setStretchFactor(1,5)
-        window.mainLayout.addWidget(window.topSplit)
-        window.topSplit.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+        window.miscLayout = QtGui.QHBoxLayout()
+        window.playbackLayout.addWidget(window.unseekButton)
+        window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'), "")
+        window.playButton.setToolTip(getMessage("play-menu-label"))
+        window.playButton.pressed.connect(self.play)
+        window.playbackLayout.addWidget(window.playButton)
+        window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'), "")
+        window.pauseButton.setToolTip(getMessage("pause-menu-label"))
+        window.pauseButton.pressed.connect(self.pause)
+        window.playbackLayout.addWidget(window.pauseButton)
+        window.playbackFrame.setMaximumHeight(window.playbackFrame.sizeHint().height())
+        window.playbackFrame.setMaximumWidth(window.playbackFrame.sizeHint().width())
+        window.outputLayout.addWidget(window.playbackFrame)
 
     def addMenubar(self, window):
         window.menuBar = QtGui.QMenuBar()
@@ -503,11 +555,16 @@ class MainWindow(QtGui.QMainWindow):
         window.identifyascontroller = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'key_go.png'),
                                                                     getMessage("identifyascontroller-menu-label"))
         window.identifyascontroller.triggered.connect(self.identifyAsController)
-        window.menuBar.addMenu(window.advancedMenu)
+
+        window.playbackAction = window.advancedMenu.addAction(getMessage("playbackbuttons-menu-label"))
+        window.playbackAction.setCheckable(True)
+        window.playbackAction.triggered.connect(self.updatePlaybackFrameVisibility)
 
         window.autoplayAction = window.advancedMenu.addAction(getMessage("autoplay-menu-label"))
         window.autoplayAction.setCheckable(True)
-        window.autoplayAction.triggered.connect(self.changeAutoPlayState)
+        window.autoplayAction.triggered.connect(self.updateAutoplayVisibility)
+        window.menuBar.addMenu(window.advancedMenu)
+
 
         # Help menu
 
@@ -544,12 +601,25 @@ class MainWindow(QtGui.QMainWindow):
         self.listbox.insertHtml(item)
         self.listbox.moveCursor(QtGui.QTextCursor.End)
 
+    def updatePlaybackFrameVisibility(self):
+        self.playbackFrame.setVisible(self.playbackAction.isChecked())
+
+    def updateAutoplayVisibility(self):
+        self.autoPlayPushButton.setVisible(self.autoplayAction.isChecked())
+
     def changeReadyState(self):
         self.updateReadyIcon()
         self._syncplayClient.changeReadyState(self.readyPushButton.isChecked())
 
+    def updateAutoPlayState(self, newState):
+        oldState = self.autoPlayPushButton.isChecked()
+        if newState != oldState and newState != None:
+            self.autoPlayPushButton.setChecked(newState)
+        self.updateAutoPlayIcon()
+
     def changeAutoPlayState(self):
-        self._syncplayClient.changeAutoPlayState(self.autoplayAction.isChecked())
+        self.updateAutoPlayIcon()
+        self._syncplayClient.changeAutoPlayState(self.autoPlayPushButton.isChecked())
 
     def updateReadyIcon(self):
         ready = self.readyPushButton.isChecked()
@@ -557,6 +627,13 @@ class MainWindow(QtGui.QMainWindow):
             self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
         else:
             self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'empty_checkbox.png'))
+
+    def updateAutoPlayIcon(self):
+        ready = self.autoPlayPushButton.isChecked()
+        if ready:
+            self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
+        else:
+            self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'empty_checkbox.png'))
 
     def automaticUpdateCheck(self):
         currentDateTime = datetime.utcnow()
@@ -626,6 +703,9 @@ class MainWindow(QtGui.QMainWindow):
         settings.beginGroup("MainWindow")
         settings.setValue("size", self.size())
         settings.setValue("pos", self.pos())
+        settings.setValue("showPlaybackButtons", self.playbackAction.isChecked())
+        print settings.value("showPlaybackButtons")
+        settings.setValue("showAutoPlayButton", self.autoplayAction.isChecked())
         settings.endGroup()
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
@@ -637,6 +717,13 @@ class MainWindow(QtGui.QMainWindow):
         settings.beginGroup("MainWindow")
         self.resize(settings.value("size", QSize(700, 500)))
         self.move(settings.value("pos", QPoint(200, 200)))
+        print settings.value("showPlaybackButtons", "False")
+        if settings.value("showPlaybackButtons", "false") == "true":
+            self.playbackAction.setChecked(True)
+            self.updatePlaybackFrameVisibility()
+        if settings.value("showAutoPlayButton", "false") == "true":
+            self.autoplayAction.setChecked(True)
+            self.updateAutoplayVisibility()
         settings.endGroup()
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
@@ -653,6 +740,7 @@ class MainWindow(QtGui.QMainWindow):
         self.setWindowTitle("Syncplay v" + version)
         self.mainLayout = QtGui.QVBoxLayout()
         self.addTopLayout(self)
+        self.addBottomLayout(self)
         self.addMenubar(self)
         self.addMainFrame(self)
         self.loadSettings()
