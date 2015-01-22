@@ -556,6 +556,8 @@ class MainWindow(QtGui.QMainWindow):
                                                                     getMessage("identifyascontroller-menu-label"))
         window.identifyascontroller.triggered.connect(self.identifyAsController)
 
+        window.menuBar.addMenu(window.advancedMenu)
+
         # Window menu
 
         window.windowMenu = QtGui.QMenu(getMessage("window-menu-label"), self)
