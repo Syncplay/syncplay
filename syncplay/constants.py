@@ -13,7 +13,6 @@ RECENT_CLIENT_THRESHOLD = "1.2.9"  #This and higher considered 'recent' clients 
 WARN_OLD_CLIENTS = True  #Use MOTD to inform old clients to upgrade
 LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
-SHOW_BUTTON_LABELS = True  # If disabled, only shows icons for main GUI buttons
 SHOW_TOOLTIPS = True
 WARN_ABOUT_MISSING_STRINGS = False # (If debug mode is enabled)
 FALLBACK_INITIAL_LANGUAGE = "en"

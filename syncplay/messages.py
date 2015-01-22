@@ -1059,9 +1059,6 @@ def isValidLanguage(language):
     return messages.has_key(language)
 
 def getMessage(type_, locale=None):
-    if constants.SHOW_BUTTON_LABELS == False:
-        if "-guibuttonlabel" in type_:
-            return ""
     if constants.SHOW_TOOLTIPS == False:
         if "-tooltip" in type_:
             return ""

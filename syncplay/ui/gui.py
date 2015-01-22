@@ -76,10 +76,8 @@ class MainWindow(QtGui.QMainWindow):
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
         try:
-            if not constants.SHOW_BUTTON_LABELS:
-                self.hideRoomSeekLabels()
-                self.hideMiscLabels()
-        except ():
+            self.updateReadyState(self.config['readyAtStart'])
+        except:
             pass
         self.automaticUpdateCheck()
 
@@ -204,7 +202,9 @@ class MainWindow(QtGui.QMainWindow):
     def updateReadyState(self, newState):
         oldState = self.readyPushButton.isChecked()
         if newState != oldState and newState != None:
+            self.readyPushButton.blockSignals(True)
             self.readyPushButton.setChecked(newState)
+            self.readyPushButton.blockSignals(False)
         self.updateReadyIcon()
 
     def roomClicked(self, item):
