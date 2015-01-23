@@ -118,8 +118,10 @@ class ConfigurationGetter(object):
     def _validateArguments(self):
         if self._config['resetConfig']:
             language = self._config['language']
+            checkForUpdatesAutomatically = self._config['checkForUpdatesAutomatically']
             self._config = self._defaultConfig
             self._config['language'] = language
+            self._config['checkForUpdatesAutomatically'] = checkForUpdatesAutomatically
             raise InvalidConfigValue("*"+getMessage("config-cleared-notification"))
 
         if not isValidLanguage(self._config['language']):
