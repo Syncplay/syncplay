@@ -170,6 +170,10 @@ class MainWindow(QtGui.QMainWindow):
                 filenameitem.setFlags(filenameitem.flags() & ~Qt.ItemIsEditable)
                 filesizeitem.setFlags(filesizeitem.flags() & ~Qt.ItemIsEditable)
                 filedurationitem.setFlags(filedurationitem.flags() & ~Qt.ItemIsEditable)
+                useritem.setSelectable(False)
+                filesizeitem.setSelectable(False)
+                filedurationitem.setSelectable(False)
+                filenameitem.setSelectable(False)
                 roomitem.appendRow((useritem, filesizeitem, filedurationitem, filenameitem))
         self.listTreeModel = self._usertreebuffer
         self.listTreeView.setModel(self.listTreeModel)
