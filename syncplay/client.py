@@ -162,12 +162,19 @@ class SyncplayClient(object):
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
         self._playerPosition = position
         self._playerPaused = paused
-        if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION) and self.userlist.currentUser.canControl():
-            lastPausedDiff = time.time() - self.lastPausedOnLeaveTime if self.lastPausedOnLeaveTime else None
-            if lastPausedDiff is not None and lastPausedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
-                self.lastPausedOnLeaveTime = None
+        if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
+            if not paused and not self.userlist.currentUser.isReady() and not self.userlist.areAllOtherUsersInRoomReady():
+                paused = True
+                self._player.setPaused(paused)
+                self._playerPaused = paused
+                self.changeReadyState(True, manuallyInitiated=True)
+                pauseChange = False
             else:
-                self.changeReadyState(not self.getPlayerPaused(), manuallyInitiated=False)
+                lastPausedDiff = time.time() - self.lastPausedOnLeaveTime if self.lastPausedOnLeaveTime else None
+                if lastPausedDiff is not None and lastPausedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
+                    self.lastPausedOnLeaveTime = None
+                else:
+                    self.changeReadyState(not self.getPlayerPaused(), manuallyInitiated=False)
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
             if (pauseChange or seeked) and self._protocol:
@@ -877,6 +884,12 @@ class SyncplayUserlist(object):
             return True
         if not self.currentUser.isReady():
             return False
+        for user in self._users.itervalues():
+            if user.room == self.currentUser.room and user.isReady() == False:
+                return False
+        return True
+
+    def areAllOtherUsersInRoomReady(self):
         for user in self._users.itervalues():
             if user.room == self.currentUser.room and user.isReady() == False:
                 return False
