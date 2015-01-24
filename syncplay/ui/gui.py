@@ -166,14 +166,10 @@ class MainWindow(QtGui.QMainWindow):
                 if isControlledRoom and not isController:
                     useritem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOTCONTROLLER_COLOR)))
                 useritem.setFont(font)
-                useritem.setFlags(useritem.flags() & ~Qt.ItemIsEditable)
-                filenameitem.setFlags(filenameitem.flags() & ~Qt.ItemIsEditable)
-                filesizeitem.setFlags(filesizeitem.flags() & ~Qt.ItemIsEditable)
-                filedurationitem.setFlags(filedurationitem.flags() & ~Qt.ItemIsEditable)
-                useritem.setSelectable(False)
-                filesizeitem.setSelectable(False)
-                filedurationitem.setSelectable(False)
-                filenameitem.setSelectable(False)
+                useritem.setFlags(useritem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
+                filenameitem.setFlags(filenameitem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
+                filesizeitem.setFlags(filesizeitem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
+                filedurationitem.setFlags(filedurationitem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
                 roomitem.appendRow((useritem, filesizeitem, filedurationitem, filenameitem))
         self.listTreeModel = self._usertreebuffer
         self.listTreeView.setModel(self.listTreeModel)
