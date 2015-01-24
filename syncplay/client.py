@@ -169,6 +169,7 @@ class SyncplayClient(object):
                 self._playerPaused = paused
                 self.changeReadyState(True, manuallyInitiated=True)
                 pauseChange = False
+                self.ui.showMessage(getMessage("ready-to-unpause-notification"))
             else:
                 lastPausedDiff = time.time() - self.lastPausedOnLeaveTime if self.lastPausedOnLeaveTime else None
                 if lastPausedDiff is not None and lastPausedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
