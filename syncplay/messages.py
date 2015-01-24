@@ -326,6 +326,7 @@ en = {
       "server-password-argument" : 'server password',
       "server-isolate-room-argument" : 'should rooms be isolated?',
       "server-salt-argument" : "random string used to generate controlled room passwords",
+      "server-disable-ready-argument" : u"disable readiness feature",
       "server-motd-argument": "path to file from which motd will be fetched",
       "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
       "server-messed-up-motd-too-long": "Message of the Day is too long - maximum of {} chars, {} given.",
@@ -665,6 +666,7 @@ ru = {
       "server-password-argument" : u'пароль к серверу',
       "server-isolate-room-argument" : u'должны ли комнаты быть изолированными?',
       "server-salt-argument" : u"random string used to generate controlled room passwords", # TODO: Translate into Russian (note: as you may already be aware, 'salt' means Соль (криптография))
+      "server-disable-ready-argument" : u"disable readiness feature", # TODO: Translate into Russian
       "server-motd-argument" : u"путь к файлу, из которого будет извлекаться MOTD-сообщение",
       "server-messed-up-motd-unescaped-placeholders" : u"MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
       "server-messed-up-motd-too-long" : u"MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
@@ -1004,6 +1006,7 @@ de = {
       "server-password-argument" : u'Server Passwort',
       "server-isolate-room-argument" : u'Sollen die Räume isoliert sein?',
       "server-salt-argument" : u"zufällige Zeichenkette, die zur Erstellung von Passwörtern verwendet wird",
+      "server-disable-ready-argument" : u"disable readiness feature", # TODO: Translate into German
       "server-motd-argument": u"Pfad zur Datei, von der die Nachricht des Tages geladen wird",
       "server-messed-up-motd-unescaped-placeholders": u"Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
       "server-messed-up-motd-too-long": u"Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
