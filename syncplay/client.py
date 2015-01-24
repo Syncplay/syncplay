@@ -543,7 +543,8 @@ class SyncplayClient(object):
         self._protocol.requestControlledRoom(self.getRoom(), controlPassword)
 
     def controllerIdentificationError(self, username, room):
-        self.ui.showErrorMessage(getMessage("failed-to-identify-as-controller-notification").format(username))
+        if username == self.getUsername():
+            self.ui.showErrorMessage(getMessage("failed-to-identify-as-controller-notification").format(username))
 
     def controllerIdentificationSuccess(self, username, roomname):
         self.userlist.setUserAsController(username)
