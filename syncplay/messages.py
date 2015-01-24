@@ -34,7 +34,7 @@ en = {
       "playing-notification/room-addendum" :  u" in room: '{}'",  # Room
 
       "not-all-ready" : u"Not ready: {}", # Usernames
-      "all-users-ready" : u"Everyone is ready",
+      "all-users-ready" : u"Everyone is ready ({} users)", #Number of ready users
 
       "identifying-as-controller-notification" : u"Identifying as room controller with password '{}'...",
       "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room controller.",
@@ -373,7 +373,7 @@ ru = {
       "playing-notification/room-addendum" : u" в комнате: '{}'",  # Room
 
       "not-all-ready" : u"Not ready: {}", # Usernames # TODO: Translate into Russian
-      "all-users-ready" : u"Everyone is ready", # TODO: Translate into Russian
+      "all-users-ready" : u"Everyone is ready ({} users)", #Number of ready users # TODO: Translate into Russian
 
       "identifying-as-controller-notification" : u"Identifying as room controller with password '{}'...", # TODO: Translate into Russian
       "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room controller.", # TODO: Translate into Russian
@@ -713,7 +713,7 @@ de = {
       "playing-notification/room-addendum" :  u" in Raum: '{}'",  # Room
 
       "not-all-ready" : u"Not ready: {}", # Usernames # TODO: Translate into German
-      "all-users-ready" : u"Everyone is ready", # TODO: Translate into German
+      "all-users-ready" : u"Everyone is ready ({} users)", #Number of ready users # TODO: Translate into German
 
       "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room controller"
       "failed-to-identify-as-controller-notification" : u"<{}> konnte sich nicht als Raumleiter identifizieren.",

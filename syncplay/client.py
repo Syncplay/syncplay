@@ -655,14 +655,14 @@ class SyncplayClient(object):
                 fileDifferencesMessage = getMessage("room-file-differences").format(self._userlist.getFileDifferencesForRoom())
                 if self._userlist.currentUser.canControl() and self._userlist.isReadinessSupported():
                     if self._userlist.areAllUsersInRoomReady():
-                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("all-users-ready"))
+                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("all-users-ready").format(self._userlist.readyUserCount()))
                     else:
                         osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady()))
                 else:
                     osdMessage = fileDifferencesMessage
             elif self._userlist.isReadinessSupported():
                 if self._userlist.areAllUsersInRoomReady():
-                    osdMessage = getMessage("all-users-ready")
+                    osdMessage = getMessage("all-users-ready").format(self._userlist.readyUserCount())
                 else:
                     osdMessage = getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady())
             if osdMessage:
@@ -881,6 +881,15 @@ class SyncplayUserlist(object):
             if user.room == self.currentUser.room and user.isReady() == False:
                 return False
         return True
+
+    def readyUserCount(self):
+        readyCount = 0
+        if self.currentUser.isReady():
+            readyCount += 1
+        for user in self._users.itervalues():
+            if user.room == self.currentUser.room and user.isReady():
+                readyCount += 1
+        return readyCount
 
     def usersInRoomNotReady(self):
         notReady = []
