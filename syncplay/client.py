@@ -519,12 +519,11 @@ class SyncplayClient(object):
     @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
     def createControlledRoom(self, roomName):
         controlPassword = utils.RandomStringGenerator.generate_room_password()
-        self.ui.showMessage(u"Attempting to create controlled room '{}' with password '{}'...".format(roomName, controlPassword))
         self.lastControlPasswordAttempt = controlPassword
         self._protocol.requestControlledRoom(roomName, controlPassword)
 
     def controlledRoomCreated(self, roomName, controlPassword):
-        self.ui.showMessage(u"Created controlled room '{}' with password '{}'. Please save this information for future reference!".format(roomName, controlPassword))
+        self.ui.showMessage(getMessage("created-controlled-room-notification").format(roomName, controlPassword))
         self.setRoom(roomName)
         self.sendRoom()
         self._protocol.requestControlledRoom(roomName, controlPassword)
