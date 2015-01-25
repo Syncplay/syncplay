@@ -659,8 +659,9 @@ class SyncplayClient(object):
             if not self._client._player:
                 return
             osdMessage = None
-            if not self._userlist.areAllFilesInRoomSame():
-                fileDifferencesMessage = getMessage("room-file-differences").format(self._userlist.getFileDifferencesForRoom())
+            fileDifferencesForRoom = self._userlist.getFileDifferencesForRoom()
+            if not self._userlist.areAllFilesInRoomSame() and fileDifferencesForRoom is not None:
+                fileDifferencesMessage = getMessage("room-file-differences").format(fileDifferencesForRoom)
                 if self._userlist.currentUser.canControl() and self._userlist.isReadinessSupported():
                     if self._userlist.areAllUsersInRoomReady():
                         osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("all-users-ready").format(self._userlist.readyUserCount()))
@@ -789,10 +790,14 @@ class SyncplayUserlist(object):
                     message += getMessage("playing-notification/room-addendum").format(room)
                 self.ui.showMessage(message, hideFromOSD)
                 if self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room:
-                    message = getMessage("file-differences-notification").format(self.getFileDifferencesForUser(self.currentUser.file, file_))
-                    self.ui.showMessage(message, True)
+                    fileDifferences = self.getFileDifferencesForUser(self.currentUser.file, file_)
+                    if fileDifferences is not None:
+                        message = getMessage("file-differences-notification").format(fileDifferences)
+                        self.ui.showMessage(message, True)
                     
     def getFileDifferencesForUser(self, currentUserFile, otherUserFile):
+        if not currentUserFile or not otherUserFile:
+            return None
         differences = []
         differentName     = not utils.sameFilename(currentUserFile['name'], otherUserFile['name'])
         differentSize     = not utils.sameFilesize(currentUserFile['size'], otherUserFile['size'])                  
@@ -803,12 +808,14 @@ class SyncplayUserlist(object):
         return ", ".join(differences)
 
     def getFileDifferencesForRoom(self):
+        if not self.currentUser.file:
+            return None
         differences = []
         differentName = False
         differentSize = False
         differentDuration = False
         for otherUser in self._users.itervalues():
-            if otherUser.room == self.currentUser.room:
+            if otherUser.room == self.currentUser.room and otherUser.file:
                 if not utils.sameFilename(self.currentUser.file['name'], otherUser.file['name']):
                     differentName = True
                 if not utils.sameFilesize(self.currentUser.file['size'], otherUser.file['size']):
