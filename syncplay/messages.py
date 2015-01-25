@@ -37,9 +37,9 @@ en = {
       "all-users-ready" : u"Everyone is ready ({} users)", #Number of ready users
       "ready-to-unpause-notification" : u"You are now set as ready - unpause again to unpause",
 
-      "identifying-as-controller-notification" : u"Identifying as room manager with password '{}'...",
-      "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room manager.",
-      "authenticated-as-controller-notification" : u"<{}> authenticated as a room manager",
+      "identifying-as-controller-notification" : u"Identifying as room operator with password '{}'...",
+      "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room operator.",
+      "authenticated-as-controller-notification" : u"<{}> authenticated as a room operator",
       "created-controlled-room-notification" : u"Created managed room '{}' with password '{}'. Please save this information for future reference!", # RoomName, controlPassword
 
       "file-different-notification" : "File you are playing appears to be different from <{}>'s",  # User
@@ -57,7 +57,7 @@ en = {
       "notplaying-notification" : "People who are not playing any file:",
       "userlist-room-notification" :  u"In room '{}':",  # Room
       "userlist-file-notification" : "File",
-      "controller-userlist-userflag" : "Manager",
+      "controller-userlist-userflag" : "Operator",
       "ready-userlist-userflag" : "Ready",
       
       "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version
@@ -78,7 +78,7 @@ en = {
       "commandlist-notification/help" : "\th - this help",
       "commandlist-notification/toggle" : u"\tt - toggles whether you are ready to watch or not",
       "commandlist-notification/create" : "\tc [name] - create managed room using name of current room",
-      "commandlist-notification/auth" : "\ta [password] - authenticate as room manager with controller password",
+      "commandlist-notification/auth" : "\ta [password] - authenticate as room operator with controller password",
       "syncplay-version-notification" : "Syncplay version: {}",  # syncplay.version
       "more-info-notification" : "More info available at: {}",  # projectURL
 
@@ -186,7 +186,7 @@ en = {
 
       "showosdwarnings-label" : "Include warnings (e.g. when files are different, users not ready)",
       "showsameroomosd-label" : "Include events in your room",
-      "shownoncontrollerosd-label" : "Include events from non-controllers in managed rooms",
+      "shownoncontrollerosd-label" : "Include events from non-operators in managed rooms",
       "showdifferentroomosd-label" : "Include events in other rooms",
       "showslowdownosd-label" :"Include slowing down / reverting notifications",
       "language-label" : "Language:",
@@ -240,7 +240,7 @@ en = {
       "window-menu-label" : "&Window",
       "setoffset-menu-label" : "Set &offset",
       "createcontrolledroom-menu-label" : "&Create managed room",
-      "identifyascontroller-menu-label" : "&Identify as room manager",
+      "identifyascontroller-menu-label" : "&Identify as room operator",
 
       "playback-menu-label" : u"&Playback",
 
@@ -257,7 +257,7 @@ en = {
       "createcontrolledroom-msgbox-label" : "Create managed room",
       "controlledroominfo-msgbox-label" : "Enter name of managed room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
 
-      "identifyascontroller-msgbox-label" : "Identify as room manager",
+      "identifyascontroller-msgbox-label" : "Identify as room operator",
       "identifyinfo-msgbox-label" : "Enter controller password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
 
       "megabyte-suffix" : " MB",
@@ -275,7 +275,7 @@ en = {
       "more-tooltip" : "Display less frequently used settings.",
       "slowdown-threshold-tooltip" : "Time ahead of slowest client before temporarily reducing playback speed (default: {} secs).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
       "rewind-threshold-tooltip" : "Time ahead slowest client before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_REWIND_THRESHOLD),
-      "fastforward-threshold-tooltip" : "Time behind room manager before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD),
+      "fastforward-threshold-tooltip" : "Time behind room operator before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD),
       "filename-privacy-tooltip" : "Privacy mode for sending currently playing filename to server.",
       "filesize-privacy-tooltip" : "Privacy mode for sending size of currently playing file to server.",
       "privacy-sendraw-tooltip" : "Send this information without obfuscation. This is the default option with most functionality.",
@@ -283,17 +283,17 @@ en = {
       "privacy-dontsend-tooltip" : "Do not send this information to the server. This provides for maximum privacy.",
       "checkforupdatesautomatically-tooltip" : "Regularly check with the Syncplay website to see whether a new version of Syncplay is available.",
       "slowondesync-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers. Not supported on MPC-HC.",
-      "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room managers.",
+      "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room operators.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
       "readyatstart-tooltip" : "Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)",
       "forceguiprompt-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.", # (Inverted)
       "nostore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.", # (Inverted)
       "rewindondesync-tooltip" : "Jump back when needed to get back in sync. Disabling this option can result in major desyncs!",
-      "fastforwardondesync-tooltip" : "Jump forward when out of sync with room manager (or your pretend position if 'Never slow down or rewind others' enabled).",
+      "fastforwardondesync-tooltip" : "Jump forward when out of sync with room operator (or your pretend position if 'Never slow down or rewind others' enabled).",
       "showosd-tooltip" : "Sends Syncplay messages to media player OSD.",
       "showosdwarnings-tooltip" : "Show warnings if playing different file, alone in room, users not ready, etc.",
       "showsameroomosd-tooltip" : "Show OSD notifications for events relating to room user is in.",
-      "shownoncontrollerosd-tooltip" : "Show OSD notifications for events relating to non-controllers who are in managed rooms.",
+      "shownoncontrollerosd-tooltip" : "Show OSD notifications for events relating to non-operators who are in managed rooms.",
       "showdifferentroomosd-tooltip" : "Show OSD notifications for events relating to room user is not in.",
       "showslowdownosd-tooltip" :"Show notifications of slowing down / reverting on time difference.",
       "showdurationnotification-tooltip" : "Useful for when a segment in a multi-part file is missing, but can result in false positives.",
@@ -379,9 +379,9 @@ ru = {
       "all-users-ready" : u"Everyone is ready ({} users)", #Number of ready users # TODO: Translate into Russian
       "ready-to-unpause-notification" : u"You are now set as ready - unpause again to unpause", # TODO: Translate into Russian
 
-      "identifying-as-controller-notification" : u"Identifying as room manager with password '{}'...", # TODO: Translate into Russian
-      "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room manager.", # TODO: Translate into Russian
-      "authenticated-as-controller-notification" : u"<{}> authenticated as a room manager", # TODO: Translate into Russian
+      "identifying-as-controller-notification" : u"Identifying as room operator with password '{}'...", # TODO: Translate into Russian
+      "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room operator.", # TODO: Translate into Russian
+      "authenticated-as-controller-notification" : u"<{}> authenticated as a room operator", # TODO: Translate into Russian
       "created-controlled-room-notification" : u"Created managed room '{}' with password '{}'. Please save this information for future reference!", # RoomName, controlPassword # TODO: Translate into Russian
 
       "file-different-notification" : u"Вероятно, файл, который Вы смотрите, отличается от того, который смотрит <{}>.",  # User
@@ -399,7 +399,7 @@ ru = {
       "notplaying-notification" : u"Люди, которые не смотрят ничего:",
       "userlist-room-notification" : u"В комнате '{}':",  # Room
       "userlist-file-notification" : u"File", # TODO: Translate into Russian (Файл?)
-      "controller-userlist-userflag" : u"Manager", # TODO: Translate into Russian (this is to indicate a user is a controller in the ConsoleUI userlist)
+      "controller-userlist-userflag" : u"Operator", # TODO: Translate into Russian (this is to indicate a user is a controller in the ConsoleUI userlist)
       "ready-userlist-userflag" : u"Ready", # TODO: Translate into Russian (this is to indicate a user is ready to watch in the ConsoleUI userlist)
       
       "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version # TODO: Translate into Russian
@@ -420,7 +420,7 @@ ru = {
       "commandlist-notification/help" : u"\th - помощь",
       "commandlist-notification/toggle" : u"\tt - toggles whether you are ready to watch or not", # TODO: Translate into Russian
       "commandlist-notification/create" : u"\tc [name] - create managed room using name of current room", # TODO: Translate into Russian
-      "commandlist-notification/auth" : u"\ta [password] - authenticate as room manager with controller password", # TODO: Translate into Russian
+      "commandlist-notification/auth" : u"\ta [password] - authenticate as room operator with controller password", # TODO: Translate into Russian
       "syncplay-version-notification" : u"Версия Syncplay: {}",  # syncplay.version
       "more-info-notification" : u"Больше информации на {}",  # projectURL
 
@@ -528,7 +528,7 @@ ru = {
 
       "showosdwarnings-label" : u"Показывать предупреждения (напр., когда файлы не совпадают)",
       "showsameroomosd-label" : u"Показывать события Вашей комнаты",
-      "shownoncontrollerosd-label" : u"Include events from non-controllers in managed rooms", # TODO: Translate into Russiann
+      "shownoncontrollerosd-label" : u"Include events from non-operators in managed rooms", # TODO: Translate into Russiann
       "showdifferentroomosd-label" : u"Показывать события других комнат",
       "showslowdownosd-label" : u"Показывать уведомления о замедлении/перемотке",
       "language-label" : u"Language:", # TODO: Translate into Russian
@@ -583,7 +583,7 @@ ru = {
       "window-menu-label" : u"&Window", # TODO: Translate into Russian
       "setoffset-menu-label" : u"Установить &смещение",
       "createcontrolledroom-menu-label" : u"&Create managed room", # TODO: Translate into Russian
-      "identifyascontroller-menu-label" : u"&Identify as room manager", # TODO: Translate into Russian
+      "identifyascontroller-menu-label" : u"&Identify as room operator", # TODO: Translate into Russian
 
       "playback-menu-label" : u"&Playback", # TODO: Translate into Russian
 
@@ -600,7 +600,7 @@ ru = {
       "createcontrolledroom-msgbox-label" : u"Create managed room", # TODO: Translate into Russian
       "controlledroominfo-msgbox-label" : u"Enter name of managed room\r\n(see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into Russian
 
-      "identifyascontroller-msgbox-label" : u"Identify as room manager", # TODO: Translate into Russian
+      "identifyascontroller-msgbox-label" : u"Identify as room operator", # TODO: Translate into Russian
       "identifyinfo-msgbox-label" : u"Enter controller password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):", # TODO: Translate into Russian
 
       "megabyte-suffix" : u" MB", # Technically it is a mebibyte # TODO: Translate into Russian
@@ -618,7 +618,7 @@ ru = {
       "more-tooltip" : u"Показать дополнительные настройки.",
       "slowdown-threshold-tooltip" : u"Отставание самого медленного клиента, необходимое для временного уменьшения скорости видео (по умолчанию: {} сек.).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
       "rewind-threshold-tooltip" : u"Отставание самого медленного клиента, необходимое для перемотки назад в целях синхронизации (по умолчанию: {} сек.).".format(constants.DEFAULT_REWIND_THRESHOLD),
-      "fastforward-threshold-tooltip" : u"Time behind room manager before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD),  # TODO: Translate into Russian
+      "fastforward-threshold-tooltip" : u"Time behind room operator before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD),  # TODO: Translate into Russian
       "filename-privacy-tooltip" : u"Режим приватности для передачи имени воспроизводимого файла на сервер.",
       "filesize-privacy-tooltip" : u"Режим приватности для передачи размера воспроизводимого файла на сервер.",
       "privacy-sendraw-tooltip" : u"Отправляет эту информацию без шифрования. Рекомендуемая опция с наибольшей функциональностью.",
@@ -632,11 +632,11 @@ ru = {
       "forceguiprompt-tooltip" : u"Окно настройки не будет отображаться при открытии файла в Syncplay.", # (Inverted)
       "nostore-tooltip" : u"Запустить Syncplay с данной конфигурацией, но не сохранять изменения навсегда.", # (Inverted)
       "rewindondesync-tooltip" : u"Перематывать назад, когда это необходимо для синхронизации. Отключение этой опции может привести к большим рассинхронизациям!",
-      "fastforwardondesync-tooltip" : u"Jump forward when out of sync with room manager (or your pretend position if 'Never slow down or rewind others' enabled).", # TODO: Translate into Russian
+      "fastforwardondesync-tooltip" : u"Jump forward when out of sync with room operator (or your pretend position if 'Never slow down or rewind others' enabled).", # TODO: Translate into Russian
       "showosd-tooltip" : u"Отправлять сообщения Syncplay в видеопроигрыватель и отображать их поверх видео (OSD - On Screen Display).",
       "showosdwarnings-tooltip" : u"Показывать OSC-предупреждения, если проигрываются разные файлы или если Вы в комнате больше никого нет.",
       "showsameroomosd-tooltip" : u"Показывать OSD-уведомления о событиях, относящихся к комнате, в которой Вы находитесь.",
-      "shownoncontrollerosd-tooltip" : u"Show OSD notifications for events relating to non-controllers who are in controllerd rooms.", # TODO: Translate into Russian
+      "shownoncontrollerosd-tooltip" : u"Show OSD notifications for events relating to non-operators who are in controllerd rooms.", # TODO: Translate into Russian
       "showdifferentroomosd-tooltip" : u"Показывать OSD-уведомления о событиях, относящихся к любым другим комнатам.",
       "showslowdownosd-tooltip" : u"Показывать уведомления о замедлении или перемотке в целях синхронизации.",
       "showdurationnotification-tooltip" : u"Полезно, когда сегмент составного файла отсутствует. Возможны ложные срабатывания.",
@@ -722,7 +722,7 @@ de = {
       "all-users-ready" : u"Everyone is ready ({} users)", #Number of ready users # TODO: Translate into German
       "ready-to-unpause-notification" : u"You are now set as ready - unpause again to unpause", # TODO: Translate into German
 
-      "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room manager"
+      "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room operator"
       "failed-to-identify-as-controller-notification" : u"<{}> konnte sich nicht als Raumleiter identifizieren.",
       "authenticated-as-controller-notification" : u"<{}> authentifizierte sich als Raumleiter",
       "created-controlled-room-notification" : u"Created managed room '{}' with password '{}'. Please save this information for future reference!", # RoomName, controlPassword # TODO: Translate into German
@@ -742,7 +742,7 @@ de = {
       "notplaying-notification" : u"Personen im Raum, die keine Dateien spielen:",
       "userlist-room-notification" :  u"In Raum '{}':",  # Room
       "userlist-file-notification" : u"File", # TODO: Translate into German (Datei?)
-      "controller-userlist-userflag" : u"Manager", # TODO: Translate into German (this is to indicate a user is a room manager in the ConsoleUI userlist)
+      "controller-userlist-userflag" : u"Operator", # TODO: Translate into German (this is to indicate a user is a room operator in the ConsoleUI userlist)
       "ready-userlist-userflag" : u"Ready", # TODO: Translate into German (this is to indicate a user is ready to watch in the ConsoleUI userlist)
       
       "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version # TODO: Translate into German
