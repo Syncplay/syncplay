@@ -243,22 +243,28 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient.setRoom(room)
             self._syncplayClient.sendRoom()
 
-    def seekPosition(self):
+    def seekPositionDialog(self):
         seekTime, ok = QtGui.QInputDialog.getText(self, getMessage("seektime-menu-label"),
                                                    getMessage("seektime-msgbox-label"), QtGui.QLineEdit.Normal,
                                                    "0:00")
         if ok and seekTime != '':
-            s = re.match(constants.UI_SEEK_REGEX, seekTime)
-            if s:
-                sign = self._extractSign(s.group('sign'))
-                t = utils.parseTime(s.group('time'))
-                if t is None:
-                    return
-                if sign:
-                    t = self._syncplayClient.getGlobalPosition() + sign * t
-                self._syncplayClient.setPosition(t)
-            else:
-                self.showErrorMessage(getMessage("invalid-seek-value"))
+            self.seekPosition(seekTime)
+
+    def seekFromButton(self):
+        self.seekPosition(self.seekInput.text())
+
+    def seekPosition(self, seekTime):
+        s = re.match(constants.UI_SEEK_REGEX, seekTime)
+        if s:
+            sign = self._extractSign(s.group('sign'))
+            t = utils.parseTime(s.group('time'))
+            if t is None:
+                return
+            if sign:
+                t = self._syncplayClient.getGlobalPosition() + sign * t
+            self._syncplayClient.setPosition(t)
+        else:
+            self.showErrorMessage(getMessage("invalid-seek-value"))
 
     def undoSeek(self):
         tmp_pos = self._syncplayClient.getPlayerPosition()
@@ -484,10 +490,10 @@ class MainWindow(QtGui.QMainWindow):
         window.playbackLayout.setContentsMargins(0,0,0,0)
         window.playbackFrame.setLayout(window.playbackLayout)
         window.seekInput = QtGui.QLineEdit()
-        window.seekInput.returnPressed.connect(self.seekPosition)
+        window.seekInput.returnPressed.connect(self.seekFromButton)
         window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'), "")
         window.seekButton.setToolTip(getMessage("seektime-menu-label"))
-        window.seekButton.pressed.connect(self.seekPosition)
+        window.seekButton.pressed.connect(self.seekFromButton)
         window.seekInput.setText("0:00")
         window.seekInput.setFixedWidth(60)
         window.playbackLayout.addWidget(window.seekInput)
@@ -536,7 +542,7 @@ class MainWindow(QtGui.QMainWindow):
         window.pauseAction = window.playbackMenu.addAction(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'), getMessage("pause-menu-label"))
         window.pauseAction.triggered.connect(self.pause)
         window.seekAction = window.playbackMenu.addAction(QtGui.QIcon(self.resourcespath + 'clock_go.png'), getMessage("seektime-menu-label"))
-        window.seekAction.triggered.connect(self.seekPosition)
+        window.seekAction.triggered.connect(self.seekPositionDialog)
         window.unseekAction = window.playbackMenu.addAction(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'), getMessage("undoseek-menu-label"))
         window.unseekAction.triggered.connect(self.undoSeek)
 
