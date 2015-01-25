@@ -68,6 +68,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^StartMenu $${LANG_ENGLISH} "Start Menu"
   LangString ^Desktop $${LANG_ENGLISH} "Desktop"
   LangString ^QuickLaunchBar $${LANG_ENGLISH} "Quick Launch Bar"
+  LangString ^AutomaticUpdates $${LANG_ENGLISH} "Check for updates automatically"
   LangString ^UninstConfig $${LANG_ENGLISH} "Delete configuration file."
 
   LangString ^SyncplayLanguage $${LANG_POLISH} "pl"
@@ -88,6 +89,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^StartMenu $${LANG_RUSSIAN} "в меню Пуск"
   LangString ^Desktop $${LANG_RUSSIAN} "на рабочем столе"
   LangString ^QuickLaunchBar $${LANG_RUSSIAN} "в меню быстрого запуска"
+  LangString ^AutomaticUpdates $${LANG_RUSSIAN} "Проверять обновления автоматически"; TODO: Confirm Russian translation ("Check for updates automatically")
   LangString ^UninstConfig $${LANG_RUSSIAN} "Удалить файл настроек."
 
   LangString ^SyncplayLanguage $${LANG_GERMAN} "de"
@@ -98,6 +100,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^StartMenu $${LANG_GERMAN} "Startmenü"
   LangString ^Desktop $${LANG_GERMAN} "Desktop"
   LangString ^QuickLaunchBar $${LANG_GERMAN} "Schnellstartleiste"
+  LangString ^AutomaticUpdates $${LANG_GERMAN} "Automatisch nach Updates suchen"; TODO: Confirm German translation ("Check for updates automatically")
   LangString ^UninstConfig $${LANG_GERMAN} "Konfigurationsdatei löschen."
 
   ; Remove text to save space
@@ -117,11 +120,13 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Var Icon_Syncplay_Handle
   Var CheckBox_Associate
   Var CheckBox_VLC
+  Var CheckBox_AutomaticUpdates
   Var CheckBox_StartMenuShortcut
   Var CheckBox_DesktopShortcut
   Var CheckBox_QuickLaunchShortcut
   Var CheckBox_Associate_State
   Var CheckBox_VLC_State
+  Var CheckBox_AutomaticUpdates_State
   Var CheckBox_StartMenuShortcut_State
   Var CheckBox_DesktopShortcut_State
   Var CheckBox_QuickLaunchShortcut_State
@@ -237,10 +242,10 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${NSD_CreateGroupBox} 1u 27u 264u 30u "$$(^DirSubText)"
     Pop $$GroupBox_DirSub
 
-    $${NSD_CreateLabel} 0u 111u 265u 8u "$$(^SpaceRequired)$$SizeMB"
+    $${NSD_CreateLabel} 0u 122u 132 8u "$$(^SpaceRequired)$$SizeMB"
     Pop $$Label_Size
 
-    $${NSD_CreateLabel} 0u 122u 265u 8u "$$(^SpaceAvailable)$$AvailibleSpaceGiB.$$AvailibleSpaceGB"
+    $${NSD_CreateLabel} 321u 122u 132 8u "$$(^SpaceAvailable)$$AvailibleSpaceGiB.$$AvailibleSpaceGB"
     Pop $$Label_Space
 
     $${NSD_CreateCheckBox} 8u 59u 187u 10u "$$(^Associate)"
@@ -253,16 +258,20 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${NSD_CreateCheckBox} 8u 72u 250u 10u "$$(^VLC)"
     Pop $$CheckBox_VLC
 
-    $${NSD_CreateLabel} 8u 85u 187u 10u "$$(^Shortcut)"
+    $${NSD_CreateCheckBox} 8u 85u 250u 10u "$$(^AutomaticUpdates)"
+    Pop $$CheckBox_AutomaticUpdates
+    $${NSD_Check} $$CheckBox_AutomaticUpdates
+
+    $${NSD_CreateLabel} 8u 98u 187u 10u "$$(^Shortcut)"
     Pop $$Label_Shortcut
 
-    $${NSD_CreateCheckbox} 8u 98u 60u 10u "$$(^StartMenu)"
+    $${NSD_CreateCheckbox} 8u 111u 60u 10u "$$(^StartMenu)"
     Pop $$CheckBox_StartMenuShortcut
 
-    $${NSD_CreateCheckbox} 78u 98u 70u 10u "$$(^Desktop)"
+    $${NSD_CreateCheckbox} 78u 111u 70u 10u "$$(^Desktop)"
     Pop $$CheckBox_DesktopShortcut
 
-    $${NSD_CreateCheckbox} 158u 98u 130u 10u "$$(^QuickLaunchBar)"
+    $${NSD_CreateCheckbox} 158u 111u 130u 10u "$$(^QuickLaunchBar)"
     Pop $$CheckBox_QuickLaunchShortcut
 
     $${If} $$CheckBox_Associate_State == $${BST_CHECKED}
@@ -287,6 +296,10 @@ NSIS_SCRIPT_TEMPLATE = r"""
     	$${NSD_Check} $$CheckBox_QuickLaunchShortcut
     $${EndIf}
 
+    $${If} $$CheckBox_AutomaticUpdates_State == $${BST_CHECKED}
+    	$${NSD_Check} $$CheckBox_AutomaticUpdates
+    $${EndIf}
+
     nsDialogs::Show
 
     $${NSD_FreeIcon} $$Icon_Syncplay_Handle
@@ -297,6 +310,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${NSD_GetText} $$Text_Directory $$INSTDIR
     $${NSD_GetState} $$CheckBox_Associate $$CheckBox_Associate_State
     $${NSD_GetState} $$CheckBox_VLC $$CheckBox_VLC_State
+    $${NSD_GetState} $$CheckBox_AutomaticUpdates $$CheckBox_AutomaticUpdates_State
     $${NSD_GetState} $$CheckBox_StartMenuShortcut $$CheckBox_StartMenuShortcut_State
     $${NSD_GetState} $$CheckBox_DesktopShortcut $$CheckBox_DesktopShortcut_State
     $${NSD_GetState} $$CheckBox_QuickLaunchShortcut $$CheckBox_QuickLaunchShortcut_State
@@ -444,6 +458,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "NoRepair" 1
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "EstimatedSize" "$$SizeHex"
     WriteINIStr $$APPDATA\syncplay.ini general language $$(^SyncplayLanguage)
+    $${If} $$CheckBox_AutomaticUpdates_State == $${BST_CHECKED}
+        WriteINIStr $$APPDATA\syncplay.ini general CheckForUpdatesAutomatically "True"
+    $${Else}
+        WriteINIStr $$APPDATA\syncplay.ini general CheckForUpdatesAutomatically "False"
+    $${EndIf}
   FunctionEnd
 
   Function un.installConfirm
@@ -624,7 +643,8 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/mpv.png','resources/vlc.png', 'resources/house.png', 'resources/film_link.png',
      'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/chevrons_right.png',
      'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',
-     'resources/tick.png', 'resources/lock_open.png'
+     'resources/tick.png', 'resources/lock_open.png', 'resources/empty_checkbox.png', 'resources/tick_checkbox.png',
+     'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png'
     ]
 resources = ["resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)

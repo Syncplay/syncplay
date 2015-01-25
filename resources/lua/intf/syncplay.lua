@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb
  Project: http://syncplay.pl/
- Version: 0.2.3
+ Version: 0.2.4
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -68,6 +68,9 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
  display-osd: [placement on screen <center/left/right/top/bottom/top-left/top-right/bottom-left/bottom-right>], [duration in seconds], [message]
     ? >> display-osd-error: no-input
 
+ display-secondary-osd: [placement on screen <center/left/right/top/bottom/top-left/top-right/bottom-left/bottom-right>], [duration in seconds], [message]
+    ? >> display-secondary-osd-error: no-input
+
  load-file: [filepath]
     * >> load-file-attempted
 
@@ -78,7 +81,7 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 --]==========================================================================]
 
-local connectorversion = "0.2.3"
+local connectorversion = "0.2.4"
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
 local loopsleepduration = 5000 -- Pause for every event loop (uses microseconds)
 local quitcheckfrequency = 20 -- Check whether VLC has closed every X loops
@@ -108,12 +111,18 @@ local newinputstate
 local oldtitle = 0
 local newtitle = 0
 
+local channel1
+local channel2
+local l
+
 local running = true
+
 
 function radixsafe_tonumber(str)
     -- Version of tonumber that works with any radix character (but not thousand seperators)
     -- Based on the public domain VLC common.lua us_tonumber() function
-	str = string.gsub(tostring(str), "[^0-9]", ".")
+
+    str = string.gsub(tostring(str), "[^0-9]", ".")
     local s, i, d = string.match(str, "^([+-]?)(%d*)%.?(%d*)$")
     if not s or not i or not d then
         return nil
@@ -277,8 +286,8 @@ function set_time ( timetoset)
         end
         errormsg = set_var("time", radixsafe_tonumber(realtime))
         return errormsg
-	else
-	    return noinput
+    else
+        return noinput
     end
 end
 
@@ -379,17 +388,19 @@ function get_duration ()
 
         if input then
             local item = vlc.input.item()
-            if (item and item:duration()) then
             -- Try to get duration, which might not be available straight away
-                local i = 0
-                repeat
-                    vlc.misc.mwait(vlc.misc.mdate() + durationdelay)
+            local i = 0
+            response = 0
+            repeat
+                vlc.misc.mwait(vlc.misc.mdate() + durationdelay)
+                if item and item:duration() then
                     response = item:duration()
-                    i = i + 1
-                until response > 0 or i > 5
-            else
-                errormsg = noinput
-            end
+                    if response < 1 then
+                        response = 0
+                    end
+                end
+                i = i + 1
+            until response > 1 or i > 5
         else
             errormsg = noinput
         end
@@ -400,15 +411,42 @@ end
 
 function display_osd ( argument )
     -- [Used by display-osd command]
-
     local errormsg
     local osdarray
     local input = vlc.object.input()
-    if input then
+    if input and vlc.osd and vlc.object.vout() then
+        if not channel1 then
+            channel1 = vlc.osd.channel_register()
+        end
+        if not channel2 then
+            channel2 = vlc.osd.channel_register()
+        end
         osdarray = get_args(argument,3)
         --position, duration, message -> message, , position, duration (converted from seconds to microseconds)
         local osdduration = radixsafe_tonumber(osdarray[2]) * 1000 * 1000
         vlc.osd.message(osdarray[3],channel1,osdarray[1],osdduration)
+    else
+        errormsg = noinput
+    end
+    return errormsg
+end
+
+function display_secondary_osd ( argument )
+    -- [Used by display-secondary-osd command]
+    local errormsg
+    local osdarray
+    local input = vlc.object.input()
+    if input and vlc.osd and vlc.object.vout() then
+        if not channel1 then
+            channel1 = vlc.osd.channel_register()
+        end
+        if not channel2 then
+            channel2 = vlc.osd.channel_register()
+        end
+        osdarray = get_args(argument,3)
+        --position, duration, message -> message, , position, duration (converted from seconds to microseconds)
+        local osdduration = radixsafe_tonumber(osdarray[2]) * 1000 * 1000
+        vlc.osd.message(osdarray[3],channel2,osdarray[1],osdduration)
     else
         errormsg = noinput
     end
@@ -445,6 +483,7 @@ function do_command ( command, argument)
     elseif command == "set-rate"              then           errormsg = set_var("rate", radixsafe_tonumber(argument))
     elseif command == "set-title"             then           errormsg = set_var("title", radixsafe_tonumber(argument))
     elseif command == "display-osd"           then           errormsg = display_osd(argument)
+	elseif command == "display-secondary-osd" then           errormsg = display_secondary_osd(argument)
     elseif command == "load-file"             then response           = load_file(argument)
     elseif command == "close-vlc"             then                      quit_vlc()
     else                                                     errormsg = unknowncommand
@@ -498,7 +537,7 @@ while running == true do
     --accept new connections and select active clients
     local quitcheckcounter = 0
 	local fd = l:accept()
-    local buffer, inputbuffer, responsebuffer = ""
+    local buffer, inputbuffer, responsebuffer = "", "", ""
     while fd >= 0 and running == true do
 
         -- handle read mode
@@ -559,7 +598,6 @@ while running == true do
             end
             quitcheckcounter = 0
         end
-
 
     end
 

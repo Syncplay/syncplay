@@ -14,7 +14,7 @@ import argparse
 from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion
 
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None):
+    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False):
         print getMessage("welcome-server-notification").format(syncplay.version)
         if password:
             password = hashlib.md5(password).hexdigest()
@@ -24,6 +24,7 @@ class SyncFactory(Factory):
             print getMessage("no-salt-notification").format(salt)
         self._salt = salt
         self._motdFilePath = motdFilePath
+        self.disableReady = disableReady
         if not isolateRooms:
             self._roomManager = RoomManager()
         else:
@@ -78,6 +79,7 @@ class SyncFactory(Factory):
     def sendRoomSwitchMessage(self, watcher):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, None)
         self._roomManager.broadcast(watcher, l)
+        self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
 
     def removeWatcher(self, watcher):
         if watcher and watcher.getRoom():
@@ -91,6 +93,7 @@ class SyncFactory(Factory):
     def sendJoinMessage(self, watcher):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True}) if w != watcher else None
         self._roomManager.broadcast(watcher, l)
+        self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
 
     def sendFileUpdate(self, watcher):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), watcher.getFile(), None)
@@ -125,6 +128,9 @@ class SyncFactory(Factory):
         except ValueError:
             self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
 
+    def setReady(self, watcher, isReady, manuallyInitiated=True):
+        watcher.setReady(isReady)
+        self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), manuallyInitiated))
 
 class RoomManager(object):
     def __init__(self):
@@ -299,6 +305,7 @@ class ControlledRoom(Room):
 
 class Watcher(object):
     def __init__(self, server, connector, name):
+        self._ready = None
         self._server = server
         self._connector = connector
         self._name = name
@@ -321,6 +328,14 @@ class Watcher(object):
         else:
             self._resetStateTimer()
             self._askForStateUpdate(True, True)
+
+    def setReady(self, ready):
+        self._ready = ready
+
+    def isReady(self):
+        if self._server.disableReady:
+            return None
+        return self._ready
 
     def getRoom(self):
         return self._room
@@ -351,6 +366,9 @@ class Watcher(object):
 
     def sendControlledRoomAuthStatus(self, success, username, room):
         self._connector.sendControlledRoomAuthStatus(success, username, room)
+
+    def sendSetReady(self, username, isReady, manuallyInitiated=True):
+        self._connector.sendSetReady(username, isReady, manuallyInitiated)
 
     def __lt__(self, b):
         if self.getPosition() is None or self._file is None:
@@ -422,5 +440,6 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--port', metavar='port', type=str, nargs='?', help=getMessage("server-port-argument"))
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
+        self._argparser.add_argument('--disable-ready', action='store_true', help=getMessage("server-disable-ready-argument"))
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))

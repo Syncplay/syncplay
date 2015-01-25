@@ -306,7 +306,9 @@ class MpcHcApi:
 
 class MPCHCAPIPlayer(BasePlayer):
     speedSupported = False
+    secondaryOSDSupported = False
     customOpenDialog = False
+    osdMessageSeparator = "; "
     
     def __init__(self, client):
         from twisted.internet import reactor
@@ -393,7 +395,7 @@ class MPCHCAPIPlayer(BasePlayer):
     def openFile(self, filePath, resetPosition=False):
         self._mpcApi.openFile(filePath)
         
-    def displayMessage(self, message, duration = (constants.OSD_DURATION*1000)):
+    def displayMessage(self, message, duration = (constants.OSD_DURATION*1000), secondaryOSD=False):
         self._mpcApi.sendOsd(message, constants.MPC_OSD_POSITION, duration)
 
     @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)

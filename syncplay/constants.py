@@ -1,8 +1,9 @@
 # You might want to change these
 DEFAULT_PORT = 8999
 OSD_DURATION = 3
-OSD_WARNING_MESSAGE_DURATION = 15
-MPC_OSD_POSITION = 2  #Right corner, 1 for left
+OSD_WARNING_MESSAGE_DURATION = 5
+NO_SECONDARY_OSD_WARNING_DURATION = 13
+MPC_OSD_POSITION = 1  #Right corner, 1 for left
 MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "
 CONFIG_NAMES = [".syncplay", "syncplay.ini"]  #Syncplay searches first to last
@@ -12,7 +13,6 @@ RECENT_CLIENT_THRESHOLD = "1.2.9"  #This and higher considered 'recent' clients 
 WARN_OLD_CLIENTS = True  #Use MOTD to inform old clients to upgrade
 LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
-SHOW_BUTTON_LABELS = True  # If disabled, only shows icons for main GUI buttons
 SHOW_TOOLTIPS = True
 WARN_ABOUT_MISSING_STRINGS = False # (If debug mode is enabled)
 FALLBACK_INITIAL_LANGUAGE = "en"
@@ -28,6 +28,7 @@ SHOW_DURATION_NOTIFICATION = True
 DEBUG_MODE = False
 
 #Changing these might be ok
+AUTOMATIC_UPDATE_CHECK_FREQUENCY = 7 * 86400 # Days converted into seconds
 DEFAULT_REWIND_THRESHOLD = 4
 MINIMUM_REWIND_THRESHOLD = 3
 DEFAULT_FASTFORWARD_THRESHOLD = 5
@@ -45,9 +46,9 @@ PROTOCOL_TIMEOUT = 12.5
 RECONNECT_RETRIES = 10
 SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
-MERGE_PLAYPAUSE_BUTTONS = False
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 #Usually there's no need to adjust these
+LAST_PAUSED_DIFF_THRESHOLD = 2
 FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
 CONTROL_PASSWORD_STRIP_REGEX = u"[^a-zA-Z0-9\-]"
 ROOM_NAME_STRIP_REGEX = u"^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
@@ -58,10 +59,12 @@ COMMANDS_ROOM = ["r", "room"]
 COMMANDS_HELP = ['help', 'h', '?', '/?', r'\?']
 COMMANDS_CREATE = ['c','create']
 COMMANDS_AUTH = ['a','auth']
+COMMANDS_TOGGLE = ['t','toggle']
 MPC_MIN_VER = "1.6.4"
 VLC_MIN_VERSION = "2.0.0"
-VLC_INTERFACE_MIN_VERSION = "0.2.1"
+VLC_INTERFACE_MIN_VERSION = "0.2.4"
 CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
+USER_READY_MIN_VERSION = "1.3.0"
 MPC_PATHS = [
     r"c:\program files (x86)\mpc-hc\mpc-hc.exe",
     r"c:\program files\mpc-hc\mpc-hc.exe",
@@ -115,7 +118,10 @@ STYLE_SUBCHECKBOX  = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 21px;
 STYLE_SUBLABEL  = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 16px; background:url('{}') left no-repeat }}" #Graphic path
 STYLE_ERRORLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: red; padding: 2px; background: #FFAAAA; }"
 STYLE_SUCCESSLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: green; padding: 2px; background: #AAFFAA; }"
+STYLE_READY_PUSHBUTTON = "QPushButton { text-align: left; padding: 10px 5px 10px 5px;}"
+STYLE_AUTO_PLAY_PUSHBUTTON = "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }"
 STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
+STYLE_CONTACT_INFO = u"<span style=\"color: grey\"><strong><small>{}</span><br /><br />" # Contact info message
 STYLE_USERNAME = "color: #367AA9; font-weight:bold;"
 STYLE_ERRORNOTIFICATION = "color: red;"
 STYLE_DIFFERENTITEM_COLOR = 'red'
@@ -137,7 +143,7 @@ VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance', '--no-one-instance-when-started-fr
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
 VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_]+)(?:\: )?(?P<argument>.*))"
 UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
-UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
+UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,9}(?:[^\d\.](?:\d{1,9})){0,2}(?:\.(?:\d{1,3}))?)$"
 UI_SEEK_REGEX = r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
 PARSE_TIME_REGEX = r'(:?(?:(?P<hours>\d+?)[^\d\.])?(?:(?P<minutes>\d+?))?[^\d\.])?(?P<seconds>\d+?)(?:\.(?P<miliseconds>\d+?))?$'
 SERVER_MAX_TEMPLATE_LENGTH = 10000
@@ -152,3 +158,6 @@ CONFIG_NAME_MARKER = ":"
 CONFIG_VALUE_MARKER = "="
 USERITEM_CONTROLLER_ROLE = 0
 USERITEM_READY_ROLE = 1
+
+SYNCPLAY_UPDATE_URL = u"http://syncplay.pl/checkforupdate?{}" # Params
+SYNCPLAY_DOWNLOAD_URL = "http://syncplay.pl/download/"

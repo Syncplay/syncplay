@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 #coding:utf8
 
 import site, sys
@@ -20,5 +20,5 @@ if __name__ == '__main__':
     argsGetter = ConfigurationGetter()
     args = argsGetter.getConfiguration()
 
-    reactor.listenTCP(int(args.port), SyncFactory(args.password, args.motd_file, args.isolate_rooms, args.salt))
+    reactor.listenTCP(int(args.port), SyncFactory(args.password, args.motd_file, args.isolate_rooms, args.salt, args.disable_ready))
     reactor.run()

@@ -39,6 +39,9 @@ class ConsoleUI(threading.Thread):
     def updateRoomName(self, room=""):
         pass
 
+    def updateAutoPlayState(self, newState):
+        pass
+
     def promptFor(self, prompt=">", message=""):
         if message <> "":
             print(message)
@@ -54,18 +57,21 @@ class ConsoleUI(threading.Thread):
             for user in rooms[room]:
                 userflags = u""
                 if user.isController():
-                    userflags = userflags + u"(Controller) "
+                    userflags += u"({}) ".format(getMessage("controller-userlist-userflag"))
+                if user.isReady():
+                    userflags += u"({}) ".format(getMessage("ready-userlist-userflag"))
+
                 username = userflags + u"*<{}>*".format(user.username) if user == currentUser else userflags + u"<{}>".format(user.username)
                 if user.file:
-                    message = u"{} is playing:".format(username)
+                    message = getMessage("userlist-playing-notification").format(username)
                     self.showMessage(message, True)
-                    message = u"    File: '{}' ({})".format(user.file['name'], formatTime(user.file['duration']))
+                    message = u"    {}: '{}' ({})".format(getMessage("userlist-file-notification"),user.file['name'], formatTime(user.file['duration']))
                     if currentUser.file:
                         if user.file['name'] == currentUser.file['name'] and user.file['size'] != currentUser.file['size']:
-                            message += u" (their file size is different from yours!)"
+                            message += getMessage("different-filesize-notification")
                     self.showMessage(message, True)
                 else:
-                    message = u"{} is not playing a file".format(username)
+                    message = getMessage("no-file-played-notification").format(username)
                     self.showMessage(message, True)
 
     def userListChange(self):
@@ -149,6 +155,8 @@ class ConsoleUI(threading.Thread):
         elif command.group('command') in constants.COMMANDS_AUTH:
             controlpassword = command.group('parameter')
             self._syncplayClient.identifyAsController(controlpassword)
+        elif command.group('command') in constants.COMMANDS_TOGGLE:
+            self._syncplayClient.toggleReady()
         else:
             if self._tryAdvancedCommands(data):
                 return
@@ -161,6 +169,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/pause"), True)
             self.showMessage(getMessage("commandlist-notification/seek"), True)
             self.showMessage(getMessage("commandlist-notification/help"), True)
+            self.showMessage(getMessage("commandlist-notification/toggle"), True)
             self.showMessage(getMessage("commandlist-notification/create"), True)
             self.showMessage(getMessage("commandlist-notification/auth"), True)
             self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)

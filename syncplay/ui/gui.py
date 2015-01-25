@@ -1,12 +1,14 @@
 from PySide import QtGui
-from PySide.QtCore import Qt, QSettings, QSize, QPoint
+from PySide.QtCore import Qt, QSettings, QSize, QPoint, QUrl
 from syncplay import utils, constants, version
 from syncplay.messages import getMessage
 import sys
 import time
+from datetime import datetime
 import re
 import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize
+lastCheckedForUpdates = None
 
 class UserlistItemDelegate(QtGui.QStyledItemDelegate):
     def __init__(self):
@@ -74,13 +76,10 @@ class MainWindow(QtGui.QMainWindow):
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
         try:
-            if self.contactLabel and not self.config['showContactInfo']:
-                self.contactLabel.hide()
-            if not constants.SHOW_BUTTON_LABELS:
-                self.hideRoomSeekLabels()
-                self.hideMiscLabels()
-        except ():
+            self.updateReadyState(self.config['readyAtStart'])
+        except:
             pass
+        self.automaticUpdateCheck()
 
     def promptFor(self, prompt=">", message=""):
         # TODO: Prompt user
@@ -93,7 +92,7 @@ class MainWindow(QtGui.QMainWindow):
         message = message.replace("&gt;", "&gt;</span>")
         message = message.replace("\n", "<br />")
         if noTimestamp:
-            self.newMessage(message + "<br />")
+            self.newMessage("{}<br />".format(message))
         else:
             self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
 
@@ -125,7 +124,13 @@ class MainWindow(QtGui.QMainWindow):
             for user in rooms[room]:
                 useritem = QtGui.QStandardItem(user.username)
                 isController = user.isController()
+                sameRoom = room == currentUser.room
+                if sameRoom:
+                    isReady = user.isReady()
+                else:
+                    isReady = None
                 useritem.setData(isController, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
+                useritem.setData(isReady, Qt.UserRole + constants.USERITEM_READY_ROLE)
                 if user.file:
                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size']))
                     filedurationitem = QtGui.QStandardItem("({})".format(formatTime(user.file['duration'])))
@@ -134,7 +139,6 @@ class MainWindow(QtGui.QMainWindow):
                         sameName = sameFilename(user.file['name'], currentUser.file['name'])
                         sameSize = sameFilesize(user.file['size'], currentUser.file['size'])
                         sameDuration = sameFileduration(user.file['duration'], currentUser.file['duration'])
-                        sameRoom = room == currentUser.room
                         underlinefont = QtGui.QFont()
                         underlinefont.setUnderline(True)
                         if sameRoom:
@@ -158,13 +162,14 @@ class MainWindow(QtGui.QMainWindow):
                 font = QtGui.QFont()
                 if currentUser.username == user.username:
                     font.setWeight(QtGui.QFont.Bold)
+                    self.updateReadyState(currentUser.isReady())
                 if isControlledRoom and not isController:
                     useritem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOTCONTROLLER_COLOR)))
                 useritem.setFont(font)
-                useritem.setFlags(useritem.flags() & ~Qt.ItemIsEditable)
-                filenameitem.setFlags(filenameitem.flags() & ~Qt.ItemIsEditable)
-                filesizeitem.setFlags(filesizeitem.flags() & ~Qt.ItemIsEditable)
-                filedurationitem.setFlags(filedurationitem.flags() & ~Qt.ItemIsEditable)
+                useritem.setFlags(useritem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
+                filenameitem.setFlags(filenameitem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
+                filesizeitem.setFlags(filesizeitem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
+                filedurationitem.setFlags(filedurationitem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
                 roomitem.appendRow((useritem, filesizeitem, filedurationitem, filenameitem))
         self.listTreeModel = self._usertreebuffer
         self.listTreeView.setModel(self.listTreeModel)
@@ -193,6 +198,14 @@ class MainWindow(QtGui.QMainWindow):
             self.listTreeView.expandAll()
         except:
             pass
+
+    def updateReadyState(self, newState):
+        oldState = self.readyPushButton.isChecked()
+        if newState != oldState and newState != None:
+            self.readyPushButton.blockSignals(True)
+            self.readyPushButton.setChecked(newState)
+            self.readyPushButton.blockSignals(False)
+        self.updateReadyIcon()
 
     def roomClicked(self, item):
         while item.parent().row() != -1:
@@ -230,8 +243,18 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient.setRoom(room)
             self._syncplayClient.sendRoom()
 
-    def seekPosition(self):
-        s = re.match(constants.UI_SEEK_REGEX, self.seekInput.text())
+    def seekPositionDialog(self):
+        seekTime, ok = QtGui.QInputDialog.getText(self, getMessage("seektime-menu-label"),
+                                                   getMessage("seektime-msgbox-label"), QtGui.QLineEdit.Normal,
+                                                   "0:00")
+        if ok and seekTime != '':
+            self.seekPosition(seekTime)
+
+    def seekFromButton(self):
+        self.seekPosition(self.seekInput.text())
+
+    def seekPosition(self, seekTime):
+        s = re.match(constants.UI_SEEK_REGEX, seekTime)
         if s:
             sign = self._extractSign(s.group('sign'))
             t = utils.parseTime(s.group('time'))
@@ -240,9 +263,8 @@ class MainWindow(QtGui.QMainWindow):
             if sign:
                 t = self._syncplayClient.getGlobalPosition() + sign * t
             self._syncplayClient.setPosition(t)
-
         else:
-            self.showErrorMessage("Invalid seek value")
+            self.showErrorMessage(getMessage("invalid-seek-value"))
 
     def undoSeek(self):
         tmp_pos = self._syncplayClient.getPlayerPosition()
@@ -264,69 +286,6 @@ class MainWindow(QtGui.QMainWindow):
     def closeEvent(self, event):
         self.exitSyncplay()
         self.saveSettings()
-
-    def setupSizes(self):
-        self.hideRoomSeekLabels()
-        self.miscThreshold = self.seekGroup.sizeHint().width()+self.roomGroup.sizeHint().width()+self.miscGroup.sizeHint().width()+30
-        self.hideMiscLabels()
-        self.setMinimumWidth(self.seekGroup.sizeHint().width()+self.roomGroup.sizeHint().width()+self.miscGroup.sizeHint().width()+30)
-        self.seekGroup.setMinimumWidth(self.seekGroup.sizeHint().width())
-        self.roomGroup.setMinimumWidth(self.roomGroup.sizeHint().width())
-        self.miscGroup.setMinimumWidth(self.miscGroup.sizeHint().width())
-        self.showRoomSeekLabels()
-        self.showMiscLabels()
-        windowMaximumWidth = self.maximumWidth()
-        self.seekGroup.setMaximumWidth(self.seekGroup.sizeHint().width())
-        self.roomGroup.setMaximumWidth(self.roomGroup.sizeHint().width())
-        self.miscGroup.setMaximumWidth(self.miscGroup.sizeHint().width())
-        self.setMaximumWidth(windowMaximumWidth)
-        self.roomSeekThreshold = self.mainLayout.sizeHint().width()
-
-    def hideRoomSeekLabels(self):
-        self.roomButton.setText("")
-        self.seekButton.setText("")
-
-    def hideMiscLabels(self):
-        self.unseekButton.setText("")
-        if constants.MERGE_PLAYPAUSE_BUTTONS:
-            self.playpauseButton.setText("")
-        else:
-            self.playButton.setText("")
-            self.pauseButton.setText("")
-
-    def showRoomSeekLabels(self):
-        if not constants.SHOW_BUTTON_LABELS:
-            return
-        self.roomButton.setText(getMessage("joinroom-guibuttonlabel"))
-        self.seekButton.setText(getMessage("seektime-guibuttonlabel"))
-
-    def showMiscLabels(self):
-        self.unseekButton.setText(getMessage("undoseek-guibuttonlabel"))
-        if not constants.SHOW_BUTTON_LABELS:
-            return
-        if constants.MERGE_PLAYPAUSE_BUTTONS:
-            self.playpauseButton.setText(getMessage("togglepause-guibuttonlabel"))
-        else:
-            self.playButton.setText(getMessage("play-guibuttonlabel"))
-            self.pauseButton.setText(getMessage("pause-guibuttonlabel"))
-
-    def resizeEvent(self,resizeEvent):
-        self.updateListGeometry()
-        if self.roomGroup and self.miscThreshold:
-            currentWidth = self.mainFrame.size().width()
-            if currentWidth < self.miscThreshold:
-                 if self.unseekButton.text() != "":
-                    self.hideMiscLabels()
-            else:
-                if self.unseekButton.text() == "":
-                    self.showMiscLabels()
-
-            if currentWidth < self.roomSeekThreshold:
-                if self.roomButton.text() != "":
-                    self.hideRoomSeekLabels()
-            else:
-                if self.roomButton.text() == "":
-                    self.showRoomSeekLabels()
 
     def loadMediaBrowseSettings(self):
         settings = QSettings("Syncplay", "MediaBrowseDialog")
@@ -364,6 +323,13 @@ class MainWindow(QtGui.QMainWindow):
             self.mediadirectory = os.path.dirname(fileName)
             self.saveMediaBrowseSettings()
             self._syncplayClient._player.openFile(fileName)
+
+    def promptForStreamURL(self):
+        streamURL, ok = QtGui.QInputDialog.getText(self, getMessage("promptforstreamurl-msgbox-label"),
+                                                   getMessage("promptforstreamurlinfo-msgbox-label"), QtGui.QLineEdit.Normal,
+                                                   "")
+        if ok and streamURL != '':
+            self._syncplayClient._player.openFile(streamURL)
 
     def createControlledRoom(self):
         controlroom, ok = QtGui.QInputDialog.getText(self, getMessage("createcontrolledroom-msgbox-label"),
@@ -405,15 +371,15 @@ class MainWindow(QtGui.QMainWindow):
                     t = self._syncplayClient.getUserOffset() + sign * t
                 self._syncplayClient.setUserOffset(t)
             else:
-                self.showErrorMessage("Invalid offset value")
+                self.showErrorMessage(getMessage("invalid-offset-value"))
 
     def openUserGuide(self):
         if sys.platform.startswith('linux'):
-            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/linux/")
+            self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/linux/"))
         elif sys.platform.startswith('win'):
-            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/windows/")
+            self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/windows/"))
         else:
-            self.QtGui.QDesktopServices.openUrl("http://syncplay.pl/guide/")
+            self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/"))
 
     def drop(self):
         self.close()
@@ -422,8 +388,16 @@ class MainWindow(QtGui.QMainWindow):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)
 
         window.outputLayout = QtGui.QVBoxLayout()
-        window.outputbox = QtGui.QTextEdit()
+        window.outputbox = QtGui.QTextBrowser()
         window.outputbox.setReadOnly(True)
+        window.outputbox.setTextInteractionFlags(window.outputbox.textInteractionFlags() | Qt.TextSelectableByKeyboard)
+        window.outputbox.setOpenExternalLinks(True)
+        window.outputbox.unsetCursor()
+        window.outputbox.moveCursor(QtGui.QTextCursor.End)
+        window.outputbox.insertHtml(constants.STYLE_CONTACT_INFO.format(getMessage("contact-label")))
+        window.outputbox.moveCursor(QtGui.QTextCursor.End)
+        window.outputbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+
         window.outputlabel = QtGui.QLabel(getMessage("notifications-heading-label"))
         window.outputFrame = QtGui.QFrame()
         window.outputFrame.setLineWidth(0)
@@ -443,19 +417,28 @@ class MainWindow(QtGui.QMainWindow):
         window.listFrame = QtGui.QFrame()
         window.listFrame.setLineWidth(0)
         window.listFrame.setMidLineWidth(0)
+        window.listFrame.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         window.listLayout.setContentsMargins(0, 0, 0, 0)
         window.listLayout.addWidget(window.listlabel)
         window.listLayout.addWidget(window.listTreeView)
-        window.contactLabel = QtGui.QLabel()
-        window.contactLabel.setWordWrap(True)
-        window.contactLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
-        window.contactLabel.setLineWidth(1)
-        window.contactLabel.setMidLineWidth(0)
-        window.contactLabel.setMargin(2)
-        window.contactLabel.setText(getMessage("contact-label"))
-        window.contactLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
-        window.contactLabel.setOpenExternalLinks(True)
-        window.listLayout.addWidget(window.contactLabel)
+
+        window.roomInput = QtGui.QLineEdit()
+        window.roomInput.returnPressed.connect(self.joinRoom)
+        window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'),
+                                              getMessage("joinroom-menu-label"))
+        window.roomButton.pressed.connect(self.joinRoom)
+        window.roomLayout = QtGui.QHBoxLayout()
+        window.roomFrame = QtGui.QFrame()
+        window.roomFrame.setLayout(self.roomLayout)
+        window.roomFrame.setContentsMargins(0,0,0,0)
+        window.roomFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        window.roomLayout.setContentsMargins(0,0,0,0)
+        self.roomButton.setToolTip(getMessage("joinroom-tooltip"))
+        window.roomLayout.addWidget(window.roomInput)
+        window.roomLayout.addWidget(window.roomButton)
+        window.roomFrame.setMaximumHeight(window.roomFrame.sizeHint().height())
+        window.listLayout.addWidget(window.roomFrame, Qt.AlignRight)
+
         window.listFrame.setLayout(window.listLayout)
 
         window.topSplit.addWidget(window.outputFrame)
@@ -467,101 +450,105 @@ class MainWindow(QtGui.QMainWindow):
 
     def addBottomLayout(self, window):
         window.bottomLayout = QtGui.QHBoxLayout()
+        window.bottomFrame = QtGui.QFrame()
+        window.bottomFrame.setLayout(window.bottomLayout)
+        window.bottomLayout.setContentsMargins(0,0,0,0)
 
-        window.addRoomBox(MainWindow)
-        window.addSeekBox(MainWindow)
-        window.addMiscBox(MainWindow)
+        self.addPlaybackLayout(window)
 
-        window.bottomLayout.addWidget(window.roomGroup)
-        window.bottomLayout.addWidget(window.seekGroup)
-        window.bottomLayout.addWidget(window.miscGroup)
+        window.readyPushButton = QtGui.QPushButton()
+        readyFont = QtGui.QFont()
+        readyFont.setWeight(QtGui.QFont.Bold)
+        window.readyPushButton.setText(getMessage("ready-guipushbuttonlabel"))
+        window.readyPushButton.setCheckable(True)
+        window.readyPushButton.setAutoExclusive(False)
+        window.readyPushButton.toggled.connect(self.changeReadyState)
+        window.readyPushButton.setFont(readyFont)
+        window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON)
+        window.listLayout.addWidget(window.readyPushButton, Qt.AlignRight)
+        window.autoPlayPushButton = QtGui.QPushButton()
+        window.autoPlayPushButton.setVisible(False)
+        autoPlayFont = QtGui.QFont()
+        autoPlayFont.setWeight(QtGui.QFont.Bold)
+        window.autoPlayPushButton.setText(getMessage("autoplay-guipushbuttonlabel"))
+        window.autoPlayPushButton.setCheckable(True)
+        window.autoPlayPushButton.setAutoExclusive(False)
+        window.autoPlayPushButton.toggled.connect(self.changeAutoPlayState)
+        window.autoPlayPushButton.setFont(autoPlayFont)
+        window.autoPlayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON)
+        window.listLayout.addWidget(window.autoPlayPushButton, Qt.AlignRight)
+        self.updateAutoPlayIcon()
+        window.mainLayout.addWidget(window.bottomFrame, Qt.AlignLeft)
+        window.bottomFrame.setMaximumHeight(window.bottomFrame.minimumSizeHint().height())
 
-        window.mainLayout.addLayout(window.bottomLayout, Qt.AlignLeft)
-
-    def addRoomBox(self, window):
-        window.roomGroup = QtGui.QGroupBox(getMessage("room-heading-label"))
-
-        window.roomInput = QtGui.QLineEdit()
-        window.roomInput.returnPressed.connect(self.joinRoom)
-        window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'),
-                                              getMessage("joinroom-guibuttonlabel"))
-        window.roomButton.pressed.connect(self.joinRoom)
-        window.roomLayout = QtGui.QHBoxLayout()
-        window.roomInput.setFixedWidth(150)
-
-        self.roomButton.setToolTip(getMessage("joinroom-tooltip"))
-
-        window.roomLayout.addWidget(window.roomInput)
-        window.roomLayout.addWidget(window.roomButton)
-
-        window.roomGroup.setLayout(window.roomLayout)
-        window.roomGroup.setFixedHeight(window.roomGroup.sizeHint().height())
-
-    def addSeekBox(self, window):
-        window.seekGroup = QtGui.QGroupBox(getMessage("seek-heading-label"))
-
+    def addPlaybackLayout(self, window):
+        window.playbackFrame = QtGui.QFrame()
+        window.playbackFrame.setVisible(False)
+        window.playbackFrame.setContentsMargins(0,0,0,0)
+        window.playbackLayout = QtGui.QHBoxLayout()
+        window.playbackLayout.setAlignment(Qt.AlignLeft)
+        window.playbackLayout.setContentsMargins(0,0,0,0)
+        window.playbackFrame.setLayout(window.playbackLayout)
         window.seekInput = QtGui.QLineEdit()
-        window.seekInput.returnPressed.connect(self.seekPosition)
-        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'),
-                                              getMessage("seektime-guibuttonlabel"))
-        window.seekButton.pressed.connect(self.seekPosition)
-
-        self.seekButton.setToolTip(getMessage("seektime-tooltip"))
-
-        window.seekLayout = QtGui.QHBoxLayout()
+        window.seekInput.returnPressed.connect(self.seekFromButton)
+        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'), "")
+        window.seekButton.setToolTip(getMessage("seektime-menu-label"))
+        window.seekButton.pressed.connect(self.seekFromButton)
         window.seekInput.setText("0:00")
         window.seekInput.setFixedWidth(60)
-
-        window.seekLayout.addWidget(window.seekInput)
-        window.seekLayout.addWidget(window.seekButton)
-
-        window.seekGroup.setLayout(window.seekLayout)
-        window.seekGroup.setFixedHeight(window.seekGroup.sizeHint().height())
-
-    def addMiscBox(self, window):
-        window.miscGroup = QtGui.QGroupBox(getMessage("othercommands-heading-label"))
-
-        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'),
-                                                getMessage("undoseek-guibuttonlabel"))
+        window.playbackLayout.addWidget(window.seekInput)
+        window.playbackLayout.addWidget(window.seekButton)
+        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'), "")
+        window.unseekButton.setToolTip(getMessage("undoseek-menu-label"))
         window.unseekButton.pressed.connect(self.undoSeek)
-        self.unseekButton.setToolTip(getMessage("undoseek-tooltip"))
 
         window.miscLayout = QtGui.QHBoxLayout()
-        window.miscLayout.addWidget(window.unseekButton)
-        if constants.MERGE_PLAYPAUSE_BUTTONS == True:
-            window.playpauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),
-                                                       getMessage("togglepause-guibuttonlabel"))
-            window.playpauseButton.pressed.connect(self.togglePause)
-            window.miscLayout.addWidget(window.playpauseButton)
-            self.playpauseButton.setToolTip(getMessage("togglepause-tooltip"))
-        else:
-            window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'),
-                                                  getMessage("play-guibuttonlabel"))
-            window.playButton.pressed.connect(self.play)
-            window.miscLayout.addWidget(window.playButton)
-            window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'),
-                                                   getMessage("pause-guibuttonlabel"))
-            window.pauseButton.pressed.connect(self.pause)
-            window.miscLayout.addWidget(window.pauseButton)
-            self.playButton.setToolTip(getMessage("play-tooltip"))
-            self.pauseButton.setToolTip(getMessage("pause-tooltip"))
-
-        window.miscGroup.setLayout(window.miscLayout)
-        window.miscGroup.setFixedHeight(window.miscGroup.sizeHint().height())
-
+        window.playbackLayout.addWidget(window.unseekButton)
+        window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'), "")
+        window.playButton.setToolTip(getMessage("play-menu-label"))
+        window.playButton.pressed.connect(self.play)
+        window.playbackLayout.addWidget(window.playButton)
+        window.pauseButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'), "")
+        window.pauseButton.setToolTip(getMessage("pause-menu-label"))
+        window.pauseButton.pressed.connect(self.pause)
+        window.playbackLayout.addWidget(window.pauseButton)
+        window.playbackFrame.setMaximumHeight(window.playbackFrame.sizeHint().height())
+        window.playbackFrame.setMaximumWidth(window.playbackFrame.sizeHint().width())
+        window.outputLayout.addWidget(window.playbackFrame)
 
     def addMenubar(self, window):
         window.menuBar = QtGui.QMenuBar()
+
+        # File menu
 
         window.fileMenu = QtGui.QMenu(getMessage("file-menu-label"), self)
         window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'folder_explore.png'),
                                                       getMessage("openmedia-menu-label"))
         window.openAction.triggered.connect(self.browseMediapath)
+        window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'world_explore.png'),
+                                                      getMessage("openstreamurl-menu-label"))
+        window.openAction.triggered.connect(self.promptForStreamURL)
 
         window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'),
                                                       getMessage("exit-menu-label"))
         window.exitAction.triggered.connect(self.exitSyncplay)
         window.menuBar.addMenu(window.fileMenu)
+
+        # Playback menu
+
+        window.playbackMenu = QtGui.QMenu(getMessage("playback-menu-label"), self)
+        window.playAction = window.playbackMenu.addAction(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'), getMessage("play-menu-label"))
+        window.playAction.triggered.connect(self.play)
+        window.pauseAction = window.playbackMenu.addAction(QtGui.QIcon(self.resourcespath + 'control_pause_blue.png'), getMessage("pause-menu-label"))
+        window.pauseAction.triggered.connect(self.pause)
+        window.seekAction = window.playbackMenu.addAction(QtGui.QIcon(self.resourcespath + 'clock_go.png'), getMessage("seektime-menu-label"))
+        window.seekAction.triggered.connect(self.seekPositionDialog)
+        window.unseekAction = window.playbackMenu.addAction(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'), getMessage("undoseek-menu-label"))
+        window.unseekAction.triggered.connect(self.undoSeek)
+
+        window.menuBar.addMenu(window.playbackMenu)
+
+        # Advanced menu
 
         window.advancedMenu = QtGui.QMenu(getMessage("advanced-menu-label"), self)
         window.setoffsetAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'timeline_marker.png'),
@@ -574,12 +561,32 @@ class MainWindow(QtGui.QMainWindow):
         window.identifyascontroller = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'key_go.png'),
                                                                     getMessage("identifyascontroller-menu-label"))
         window.identifyascontroller.triggered.connect(self.identifyAsController)
+
         window.menuBar.addMenu(window.advancedMenu)
+
+        # Window menu
+
+        window.windowMenu = QtGui.QMenu(getMessage("window-menu-label"), self)
+
+        window.playbackAction = window.windowMenu.addAction(getMessage("playbackbuttons-menu-label"))
+        window.playbackAction.setCheckable(True)
+        window.playbackAction.triggered.connect(self.updatePlaybackFrameVisibility)
+
+        window.autoplayAction = window.windowMenu.addAction(getMessage("autoplay-menu-label"))
+        window.autoplayAction.setCheckable(True)
+        window.autoplayAction.triggered.connect(self.updateAutoplayVisibility)
+        window.menuBar.addMenu(window.windowMenu)
+
+
+        # Help menu
 
         window.helpMenu = QtGui.QMenu(getMessage("help-menu-label"), self)
         window.userguideAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'),
                                                            getMessage("userguide-menu-label"))
         window.userguideAction.triggered.connect(self.openUserGuide)
+        window.updateAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'application_get.png'),
+                                                           getMessage("update-menu-label"))
+        window.updateAction.triggered.connect(self.userCheckForUpdates)
 
         window.menuBar.addMenu(window.helpMenu)
         window.mainLayout.setMenuBar(window.menuBar)
@@ -605,6 +612,81 @@ class MainWindow(QtGui.QMainWindow):
         self.listbox.moveCursor(QtGui.QTextCursor.End)
         self.listbox.insertHtml(item)
         self.listbox.moveCursor(QtGui.QTextCursor.End)
+
+    def updatePlaybackFrameVisibility(self):
+        self.playbackFrame.setVisible(self.playbackAction.isChecked())
+
+    def updateAutoplayVisibility(self):
+        self.autoPlayPushButton.setVisible(self.autoplayAction.isChecked())
+
+    def changeReadyState(self):
+        self.updateReadyIcon()
+        self._syncplayClient.changeReadyState(self.readyPushButton.isChecked())
+
+    def updateAutoPlayState(self, newState):
+        oldState = self.autoPlayPushButton.isChecked()
+        if newState != oldState and newState != None:
+            self.autoPlayPushButton.setChecked(newState)
+        self.updateAutoPlayIcon()
+
+    def changeAutoPlayState(self):
+        self.updateAutoPlayIcon()
+        self._syncplayClient.changeAutoPlayState(self.autoPlayPushButton.isChecked())
+
+    def updateReadyIcon(self):
+        ready = self.readyPushButton.isChecked()
+        if ready:
+            self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
+        else:
+            self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'empty_checkbox.png'))
+
+    def updateAutoPlayIcon(self):
+        ready = self.autoPlayPushButton.isChecked()
+        if ready:
+            self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
+        else:
+            self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'empty_checkbox.png'))
+
+    def automaticUpdateCheck(self):
+        currentDateTime = datetime.utcnow()
+        if not self.config['checkForUpdatesAutomatically']:
+            return
+        if self.config['lastCheckedForUpdates']:
+            configLastChecked = datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f")
+            if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates:
+                self.lastCheckedForUpdates = configLastChecked
+        if self.lastCheckedForUpdates is None:
+            self.checkForUpdates()
+        else:
+            timeDelta = currentDateTime - self.lastCheckedForUpdates
+            if timeDelta.total_seconds() > constants.AUTOMATIC_UPDATE_CHECK_FREQUENCY:
+                self.checkForUpdates()
+
+    def userCheckForUpdates(self):
+        self.checkForUpdates(userInitiated=True)
+
+    def checkForUpdates(self, userInitiated=False):
+        self.lastCheckedForUpdates = datetime.utcnow()
+        updateStatus, updateMessage, updateURL = self._syncplayClient.checkForUpdate(userInitiated)
+        if updateMessage is None:
+            if updateStatus == "uptodate":
+                updateMessage = getMessage("syncplay-uptodate-notification")
+            elif updateStatus == "updateavailale":
+                updateMessage = getMessage("syncplay-updateavailable-notification")
+            else:
+                import syncplay
+                updateMessage = getMessage("update-check-failed-notification").format(syncplay.version)
+                if userInitiated == True:
+                    updateURL = constants.SYNCPLAY_DOWNLOAD_URL
+        if updateURL is not None:
+            reply = QtGui.QMessageBox.question(self, "Syncplay",
+                                        updateMessage, QtGui.QMessageBox.StandardButton.Yes | QtGui.QMessageBox.StandardButton.No)
+            if reply == QtGui.QMessageBox.Yes:
+                self.QtGui.QDesktopServices.openUrl(QUrl(updateURL))
+        elif userInitiated:
+            QtGui.QMessageBox.information(self, "Syncplay", updateMessage)
+        else:
+            self.showMessage(updateMessage)
 
     def dragEnterEvent(self, event):
         data = event.mimeData()
@@ -633,6 +715,12 @@ class MainWindow(QtGui.QMainWindow):
         settings.beginGroup("MainWindow")
         settings.setValue("size", self.size())
         settings.setValue("pos", self.pos())
+        settings.setValue("showPlaybackButtons", self.playbackAction.isChecked())
+        settings.setValue("showAutoPlayButton", self.autoplayAction.isChecked())
+        settings.endGroup()
+        settings = QSettings("Syncplay", "Interface")
+        settings.beginGroup("Update")
+        settings.setValue("lastChecked", self.lastCheckedForUpdates)
         settings.endGroup()
 
     def loadSettings(self):
@@ -640,7 +728,16 @@ class MainWindow(QtGui.QMainWindow):
         settings.beginGroup("MainWindow")
         self.resize(settings.value("size", QSize(700, 500)))
         self.move(settings.value("pos", QPoint(200, 200)))
+        if settings.value("showPlaybackButtons", "false") == "true":
+            self.playbackAction.setChecked(True)
+            self.updatePlaybackFrameVisibility()
+        if settings.value("showAutoPlayButton", "false") == "true":
+            self.autoplayAction.setChecked(True)
+            self.updateAutoplayVisibility()
         settings.endGroup()
+        settings = QSettings("Syncplay", "Interface")
+        settings.beginGroup("Update")
+        self.lastCheckedForUpdates = settings.value("lastChecked", None)
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -656,7 +753,6 @@ class MainWindow(QtGui.QMainWindow):
         self.addBottomLayout(self)
         self.addMenubar(self)
         self.addMainFrame(self)
-        self.setupSizes()
         self.loadSettings()
         self.setWindowIcon(QtGui.QIcon(self.resourcespath + "syncplay.png"))
         self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.AA_DontUseNativeMenuBar & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
