@@ -62,7 +62,7 @@ en = {
       
       "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version
       "syncplay-uptodate-notification" : u"Syncplay is up to date",
-      "syncplay-updateavailable-notification" : u"A new version of Syncplay is available. Do you want to download it?",
+      "syncplay-updateavailable-notification" : u"A new version of Syncplay is available. Do you want to visit the release page?",
 
       "mplayer-file-required-notification" : "Syncplay using mplayer requires you to provide file when starting",
       "mplayer-file-required-notification/example" : "Usage example: syncplay [options] [url|path/]filename",
@@ -404,7 +404,7 @@ ru = {
       
       "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version # TODO: Translate into Russian
       "syncplay-uptodate-notification" : u"Syncplay is up to date", # TODO: Translate into Russian
-      "syncplay-updateavailable-notification" : u"A new version of Syncplay is available. Do you want to download it?", # TODO: Translate into Russian
+      "syncplay-updateavailable-notification" : u"A new version of Syncplay is available. Do you want to visit the release page?", # TODO: Translate into Russian
 
       "mplayer-file-required-notification" : u"Для использования Syncplay с mplayer необходимо передать файл в качестве параметра",
       "mplayer-file-required-notification/example" : u"Пример использования: syncplay [options] [url|path/]filename",
@@ -747,7 +747,7 @@ de = {
       
       "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version # TODO: Translate into German
         "syncplay-uptodate-notification" : u"Syncplay is up to date", # TODO: Translate into German
-      "syncplay-updateavailable-notification" : u"A new version of Syncplay is available. Do you want to download it?", # TODO: Translate into German
+      "syncplay-updateavailable-notification" : u"A new version of Syncplay is available. Do you want to visit the release page?", # TODO: Translate into German
 
       "mplayer-file-required-notification" : u"Syncplay für mplayer benötigt eine Datei-Angabe beim Start",
       "mplayer-file-required-notification/example" : u"Anwendungsbeispiel: syncplay [optionen] [url|pfad/]Dateiname",
