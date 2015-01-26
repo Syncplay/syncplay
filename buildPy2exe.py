@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 #coding:utf8
+
+''' *** TROUBLESHOOTING ***
+
+1) If you get the error "ImportError: No module named zope.interface" then add an empty __init__.py file to the PYTHONDIR/Lib/site-packages/zope directory
+
+2) It is expected that you will have Unicode NSIS from http://www.scratchpaper.com/ installed to: C:\Program Files (x86)\NSIS\Unicode\
+
+'''
+
 import sys
 try:
     if (sys.version_info.major != 2) or (sys.version_info.minor < 7):
