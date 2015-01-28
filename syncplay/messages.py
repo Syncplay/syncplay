@@ -210,7 +210,7 @@ en = {
       "run-label" : "Run Syncplay",
       "storeandrun-label" : "Store configuration and run Syncplay",
 
-      "contact-label" : "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues/new\"><nobr>raise an issue</nobr></a> via GitHub or visit <a href=\"http://syncplay.pl/\"><nobr>http://syncplay.pl/</nobr></a>",
+      "contact-label" : "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>raise an issue</nobr></a> via GitHub or visit <a href=\"http://syncplay.pl/\"><nobr>http://syncplay.pl/</nobr></a>",
 
       "joinroom-menu-label" : "Join room",
       "seektime-menu-label" : "Seek to time",
@@ -552,7 +552,7 @@ ru = {
       "run-label" : u"Запустить Syncplay",
       "storeandrun-label" : u"Сохранить настройки и зап. Syncplay",
 
-      "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues/new\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> за инорфмацией, помощью и обновлениями!",
+      "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> за инорфмацией, помощью и обновлениями!",
 
       "joinroom-menu-label" : u"Зайти в комнату",
       "seektime-menu-label" : u"Перемотать",
@@ -893,7 +893,7 @@ de = {
       "run-label" : u"Syncplay starten",
       "storeandrun-label" : u"Konfiguration speichern und Syncplay starten",
 
-      "contact-label" : u"Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues/new\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates.",
+      "contact-label" : u"Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates.",
 
       "joinroom-menu-label" : u"Raum beitreten",
       "seektime-menu-label" : u"Spule zu Zeit",
