@@ -11,7 +11,7 @@ class MplayerPlayer(BasePlayer):
     speedSupported = True
     customOpenDialog = False
     secondaryOSDSupported = False
-    osdMessageSeparator = "\\n"
+    osdMessageSeparator = "; "
 
     RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
     POSITION_QUERY = 'time_pos'
