@@ -811,7 +811,7 @@ class MainWindow(QtGui.QMainWindow):
             self.updateAutoPlayState(True)
             self.autoplayPushButton.setChecked(True)
         self.autoplayThresholdSpinbox.blockSignals(True)
-        self.autoplayThresholdSpinbox.setValue(settings.value("autoplayMinUsers", 2))
+        self.autoplayThresholdSpinbox.setValue(int(settings.value("autoplayMinUsers", 2)))
         self.autoplayThresholdSpinbox.blockSignals(False)
         settings.endGroup()
         settings = QSettings("Syncplay", "Interface")
