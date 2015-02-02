@@ -747,6 +747,11 @@ class SyncplayUser(object):
         else:
             return False
 
+    def isReadyWithFile(self):
+        if self.file is None:
+            return None
+        return self.ready
+
     def isReady(self):
         return self.ready
 
@@ -897,13 +902,13 @@ class SyncplayUserlist(object):
         if not self.currentUser.isReady():
             return False
         for user in self._users.itervalues():
-            if user.room == self.currentUser.room and user.isReady() == False:
+            if user.room == self.currentUser.room and user.isReadyWithFile() == False:
                 return False
         return True
 
     def areAllOtherUsersInRoomReady(self):
         for user in self._users.itervalues():
-            if user.room == self.currentUser.room and user.isReady() == False:
+            if user.room == self.currentUser.room and user.isReadyWithFile() == False:
                 return False
         return True
 
@@ -912,14 +917,14 @@ class SyncplayUserlist(object):
         if self.currentUser.isReady():
             readyCount += 1
         for user in self._users.itervalues():
-            if user.room == self.currentUser.room and user.isReady():
+            if user.room == self.currentUser.room and user.isReadyWithFile():
                 readyCount += 1
         return readyCount
     
     def usersInRoomCount(self):
         userCount = 1
         for user in self._users.itervalues():
-            if user.room == self.currentUser.room and user.isReady():
+            if user.room == self.currentUser.room and user.isReadyWithFile():
                 userCount += 1
         return userCount
 
@@ -928,7 +933,7 @@ class SyncplayUserlist(object):
         if not self.currentUser.isReady():
             notReady.append(self.currentUser.username)
         for user in self._users.itervalues():
-            if user.room == self.currentUser.room and user.isReady() == False:
+            if user.room == self.currentUser.room and user.isReadyWithFile() == False:
                 notReady.append(user.username)
         return ", ".join(notReady)
 
@@ -948,7 +953,7 @@ class SyncplayUserlist(object):
     
     def onlyUserInRoomWhoSupportsReadiness(self):
         for user in self._users.itervalues():
-            if user.room == self.currentUser.room and user.isReady() is not None:
+            if user.room == self.currentUser.room and user.isReadyWithFile() is not None:
                 return False
         return True
 
@@ -966,6 +971,15 @@ class SyncplayUserlist(object):
             if user.username == username and user.canControl():
                 return True
         return False
+
+    def isReadyWithFile(self, username):
+        if self.currentUser.username == username:
+            return self.currentUser.isReadyWithFile()
+
+        for user in self._users.itervalues():
+            if user.username == username:
+                return user.isReadyWithFile()
+        return None
 
     def isReady(self, username):
         if self.currentUser.username == username:

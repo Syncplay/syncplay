@@ -148,11 +148,11 @@ class MainWindow(QtGui.QMainWindow):
                 isController = user.isController()
                 sameRoom = room == currentUser.room
                 if sameRoom:
-                    isReady = user.isReady()
+                    isReadyWithFile = user.isReadyWithFile()
                 else:
-                    isReady = None
+                    isReadyWithFile = None
                 useritem.setData(isController, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
-                useritem.setData(isReady, Qt.UserRole + constants.USERITEM_READY_ROLE)
+                useritem.setData(isReadyWithFile, Qt.UserRole + constants.USERITEM_READY_ROLE)
                 if user.file:
                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size']))
                     filedurationitem = QtGui.QStandardItem("({})".format(formatTime(user.file['duration'])))
@@ -184,7 +184,7 @@ class MainWindow(QtGui.QMainWindow):
                 font = QtGui.QFont()
                 if currentUser.username == user.username:
                     font.setWeight(QtGui.QFont.Bold)
-                    self.updateReadyState(currentUser.isReady())
+                    self.updateReadyState(currentUser.isReadyWithFile())
                 if isControlledRoom and not isController:
                     useritem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOTCONTROLLER_COLOR)))
                 useritem.setFont(font)
