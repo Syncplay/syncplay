@@ -144,7 +144,7 @@ class ConsoleUI(threading.Thread):
                 else:
                     room = self._syncplayClient.defaultRoom
 
-            self._syncplayClient.setRoom(room)
+            self._syncplayClient.setRoom(room, resetAutoplay=True)
             self._syncplayClient.sendRoom()
         elif command.group('command') in constants.COMMANDS_CREATE:
             roombasename = command.group('parameter')

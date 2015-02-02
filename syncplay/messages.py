@@ -219,7 +219,8 @@ en = {
       "pause-menu-label" : "Pause",
       "playbackbuttons-menu-label" : u"Show playback buttons",
       "autoplay-menu-label" : u"Show auto-play button",
-      "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready",
+      "autoplay-guipushbuttonlabel" : u"Play when all ready",
+      "autoplay-minimum-label" : u"Min users:",
 
       "ready-guipushbuttonlabel" : u"I'm ready to watch!",
 
@@ -304,6 +305,8 @@ en = {
 
       "joinroom-tooltip" : "Leave current room and joins specified room.",
       "seektime-msgbox-label" : "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",
+      "ready-tooltip" : "Indicates whether you are ready to watch.",
+      "autoplay-tooltip" : "Auto-play when all users who have readiness indicator are ready and minimum user threshold met.",
 
       # In-userlist notes (GUI)
       "differentsize-note" : "Different size!",
@@ -562,6 +565,7 @@ ru = {
       "playbackbuttons-menu-label" : u"Show playback buttons",  # TODO: Translate into Russian
       "autoplay-menu-label" : u"Show auto-play button", # TODO: Translate into Russian
       "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready", # TODO: Translate into Russian
+      "autoplay-minimum-label" : u"Min users:", # TODO: Translate into Russian
 
 
       "ready-guipushbuttonlabel" : u"I'm ready to watch!", # TODO: Translate into Russian
@@ -647,6 +651,8 @@ ru = {
 
       "joinroom-tooltip" : u"Покинуть комнату и зайти в другую, указанную комнату.",
       "seektime-msgbox-label" : u"Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",
+      "ready-tooltip" : "Indicates whether you are ready to watch.", # TODO: Translate into Russian
+      "autoplay-tooltip" : "Auto-play when all users who have readiness indicator are ready and minimum user threshold met.", # TODO: Translate into Russian
 
       # In-userlist notes (GUI)
       "differentsize-note" : u"Размер файла не совпадает!",
@@ -903,6 +909,7 @@ de = {
       "playbackbuttons-menu-label" : u"Show playback buttons",  # TODO: Translate into German
       "autoplay-menu-label" : u"Show auto-play button", # TODO: Translate into German
       "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready", # TODO: Translate into German
+      "autoplay-minimum-label" : u"Min users:", # TODO: Translate into German
 
       "ready-guipushbuttonlabel" : u"I'm ready to watch!", # TODO: Translate into German
 
@@ -989,6 +996,8 @@ de = {
 
       "joinroom-tooltip" : u"Den aktuellen Raum verlassen und stattdessen den angegebenen betreten.",
       "seektime-msgbox-label" : u"Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
+      "ready-tooltip" : "Indicates whether you are ready to watch.", # TODO: Translate into German
+      "autoplay-tooltip" : "Auto-play when all users who have readiness indicator are ready and minimum user threshold met.", # TODO: Translate into German
 
       # In-userlist notes (GUI)
       "differentsize-note" : u"Verschiedene Größe!",

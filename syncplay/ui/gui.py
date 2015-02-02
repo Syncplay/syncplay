@@ -8,6 +8,7 @@ from datetime import datetime
 import re
 import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize
+from functools import wraps
 lastCheckedForUpdates = None
 
 class UserlistItemDelegate(QtGui.QStyledItemDelegate):
@@ -71,14 +72,35 @@ class MainWindow(QtGui.QMainWindow):
                 QtGui.QSplitterHandle.mouseMoveEvent(self, event)
                 self.parent().parent().parent().updateListGeometry()
 
+    def needsClient(f):  # @NoSelf
+        @wraps(f)
+        def wrapper(self, *args, **kwds):
+            if not self._syncplayClient:
+                self.showDebugMessage("Tried to use client before it was ready!")
+                return
+            return f(self, *args, **kwds)
+        return wrapper
+
     def addClient(self, client):
         self._syncplayClient = client
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
         try:
-            self.updateReadyState(self.config['readyAtStart'])
+            self.updateReadyState(self.config['readyAtStart'])     
+            autoplayInitialState = self.config['autoplayInitialState']
+            if autoplayInitialState is not None:
+                self.autoplayPushButton.blockSignals(True)
+                self.autoplayPushButton.setChecked(autoplayInitialState)
+                self.autoplayPushButton.blockSignals(False)
+            if self.config['autoplayInitialThreshold'] > 1:
+                self.autoplayThresholdSpinbox.blockSignals(True)
+                self.autoplayThresholdSpinbox.setValue(self.config['autoplayInitialThreshold'])
+                self.autoplayThresholdSpinbox.blockSignals(False)
+            self.changeAutoplayState()
+            self.changeAutoplayThreshold()
+            self.updateAutoPlayIcon()
         except:
-            pass
+            self.showErrorMessage("Failed to load some settings.")
         self.automaticUpdateCheck()
 
     def promptFor(self, prompt=">", message=""):
@@ -212,6 +234,7 @@ class MainWindow(QtGui.QMainWindow):
             item = item.parent()
         self.joinRoom(item.sibling(item.row(), 0).data())
 
+    @needsClient
     def userListChange(self):
         self._syncplayClient.showUserList()
 
@@ -230,6 +253,7 @@ class MainWindow(QtGui.QMainWindow):
         message = "<span style=\"{}\">".format(constants.STYLE_ERRORNOTIFICATION) + message + "</span>"
         self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
 
+    @needsClient
     def joinRoom(self, room=None):
         if room == None:
             room = self.roomInput.text()
@@ -240,7 +264,7 @@ class MainWindow(QtGui.QMainWindow):
                 room = self._syncplayClient.defaultRoom
         self.roomInput.setText(room)
         if room != self._syncplayClient.getRoom():
-            self._syncplayClient.setRoom(room)
+            self._syncplayClient.setRoom(room, resetAutoplay=True)
             self._syncplayClient.sendRoom()
 
     def seekPositionDialog(self):
@@ -253,6 +277,7 @@ class MainWindow(QtGui.QMainWindow):
     def seekFromButton(self):
         self.seekPosition(self.seekInput.text())
 
+    @needsClient
     def seekPosition(self, seekTime):
         s = re.match(constants.UI_SEEK_REGEX, seekTime)
         if s:
@@ -266,20 +291,25 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.showErrorMessage(getMessage("invalid-seek-value"))
 
+    @needsClient
     def undoSeek(self):
         tmp_pos = self._syncplayClient.getPlayerPosition()
         self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
         self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
 
+    @needsClient
     def togglePause(self):
         self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
 
+    @needsClient
     def play(self):
         self._syncplayClient.setPaused(False)
 
+    @needsClient
     def pause(self):
         self._syncplayClient.setPaused(True)
 
+    @needsClient
     def exitSyncplay(self):
         self._syncplayClient.stop()
 
@@ -299,6 +329,7 @@ class MainWindow(QtGui.QMainWindow):
         settings.setValue("mediadir", self.mediadirectory)
         settings.endGroup()
 
+    @needsClient
     def browseMediapath(self):
         if self._syncplayClient._player.customOpenDialog == True:
             self._syncplayClient._player.openCustomOpenDialog()
@@ -324,6 +355,7 @@ class MainWindow(QtGui.QMainWindow):
             self.saveMediaBrowseSettings()
             self._syncplayClient._player.openFile(fileName)
 
+    @needsClient
     def promptForStreamURL(self):
         streamURL, ok = QtGui.QInputDialog.getText(self, getMessage("promptforstreamurl-msgbox-label"),
                                                    getMessage("promptforstreamurlinfo-msgbox-label"), QtGui.QLineEdit.Normal,
@@ -331,6 +363,7 @@ class MainWindow(QtGui.QMainWindow):
         if ok and streamURL != '':
             self._syncplayClient._player.openFile(streamURL)
 
+    @needsClient
     def createControlledRoom(self):
         controlroom, ok = QtGui.QInputDialog.getText(self, getMessage("createcontrolledroom-msgbox-label"),
                 getMessage("controlledroominfo-msgbox-label"), QtGui.QLineEdit.Normal,
@@ -338,6 +371,7 @@ class MainWindow(QtGui.QMainWindow):
         if ok and controlroom != '':
             self._syncplayClient.createControlledRoom(controlroom)
 
+    @needsClient
     def identifyAsController(self):
         msgboxtitle = getMessage("identifyascontroller-msgbox-label")
         msgboxtext = getMessage("identifyinfo-msgbox-label")
@@ -354,6 +388,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             return None
 
+    @needsClient
     def setOffset(self):
         newoffset, ok = QtGui.QInputDialog.getText(self, getMessage("setoffset-msgbox-label"),
                                                    getMessage("offsetinfo-msgbox-label"), QtGui.QLineEdit.Normal,
@@ -465,19 +500,41 @@ class MainWindow(QtGui.QMainWindow):
         window.readyPushButton.toggled.connect(self.changeReadyState)
         window.readyPushButton.setFont(readyFont)
         window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON)
+        window.readyPushButton.setToolTip(getMessage("ready-tooltip"))
         window.listLayout.addWidget(window.readyPushButton, Qt.AlignRight)
-        window.autoPlayPushButton = QtGui.QPushButton()
-        window.autoPlayPushButton.setVisible(False)
+
+        window.autoplayLayout = QtGui.QHBoxLayout()
+        window.autoplayFrame = QtGui.QFrame()
+        window.autoplayFrame.setVisible(False)
+        window.autoplayLayout.setContentsMargins(0,0,0,0)
+        window.autoplayFrame.setLayout(window.autoplayLayout)
+        window.autoplayPushButton = QtGui.QPushButton()
         autoPlayFont = QtGui.QFont()
         autoPlayFont.setWeight(QtGui.QFont.Bold)
-        window.autoPlayPushButton.setText(getMessage("autoplay-guipushbuttonlabel"))
-        window.autoPlayPushButton.setCheckable(True)
-        window.autoPlayPushButton.setAutoExclusive(False)
-        window.autoPlayPushButton.toggled.connect(self.changeAutoPlayState)
-        window.autoPlayPushButton.setFont(autoPlayFont)
-        window.autoPlayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON)
-        window.listLayout.addWidget(window.autoPlayPushButton, Qt.AlignRight)
-        self.updateAutoPlayIcon()
+        window.autoplayPushButton.setText(getMessage("autoplay-guipushbuttonlabel"))
+        window.autoplayPushButton.setCheckable(True)
+        window.autoplayPushButton.setAutoExclusive(False)
+        window.autoplayPushButton.toggled.connect(self.changeAutoplayState)
+        window.autoplayPushButton.setFont(autoPlayFont)
+        window.autoplayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON)
+        window.autoplayPushButton.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        window.autoplayPushButton.setToolTip(getMessage("autoplay-tooltip"))
+        window.autoplayLabel = QtGui.QLabel(getMessage("autoplay-minimum-label"))
+        window.autoplayLabel.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        window.autoplayLabel.setMaximumWidth(window.autoplayLabel.minimumSizeHint().width())
+        window.autoplayLabel.setToolTip(getMessage("autoplay-tooltip"))
+        window.autoplayThresholdSpinbox = QtGui.QSpinBox()
+        window.autoplayThresholdSpinbox.setMaximumWidth(window.autoplayThresholdSpinbox.minimumSizeHint().width())
+        window.autoplayThresholdSpinbox.setMinimum(2)
+        window.autoplayThresholdSpinbox.setMaximum(99)
+        window.autoplayThresholdSpinbox.setToolTip(getMessage("autoplay-tooltip"))
+        window.autoplayThresholdSpinbox.valueChanged.connect(self.changeAutoplayThreshold)
+        window.autoplayLayout.addWidget(window.autoplayPushButton, Qt.AlignRight)
+        window.autoplayLayout.addWidget(window.autoplayLabel, Qt.AlignRight)
+        window.autoplayLayout.addWidget(window.autoplayThresholdSpinbox, Qt.AlignRight)
+
+        window.listLayout.addWidget(window.autoplayFrame, Qt.AlignLeft)
+        window.autoplayFrame.setMaximumHeight(window.autoplayFrame.sizeHint().height())
         window.mainLayout.addWidget(window.bottomFrame, Qt.AlignLeft)
         window.bottomFrame.setMaximumHeight(window.bottomFrame.minimumSizeHint().height())
 
@@ -617,21 +674,34 @@ class MainWindow(QtGui.QMainWindow):
         self.playbackFrame.setVisible(self.playbackAction.isChecked())
 
     def updateAutoplayVisibility(self):
-        self.autoPlayPushButton.setVisible(self.autoplayAction.isChecked())
+        self.autoplayFrame.setVisible(self.autoplayAction.isChecked())
 
     def changeReadyState(self):
         self.updateReadyIcon()
-        self._syncplayClient.changeReadyState(self.readyPushButton.isChecked())
+        if self._syncplayClient:
+            self._syncplayClient.changeReadyState(self.readyPushButton.isChecked())
+        else:
+            self.showDebugMessage("Tried to change ready state too soon.")
+        
+    @needsClient
+    def changeAutoplayThreshold(self, source=None):
+        self._syncplayClient.changeAutoPlayThrehsold(self.autoplayThresholdSpinbox.value())
 
     def updateAutoPlayState(self, newState):
-        oldState = self.autoPlayPushButton.isChecked()
+        oldState = self.autoplayPushButton.isChecked()
         if newState != oldState and newState != None:
-            self.autoPlayPushButton.setChecked(newState)
+            self.autoplayPushButton.blockSignals(True)
+            self.autoplayPushButton.setChecked(newState)
+            self.autoplayPushButton.blockSignals(False)
         self.updateAutoPlayIcon()
 
-    def changeAutoPlayState(self):
+    @needsClient
+    def changeAutoplayState(self, source=None):
         self.updateAutoPlayIcon()
-        self._syncplayClient.changeAutoPlayState(self.autoPlayPushButton.isChecked())
+        if self._syncplayClient:
+            self._syncplayClient.changeAutoplayState(self.autoplayPushButton.isChecked())
+        else:
+            self.showDebugMessage("Tried to set AutoplayState too soon")
 
     def updateReadyIcon(self):
         ready = self.readyPushButton.isChecked()
@@ -641,11 +711,11 @@ class MainWindow(QtGui.QMainWindow):
             self.readyPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'empty_checkbox.png'))
 
     def updateAutoPlayIcon(self):
-        ready = self.autoPlayPushButton.isChecked()
+        ready = self.autoplayPushButton.isChecked()
         if ready:
-            self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
+            self.autoplayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'tick_checkbox.png'))
         else:
-            self.autoPlayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'empty_checkbox.png'))
+            self.autoplayPushButton.setIcon(QtGui.QIcon(self.resourcespath + 'empty_checkbox.png'))
 
     def automaticUpdateCheck(self):
         currentDateTime = datetime.utcnow()
@@ -665,6 +735,7 @@ class MainWindow(QtGui.QMainWindow):
     def userCheckForUpdates(self):
         self.checkForUpdates(userInitiated=True)
 
+    @needsClient
     def checkForUpdates(self, userInitiated=False):
         self.lastCheckedForUpdates = datetime.utcnow()
         updateStatus, updateMessage, updateURL = self._syncplayClient.checkForUpdate(userInitiated)
@@ -717,6 +788,8 @@ class MainWindow(QtGui.QMainWindow):
         settings.setValue("pos", self.pos())
         settings.setValue("showPlaybackButtons", self.playbackAction.isChecked())
         settings.setValue("showAutoPlayButton", self.autoplayAction.isChecked())
+        settings.setValue("autoplayChecked", self.autoplayPushButton.isChecked())
+        settings.setValue("autoplayMinUsers", self.autoplayThresholdSpinbox.value())
         settings.endGroup()
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
@@ -734,6 +807,12 @@ class MainWindow(QtGui.QMainWindow):
         if settings.value("showAutoPlayButton", "false") == "true":
             self.autoplayAction.setChecked(True)
             self.updateAutoplayVisibility()
+        if settings.value("autoplayChecked", "false") == "true":
+            self.updateAutoPlayState(True)
+            self.autoplayPushButton.setChecked(True)
+        self.autoplayThresholdSpinbox.blockSignals(True)
+        self.autoplayThresholdSpinbox.setValue(settings.value("autoplayMinUsers", 2))
+        self.autoplayThresholdSpinbox.blockSignals(False)
         settings.endGroup()
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
@@ -741,6 +820,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
+        self._syncplayClient = None
         self.QtGui = QtGui
         if sys.platform.startswith('win'):
             self.resourcespath = utils.findWorkingDir() + "\\resources\\"

@@ -11,7 +11,6 @@ from syncplay.messages import getMissingStrings, getMessage
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME
 import collections
-
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry=constants.RECONNECT_RETRIES):
         self._client = client
@@ -106,6 +105,7 @@ class SyncplayClient(object):
         self._speedChanged = False
         self.behindFirstDetected = None
         self.autoPlay = False
+        self.autoPlayThreshold = None
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
@@ -319,7 +319,6 @@ class SyncplayClient(object):
         self.ui.showMessage(getMessage("current-offset-notification").format(self._userOffset))
 
     def onDisconnect(self):
-        self.resetAutoPlayState()
         if self._config['pauseOnLeave']:
             self.setPaused(True)
             self.lastPausedOnLeaveTime = time.time()
@@ -404,9 +403,10 @@ class SyncplayClient(object):
     def getUsername(self):
         return self.userlist.currentUser.username
 
-    def setRoom(self, roomName):
+    def setRoom(self, roomName, resetAutoplay=False):
         self.userlist.currentUser.room = roomName
-        self.resetAutoPlayState()
+        if resetAutoplay:
+            self.resetAutoPlayState()
 
     def sendRoom(self):
         room = self.userlist.currentUser.room
@@ -493,12 +493,16 @@ class SyncplayClient(object):
             return wrapper
         return requireMinVersionDecorator
 
-    def changeAutoPlayState(self, newState):
+    def changeAutoplayState(self, newState):
         self.autoPlay = newState
-        self.autoPlayCheck()
+        self.autoplayCheck()
+    
+    def changeAutoPlayThrehsold(self, newThreshold):
+        self.autoPlayThreshold = newThreshold
+        self.autoplayCheck()
 
-    def autoPlayCheck(self):
-        if self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady():
+    def autoplayCheck(self):
+        if self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady() and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold:
             self.setPaused(False)
 
     def resetAutoPlayState(self):
@@ -532,7 +536,7 @@ class SyncplayClient(object):
 
     def controlledRoomCreated(self, roomName, controlPassword):
         self.ui.showMessage(getMessage("created-controlled-room-notification").format(roomName, controlPassword))
-        self.setRoom(roomName)
+        self.setRoom(roomName, resetAutoplay=True)
         self.sendRoom()
         self._protocol.requestControlledRoom(roomName, controlPassword)
         self.ui.updateRoomName(roomName)
@@ -911,6 +915,13 @@ class SyncplayUserlist(object):
             if user.room == self.currentUser.room and user.isReady():
                 readyCount += 1
         return readyCount
+    
+    def usersInRoomCount(self):
+        userCount = 1
+        for user in self._users.itervalues():
+            if user.room == self.currentUser.room and user.isReady():
+                userCount += 1
+        return userCount
 
     def usersInRoomNotReady(self):
         notReady = []
@@ -970,7 +981,7 @@ class SyncplayUserlist(object):
             self.currentUser.setReady(isReady)
         elif self._users.has_key(username):
             self._users[username].setReady(isReady)
-        self._client.autoPlayCheck()
+        self._client.autoplayCheck()
 
     def userListChange(self, room = None):
         if room is not None and self.isRoomSame(room):
@@ -994,7 +1005,7 @@ class SyncplayUserlist(object):
         rooms[self.currentUser.room].append(self.currentUser)
         rooms = self.sortList(rooms)
         self.ui.showUserList(self.currentUser, rooms)
-        self._client.autoPlayCheck()
+        self._client.autoplayCheck()
 
     def clearList(self):
         self._users = {}

@@ -45,6 +45,8 @@ class ConfigurationGetter(object):
                         "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
                         "pauseOnLeave": False,
                         "readyAtStart": False,
+                        "autoplayInitialState" : None,
+                        "autoplayInitialThreshold" : -1,
                         "clearGUIData": False,
                         "language" : "",
                         "checkForUpdatesAutomatically" : None,
@@ -97,18 +99,20 @@ class ConfigurationGetter(object):
                          "showDurationNotification"
                         ]
         self._tristate = [
-            "checkForUpdatesAutomatically"
+            "checkForUpdatesAutomatically",
+            "autoplayInitialState",
         ]
 
         self._numeric = [
             "slowdownThreshold",
             "rewindThreshold",
             "fastforwardThreshold",
+            "autoplayInitialThreshold",
         ]
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave", "readyAtStart"],
+                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave", "readyAtStart", "autoplayInitialThreshold", "autoplayInitialState"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showDurationNotification"],
                         "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
                         }
