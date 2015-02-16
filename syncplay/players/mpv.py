@@ -101,6 +101,14 @@ class OldMpvPlayer(MpvPlayer):
 class NewMpvPlayer(OldMpvPlayer):
     lastResetTime = None
 
+    def _getProperty(self, property_):
+        floatProperties = ['length','time-pos']
+        if property_ in floatProperties:
+            propertyID = u"={}".format(property_)
+        else:
+            propertyID = property_
+        self._listener.sendLine(u"print_text ""ANS_{}=${{{}}}""".format(property_, propertyID))
+
     def _storePosition(self, value):
         if self._recentlyReset():
             self._position = 0
