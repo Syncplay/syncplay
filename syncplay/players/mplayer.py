@@ -255,14 +255,16 @@ class MplayerPlayer(BasePlayer):
     class __Listener(threading.Thread):
         def __init__(self, playerController, playerPath, filePath, args):
             self.__playerController = playerController
-            if not filePath:
+            if self.__playerController.getPlayerPathErrors(playerPath,filePath):
                 raise ValueError()
-            if '://' not in filePath:
+            if filePath and '://' not in filePath:
                 if not os.path.isfile(filePath) and 'PWD' in os.environ:
                     filePath = os.environ['PWD'] + os.path.sep + filePath
                 filePath = os.path.realpath(filePath)
 
-            call = [playerPath, filePath]
+            call = [playerPath]
+            if filePath:
+                call.extend(filePath)
             call.extend(playerController.getStartupArgs(playerPath))
             if args:
                 call.extend(args)
@@ -273,11 +275,16 @@ class MplayerPlayer(BasePlayer):
             env = os.environ.copy()
             if 'TERM' in env:
                 del env['TERM']
-            self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.__getCwd(filePath, env), env=env)
+            if filePath:
+                self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.__getCwd(filePath, env), env=env)
+            else:
+                self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, env=env)
             threading.Thread.__init__(self, name="MPlayer Listener")
 
 
         def __getCwd(self, filePath, env):
+            if not filePath:
+                return None
             if os.path.isfile(filePath):
                 cwd = os.path.dirname(filePath)
             elif 'HOME' in env:

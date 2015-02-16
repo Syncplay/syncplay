@@ -67,6 +67,10 @@ class MpvPlayer(MplayerPlayer):
     def getIconPath(path):
         return constants.MPV_ICONPATH
 
+    @staticmethod
+    def getPlayerPathErrors(playerPath, filePath):
+        return None
+
 class OldMpvPlayer(MpvPlayer):
     POSITION_QUERY = 'time-pos'
     OSD_QUERY = 'show_text'

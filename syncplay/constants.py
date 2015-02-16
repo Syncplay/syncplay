@@ -133,7 +133,7 @@ USERLIST_GUI_USERNAME_OFFSET = 21 # Pixels
 
 MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4', '-af', 'scaletempo']
 # --quiet works with both mpv 0.2 and 0.3
-MPV_SLAVE_ARGS = ['--hr-seek=always', '--quiet', '--keep-open', '-af', 'scaletempo']
+MPV_SLAVE_ARGS = ['--force-window','--idle','--hr-seek=always', '--quiet', '--keep-open', '-af', 'scaletempo']
 MPV_SLAVE_ARGS_WINDOWS = ['--slave-broken']
 MPV_SLAVE_ARGS_NONWINDOWS = ['--input-terminal=no','--input-file=/dev/stdin']
 MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=length}\nANS_path=${path}\n</SyncplayUpdateFile>']
