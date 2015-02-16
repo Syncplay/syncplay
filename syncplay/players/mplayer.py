@@ -264,7 +264,7 @@ class MplayerPlayer(BasePlayer):
 
             call = [playerPath]
             if filePath:
-                call.extend(filePath)
+                call.extend([filePath])
             call.extend(playerController.getStartupArgs(playerPath))
             if args:
                 call.extend(args)
