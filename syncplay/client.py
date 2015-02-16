@@ -107,6 +107,9 @@ class SyncplayClient(object):
         self.autoPlay = False
         self.autoPlayThreshold = None
 
+        self.autoplayTimer = task.LoopingCall(self.autoplayCountdown)
+        self.autoplayTimeLeft = constants.AUTOPLAY_DELAY
+
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
             paths = "; ".join(self._config['loadedRelativePaths'])
@@ -498,16 +501,50 @@ class SyncplayClient(object):
         self.autoplayCheck()
     
     def changeAutoPlayThrehsold(self, newThreshold):
+        oldAutoplayConditionsMet = self.autoplayConditionsMet()
         self.autoPlayThreshold = newThreshold
-        self.autoplayCheck()
+        newAutoplayConditionsMet = self.autoplayConditionsMet()
+        if oldAutoplayConditionsMet == False and newAutoplayConditionsMet == True:
+            self.autoplayCheck()
 
     def autoplayCheck(self):
-        if self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady() and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold:
+        if self.autoplayConditionsMet():
+            self.startAutoplayCountdown()
+        else:
+            self.stopAutoplayCountdown()
+
+    def autoplayConditionsMet(self):
+        return self._playerPaused and self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady() and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold
+
+    def autoplayTimerIsRunning(self):
+        return self.autoplayTimer.running
+
+    def startAutoplayCountdown(self):
+        if self.autoplayConditionsMet() and not self.autoplayTimer.running:
+            self.autoplayTimeLeft = constants.AUTOPLAY_DELAY
+            self.autoplayTimer.start(1)
+
+    def stopAutoplayCountdown(self):
+        if self.autoplayTimer.running:
+            self.autoplayTimer.stop()
+        self.autoplayTimeLeft = constants.AUTOPLAY_DELAY
+
+    def autoplayCountdown(self):
+        if not self.autoplayConditionsMet():
+            self.stopAutoplayCountdown()
+            return
+        countdownMessage = u"{}{}{}".format(getMessage("all-users-ready").format(self.userlist.readyUserCount()),self._player.osdMessageSeparator, getMessage("autoplaying-notification").format(int(self.autoplayTimeLeft)))
+        self.ui.showOSDMessage(countdownMessage, 1, secondaryOSD=True)
+        if self.autoplayTimeLeft <= 0:
             self.setPaused(False)
+            self.stopAutoplayCountdown()
+        else:
+            self.autoplayTimeLeft -= 1
 
     def resetAutoPlayState(self):
         self.autoPlay = False
         self.ui.updateAutoPlayState(False)
+        self.stopAutoplayCountdown()
 
     @requireMinServerVersion(constants.USER_READY_MIN_VERSION)
     def toggleReady(self, manuallyInitiated=True):
@@ -616,6 +653,8 @@ class SyncplayClient(object):
             self.pausedTimer.start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
 
         def checkWarnings(self):
+            if self._client.autoplayConditionsMet():
+                return
             self._checkIfYouReAloneInTheRoom(OSDOnly=False)
             self._checkRoomForSameFiles(OSDOnly=False)
             self.checkReadyStates()
@@ -660,7 +699,7 @@ class SyncplayClient(object):
                 self._displayReadySameWarning()
 
         def _displayReadySameWarning(self):
-            if not self._client._player:
+            if not self._client._player or self._client.autoplayTimerIsRunning():
                 return
             osdMessage = None
             fileDifferencesForRoom = self._userlist.getFileDifferencesForRoom()
@@ -693,6 +732,8 @@ class SyncplayClient(object):
                     pass
 
         def __displayPausedMessagesOnOSD(self):
+            if self._client.autoplayConditionsMet():
+                return
             if self._client and self._client._player and self._client.getPlayerPaused():
                 self._checkRoomForSameFiles(OSDOnly=True)
                 self.checkReadyStates()
@@ -1055,7 +1096,8 @@ class UiManager(object):
         self.__ui.showUserList(currentUser, rooms)
 
     def showOSDMessage(self, message, duration=constants.OSD_DURATION, secondaryOSD=False):
-        if secondaryOSD and not constants.SHOW_OSD_WARNINGS:
+        autoplayConditionsMet = self._client.autoplayConditionsMet()
+        if secondaryOSD and not constants.SHOW_OSD_WARNINGS and not self._client.autoplayTimerIsRunning():
             return
         if not self._client._player:
             return
@@ -1063,7 +1105,10 @@ class UiManager(object):
             if not self._client._player.secondaryOSDSupported:
                 if secondaryOSD:
                     self.lastSecondaryOSDMessage = message
-                    self.lastSecondaryOSDEndTime = time.time() + constants.NO_SECONDARY_OSD_WARNING_DURATION
+                    if autoplayConditionsMet:
+                        self.lastSecondaryOSDEndTime = time.time() + 1.0
+                    else:
+                        self.lastSecondaryOSDEndTime = time.time() + constants.NO_SECONDARY_OSD_WARNING_DURATION
                     if self.lastPrimaryOSDEndTime and time.time() < self.lastPrimaryOSDEndTime:
                         message = u"{}{}{}".format(message, self._client._player.osdMessageSeparator, self.lastPrimaryOSDMessage)
                 else:
@@ -1071,7 +1116,7 @@ class UiManager(object):
                     self.lastPrimaryOSDEndTime = time.time() + constants.OSD_DURATION
                     if self.lastSecondaryOSDEndTime and time.time() < self.lastSecondaryOSDEndTime:
                         message = u"{}{}{}".format(self.lastSecondaryOSDMessage, self._client._player.osdMessageSeparator, message)
-            self._client._player.displayMessage(message, duration * 1000, secondaryOSD)
+            self._client._player.displayMessage(message, int(duration * 1000), secondaryOSD)
 
     def setControllerStatus(self, username, isController):
         self.__ui.setControllerStatus(username, isController)
