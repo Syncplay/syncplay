@@ -149,7 +149,7 @@ class MplayerPlayer(BasePlayer):
     def lineReceived(self, line):
         if line:
             self._client.ui.showDebugMessage("player << {}".format(line))
-        if "Failed to get value of property" in line or "=(unavailable)" in line:
+        if "Failed to get value of property" in line or "=(unavailable)" in line or line == "ANS_filename=" or line == "ANS_length=" or line == "ANS_path=":
             if "filename" in line:
                 self._getFilename()
             elif "length" in line:
