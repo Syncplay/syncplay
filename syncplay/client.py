@@ -368,10 +368,13 @@ class SyncplayClient(object):
         if not path:
             return
         try:
-            path = path.decode('utf-8')
             size = os.path.getsize(path)
-        except OSError:  # file not accessible (stream?)
-            size = 0
+        except:
+            try:
+                path = path.decode('utf-8')
+                size = os.path.getsize(path)
+            except:
+                size = 0
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size)
         self.sendFile()
