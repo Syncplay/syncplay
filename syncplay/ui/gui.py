@@ -114,7 +114,7 @@ class MainWindow(QtGui.QMainWindow):
         message = message.replace("&gt;", "&gt;</span>")
         message = message.replace("\n", "<br />")
         if noTimestamp:
-            self.newMessage("{}<br />".format(message))
+            self.newMessage(u"{}<br />".format(message))
         else:
             self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
 
