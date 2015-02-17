@@ -108,6 +108,9 @@ def formatSize (bytes, precise=False):
     except: # E.g. when filesize is hashed
         return "???"
 
+def isASCII(s):
+    return all(ord(c) < 128 for c in s)
+
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
     if not frozen:

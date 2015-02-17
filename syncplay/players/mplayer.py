@@ -3,9 +3,9 @@ import re
 import threading
 import time
 from syncplay.players.basePlayer import BasePlayer
-from syncplay import constants
+from syncplay import constants, utils
 from syncplay.messages import getMessage
-import os
+import os, sys
 
 class MplayerPlayer(BasePlayer):
     speedSupported = True
@@ -29,6 +29,7 @@ class MplayerPlayer(BasePlayer):
         self.quitReason = None
         self.lastLoadedTime = None
         self.fileLoaded = False
+        self.delayedFilePath = None
         try:
             self._listener = self.__Listener(self, playerPath, filePath, args)
         except ValueError:
@@ -264,7 +265,11 @@ class MplayerPlayer(BasePlayer):
 
             call = [playerPath]
             if filePath:
-                call.extend([filePath])
+                if sys.platform.startswith('win') and not utils.isASCII(filePath):
+                    self.__playerController.delayedFilePath = filePath
+                    filePath = None
+                else:
+                    call.extend([filePath])
             call.extend(playerController.getStartupArgs(playerPath))
             if args:
                 call.extend(args)

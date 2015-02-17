@@ -137,6 +137,8 @@ class NewMpvPlayer(OldMpvPlayer):
         self._client.updatePlayerStatus(self._paused, self._position)
 
     def _preparePlayer(self):
+        if self.delayedFilePath:
+            self.openFile(self.delayedFilePath)
         self.setPaused(True)
         self.reactor.callLater(0, self._client.initPlayer, self)
 

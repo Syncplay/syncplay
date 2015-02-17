@@ -121,11 +121,8 @@ class VlcPlayer(BasePlayer):
         fileURL = fileURL.replace("+", "%20")
         return fileURL
 
-    def _isASCII (self, s):
-        return all(ord(c) < 128 for c in s)
-
     def openFile(self, filePath, resetPosition=False):
-        if self._isASCII(filePath):
+        if utils.isASCII(filePath):
             self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii', 'ignore')))
         else:
             fileURL = self.getMRL(filePath)
@@ -250,7 +247,7 @@ class VlcPlayer(BasePlayer):
             self.__playerController = playerController
             call = [playerPath]
             if filePath:
-                if self.__playerController._isASCII(filePath):
+                if utils.isASCII(filePath):
                     call.append(filePath)
                 else:
                     call.append(self.__playerController.getMRL(filePath))
