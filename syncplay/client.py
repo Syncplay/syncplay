@@ -494,7 +494,10 @@ class SyncplayClient(object):
             @wraps(f)
             def wrapper(self, *args, **kwds):
                 if not utils.meetsMinVersion(self.serverVersion,minVersion):
-                    self.ui.showErrorMessage(getMessage("not-supported-by-server-error").format(minVersion, self.serverVersion))
+                    if self.serverVersion != "0.0.0":
+                        self.ui.showErrorMessage(getMessage("not-supported-by-server-error").format(minVersion, self.serverVersion))
+                    else:
+                        self.ui.showDebugMessage("Tried to check server version too soon (threshold: {})".format(minVersion))
                     return
                 return f(self, *args, **kwds)
             return wrapper
