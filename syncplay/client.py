@@ -518,7 +518,7 @@ class SyncplayClient(object):
             self.stopAutoplayCountdown()
 
     def instaplayConditionsMet(self):
-        if self.userlist.currentUser.isReady():
+        if self.userlist.currentUser.isReady() or self._config["alwaysUnpause"]:
             return True
 
     def autoplayConditionsMet(self):

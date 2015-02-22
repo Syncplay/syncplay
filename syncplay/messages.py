@@ -181,6 +181,7 @@ en = {
       "dontslowdownwithme-label" : "Never slow down or rewind others (experimental)",
       "pauseonleave-label" : "Pause when user leaves (e.g. if they are disconnected)",
       "readyatstart-label" : "Set me as 'ready to watch' by default",
+      "alwaysunpause-label" : u"Unpause always unpauses (rather than just sets as ready if unready)",
       "forceguiprompt-label" : "Don't always show the Syncplay configuration window", # (Inverted)
       "nostore-label" : "Don't store this configuration", # (Inverted)
       "showosd-label" : "Enable OSD Messages",
@@ -288,6 +289,7 @@ en = {
       "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room operators.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
       "readyatstart-tooltip" : "Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)",
+      "alwaysunpause-tooltip" : "If you unpause when not ready it sets you as ready and unpauses, rather than just setting you as ready.",
       "forceguiprompt-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.", # (Inverted)
       "nostore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.", # (Inverted)
       "rewindondesync-tooltip" : "Jump back when needed to get back in sync. Disabling this option can result in major desyncs!",
@@ -526,6 +528,7 @@ ru = {
       "dontslowdownwithme-label" : u"Никогда не замедлять или перематывать видео другим", # TODO: Update new wording into Russian (should state "Experimental" in brackets at the end)
       "pauseonleave-label" : u"Приостанавливать, когда кто-то уходит (например, отключился)",
       "readyatstart-label" : u"Set me as 'ready to watch' by default", # TODO: Translate into Russian
+      "alwaysunpause-label" : u"Unpause always unpauses (rather than just sets as ready if unready)", # TODO: Translate into Russian
       "fastforwardondesync-label" : u"Fast-forward if lagging behind (recommended)", # TODO: Translate into Russian
       "forceguiprompt-label" : u"Не показывать больше этот диалог", # (Inverted)
       "nostore-label" : u"Не сохранять текущую конфигурацию", # (Inverted)
@@ -872,6 +875,7 @@ de = {
        "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentell)",
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
       "readyatstart-label" : u"Set me as 'ready to watch' by default", # TODO: Translate into German
+      "alwaysunpause-label" : u"Unpause always unpauses (rather than just sets as ready if unready)", # TODO: Translate into German
       "forceguiprompt-label" : u"Diesen Dialog nicht mehr anzeigen",
       "nostore-label" : u"Diese Konfiguration nicht speichern",
       "showosd-label" : u"OSD-Nachrichten anzeigen",

@@ -476,36 +476,22 @@ class ConfigDialog(QtGui.QDialog):
         self.miscFrame.setLayout(self.miscLayout)
 
         self.coreSettingsGroup = QtGui.QGroupBox(getMessage("core-behaviour-title"))
-        self.coreSettingsLayout = QtGui.QVBoxLayout()
+        self.coreSettingsLayout = QtGui.QGridLayout()
         self.coreSettingsGroup.setLayout(self.coreSettingsLayout)
 
         self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
         self.pauseonleaveCheckbox.setObjectName("pauseOnLeave")
-        self.coreSettingsLayout.addWidget(self.pauseonleaveCheckbox)
+        self.coreSettingsLayout.addWidget(self.pauseonleaveCheckbox, 0, 0, 1, 4)
+
+        self.alwaysUnpauseCheckbox = QCheckBox(getMessage("alwaysunpause-label"))
+        self.alwaysUnpauseCheckbox.setObjectName("alwaysUnpause")
+        self.coreSettingsLayout.addWidget(self.alwaysUnpauseCheckbox, 1, 0, 1, 4)
 
         self.readyatstartCheckbox = QCheckBox(getMessage("readyatstart-label"))
         self.readyatstartCheckbox.setObjectName("readyAtStart")
-        self.coreSettingsLayout.addWidget(self.readyatstartCheckbox)
-
-        self.internalSettingsGroup = QtGui.QGroupBox(getMessage("syncplay-internals-title"))
-        self.internalSettingsLayout = QtGui.QVBoxLayout()
-        self.internalSettingsGroup.setLayout(self.internalSettingsLayout)
-
-        self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
-        self.alwaysshowCheckbox.setObjectName(constants.INVERTED_STATE_MARKER + "forceGuiPrompt")
-        self.internalSettingsLayout.addWidget(self.alwaysshowCheckbox)
-
-        self.automaticupdatesCheckbox = QCheckBox(getMessage("checkforupdatesautomatically-label"))
-        self.automaticupdatesCheckbox.setObjectName("checkForUpdatesAutomatically")
-        self.internalSettingsLayout.addWidget(self.automaticupdatesCheckbox)
+        self.coreSettingsLayout.addWidget(self.readyatstartCheckbox, 2, 0, 1, 4)
 
         ### Privacy:
-
-        self.privacySettingsGroup = QtGui.QGroupBox(getMessage("privacy-title"))
-        self.privacySettingsLayout = QtGui.QVBoxLayout()
-        self.privacySettingsFrame = QtGui.QFrame()
-        self.privacyFrame = QtGui.QFrame()
-        self.privacyLayout = QtGui.QGridLayout()
 
         self.filenameprivacyLabel = QLabel(getMessage("filename-privacy-label"), self)
         self.filenameprivacyButtonGroup = QButtonGroup()
@@ -534,25 +520,31 @@ class ConfigDialog(QtGui.QDialog):
         self.filesizeprivacySendHashedOption.setObjectName("privacy-sendhashed" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_SENDHASHED_MODE)
         self.filesizeprivacyDontSendOption.setObjectName("privacy-dontsend" + constants.CONFIG_NAME_MARKER + "filesizePrivacyMode" + constants.CONFIG_VALUE_MARKER + constants.PRIVACY_DONTSEND_MODE)
 
-        self.privacyLayout.addWidget(self.filenameprivacyLabel, 1, 0)
-        self.privacyLayout.addWidget(self.filenameprivacySendRawOption, 1, 1, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.filenameprivacySendHashedOption, 1, 2, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.filenameprivacyDontSendOption, 1, 3, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.filesizeprivacyLabel, 2, 0)
-        self.privacyLayout.addWidget(self.filesizeprivacySendRawOption, 2, 1, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.filesizeprivacySendHashedOption, 2, 2, Qt.AlignLeft)
-        self.privacyLayout.addWidget(self.filesizeprivacyDontSendOption, 2, 3, Qt.AlignLeft)
+        self.coreSettingsLayout.addWidget(self.filenameprivacyLabel, 3, 0)
+        self.coreSettingsLayout.addWidget(self.filenameprivacySendRawOption, 3, 1, Qt.AlignLeft)
+        self.coreSettingsLayout.addWidget(self.filenameprivacySendHashedOption, 3, 2, Qt.AlignLeft)
+        self.coreSettingsLayout.addWidget(self.filenameprivacyDontSendOption, 3, 3, Qt.AlignLeft)
+        self.coreSettingsLayout.addWidget(self.filesizeprivacyLabel, 4, 0)
+        self.coreSettingsLayout.addWidget(self.filesizeprivacySendRawOption, 4, 1, Qt.AlignLeft)
+        self.coreSettingsLayout.addWidget(self.filesizeprivacySendHashedOption, 4, 2, Qt.AlignLeft)
+        self.coreSettingsLayout.addWidget(self.filesizeprivacyDontSendOption, 4, 3, Qt.AlignLeft)
 
-        self.privacyFrame.setLayout(self.privacyLayout)
-        self.privacySettingsGroup.setLayout(self.privacyLayout)
-        self.privacySettingsGroup.setMaximumHeight(self.privacySettingsGroup.minimumSizeHint().height())
-        self.privacySettingsLayout.addWidget(self.privacySettingsGroup)
-        self.privacySettingsLayout.setAlignment(Qt.AlignTop)
-        self.privacyFrame.setLayout(self.privacySettingsLayout)
+        ## Syncplay internals
+
+        self.internalSettingsGroup = QtGui.QGroupBox(getMessage("syncplay-internals-title"))
+        self.internalSettingsLayout = QtGui.QVBoxLayout()
+        self.internalSettingsGroup.setLayout(self.internalSettingsLayout)
+
+        self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
+        self.alwaysshowCheckbox.setObjectName(constants.INVERTED_STATE_MARKER + "forceGuiPrompt")
+        self.internalSettingsLayout.addWidget(self.alwaysshowCheckbox)
+
+        self.automaticupdatesCheckbox = QCheckBox(getMessage("checkforupdatesautomatically-label"))
+        self.automaticupdatesCheckbox.setObjectName("checkForUpdatesAutomatically")
+        self.internalSettingsLayout.addWidget(self.automaticupdatesCheckbox)
 
         self.miscLayout.addWidget(self.coreSettingsGroup)
         self.miscLayout.addWidget(self.internalSettingsGroup)
-        self.miscLayout.addWidget(self.privacySettingsGroup)
         self.miscLayout.setAlignment(Qt.AlignTop)
         self.stackedLayout.addWidget(self.miscFrame)
 
