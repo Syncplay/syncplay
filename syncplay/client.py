@@ -494,7 +494,7 @@ class SyncplayClient(object):
             @wraps(f)
             def wrapper(self, *args, **kwds):
                 if not utils.meetsMinVersion(self.serverVersion,minVersion):
-                    self.ui.showErrorMessage(u"This feature is not supported by the server. The feature requires a  server running Syncplay {}+, but the server is running Syncplay {}.".format(minVersion, self.serverVersion))
+                    self.ui.showErrorMessage(getMessage("not-supported-by-server-error").format(minVersion, self.serverVersion))
                     return
                 return f(self, *args, **kwds)
             return wrapper

@@ -126,6 +126,8 @@ en = {
        "vlc-failed-versioncheck": "This version of VLC is not supported by Syncplay. Please use VLC 2.",
        "vlc-failed-other" : "When trying to load the syncplay.lua interface script VLC has provided the following error: {}",  # Syncplay Error
 
+       "not-supported-by-server-error" : "This feature is not supported by the server. The feature requires a server running Syncplay {}+, but the server is running Syncplay {}.", #minVersion, serverVersion
+
        "invalid-seek-value" : u"Invalid seek value",
        "invalid-offset-value" : u"Invalid offset value",
 
@@ -474,6 +476,8 @@ ru = {
       "vlc-failed-versioncheck" : u"Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
       "vlc-failed-other" : u"Во время загрузки скрипта интерфейса syncplay.lua в VLC произошла следующая ошибка: {}",  # Syncplay Error
 
+      "not-supported-by-server-error" : "This feature is not supported by the server. The feature requires a server running Syncplay {}+, but the server is running Syncplay {}.", #minVersion, serverVersion #TODO: Translate into Russian
+
        "invalid-seek-value" : u"Invalid seek value", # TODO: Translate into Russian
        "invalid-offset-value" : u"Invalid offset value", # TODO: Translate into Russian
 
@@ -821,6 +825,8 @@ de = {
        "vlc-failed-noscript": u"Laut VLC ist das syncplay.lua Interface-Skript nicht installiert. Auf http://syncplay.pl/LUA/ findest du eine Anleitung.",
        "vlc-failed-versioncheck": u"Diese VLC-Version wird von Syncplay nicht unterstützt. Bitte nutze VLC 2.0",
        "vlc-failed-other" : u"Beim Laden des syncplay.lua Interface-Skripts durch VLC trat folgender Fehler auf: {}",  # Syncplay Error
+
+       "not-supported-by-server-error" : "This feature is not supported by the server. The feature requires a server running Syncplay {}+, but the server is running Syncplay {}.", #minVersion, serverVersion #TODO: Translate into Russian # TODO: Translate into German
 
        "invalid-seek-value" : u"Invalid seek value", # TODO: Translate into German
        "invalid-offset-value" : u"Invalid offset value", # TODO: Translate into German
