@@ -166,7 +166,7 @@ class SyncplayClient(object):
         self._playerPosition = position
         self._playerPaused = paused
         if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
-            if not paused and not self.userlist.currentUser.isReady() and not self.userlist.areAllOtherUsersInRoomReady():
+            if not paused and not self.instaplayConditionsMet():
                 paused = True
                 self._player.setPaused(paused)
                 self._playerPaused = paused
@@ -517,6 +517,10 @@ class SyncplayClient(object):
         else:
             self.stopAutoplayCountdown()
 
+    def instaplayConditionsMet(self):
+        if self.userlist.currentUser.isReady():
+            return True
+
     def autoplayConditionsMet(self):
         return self._playerPaused and self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady() and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold
 
@@ -812,6 +816,7 @@ class SyncplayUserlist(object):
         self._roomUsersChanged = True
 
     def isReadinessSupported(self):
+        # TODO: Return False if server is run with --disable-ready
         if not utils.meetsMinVersion(self._client.serverVersion,constants.USER_READY_MIN_VERSION):
             return False
         elif self.onlyUserInRoomWhoSupportsReadiness():
