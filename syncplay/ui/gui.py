@@ -92,9 +92,9 @@ class MainWindow(QtGui.QMainWindow):
                 self.autoplayPushButton.blockSignals(True)
                 self.autoplayPushButton.setChecked(autoplayInitialState)
                 self.autoplayPushButton.blockSignals(False)
-            if self.config['autoplayInitialThreshold'] > 1:
+            if self.config['autoplayMinUsers'] > 1:
                 self.autoplayThresholdSpinbox.blockSignals(True)
-                self.autoplayThresholdSpinbox.setValue(self.config['autoplayInitialThreshold'])
+                self.autoplayThresholdSpinbox.setValue(self.config['autoplayMinUsers'])
                 self.autoplayThresholdSpinbox.blockSignals(False)
             self.changeAutoplayState()
             self.changeAutoplayThreshold()

@@ -47,7 +47,7 @@ class ConfigurationGetter(object):
                         "readyAtStart": False,
                         "alwaysUnpause": False,
                         "autoplayInitialState" : None,
-                        "autoplayInitialThreshold" : -1,
+                        "autoplayMinUsers" : -1,
                         "clearGUIData": False,
                         "language" : "",
                         "checkForUpdatesAutomatically" : None,
@@ -109,12 +109,12 @@ class ConfigurationGetter(object):
             "slowdownThreshold",
             "rewindThreshold",
             "fastforwardThreshold",
-            "autoplayInitialThreshold",
+            "autoplayMinUsers",
         ]
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave", "readyAtStart", "alwaysUnpause", "autoplayInitialThreshold", "autoplayInitialState"],
+                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave", "readyAtStart", "alwaysUnpause", "autoplayMinUsers", "autoplayInitialState"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showDurationNotification"],
                         "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
                         }
