@@ -166,9 +166,6 @@ en = {
       "browse-label" : "Browse",
 
       "more-title" : "Show more settings",
-      "slowdown-threshold-label" : "Slow down threshold:",
-      "rewind-threshold-label" : "Rewind threshold:",
-      "fastforward-threshold-label" : "Fast-forward threshold:",
       "never-rewind-value" : "Never",
       "seconds-suffix" : " secs",
       "privacy-sendraw-option" : "Send raw",
@@ -278,9 +275,6 @@ en = {
       "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
 
       "more-tooltip" : "Display less frequently used settings.",
-      "slowdown-threshold-tooltip" : "Time ahead of slowest client before temporarily reducing playback speed (default: {} secs).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
-      "rewind-threshold-tooltip" : "Time ahead slowest client before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_REWIND_THRESHOLD),
-      "fastforward-threshold-tooltip" : "Time behind room operator before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD),
       "filename-privacy-tooltip" : "Privacy mode for sending currently playing filename to server.",
       "filesize-privacy-tooltip" : "Privacy mode for sending size of currently playing file to server.",
       "privacy-sendraw-tooltip" : "Send this information without obfuscation. This is the default option with most functionality.",
@@ -516,9 +510,6 @@ ru = {
       "browse-label" : u"Выбрать",
 
       "more-title" : u"Больше настроек",
-      "slowdown-threshold-label" : u"Предел для замедления:",
-      "rewind-threshold-label" : u"Предел для перемотки:",
-      "fastforward-threshold-label" : u"Fast-forward threshold:", # TODO: Translate into Russian
       "never-rewind-value" : u"Никогда",
       "seconds-suffix" : u" секунд(ы)",
       "privacy-sendraw-option" : u"отпр. как есть",
@@ -629,9 +620,6 @@ ru = {
       "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mpv и mplayer2.",
 
       "more-tooltip" : u"Показать дополнительные настройки.",
-      "slowdown-threshold-tooltip" : u"Отставание самого медленного клиента, необходимое для временного уменьшения скорости видео (по умолчанию: {} сек.).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
-      "rewind-threshold-tooltip" : u"Отставание самого медленного клиента, необходимое для перемотки назад в целях синхронизации (по умолчанию: {} сек.).".format(constants.DEFAULT_REWIND_THRESHOLD),
-      "fastforward-threshold-tooltip" : u"Time behind room operator before seeking to get back in sync (default: {} secs).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD),  # TODO: Translate into Russian
       "filename-privacy-tooltip" : u"Режим приватности для передачи имени воспроизводимого файла на сервер.",
       "filesize-privacy-tooltip" : u"Режим приватности для передачи размера воспроизводимого файла на сервер.",
       "privacy-sendraw-tooltip" : u"Отправляет эту информацию без шифрования. Рекомендуемая опция с наибольшей функциональностью.",
@@ -866,9 +854,6 @@ de = {
       "browse-label" : u"Durchsuchen",
 
       "more-title" : u"Mehr Einstellungen zeigen",
-      "slowdown-threshold-label" : u"Verlangsamungs-Grenzwert:",
-      "rewind-threshold-label" : u"Zurückspul-Grenzwert:",
-      "fastforward-threshold-label" : u"Vorspul-Grenzwert:",
       "never-rewind-value" : u"Niemals",
       "seconds-suffix" : u" sek",
       "privacy-sendraw-option" : u"Klartext senden",
@@ -976,9 +961,6 @@ de = {
       "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
 
       "more-tooltip" : u"Weitere Einstellungen anzeigen.",
-      "slowdown-threshold-tooltip" : u"Zeitvorsprung zum langsamsten Client, ab dem die Wiedergabe verlangsamt wird (Standard: {} sek).".format(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD),
-      "rewind-threshold-tooltip" : u"Zeitvorsprung zum langsamsten Client, ab dem zur Wiederherstellung der Synchronität gesprungen wird (Standard: {} sek).".format(constants.DEFAULT_REWIND_THRESHOLD),
-      "fastforward-threshold-tooltip" : u"Zeitvorsprung zum Raumleiter, ab dem zur Wiederherstellung der Synchronität gesprungen wird (Standard: {} sek).".format(constants.DEFAULT_FASTFORWARD_THRESHOLD),
       "filename-privacy-tooltip" : u"Privatheitsmodus beim Senden des Namens der aktuellen Datei zum Server.",
       "filesize-privacy-tooltip" : u"Privatheitsmodus beim Senden der Größe der aktuellen Datei zum Server.",
       "privacy-sendraw-tooltip" : u"Die Information im Klartext übertragen. Dies ist die Standard-Einstellung mit der besten Funktionalität.",

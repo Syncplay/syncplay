@@ -253,16 +253,6 @@ class ConfigDialog(QtGui.QDialog):
         else:
             self.config['file'] = unicode(self.mediapathTextbox.text())
 
-        if not self.slowdownThresholdSpinbox.text:
-            self.slowdownThresholdSpinbox.value = constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD
-        if not self.rewindThresholdSpinbox.text:
-            self.rewindThresholdSpinbox.value = constants.DEFAULT_REWIND_THRESHOLD
-        if not self.fastforwardThresholdSpinbox.text:
-            self.fastforwardThresholdSpinbox.value = constants.DEFAULT_FASTFORWARD_THRESHOLD
-        self.config['slowdownThreshold'] = self.slowdownThresholdSpinbox.value()
-        self.config['rewindThreshold'] = self.rewindThresholdSpinbox.value()
-        self.config['fastforwardThreshold'] = self.fastforwardThresholdSpinbox.value()
-
         self.pressedclosebutton = True
         self.close()
         return
@@ -564,79 +554,14 @@ class ConfigDialog(QtGui.QDialog):
         self.fastforwardCheckbox = QCheckBox(getMessage("fastforwardondesync-label"))
         self.fastforwardCheckbox.setObjectName("fastforwardOnDesync")
 
-        self.spaceLabel = QLabel()
-        self.spaceLabel.setFixedHeight(5)
-
         self.desyncSettingsLayout = QtGui.QGridLayout()
         self.desyncSettingsLayout.setSpacing(2)
         self.desyncFrame = QtGui.QFrame()
         self.desyncFrame.setLineWidth(0)
         self.desyncFrame.setMidLineWidth(0)
 
-        self.slowdownThresholdLabel = QLabel(getMessage("slowdown-threshold-label"), self)
-        self.slowdownThresholdLabel.setStyleSheet(constants.STYLE_SUBLABEL.format(self.posixresourcespath + "chevrons_right.png"))
-
-        self.slowdownThresholdSpinbox = QDoubleSpinBox()
-        try:
-            slowdownThreshold = float(config['slowdownThreshold'])
-            self.slowdownThresholdSpinbox.setValue(slowdownThreshold)
-            if slowdownThreshold < constants.MINIMUM_SLOWDOWN_THRESHOLD:
-                constants.MINIMUM_SLOWDOWN_THRESHOLD = slowdownThreshold
-        except ValueError:
-            self.slowdownThresholdSpinbox.setValue(constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD)
-        self.slowdownThresholdSpinbox.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.slowdownThresholdSpinbox.setMinimum(constants.MINIMUM_SLOWDOWN_THRESHOLD)
-        self.slowdownThresholdSpinbox.setSingleStep(0.1)
-        self.slowdownThresholdSpinbox.setSuffix(getMessage("seconds-suffix"))
-        self.slowdownThresholdSpinbox.adjustSize()
-
-        self.rewindThresholdLabel = QLabel(getMessage("rewind-threshold-label"), self)
-        self.rewindThresholdLabel.setStyleSheet(constants.STYLE_SUBLABEL.format(self.posixresourcespath + "chevrons_right.png"))
-        self.rewindThresholdSpinbox = QDoubleSpinBox()
-        try:
-            rewindThreshold = float(config['rewindThreshold'])
-            self.rewindThresholdSpinbox.setValue(rewindThreshold)
-            if rewindThreshold < constants.MINIMUM_REWIND_THRESHOLD:
-                constants.MINIMUM_REWIND_THRESHOLD = rewindThreshold
-        except ValueError:
-            self.rewindThresholdSpinbox.setValue(constants.DEFAULT_REWIND_THRESHOLD)
-        self.rewindThresholdSpinbox.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.rewindThresholdSpinbox.setMinimum(constants.MINIMUM_REWIND_THRESHOLD)
-        self.rewindThresholdSpinbox.setSingleStep(0.1)
-        self.rewindThresholdSpinbox.setSuffix(getMessage("seconds-suffix"))
-        self.rewindThresholdSpinbox.adjustSize()
-
-        self.fastforwardThresholdLabel = QLabel(getMessage("fastforward-threshold-label"), self)
-        self.fastforwardThresholdLabel.setStyleSheet(constants.STYLE_SUBLABEL.format(self.posixresourcespath + "chevrons_right.png"))
-        self.fastforwardThresholdSpinbox = QDoubleSpinBox()
-        try:
-            fastforwardThreshold = float(config['fastforwardThreshold'])
-            self.fastforwardThresholdSpinbox.setValue(fastforwardThreshold)
-            if fastforwardThreshold < constants.MINIMUM_FASTFORWARD_THRESHOLD:
-                constants.MINIMUM_FASTFORWARD_THRESHOLD = fastforwardThreshold
-        except ValueError:
-            self.fastforwardThresholdSpinbox.setValue(constants.DEFAULT_FASTFORWARD_THRESHOLD)
-        self.fastforwardThresholdSpinbox.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.fastforwardThresholdSpinbox.setMinimum(constants.MINIMUM_FASTFORWARD_THRESHOLD)
-        self.fastforwardThresholdSpinbox.setSingleStep(0.1)
-        self.fastforwardThresholdSpinbox.setSuffix(getMessage("seconds-suffix"))
-        self.fastforwardThresholdSpinbox.adjustSize()
-
-        self.slowdownThresholdLabel.setObjectName("slowdown-threshold")
-        self.slowdownThresholdSpinbox.setObjectName("slowdown-threshold")
-        self.rewindThresholdLabel.setObjectName("rewind-threshold")
-        self.rewindThresholdSpinbox.setObjectName("rewind-threshold")
-
         self.desyncSettingsLayout.addWidget(self.slowdownCheckbox, 0, 0, 1, 2, Qt.AlignLeft)
-        self.desyncSettingsLayout.addWidget(self.slowdownThresholdLabel, 1, 0, 1, 1, Qt.AlignLeft)
-        self.desyncSettingsLayout.addWidget(self.slowdownThresholdSpinbox, 1, 1, 1, 1, Qt.AlignLeft)
-        self.desyncSettingsLayout.addWidget(self.spaceLabel, 2, 0,1,2, Qt.AlignLeft)
-        self.desyncSettingsLayout.addWidget(self.rewindCheckbox, 3, 0,1,2, Qt.AlignLeft)
-        self.desyncSettingsLayout.addWidget(self.rewindThresholdLabel, 4, 0, 1, 1, Qt.AlignLeft)
-        self.desyncSettingsLayout.addWidget(self.rewindThresholdSpinbox, 4, 1, Qt.AlignLeft)
-
-        self.subitems['slowOnDesync'] = ["slowdown-threshold"]
-        self.subitems['rewindOnDesync'] = ["rewind-threshold"]
+        self.desyncSettingsLayout.addWidget(self.rewindCheckbox, 1, 0,1,2, Qt.AlignLeft)
 
         self.desyncSettingsLayout.setAlignment(Qt.AlignLeft)
         self.desyncSettingsGroup.setLayout(self.desyncSettingsLayout)
@@ -651,16 +576,10 @@ class ConfigDialog(QtGui.QDialog):
         self.dontslowwithmeCheckbox = QCheckBox(getMessage("dontslowdownwithme-label"))
         self.dontslowwithmeCheckbox.setObjectName("dontSlowDownWithMe")
 
-        self.othersyncSettingsLayout.addWidget(self.dontslowwithmeCheckbox, 3, 0, 1, 2, Qt.AlignLeft)
-
-        self.fastforwardThresholdLabel.setObjectName("fastforward-threshold")
-        self.fastforwardThresholdSpinbox.setObjectName("fastforward-threshold")
+        self.othersyncSettingsLayout.addWidget(self.dontslowwithmeCheckbox, 2, 0, 1, 2, Qt.AlignLeft)
 
         self.othersyncSettingsLayout.setAlignment(Qt.AlignLeft)
-        self.othersyncSettingsLayout.addWidget(self.fastforwardCheckbox, 4, 0,1,2, Qt.AlignLeft)
-        self.othersyncSettingsLayout.addWidget(self.fastforwardThresholdLabel, 5, 0, 1, 1, Qt.AlignLeft)
-        self.othersyncSettingsLayout.addWidget(self.fastforwardThresholdSpinbox, 5, 1, Qt.AlignLeft)
-        self.subitems['fastforwardOnDesync'] = ["fastforward-threshold"]
+        self.othersyncSettingsLayout.addWidget(self.fastforwardCheckbox, 3, 0,1,2, Qt.AlignLeft)
 
         self.othersyncSettingsGroup.setLayout(self.othersyncSettingsLayout)
         self.othersyncSettingsGroup.setMaximumHeight(self.othersyncSettingsGroup.minimumSizeHint().height())
