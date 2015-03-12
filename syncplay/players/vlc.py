@@ -311,10 +311,7 @@ class VlcPlayer(BasePlayer):
                     elif "lua interface error" in line:
                         playerController._client.ui.showErrorMessage(getMessage("media-player-error").format(line), True)
                         break
-            try:
-                self.__process.stderr = subprocess.STD_ERROR_HANDLE
-            except:
-                self.__playerController._client.ui.showDebugMessage("Failed to set VLC's stderr to STD_ERROR_HANDLE")
+            self.__process.stderr = sys.stderr
             threading.Thread.__init__(self, name="VLC Listener")
             asynchat.async_chat.__init__(self)
             self.set_terminator("\n")
