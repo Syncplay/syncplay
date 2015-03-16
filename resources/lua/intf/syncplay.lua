@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb
  Project: http://syncplay.pl/
- Version: 0.2.4
+ Version: 0.2.5
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -81,9 +81,9 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 --]==========================================================================]
 
-local connectorversion = "0.2.4"
+local connectorversion = "0.2.5"
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
-local loopsleepduration = 5000 -- Pause for every event loop (uses microseconds)
+local loopsleepduration = 2500 -- Pause for every event loop (uses microseconds)
 local quitcheckfrequency = 20 -- Check whether VLC has closed every X loops
 
 local host = "localhost"
