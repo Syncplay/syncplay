@@ -180,7 +180,6 @@ en = {
       "dontslowdownwithme-label" : "Never slow down or rewind others (experimental)",
       "pauseonleave-label" : "Pause when user leaves (e.g. if they are disconnected)",
       "readyatstart-label" : "Set me as 'ready to watch' by default",
-      "alwaysunpause-label" : u"Unpause always unpauses (rather than just sets as ready if unready)",
       "forceguiprompt-label" : "Don't always show the Syncplay configuration window", # (Inverted)
       "nostore-label" : "Don't store this configuration", # (Inverted)
       "showosd-label" : "Enable OSD Messages",
@@ -194,6 +193,7 @@ en = {
       "automatic-language" : "Default ({})", # Default language
       "showdurationnotification-label" : "Warn about media duration mismatches",
       "basics-label" : "Basics",
+      "readiness-label" : u"Play/Pause",
       "misc-label" : u"Misc",
       "core-behaviour-title" : "Core room behaviour",
       "syncplay-internals-title" : u"Syncplay internals",
@@ -205,6 +205,11 @@ en = {
       "messages-other-title" : "Other display settings",
       "privacy-label" : "Privacy", # Currently unused, but will be brought back if more space is needed in Misc tab
       "privacy-title" : "Privacy settings",
+      "unpause-title" : u"If you press play, set as ready and:",
+      "unpause-ifalreadyready-option" : u"Unpause if already set as ready",
+      "unpause-ifothersready-option" : u"Unpause if already ready or others in room are ready (default)",
+      "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready",
+      "unpause-always" : u"Always unpause",
 
       "help-label" : "Help",
       "reset-label" : "Restore defaults",
@@ -285,7 +290,6 @@ en = {
       "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room operators.",
       "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
       "readyatstart-tooltip" : "Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)",
-      "alwaysunpause-tooltip" : "If you unpause when not ready it sets you as ready and unpauses, rather than just setting you as ready.",
       "forceguiprompt-tooltip" : "Configuration dialogue is not shown when opening a file with Syncplay.", # (Inverted)
       "nostore-tooltip" : "Run Syncplay with the given configuration, but do not permanently store the changes.", # (Inverted)
       "rewindondesync-tooltip" : "Jump back when needed to get back in sync. Disabling this option can result in major desyncs!",
@@ -298,6 +302,10 @@ en = {
       "showslowdownosd-tooltip" :"Show notifications of slowing down / reverting on time difference.",
       "showdurationnotification-tooltip" : "Useful for when a segment in a multi-part file is missing, but can result in false positives.",
       "language-tooltip" : u"Language to be used by Syncplay.",
+      "unpause-always-tooltip" : u"If you press unpause it always sets you as ready and unpause, rather than just setting you as ready.",
+      "unpause-ifalreadyready-tooltip" : u"If you press unpause when not ready it will set you as ready - press unpause again to unpause.",
+      "unpause-ifothersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready.",
+      "unpause-ifminusersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready and minimum users threshold is met.",
 
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
       "reset-tooltip" : "Reset all settings to the default configuration.",
@@ -523,7 +531,6 @@ ru = {
       "dontslowdownwithme-label" : u"Никогда не замедлять или перематывать видео другим", # TODO: Update new wording into Russian (should state "Experimental" in brackets at the end)
       "pauseonleave-label" : u"Приостанавливать, когда кто-то уходит (например, отключился)",
       "readyatstart-label" : u"Set me as 'ready to watch' by default", # TODO: Translate into Russian
-      "alwaysunpause-label" : u"Unpause always unpauses (rather than just sets as ready if unready)", # TODO: Translate into Russian
       "fastforwardondesync-label" : u"Fast-forward if lagging behind (recommended)", # TODO: Translate into Russian
       "forceguiprompt-label" : u"Не показывать больше этот диалог", # (Inverted)
       "nostore-label" : u"Не сохранять текущую конфигурацию", # (Inverted)
@@ -538,6 +545,7 @@ ru = {
       "automatic-language" : u"Default ({})", # Automatic language # TODO: Translate into Russian
       "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
       "basics-label" : u"Основное",
+      "readiness-label" : u"Play/Pause", # TODO: Translate into Russian
       "misc-label" : u"Misc", # TODO: Translate into Russian
       "core-behaviour-title" : "Core room behaviour", # TODO: Translate into Russian
       "syncplay-internals-title" : u"Syncplay internals", # TODO: Translate into Russian
@@ -549,6 +557,11 @@ ru = {
       "messages-other-title" : u"Other display settings", # TODO: Translate into Russian
       "privacy-label" : u"Приватность",
       "privacy-title" : u"Privacy settings", # TODO: Translate into Russian
+      "unpause-title" : u"If you press play, set as ready and:", # TODO: Translate into Russian
+      "unpause-ifalreadyready-option" : u"Unpause if already set as ready", # TODO: Translate into Russian
+      "unpause-ifothersready-option" : u"Unpause if already ready or others in room are ready (default)", # TODO: Translate into Russian
+      "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready", # TODO: Translate into Russian
+      "unpause-always" : u"Always unpause", # TODO: Translate into Russian
 
       "help-label" : u"Помощь",
       "reset-label" : u"Сброс настроек",
@@ -566,7 +579,6 @@ ru = {
       "autoplay-menu-label" : u"Show auto-play button", # TODO: Translate into Russian
       "autoplay-guipushbuttonlabel" : u"Auto-play when everyone is ready", # TODO: Translate into Russian
       "autoplay-minimum-label" : u"Min users:", # TODO: Translate into Russian
-
 
       "ready-guipushbuttonlabel" : u"I'm ready to watch!", # TODO: Translate into Russian
 
@@ -642,6 +654,10 @@ ru = {
       "showslowdownosd-tooltip" : u"Показывать уведомления о замедлении или перемотке в целях синхронизации.",
       "showdurationnotification-tooltip" : u"Полезно, когда сегмент составного файла отсутствует. Возможны ложные срабатывания.",
       "language-tooltip" : u"Language to be used by Syncplay.", # TODO: Translate into Russian
+      "unpause-always-tooltip" : u"If you press unpause it always sets you as ready and unpause, rather than just setting you as ready.", # TODO: Translate into Russian
+      "unpause-ifalreadyready-tooltip" : u"If you press unpause when not ready it will set you as ready - press unpause again to unpause.", # TODO: Translate into Russian
+      "unpause-ifothersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready.", # TODO: Translate into Russian
+      "unpause-ifminusersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready and minimum users threshold is met.", # TODO: Translate into Russian
 
       "help-tooltip" : u"Открыть Руководство Пользователя на Syncplay.pl.",
       "reset-tooltip" : u"Сбрасывает все настройки Syncplay в начальное состояние.",
@@ -866,7 +882,6 @@ de = {
        "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentell)",
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
       "readyatstart-label" : u"Standardmäßig auf \'Bereit\' stellen",
-      "alwaysunpause-label" : u"Fortsetzen startet immer (anstatt nur den Bereitschaftsstatus zu ändern)",
       "forceguiprompt-label" : u"Diesen Dialog nicht mehr anzeigen",
       "nostore-label" : u"Diese Konfiguration nicht speichern",
       "showosd-label" : u"OSD-Nachrichten anzeigen",
@@ -880,6 +895,7 @@ de = {
       "automatic-language" : u"Automatisch ({})", # Default language # TODO: Change to German translation of "default" / Current translation represents Idea better
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
       "basics-label" : u"Grundlagen",
+      "readiness-label" : u"Play/Pause", # TODO: Translate into German
       "misc-label" : u"Diverse",
       "core-behaviour-title" : u"Verhalten des Raumes",
       "syncplay-internals-title" : u"Syncplay intern",
@@ -891,6 +907,11 @@ de = {
       "messages-other-title" : u"Weitere Display-Einstellungen",
       "privacy-label" : u"Privatsphäre",
       "privacy-title" : u"Privatsphäreneinstellungen",
+      "unpause-title" : u"If you press play, set as ready and:", # TODO: Translate into German
+      "unpause-ifalreadyready-option" : u"Unpause if already set as ready", # TODO: Translate into German
+      "unpause-ifothersready-option" : u"Unpause if already ready or others in room are ready (default)", # TODO: Translate into German
+      "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready", # TODO: Translate into German
+      "unpause-always" : u"Always unpause", # TODO: Translate into German
 
       "help-label" : u"Hilfe",
       "reset-label" : u"Standardwerte zurücksetzen",
@@ -985,6 +1006,10 @@ de = {
       "showslowdownosd-tooltip" : u"Meldungen bei Geschwindigkeitsänderung anzeigen.",
       "showdurationnotification-tooltip" : u"Nützlich, wenn z.B. ein Teil eines mehrteiligen Videos fehlt, kann jedoch auch fehlerhaft anschlagen.",
       "language-tooltip" : u"Die verwendete Sprache von Syncplay",
+      "unpause-always-tooltip" : u"Fortsetzen startet immer (anstatt nur den Bereitschaftsstatus zu ändern)",
+      "unpause-ifalreadyready-tooltip" : u"If you press unpause when not ready it will set you as ready - press unpause again to unpause.", # TODO: Translate into German
+      "unpause-ifothersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready.", # TODO: Translate into German
+      "unpause-ifminusersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready and minimum users threshold is met.", # TODO: Translate into German
 
       "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
       "reset-tooltip" : u"Alle Einstellungen auf Standardwerte zurücksetzen.",
@@ -1092,4 +1117,4 @@ def getMessage(type_, locale=None):
     if messages["en"].has_key(type_):
         return unicode(messages["en"][type_])
     else:
-        raise KeyError()
+        raise KeyError(type_)

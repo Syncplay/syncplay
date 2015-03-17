@@ -45,7 +45,7 @@ class ConfigurationGetter(object):
                         "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
                         "pauseOnLeave": False,
                         "readyAtStart": False,
-                        "alwaysUnpause": False,
+                        "unpauseAction": constants.UNPAUSE_IFOTHERSREADY_MODE,
                         "autoplayInitialState" : None,
                         "autoplayMinUsers" : -1,
                         "clearGUIData": False,
@@ -84,7 +84,6 @@ class ConfigurationGetter(object):
                          "dontSlowDownWithMe",
                          "pauseOnLeave",
                          "readyAtStart",
-                         "alwaysUnpause",
                          "clearGUIData",
                          "rewindOnDesync",
                          "slowOnDesync",
@@ -114,7 +113,7 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "pauseOnLeave", "readyAtStart", "alwaysUnpause", "autoplayMinUsers", "autoplayInitialState"],
+                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showDurationNotification"],
                         "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
                         }

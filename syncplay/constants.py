@@ -115,7 +115,7 @@ VLC_MAX_PORT = 55000
 
 #These are not changes you're looking for
 STYLE_TABLIST = "QListWidget::item { border-style: solid; border-width: 1px; border-radius: 2px; } QListWidget::item:selected { color: black; background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(242, 248, 255, 255), stop:1 rgba(208, 229, 255, 255)); border-color: #84ACDD; } QListWidget::item:!selected { border-color: transparent; } QListWidget::item:!selected:hover { color: black; background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(248, 248, 248, 255), stop:1 rgba(229, 229, 229, 255)); border-color: silver; }"
-STYLE_SUBCHECKBOX  = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 21px; background:url('{}') left no-repeat }}" #Graphic path
+STYLE_SUBCHECKBOX  = "QCheckBox, QLabel, QRadioButton {{ margin-left: 6px; padding-left: 21px; background:url('{}') left no-repeat }}" #Graphic path
 STYLE_SUBLABEL  = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 16px; background:url('{}') left no-repeat }}" #Graphic path
 STYLE_ERRORLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: red; padding: 2px; background: #FFAAAA; }"
 STYLE_SUCCESSLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: green; padding: 2px; background: #AAFFAA; }"
@@ -151,6 +151,11 @@ SERVER_MAX_TEMPLATE_LENGTH = 10000
 PRIVACY_SENDRAW_MODE = "SendRaw"
 PRIVACY_SENDHASHED_MODE = "SendHashed"
 PRIVACY_DONTSEND_MODE = "DoNotSend"
+UNPAUSE_IFALREADYREADY_MODE = "IfAlreadyReady"
+UNPAUSE_IFOTHERSREADY_MODE = "IfOthersReady"
+UNPAUSE_IFMINUSERSREADY_MODE = "IfMinUsersReady"
+UNPAUSE_ALWAYS_MODE = "Always"
+
 PRIVACY_HIDDENFILENAME = "**Hidden filename**"
 INVERTED_STATE_MARKER = "*"
 ERROR_MESSAGE_MARKER = "*"

@@ -460,6 +460,60 @@ class ConfigDialog(QtGui.QDialog):
         self.basicOptionsFrame.setLayout(self.basicOptionsLayout)
         self.stackedLayout.addWidget(self.basicOptionsFrame)
 
+    def addReadinessTab(self):
+        self.readyFrame = QtGui.QFrame()
+        self.readyLayout = QtGui.QVBoxLayout()
+        self.readyFrame.setLayout(self.readyLayout)
+
+        # Initial state
+
+        self.readyInitialGroup = QtGui.QGroupBox(u"Initial readiness state")
+        self.readyInitialLayout = QtGui.QVBoxLayout()
+        self.readyInitialGroup.setLayout(self.readyInitialLayout)
+        self.readyatstartCheckbox = QCheckBox(getMessage("readyatstart-label"))
+        self.readyatstartCheckbox.setObjectName("readyAtStart")
+        self.readyInitialLayout.addWidget(self.readyatstartCheckbox)
+        self.readyLayout.addWidget(self.readyInitialGroup)
+
+        # Automatically pausing
+        self.readyPauseGroup = QtGui.QGroupBox(u"Pausing")
+        self.readyPauseLayout = QtGui.QVBoxLayout()
+        self.readyPauseGroup.setLayout(self.readyPauseLayout)
+        self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
+        self.pauseonleaveCheckbox.setObjectName("pauseOnLeave")
+        self.readyPauseLayout.addWidget(self.pauseonleaveCheckbox)
+        self.readyLayout.addWidget(self.readyPauseGroup)
+
+        # Unpausing
+        self.readyUnpauseGroup = QtGui.QGroupBox(getMessage("unpause-title"))
+        self.readyUnpauseLayout = QtGui.QVBoxLayout()
+        self.readyUnpauseGroup.setLayout(self.readyUnpauseLayout)
+        self.readyUnpauseButtonGroup = QButtonGroup()
+        self.unpauseIfAlreadyReadyOption = QRadioButton(getMessage("unpause-ifalreadyready-option"))
+        self.readyUnpauseButtonGroup.addButton(self.unpauseIfAlreadyReadyOption)
+        self.unpauseIfAlreadyReadyOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.unpauseIfAlreadyReadyOption.setObjectName("unpause-ifalreadyready" + constants.CONFIG_NAME_MARKER + "unpauseAction" + constants.CONFIG_VALUE_MARKER + constants.UNPAUSE_IFALREADYREADY_MODE)
+        self.readyUnpauseLayout.addWidget(self.unpauseIfAlreadyReadyOption)
+        self.unpauseIfOthersReadyOption = QRadioButton(getMessage("unpause-ifothersready-option"))
+        self.readyUnpauseButtonGroup.addButton(self.unpauseIfOthersReadyOption)
+        self.unpauseIfOthersReadyOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.unpauseIfOthersReadyOption.setObjectName("unpause-ifothersready" + constants.CONFIG_NAME_MARKER + "unpauseAction" + constants.CONFIG_VALUE_MARKER + constants.UNPAUSE_IFOTHERSREADY_MODE)
+        self.readyUnpauseLayout.addWidget(self.unpauseIfOthersReadyOption)
+        self.unpauseIfMinUsersReadyOption = QRadioButton(getMessage("unpause-ifminusersready-option"))
+        self.readyUnpauseButtonGroup.addButton(self.unpauseIfMinUsersReadyOption)
+        self.unpauseIfMinUsersReadyOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.unpauseIfMinUsersReadyOption.setObjectName("unpause-ifminusersready" + constants.CONFIG_NAME_MARKER + "unpauseAction" + constants.CONFIG_VALUE_MARKER + constants.UNPAUSE_IFMINUSERSREADY_MODE)
+        self.readyUnpauseLayout.addWidget(self.unpauseIfMinUsersReadyOption)
+        self.unpauseAlwaysUnpauseOption = QRadioButton(getMessage("unpause-always"))
+        self.readyUnpauseButtonGroup.addButton(self.unpauseAlwaysUnpauseOption)
+        self.unpauseAlwaysUnpauseOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.unpauseAlwaysUnpauseOption.setObjectName("unpause-always" + constants.CONFIG_NAME_MARKER + "unpauseAction" + constants.CONFIG_VALUE_MARKER + constants.UNPAUSE_ALWAYS_MODE)
+        self.readyUnpauseLayout.addWidget(self.unpauseAlwaysUnpauseOption)
+        self.readyLayout.addWidget(self.readyUnpauseGroup)
+
+        self.readyLayout.setAlignment(Qt.AlignTop)
+        self.stackedLayout.addWidget(self.readyFrame)
+
     def addMiscTab(self):
         self.miscFrame = QtGui.QFrame()
         self.miscLayout = QtGui.QVBoxLayout()
@@ -468,18 +522,6 @@ class ConfigDialog(QtGui.QDialog):
         self.coreSettingsGroup = QtGui.QGroupBox(getMessage("core-behaviour-title"))
         self.coreSettingsLayout = QtGui.QGridLayout()
         self.coreSettingsGroup.setLayout(self.coreSettingsLayout)
-
-        self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
-        self.pauseonleaveCheckbox.setObjectName("pauseOnLeave")
-        self.coreSettingsLayout.addWidget(self.pauseonleaveCheckbox, 0, 0, 1, 4)
-
-        self.alwaysUnpauseCheckbox = QCheckBox(getMessage("alwaysunpause-label"))
-        self.alwaysUnpauseCheckbox.setObjectName("alwaysUnpause")
-        self.coreSettingsLayout.addWidget(self.alwaysUnpauseCheckbox, 1, 0, 1, 4)
-
-        self.readyatstartCheckbox = QCheckBox(getMessage("readyatstart-label"))
-        self.readyatstartCheckbox.setObjectName("readyAtStart")
-        self.coreSettingsLayout.addWidget(self.readyatstartCheckbox, 2, 0, 1, 4)
 
         ### Privacy:
 
@@ -727,9 +769,10 @@ class ConfigDialog(QtGui.QDialog):
         self.tabListFrame = QtGui.QFrame()
         self.tabListWidget = QtGui.QListWidget()
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "house.png"),getMessage("basics-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "cog.png"),getMessage("misc-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "control_pause_blue.png"),getMessage("readiness-label")))
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "film_link.png"),getMessage("sync-label")))
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "comments.png"),getMessage("messages-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "cog.png"),getMessage("misc-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
         self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width())
@@ -814,9 +857,10 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.setContentsMargins(0,0,0,0)
 
         self.addBasicTab()
-        self.addMiscTab()
+        self.addReadinessTab()
         self.addSyncTab()
         self.addMessageTab()
+        self.addMiscTab()
         self.tabList()
 
         self.mainLayout.addWidget(self.stackedFrame, 0, 1)

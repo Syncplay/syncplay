@@ -521,8 +521,18 @@ class SyncplayClient(object):
             self.stopAutoplayCountdown()
 
     def instaplayConditionsMet(self):
-        if self.userlist.currentUser.isReady() or self._config["alwaysUnpause"]:
+        if not self.userlist.currentUser.canControl():
+            return False
+
+        unpauseAction = self._config['unpauseAction']
+        if self.userlist.currentUser.isReady() or unpauseAction == constants.UNPAUSE_ALWAYS_MODE:
             return True
+        elif unpauseAction == constants.UNPAUSE_IFOTHERSREADY_MODE and self.userlist.areAllOtherUsersInRoomReady():
+            return True
+        elif unpauseAction == constants.UNPAUSE_IFMINUSERSREADY_MODE and self.userlist.areAllOtherUsersInRoomReady() and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold:
+            return True
+        else:
+            return False
 
     def autoplayConditionsMet(self):
         return self._playerPaused and self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady() and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold
