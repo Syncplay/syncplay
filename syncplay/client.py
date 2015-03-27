@@ -228,7 +228,7 @@ class SyncplayClient(object):
 
     def _serverPaused(self, setBy):
         hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
-        if constants.SYNC_ON_PAUSE:
+        if constants.SYNC_ON_PAUSE and self.getUsername() <> setBy:
             self.setPosition(self.getGlobalPosition())
         self._player.setPaused(True)
         madeChangeOnPlayer = True
