@@ -9,6 +9,7 @@ import random
 import socket
 import asynchat, asyncore
 import urllib
+import time
 from syncplay.messages import getMessage
 
 class VlcPlayer(BasePlayer):
@@ -33,6 +34,7 @@ class VlcPlayer(BasePlayer):
         self._filename = None
         self._filepath = None
         self._filechanged = False
+        self._lastVLCPositionUpdate = None
         try: # Hack to fix locale issue without importing locale library
             self.radixChar = "{:n}".format(1.5)[1:2]
             if self.radixChar == "" or self.radixChar == "1" or self.radixChar == "5":
@@ -87,11 +89,19 @@ class VlcPlayer(BasePlayer):
         self._pausedAsk.clear()
         self._listener.sendLine(".")
         if self._filename and not self._filechanged:
-            self._positionAsk.wait()
-            self._pausedAsk.wait()
-            self._client.updatePlayerStatus(self._paused, self._position)
+            self._positionAsk.wait(constants.PLAYER_ASK_DELAY)
+            self._client.updatePlayerStatus(self._paused, self.getCalculatedPosition())
         else:
             self._client.updatePlayerStatus(self._client.getGlobalPaused(), self._client.getGlobalPosition())
+
+    def getCalculatedPosition(self):
+        if self._lastVLCPositionUpdate is None:
+            return 0
+        diff = time.time() - self._lastVLCPositionUpdate
+        if diff > constants.PLAYER_ASK_DELAY and not self._paused:
+            return self._position + diff
+        else:
+            return self._position
 
     def displayMessage(self, message, duration=constants.OSD_DURATION * 1000, secondaryOSD=False):
         duration /= 1000
@@ -169,6 +179,7 @@ class VlcPlayer(BasePlayer):
             self._pausedAsk.set()
         elif name == "position":
             self._position = float(value.replace(",", ".")) if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPosition()
+            self._lastVLCPositionUpdate = time.time()
             self._positionAsk.set()
         elif name == "filename":
             self._filechanged = True
