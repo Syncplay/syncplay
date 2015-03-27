@@ -96,7 +96,7 @@ class VlcPlayer(BasePlayer):
 
     def getCalculatedPosition(self):
         if self._lastVLCPositionUpdate is None:
-            return 0
+            return self._client.getGlobalPosition()
         diff = time.time() - self._lastVLCPositionUpdate
         if diff > constants.PLAYER_ASK_DELAY and not self._paused:
             return self._position + diff
