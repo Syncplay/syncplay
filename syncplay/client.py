@@ -451,6 +451,8 @@ class SyncplayClient(object):
         return self._serverPassword
 
     def setPosition(self, position):
+        if self._lastPlayerUpdate:
+            self._lastPlayerUpdate = time.time()
         position += self.getUserOffset()
         if self._player and self.userlist.currentUser.file:
             if position < 0:
@@ -460,6 +462,8 @@ class SyncplayClient(object):
 
     def setPaused(self, paused):
         if self._player and self.userlist.currentUser.file:
+            if self._lastPlayerUpdate and not paused:
+                self._lastPlayerUpdate = time.time()
             self._player.setPaused(paused)
 
     def start(self, host, port):
