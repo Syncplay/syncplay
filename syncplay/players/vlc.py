@@ -99,6 +99,7 @@ class VlcPlayer(BasePlayer):
             return self._client.getGlobalPosition()
         diff = time.time() - self._lastVLCPositionUpdate
         if diff > constants.PLAYER_ASK_DELAY and not self._paused:
+            self._client.ui.showDebugMessage("VLC did not response in time, so assuming position is {} ({}+{})".format(self._position + diff, self._position, diff))
             return self._position + diff
         else:
             return self._position
@@ -114,10 +115,13 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine("set-rate: {:.2n}".format(value))
 
     def setPosition(self, value):
+        self._lastVLCPositionUpdate = time.time()
         self._listener.sendLine("set-position: {}".format(value).replace(".",self.radixChar))
 
     def setPaused(self, value):
         self._paused = value
+        if not value:
+            self._lastVLCPositionUpdate = time.time()
         self._listener.sendLine('set-playstate: {}'.format("paused" if value else "playing"))
 
     def getMRL(self, fileURL):
