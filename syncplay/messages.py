@@ -36,6 +36,8 @@ en = {
       "not-all-ready" : u"Not ready: {}", # Usernames
       "all-users-ready" : u"Everyone is ready ({} users)", #Number of ready users
       "ready-to-unpause-notification" : u"You are now set as ready - unpause again to unpause",
+      "set-as-ready-notification" : u"You are now set as ready",
+      "set-as-not-ready-notification" : u"You are now set as not ready",
       "autoplaying-notification" : u"Auto-playing in {}...",
 
       "identifying-as-controller-notification" : u"Identifying as room operator with password '{}'...",
@@ -388,6 +390,8 @@ ru = {
       "not-all-ready" : u"Not ready: {}", # Usernames # TODO: Translate into Russian
       "all-users-ready" : u"Everyone is ready ({} users)", #Number of ready users # TODO: Translate into Russian
       "ready-to-unpause-notification" : u"You are now set as ready - unpause again to unpause", # TODO: Translate into Russian
+      "set-as-ready-notification" : u"You are now set as ready", # TODO: Translate into Russian
+      "set-as-not-ready-notification" : u"You are now set as not ready", # TODO: Translate into Russian
       "autoplaying-notification" : u"Auto-playing in {}...", # TODO: Translate into Russian
 
       "identifying-as-controller-notification" : u"Identifying as room operator with password '{}'...", # TODO: Translate into Russian
@@ -740,6 +744,8 @@ de = {
       "not-all-ready" : u"Noch nicht bereit: {}", # Usernames
       "all-users-ready" : u"Alle sind bereit ({} Nutzer)", #Number of ready users
       "ready-to-unpause-notification" : u"Du bist bereit - noch einmal fortsetzen klicken zum abspielen",
+      "set-as-ready-notification" : u"Du bist bereit", # TODO: Check German translation
+      "set-as-not-ready-notification" : u"You are now set as not ready", # TODO: Translate into German
       "autoplaying-notification" : u"Starte in {}...",
 
       "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room operator"

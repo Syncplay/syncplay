@@ -166,7 +166,16 @@ class SyncplayClient(object):
         self._playerPosition = position
         self._playerPaused = paused
         if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
-            if not paused and not self.instaplayConditionsMet():
+            if not self.userlist.currentUser.canControl():
+                self._player.setPaused(self._globalPaused)
+                self.toggleReady(manuallyInitiated=True)
+                self._playerPaused = self._globalPaused
+                pauseChange = False
+                if self.userlist.currentUser.isReady():
+                    self.ui.showMessage(getMessage("set-as-ready-notification"))
+                else:
+                    self.ui.showMessage(getMessage("set-as-not-ready-notification"))
+            elif not paused and not self.instaplayConditionsMet():
                 paused = True
                 self._player.setPaused(paused)
                 self._playerPaused = paused
