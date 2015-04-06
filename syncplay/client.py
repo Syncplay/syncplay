@@ -206,17 +206,25 @@ class SyncplayClient(object):
             return madeChangeOnPlayer
 
     def _rewindPlayerDueToTimeDifference(self, position, setBy):
-        hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
-        self.setPosition(position)
-        self.ui.showMessage(getMessage("rewind-notification").format(setBy), hideFromOSD)
-        madeChangeOnPlayer = True
+        madeChangeOnPlayer = False
+        if self.getUsername() == setBy:
+            self.ui.showDebugMessage("Caught attempt to rewind due to time difference with self")
+        else:
+            hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
+            self.setPosition(position)
+            self.ui.showMessage(getMessage("rewind-notification").format(setBy), hideFromOSD)
+            madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
     def _fastforwardPlayerDueToTimeDifference(self, position, setBy):
-        hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
-        self.setPosition(position + constants.FASTFORWARD_EXTRA_TIME)
-        self.ui.showMessage(getMessage("fastforward-notification").format(setBy), hideFromOSD)
-        madeChangeOnPlayer = True
+        madeChangeOnPlayer = False
+        if self.getUsername() == setBy:
+            self.ui.showDebugMessage("Caught attempt to fastforward due to time difference with self")
+        else:
+            hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
+            self.setPosition(position + constants.FASTFORWARD_EXTRA_TIME)
+            self.ui.showMessage(getMessage("fastforward-notification").format(setBy), hideFromOSD)
+            madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
     def _serverUnpaused(self, setBy):
@@ -252,15 +260,20 @@ class SyncplayClient(object):
 
     def _slowDownToCoverTimeDifference(self, diff, setBy):
         hideFromOSD = not constants.SHOW_SLOWDOWN_OSD
+        madeChangeOnPlayer = False
         if self._config['slowdownThreshold']  < diff and not self._speedChanged:
-            self._player.setSpeed(constants.SLOWDOWN_RATE)
-            self._speedChanged = True
-            self.ui.showMessage(getMessage("slowdown-notification").format(setBy), hideFromOSD)
+            if self.getUsername() == setBy:
+                self.ui.showDebugMessage("Caught attempt to slow down due to time difference with self")
+            else:
+                self._player.setSpeed(constants.SLOWDOWN_RATE)
+                self._speedChanged = True
+                self.ui.showMessage(getMessage("slowdown-notification").format(setBy), hideFromOSD)
+                madeChangeOnPlayer = True
         elif self._speedChanged and diff < constants.SLOWDOWN_RESET_THRESHOLD:
             self._player.setSpeed(1.00)
             self._speedChanged = False
             self.ui.showMessage(getMessage("revert-notification"), hideFromOSD)
-        madeChangeOnPlayer = True
+            madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
     def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy):
