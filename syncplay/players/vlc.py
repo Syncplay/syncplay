@@ -100,6 +100,8 @@ class VlcPlayer(BasePlayer):
         diff = time.time() - self._lastVLCPositionUpdate
         if diff > constants.PLAYER_ASK_DELAY and not self._paused:
             self._client.ui.showDebugMessage("VLC did not response in time, so assuming position is {} ({}+{})".format(self._position + diff, self._position, diff))
+            if diff > constants.VLC_LATENCY_ERROR_THRESHOLD:
+                self._client.ui.showErrorMessage(getMessage("vlc-latency-error").format(int(diff)))
             return self._position + diff
         else:
             return self._position

@@ -2,6 +2,7 @@ import hashlib
 import os.path
 import time
 import re
+import sys
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from functools import wraps
@@ -1131,7 +1132,7 @@ class UiManager(object):
 
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():
-            print "{}{}".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip())
+            sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip()))
 
     def showMessage(self, message, noPlayer=False, noTimestamp=False, secondaryOSD=False):
         if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, secondaryOSD=secondaryOSD)
