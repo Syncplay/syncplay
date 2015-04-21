@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb
  Project: http://syncplay.pl/
- Version: 0.2.5
+ Version: 0.2.6
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -37,6 +37,9 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
  get-interface-version
     * >> interface-version: [syncplay connector version]
+
+ get-vlc-version
+    * >> vlc-version: [VLC version]
 
  get-duration
     * >> duration: [<duration/no-input>]
@@ -81,7 +84,8 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 --]==========================================================================]
 
-local connectorversion = "0.2.5"
+local connectorversion = "0.2.6"
+local vlcversion = vlc.misc.version()
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
 local loopsleepduration = 2500 -- Pause for every event loop (uses microseconds)
 local quitcheckfrequency = 20 -- Check whether VLC has closed every X loops
@@ -473,6 +477,7 @@ function do_command ( command, argument)
     local response = ""
 
     if     command == "get-interface-version" then response           = "interface-version"..msgseperator..connectorversion..msgterminator
+    elseif command == "get-vlc-version"       then response           = "vlc-version"..msgseperator..vlcversion..msgterminator
     elseif command == "get-duration"          then response           = "duration"..msgseperator..errormerge(get_duration())..msgterminator
     elseif command == "get-filepath"          then response           = "filepath"..msgseperator..errormerge(get_filepath())..msgterminator
     elseif command == "get-filename"          then response           = "filename"..msgseperator..errormerge(get_filename())..msgterminator
@@ -523,7 +528,7 @@ function set_playstate(argument)
     return errormsg
 end
 
-if string.sub(vlc.misc.version(),1,2) == "1." then
+if string.sub(vlcversion,1,2) == "1." then
     vlc.msg.err("This version of VLC is not known to support the Syncplay interface module. Please use VLC 2+.")
     quit_vlc()
 else

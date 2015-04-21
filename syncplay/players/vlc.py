@@ -191,17 +191,11 @@ class VlcPlayer(BasePlayer):
             self._filechanged = True
             self._filename = value.decode('utf-8')
             self._filenameAsk.set()
-        elif line.startswith("interface-version: "):
-            interface_version = line[19:24]
-            if int(interface_version.replace(".", "")) < int(constants.VLC_INTERFACE_MIN_VERSION.replace(".", "")):
-                self._client.ui.showErrorMessage(getMessage("vlc-interface-version-mismatch").format(str(interface_version), str(constants.VLC_INTERFACE_MIN_VERSION)))
-        elif line[:16] == "VLC media player":
-            vlc_version = line[17:22]
-            if int(vlc_version.replace(".", "")) < int(constants.VLC_MIN_VERSION.replace(".", "")):
+        elif line.startswith("vlc-version: "):
+            vlc_version = line.split(': ')[1].replace(' ','-').split('-')[0]
+            if not utils.meetsMinVersion(vlc_version, constants.VLC_MIN_VERSION):
                 self._client.ui.showErrorMessage(getMessage("vlc-version-mismatch").format(str(vlc_version), str(constants.VLC_MIN_VERSION)))
             self._vlcready.set()
-            self._listener.sendLine("get-interface-version")
-
 
     @staticmethod
     def run(client, playerPath, filePath, args):
@@ -262,6 +256,7 @@ class VlcPlayer(BasePlayer):
     class __Listener(threading.Thread, asynchat.async_chat):
         def __init__(self, playerController, playerPath, filePath, args, vlcReady, vlcClosed):
             self.__playerController = playerController
+            self.requestedVLCVersion = False
             call = [playerPath]
             if filePath:
                 if utils.isASCII(filePath):
@@ -277,7 +272,7 @@ class VlcPlayer(BasePlayer):
                         for line in interfacefile:
                             if "local connectorversion" in line:
                                 interface_version = line[26:31]
-                                if int(interface_version.replace(".", "")) >= int(constants.VLC_INTERFACE_MIN_VERSION.replace(".", "")):
+                                if utils.meetsMinVersion(interface_version, constants.VLC_INTERFACE_MIN_VERSION):
                                     return True
                                 else:
                                     playerController._client.ui.showErrorMessage(getMessage("vlc-interface-oldversion-ignored"))
@@ -362,6 +357,9 @@ class VlcPlayer(BasePlayer):
 
         def sendLine(self, line):
             if self.connected:
+                if not self.requestedVLCVersion:
+                    self.requestedVLCVersion = True
+                    self.sendLine("get-vlc-version")
                 try:
                     self.push(line + "\n")
                     self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
