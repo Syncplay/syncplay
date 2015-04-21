@@ -275,7 +275,7 @@ class VlcPlayer(BasePlayer):
                                 if utils.meetsMinVersion(interface_version, constants.VLC_INTERFACE_MIN_VERSION):
                                     return True
                                 else:
-                                    playerController._client.ui.showErrorMessage(getMessage("vlc-interface-oldversion-ignored"))
+                                    playerController._client.ui.showErrorMessage(getMessage("vlc-interface-oldversion-warning"))
                                     return False
                 playerController._client.ui.showErrorMessage(getMessage("vlc-interface-not-installed"))
                 return False
