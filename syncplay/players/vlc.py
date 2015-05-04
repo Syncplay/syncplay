@@ -35,6 +35,7 @@ class VlcPlayer(BasePlayer):
         self._filepath = None
         self._filechanged = False
         self._lastVLCPositionUpdate = None
+        self.shownVLCLatencyError = False
         try: # Hack to fix locale issue without importing locale library
             self.radixChar = "{:n}".format(1.5)[1:2]
             if self.radixChar == "" or self.radixChar == "1" or self.radixChar == "5":
@@ -101,7 +102,9 @@ class VlcPlayer(BasePlayer):
         if diff > constants.PLAYER_ASK_DELAY and not self._paused:
             self._client.ui.showDebugMessage("VLC did not response in time, so assuming position is {} ({}+{})".format(self._position + diff, self._position, diff))
             if diff > constants.VLC_LATENCY_ERROR_THRESHOLD:
-                self._client.ui.showErrorMessage(getMessage("media-player-latency-warning").format(int(diff)))
+                if not self.shownVLCLatencyError or constants.DEBUG_MODE:
+                    self._client.ui.showErrorMessage(getMessage("media-player-latency-warning").format(int(diff)))
+                    self.shownVLCLatencyError = True
             return self._position + diff
         else:
             return self._position
