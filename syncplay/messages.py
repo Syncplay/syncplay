@@ -93,7 +93,7 @@ en = {
       "vlc-interface-version-mismatch": "Warning: You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above.",  # VLC interface version, VLC interface min version
       "vlc-interface-oldversion-warning": "Warning: Syncplay detected that an old version version of the Syncplay interface module for VLC was installed in the VLC directory. Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
       "vlc-interface-not-installed": "Warning: The Syncplay interface module for VLC was not found in the VLC directory. As such, if you are running VLC 2.0 then VLC will use the syncplay.lua module contained within the Syncplay directory, but this will mean that other custom interface scripts and extensions will not work. Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
-      "vlc-latency-error": u"Warning: VLC interface script took {} seconds to respond. If this happens regularly then you should move to a different media player!", # Seconds to respond
+      "media-player-latency-warning": u"Warning: The media player took {} seconds to respond. If this happens regularly then you could try a different media player.", # Seconds to respond
 
       # Client prompts
       "enter-to-exit-prompt" : "Press enter to exit\n",
@@ -448,7 +448,7 @@ ru = {
       "vlc-interface-version-mismatch" : u"Внимание: В используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше.",  # VLC interface version, VLC interface min version
       "vlc-interface-oldversion-warning" : u"Внимание: Syncplay обнаружил, что старая версия модуля интерфейса Syncplay для VLC уже установлена в директорию VLC. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
       "vlc-interface-not-installed" : u"Внимание: Модуль интерфейса Syncplay для VLC не обнаружен в директории VLC. По существу, если Вы используете VLC 2.0, то VLC будет использовать модуль syncplay.lua из директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
-      "vlc-latency-error": u"Warning: VLC interface script took {} seconds to respond. If this happens regularly then you should move to a different media player!", # Seconds to respond # TODO: Translate into Russian
+      "media-player-latency-warning": u"Warning: The media player took {} seconds to respond. If this happens regularly then you could try a different media player.", # Seconds to respond # TODO: Translate into Russian
 
       # Client prompts
       "enter-to-exit-prompt" : u"Для выхода нажмите Enter\n",
@@ -803,7 +803,7 @@ de = {
       "vlc-interface-version-mismatch": u"Warnung: Du nutzt Version {} des VLC-Syncplay Interface-Moduls, Syncplay benötigt aber mindestens Version {}.",  # VLC interface version, VLC interface min version
       "vlc-interface-oldversion-warning": u"Warnung: Es ist eine alte Version des Syncplay Interface-Moduls für VLC im VLC-Verzeichnis installiert. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du Details zur Installation des syncplay.lua-Skripts.",
       "vlc-interface-not-installed": u"Warnung: Es wurde kein Syncplay Interface-Modul für VLC im VLC-Verzeichnis gefunden. Daher wird, wenn du VLC 2.0 nutzt, die syncplay.lua die mit Syncplay mitgeliefert wurde, verwendet. Dies bedeutet allerdings, dass keine anderen Interface-Skripts und Erweiterungen geladen werden. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du  Details zur Installation des syncplay.lua-Skripts.",
-      "vlc-latency-error": u"Warning: VLC interface script took {} seconds to respond. If this happens regularly then you should move to a different media player!", # Seconds to respond # TODO: Translate into German
+      "media-player-latency-warning": u"Warning: The media player took {} seconds to respond. If this happens regularly then you could try a different media player.", # Seconds to respond # TODO: Translate into German
 
       # Client prompts
       "enter-to-exit-prompt" : u"Enter drücken zum Beenden\n",
