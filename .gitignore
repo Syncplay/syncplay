@@ -1,9 +1,12 @@
 *.py[co]
 .*.sw[po]
+*.exe
 venv
 
 /SyncPlay.egg-info
 /build
 /dist
+/syncplay v*
+syncplay_setup.nsi
 dist.7z
 .*
