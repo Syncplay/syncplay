@@ -15,7 +15,7 @@ class MpvPlayer(MplayerPlayer):
             ver = MpvPlayer.RE_VERSION.search(subprocess.check_output([playerPath, '--version']))
         except:
             ver = None
-        constants.MPV_NEW_VERSION = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 5
+        constants.MPV_NEW_VERSION = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 6
         if constants.MPV_NEW_VERSION:
             return NewMpvPlayer(client, MpvPlayer.getExpandedPath(playerPath), filePath, args)
         else:
@@ -24,12 +24,8 @@ class MpvPlayer(MplayerPlayer):
     @staticmethod
     def getStartupArgs(path):
         args = constants.MPV_SLAVE_ARGS
-        if constants.MPV_NEW_VERSION or sys.platform.startswith('win'):
+        if constants.MPV_NEW_VERSION:
             args.extend(constants.MPV_SLAVE_ARGS_NEW)
-        if sys.platform.startswith('win') or not constants.MPV_NEW_VERSION:
-             args.extend(constants.MPV_SLAVE_ARGS_WINDOWS)
-        else:
-             args.extend(constants.MPV_SLAVE_ARGS_NONWINDOWS)
         return args
 
     @staticmethod
