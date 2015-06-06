@@ -1,5 +1,5 @@
 from PySide import QtGui
-from PySide.QtCore import Qt, QSettings, QSize, QPoint, QUrl
+from PySide.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine
 from syncplay import utils, constants, version
 from syncplay.messages import getMessage
 import sys
@@ -59,7 +59,75 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
 class MainWindow(QtGui.QMainWindow):
+    insertPosition = None
+
+    def setPlaylistInsertPosition(self, newPosition):
+        if MainWindow.insertPosition <> newPosition:
+            MainWindow.insertPosition = newPosition
+            self.playlist.forceUpdate()
+
+    class PlaylistItemDelegate(QtGui.QStyledItemDelegate):
+        def paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex):
+            QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
+            itemQPainter.save()
+            lineAbove = False
+            lineBelow = False
+            if MainWindow.insertPosition == 0 and indexQModelIndex.row() == 0:
+                lineAbove = True
+            elif MainWindow.insertPosition and indexQModelIndex.row() == MainWindow.insertPosition-1:
+                lineBelow = True
+            if lineAbove:
+                line = QLine(optionQStyleOptionViewItem.rect.topLeft(), optionQStyleOptionViewItem.rect.topRight())
+                itemQPainter.drawLine(line)
+            elif lineBelow:
+                line = QLine(optionQStyleOptionViewItem.rect.bottomLeft(), optionQStyleOptionViewItem.rect.bottomRight())
+                itemQPainter.drawLine(line)
+            itemQPainter.restore()
+
+    class PlaylistGroupBox(QtGui.QGroupBox):
+        def dragEnterEvent(self, event):
+            data = event.mimeData()
+            urls = data.urls()
+            window = self.parent().parent().parent().parent()
+            if urls and urls[0].scheme() == 'file':
+                event.acceptProposedAction()
+                window.setPlaylistInsertPosition(window.playlist.count() if window.clearedPlaylistNote else 0)
+            else:
+                super(MainWindow.PlaylistGroupBox, self).dragEnterEvent(event)
+
+        def dragLeaveEvent(self, event):
+            window = self.parent().parent().parent().parent()
+            window.setPlaylistInsertPosition(None)
+
+        def dropEvent(self, event):
+            window = self.parent().parent().parent().parent()
+            window.setPlaylistInsertPosition(None)
+            if QtGui.QDropEvent.proposedAction(event) == Qt.MoveAction:
+                QtGui.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
+            data = event.mimeData()
+            urls = data.urls()
+
+            if urls and urls[0].scheme() == 'file':
+                indexRow = window.playlist.count() if window.clearedPlaylistNote else 0
+
+                for url in urls[::-1]:
+                    dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
+                    if os.path.isfile(dropfilepath):
+                        window.addFileToPlaylist(dropfilepath, indexRow)
+                    elif os.path.isdir(dropfilepath):
+                        window.addFolderToPlaylist(dropfilepath)
+            else:
+                super(MainWindow.PlaylistWidget, self).dropEvent(event)
+
     class PlaylistWidget(QtGui.QListWidget):
+        def dragLeaveEvent(self, event):
+            window = self.parent().parent().parent().parent().parent()
+            window.setPlaylistInsertPosition(None)
+
+        def forceUpdate(self):
+            root = self.rootIndex()
+            self.dataChanged(root, root)
+
         def keyPressEvent(self, event):
             if event.key() == Qt.Key_Delete:
                 self._remove_selected_items()
@@ -78,18 +146,39 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 super(MainWindow.PlaylistWidget, self).dragEnterEvent(event)
 
+        def dragMoveEvent(self, event):
+            data = event.mimeData()
+            urls = data.urls()
+            if urls and urls[0].scheme() == 'file':
+                event.acceptProposedAction()
+                indexRow = self.indexAt(event.pos()).row()
+                window = self.parent().parent().parent().parent().parent()
+                if not window.clearedPlaylistNote:
+                    indexRow = 0
+                if indexRow == -1:
+                    indexRow = window.playlist.count()
+                window.setPlaylistInsertPosition(indexRow)
+            else:
+                super(MainWindow.PlaylistWidget, self).dragMoveEvent(event)
+
         def dropEvent(self, event):
             window = self.parent().parent().parent().parent().parent()
+            window.setPlaylistInsertPosition(None)
             if QtGui.QDropEvent.proposedAction(event) == Qt.MoveAction:
                 QtGui.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
             data = event.mimeData()
             urls = data.urls()
 
             if urls and urls[0].scheme() == 'file':
-                for url in urls:
+                indexRow = self.indexAt(event.pos()).row()
+                if not window.clearedPlaylistNote:
+                    indexRow = 0
+                if indexRow == -1:
+                    indexRow = window.playlist.count()
+                for url in urls[::-1]:
                     dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
                     if os.path.isfile(dropfilepath):
-                        window.addFileToPlaylist(dropfilepath)
+                        window.addFileToPlaylist(dropfilepath, indexRow)
                     elif os.path.isdir(dropfilepath):
                         window.addFolderToPlaylist(dropfilepath)
             else:
@@ -527,32 +616,25 @@ class MainWindow(QtGui.QMainWindow):
 
         self.addPlaybackLayout(window)
 
-        window.playlistGroup = QtGui.QGroupBox(u"Enable shared playlists")
+        window.playlistGroup = self.PlaylistGroupBox(u"Enable shared playlists")
         window.playlistGroup.setCheckable(True)
         window.playlistLayout = QtGui.QHBoxLayout()
         window.playlistGroup.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        window.playlistGroup.setAcceptDrops(True)
         window.playlist = self.PlaylistWidget()
-        window.playlist.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+        window.playlist.setItemDelegate(self.PlaylistItemDelegate())
+        window.playlist.setDragEnabled(True)
+        window.playlist.setAcceptDrops(True)
+        window.playlist.setDropIndicatorShown(True)
         window.playlist.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        window.playlist.setDefaultDropAction(Qt.MoveAction)
+        window.playlist.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
         noteFont = QtGui.QFont()
         noteFont.setItalic(True)
-        playlistItem = QtGui.QListWidgetItem(u"Drag file here to add it to shared playlist.")
+        playlistItem = QtGui.QListWidgetItem(u"Drag file here to add it to the shared playlist.")
         playlistItem.setFont(noteFont)
         window.playlist.addItem(playlistItem)
-        window.playlist.addItem("")
-        playlistItem = QtGui.QListWidgetItem(u"You can drag items around too.",)
         playlistItem.setFont(noteFont)
-        window.playlist.addItem(playlistItem)
-        window.playlist.addItem("")
-        playlistItem = QtGui.QListWidgetItem(u"...and right click here for more options (soon).")
-        playlistItem.setFont(noteFont)
-        window.playlist.addItem(playlistItem)
-        window.playlist.addItem("")
-        playlistItem = QtGui.QListWidgetItem(u"<-- Test icon for currently playing file")
-        window.playlist.addItem(playlistItem)
-        window.playlist.addItem("")
-        playlistItem.setFont(noteFont)
-        playlistItem.setIcon(QtGui.QIcon(self.resourcespath + 'bullet_right_grey.png'))
         window.playlist.addItem(playlistItem)
         window.playlistLayout.addWidget(window.playlist)
         window.playlistLayout.setAlignment(Qt.AlignTop)
@@ -849,10 +931,13 @@ class MainWindow(QtGui.QMainWindow):
                 self._syncplayClient._player.openFile(dropfilepath, resetPosition=True)
                 self._syncplayClient.setPosition(0)
 
-    def addFileToPlaylist(self, filePath):
+    def addFileToPlaylist(self, filePath, index = -1):
         if os.path.isfile(filePath):
             self.removePlaylistNote()
-            self.playlist.addItem(os.path.basename(filePath))
+            if index == -1:
+                self.playlist.addItem(os.path.basename(filePath))
+            else:
+                self.playlist.insertItem(index, os.path.basename(filePath))
 
     def addStreamToPlaylist(self, filePath):
         self.removePlayListNote()
