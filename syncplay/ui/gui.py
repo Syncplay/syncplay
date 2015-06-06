@@ -91,7 +91,7 @@ class MainWindow(QtGui.QMainWindow):
             window = self.parent().parent().parent().parent()
             if urls and urls[0].scheme() == 'file':
                 event.acceptProposedAction()
-                window.setPlaylistInsertPosition(window.playlist.count() if window.clearedPlaylistNote else 0)
+                window.setPlaylistInsertPosition(window.playlist.count())
             else:
                 super(MainWindow.PlaylistGroupBox, self).dragEnterEvent(event)
 
@@ -153,9 +153,7 @@ class MainWindow(QtGui.QMainWindow):
                 event.acceptProposedAction()
                 indexRow = self.indexAt(event.pos()).row()
                 window = self.parent().parent().parent().parent().parent()
-                if not window.clearedPlaylistNote:
-                    indexRow = 0
-                if indexRow == -1:
+                if indexRow == -1 or not window.clearedPlaylistNote:
                     indexRow = window.playlist.count()
                 window.setPlaylistInsertPosition(indexRow)
             else:
