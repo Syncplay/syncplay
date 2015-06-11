@@ -24,6 +24,16 @@ class MpvPlayer(MplayerPlayer):
     @staticmethod
     def getStartupArgs(path):
         args = constants.MPV_SLAVE_ARGS
+
+        try:
+            pseudogui = subprocess.check_output([path, '--profile=help'])
+        except:
+            pseudogui = ''
+        if 'pseudo-gui' in pseudogui:
+            args.extend(constants.MPV_SLAVE_GUI_NEW)
+        else:
+            args.extend(constants.MPV_SLAVE_GUI)
+
         if constants.MPV_NEW_VERSION:
             args.extend(constants.MPV_SLAVE_ARGS_NEW)
         return args
