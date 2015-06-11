@@ -136,7 +136,7 @@ MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 
 MPV_SLAVE_ARGS = ['--hr-seek=always', '--quiet', '--af=scaletempo', '--input-terminal=no', '--input-file=/dev/stdin']
 MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=length}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
 MPV_SLAVE_GUI = ['--force-window', '--idle', '--keep-open']
-MPV_SLAVE_GUI_NEW = ['--profile=pseudo-gui']
+MPV_SLAVE_GUI_NEW = ['--profile=pseudo-gui', '--keep-open=always']
 MPV_NEW_VERSION = False
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
