@@ -87,6 +87,9 @@ class OldMpvPlayer(MpvPlayer):
             self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("mpv-version-error"), True)
             self.drop()
 
+        elif "[ytdl_hook] Your version of youtube-dl is too old" in line:
+            self._client.ui.showErrorMessage(line)
+
     def _handleUnknownLine(self, line):
         self.mpvVersionErrorCheck(line)
         if "Playing: " in line:
