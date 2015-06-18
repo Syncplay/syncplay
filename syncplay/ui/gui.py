@@ -88,7 +88,7 @@ class MainWindow(QtGui.QMainWindow):
         def dragEnterEvent(self, event):
             data = event.mimeData()
             urls = data.urls()
-            window = self.parent().parent().parent().parent()
+            window = self.parent().parent().parent().parent().parent()
             if urls and urls[0].scheme() == 'file':
                 event.acceptProposedAction()
                 window.setPlaylistInsertPosition(window.playlist.count())
@@ -96,11 +96,11 @@ class MainWindow(QtGui.QMainWindow):
                 super(MainWindow.PlaylistGroupBox, self).dragEnterEvent(event)
 
         def dragLeaveEvent(self, event):
-            window = self.parent().parent().parent().parent()
+            window = self.parent().parent().parent().parent().parent()
             window.setPlaylistInsertPosition(None)
 
         def dropEvent(self, event):
-            window = self.parent().parent().parent().parent()
+            window = self.parent().parent().parent().parent().parent()
             window.setPlaylistInsertPosition(None)
             if QtGui.QDropEvent.proposedAction(event) == Qt.MoveAction:
                 QtGui.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
@@ -121,7 +121,7 @@ class MainWindow(QtGui.QMainWindow):
 
     class PlaylistWidget(QtGui.QListWidget):
         def dragLeaveEvent(self, event):
-            window = self.parent().parent().parent().parent().parent()
+            window = self.parent().parent().parent().parent().parent().parent()
             window.setPlaylistInsertPosition(None)
 
         def forceUpdate(self):
@@ -152,7 +152,7 @@ class MainWindow(QtGui.QMainWindow):
             if urls and urls[0].scheme() == 'file':
                 event.acceptProposedAction()
                 indexRow = self.indexAt(event.pos()).row()
-                window = self.parent().parent().parent().parent().parent()
+                window = self.parent().parent().parent().parent().parent().parent()
                 if indexRow == -1 or not window.clearedPlaylistNote:
                     indexRow = window.playlist.count()
                 window.setPlaylistInsertPosition(indexRow)
@@ -160,7 +160,7 @@ class MainWindow(QtGui.QMainWindow):
                 super(MainWindow.PlaylistWidget, self).dragMoveEvent(event)
 
         def dropEvent(self, event):
-            window = self.parent().parent().parent().parent().parent()
+            window = self.parent().parent().parent().parent().parent().parent()
             window.setPlaylistInsertPosition(None)
             if QtGui.QDropEvent.proposedAction(event) == Qt.MoveAction:
                 QtGui.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
@@ -194,19 +194,6 @@ class MainWindow(QtGui.QMainWindow):
             def mouseMoveEvent(self, event):
                 QtGui.QSplitterHandle.mouseMoveEvent(self, event)
                 self.parent().parent().parent().updateListGeometry()
-
-    class listSplitter(QtGui.QSplitter):
-        def createHandle(self):
-            return self.listSplitter(self.orientation(), self)
-
-        class listSplitter(QtGui.QSplitterHandle):
-            def mouseReleaseEvent(self, event):
-                QtGui.QSplitterHandle.mouseReleaseEvent(self, event)
-                self.parent().parent().parent().parent().parent().updateListGeometry()
-
-            def mouseMoveEvent(self, event):
-                QtGui.QSplitterHandle.mouseMoveEvent(self, event)
-                self.parent().parent().parent().parent().parent().updateListGeometry()
 
     def needsClient(f):  # @NoSelf
         @wraps(f)
@@ -601,7 +588,7 @@ class MainWindow(QtGui.QMainWindow):
         window.userlistLayout.addWidget(window.listlabel)
         window.userlistLayout.addWidget(window.listTreeView)
 
-        window.listSplit = self.listSplitter(Qt.Vertical, self)
+        window.listSplit = QtGui.QSplitter(Qt.Vertical, self)
         window.listSplit.addWidget(window.userlistFrame)
         window.listLayout.addWidget(window.listSplit)
 
