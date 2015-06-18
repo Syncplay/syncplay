@@ -195,6 +195,19 @@ class MainWindow(QtGui.QMainWindow):
                 QtGui.QSplitterHandle.mouseMoveEvent(self, event)
                 self.parent().parent().parent().updateListGeometry()
 
+    class listSplitter(QtGui.QSplitter):
+        def createHandle(self):
+            return self.listSplitter(self.orientation(), self)
+
+        class listSplitter(QtGui.QSplitterHandle):
+            def mouseReleaseEvent(self, event):
+                QtGui.QSplitterHandle.mouseReleaseEvent(self, event)
+                self.parent().parent().parent().parent().parent().updateListGeometry()
+
+            def mouseMoveEvent(self, event):
+                QtGui.QSplitterHandle.mouseMoveEvent(self, event)
+                self.parent().parent().parent().parent().parent().updateListGeometry()
+
     def needsClient(f):  # @NoSelf
         @wraps(f)
         def wrapper(self, *args, **kwds):
@@ -577,8 +590,20 @@ class MainWindow(QtGui.QMainWindow):
         window.listFrame.setMidLineWidth(0)
         window.listFrame.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         window.listLayout.setContentsMargins(0, 0, 0, 0)
-        window.listLayout.addWidget(window.listlabel)
-        window.listLayout.addWidget(window.listTreeView)
+
+        window.userlistLayout = QtGui.QVBoxLayout()
+        window.userlistFrame = QtGui.QFrame()
+        window.userlistFrame.setLineWidth(0)
+        window.userlistFrame.setMidLineWidth(0)
+        window.userlistFrame.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        window.userlistLayout.setContentsMargins(0, 0, 0, 0)
+        window.userlistFrame.setLayout(window.userlistLayout)
+        window.userlistLayout.addWidget(window.listlabel)
+        window.userlistLayout.addWidget(window.listTreeView)
+
+        window.listSplit = self.listSplitter(Qt.Vertical, self)
+        window.listSplit.addWidget(window.userlistFrame)
+        window.listLayout.addWidget(window.listSplit)
 
         window.roomInput = QtGui.QLineEdit()
         window.roomInput.returnPressed.connect(self.joinRoom)
@@ -617,7 +642,7 @@ class MainWindow(QtGui.QMainWindow):
         window.playlistGroup = self.PlaylistGroupBox(u"Enable shared playlists")
         window.playlistGroup.setCheckable(True)
         window.playlistLayout = QtGui.QHBoxLayout()
-        window.playlistGroup.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        window.playlistGroup.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         window.playlistGroup.setAcceptDrops(True)
         window.playlist = self.PlaylistWidget()
         window.playlist.setItemDelegate(self.PlaylistItemDelegate())
@@ -637,7 +662,7 @@ class MainWindow(QtGui.QMainWindow):
         window.playlistLayout.addWidget(window.playlist)
         window.playlistLayout.setAlignment(Qt.AlignTop)
         window.playlistGroup.setLayout(window.playlistLayout)
-        window.listLayout.addWidget(window.playlistGroup, Qt.AlignRight)
+        window.listSplit.addWidget(window.playlistGroup)
 
         window.readyPushButton = QtGui.QPushButton()
         readyFont = QtGui.QFont()
