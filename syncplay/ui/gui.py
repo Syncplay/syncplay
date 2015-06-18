@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 import re
 import os
-from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize
+from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from functools import wraps
 lastCheckedForUpdates = None
 
@@ -230,9 +230,28 @@ class MainWindow(QtGui.QMainWindow):
         self.updateReadyIcon()
 
     def roomClicked(self, item):
+        username = item.sibling(item.row(), 0).data()
+        filename = item.sibling(item.row(), 3).data()
         while item.parent().row() != -1:
             item = item.parent()
-        self.joinRoom(item.sibling(item.row(), 0).data())
+        roomToJoin = item.sibling(item.row(), 0).data()
+        if roomToJoin <> self._syncplayClient.getRoom():
+            self.joinRoom(item.sibling(item.row(), 0).data())
+        elif username and filename and username <> self._syncplayClient.userlist.currentUser.username:
+            if self._syncplayClient.userlist.currentUser.file and filename == self._syncplayClient.userlist.currentUser.file:
+                return
+            if isURL(filename):
+                self._syncplayClient._player.openFile(filename) #bob
+            else:
+                currentPath = self._syncplayClient.userlist.currentUser.file["path"]
+                if currentPath is not None:
+                    currentDirectory = os.path.dirname(currentPath)
+                    newPath = os.path.join(currentDirectory, filename)
+                    if os.path.isfile(newPath):
+                        self._syncplayClient._player.openFile(newPath)
+            # TODO: Add error messages
+            # TODO: Change media players (mpv/VLC) to give URL of stream
+
 
     @needsClient
     def userListChange(self):

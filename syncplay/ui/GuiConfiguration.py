@@ -3,6 +3,7 @@ from PySide.QtCore import QSettings, Qt, QCoreApplication, QUrl
 from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton, QDoubleSpinBox
 from syncplay.players.playerFactory import PlayerFactory
 from datetime import datetime
+from syncplay import utils
 import os
 import sys
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
@@ -77,15 +78,10 @@ class ConfigDialog(QtGui.QDialog):
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
 
-    def _isURL(self, path):
-        if path is None:
-            return False
 
-        if "http://" in path:
-            return True
 
     def safenormcaseandpath(self, path):
-        if self._isURL(path):
+        if utils.isURL(path):
             return path
         else:
             return os.path.normcase(os.path.normpath(path))
@@ -104,7 +100,7 @@ class ConfigDialog(QtGui.QDialog):
         foundpath = ""
 
         if playerpath != None and playerpath != "":
-            if self._isURL(playerpath):
+            if utils.isURL(playerpath):
                 foundpath = playerpath
                 self.executablepathCombobox.addItem(foundpath)
 
@@ -119,7 +115,7 @@ class ConfigDialog(QtGui.QDialog):
                     self.executablepathCombobox.addItem(foundpath)
 
         for path in playerpathlist:
-            if self._isURL(path):
+            if utils.isURL(path):
                 if foundpath == "":
                     foundpath = path
                 if path != playerpath:
@@ -821,7 +817,6 @@ class ConfigDialog(QtGui.QDialog):
 
     def __init__(self, config, playerpaths, error, defaultConfig):
 
-        from syncplay import utils
         self.config = config
         self.defaultConfig = defaultConfig
         self.playerpaths = playerpaths

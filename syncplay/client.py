@@ -399,7 +399,7 @@ class SyncplayClient(object):
             except:
                 size = 0
         filename, size = self.__executePrivacySettings(filename, size)
-        self.userlist.currentUser.setFile(filename, duration, size)
+        self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
 
     def __executePrivacySettings(self, filename, size):
@@ -796,11 +796,12 @@ class SyncplayUser(object):
         self.file = file_
         self._controller = False
 
-    def setFile(self, filename, duration, size):
+    def setFile(self, filename, duration, size, path=None):
         file_ = {
             "name": filename,
             "duration": duration,
-            "size": size
+            "size": size,
+            "path": path
         }
         self.file = file_
 

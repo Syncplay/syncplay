@@ -218,6 +218,16 @@ def meetsMinVersion(version, minVersion):
         return tuple(map(int, ver.split(".")))
     return versiontotuple(version) >= versiontotuple(minVersion)
 
+def isURL(path):
+    if path is None:
+        return False
+
+    if "http://" in path:
+        return True
+
+    elif "https://" in path:
+        return True
+
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
     PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")
