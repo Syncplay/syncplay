@@ -222,10 +222,7 @@ def isURL(path):
     if path is None:
         return False
 
-    if "http://" in path:
-        return True
-
-    elif "https://" in path:
+    if "://" in path:
         return True
 
 class RoomPasswordProvider(object):
