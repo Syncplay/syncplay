@@ -388,6 +388,9 @@ class SyncplayClient(object):
         return self._globalPaused
 
     def updateFile(self, filename, duration, path):
+        if utils.isURL(path):
+            filename = path
+
         if not path:
             return
         try:
