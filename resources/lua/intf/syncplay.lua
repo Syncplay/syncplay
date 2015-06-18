@@ -329,7 +329,7 @@ function get_filepath ()
                      response = ":::DVD:::"
                 else
                      local metas = item:metas()
-                     if metas and metas["title"] and string.len(metas["title"]) > 0 then
+                     if metas and metas["url"] and string.len(metas["url"]) > 0 then
                           response = metas["url"]
                      else
                           response = unknownstream
