@@ -241,17 +241,18 @@ class MainWindow(QtGui.QMainWindow):
             if self._syncplayClient.userlist.currentUser.file and filename == self._syncplayClient.userlist.currentUser.file:
                 return
             if isURL(filename):
-                self._syncplayClient._player.openFile(filename) #bob
+                self._syncplayClient._player.openFile(filename)
             else:
-                currentPath = self._syncplayClient.userlist.currentUser.file["path"]
-                if currentPath is not None:
+                currentPath = self._syncplayClient.userlist.currentUser.file["path"] if self._syncplayClient.userlist.currentUser.file else None
+                if currentPath:
                     currentDirectory = os.path.dirname(currentPath)
                     newPath = os.path.join(currentDirectory, filename)
                     if os.path.isfile(newPath):
                         self._syncplayClient._player.openFile(newPath)
-            # TODO: Add error messages
-            # TODO: Change media players (mpv/VLC) to give URL of stream
-
+                    else:
+                        self.showErrorMessage(getMessage("switch-file-not-found-error").format(filename, currentDirectory))
+                else:
+                    self.showErrorMessage(getMessage("switch-no-folder-error").format(filename))
 
     @needsClient
     def userListChange(self):

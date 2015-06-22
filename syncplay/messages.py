@@ -134,6 +134,9 @@ en = {
        "invalid-seek-value" : u"Invalid seek value",
        "invalid-offset-value" : u"Invalid offset value",
 
+      "switch-file-not-found-error" : u"Could not switch to file '{0}' as it was not found in folder '{1}'.", # File not found, folder it was not found in
+      "switch-no-folder-error" : u"Could not switch to file '{0}'. Syncplay only looks in the folder of the currently playing file, and no file is currently playing.", # File not found
+
       # Client arguments
       "argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
       "argument-epilog" : 'If no options supplied _config values will be used',
@@ -489,6 +492,9 @@ ru = {
        "invalid-seek-value" : u"Invalid seek value", # TODO: Translate into Russian
        "invalid-offset-value" : u"Invalid offset value", # TODO: Translate into Russian
 
+      "switch-file-not-found-error" : u"Could not switch to file '{0}' as it was not found in folder '{1}'.", # File not found, folder it was not found in  # TODO: Translate into Russian
+      "switch-no-folder-error" : u"Could not switch to file '{0}'. Syncplay only looks in the folder of the currently playing file, and no file is currently playing.", # File not found  # TODO: Translate into Russian
+
       # Client arguments
       "argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет.',
       "argument-epilog" : u'Если параметр не будет передан, то будет использоваться значение, указанное в _config.',
@@ -843,6 +849,9 @@ de = {
 
        "invalid-seek-value" : u"Ungültige Zeitangabe",
        "invalid-offset-value" : u"Ungültiger Offset-Wert",
+
+      "switch-file-not-found-error" : u"Could not switch to file '{0}' as it was not found in folder '{1}'.", # File not found, folder it was not found in # TODO: Translate into German
+      "switch-no-folder-error" : u"Could not switch to file '{0}'. Syncplay only looks in the folder of the currently playing file, and no file is currently playing.", # File not found # TODO: Translate into German
 
       # Client arguments
       "argument-description" : u'Syncplay ist eine Anwendung um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren.',
