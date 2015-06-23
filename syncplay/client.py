@@ -497,7 +497,10 @@ class SyncplayClient(object):
             return
         self._running = True
         if self._playerClass:
-            reactor.callLater(0.1, self._playerClass.run, self, self._config['playerPath'], self._config['file'], self._config['playerArgs'])
+            perPlayerArguments = utils.getPlayerArgumentsByPathAsArray(self._config['perPlayerArguments'],self._config['playerPath'])
+            if perPlayerArguments:
+                self._config['playerArgs'].extend(perPlayerArguments)
+            reactor.callLater(0.1, self._playerClass.run, self, self._config['playerPath'], self._config['file'], self._config['playerArgs'], )
             self._playerClass = None
         self.protocolFactory = SyncClientFactory(self)
         port = int(port)

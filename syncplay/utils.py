@@ -225,6 +225,16 @@ def isURL(path):
     if "://" in path:
         return True
 
+def getPlayerArgumentsByPathAsArray(arguments, path):
+    if arguments and not isinstance(arguments, (str, unicode)) and arguments.has_key(path):
+        return arguments[path]
+    else:
+        return None
+
+def getPlayerArgumentsByPathAsText(arguments, path):
+    argsToReturn = getPlayerArgumentsByPathAsArray(arguments, path)
+    return " ".join(argsToReturn) if argsToReturn else ""
+
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
     PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")

@@ -134,13 +134,27 @@ class ConfigDialog(QtGui.QDialog):
         return foundpath
 
     def updateExecutableIcon(self):
-        currentplayerpath = unicode(self.executablepathCombobox.currentText())
+        currentplayerpath = self.executablepathCombobox.currentText()
         iconpath = PlayerFactory().getPlayerIconByPath(currentplayerpath)
         if iconpath != None and iconpath != "":
             self.executableiconImage.load(self.resourcespath + iconpath)
             self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(self.executableiconImage))
         else:
             self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(QtGui.QImage()))
+        self.updatePlayerArguments(currentplayerpath)
+
+    def updatePlayerArguments(self, currentplayerpath):
+        argumentsForPath = utils.getPlayerArgumentsByPathAsText(self.perPlayerArgs, currentplayerpath)
+        self.playerargsTextbox.blockSignals(True)
+        self.playerargsTextbox.setText(argumentsForPath)
+        self.playerargsTextbox.blockSignals(False)
+
+    def changedPlayerArgs(self):
+        currentplayerpath = self.executablepathCombobox.currentText()
+
+        if currentplayerpath:
+            NewPlayerArgs = self.playerargsTextbox.text().split(u" ") if self.playerargsTextbox.text() else ""
+            self.perPlayerArgs[self.executablepathCombobox.currentText()]=NewPlayerArgs
 
     def languageChanged(self):
         setLanguage(unicode(self.languageCombobox.itemData(self.languageCombobox.currentIndex())))
@@ -234,6 +248,8 @@ class ConfigDialog(QtGui.QDialog):
     def _saveDataAndLeave(self):
         self.automaticUpdatePromptCheck()
         self.loadLastUpdateCheckDate()
+
+        self.config["perPlayerArguments"] = self.perPlayerArgs
 
         self.processWidget(self, lambda w: self.saveValues(w))
         if self.hostTextbox.text():
@@ -364,6 +380,8 @@ class ConfigDialog(QtGui.QDialog):
         else:
             host = config['host'] + ":" + str(config['port'])
 
+        self.perPlayerArgs = self.config["perPlayerArguments"]
+
         self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
         self.hostTextbox = QLineEdit(host, self)
         self.hostLabel = QLabel(getMessage("host-label"), self)
@@ -396,6 +414,10 @@ class ConfigDialog(QtGui.QDialog):
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
         self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
 
+        self.playerargsTextbox = QLineEdit("", self)
+        self.playerargsTextbox.textEdited.connect(self.changedPlayerArgs)
+        self.playerargsLabel = QLabel(getMessage("player-arguments-label"), self)
+
         self.mediaplayerSettingsGroup = QtGui.QGroupBox(getMessage("media-setting-title"))
         self.executableiconImage = QtGui.QImage()
         self.executableiconLabel = QLabel(self)
@@ -419,6 +441,8 @@ class ConfigDialog(QtGui.QDialog):
         self.executablepathCombobox.setObjectName("executable-path")
         self.mediapathLabel.setObjectName("media-path")
         self.mediapathTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "media-path")
+        self.playerargsLabel.setObjectName("player-arguments")
+        self.playerargsTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "player-arguments")
 
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
@@ -428,6 +452,8 @@ class ConfigDialog(QtGui.QDialog):
         self.mediaplayerSettingsLayout.addWidget(self.mediapathLabel, 1, 0)
         self.mediaplayerSettingsLayout.addWidget(self.mediapathTextbox , 1, 2)
         self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton , 1, 3)
+        self.mediaplayerSettingsLayout.addWidget(self.playerargsLabel, 2, 0, 1, 2)
+        self.mediaplayerSettingsLayout.addWidget(self.playerargsTextbox, 2, 2, 1, 2)
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
 
         self.showmoreCheckbox = QCheckBox(getMessage("more-title"))

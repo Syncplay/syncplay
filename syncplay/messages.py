@@ -169,6 +169,7 @@ en = {
       "media-setting-title" : "Media player settings",
       "executable-path-label" : "Path to media player:",
       "media-path-label" : "Path to media file:",
+      "player-arguments-label" : "Player arguments (if any):",
       "browse-label" : "Browse",
 
       "more-title" : "Show more settings",
@@ -284,6 +285,7 @@ en = {
 
       "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
+      "player-arguments-tooltip" : "Additional command line arguments / switches to pass on to this media player.",
 
       "more-tooltip" : "Display less frequently used settings.",
       "filename-privacy-tooltip" : "Privacy mode for sending currently playing filename to server.",
@@ -527,6 +529,7 @@ ru = {
       "media-setting-title" : u"Параметры проигрывателя",
       "executable-path-label" : u"Путь к проигрывателю:",
       "media-path-label" : u"Путь к видеофайлу:",
+      "player-arguments-label" : "Player arguments:", # TODO: Translate into Russian
       "browse-label" : u"Выбрать",
 
       "more-title" : u"Больше настроек",
@@ -642,6 +645,7 @@ ru = {
 
       "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, VLC, mplayer2 или mpv).",
       "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mpv и mplayer2.",
+      "player-arguments-tooltip" : "Additional command line arguments / switches to pass on to this media player.", # TODO: Translate into Russian
 
       "more-tooltip" : u"Показать дополнительные настройки.",
       "filename-privacy-tooltip" : u"Режим приватности для передачи имени воспроизводимого файла на сервер.",
@@ -885,6 +889,7 @@ de = {
       "media-setting-title" : u"Media-Player Einstellungen",
       "executable-path-label" : u"Pfad zum Media-Player:",
       "media-path-label" : u"Pfad zur Datei:",
+      "player-arguments-label" : "Player arguments:", # TODO: Translate into German
       "browse-label" : u"Durchsuchen",
 
       "more-title" : u"Mehr Einstellungen zeigen",
@@ -998,6 +1003,7 @@ de = {
 
       "executable-path-tooltip" : u"Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
+      "player-arguments-tooltip" : "Additional command line arguments / switches to pass on to this media player.", # TODO: Translate into German
 
       "more-tooltip" : u"Weitere Einstellungen anzeigen.",
       "filename-privacy-tooltip" : u"Privatheitsmodus beim Senden des Namens der aktuellen Datei zum Server.",
