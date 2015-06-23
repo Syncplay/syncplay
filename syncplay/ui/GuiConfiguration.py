@@ -134,7 +134,7 @@ class ConfigDialog(QtGui.QDialog):
         return foundpath
 
     def updateExecutableIcon(self):
-        currentplayerpath = self.executablepathCombobox.currentText()
+        currentplayerpath = unicode(self.executablepathCombobox.currentText())
         iconpath = PlayerFactory().getPlayerIconByPath(currentplayerpath)
         if iconpath != None and iconpath != "":
             self.executableiconImage.load(self.resourcespath + iconpath)
