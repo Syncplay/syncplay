@@ -146,7 +146,7 @@ class MainWindow(QtGui.QMainWindow):
             if self._syncplayClient.userlist.currentUser.file and filename == self._syncplayClient.userlist.currentUser.file['name']:
                 return constants.FILEITEM_SWITCH_NO_SWITCH
             if isURL(filename):
-                return constants.FILEITEM_SWITCH_FILE_SWITCH
+                return constants.FILEITEM_SWITCH_STREAM_SWITCH
             else:
                 currentPath = self._syncplayClient.userlist.currentUser.file["path"] if self._syncplayClient.userlist.currentUser.file else None
                 if currentPath:
