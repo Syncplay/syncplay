@@ -131,6 +131,8 @@ STYLE_NOFILEITEM_COLOR = 'blue'
 STYLE_NOTCONTROLLER_COLOR = 'grey'
 
 USERLIST_GUI_USERNAME_OFFSET = 21 # Pixels
+USERLIST_GUI_USERNAME_COLUMN = 0
+USERLIST_GUI_FILENAME_COLUMN = 3
 
 MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4', '-af', 'scaletempo']
 # --quiet works with both mpv 0.2 and 0.3
@@ -163,6 +165,10 @@ CONFIG_NAME_MARKER = ":"
 CONFIG_VALUE_MARKER = "="
 USERITEM_CONTROLLER_ROLE = 0
 USERITEM_READY_ROLE = 1
+FILEITEM_SWITCH_ROLE = 1
+FILEITEM_SWITCH_NO_SWITCH = 0
+FILEITEM_SWITCH_FILE_SWITCH = 1
+FILEITEM_SWITCH_STREAM_SWITCH = 2
 
 SYNCPLAY_UPDATE_URL = u"http://syncplay.pl/checkforupdate?{}" # Params
 SYNCPLAY_DOWNLOAD_URL = "http://syncplay.pl/download/"

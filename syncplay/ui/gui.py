@@ -17,15 +17,15 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
 
     def sizeHint(self, option, index):
         size = QtGui.QStyledItemDelegate.sizeHint(self, option, index)
-        if (index.column() == 0):
+        if (index.column() == constants.USERLIST_GUI_USERNAME_COLUMN):
             size.setWidth(size.width() + constants.USERLIST_GUI_USERNAME_OFFSET)
         return size
 
     def paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex):
         column = indexQModelIndex.column()
-        if column == 0:
+        if column == constants.USERLIST_GUI_USERNAME_COLUMN:
             currentQAbstractItemModel = indexQModelIndex.model()
-            itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), 0, indexQModelIndex.parent())
+            itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), constants.USERLIST_GUI_USERNAME_COLUMN, indexQModelIndex.parent())
             if sys.platform.startswith('win'):
                 resourcespath = utils.findWorkingDir() + "\\resources\\"
             else:
@@ -56,6 +56,29 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
             isUserRow = indexQModelIndex.parent() != indexQModelIndex.parent().parent()
             if isUserRow:
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+constants.USERLIST_GUI_USERNAME_OFFSET)
+        if column == constants.USERLIST_GUI_FILENAME_COLUMN:
+            if sys.platform.startswith('win'):
+                resourcespath = utils.findWorkingDir() + "\\resources\\"
+            else:
+                resourcespath = utils.findWorkingDir() + "/resources/"
+            currentQAbstractItemModel = indexQModelIndex.model()
+            itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), constants.USERLIST_GUI_FILENAME_COLUMN, indexQModelIndex.parent())
+            fileSwitchRole = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.FILEITEM_SWITCH_ROLE)
+            if fileSwitchRole == constants.FILEITEM_SWITCH_FILE_SWITCH:
+                fileSwitchIconQPixmap = QtGui.QPixmap(resourcespath + "film_go.png")
+                itemQPainter.drawPixmap (
+                    (optionQStyleOptionViewItem.rect.x()),
+                    optionQStyleOptionViewItem.rect.y(),
+                    fileSwitchIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
+                optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
+
+            elif fileSwitchRole == constants.FILEITEM_SWITCH_STREAM_SWITCH:
+                streamSwitchIconQPixmap = QtGui.QPixmap(resourcespath + "world_go.png")
+                itemQPainter.drawPixmap (
+                    (optionQStyleOptionViewItem.rect.x()),
+                    optionQStyleOptionViewItem.rect.y(),
+                    streamSwitchIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
+                optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
 class MainWindow(QtGui.QMainWindow):
@@ -86,7 +109,7 @@ class MainWindow(QtGui.QMainWindow):
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
         try:
-            self.updateReadyState(self.config['readyAtStart'])     
+            self.updateReadyState(self.config['readyAtStart'])
             autoplayInitialState = self.config['autoplayInitialState']
             if autoplayInitialState is not None:
                 self.autoplayPushButton.blockSignals(True)
@@ -117,6 +140,25 @@ class MainWindow(QtGui.QMainWindow):
             self.newMessage(u"{}<br />".format(message))
         else:
             self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
+
+    def getFileSwitchState(self, filename):
+        if filename:
+            if self._syncplayClient.userlist.currentUser.file and filename == self._syncplayClient.userlist.currentUser.file['name']:
+                return constants.FILEITEM_SWITCH_NO_SWITCH
+            if isURL(filename):
+                return constants.FILEITEM_SWITCH_FILE_SWITCH
+            else:
+                currentPath = self._syncplayClient.userlist.currentUser.file["path"] if self._syncplayClient.userlist.currentUser.file else None
+                if currentPath:
+                    currentDirectory = os.path.dirname(currentPath)
+                    newPath = os.path.join(currentDirectory, filename)
+                    if os.path.isfile(newPath):
+                        return constants.FILEITEM_SWITCH_FILE_SWITCH
+                    else:
+                        return constants.FILEITEM_SWITCH_NO_SWITCH
+                else:
+                    return constants.FILEITEM_SWITCH_NO_SWITCH
+        return constants.FILEITEM_SWITCH_NO_SWITCH
 
     def showUserList(self, currentUser, rooms):
         self._usertreebuffer = QtGui.QStandardItemModel()
@@ -157,6 +199,8 @@ class MainWindow(QtGui.QMainWindow):
                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size']))
                     filedurationitem = QtGui.QStandardItem("({})".format(formatTime(user.file['duration'])))
                     filenameitem = QtGui.QStandardItem((user.file['name']))
+                    fileSwitchState = self.getFileSwitchState(user.file['name']) if room == currentUser.room else None
+                    filenameitem.setData(fileSwitchState, Qt.UserRole + constants.FILEITEM_SWITCH_ROLE)
                     if currentUser.file:
                         sameName = sameFilename(user.file['name'], currentUser.file['name'])
                         sameSize = sameFilesize(user.file['size'], currentUser.file['size'])
