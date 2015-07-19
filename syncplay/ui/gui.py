@@ -200,9 +200,11 @@ class MainWindow(QtGui.QMainWindow):
                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size']))
                     filedurationitem = QtGui.QStandardItem("({})".format(formatTime(user.file['duration'])))
                     filename = user.file['name']
+                    rawfilename = filename
                     if isURL(filename):
                         filename = urllib.unquote(filename)
                     filenameitem = QtGui.QStandardItem(filename)
+                    filenameitem.setToolTip(rawfilename)
                     fileSwitchState = self.getFileSwitchState(user.file['name']) if room == currentUser.room else None
                     filenameitem.setData(fileSwitchState, Qt.UserRole + constants.FILEITEM_SWITCH_ROLE)
                     if currentUser.file:
