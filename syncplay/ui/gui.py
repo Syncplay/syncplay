@@ -4,6 +4,7 @@ from syncplay import utils, constants, version
 from syncplay.messages import getMessage
 import sys
 import time
+import urllib
 from datetime import datetime
 import re
 import os
@@ -198,7 +199,10 @@ class MainWindow(QtGui.QMainWindow):
                 if user.file:
                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size']))
                     filedurationitem = QtGui.QStandardItem("({})".format(formatTime(user.file['duration'])))
-                    filenameitem = QtGui.QStandardItem((user.file['name']))
+                    filename = user.file['name']
+                    if isURL(filename):
+                        filename = urllib.unquote(filename)
+                    filenameitem = QtGui.QStandardItem(filename)
                     fileSwitchState = self.getFileSwitchState(user.file['name']) if room == currentUser.room else None
                     filenameitem.setData(fileSwitchState, Qt.UserRole + constants.FILEITEM_SWITCH_ROLE)
                     if currentUser.file:
