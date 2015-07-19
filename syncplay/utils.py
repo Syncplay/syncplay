@@ -161,8 +161,8 @@ def blackholeStdoutForFrozenWindow():
 
 def stripfilename(filename, stripURL):
     if filename:
+        filename = urllib.unquote(filename)
         if stripURL:
-            filename = urllib.unquote(filename)
             filename = filename.split(u"/")[-1]
         return re.sub(constants.FILENAME_STRIP_REGEX, "", filename)
     else:
