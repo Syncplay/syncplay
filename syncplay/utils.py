@@ -9,6 +9,7 @@ import itertools
 import hashlib
 import random
 import string
+import urllib
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -158,8 +159,11 @@ def blackholeStdoutForFrozenWindow():
 
 # Relate to file hashing / difference checking:
 
-def stripfilename(filename):
+def stripfilename(filename, stripURL):
     if filename:
+        if stripURL:
+            filename = urllib.unquote(filename)
+            filename = filename.split(u"/")[-1]
         return re.sub(constants.FILENAME_STRIP_REGEX, "", filename)
     else:
         return ""
@@ -173,8 +177,8 @@ def stripRoomName(RoomName):
     else:
         return ""
 
-def hashFilename(filename):
-    return hashlib.sha256(stripfilename(filename).encode('utf-8')).hexdigest()[:12]
+def hashFilename(filename, stripURL = False):
+    return hashlib.sha256(stripfilename(filename, stripURL).encode('utf-8')).hexdigest()[:12]
 
 def hashFilesize(size):
     return hashlib.sha256(str(size)).hexdigest()[:12]
@@ -190,9 +194,10 @@ def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
         return True
 
 def sameFilename (filename1, filename2):
+    stripURL = True if isURL(filename1) ^ isURL(filename2) else False
     if filename1 == constants.PRIVACY_HIDDENFILENAME or filename2 == constants.PRIVACY_HIDDENFILENAME:
         return True
-    elif sameHashed(stripfilename(filename1), hashFilename(filename1), stripfilename(filename2), hashFilename(filename2)):
+    elif sameHashed(stripfilename(filename1, stripURL), hashFilename(filename1, stripURL), stripfilename(filename2, stripURL), hashFilename(filename2, stripURL)):
         return True
     else:
         return False
@@ -221,9 +226,10 @@ def meetsMinVersion(version, minVersion):
 def isURL(path):
     if path is None:
         return False
-
-    if "://" in path:
+    elif "://" in path:
         return True
+    else:
+        return False
 
 def getPlayerArgumentsByPathAsArray(arguments, path):
     if arguments and not isinstance(arguments, (str, unicode)) and arguments.has_key(path):
