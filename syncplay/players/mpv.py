@@ -22,8 +22,11 @@ class MpvPlayer(MplayerPlayer):
             return OldMpvPlayer(client, MpvPlayer.getExpandedPath(playerPath), filePath, args)
 
     @staticmethod
-    def getStartupArgs(path):
-        args = constants.MPV_SLAVE_ARGS
+    def getStartupArgs(path, userArgs):
+        args = constants.MPV_ARGS
+        if userArgs:
+            args.extend(userArgs)
+        args.extend(constants.MPV_SLAVE_ARGS)
         if constants.MPV_NEW_VERSION:
             args.extend(constants.MPV_SLAVE_ARGS_NEW)
         return args
