@@ -144,13 +144,18 @@ class MainWindow(QtGui.QMainWindow):
 
     def getFileSwitchState(self, filename):
         if filename:
+            if filename == getMessage("nofile-note"):
+                return constants.FILEITEM_SWITCH_NO_SWITCH
             if self._syncplayClient.userlist.currentUser.file and filename == self._syncplayClient.userlist.currentUser.file['name']:
                 return constants.FILEITEM_SWITCH_NO_SWITCH
             if isURL(filename):
                 return constants.FILEITEM_SWITCH_STREAM_SWITCH
             else:
                 currentPath = self._syncplayClient.userlist.currentUser.file["path"] if self._syncplayClient.userlist.currentUser.file else None
-                if currentPath:
+                if utils.findFilenameInDirectories(filename, self.config["mediaSearchDirectories"]):
+                    return constants.FILEITEM_SWITCH_FILE_SWITCH
+
+                elif currentPath:
                     currentDirectory = os.path.dirname(currentPath)
                     newPath = os.path.join(currentDirectory, filename)
                     if os.path.isfile(newPath):
@@ -293,7 +298,10 @@ class MainWindow(QtGui.QMainWindow):
                 self._syncplayClient._player.openFile(filename)
             else:
                 currentPath = self._syncplayClient.userlist.currentUser.file["path"] if self._syncplayClient.userlist.currentUser.file else None
-                if currentPath:
+                pathFound = utils.findFilenameInDirectories(filename, self.config["mediaSearchDirectories"])
+                if pathFound:
+                    self._syncplayClient._player.openFile(pathFound)
+                elif currentPath:
                     currentDirectory = os.path.dirname(currentPath)
                     newPath = os.path.join(currentDirectory, filename)
                     if os.path.isfile(newPath):
@@ -301,7 +309,7 @@ class MainWindow(QtGui.QMainWindow):
                     else:
                         self.showErrorMessage(getMessage("switch-file-not-found-error").format(filename, currentDirectory))
                 else:
-                    self.showErrorMessage(getMessage("switch-no-folder-error").format(filename))
+                    self.showErrorMessage(getMessage("switch-file-not-found-error").format(filename))
 
     @needsClient
     def userListChange(self):

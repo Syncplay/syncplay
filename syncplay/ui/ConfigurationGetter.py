@@ -33,6 +33,7 @@ class ConfigurationGetter(object):
                         "password": None,
                         "playerPath": None,
                         "perPlayerArguments": None,
+                        "mediaSearchDirectories": None,
                         "file": None,
                         "playerArgs": [],
                         "playerClass": None,
@@ -108,6 +109,7 @@ class ConfigurationGetter(object):
 
         self._serialised = [
             "perPlayerArguments",
+            "mediaSearchDirectories",
         ]
 
         self._numeric = [
@@ -119,7 +121,7 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "perPlayerArguments", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState"],
+                        "client_settings": ["name", "room", "playerPath", "perPlayerArguments", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState", "mediaSearchDirectories"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showDurationNotification"],
                         "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
                         }

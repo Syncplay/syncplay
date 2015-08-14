@@ -1,6 +1,6 @@
 from PySide import QtCore, QtGui
 from PySide.QtCore import QSettings, Qt, QCoreApplication, QUrl
-from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton, QDoubleSpinBox
+from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
 from syncplay.players.playerFactory import PlayerFactory
 from datetime import datetime
 from syncplay import utils
@@ -250,6 +250,7 @@ class ConfigDialog(QtGui.QDialog):
         self.loadLastUpdateCheckDate()
 
         self.config["perPlayerArguments"] = self.perPlayerArgs
+        self.config["mediaSearchDirectories"] = utils.convertMultilineStringToList(self.mediasearchTextEdit.toPlainText())
 
         self.processWidget(self, lambda w: self.saveValues(w))
         if self.hostTextbox.text():
@@ -381,6 +382,7 @@ class ConfigDialog(QtGui.QDialog):
             host = config['host'] + ":" + str(config['port'])
 
         self.perPlayerArgs = self.config["perPlayerArguments"]
+        self.mediaSearchDirectories = self.config["mediaSearchDirectories"]
 
         self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
         self.hostTextbox = QLineEdit(host, self)
@@ -597,8 +599,21 @@ class ConfigDialog(QtGui.QDialog):
         self.automaticupdatesCheckbox.setObjectName("checkForUpdatesAutomatically")
         self.internalSettingsLayout.addWidget(self.automaticupdatesCheckbox)
 
+        ## Media path directories
+
+        self.mediasearchSettingsGroup = QtGui.QGroupBox(getMessage("syncplay-mediasearchdirectories-title"))
+        self.mediasearchSettingsLayout = QtGui.QVBoxLayout()
+        self.mediasearchSettingsGroup.setLayout(self.mediasearchSettingsLayout)
+
+        self.mediasearchTextEdit = QPlainTextEdit(utils.getListAsMultilineString(self.mediaSearchDirectories))
+        self.mediasearchTextEdit.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "mediasearcdirectories-arguments")
+        self.mediasearchTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.mediasearchSettingsLayout.addWidget(self.mediasearchTextEdit)
+        self.mediasearchSettingsGroup.setMaximumHeight(self.mediasearchSettingsGroup.minimumSizeHint().height())
+
         self.miscLayout.addWidget(self.coreSettingsGroup)
         self.miscLayout.addWidget(self.internalSettingsGroup)
+        self.miscLayout.addWidget(self.mediasearchSettingsGroup)
         self.miscLayout.setAlignment(Qt.AlignTop)
         self.stackedLayout.addWidget(self.miscFrame)
 

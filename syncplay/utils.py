@@ -241,6 +241,21 @@ def getPlayerArgumentsByPathAsText(arguments, path):
     argsToReturn = getPlayerArgumentsByPathAsArray(arguments, path)
     return " ".join(argsToReturn) if argsToReturn else ""
 
+def getListAsMultilineString(pathArray):
+    return u"\n".join(pathArray) if pathArray else ""
+
+def convertMultilineStringToList(multilineString):
+    return unicode.split(multilineString,u"\n") if multilineString else ""
+
+def findFilenameInDirectories(filename, directoryList):
+    if filename and directoryList:
+        for directory in directoryList:
+            for root, dirs, files in os.walk(directory):
+                candidatePath = os.path.join(root,filename)
+                if os.path.isfile(candidatePath):
+                    return candidatePath
+    return None
+
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
     PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")

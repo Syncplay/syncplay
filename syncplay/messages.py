@@ -134,8 +134,7 @@ en = {
        "invalid-seek-value" : u"Invalid seek value",
        "invalid-offset-value" : u"Invalid offset value",
 
-      "switch-file-not-found-error" : u"Could not switch to file '{0}' as it was not found in folder '{1}'.", # File not found, folder it was not found in
-      "switch-no-folder-error" : u"Could not switch to file '{0}'. Syncplay only looks in the folder of the currently playing file, and no file is currently playing.", # File not found
+      "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found
 
       # Client arguments
       "argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
@@ -204,6 +203,7 @@ en = {
       "misc-label" : u"Misc",
       "core-behaviour-title" : "Core room behaviour",
       "syncplay-internals-title" : u"Syncplay internals",
+      "syncplay-mediasearchdirectories-title" : u"Directories to search for media (one path per line)",
       "sync-label" : "Sync",
       "sync-otherslagging-title" : "If others are lagging behind...",
       "sync-youlaggging-title" : "If you are lagging behind...",
@@ -286,6 +286,7 @@ en = {
       "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
       "player-arguments-tooltip" : "Additional command line arguments / switches to pass on to this media player.",
+      "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively.",
 
       "more-tooltip" : "Display less frequently used settings.",
       "filename-privacy-tooltip" : "Privacy mode for sending currently playing filename to server.",
@@ -494,8 +495,7 @@ ru = {
       "invalid-seek-value" : u"Некорректное значение для перемотки",
       "invalid-offset-value" : u"Некорректное смещение",
 
-      "switch-file-not-found-error" : u"Невозможно переключиться на файл '{0}', т.к. в папке '{1}' его не обнаружено.", # File not found, folder it was not found in
-      "switch-no-folder-error" : u"Невозможно переключиться на файл '{0}'. Syncplay ищет только в папке проигрываемого файла, а в настоящий момент ничего не проигрывается.", # File not found
+      "switch-file-not-found-error" : u"Невозможно переключиться на файл '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found # TODO: Translate last part into Russian
 
       # Client arguments
       "argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет.',
@@ -564,6 +564,7 @@ ru = {
       "misc-label" : u"Прочее",
       "core-behaviour-title" : u"Core room behaviour", # TODO: Translate into Russian
       "syncplay-internals-title" : u"Syncplay internals", # TODO: Translate into Russian
+      "syncplay-mediasearchdirectories-title" : u"Directories to search for media (one path per line)", # TODO: Translate into Russian
       "sync-label" : u"Синхронизация",
       "sync-otherslagging-title" : u"При отставании других зрителей...",
       "sync-youlaggging-title" : u"Когда я отстаю ...",
@@ -646,6 +647,7 @@ ru = {
       "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, VLC, mplayer2 или mpv).",
       "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mpv и mplayer2.",
       "player-arguments-tooltip" : u"Передавать дополнительные аргументы командной строки этому проигрывателю.",
+      "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively.", # TODO: Translate into Russian
 
       "more-tooltip" : u"Показать дополнительные настройки.",
       "filename-privacy-tooltip" : u"Режим приватности для передачи имени воспроизводимого файла на сервер.",
@@ -854,8 +856,7 @@ de = {
        "invalid-seek-value" : u"Ungültige Zeitangabe",
        "invalid-offset-value" : u"Ungültiger Offset-Wert",
 
-      "switch-file-not-found-error" : u"Could not switch to file '{0}' as it was not found in folder '{1}'.", # File not found, folder it was not found in # TODO: Translate into German
-      "switch-no-folder-error" : u"Could not switch to file '{0}'. Syncplay only looks in the folder of the currently playing file, and no file is currently playing.", # File not found # TODO: Translate into German
+      "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found, folder it was not found in # TODO: Translate into German
 
       # Client arguments
       "argument-description" : u'Syncplay ist eine Anwendung um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren.',
@@ -922,6 +923,7 @@ de = {
       "misc-label" : u"Diverse",
       "core-behaviour-title" : u"Verhalten des Raumes",
       "syncplay-internals-title" : u"Syncplay intern",
+      "syncplay-mediasearchdirectories-title" : u"Directories to search for media (one path per line)", # TODO: Translate into Russian
       "sync-label" : u"Synchronisation",
       "sync-otherslagging-title" : u"Wenn andere laggen...",
       "sync-youlaggging-title" : u"Wenn du laggst...",
@@ -1004,6 +1006,7 @@ de = {
       "executable-path-tooltip" : u"Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
       "player-arguments-tooltip" : u"Additional command line arguments / switches to pass on to this media player.", # TODO: Translate into German
+      "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively.", # TODO: Translate into German
 
       "more-tooltip" : u"Weitere Einstellungen anzeigen.",
       "filename-privacy-tooltip" : u"Privatheitsmodus beim Senden des Namens der aktuellen Datei zum Server.",
