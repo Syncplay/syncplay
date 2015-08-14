@@ -307,7 +307,7 @@ en = {
       "showsameroomosd-tooltip" : "Show OSD notifications for events relating to room user is in.",
       "shownoncontrollerosd-tooltip" : "Show OSD notifications for events relating to non-operators who are in managed rooms.",
       "showdifferentroomosd-tooltip" : "Show OSD notifications for events relating to room user is not in.",
-      "showslowdownosd-tooltip" :"Show notifications of slowing down / reverting on time difference.",
+      "showslowdownosd-tooltip" : "Show notifications of slowing down / reverting on time difference.",
       "showdurationnotification-tooltip" : "Useful for when a segment in a multi-part file is missing, but can result in false positives.",
       "language-tooltip" : u"Language to be used by Syncplay.",
       "unpause-always-tooltip" : u"If you press unpause it always sets you as ready and unpause, rather than just setting you as ready.",
@@ -489,7 +489,7 @@ ru = {
       "vlc-failed-versioncheck" : u"Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
       "vlc-failed-other" : u"Во время загрузки скрипта интерфейса syncplay.lua в VLC произошла следующая ошибка: {}",  # Syncplay Error
 
-      "not-supported-by-server-error" : "Эта возможность не поддерживается сервером. The feature requires a server running Syncplay {}+, but the server is running Syncplay {}.", #minVersion, serverVersion #TODO: Translate into Russian
+      "not-supported-by-server-error" : u"Эта возможность не поддерживается сервером. The feature requires a server running Syncplay {}+, but the server is running Syncplay {}.", #minVersion, serverVersion #TODO: Translate into Russian
 
       "invalid-seek-value" : u"Некорректное значение для перемотки",
       "invalid-offset-value" : u"Некорректное смещение",
@@ -529,7 +529,7 @@ ru = {
       "media-setting-title" : u"Параметры проигрывателя",
       "executable-path-label" : u"Путь к проигрывателю:",
       "media-path-label" : u"Путь к видеофайлу:",
-      "player-arguments-label" : "Аргументы для запуска проигрывателя:",
+      "player-arguments-label" : u"Аргументы для запуска проигрывателя:",
       "browse-label" : u"Выбрать",
 
       "more-title" : u"Больше настроек",
@@ -562,7 +562,7 @@ ru = {
       "basics-label" : u"Основное",
       "readiness-label" : u"Воспроизвести/Приостановить",
       "misc-label" : u"Прочее",
-      "core-behaviour-title" : "Core room behaviour", # TODO: Translate into Russian
+      "core-behaviour-title" : u"Core room behaviour", # TODO: Translate into Russian
       "syncplay-internals-title" : u"Syncplay internals", # TODO: Translate into Russian
       "sync-label" : u"Синхронизация",
       "sync-otherslagging-title" : u"При отставании других зрителей...",
@@ -645,7 +645,7 @@ ru = {
 
       "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, VLC, mplayer2 или mpv).",
       "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mpv и mplayer2.",
-      "player-arguments-tooltip" : "Передавать дополнительные аргументы командной строки этому проигрывателю.",
+      "player-arguments-tooltip" : u"Передавать дополнительные аргументы командной строки этому проигрывателю.",
 
       "more-tooltip" : u"Показать дополнительные настройки.",
       "filename-privacy-tooltip" : u"Режим приватности для передачи имени воспроизводимого файла на сервер.",
@@ -680,8 +680,8 @@ ru = {
 
       "joinroom-tooltip" : u"Покинуть комнату и зайти в другую, указанную комнату.",
       "seektime-msgbox-label" : u"Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",
-      "ready-tooltip" : "Показывает, готовы ли Вы к просмотру или нет.",
-      "autoplay-tooltip" : "Автоматическое воспроизведение, когда все пользователи с индикаторами готовности будут готовы и присутствует достаточное число пользователей.",
+      "ready-tooltip" : u"Показывает, готовы ли Вы к просмотру или нет.",
+      "autoplay-tooltip" : u"Автоматическое воспроизведение, когда все пользователи с индикаторами готовности будут готовы и присутствует достаточное число пользователей.",
 
       # In-userlist notes (GUI)
       "differentsize-note" : u"Размер файла не совпадает!",
@@ -849,7 +849,7 @@ de = {
        "vlc-failed-versioncheck": u"Diese VLC-Version wird von Syncplay nicht unterstützt. Bitte nutze VLC 2.0",
        "vlc-failed-other" : u"Beim Laden des syncplay.lua Interface-Skripts durch VLC trat folgender Fehler auf: {}",  # Syncplay Error
 
-       "not-supported-by-server-error" : "Dieses Feature wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.", #minVersion, serverVersion
+       "not-supported-by-server-error" : u"Dieses Feature wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.", #minVersion, serverVersion
 
        "invalid-seek-value" : u"Ungültige Zeitangabe",
        "invalid-offset-value" : u"Ungültiger Offset-Wert",
@@ -889,7 +889,7 @@ de = {
       "media-setting-title" : u"Media-Player Einstellungen",
       "executable-path-label" : u"Pfad zum Media-Player:",
       "media-path-label" : u"Pfad zur Datei:",
-      "player-arguments-label" : "Player arguments:", # TODO: Translate into German
+      "player-arguments-label" : u"Player arguments:", # TODO: Translate into German
       "browse-label" : u"Durchsuchen",
 
       "more-title" : u"Mehr Einstellungen zeigen",
@@ -1003,7 +1003,7 @@ de = {
 
       "executable-path-tooltip" : u"Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
-      "player-arguments-tooltip" : "Additional command line arguments / switches to pass on to this media player.", # TODO: Translate into German
+      "player-arguments-tooltip" : u"Additional command line arguments / switches to pass on to this media player.", # TODO: Translate into German
 
       "more-tooltip" : u"Weitere Einstellungen anzeigen.",
       "filename-privacy-tooltip" : u"Privatheitsmodus beim Senden des Namens der aktuellen Datei zum Server.",
@@ -1040,8 +1040,8 @@ de = {
 
       "joinroom-tooltip" : u"Den aktuellen Raum verlassen und stattdessen den angegebenen betreten.",
       "seektime-msgbox-label" : u"Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
-      "ready-tooltip" : "Zeigt an, ob du bereit zum anschauen bist",
-      "autoplay-tooltip" : "Automatisch abspielen, wenn alle Nutzer bereit sind und die minimale Nutzerzahl erreicht ist.",
+      "ready-tooltip" : u"Zeigt an, ob du bereit zum anschauen bist",
+      "autoplay-tooltip" : u"Automatisch abspielen, wenn alle Nutzer bereit sind und die minimale Nutzerzahl erreicht ist.",
 
       # In-userlist notes (GUI)
       "differentsize-note" : u"Verschiedene Größe!",
