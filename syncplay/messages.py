@@ -560,7 +560,7 @@ ru = {
       "automatic-language" : u"По умолчанию ({})", # Automatic language
       "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
       "basics-label" : u"Основное",
-      "readiness-label" : u"Воспроизвести/Приостановить",
+      "readiness-label" : u"Воспроизведение/Пауза", # TODO: Confirm translation of play/pause
       "misc-label" : u"Прочее",
       "core-behaviour-title" : u"Core room behaviour", # TODO: Translate into Russian
       "syncplay-internals-title" : u"Syncplay internals", # TODO: Translate into Russian
