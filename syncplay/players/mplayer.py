@@ -207,8 +207,12 @@ class MplayerPlayer(BasePlayer):
         return constants.MPLAYER_ICONPATH
 
     @staticmethod
-    def getStartupArgs(path):
-        return constants.MPLAYER_SLAVE_ARGS
+    def getStartupArgs(path, userArgs):
+        args = []
+        if userArgs:
+            args.extend(userArgs)
+        args.extend(constants.MPLAYER_SLAVE_ARGS)
+        return args
 
     @staticmethod
     def isValidPlayerPath(path):
@@ -270,9 +274,7 @@ class MplayerPlayer(BasePlayer):
                     filePath = None
                 else:
                     call.extend([filePath])
-            if args:
-                call.extend(args)
-            call.extend(playerController.getStartupArgs(playerPath))
+            call.extend(playerController.getStartupArgs(playerPath, args))
             # At least mpv may output escape sequences which result in syncplay
             # trying to parse something like
             # "\x1b[?1l\x1b>ANS_filename=blah.mkv". Work around this by
