@@ -154,7 +154,6 @@ class MainWindow(QtGui.QMainWindow):
                 currentPath = self._syncplayClient.userlist.currentUser.file["path"] if self._syncplayClient.userlist.currentUser.file else None
                 if utils.findFilenameInDirectories(filename, self.config["mediaSearchDirectories"]):
                     return constants.FILEITEM_SWITCH_FILE_SWITCH
-
                 elif currentPath:
                     currentDirectory = os.path.dirname(currentPath)
                     newPath = os.path.join(currentDirectory, filename)
@@ -208,8 +207,12 @@ class MainWindow(QtGui.QMainWindow):
                     if isURL(filename):
                         filename = urllib.unquote(filename)
                     filenameitem = QtGui.QStandardItem(filename)
-                    filenameitem.setToolTip(filename)
                     fileSwitchState = self.getFileSwitchState(user.file['name']) if room == currentUser.room else None
+                    if fileSwitchState != constants.FILEITEM_SWITCH_NO_SWITCH:
+                        filenameTooltip = getMessage("switch-to-file-tooltip").format(filename)
+                    else:
+                        filenameTooltip = filename
+                    filenameitem.setToolTip(filenameTooltip)
                     filenameitem.setData(fileSwitchState, Qt.UserRole + constants.FILEITEM_SWITCH_ROLE)
                     if currentUser.file:
                         sameName = sameFilename(user.file['name'], currentUser.file['name'])

@@ -323,6 +323,7 @@ en = {
       "seektime-msgbox-label" : "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",
       "ready-tooltip" : "Indicates whether you are ready to watch.",
       "autoplay-tooltip" : "Auto-play when all users who have readiness indicator are ready and minimum user threshold met.",
+      "switch-to-file-tooltip" : "Double click to switch to {}", # Filename
 
       # In-userlist notes (GUI)
       "differentsize-note" : "Different size!",
@@ -684,6 +685,7 @@ ru = {
       "seektime-msgbox-label" : u"Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",
       "ready-tooltip" : u"Показывает, готовы ли Вы к просмотру или нет.",
       "autoplay-tooltip" : u"Автоматическое воспроизведение, когда все пользователи с индикаторами готовности будут готовы и присутствует достаточное число пользователей.",
+      "switch-to-file-tooltip" : u"Double click to switch to {}", # Filename # TODO: Translate to Russian
 
       # In-userlist notes (GUI)
       "differentsize-note" : u"Размер файла не совпадает!",
@@ -1045,6 +1047,7 @@ de = {
       "seektime-msgbox-label" : u"Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
       "ready-tooltip" : u"Zeigt an, ob du bereit zum anschauen bist",
       "autoplay-tooltip" : u"Automatisch abspielen, wenn alle Nutzer bereit sind und die minimale Nutzerzahl erreicht ist.",
+      "switch-to-file-tooltip" : u"Double click to switch to {}", # Filename # TODO: Translate to German
 
       # In-userlist notes (GUI)
       "differentsize-note" : u"Verschiedene Größe!",
