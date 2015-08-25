@@ -286,7 +286,7 @@ en = {
       "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
       "player-arguments-tooltip" : "Additional command line arguments / switches to pass on to this media player.",
-      "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively.",
+      "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.",
 
       "more-tooltip" : "Display less frequently used settings.",
       "filename-privacy-tooltip" : "Privacy mode for sending currently playing filename to server.",
@@ -648,7 +648,7 @@ ru = {
       "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, VLC, mplayer2 или mpv).",
       "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mpv и mplayer2.",
       "player-arguments-tooltip" : u"Передавать дополнительные аргументы командной строки этому проигрывателю.",
-      "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively.", # TODO: Translate into Russian
+      "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.", # TODO: Translate into Russian
 
       "more-tooltip" : u"Показать дополнительные настройки.",
       "filename-privacy-tooltip" : u"Режим приватности для передачи имени воспроизводимого файла на сервер.",
@@ -1008,7 +1008,7 @@ de = {
       "executable-path-tooltip" : u"Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
       "player-arguments-tooltip" : u"Additional command line arguments / switches to pass on to this media player.", # TODO: Translate into German
-      "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively.", # TODO: Translate into German
+      "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.", # TODO: Translate into German
 
       "more-tooltip" : u"Weitere Einstellungen anzeigen.",
       "filename-privacy-tooltip" : u"Privatheitsmodus beim Senden des Namens der aktuellen Datei zum Server.",
