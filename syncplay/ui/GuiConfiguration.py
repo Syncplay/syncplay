@@ -229,7 +229,9 @@ class ConfigDialog(QtGui.QDialog):
     def browseMediapath(self):
         self.loadMediaBrowseSettings()
         options = QtGui.QFileDialog.Options()
-        if os.path.isdir(self.mediadirectory):
+        if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
+            defaultdirectory = self.config["mediaSearchDirectories"][0]
+        elif os.path.isdir(self.mediadirectory):
             defaultdirectory = self.mediadirectory
         elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)):
             defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)
