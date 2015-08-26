@@ -11,6 +11,8 @@ import random
 import string
 import urllib
 
+folderSearchEnabled = True
+
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
 
@@ -249,11 +251,13 @@ def convertMultilineStringToList(multilineString):
 
 def findFilenameInDirectories(filename, directoryList):
     if filename and directoryList:
+        startTime = time.time()
         for directory in directoryList:
             for root, dirs, files in os.walk(directory):
-                candidatePath = os.path.join(root,filename)
-                if os.path.isfile(candidatePath):
-                    return candidatePath
+                if filename in files:
+                    return os.path.join(root,filename)
+                if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
+                    raise IOError(getMessage("folder-search-timeout-error").format(directory))
     return None
 
 class RoomPasswordProvider(object):

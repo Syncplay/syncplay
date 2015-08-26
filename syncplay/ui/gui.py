@@ -152,7 +152,16 @@ class MainWindow(QtGui.QMainWindow):
                 return constants.FILEITEM_SWITCH_STREAM_SWITCH
             else:
                 currentPath = self._syncplayClient.userlist.currentUser.file["path"] if self._syncplayClient.userlist.currentUser.file else None
-                if utils.findFilenameInDirectories(filename, self.config["mediaSearchDirectories"]):
+                if self.folderSearchEnabled:
+                    try:
+                        filenamesInDirectories = utils.findFilenameInDirectories(filename, self.config["mediaSearchDirectories"])
+                    except IOError as errorMessage:
+                        self.showErrorMessage(errorMessage)
+                        filenamesInDirectories = None
+                        self.folderSearchEnabled = False
+                else:
+                    filenamesInDirectories = None
+                if filenamesInDirectories:
                     return constants.FILEITEM_SWITCH_FILE_SWITCH
                 elif currentPath:
                     currentDirectory = os.path.dirname(currentPath)
@@ -301,7 +310,15 @@ class MainWindow(QtGui.QMainWindow):
                 self._syncplayClient._player.openFile(filename)
             else:
                 currentPath = self._syncplayClient.userlist.currentUser.file["path"] if self._syncplayClient.userlist.currentUser.file else None
-                pathFound = utils.findFilenameInDirectories(filename, self.config["mediaSearchDirectories"])
+                if self.folderSearchEnabled:
+                    try:
+                        pathFound = utils.findFilenameInDirectories(filename, self.config["mediaSearchDirectories"])
+                    except IOError as errorMessage:
+                        self.showErrorMessage(errorMessage)
+                        pathFound = None
+                        self.folderSearchEnabled = False
+                else:
+                    pathFound = None
                 if pathFound:
                     self._syncplayClient._player.openFile(pathFound)
                 elif currentPath:
@@ -907,6 +924,7 @@ class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self._syncplayClient = None
+        self.folderSearchEnabled = True
         self.QtGui = QtGui
         if sys.platform.startswith('win'):
             self.resourcespath = utils.findWorkingDir() + "\\resources\\"

@@ -135,6 +135,7 @@ en = {
        "invalid-offset-value" : u"Invalid offset value",
 
       "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found
+      "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder
 
       # Client arguments
       "argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
@@ -497,6 +498,7 @@ ru = {
       "invalid-offset-value" : u"Некорректное смещение",
 
       "switch-file-not-found-error" : u"Невозможно переключиться на файл '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found # TODO: Translate last part into Russian
+      "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder # TODO: Translate into Russian
 
       # Client arguments
       "argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет.',
@@ -859,6 +861,7 @@ de = {
        "invalid-offset-value" : u"Ungültiger Offset-Wert",
 
       "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found, folder it was not found in # TODO: Translate into German
+      "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder # TODO: Translate into German
 
       # Client arguments
       "argument-description" : u'Syncplay ist eine Anwendung um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren.',
