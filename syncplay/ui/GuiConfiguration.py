@@ -226,6 +226,32 @@ class ConfigDialog(QtGui.QDialog):
         settings.setValue("ShowMoreSettings", morestate)
         settings.endGroup()
 
+
+    def findPublicServer(self):
+        try:
+            servers = utils.getListOfPublicServers()
+        except IOError as e:
+            self.showErrorMessage(unicode(e))
+            return
+        dialog = QtGui.QInputDialog()
+        dialog.setOption(QtGui.QInputDialog.UseListViewForComboBoxItems)
+        dialog.setWindowTitle(getMessage("public-server-msgbox-label"))
+        dialog.setLabelText(getMessage("public-server-msgbox-label"))
+        serverTitles = []
+        serverDict = {}
+        for server in servers:
+            serverTitle = server[0]
+            serverAddress = server[1]
+            serverTitles.append(serverTitle)
+            serverDict[serverTitle]=serverAddress
+        dialog.setComboBoxItems(serverTitles)
+        ok = dialog.exec_()
+        if ok:
+            self.hostTextbox.setText(serverDict[dialog.textValue()])
+
+    def showErrorMessage(self, errorMessage):
+        QtGui.QMessageBox.warning(self, "Syncplay", errorMessage)
+
     def browseMediapath(self):
         self.loadMediaBrowseSettings()
         options = QtGui.QFileDialog.Options()
@@ -389,7 +415,10 @@ class ConfigDialog(QtGui.QDialog):
         self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
         self.hostTextbox = QLineEdit(host, self)
         self.hostLabel = QLabel(getMessage("host-label"), self)
+        self.findServerButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'report_magnify.png'), getMessage("list-servers-label"))
+        self.findServerButton.clicked.connect(self.findPublicServer)
         self.usernameTextbox = QLineEdit(self)
+
         self.usernameTextbox.setObjectName("name")
         self.serverpassLabel = QLabel(getMessage("password-label"), self)
         self.defaultroomTextbox = QLineEdit(self)
@@ -409,12 +438,13 @@ class ConfigDialog(QtGui.QDialog):
         self.connectionSettingsLayout = QtGui.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
         self.connectionSettingsLayout.addWidget(self.hostTextbox, 0, 1)
+        self.connectionSettingsLayout.addWidget(self.findServerButton, 0, 2)
         self.connectionSettingsLayout.addWidget(self.serverpassLabel, 1, 0)
-        self.connectionSettingsLayout.addWidget(self.serverpassTextbox, 1, 1)
+        self.connectionSettingsLayout.addWidget(self.serverpassTextbox, 1, 1, 1, 2)
         self.connectionSettingsLayout.addWidget(self.usernameLabel, 2, 0)
-        self.connectionSettingsLayout.addWidget(self.usernameTextbox, 2, 1)
+        self.connectionSettingsLayout.addWidget(self.usernameTextbox, 2, 1, 1, 2)
         self.connectionSettingsLayout.addWidget(self.defaultroomLabel, 3, 0)
-        self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
+        self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1, 1, 2)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
         self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
 

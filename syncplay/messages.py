@@ -137,6 +137,8 @@ en = {
       "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found
       "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder
 
+      "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.",
+
       # Client arguments
       "argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
       "argument-epilog" : 'If no options supplied _config values will be used',
@@ -171,6 +173,7 @@ en = {
       "media-path-label" : "Path to media file:",
       "player-arguments-label" : "Player arguments (if any):",
       "browse-label" : "Browse",
+      "list-servers-label" : u"Find public server",
 
       "more-title" : "Show more settings",
       "never-rewind-value" : "Never",
@@ -274,6 +277,8 @@ en = {
 
       "identifyascontroller-msgbox-label" : "Identify as room operator",
       "identifyinfo-msgbox-label" : "Enter operator password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
+
+      "public-server-msgbox-label" : "Find public server (you must all use the same one!)",
 
       "megabyte-suffix" : " MB",
 
@@ -500,6 +505,8 @@ ru = {
       "switch-file-not-found-error" : u"Невозможно переключиться на файл '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found # TODO: Translate last part into Russian
       "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder # TODO: Translate into Russian
 
+      "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.", # TODO: Translate into Russian
+
       # Client arguments
       "argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет.',
       "argument-epilog" : u'Если параметр не будет передан, то будет использоваться значение, указанное в _config.',
@@ -534,6 +541,7 @@ ru = {
       "media-path-label" : u"Путь к видеофайлу:",
       "player-arguments-label" : u"Аргументы для запуска проигрывателя:",
       "browse-label" : u"Выбрать",
+      "list-servers-label" : u"Find public server", # TODO: Translate into Russian
 
       "more-title" : u"Больше настроек",
       "never-rewind-value" : u"Никогда",
@@ -637,6 +645,8 @@ ru = {
 
       "identifyascontroller-msgbox-label" : u"Войти как оператор комнаты",
       "identifyinfo-msgbox-label" : u"Введите пароль оператора комнаты\r\n(см. инструкцию на странице http://syncplay.pl/guide/):",
+
+      "public-server-msgbox-label" : "Find public server (you must all use the same one!)", # TODO: Translate into Russian
 
       "megabyte-suffix" : u" МБ", # Technically it is a mebibyte
 
@@ -863,6 +873,8 @@ de = {
       "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found, folder it was not found in # TODO: Translate into German
       "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder # TODO: Translate into German
 
+      "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.", # TODO: Translate into German
+
       # Client arguments
       "argument-description" : u'Syncplay ist eine Anwendung um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren.',
       "argument-epilog" : u'Wenn keine Optionen angegeben sind, werden die _config-Werte verwendet',
@@ -897,6 +909,7 @@ de = {
       "media-path-label" : u"Pfad zur Datei:",
       "player-arguments-label" : u"Player arguments:", # TODO: Translate into German
       "browse-label" : u"Durchsuchen",
+      "list-servers-label" : u"Find public server", # TODO: Translate into German
 
       "more-title" : u"Mehr Einstellungen zeigen",
       "never-rewind-value" : u"Niemals",
@@ -998,6 +1011,8 @@ de = {
 
       "identifyascontroller-msgbox-label" : u"Als Raumleiter identifizieren",
       "identifyinfo-msgbox-label" : u"Passwort des zentral gesteuerten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
+
+      "public-server-msgbox-label" : "Find public server (you must all use the same one!)", # TODO: Translate into German
 
       "megabyte-suffix" : u" MB",
 

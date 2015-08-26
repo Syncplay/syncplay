@@ -10,6 +10,7 @@ import hashlib
 import random
 import string
 import urllib
+import ast
 
 folderSearchEnabled = True
 
@@ -260,6 +261,23 @@ def findFilenameInDirectories(filename, directoryList):
                     raise IOError(getMessage("folder-search-timeout-error").format(directory))
     return None
 
+def getListOfPublicServers():
+    try:
+        import urllib, syncplay, sys, messages, json
+        params = urllib.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
+                                   'language': messages.messages["CURRENT"]})
+        f = urllib.urlopen(constants.SYNCPLAY_PUBLIC_SERVER_LIST_URL.format(params))
+        response = f.read()
+        response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","'").replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","") # Fix Wordpress
+        response = ast.literal_eval(response)
+
+        if response:
+            return response
+        else:
+            raise IOError
+    except:
+        raise IOError(getMessage("failed-to-load-server-list-error"))
+
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
     PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")
@@ -320,3 +338,4 @@ class RandomStringGenerator(object):
 
 class NotControlledRoom(Exception):
     pass
+
