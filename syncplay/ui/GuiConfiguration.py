@@ -46,6 +46,7 @@ class ConfigDialog(QtGui.QDialog):
                 self.automaticupdatesCheckbox.setChecked(False)
 
     def moreToggled(self):
+        self.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         if self.moreToggling == False:
             self.moreToggling = True
 
@@ -53,16 +54,21 @@ class ConfigDialog(QtGui.QDialog):
                 self.tabListFrame.show()
                 self.resetButton.show()
                 self.nostoreCheckbox.show()
+                self.playerargsTextbox.show()
+                self.playerargsLabel.show()
                 self.saveMoreState(True)
                 self.tabListWidget.setCurrentRow(0)
                 self.ensureTabListIsVisible()
+                self.stackedFrame.setFixedHeight(self.stackedFrame.minimumSizeHint().height())
             else:
                 self.tabListFrame.hide()
                 self.resetButton.hide()
                 self.nostoreCheckbox.hide()
+                self.playerargsTextbox.hide()
+                self.playerargsLabel.hide()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
-
+                self.stackedFrame.setFixedHeight(self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3)
             self.adjustSize()
             self.setFixedSize(self.sizeHint())
         self.moreToggling = False
@@ -77,8 +83,6 @@ class ConfigDialog(QtGui.QDialog):
 
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
-
-
 
     def safenormcaseandpath(self, path):
         if utils.isURL(path):
@@ -510,9 +514,8 @@ class ConfigDialog(QtGui.QDialog):
         self.basicOptionsLayout.setAlignment(Qt.AlignTop)
         self.basicOptionsLayout.addWidget(self.connectionSettingsGroup)
         self.basicOptionsLayout.addSpacing(5)
-        self.mediaplayerSettingsGroup.setMaximumHeight(self.mediaplayerSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.addWidget(self.mediaplayerSettingsGroup)
-
+        self.basicOptionsFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.basicOptionsFrame.setLayout(self.basicOptionsLayout)
         self.stackedLayout.addWidget(self.basicOptionsFrame)
 
@@ -934,14 +937,17 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addWidget(self.stackedFrame, 0, 1)
         self.addBottomLayout()
 
-
         if self.getMoreState() == False:
             self.tabListFrame.hide()
             self.nostoreCheckbox.hide()
             self.resetButton.hide()
+            self.playerargsTextbox.hide()
+            self.playerargsLabel.hide()
+            self.stackedFrame.setFixedHeight(self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3)
         else:
             self.showmoreCheckbox.setChecked(True)
             self.tabListWidget.setCurrentRow(0)
+            self.stackedFrame.setFixedHeight(self.stackedFrame.minimumSizeHint().height())
 
         self.showmoreCheckbox.toggled.connect(self.moreToggled)
 
