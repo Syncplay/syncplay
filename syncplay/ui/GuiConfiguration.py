@@ -68,7 +68,10 @@ class ConfigDialog(QtGui.QDialog):
                 self.playerargsLabel.hide()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
-                self.stackedFrame.setFixedHeight(self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3)
+                newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
+                if self.errorLabel.isVisible():
+                    newHeight +=self.errorLabel.height()+3
+                self.stackedFrame.setFixedHeight(newHeight)
             self.adjustSize()
             self.setFixedSize(self.sizeHint())
         self.moreToggling = False
@@ -410,6 +413,7 @@ class ConfigDialog(QtGui.QDialog):
         error = self.error
         if self.datacleared == True:
             error = constants.ERROR_MESSAGE_MARKER + "{}".format(getMessage("gui-data-cleared-notification"))
+            self.error = error
         if config['host'] == None:
             host = ""
         elif ":" in config['host']:
@@ -522,7 +526,6 @@ class ConfigDialog(QtGui.QDialog):
                 self.errorLabel.setStyleSheet(constants.STYLE_SUCCESSLABEL)
             self.errorLabel.setText(error)
             self.errorLabel.setAlignment(Qt.AlignCenter)
-
             self.basicOptionsLayout.addWidget(self.errorLabel, 0, 0)
         self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.setAlignment(Qt.AlignTop)
@@ -960,7 +963,10 @@ class ConfigDialog(QtGui.QDialog):
             self.resetButton.hide()
             self.playerargsTextbox.hide()
             self.playerargsLabel.hide()
-            self.stackedFrame.setFixedHeight(self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3)
+            newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
+            if self.error:
+                newHeight +=self.errorLabel.height()+3
+            self.stackedFrame.setFixedHeight(newHeight)
         else:
             self.showmoreCheckbox.setChecked(True)
             self.tabListWidget.setCurrentRow(0)
