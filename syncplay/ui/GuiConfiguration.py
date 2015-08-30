@@ -208,9 +208,7 @@ class ConfigDialog(QtGui.QDialog):
     def loadSavedPublicServerList(self):
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("PublicServerList")
-        self.publicServers = settings.value("publicServers", constants.FALLBACK_PUBLIC_SYNCPLAY_SERVERS)
-        if self.publicServers is None:
-            self.publicServers = constants.FALLBACK_PUBLIC_SYNCPLAY_SERVERS
+        self.publicServers = settings.value("publicServers", None)
 
     def loadMediaBrowseSettings(self):
         settings = QSettings("Syncplay", "MediaBrowseDialog")
@@ -239,7 +237,6 @@ class ConfigDialog(QtGui.QDialog):
         settings.beginGroup("MoreSettings")
         settings.setValue("ShowMoreSettings", morestate)
         settings.endGroup()
-
 
     def updateServerList(self):
         try:
@@ -910,7 +907,21 @@ class ConfigDialog(QtGui.QDialog):
             settings = QSettings("Syncplay", "MoreSettings")
             settings.clear()
         self.datacleared = True
-
+    
+    def populateEmptyServerList(self):
+        if self.publicServers is None:
+            if self.config["checkForUpdatesAutomatically"] == True:
+                self.updateServerList()
+            else:
+                currentServer = self.hostCombobox.currentText()
+                self.publicServers = constants.FALLBACK_PUBLIC_SYNCPLAY_SERVERS
+                i = 0
+                for server in self.publicServers:
+                    self.hostCombobox.addItem(server[1])
+                    self.hostCombobox.setItemData(i, server[0], Qt.ToolTipRole)
+                    i += 1
+                self.hostCombobox.setEditText(currentServer)
+        
     def __init__(self, config, playerpaths, error, defaultConfig):
 
         self.config = config
@@ -984,3 +995,4 @@ class ConfigDialog(QtGui.QDialog):
             self.processWidget(self, lambda w: self.loadTooltips(w))
         self.processWidget(self, lambda w: self.loadValues(w))
         self.processWidget(self, lambda w: self.connectChildren(w))
+        self.populateEmptyServerList()
