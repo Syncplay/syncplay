@@ -278,7 +278,7 @@ en = {
       "identifyascontroller-msgbox-label" : "Identify as room operator",
       "identifyinfo-msgbox-label" : "Enter operator password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
 
-      "public-server-msgbox-label" : "Public server (you must all use the same one!)",
+      "public-server-msgbox-label" : u"Select the public server for this viewing session",
 
       "megabyte-suffix" : " MB",
 
@@ -646,7 +646,7 @@ ru = {
       "identifyascontroller-msgbox-label" : u"Войти как оператор комнаты",
       "identifyinfo-msgbox-label" : u"Введите пароль оператора комнаты\r\n(см. инструкцию на странице http://syncplay.pl/guide/):",
 
-      "public-server-msgbox-label" : "Public server (you must all use the same one!)", # TODO: Translate into Russian
+      "public-server-msgbox-label" : u"Select the public server for this viewing session", # TODO: Translate into Russian
 
       "megabyte-suffix" : u" МБ", # Technically it is a mebibyte
 
@@ -1012,7 +1012,7 @@ de = {
       "identifyascontroller-msgbox-label" : u"Als Raumleiter identifizieren",
       "identifyinfo-msgbox-label" : u"Passwort des zentral gesteuerten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
-      "public-server-msgbox-label" : "Public server (you must all use the same one!)", # TODO: Translate into German
+      "public-server-msgbox-label" : u"Select the public server for this viewing session", # TODO: Translate into German
 
       "megabyte-suffix" : u" MB",
 
