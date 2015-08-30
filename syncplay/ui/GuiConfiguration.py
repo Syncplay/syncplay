@@ -69,8 +69,8 @@ class ConfigDialog(QtGui.QDialog):
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
                 newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
-                if self.errorLabel.isVisible():
-                    newHeight +=self.errorLabel.height()+3
+                if self.error:
+                    newHeight += self.errorLabel.height()+3
                 self.stackedFrame.setFixedHeight(newHeight)
             self.adjustSize()
             self.setFixedSize(self.sizeHint())
