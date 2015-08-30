@@ -841,7 +841,8 @@ class MainWindow(QtGui.QMainWindow):
     @needsClient
     def checkForUpdates(self, userInitiated=False):
         self.lastCheckedForUpdates = datetime.utcnow()
-        updateStatus, updateMessage, updateURL = self._syncplayClient.checkForUpdate(userInitiated)
+        updateStatus, updateMessage, updateURL, self.publicServerList = self._syncplayClient.checkForUpdate(userInitiated)
+
         if updateMessage is None:
             if updateStatus == "uptodate":
                 updateMessage = getMessage("syncplay-uptodate-notification")
@@ -898,6 +899,10 @@ class MainWindow(QtGui.QMainWindow):
         settings.beginGroup("Update")
         settings.setValue("lastChecked", self.lastCheckedForUpdates)
         settings.endGroup()
+        settings.beginGroup("PublicServerList")
+        if self.publicServerList:
+            settings.setValue("publicServers", self.publicServerList)
+        settings.endGroup()
 
     def loadSettings(self):
         settings = QSettings("Syncplay", "MainWindow")
@@ -920,9 +925,14 @@ class MainWindow(QtGui.QMainWindow):
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
         self.lastCheckedForUpdates = settings.value("lastChecked", None)
+        settings.endGroup()
+        settings.beginGroup("PublicServerList")
+        self.publicServerList = settings.value("publicServers", None)
 
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.publicServerList = []
+        self.lastCheckedForUpdates = None
         self._syncplayClient = None
         self.folderSearchEnabled = True
         self.QtGui = QtGui

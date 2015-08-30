@@ -173,7 +173,7 @@ en = {
       "media-path-label" : "Path to media file:",
       "player-arguments-label" : "Player arguments (if any):",
       "browse-label" : "Browse",
-      "list-servers-label" : u"Find public server",
+      "update-server-list-label" : u"Update list",
 
       "more-title" : "Show more settings",
       "never-rewind-value" : "Never",
@@ -541,7 +541,7 @@ ru = {
       "media-path-label" : u"Путь к видеофайлу:",
       "player-arguments-label" : u"Аргументы для запуска проигрывателя:",
       "browse-label" : u"Выбрать",
-      "list-servers-label" : u"Find public server", # TODO: Translate into Russian
+      "update-server-list-label" : u"Update list", # TODO: Translate into Russian
 
       "more-title" : u"Больше настроек",
       "never-rewind-value" : u"Никогда",
@@ -909,7 +909,7 @@ de = {
       "media-path-label" : u"Pfad zur Datei:",
       "player-arguments-label" : u"Player arguments:", # TODO: Translate into German
       "browse-label" : u"Durchsuchen",
-      "list-servers-label" : u"Find public server", # TODO: Translate into German
+      "update-server-list-label" : u"Update list", # TODO: Translate into German
 
       "more-title" : u"Mehr Einstellungen zeigen",
       "never-rewind-value" : u"Niemals",

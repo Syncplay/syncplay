@@ -202,6 +202,13 @@ class ConfigDialog(QtGui.QDialog):
             else:
                 self.config["lastCheckedForUpdates"] = str(self.lastCheckedForUpdates)
 
+    def loadSavedPublicServerList(self):
+        settings = QSettings("Syncplay", "Interface")
+        settings.beginGroup("PublicServerList")
+        self.publicServers = settings.value("publicServers", constants.FALLBACK_PUBLIC_SYNCPLAY_SERVERS)
+        if self.publicServers is None:
+            self.publicServers = constants.FALLBACK_PUBLIC_SYNCPLAY_SERVERS
+
     def loadMediaBrowseSettings(self):
         settings = QSettings("Syncplay", "MediaBrowseDialog")
         settings.beginGroup("MediaBrowseDialog")
@@ -231,26 +238,24 @@ class ConfigDialog(QtGui.QDialog):
         settings.endGroup()
 
 
-    def findPublicServer(self):
+    def updateServerList(self):
         try:
             servers = utils.getListOfPublicServers()
         except IOError as e:
             self.showErrorMessage(unicode(e))
             return
-        dialog = QtGui.QInputDialog()
-        dialog.setWindowTitle(getMessage("list-servers-label"))
-        dialog.setLabelText(getMessage("public-server-msgbox-label"))
-        serverTitles = []
-        serverDict = {}
-        for server in servers:
-            serverTitle = server[0]
-            serverAddress = server[1]
-            serverTitles.append(serverTitle)
-            serverDict[serverTitle]=serverAddress
-        dialog.setComboBoxItems(serverTitles)
-        ok = dialog.exec_()
-        if ok:
-            self.hostCombobox.setEditText(serverDict[dialog.textValue()])
+        currentServer = self.hostCombobox.currentText()
+        self.hostCombobox.clear()
+        if servers:
+            i = 0
+            for server in servers:
+                self.hostCombobox.addItem(server[1])
+                self.hostCombobox.setItemData(i, server[0], Qt.ToolTipRole)
+                i += 1
+            settings = QSettings("Syncplay", "Interface")
+            settings.beginGroup("PublicServerList")
+            settings.setValue("publicServers", servers)
+        self.hostCombobox.setEditText(currentServer)
 
     def showErrorMessage(self, errorMessage):
         QtGui.QMessageBox.warning(self, "Syncplay", errorMessage)
@@ -416,14 +421,20 @@ class ConfigDialog(QtGui.QDialog):
         self.mediaSearchDirectories = self.config["mediaSearchDirectories"]
 
         self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
+        self.loadSavedPublicServerList()
         self.hostCombobox = QtGui.QComboBox(self)
-        self.hostCombobox.addItems(constants.PUBLIC_SYNCPLAY_SERVERS)
+        if self.publicServers:
+            i = 0
+            for publicServer in self.publicServers:
+                self.hostCombobox.addItem(publicServer[1])
+                self.hostCombobox.setItemData(i, publicServer[0], Qt.ToolTipRole)
+                i += 1
         self.hostCombobox.setEditable(True)
         self.hostCombobox.setEditText(host)
         self.hostCombobox.setFixedWidth(165)
         self.hostLabel = QLabel(getMessage("host-label"), self)
-        self.findServerButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'report_magnify.png'), getMessage("list-servers-label"))
-        self.findServerButton.clicked.connect(self.findPublicServer)
+        self.findServerButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'arrow_refresh.png'), getMessage("update-server-list-label"))
+        self.findServerButton.clicked.connect(self.updateServerList)
         self.usernameTextbox = QLineEdit(self)
 
         self.usernameTextbox.setObjectName("name")
@@ -881,6 +892,8 @@ class ConfigDialog(QtGui.QDialog):
     def clearGUIData(self, leaveMore=False):
         settings = QSettings("Syncplay", "PlayerList")
         settings.clear()
+        settings = QSettings("Syncplay", "PublicServerList")
+        settings.clear()
         settings = QSettings("Syncplay", "MediaBrowseDialog")
         settings.clear()
         settings = QSettings("Syncplay", "MainWindow")
@@ -902,6 +915,7 @@ class ConfigDialog(QtGui.QDialog):
         self.datacleared = False
         self.config['resetConfig'] = False
         self.subitems = {}
+        self.publicServers = None
 
         if self.config['clearGUIData'] == True:
             self.config['clearGUIData'] = False

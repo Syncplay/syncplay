@@ -3,6 +3,7 @@ import os.path
 import time
 import re
 import sys
+import ast
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from functools import wraps
@@ -676,9 +677,14 @@ class SyncplayClient(object):
             response = f.read()
             response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","\"").replace("&#8221;","\"") # Fix Wordpress
             response = json.loads(response)
-            return response["version-status"], response["version-message"] if response.has_key("version-message") else None, response["version-url"] if response.has_key("version-url") else None
+            publicServers = None
+            if response["public-servers"]:
+                publicServers = response["public-servers"].replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","")
+                print publicServers
+                publicServers = ast.literal_eval(publicServers)
+            return response["version-status"], response["version-message"] if response.has_key("version-message") else None, response["version-url"] if response.has_key("version-url") else None, publicServers
         except:
-            return "failed", getMessage("update-check-failed-notification").format(syncplay.version), constants.SYNCPLAY_DOWNLOAD_URL
+            return "failed", getMessage("update-check-failed-notification").format(syncplay.version), constants.SYNCPLAY_DOWNLOAD_URL, None
 
     class _WarningManager(object):
         def __init__(self, player, userlist, ui, client):
