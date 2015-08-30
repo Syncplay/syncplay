@@ -238,8 +238,7 @@ class ConfigDialog(QtGui.QDialog):
             self.showErrorMessage(unicode(e))
             return
         dialog = QtGui.QInputDialog()
-        dialog.setOption(QtGui.QInputDialog.UseListViewForComboBoxItems)
-        dialog.setWindowTitle(getMessage("public-server-msgbox-label"))
+        dialog.setWindowTitle(getMessage("list-servers-label"))
         dialog.setLabelText(getMessage("public-server-msgbox-label"))
         serverTitles = []
         serverDict = {}
