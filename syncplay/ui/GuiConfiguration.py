@@ -895,8 +895,6 @@ class ConfigDialog(QtGui.QDialog):
     def clearGUIData(self, leaveMore=False):
         settings = QSettings("Syncplay", "PlayerList")
         settings.clear()
-        settings = QSettings("Syncplay", "PublicServerList")
-        settings.clear()
         settings = QSettings("Syncplay", "MediaBrowseDialog")
         settings.clear()
         settings = QSettings("Syncplay", "MainWindow")
@@ -904,6 +902,9 @@ class ConfigDialog(QtGui.QDialog):
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
         settings.setValue("lastChecked", None)
+        settings.endGroup()
+        settings.beginGroup("PublicServerList")
+        settings.setValue("publicServers", None)
         settings.endGroup()
         if not leaveMore:
             settings = QSettings("Syncplay", "MoreSettings")
