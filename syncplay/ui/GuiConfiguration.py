@@ -250,7 +250,7 @@ class ConfigDialog(QtGui.QDialog):
         dialog.setComboBoxItems(serverTitles)
         ok = dialog.exec_()
         if ok:
-            self.hostTextbox.setText(serverDict[dialog.textValue()])
+            self.hostCombobox.setEditText(serverDict[dialog.textValue()])
 
     def showErrorMessage(self, errorMessage):
         QtGui.QMessageBox.warning(self, "Syncplay", errorMessage)
@@ -284,8 +284,8 @@ class ConfigDialog(QtGui.QDialog):
         self.config["mediaSearchDirectories"] = utils.convertMultilineStringToList(self.mediasearchTextEdit.toPlainText())
 
         self.processWidget(self, lambda w: self.saveValues(w))
-        if self.hostTextbox.text():
-            self.config['host'] = self.hostTextbox.text() if ":" in self.hostTextbox.text() else self.hostTextbox.text() + ":" + unicode(constants.DEFAULT_PORT)
+        if self.hostCombobox.currentText():
+            self.config['host'] = self.hostCombobox.currentText() if ":" in self.hostCombobox.currentText() else self.hostCombobox.currentText() + ":" + unicode(constants.DEFAULT_PORT)
         else:
             self.config['host'] = None
         self.config['playerPath'] = unicode(self.safenormcaseandpath(self.executablepathCombobox.currentText()))
@@ -416,7 +416,11 @@ class ConfigDialog(QtGui.QDialog):
         self.mediaSearchDirectories = self.config["mediaSearchDirectories"]
 
         self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
-        self.hostTextbox = QLineEdit(host, self)
+        self.hostCombobox = QtGui.QComboBox(self)
+        self.hostCombobox.addItems(constants.PUBLIC_SYNCPLAY_SERVERS)
+        self.hostCombobox.setEditable(True)
+        self.hostCombobox.setEditText(host)
+        self.hostCombobox.setFixedWidth(165)
         self.hostLabel = QLabel(getMessage("host-label"), self)
         self.findServerButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'report_magnify.png'), getMessage("list-servers-label"))
         self.findServerButton.clicked.connect(self.findPublicServer)
@@ -430,7 +434,7 @@ class ConfigDialog(QtGui.QDialog):
         self.defaultroomLabel = QLabel(getMessage("room-label"), self)
 
         self.hostLabel.setObjectName("host")
-        self.hostTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "host")
+        self.hostCombobox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "host")
         self.usernameLabel.setObjectName("name")
         self.usernameTextbox.setObjectName("name")
         self.serverpassLabel.setObjectName("password")
@@ -440,7 +444,7 @@ class ConfigDialog(QtGui.QDialog):
 
         self.connectionSettingsLayout = QtGui.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
-        self.connectionSettingsLayout.addWidget(self.hostTextbox, 0, 1)
+        self.connectionSettingsLayout.addWidget(self.hostCombobox, 0, 1)
         self.connectionSettingsLayout.addWidget(self.findServerButton, 0, 2)
         self.connectionSettingsLayout.addWidget(self.serverpassLabel, 1, 0)
         self.connectionSettingsLayout.addWidget(self.serverpassTextbox, 1, 1, 1, 2)

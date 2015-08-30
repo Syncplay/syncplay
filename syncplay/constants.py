@@ -16,6 +16,7 @@ SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
 SHOW_TOOLTIPS = True
 WARN_ABOUT_MISSING_STRINGS = False # (If debug mode is enabled)
 FALLBACK_INITIAL_LANGUAGE = "en"
+PUBLIC_SYNCPLAY_SERVERS = ["syncplay.pl:8995","syncplay.pl:8996","syncplay.pl:8997","syncplay.pl:8998","syncplay.pl:8999"]
 
 #Overriden by config
 SHOW_OSD = True  # Sends Syncplay messages to media player OSD
