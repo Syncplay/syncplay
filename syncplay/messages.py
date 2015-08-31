@@ -324,6 +324,7 @@ en = {
 
       "help-tooltip" : "Opens the Syncplay.pl user guide.",
       "reset-tooltip" : "Reset all settings to the default configuration.",
+      "update-server-list-tooltip" : u"Connect to syncplay.pl to update list of public servers.",
 
       "joinroom-tooltip" : "Leave current room and joins specified room.",
       "seektime-msgbox-label" : "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",
@@ -692,6 +693,7 @@ ru = {
 
       "help-tooltip" : u"Открыть Руководство Пользователя на Syncplay.pl.",
       "reset-tooltip" : u"Сбрасывает все настройки Syncplay в начальное состояние.",
+      "update-server-list-tooltip" : u"Connect to syncplay.pl to update list of public servers.", # TODO: Translate to Russian
 
       "joinroom-tooltip" : u"Покинуть комнату и зайти в другую, указанную комнату.",
       "seektime-msgbox-label" : u"Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",
@@ -1060,6 +1062,7 @@ de = {
 
       "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
       "reset-tooltip" : u"Alle Einstellungen auf Standardwerte zurücksetzen.",
+      "update-server-list-tooltip" : u"Connect to syncplay.pl to update list of public servers.", # TODO: Translate to German
 
       "joinroom-tooltip" : u"Den aktuellen Raum verlassen und stattdessen den angegebenen betreten.",
       "seektime-msgbox-label" : u"Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",

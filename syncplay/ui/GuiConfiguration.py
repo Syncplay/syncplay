@@ -436,6 +436,7 @@ class ConfigDialog(QtGui.QDialog):
         self.hostLabel = QLabel(getMessage("host-label"), self)
         self.findServerButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'arrow_refresh.png'), getMessage("update-server-list-label"))
         self.findServerButton.clicked.connect(self.updateServerList)
+        self.findServerButton.setToolTip(getMessage("update-server-list-tooltip"))
         self.usernameTextbox = QLineEdit(self)
 
         self.usernameTextbox.setObjectName("name")
