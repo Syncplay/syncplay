@@ -680,7 +680,6 @@ class SyncplayClient(object):
             publicServers = None
             if response["public-servers"]:
                 publicServers = response["public-servers"].replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","")
-                print publicServers
                 publicServers = ast.literal_eval(publicServers)
             return response["version-status"], response["version-message"] if response.has_key("version-message") else None, response["version-url"] if response.has_key("version-url") else None, publicServers
         except:
