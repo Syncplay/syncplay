@@ -49,7 +49,7 @@ SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
 AUTOPLAY_DELAY = 3.0
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
-FOLDER_SEARCH_TIMEOUT = 1.0 # Secs
+FOLDER_SEARCH_TIMEOUT = 2.0 # Secs
 
 #Usually there's no need to adjust these
 LAST_PAUSED_DIFF_THRESHOLD = 2
