@@ -774,8 +774,8 @@ de = {
       "not-all-ready" : u"Noch nicht bereit: {}", # Usernames
       "all-users-ready" : u"Alle sind bereit ({} Nutzer)", #Number of ready users
       "ready-to-unpause-notification" : u"Du bist bereit - noch einmal fortsetzen klicken zum abspielen",
-      "set-as-ready-notification" : u"Du bist bereit", # TODO: Check German translation
-      "set-as-not-ready-notification" : u"You are now set as not ready", # TODO: Translate into German
+      "set-as-ready-notification" : u"Du bist bereit",
+      "set-as-not-ready-notification" : u"Du bist nicht bereit",
       "autoplaying-notification" : u"Starte in {}...",
 
       "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room operator"
@@ -831,7 +831,7 @@ de = {
       "vlc-interface-version-mismatch": u"Warnung: Du nutzt Version {} des VLC-Syncplay Interface-Moduls, Syncplay benötigt aber mindestens Version {}.",  # VLC interface version, VLC interface min version
       "vlc-interface-oldversion-warning": u"Warnung: Es ist eine alte Version des Syncplay Interface-Moduls für VLC im VLC-Verzeichnis installiert. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du Details zur Installation des syncplay.lua-Skripts.",
       "vlc-interface-not-installed": u"Warnung: Es wurde kein Syncplay Interface-Modul für VLC im VLC-Verzeichnis gefunden. Daher wird, wenn du VLC 2.0 nutzt, die syncplay.lua die mit Syncplay mitgeliefert wurde, verwendet. Dies bedeutet allerdings, dass keine anderen Interface-Skripts und Erweiterungen geladen werden. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du  Details zur Installation des syncplay.lua-Skripts.",
-      "media-player-latency-warning": u"Warning: The media player took {} seconds to respond. If you experience syncing issues then close applications to free up system resources, and if that doesn't work then try a different media player.", # Seconds to respond # TODO: Translate into German
+      "media-player-latency-warning": u"Warnung: Der Mediaplayer brauchte {} Sekunden zum Antworten. Wenn Probleme bei der Synchronisation auftreten, schließe bitte andere Anwendungen, um Ressourcen freizugeben. Sollte das nicht funktionieren, versuche es mit einem anderen Media-Player.", # Seconds to respond
 
       # Client prompts
       "enter-to-exit-prompt" : u"Enter drücken zum Beenden\n",
@@ -872,10 +872,10 @@ de = {
        "invalid-seek-value" : u"Ungültige Zeitangabe",
        "invalid-offset-value" : u"Ungültiger Offset-Wert",
 
-      "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found, folder it was not found in # TODO: Translate into German
-      "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder # TODO: Translate into German
+      "switch-file-not-found-error" : u"Konnte nicht zur Datei '{0}' wechseln. Syncplay sucht im Ordner der aktuellen Datei und angegebenen Medien-Verzeichnissen.", # File not found, folder it was not found in
+      "folder-search-timeout-error" : u"Die Suche nach Mediendateien in '{}' wurde abgebrochen weil sie zu lange gedauert hat. Dies tritt auf, wenn ein zu durchsuchender Medienordner zu viele Unterordner hat. Syncplay wird bis zum Neustart nur noch das Verzeichnis der aktuellen Datei durchsuchen.", #Folder
 
-      "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.", # TODO: Translate into German
+      "failed-to-load-server-list-error" : u"Konnte die Liste der öffentlichen Server nicht laden. Bitte besuche http://www.syncplay.pl/ [Englisch] mit deinem Browser.",
 
       # Client arguments
       "argument-description" : u'Syncplay ist eine Anwendung um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren.',
@@ -909,9 +909,9 @@ de = {
       "media-setting-title" : u"Media-Player Einstellungen",
       "executable-path-label" : u"Pfad zum Media-Player:",
       "media-path-label" : u"Pfad zur Datei:",
-      "player-arguments-label" : u"Player arguments:", # TODO: Translate into German
+      "player-arguments-label" : u"Playerparameter:",
       "browse-label" : u"Durchsuchen",
-      "update-server-list-label" : u"Update list", # TODO: Translate into German
+      "update-server-list-label" : u"Liste aktualisieren",
 
       "more-title" : u"Mehr Einstellungen zeigen",
       "never-rewind-value" : u"Niemals",
@@ -936,14 +936,14 @@ de = {
       "showdifferentroomosd-label" : u"Zeige Ereignisse in anderen Räumen",
       "showslowdownosd-label" : u"Zeige Verlangsamungs/Zurücksetzungs-Benachrichtigung",
       "language-label" : u"Sprache:",
-      "automatic-language" : u"Automatisch ({})", # Default language # TODO: Change to German translation of "default" / Current translation represents Idea better
+      "automatic-language" : u"Automatisch ({})", # Default language # NODO: Change to German translation of "default" / Current translation represents Idea better
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
       "basics-label" : u"Grundlagen",
-      "readiness-label" : u"Play/Pause", # TODO: Translate into German
+      "readiness-label" : u"Play/Pause", # NODO: Translate into German / Is used normally in German
       "misc-label" : u"Diverse",
       "core-behaviour-title" : u"Verhalten des Raumes",
       "syncplay-internals-title" : u"Syncplay intern",
-      "syncplay-mediasearchdirectories-title" : u"Directories to search for media (one path per line)", # TODO: Translate into Russian
+      "syncplay-mediasearchdirectories-title" : u"In diesen Verzeichnissen nach Medien suchen (ein Pfad pro Zeile)",
       "sync-label" : u"Synchronisation",
       "sync-otherslagging-title" : u"Wenn andere laggen...",
       "sync-youlaggging-title" : u"Wenn du laggst...",
@@ -952,11 +952,11 @@ de = {
       "messages-other-title" : u"Weitere Display-Einstellungen",
       "privacy-label" : u"Privatsphäre",
       "privacy-title" : u"Privatsphäreneinstellungen",
-      "unpause-title" : u"If you press play, set as ready and:", # TODO: Translate into German
-      "unpause-ifalreadyready-option" : u"Unpause if already set as ready", # TODO: Translate into German
-      "unpause-ifothersready-option" : u"Unpause if already ready or others in room are ready (default)", # TODO: Translate into German
-      "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready", # TODO: Translate into German
-      "unpause-always" : u"Always unpause", # TODO: Translate into German
+      "unpause-title" : u"Wenn du Play drückst, auf Bereit setzen und:",
+      "unpause-ifalreadyready-option" : u"Wiedergeben wenn bereits als Bereit gesetzt",
+      "unpause-ifothersready-option" : u"Wiedergeben wenn bereits als Bereit gesetzt oder alle anderen bereit sind (Standard)",
+      "unpause-ifminusersready-option" : u"Wiedergeben wenn bereits als Bereit gesetzt oder die minimale Anzahl anderer Nutzer bereit ist",
+      "unpause-always" : u"Immer wiedergeben",
 
       "help-label" : u"Hilfe",
       "reset-label" : u"Standardwerte zurücksetzen",
@@ -1014,7 +1014,7 @@ de = {
       "identifyascontroller-msgbox-label" : u"Als Raumleiter identifizieren",
       "identifyinfo-msgbox-label" : u"Passwort des zentral gesteuerten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
-      "public-server-msgbox-label" : u"Select the public server for this viewing session", # TODO: Translate into German
+      "public-server-msgbox-label" : u"Einen öffentlichen Server für diese Sitzung auswählen",
 
       "megabyte-suffix" : u" MB",
 
@@ -1027,8 +1027,8 @@ de = {
 
       "executable-path-tooltip" : u"Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
-      "player-arguments-tooltip" : u"Additional command line arguments / switches to pass on to this media player.", # TODO: Translate into German
-      "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.", # TODO: Translate into German
+      "player-arguments-tooltip" : u"Zusätzliche Kommandozeilenparameter / -schalter für diesen Mediaplayer.",
+      "mediasearcdirectories-arguments-tooltip" : u"Verzeichnisse, in denen Syncplay nach Mediendateien suchen soll, z.B. wenn du das Click-to-switch-Feature verwendest. Syncplay wird rekursiv Unterordner durchsuchen.", # TODO: Translate Click-to-switch? (or use as name for feature)
 
       "more-tooltip" : u"Weitere Einstellungen anzeigen.",
       "filename-privacy-tooltip" : u"Privatheitsmodus beim Senden des Namens der aktuellen Datei zum Server.",
@@ -1055,20 +1055,20 @@ de = {
       "showslowdownosd-tooltip" : u"Meldungen bei Geschwindigkeitsänderung anzeigen.",
       "showdurationnotification-tooltip" : u"Nützlich, wenn z.B. ein Teil eines mehrteiligen Videos fehlt, kann jedoch auch fehlerhaft anschlagen.",
       "language-tooltip" : u"Die verwendete Sprache von Syncplay",
-      "unpause-always-tooltip" : u"Fortsetzen startet immer (anstatt nur den Bereitschaftsstatus zu ändern)",
-      "unpause-ifalreadyready-tooltip" : u"If you press unpause when not ready it will set you as ready - press unpause again to unpause.", # TODO: Translate into German
-      "unpause-ifothersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready.", # TODO: Translate into German
-      "unpause-ifminusersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready and minimum users threshold is met.", # TODO: Translate into German
+      "unpause-always-tooltip" : u"Wiedergabe startet immer (anstatt nur den Bereitschaftsstatus zu ändern)",
+      "unpause-ifalreadyready-tooltip" : u"Wenn du nicht bereit bist und Play drückst wirst du als bereit gesetzt - zum Starten der Wiedergabe nochmal drücken.",
+      "unpause-ifothersready-tooltip" : u"Wenn du Play drückst und nicht bereit bist, wird nur gestartet, wenn alle anderen bereit sind.",
+      "unpause-ifminusersready-tooltip" : u"Wenn du Play drückst und nicht bereit bist, wird nur gestartet, wenn die minimale Anzahl anderer Benutzer bereit ist.",
 
       "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
       "reset-tooltip" : u"Alle Einstellungen auf Standardwerte zurücksetzen.",
-      "update-server-list-tooltip" : u"Connect to syncplay.pl to update list of public servers.", # TODO: Translate to German
+      "update-server-list-tooltip" : u"Mit syncplay.pl verbinden um die Liste öffentlicher Server zu aktualisieren.",
 
       "joinroom-tooltip" : u"Den aktuellen Raum verlassen und stattdessen den angegebenen betreten.",
       "seektime-msgbox-label" : u"Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
       "ready-tooltip" : u"Zeigt an, ob du bereit zum anschauen bist",
-      "autoplay-tooltip" : u"Automatisch abspielen, wenn alle Nutzer bereit sind und die minimale Nutzerzahl erreicht ist.",
-      "switch-to-file-tooltip" : u"Double click to switch to {}", # Filename # TODO: Translate to German
+      "autoplay-tooltip" : u"Automatisch abspielen, wenn alle Nutzer bereit sind oder die minimale Nutzerzahl erreicht ist.",
+      "switch-to-file-tooltip" : u"Doppelklicken um zu {} zu wechseln", # Filename
 
       # In-userlist notes (GUI)
       "differentsize-note" : u"Verschiedene Größe!",
