@@ -38,7 +38,7 @@ en = {
       "ready-to-unpause-notification" : u"You are now set as ready - unpause again to unpause",
       "set-as-ready-notification" : u"You are now set as ready",
       "set-as-not-ready-notification" : u"You are now set as not ready",
-      "autoplaying-notification" : u"Auto-playing in {}...",
+      "autoplaying-notification" : u"Auto-playing in {}...",  # Number of seconds until playback will start
 
       "identifying-as-controller-notification" : u"Identifying as room operator with password '{}'...",
       "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room operator.",
@@ -407,7 +407,7 @@ ru = {
       "ready-to-unpause-notification" : u"Вы помечены как готовый - нажмите еще раз, чтобы продолжить воспроизведение",
       "set-as-ready-notification" : u"Вы помечены как готовый",
       "set-as-not-ready-notification" : u"Вы помечены как неготовый",
-      "autoplaying-notification" : u"Автовоспроизведение через {}...", # TODO: What's the variable?
+      "autoplaying-notification" : u"Автовоспроизведение через {}...",  # Number of seconds until playback will start
 
       "identifying-as-controller-notification" : u"Идентификация как оператора комнаты с паролем '{}'...",
       "failed-to-identify-as-controller-notification" : u"<{}> не прошел идентификацию в качестве оператора комнаты.",
@@ -776,7 +776,7 @@ de = {
       "ready-to-unpause-notification" : u"Du bist bereit - noch einmal fortsetzen klicken zum abspielen",
       "set-as-ready-notification" : u"Du bist bereit",
       "set-as-not-ready-notification" : u"Du bist nicht bereit",
-      "autoplaying-notification" : u"Starte in {}...",
+      "autoplaying-notification" : u"Starte in {}...", # Number of seconds until playback will start
 
       "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room operator"
       "failed-to-identify-as-controller-notification" : u"<{}> konnte sich nicht als Raumleiter identifizieren.",
@@ -936,10 +936,10 @@ de = {
       "showdifferentroomosd-label" : u"Zeige Ereignisse in anderen Räumen",
       "showslowdownosd-label" : u"Zeige Verlangsamungs/Zurücksetzungs-Benachrichtigung",
       "language-label" : u"Sprache:",
-      "automatic-language" : u"Automatisch ({})", # Default language # NODO: Change to German translation of "default" / Current translation represents Idea better
+      "automatic-language" : u"Automatisch ({})", # Default language
       "showdurationnotification-label" : u"Zeige Warnung wegen unterschiedlicher Dauer",
       "basics-label" : u"Grundlagen",
-      "readiness-label" : u"Play/Pause", # NODO: Translate into German / Is used normally in German
+      "readiness-label" : u"Play/Pause",
       "misc-label" : u"Diverse",
       "core-behaviour-title" : u"Verhalten des Raumes",
       "syncplay-internals-title" : u"Syncplay intern",
