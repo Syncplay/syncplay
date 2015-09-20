@@ -250,17 +250,6 @@ def getListAsMultilineString(pathArray):
 def convertMultilineStringToList(multilineString):
     return unicode.split(multilineString,u"\n") if multilineString else ""
 
-def findFilenameInDirectories(filename, directoryList):
-    if filename and directoryList:
-        startTime = time.time()
-        for directory in directoryList:
-            for root, dirs, files in os.walk(directory):
-                if filename in files:
-                    return os.path.join(root,filename)
-                if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
-                    raise IOError(getMessage("folder-search-timeout-error").format(directory))
-    return None
-
 def getListOfPublicServers():
     try:
         import urllib, syncplay, sys, messages, json

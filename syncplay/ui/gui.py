@@ -10,6 +10,8 @@ import re
 import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from functools import wraps
+from twisted.internet import task
+import threading
 lastCheckedForUpdates = None
 
 class UserlistItemDelegate(QtGui.QStyledItemDelegate):
@@ -83,6 +85,153 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
 class MainWindow(QtGui.QMainWindow):
+    class FileSwitchManager(object):
+        def __init__(self):
+            self.fileSwitchTimer = task.LoopingCall(self.updateInfo)
+            self.fileSwitchTimer.start(constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL, True)
+            self.fileCheckTimer = task.LoopingCall(self.checkForUpdate)
+            self.fileCheckTimer.start(constants.MEDIA_CACHE_CHECK_INTERVAL, True)
+
+        mediaFilesCache = {}
+        filenameWatchlist = []
+        currentDirectory = None
+        mediaDirectories = None
+        lock = threading.Lock()
+        client = None
+        currentWindow = None
+        folderSearchEnabled = True
+        disabledDir = None
+        newInfo = False
+        currentlyUpdating = False
+
+        @staticmethod
+        def setWindow(window):
+            MainWindow.FileSwitchManager.currentWindow = window
+
+        @staticmethod
+        def setClient(newClient):
+            MainWindow.FileSwitchManager.client = newClient
+
+        @staticmethod
+        def setCurrentDirectory(curDir):
+            MainWindow.FileSwitchManager.currentDirectory = curDir
+            MainWindow.FileSwitchManager.updateInfo()
+
+        @staticmethod
+        def setMediaDirectories(mediaDirs):
+            MainWindow.FileSwitchManager.mediaDirectories = mediaDirs
+            MainWindow.FileSwitchManager.updateInfo()
+
+        @staticmethod
+        def checkForUpdate():
+            if MainWindow.FileSwitchManager.newInfo:
+                MainWindow.FileSwitchManager.newInfo = False
+                MainWindow.FileSwitchManager.infoUpdated()
+
+        @staticmethod
+        def updateInfo():
+            if len(MainWindow.FileSwitchManager.filenameWatchlist) > 0 or len(MainWindow.FileSwitchManager.mediaFilesCache) == 0 and MainWindow.FileSwitchManager.currentlyUpdating == False:
+                newThread = threading.Thread(target=MainWindow.FileSwitchManager._updateInfoThread)
+                newThread.setDaemon(True)
+                newThread.start()
+
+        @staticmethod
+        def setFilenameWatchlist(unfoundFilenames):
+            MainWindow.FileSwitchManager.filenameWatchlist = unfoundFilenames
+
+        @staticmethod
+        def _updateInfoThread():
+            if not MainWindow.FileSwitchManager.folderSearchEnabled:
+                if MainWindow.FileSwitchManager.areWatchedFilenamesInCurrentDir():
+                    MainWindow.FileSwitchManager.newInfo = True
+                return
+
+            with MainWindow.FileSwitchManager.lock:
+                try:
+                    MainWindow.FileSwitchManager.currentlyUpdating = True
+                    dirsToSearch = MainWindow.FileSwitchManager.mediaDirectories
+
+                    if dirsToSearch:
+                        newMediaFilesCache = {}
+                        startTime = time.time()
+                        for directory in dirsToSearch:
+                            for root, dirs, files in os.walk(directory):
+                                newMediaFilesCache[root] = files
+                                if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
+                                    if MainWindow.FileSwitchManager.client is not None and MainWindow.FileSwitchManager.currentWindow is not None:
+                                        MainWindow.FileSwitchManager.disabledDir = directory
+                                        MainWindow.FileSwitchManager.folderSearchEnabled = False
+                                        if MainWindow.FileSwitchManager.areWatchedFilenamesInCurrentDir():
+                                            MainWindow.FileSwitchManager.newInfo = True
+                                        return
+
+                        if MainWindow.FileSwitchManager.mediaFilesCache <> newMediaFilesCache:
+                            MainWindow.FileSwitchManager.mediaFilesCache = newMediaFilesCache
+                            MainWindow.FileSwitchManager.newInfo = True
+                        elif MainWindow.FileSwitchManager.areWatchedFilenamesInCurrentDir():
+                            MainWindow.FileSwitchManager.newInfo = True
+                finally:
+                    MainWindow.FileSwitchManager.currentlyUpdating = False
+
+        @staticmethod
+        def infoUpdated():
+            if MainWindow.FileSwitchManager.areWatchedFilenamesInCache() or MainWindow.FileSwitchManager.areWatchedFilenamesInCurrentDir():
+                MainWindow.FileSwitchManager.updateListOfWhoIsPlayingWhat()
+
+        @staticmethod
+        def updateListOfWhoIsPlayingWhat():
+            if MainWindow.FileSwitchManager.client is not None:
+                MainWindow.FileSwitchManager.client.showUserList()
+
+        @staticmethod
+        def findFilepath(filename):
+            if filename is None:
+                return
+
+            if MainWindow.FileSwitchManager.currentDirectory is not None:
+                candidatePath = os.path.join(MainWindow.FileSwitchManager.currentDirectory,filename)
+                if os.path.isfile(candidatePath):
+                    return candidatePath
+
+            if MainWindow.FileSwitchManager.mediaFilesCache is not None:
+                for directory in MainWindow.FileSwitchManager.mediaFilesCache:
+                    files = MainWindow.FileSwitchManager.mediaFilesCache[directory]
+
+                    if len(files) > 0 and filename in files:
+                        filepath = os.path.join(directory, filename)
+                        if os.path.isfile(filepath):
+                            return filepath
+
+        @staticmethod
+        def areWatchedFilenamesInCurrentDir():
+            if MainWindow.FileSwitchManager.filenameWatchlist is not None and MainWindow.FileSwitchManager.currentDirectory is not None:
+                for filename in MainWindow.FileSwitchManager.filenameWatchlist:
+                    potentialPath = os.path.join(MainWindow.FileSwitchManager.currentDirectory,filename)
+                    if os.path.isfile(potentialPath):
+                        return True
+
+        @staticmethod
+        def areWatchedFilenamesInCache():
+            if MainWindow.FileSwitchManager.filenameWatchlist is not None:
+                for filename in MainWindow.FileSwitchManager.filenameWatchlist:
+                    if MainWindow.FileSwitchManager.isFilenameInCache(filename):
+                        return True
+
+        @staticmethod
+        def isFilenameInCurrentDir(filename):
+            if filename is not None and MainWindow.FileSwitchManager.currentDirectory is not None:
+                potentialPath = os.path.join(MainWindow.FileSwitchManager.currentDirectory,filename)
+                if os.path.isfile(potentialPath):
+                    return True
+
+        @staticmethod
+        def isFilenameInCache(filename):
+            if filename is not None and MainWindow.FileSwitchManager.mediaFilesCache is not None:
+                for directory in MainWindow.FileSwitchManager.mediaFilesCache:
+                    files = MainWindow.FileSwitchManager.mediaFilesCache[directory]
+                    if filename in files:
+                        return True
+
     class topSplitter(QtGui.QSplitter):
         def createHandle(self):
             return self.topSplitterHandle(self.orientation(), self)
@@ -107,9 +256,11 @@ class MainWindow(QtGui.QMainWindow):
 
     def addClient(self, client):
         self._syncplayClient = client
+        MainWindow.FileSwitchManager.setClient(client)
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
         try:
+            self.FileSwitchManager.setMediaDirectories(self.config["mediaSearchDirectories"])
             self.updateReadyState(self.config['readyAtStart'])
             autoplayInitialState = self.config['autoplayInitialState']
             if autoplayInitialState is not None:
@@ -150,28 +301,11 @@ class MainWindow(QtGui.QMainWindow):
                 return constants.FILEITEM_SWITCH_NO_SWITCH
             if isURL(filename):
                 return constants.FILEITEM_SWITCH_STREAM_SWITCH
-            else:
-                currentPath = self._syncplayClient.userlist.currentUser.file["path"] if self._syncplayClient.userlist.currentUser.file else None
-                if self.folderSearchEnabled:
-                    try:
-                        filenamesInDirectories = utils.findFilenameInDirectories(filename, self.config["mediaSearchDirectories"])
-                    except IOError as errorMessage:
-                        self.showErrorMessage(errorMessage)
-                        filenamesInDirectories = None
-                        self.folderSearchEnabled = False
-                else:
-                    filenamesInDirectories = None
-                if filenamesInDirectories:
+            elif filename not in self.newWatchlist:
+                if MainWindow.FileSwitchManager.findFilepath(filename):
                     return constants.FILEITEM_SWITCH_FILE_SWITCH
-                elif currentPath:
-                    currentDirectory = os.path.dirname(currentPath)
-                    newPath = os.path.join(currentDirectory, filename)
-                    if os.path.isfile(newPath):
-                        return constants.FILEITEM_SWITCH_FILE_SWITCH
-                    else:
-                        return constants.FILEITEM_SWITCH_NO_SWITCH
                 else:
-                    return constants.FILEITEM_SWITCH_NO_SWITCH
+                    self.newWatchlist.extend([filename])
         return constants.FILEITEM_SWITCH_NO_SWITCH
 
     def showUserList(self, currentUser, rooms):
@@ -179,8 +313,11 @@ class MainWindow(QtGui.QMainWindow):
         self._usertreebuffer.setHorizontalHeaderLabels(
             (getMessage("roomuser-heading-label"), getMessage("size-heading-label"), getMessage("duration-heading-label"), getMessage("filename-heading-label") ))
         usertreeRoot = self._usertreebuffer.invisibleRootItem()
+        if self._syncplayClient.userlist.currentUser.file and self._syncplayClient.userlist.currentUser.file and os.path.isfile(self._syncplayClient.userlist.currentUser.file["path"]):
+            MainWindow.FileSwitchManager.setCurrentDirectory(os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]))
 
         for room in rooms:
+            self.newWatchlist = []
             roomitem = QtGui.QStandardItem(room)
             font = QtGui.QFont()
             font.setItalic(True)
@@ -266,6 +403,13 @@ class MainWindow(QtGui.QMainWindow):
         self.listTreeView.setRootIsDecorated(False)
         self.listTreeView.expandAll()
         self.updateListGeometry()
+        MainWindow.FileSwitchManager.setFilenameWatchlist(self.newWatchlist)
+        self.checkForDisabledDir()
+
+    def checkForDisabledDir(self):
+        if MainWindow.FileSwitchManager.disabledDir is not None and MainWindow.FileSwitchManager.currentWindow is not None:
+            self.showErrorMessage(getMessage("folder-search-timeout-error").format(MainWindow.FileSwitchManager.disabledDir))
+            MainWindow.FileSwitchManager.disabledDir = None
 
     def updateListGeometry(self):
         try:
@@ -309,26 +453,11 @@ class MainWindow(QtGui.QMainWindow):
             if isURL(filename):
                 self._syncplayClient._player.openFile(filename)
             else:
-                currentPath = self._syncplayClient.userlist.currentUser.file["path"] if self._syncplayClient.userlist.currentUser.file else None
-                if self.folderSearchEnabled:
-                    try:
-                        pathFound = utils.findFilenameInDirectories(filename, self.config["mediaSearchDirectories"])
-                    except IOError as errorMessage:
-                        self.showErrorMessage(errorMessage)
-                        pathFound = None
-                        self.folderSearchEnabled = False
-                else:
-                    pathFound = None
+                pathFound = MainWindow.FileSwitchManager.findFilepath(filename)
                 if pathFound:
                     self._syncplayClient._player.openFile(pathFound)
-                elif currentPath:
-                    currentDirectory = os.path.dirname(currentPath)
-                    newPath = os.path.join(currentDirectory, filename)
-                    if os.path.isfile(newPath):
-                        self._syncplayClient._player.openFile(newPath)
-                    else:
-                        self.showErrorMessage(getMessage("switch-file-not-found-error").format(filename, currentDirectory))
                 else:
+                    MainWindow.FileSwitchManager.updateInfo()
                     self.showErrorMessage(getMessage("switch-file-not-found-error").format(filename))
 
     @needsClient
@@ -455,6 +584,7 @@ class MainWindow(QtGui.QMainWindow):
             if sys.platform.startswith('win'):
                 fileName = fileName.replace("/", "\\")
             self.mediadirectory = os.path.dirname(fileName)
+            self.FileSwitchManager.setCurrentDirectory(self.mediadirectory)
             self.saveMediaBrowseSettings()
             self._syncplayClient._player.openFile(fileName)
 
@@ -785,7 +915,7 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient.changeReadyState(self.readyPushButton.isChecked())
         else:
             self.showDebugMessage("Tried to change ready state too soon.")
-        
+
     @needsClient
     def changeAutoplayThreshold(self, source=None):
         self._syncplayClient.changeAutoPlayThrehsold(self.autoplayThresholdSpinbox.value())
@@ -931,6 +1061,9 @@ class MainWindow(QtGui.QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
+        FileSwitchManager = self.FileSwitchManager()
+        FileSwitchManager.setWindow(self)
+        self.newWatchlist = []
         self.publicServerList = []
         self.lastCheckedForUpdates = None
         self._syncplayClient = None
