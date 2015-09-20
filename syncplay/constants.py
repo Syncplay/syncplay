@@ -142,7 +142,7 @@ USERLIST_GUI_USERNAME_COLUMN = 0
 USERLIST_GUI_FILENAME_COLUMN = 3
 
 MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4', '-af-add', 'scaletempo']
-MPV_ARGS = ['--force-window', '--idle', '--hr-seek=always', '--keep-open', '--af-add=scaletempo', '--demuxer-mkv-probe-video-duration=yes']
+MPV_ARGS = ['--force-window', '--idle', '--hr-seek=always', '--keep-open', '--af-add=scaletempo']
 MPV_SLAVE_ARGS = ['--quiet', '--input-terminal=no', '--input-file=/dev/stdin']
 MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=length}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
 MPV_NEW_VERSION = False
