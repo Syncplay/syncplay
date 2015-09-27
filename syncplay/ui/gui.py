@@ -10,7 +10,7 @@ import re
 import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from functools import wraps
-from twisted.internet import task
+from twisted.internet import task, threads
 import threading
 lastCheckedForUpdates = None
 
@@ -89,8 +89,6 @@ class MainWindow(QtGui.QMainWindow):
         def __init__(self):
             self.fileSwitchTimer = task.LoopingCall(self.updateInfo)
             self.fileSwitchTimer.start(constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL, True)
-            self.fileCheckTimer = task.LoopingCall(self.checkForUpdate)
-            self.fileCheckTimer.start(constants.MEDIA_CACHE_CHECK_INTERVAL, True)
 
         mediaFilesCache = {}
         filenameWatchlist = []
@@ -123,7 +121,7 @@ class MainWindow(QtGui.QMainWindow):
             MainWindow.FileSwitchManager.updateInfo()
 
         @staticmethod
-        def checkForUpdate():
+        def checkForUpdate(self=None):
             if MainWindow.FileSwitchManager.newInfo:
                 MainWindow.FileSwitchManager.newInfo = False
                 MainWindow.FileSwitchManager.infoUpdated()
@@ -131,9 +129,7 @@ class MainWindow(QtGui.QMainWindow):
         @staticmethod
         def updateInfo():
             if len(MainWindow.FileSwitchManager.filenameWatchlist) > 0 or len(MainWindow.FileSwitchManager.mediaFilesCache) == 0 and MainWindow.FileSwitchManager.currentlyUpdating == False:
-                newThread = threading.Thread(target=MainWindow.FileSwitchManager._updateInfoThread)
-                newThread.setDaemon(True)
-                newThread.start()
+                threads.deferToThread(MainWindow.FileSwitchManager._updateInfoThread).addCallback(MainWindow.FileSwitchManager.checkForUpdate)
 
         @staticmethod
         def setFilenameWatchlist(unfoundFilenames):
