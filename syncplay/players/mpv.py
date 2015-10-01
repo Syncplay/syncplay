@@ -106,6 +106,14 @@ class OldMpvPlayer(MpvPlayer):
 
 class NewMpvPlayer(OldMpvPlayer):
     lastResetTime = None
+    lastMPVPositionUpdate = None
+
+    def setPaused(self, value):
+        if self._paused <> value:
+            self._paused = not self._paused
+            self._listener.sendLine('cycle pause')
+            if value == False:
+                self.lastMPVPositionUpdate = time.time()
 
     def _getProperty(self, property_):
         floatProperties = ['length','time-pos']
@@ -115,7 +123,21 @@ class NewMpvPlayer(OldMpvPlayer):
             propertyID = property_
         self._listener.sendLine(u"print_text ""ANS_{}=${{{}}}""".format(property_, propertyID))
 
+    def getCalculatedPosition(self):
+        if self.lastMPVPositionUpdate is None:
+            return self._client.getGlobalPosition()
+        diff = time.time() - self.lastMPVPositionUpdate
+        if diff > constants.MPV_UNRESPONSIVE_THRESHOLD:
+            self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("mpv-unresponsive-error").format(int(diff)), True)
+            self.drop()
+        if diff > constants.PLAYER_ASK_DELAY and not self._paused:
+            self._client.ui.showDebugMessage("mpv did not response in time, so assuming position is {} ({}+{})".format(self._position + diff, self._position, diff))
+            return self._position + diff
+        else:
+            return self._position
+
     def _storePosition(self, value):
+        self.lastMPVPositionUpdate = time.time()
         if self._recentlyReset():
             self._position = 0
         elif self._fileIsLoaded():
@@ -136,7 +158,7 @@ class NewMpvPlayer(OldMpvPlayer):
         self._getPosition()
         self._positionAsk.wait(constants.MPV_LOCK_WAIT_TIME)
         self._pausedAsk.wait(constants.MPV_LOCK_WAIT_TIME)
-        self._client.updatePlayerStatus(self._paused, self._position)
+        self._client.updatePlayerStatus(self._paused, self.getCalculatedPosition())
 
     def _preparePlayer(self):
         if self.delayedFilePath:
@@ -151,6 +173,10 @@ class NewMpvPlayer(OldMpvPlayer):
     def _loadFile(self, filePath):
         self._clearFileLoaded()
         self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
+
+    def setPosition(self, value):
+        super(self.__class__, self).setPosition(value)
+        self.lastMPVPositionUpdate = time.time()
 
     def openFile(self, filePath, resetPosition=False):
         if resetPosition:
