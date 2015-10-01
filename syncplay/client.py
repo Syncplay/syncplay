@@ -113,6 +113,9 @@ class SyncplayClient(object):
         self.autoplayTimer = task.LoopingCall(self.autoplayCountdown)
         self.autoplayTimeLeft = constants.AUTOPLAY_DELAY
 
+        self._playlist = []
+        self._playlistIndex = None
+
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
             paths = "; ".join(self._config['loadedRelativePaths'])
@@ -156,9 +159,6 @@ class SyncplayClient(object):
             return False
         return True
 
-    def playlistUpdate(self, newPlaylist):
-        print newPlaylist
-
     def _determinePlayerStateChange(self, paused, position):
         pauseChange = self.getPlayerPaused() != paused and self.getGlobalPaused() != paused
         _playerDiff = abs(self.getPlayerPosition() - position)
@@ -171,6 +171,7 @@ class SyncplayClient(object):
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
         self._playerPosition = position
         self._playerPaused = paused
+        # TODO: if position +- 1s of the end of a file AND has next file in playlist -> rewind to 0 and switch file
         if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
             if not self.userlist.currentUser.canControl():
                 self._player.setPaused(self._globalPaused)
@@ -409,6 +410,37 @@ class SyncplayClient(object):
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
+
+        # TODO: execute changeToPlaylistIndex if file found in playlist
+
+    def changeToPlaylistIndex(self, index, username = None):
+        if self._playlistIndex == index:
+            return
+        self._playlistIndex = index
+        if username is None and self._protocol and self._protocol.logged:
+            self._protocol.setPlaylistIndex(index)
+        elif username != self.getUsername():
+            # TODO: Display info about playlist file change
+
+            if index in self._playlist:
+                filename = self._playlist[index]
+                # TODO: Find Path
+                path = 'https://www.youtube.com/watch?v=0iXX5h6Hxxs'
+                if path:
+                    self._player.openFile(path)
+                else:
+                    # TODO: Notify user about file not found
+                    pass
+
+    def changePlaylist(self, files, username = None):
+        self._playlist = files
+
+        if username is None and self._protocol and self._protocol.logged:
+            self._protocol.setPlaylist(files)
+        elif username != self.getUsername():
+            pass
+            # TODO: Display info about playlist change
+            # TODO: Update UI with new playlist
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:

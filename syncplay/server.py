@@ -72,8 +72,12 @@ class SyncFactory(Factory):
             self.sendJoinMessage(watcher)
         else:
             self.sendRoomSwitchMessage(watcher)
+
+        room = watcher.getRoom()
+        watcher.setPlaylist(room.getSetBy().getName(), room.getPlaylist())
+        watcher.setPlaylistIndex(room.getSetBy().getName(), room.getPlaylistIndex())
         if RoomPasswordProvider.isControlledRoom(roomName):
-            for controller in watcher.getRoom().getControllers():
+            for controller in room.getControllers():
                 watcher.sendControlledRoomAuthStatus(True, controller, roomName)
 
     def sendRoomSwitchMessage(self, watcher):
@@ -131,6 +135,14 @@ class SyncFactory(Factory):
     def setReady(self, watcher, isReady, manuallyInitiated=True):
         watcher.setReady(isReady)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), manuallyInitiated))
+
+    def setPlaylist(self, watcher, files):
+        watcher.getRoom().setPlaylist(files, watcher)
+        self._roomManager.broadcastRoom(watcher, lambda w: w.setPlaylist(watcher.getName(), files))
+
+    def setPlaylistIndex(self, watcher, index):
+        watcher.getRoom().setPlaylistIndex(index, watcher)
+        self._roomManager.broadcastRoom(watcher, lambda w: w.setPlaylistIndex(watcher.getName(), index))
 
 class RoomManager(object):
     def __init__(self):
@@ -214,6 +226,8 @@ class Room(object):
         self._watchers = {}
         self._playState = self.STATE_PAUSED
         self._setBy = None
+        self._playlist = []
+        self._playlistIndex = None
 
     def __str__(self, *args, **kwargs):
         return self.getName()
@@ -268,6 +282,18 @@ class Room(object):
     def canControl(self, watcher):
         return True
 
+    def setPlaylist(self, files, setBy=None):
+        self._playlist = files
+
+    def setPlaylistIndex(self, index, setBy=None):
+        self._playlistIndex = index
+
+    def getPlaylist(self):
+        return self._playlist
+
+    def getPlaylistIndex(self):
+        return self._playlistIndex
+
 class ControlledRoom(Room):
     def __init__(self, name):
         Room.__init__(self, name)
@@ -296,6 +322,14 @@ class ControlledRoom(Room):
     def setPosition(self, position, setBy=None):
         if self.canControl(setBy):
             Room.setPosition(self, position, setBy)
+
+    def setPlaylist(self, files, setBy=None):
+        if self.canControl(setBy):
+            self._playlist = files
+
+    def setPlaylistIndex(self, index, setBy=None):
+        if self.canControl(setBy):
+            self._playlistIndex = index
 
     def canControl(self, watcher):
         return watcher.getName() in self._controllers
@@ -369,6 +403,12 @@ class Watcher(object):
 
     def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self._connector.sendSetReady(username, isReady, manuallyInitiated)
+
+    def setPlaylistIndex(self, username, index):
+         self._connector.setPlaylistIndex(username, index)
+
+    def setPlaylist(self, username, files):
+        self._connector.setPlaylist(username, files)
 
     def __lt__(self, b):
         if self.getPosition() is None or self._file is None:

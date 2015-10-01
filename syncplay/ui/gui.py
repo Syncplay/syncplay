@@ -807,7 +807,7 @@ class MainWindow(QtGui.QMainWindow):
         newPlaylist = self.getPlaylistState()
         if newPlaylist <> self.playlistState and self._syncplayClient:
             self.playlistState = newPlaylist
-            self._syncplayClient.playlistUpdate(newPlaylist)
+            self._syncplayClient.changePlaylist(newPlaylist)
 
     def addTopLayout(self, window):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)
