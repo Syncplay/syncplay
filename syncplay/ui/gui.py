@@ -87,6 +87,7 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
 class MainWindow(QtGui.QMainWindow):
     insertPosition = None
     playlistState = []
+    blockPlaylistUpdateNotifications = False
 
     def setPlaylistInsertPosition(self, newPosition):
         if MainWindow.insertPosition <> newPosition:
@@ -802,7 +803,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def playlistUpdated(self):
         newPlaylist = self.getPlaylistState()
-        if newPlaylist <> self.playlistState and self._syncplayClient:
+        if newPlaylist <> self.playlistState and self._syncplayClient and not self.blockPlaylistUpdateNotifications:
             self.playlistState = newPlaylist
             self._syncplayClient.changePlaylist(newPlaylist)
 
@@ -1206,6 +1207,14 @@ class MainWindow(QtGui.QMainWindow):
                 self._syncplayClient.setPosition(0)
                 self._syncplayClient._player.openFile(dropfilepath, resetPosition=True)
                 self._syncplayClient.setPosition(0)
+
+    def setPlaylist(self, newPlaylist):
+        if newPlaylist == [] and not self.clearedPlaylistNote:
+            return
+        self.blockPlaylistUpdateNotifications = True
+        self.playlist.clear()
+        self.playlist.insertItems(0, newPlaylist)
+        self.blockPlaylistUpdateNotifications = False
 
     def addFileToPlaylist(self, filePath, index = -1):
         if os.path.isfile(filePath):

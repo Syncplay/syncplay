@@ -22,6 +22,9 @@ class ConsoleUI(threading.Thread):
         
     def drop(self):
         pass
+
+    def setPlaylist(self, newPlaylist):
+        pass
     
     def run(self):
         try:

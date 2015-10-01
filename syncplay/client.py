@@ -445,9 +445,8 @@ class SyncplayClient(object):
         if username is None and self._protocol and self._protocol.logged:
             self._protocol.setPlaylist(files)
         elif username != self.getUsername():
-            pass
-            # TODO: Display info about playlist change
-            # TODO: Update UI with new playlist
+            self.ui.setPlaylist(self._playlist)
+            self.ui.showMessage(u"{} updated the playlist".format(username))
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
@@ -1196,6 +1195,9 @@ class UiManager(object):
         self.lastSecondaryOSDMessage = None
         self.lastSecondaryOSDEndTime = None
         self.lastError = ""
+
+    def setPlaylist(self, newPlaylist):
+        self.__ui.setPlaylist(newPlaylist)
 
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():
