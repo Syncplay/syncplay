@@ -146,6 +146,7 @@ class MainWindow(QtGui.QMainWindow):
                         window.addFolderToPlaylist(dropfilepath)
             else:
                 super(MainWindow.PlaylistWidget, self).dropEvent(event)
+            window.playlistUpdated()
 
     class PlaylistWidget(QtGui.QListWidget):
         selfWindow = None
@@ -160,11 +161,6 @@ class MainWindow(QtGui.QMainWindow):
         def rowsMoved(self, sourceParent, sourceStart, sourceEnd, destinationParent, destinationRow):
             if self.selfWindow:
                 super(MainWindow.PlaylistWidget, self).rowsMoved(sourceParent, sourceStart, sourceEnd, destinationParent, destinationRow)
-                self.selfWindow.playlistUpdated()
-
-        def rowsInserted(self, parent, start, end):
-            if self.selfWindow:
-                super(MainWindow.PlaylistWidget, self).rowsInserted(parent, start, end)
                 self.selfWindow.playlistUpdated()
 
         def rowsRemoved(self, parent, start, end):
@@ -207,6 +203,7 @@ class MainWindow(QtGui.QMainWindow):
                 window.setPlaylistInsertPosition(indexRow)
             else:
                 super(MainWindow.PlaylistWidget, self).dragMoveEvent(event)
+            self.selfWindow.playlistUpdated()
 
         def dropEvent(self, event):
             window = self.parent().parent().parent().parent().parent().parent()
