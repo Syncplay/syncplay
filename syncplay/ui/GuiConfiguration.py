@@ -1,8 +1,9 @@
 from PySide import QtCore, QtGui
 from PySide.QtCore import QSettings, Qt, QCoreApplication, QUrl
-from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton, QDoubleSpinBox
+from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
 from syncplay.players.playerFactory import PlayerFactory
 from datetime import datetime
+from syncplay import utils
 import os
 import sys
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
@@ -45,6 +46,7 @@ class ConfigDialog(QtGui.QDialog):
                 self.automaticupdatesCheckbox.setChecked(False)
 
     def moreToggled(self):
+        self.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         if self.moreToggling == False:
             self.moreToggling = True
 
@@ -52,16 +54,24 @@ class ConfigDialog(QtGui.QDialog):
                 self.tabListFrame.show()
                 self.resetButton.show()
                 self.nostoreCheckbox.show()
+                self.playerargsTextbox.show()
+                self.playerargsLabel.show()
                 self.saveMoreState(True)
                 self.tabListWidget.setCurrentRow(0)
                 self.ensureTabListIsVisible()
+                self.stackedFrame.setFixedHeight(self.stackedFrame.minimumSizeHint().height())
             else:
                 self.tabListFrame.hide()
                 self.resetButton.hide()
                 self.nostoreCheckbox.hide()
+                self.playerargsTextbox.hide()
+                self.playerargsLabel.hide()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
-
+                newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
+                if self.error:
+                    newHeight += self.errorLabel.height()+3
+                self.stackedFrame.setFixedHeight(newHeight)
             self.adjustSize()
             self.setFixedSize(self.sizeHint())
         self.moreToggling = False
@@ -77,15 +87,8 @@ class ConfigDialog(QtGui.QDialog):
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
 
-    def _isURL(self, path):
-        if path is None:
-            return False
-
-        if "http://" in path:
-            return True
-
     def safenormcaseandpath(self, path):
-        if self._isURL(path):
+        if utils.isURL(path):
             return path
         else:
             return os.path.normcase(os.path.normpath(path))
@@ -104,7 +107,7 @@ class ConfigDialog(QtGui.QDialog):
         foundpath = ""
 
         if playerpath != None and playerpath != "":
-            if self._isURL(playerpath):
+            if utils.isURL(playerpath):
                 foundpath = playerpath
                 self.executablepathCombobox.addItem(foundpath)
 
@@ -119,7 +122,7 @@ class ConfigDialog(QtGui.QDialog):
                     self.executablepathCombobox.addItem(foundpath)
 
         for path in playerpathlist:
-            if self._isURL(path):
+            if utils.isURL(path):
                 if foundpath == "":
                     foundpath = path
                 if path != playerpath:
@@ -145,6 +148,20 @@ class ConfigDialog(QtGui.QDialog):
             self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(self.executableiconImage))
         else:
             self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(QtGui.QImage()))
+        self.updatePlayerArguments(currentplayerpath)
+
+    def updatePlayerArguments(self, currentplayerpath):
+        argumentsForPath = utils.getPlayerArgumentsByPathAsText(self.perPlayerArgs, currentplayerpath)
+        self.playerargsTextbox.blockSignals(True)
+        self.playerargsTextbox.setText(argumentsForPath)
+        self.playerargsTextbox.blockSignals(False)
+
+    def changedPlayerArgs(self):
+        currentplayerpath = self.executablepathCombobox.currentText()
+
+        if currentplayerpath:
+            NewPlayerArgs = self.playerargsTextbox.text().split(u" ") if self.playerargsTextbox.text() else ""
+            self.perPlayerArgs[self.executablepathCombobox.currentText()]=NewPlayerArgs
 
     def languageChanged(self):
         setLanguage(unicode(self.languageCombobox.itemData(self.languageCombobox.currentIndex())))
@@ -188,6 +205,11 @@ class ConfigDialog(QtGui.QDialog):
             else:
                 self.config["lastCheckedForUpdates"] = str(self.lastCheckedForUpdates)
 
+    def loadSavedPublicServerList(self):
+        settings = QSettings("Syncplay", "Interface")
+        settings.beginGroup("PublicServerList")
+        self.publicServers = settings.value("publicServers", None)
+
     def loadMediaBrowseSettings(self):
         settings = QSettings("Syncplay", "MediaBrowseDialog")
         settings.beginGroup("MediaBrowseDialog")
@@ -216,10 +238,34 @@ class ConfigDialog(QtGui.QDialog):
         settings.setValue("ShowMoreSettings", morestate)
         settings.endGroup()
 
+    def updateServerList(self):
+        try:
+            servers = utils.getListOfPublicServers()
+        except IOError as e:
+            self.showErrorMessage(unicode(e))
+            return
+        currentServer = self.hostCombobox.currentText()
+        self.hostCombobox.clear()
+        if servers:
+            i = 0
+            for server in servers:
+                self.hostCombobox.addItem(server[1])
+                self.hostCombobox.setItemData(i, server[0], Qt.ToolTipRole)
+                i += 1
+            settings = QSettings("Syncplay", "Interface")
+            settings.beginGroup("PublicServerList")
+            settings.setValue("publicServers", servers)
+        self.hostCombobox.setEditText(currentServer)
+
+    def showErrorMessage(self, errorMessage):
+        QtGui.QMessageBox.warning(self, "Syncplay", errorMessage)
+
     def browseMediapath(self):
         self.loadMediaBrowseSettings()
         options = QtGui.QFileDialog.Options()
-        if os.path.isdir(self.mediadirectory):
+        if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
+            defaultdirectory = self.config["mediaSearchDirectories"][0]
+        elif os.path.isdir(self.mediadirectory):
             defaultdirectory = self.mediadirectory
         elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)):
             defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)
@@ -239,9 +285,12 @@ class ConfigDialog(QtGui.QDialog):
         self.automaticUpdatePromptCheck()
         self.loadLastUpdateCheckDate()
 
+        self.config["perPlayerArguments"] = self.perPlayerArgs
+        self.config["mediaSearchDirectories"] = utils.convertMultilineStringToList(self.mediasearchTextEdit.toPlainText())
+
         self.processWidget(self, lambda w: self.saveValues(w))
-        if self.hostTextbox.text():
-            self.config['host'] = self.hostTextbox.text() if ":" in self.hostTextbox.text() else self.hostTextbox.text() + ":" + unicode(constants.DEFAULT_PORT)
+        if self.hostCombobox.currentText():
+            self.config['host'] = self.hostCombobox.currentText() if ":" in self.hostCombobox.currentText() else self.hostCombobox.currentText() + ":" + unicode(constants.DEFAULT_PORT)
         else:
             self.config['host'] = None
         self.config['playerPath'] = unicode(self.safenormcaseandpath(self.executablepathCombobox.currentText()))
@@ -361,6 +410,7 @@ class ConfigDialog(QtGui.QDialog):
         error = self.error
         if self.datacleared == True:
             error = constants.ERROR_MESSAGE_MARKER + "{}".format(getMessage("gui-data-cleared-notification"))
+            self.error = error
         if config['host'] == None:
             host = ""
         elif ":" in config['host']:
@@ -368,10 +418,27 @@ class ConfigDialog(QtGui.QDialog):
         else:
             host = config['host'] + ":" + str(config['port'])
 
+        self.perPlayerArgs = self.config["perPlayerArguments"]
+        self.mediaSearchDirectories = self.config["mediaSearchDirectories"]
+
         self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
-        self.hostTextbox = QLineEdit(host, self)
+        self.loadSavedPublicServerList()
+        self.hostCombobox = QtGui.QComboBox(self)
+        if self.publicServers:
+            i = 0
+            for publicServer in self.publicServers:
+                self.hostCombobox.addItem(publicServer[1])
+                self.hostCombobox.setItemData(i, publicServer[0], Qt.ToolTipRole)
+                i += 1
+        self.hostCombobox.setEditable(True)
+        self.hostCombobox.setEditText(host)
+        self.hostCombobox.setFixedWidth(165)
         self.hostLabel = QLabel(getMessage("host-label"), self)
+        self.findServerButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'arrow_refresh.png'), getMessage("update-server-list-label"))
+        self.findServerButton.clicked.connect(self.updateServerList)
+        self.findServerButton.setToolTip(getMessage("update-server-list-tooltip"))
         self.usernameTextbox = QLineEdit(self)
+
         self.usernameTextbox.setObjectName("name")
         self.serverpassLabel = QLabel(getMessage("password-label"), self)
         self.defaultroomTextbox = QLineEdit(self)
@@ -380,7 +447,7 @@ class ConfigDialog(QtGui.QDialog):
         self.defaultroomLabel = QLabel(getMessage("room-label"), self)
 
         self.hostLabel.setObjectName("host")
-        self.hostTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "host")
+        self.hostCombobox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "host")
         self.usernameLabel.setObjectName("name")
         self.usernameTextbox.setObjectName("name")
         self.serverpassLabel.setObjectName("password")
@@ -390,15 +457,20 @@ class ConfigDialog(QtGui.QDialog):
 
         self.connectionSettingsLayout = QtGui.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
-        self.connectionSettingsLayout.addWidget(self.hostTextbox, 0, 1)
+        self.connectionSettingsLayout.addWidget(self.hostCombobox, 0, 1)
+        self.connectionSettingsLayout.addWidget(self.findServerButton, 0, 2)
         self.connectionSettingsLayout.addWidget(self.serverpassLabel, 1, 0)
-        self.connectionSettingsLayout.addWidget(self.serverpassTextbox, 1, 1)
+        self.connectionSettingsLayout.addWidget(self.serverpassTextbox, 1, 1, 1, 2)
         self.connectionSettingsLayout.addWidget(self.usernameLabel, 2, 0)
-        self.connectionSettingsLayout.addWidget(self.usernameTextbox, 2, 1)
+        self.connectionSettingsLayout.addWidget(self.usernameTextbox, 2, 1, 1, 2)
         self.connectionSettingsLayout.addWidget(self.defaultroomLabel, 3, 0)
-        self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
+        self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1, 1, 2)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
         self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
+
+        self.playerargsTextbox = QLineEdit("", self)
+        self.playerargsTextbox.textEdited.connect(self.changedPlayerArgs)
+        self.playerargsLabel = QLabel(getMessage("player-arguments-label"), self)
 
         self.mediaplayerSettingsGroup = QtGui.QGroupBox(getMessage("media-setting-title"))
         self.executableiconImage = QtGui.QImage()
@@ -423,6 +495,8 @@ class ConfigDialog(QtGui.QDialog):
         self.executablepathCombobox.setObjectName("executable-path")
         self.mediapathLabel.setObjectName("media-path")
         self.mediapathTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "media-path")
+        self.playerargsLabel.setObjectName("player-arguments")
+        self.playerargsTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "player-arguments")
 
         self.mediaplayerSettingsLayout = QtGui.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
@@ -432,6 +506,8 @@ class ConfigDialog(QtGui.QDialog):
         self.mediaplayerSettingsLayout.addWidget(self.mediapathLabel, 1, 0)
         self.mediaplayerSettingsLayout.addWidget(self.mediapathTextbox , 1, 2)
         self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton , 1, 3)
+        self.mediaplayerSettingsLayout.addWidget(self.playerargsLabel, 2, 0, 1, 2)
+        self.mediaplayerSettingsLayout.addWidget(self.playerargsTextbox, 2, 2, 1, 2)
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
 
         self.showmoreCheckbox = QCheckBox(getMessage("more-title"))
@@ -448,15 +524,13 @@ class ConfigDialog(QtGui.QDialog):
                 self.errorLabel.setStyleSheet(constants.STYLE_SUCCESSLABEL)
             self.errorLabel.setText(error)
             self.errorLabel.setAlignment(Qt.AlignCenter)
-
             self.basicOptionsLayout.addWidget(self.errorLabel, 0, 0)
         self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.setAlignment(Qt.AlignTop)
         self.basicOptionsLayout.addWidget(self.connectionSettingsGroup)
         self.basicOptionsLayout.addSpacing(5)
-        self.mediaplayerSettingsGroup.setMaximumHeight(self.mediaplayerSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.addWidget(self.mediaplayerSettingsGroup)
-
+        self.basicOptionsFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.basicOptionsFrame.setLayout(self.basicOptionsLayout)
         self.stackedLayout.addWidget(self.basicOptionsFrame)
 
@@ -575,8 +649,21 @@ class ConfigDialog(QtGui.QDialog):
         self.automaticupdatesCheckbox.setObjectName("checkForUpdatesAutomatically")
         self.internalSettingsLayout.addWidget(self.automaticupdatesCheckbox)
 
+        ## Media path directories
+
+        self.mediasearchSettingsGroup = QtGui.QGroupBox(getMessage("syncplay-mediasearchdirectories-title"))
+        self.mediasearchSettingsLayout = QtGui.QVBoxLayout()
+        self.mediasearchSettingsGroup.setLayout(self.mediasearchSettingsLayout)
+
+        self.mediasearchTextEdit = QPlainTextEdit(utils.getListAsMultilineString(self.mediaSearchDirectories))
+        self.mediasearchTextEdit.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "mediasearcdirectories-arguments")
+        self.mediasearchTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.mediasearchSettingsLayout.addWidget(self.mediasearchTextEdit)
+        self.mediasearchSettingsGroup.setMaximumHeight(self.mediasearchSettingsGroup.minimumSizeHint().height())
+
         self.miscLayout.addWidget(self.coreSettingsGroup)
         self.miscLayout.addWidget(self.internalSettingsGroup)
+        self.miscLayout.addWidget(self.mediasearchSettingsGroup)
         self.miscLayout.setAlignment(Qt.AlignTop)
         self.stackedLayout.addWidget(self.miscFrame)
 
@@ -814,20 +901,37 @@ class ConfigDialog(QtGui.QDialog):
         settings.beginGroup("Update")
         settings.setValue("lastChecked", None)
         settings.endGroup()
+        settings.beginGroup("PublicServerList")
+        settings.setValue("publicServers", None)
+        settings.endGroup()
         if not leaveMore:
             settings = QSettings("Syncplay", "MoreSettings")
             settings.clear()
         self.datacleared = True
-
+    
+    def populateEmptyServerList(self):
+        if self.publicServers is None:
+            if self.config["checkForUpdatesAutomatically"] == True:
+                self.updateServerList()
+            else:
+                currentServer = self.hostCombobox.currentText()
+                self.publicServers = constants.FALLBACK_PUBLIC_SYNCPLAY_SERVERS
+                i = 0
+                for server in self.publicServers:
+                    self.hostCombobox.addItem(server[1])
+                    self.hostCombobox.setItemData(i, server[0], Qt.ToolTipRole)
+                    i += 1
+                self.hostCombobox.setEditText(currentServer)
+        
     def __init__(self, config, playerpaths, error, defaultConfig):
 
-        from syncplay import utils
         self.config = config
         self.defaultConfig = defaultConfig
         self.playerpaths = playerpaths
         self.datacleared = False
         self.config['resetConfig'] = False
         self.subitems = {}
+        self.publicServers = None
 
         if self.config['clearGUIData'] == True:
             self.config['clearGUIData'] = False
@@ -866,14 +970,20 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addWidget(self.stackedFrame, 0, 1)
         self.addBottomLayout()
 
-
         if self.getMoreState() == False:
             self.tabListFrame.hide()
             self.nostoreCheckbox.hide()
             self.resetButton.hide()
+            self.playerargsTextbox.hide()
+            self.playerargsLabel.hide()
+            newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
+            if self.error:
+                newHeight +=self.errorLabel.height()+3
+            self.stackedFrame.setFixedHeight(newHeight)
         else:
             self.showmoreCheckbox.setChecked(True)
             self.tabListWidget.setCurrentRow(0)
+            self.stackedFrame.setFixedHeight(self.stackedFrame.minimumSizeHint().height())
 
         self.showmoreCheckbox.toggled.connect(self.moreToggled)
 
@@ -886,3 +996,4 @@ class ConfigDialog(QtGui.QDialog):
             self.processWidget(self, lambda w: self.loadTooltips(w))
         self.processWidget(self, lambda w: self.loadValues(w))
         self.processWidget(self, lambda w: self.connectChildren(w))
+        self.populateEmptyServerList()

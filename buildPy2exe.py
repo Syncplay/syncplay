@@ -653,7 +653,8 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/chevrons_right.png',
      'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',
      'resources/tick.png', 'resources/lock_open.png', 'resources/empty_checkbox.png', 'resources/tick_checkbox.png',
-     'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png'
+     'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png',
+     'resources/film_go.png', 'resources/world_go.png', 'resources/arrow_refresh.png'
     ]
 resources = ["resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)
@@ -676,7 +677,7 @@ info = dict(
     options={'py2exe': {
                          'dist_dir': OUT_DIR,
                          'packages': 'PySide.QtUiTools',
-                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide, liburl',
+                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide, liburl, ast',
                          'excludes': 'venv, _ssl, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
                          'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
                          'optimize': 2,

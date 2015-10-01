@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb
  Project: http://syncplay.pl/
- Version: 0.2.6
+ Version: 0.2.8
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -84,7 +84,7 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 --]==========================================================================]
 
-local connectorversion = "0.2.6"
+local connectorversion = "0.2.8"
 local vlcversion = vlc.misc.version()
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
 local loopsleepduration = 2500 -- Pause for every event loop (uses microseconds)
@@ -329,8 +329,10 @@ function get_filepath ()
                      response = ":::DVD:::"
                 else
                      local metas = item:metas()
-                     if metas and metas["title"] and string.len(metas["title"]) > 0 then
-                          response = ":::(Stream: "..metas["title"]..")"
+                     if metas and metas["url"] and string.len(metas["url"]) > 0 then
+                          response = metas["url"]
+                     elseif item:uri() and string.len(item:uri()) > 0 then
+                          response = item:uri()
                      else
                           response = unknownstream
                      end

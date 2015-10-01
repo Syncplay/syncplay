@@ -1,4 +1,4 @@
-version = '1.3.1'
+version = '1.3.4'
 milestone = 'Chami'
-release_number = '10'
+release_number = '21'
 projectURL = 'http://syncplay.pl/'

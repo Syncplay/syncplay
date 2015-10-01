@@ -9,6 +9,10 @@ import itertools
 import hashlib
 import random
 import string
+import urllib
+import ast
+
+folderSearchEnabled = True
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -158,8 +162,11 @@ def blackholeStdoutForFrozenWindow():
 
 # Relate to file hashing / difference checking:
 
-def stripfilename(filename):
+def stripfilename(filename, stripURL):
     if filename:
+        filename = urllib.unquote(filename)
+        if stripURL:
+            filename = filename.split(u"/")[-1]
         return re.sub(constants.FILENAME_STRIP_REGEX, "", filename)
     else:
         return ""
@@ -173,8 +180,8 @@ def stripRoomName(RoomName):
     else:
         return ""
 
-def hashFilename(filename):
-    return hashlib.sha256(stripfilename(filename).encode('utf-8')).hexdigest()[:12]
+def hashFilename(filename, stripURL = False):
+    return hashlib.sha256(stripfilename(filename, stripURL).encode('utf-8')).hexdigest()[:12]
 
 def hashFilesize(size):
     return hashlib.sha256(str(size)).hexdigest()[:12]
@@ -190,9 +197,10 @@ def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
         return True
 
 def sameFilename (filename1, filename2):
+    stripURL = True if isURL(filename1) ^ isURL(filename2) else False
     if filename1 == constants.PRIVACY_HIDDENFILENAME or filename2 == constants.PRIVACY_HIDDENFILENAME:
         return True
-    elif sameHashed(stripfilename(filename1), hashFilename(filename1), stripfilename(filename2), hashFilename(filename2)):
+    elif sameHashed(stripfilename(filename1, stripURL), hashFilename(filename1, stripURL), stripfilename(filename2, stripURL), hashFilename(filename2, stripURL)):
         return True
     else:
         return False
@@ -217,6 +225,47 @@ def meetsMinVersion(version, minVersion):
     def versiontotuple(ver):
         return tuple(map(int, ver.split(".")))
     return versiontotuple(version) >= versiontotuple(minVersion)
+
+def isURL(path):
+    if path is None:
+        return False
+    elif "://" in path:
+        return True
+    else:
+        return False
+
+def getPlayerArgumentsByPathAsArray(arguments, path):
+    if arguments and not isinstance(arguments, (str, unicode)) and arguments.has_key(path):
+        return arguments[path]
+    else:
+        return None
+
+def getPlayerArgumentsByPathAsText(arguments, path):
+    argsToReturn = getPlayerArgumentsByPathAsArray(arguments, path)
+    return " ".join(argsToReturn) if argsToReturn else ""
+
+def getListAsMultilineString(pathArray):
+    return u"\n".join(pathArray) if pathArray else ""
+
+def convertMultilineStringToList(multilineString):
+    return unicode.split(multilineString,u"\n") if multilineString else ""
+
+def getListOfPublicServers():
+    try:
+        import urllib, syncplay, sys, messages, json
+        params = urllib.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
+                                   'language': messages.messages["CURRENT"]})
+        f = urllib.urlopen(constants.SYNCPLAY_PUBLIC_SERVER_LIST_URL.format(params))
+        response = f.read()
+        response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","'").replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","") # Fix Wordpress
+        response = ast.literal_eval(response)
+
+        if response:
+            return response
+        else:
+            raise IOError
+    except:
+        raise IOError(getMessage("failed-to-load-server-list-error"))
 
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
@@ -278,3 +327,4 @@ class RandomStringGenerator(object):
 
 class NotControlledRoom(Exception):
     pass
+

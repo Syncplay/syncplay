@@ -2,6 +2,7 @@ from ConfigParser import SafeConfigParser, DEFAULTSECT
 import argparse
 import os
 import sys
+import ast
 from syncplay import constants, utils, version, milestone
 from syncplay.messages import getMessage, setLanguage, isValidLanguage
 from syncplay.players.playerFactory import PlayerFactory
@@ -31,6 +32,8 @@ class ConfigurationGetter(object):
                         "room": "",
                         "password": None,
                         "playerPath": None,
+                        "perPlayerArguments": None,
+                        "mediaSearchDirectories": None,
                         "file": None,
                         "playerArgs": [],
                         "playerClass": None,
@@ -104,6 +107,11 @@ class ConfigurationGetter(object):
             "autoplayInitialState",
         ]
 
+        self._serialised = [
+            "perPlayerArguments",
+            "mediaSearchDirectories",
+        ]
+
         self._numeric = [
             "slowdownThreshold",
             "rewindThreshold",
@@ -113,7 +121,7 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState"],
+                        "client_settings": ["name", "room", "playerPath", "perPlayerArguments", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState", "mediaSearchDirectories"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showDurationNotification"],
                         "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
                         }
@@ -149,6 +157,12 @@ class ConfigurationGetter(object):
                 self._config[key] = True
             elif self._config[key] == "False":
                 self._config[key] = False
+
+        for key in self._serialised:
+            if self._config[key] is None or self._config[key] == "":
+                self._config[key] = {}
+            elif isinstance(self._config[key], (str, unicode)):
+                self._config[key] = ast.literal_eval(self._config[key])
 
         for key in self._tristate:
             if self._config[key] == "True":

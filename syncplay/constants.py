@@ -16,6 +16,7 @@ SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
 SHOW_TOOLTIPS = True
 WARN_ABOUT_MISSING_STRINGS = False # (If debug mode is enabled)
 FALLBACK_INITIAL_LANGUAGE = "en"
+FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [[u'syncplay.pl:8995 (France)', u'syncplay.pl:8995'],[u'syncplay.pl:8996 (France)', u'syncplay.pl:8996'],[u'syncplay.pl:8997 (France)', u'syncplay.pl:8997'],[u'syncplay.pl:8998 (France)', u'syncplay.pl:8998'],[u'syncplay.pl:8999 (France)', u'syncplay.pl:8999']]
 
 #Overriden by config
 SHOW_OSD = True  # Sends Syncplay messages to media player OSD
@@ -48,6 +49,11 @@ SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
 AUTOPLAY_DELAY = 3.0
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
+
+# Options for the File Switch feature:
+FOLDER_SEARCH_TIMEOUT = 60.0 # Secs - How long to wait until searches in folder to update cache are aborted (may be longer than this if hard drive needs to spin up)
+FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 120.0 # Secs - Frequency of updating cache when someone is playing a file not in current cache
+
 #Usually there's no need to adjust these
 LAST_PAUSED_DIFF_THRESHOLD = 2
 FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
@@ -63,8 +69,9 @@ COMMANDS_AUTH = ['a','auth']
 COMMANDS_TOGGLE = ['t','toggle']
 MPC_MIN_VER = "1.6.4"
 VLC_MIN_VERSION = "2.2.1"
-VLC_INTERFACE_MIN_VERSION = "0.2.6"
+VLC_INTERFACE_MIN_VERSION = "0.2.8"
 VLC_LATENCY_ERROR_THRESHOLD = 2.0
+MPV_UNRESPONSIVE_THRESHOLD = 60.0
 CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
 USER_READY_MIN_VERSION = "1.3.0"
 MPC_PATHS = [
@@ -131,10 +138,12 @@ STYLE_NOFILEITEM_COLOR = 'blue'
 STYLE_NOTCONTROLLER_COLOR = 'grey'
 
 USERLIST_GUI_USERNAME_OFFSET = 21 # Pixels
+USERLIST_GUI_USERNAME_COLUMN = 0
+USERLIST_GUI_FILENAME_COLUMN = 3
 
-MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4', '-af', 'scaletempo']
-# --quiet works with both mpv 0.2 and 0.3
-MPV_SLAVE_ARGS = ['--force-window', '--idle', '--hr-seek=always', '--quiet', '--keep-open', '--af=scaletempo', '--input-terminal=no', '--input-file=/dev/stdin']
+MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4', '-af-add', 'scaletempo']
+MPV_ARGS = ['--force-window', '--idle', '--hr-seek=always', '--keep-open', '--af-add=scaletempo']
+MPV_SLAVE_ARGS = ['--quiet', '--input-terminal=no', '--input-file=/dev/stdin']
 MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=length}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
 MPV_NEW_VERSION = False
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
@@ -163,6 +172,13 @@ CONFIG_NAME_MARKER = ":"
 CONFIG_VALUE_MARKER = "="
 USERITEM_CONTROLLER_ROLE = 0
 USERITEM_READY_ROLE = 1
+FILEITEM_SWITCH_ROLE = 1
+FILEITEM_SWITCH_NO_SWITCH = 0
+FILEITEM_SWITCH_FILE_SWITCH = 1
+FILEITEM_SWITCH_STREAM_SWITCH = 2
 
 SYNCPLAY_UPDATE_URL = u"http://syncplay.pl/checkforupdate?{}" # Params
 SYNCPLAY_DOWNLOAD_URL = "http://syncplay.pl/download/"
+SYNCPLAY_PUBLIC_SERVER_LIST_URL = u"http://syncplay.pl/listpublicservers?{}" # Params
+
+PRIVATE_FILE_FIELDS = ["path"]

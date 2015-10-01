@@ -3,9 +3,11 @@ import os.path
 import time
 import re
 import sys
+import ast
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from functools import wraps
+from copy import deepcopy
 from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants
 from syncplay.messages import getMissingStrings, getMessage
@@ -388,6 +390,9 @@ class SyncplayClient(object):
         return self._globalPaused
 
     def updateFile(self, filename, duration, path):
+        if utils.isURL(path):
+            filename = path
+
         if not path:
             return
         try:
@@ -399,7 +404,7 @@ class SyncplayClient(object):
             except:
                 size = 0
         filename, size = self.__executePrivacySettings(filename, size)
-        self.userlist.currentUser.setFile(filename, duration, size)
+        self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
 
     def __executePrivacySettings(self, filename, size):
@@ -416,8 +421,20 @@ class SyncplayClient(object):
     def setServerVersion(self, version):
         self.serverVersion = version
 
+    def getSanitizedCurrentUserFile(self):
+        if self.userlist.currentUser.file:
+            file_ = deepcopy(self.userlist.currentUser.file)
+            if constants.PRIVATE_FILE_FIELDS:
+                for PrivateField in constants.PRIVATE_FILE_FIELDS:
+                    if file_.has_key(PrivateField):
+                        file_.pop(PrivateField)
+            return file_
+        else:
+            return None
+
+
     def sendFile(self):
-        file_ = self.userlist.currentUser.file
+        file_ = self.getSanitizedCurrentUserFile()
         if self._protocol and self._protocol.logged and file_:
             self._protocol.sendFileSetting(file_)
 
@@ -494,7 +511,10 @@ class SyncplayClient(object):
             return
         self._running = True
         if self._playerClass:
-            reactor.callLater(0.1, self._playerClass.run, self, self._config['playerPath'], self._config['file'], self._config['playerArgs'])
+            perPlayerArguments = utils.getPlayerArgumentsByPathAsArray(self._config['perPlayerArguments'],self._config['playerPath'])
+            if perPlayerArguments:
+                self._config['playerArgs'].extend(perPlayerArguments)
+            reactor.callLater(0.1, self._playerClass.run, self, self._config['playerPath'], self._config['file'], self._config['playerArgs'], )
             self._playerClass = None
         self.protocolFactory = SyncClientFactory(self)
         port = int(port)
@@ -670,9 +690,13 @@ class SyncplayClient(object):
             response = f.read()
             response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","\"").replace("&#8221;","\"") # Fix Wordpress
             response = json.loads(response)
-            return response["version-status"], response["version-message"] if response.has_key("version-message") else None, response["version-url"] if response.has_key("version-url") else None
+            publicServers = None
+            if response["public-servers"]:
+                publicServers = response["public-servers"].replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","")
+                publicServers = ast.literal_eval(publicServers)
+            return response["version-status"], response["version-message"] if response.has_key("version-message") else None, response["version-url"] if response.has_key("version-url") else None, publicServers
         except:
-            return "failed", getMessage("update-check-failed-notification").format(syncplay.version), constants.SYNCPLAY_DOWNLOAD_URL
+            return "failed", getMessage("update-check-failed-notification").format(syncplay.version), constants.SYNCPLAY_DOWNLOAD_URL, None
 
     class _WarningManager(object):
         def __init__(self, player, userlist, ui, client):
@@ -796,11 +820,12 @@ class SyncplayUser(object):
         self.file = file_
         self._controller = False
 
-    def setFile(self, filename, duration, size):
+    def setFile(self, filename, duration, size, path=None):
         file_ = {
             "name": filename,
             "duration": duration,
-            "size": size
+            "size": size,
+            "path": path
         }
         self.file = file_
 
