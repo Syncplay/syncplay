@@ -411,7 +411,13 @@ class SyncplayClient(object):
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
 
-        # TODO: execute changeToPlaylistIndex if file found in playlist
+        # TODO: Fix for GUIDS
+        try:
+            index = self._playlist.index(filename)
+            self.changeToPlaylistIndex(index)
+        except ValueError:
+            pass
+
 
     def changeToPlaylistIndex(self, index, username = None):
         if self._playlistIndex == index:
@@ -421,8 +427,7 @@ class SyncplayClient(object):
             self._protocol.setPlaylistIndex(index)
         elif username != self.getUsername():
             # TODO: Display info about playlist file change
-
-            if index in self._playlist:
+            try:
                 filename = self._playlist[index]
                 # TODO: Find Path
                 path = 'https://www.youtube.com/watch?v=0iXX5h6Hxxs'
@@ -431,6 +436,8 @@ class SyncplayClient(object):
                 else:
                     # TODO: Notify user about file not found
                     pass
+            except IndexError:
+                pass
 
     def changePlaylist(self, files, username = None):
         self._playlist = files
