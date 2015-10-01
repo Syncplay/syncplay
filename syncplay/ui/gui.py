@@ -86,6 +86,7 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
 
 class MainWindow(QtGui.QMainWindow):
     insertPosition = None
+    playlistState = []
 
     def setPlaylistInsertPosition(self, newPosition):
         if MainWindow.insertPosition <> newPosition:
@@ -111,6 +112,7 @@ class MainWindow(QtGui.QMainWindow):
             itemQPainter.restore()
 
     class PlaylistGroupBox(QtGui.QGroupBox):
+
         def dragEnterEvent(self, event):
             data = event.mimeData()
             urls = data.urls()
@@ -146,9 +148,29 @@ class MainWindow(QtGui.QMainWindow):
                 super(MainWindow.PlaylistWidget, self).dropEvent(event)
 
     class PlaylistWidget(QtGui.QListWidget):
+        selfWindow = None
+
+        def setWindow(self, window):
+            self.selfWindow = window
+
         def dragLeaveEvent(self, event):
             window = self.parent().parent().parent().parent().parent().parent()
             window.setPlaylistInsertPosition(None)
+
+        def rowsMoved(self, sourceParent, sourceStart, sourceEnd, destinationParent, destinationRow):
+            if self.selfWindow:
+                super(MainWindow.PlaylistWidget, self).rowsMoved(sourceParent, sourceStart, sourceEnd, destinationParent, destinationRow)
+                self.selfWindow.playlistUpdated()
+
+        def rowsInserted(self, parent, start, end):
+            if self.selfWindow:
+                super(MainWindow.PlaylistWidget, self).rowsInserted(parent, start, end)
+                self.selfWindow.playlistUpdated()
+
+        def rowsRemoved(self, parent, start, end):
+            if self.selfWindow:
+                super(MainWindow.PlaylistWidget, self).rowsRemoved(parent, start, end)
+                self.selfWindow.playlistUpdated()
 
         def forceUpdate(self):
             root = self.rootIndex()
@@ -163,6 +185,7 @@ class MainWindow(QtGui.QMainWindow):
         def _remove_selected_items(self):
             for item in self.selectedItems():
                 self.takeItem(self.row(item))
+                self.selfWindow.playlistUpdated()
 
         def dragEnterEvent(self, event):
             data = event.mimeData()
@@ -207,6 +230,7 @@ class MainWindow(QtGui.QMainWindow):
                         window.addFolderToPlaylist(dropfilepath)
             else:
                 super(MainWindow.PlaylistWidget, self).dropEvent(event)
+            self.selfWindow.playlistUpdated()
 
     class FileSwitchManager(object):
         def __init__(self):
@@ -771,6 +795,20 @@ class MainWindow(QtGui.QMainWindow):
     def drop(self):
         self.close()
 
+    def getPlaylistState(self):
+        playlistItems = []
+        for playlistItem in xrange(self.playlist.count()):
+            platlistItemText = self.playlist.item(playlistItem).text()
+            if platlistItemText <> u"Drag file here to add it to the shared playlist.":
+                playlistItems.append(platlistItemText)
+        return playlistItems
+
+    def playlistUpdated(self):
+        newPlaylist = self.getPlaylistState()
+        if newPlaylist <> self.playlistState and self._syncplayClient:
+            self.playlistState = newPlaylist
+            self._syncplayClient.playlistUpdate(newPlaylist)
+
     def addTopLayout(self, window):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)
 
@@ -861,6 +899,7 @@ class MainWindow(QtGui.QMainWindow):
         window.playlistGroup.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         window.playlistGroup.setAcceptDrops(True)
         window.playlist = self.PlaylistWidget()
+        window.playlist.setWindow(window)
         window.playlist.setItemDelegate(self.PlaylistItemDelegate())
         window.playlist.setDragEnabled(True)
         window.playlist.setAcceptDrops(True)

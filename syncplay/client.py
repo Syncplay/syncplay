@@ -156,6 +156,9 @@ class SyncplayClient(object):
             return False
         return True
 
+    def playlistUpdate(self, newPlaylist):
+        print newPlaylist
+
     def _determinePlayerStateChange(self, paused, position):
         pauseChange = self.getPlayerPaused() != paused and self.getGlobalPaused() != paused
         _playerDiff = abs(self.getPlayerPosition() - position)
