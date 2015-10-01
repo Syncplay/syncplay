@@ -419,23 +419,45 @@ class SyncplayClient(object):
             pass
 
 
+    def findFilenameInDirectories(self, filename):
+        # TODO: Replace this with the code in gui.py
+        directoryList = self._config["mediaSearchDirectories"]
+        if filename and directoryList:
+            for directory in directoryList:
+                for root, dirs, files in os.walk(directory):
+                    if filename in files:
+                        return os.path.join(root,filename)
+            return None
+
     def changeToPlaylistIndex(self, index, username = None):
+        path = None
         if self._playlistIndex == index:
+            return
+        if self._player is None:
             return
         self._playlistIndex = index
         if username is None and self._protocol and self._protocol.logged:
             self._protocol.setPlaylistIndex(index)
         elif username != self.getUsername():
+            self.ui.showMessage(u"{} changed the playlist selection".format(username))
             # TODO: Display info about playlist file change
             try:
                 filename = self._playlist[index]
-                # TODO: Find Path
-                path = 'https://www.youtube.com/watch?v=0iXX5h6Hxxs'
+                if utils.isURL(filename):
+                    for URI in constants.SAFE_URIS:
+                        if filename.startswith(URI):
+                            self._player.openFile(filename)
+                            return
+                    self.ui.showErrorMessage(u"Could not load {} because it is not known as a safe path.".format(filename))
+                    return
+                else:
+                    path = self.findFilenameInDirectories(filename)
+                    # TODO: Find Path properly
                 if path:
                     self._player.openFile(path)
                 else:
-                    # TODO: Notify user about file not found
-                    pass
+                    self.ui.showErrorMessage(u"Could not find file {} for playlist switch!".format(filename))
+                    return
             except IndexError:
                 pass
 
