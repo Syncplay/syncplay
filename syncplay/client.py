@@ -7,6 +7,7 @@ import ast
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task
 from functools import wraps
+from copy import deepcopy
 from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants
 from syncplay.messages import getMissingStrings, getMessage
@@ -420,8 +421,20 @@ class SyncplayClient(object):
     def setServerVersion(self, version):
         self.serverVersion = version
 
+    def getSanitizedCurrentUserFile(self):
+        if self.userlist.currentUser.file:
+            file_ = deepcopy(self.userlist.currentUser.file)
+            if constants.PRIVATE_FILE_FIELDS:
+                for PrivateField in constants.PRIVATE_FILE_FIELDS:
+                    if file_.has_key(PrivateField):
+                        file_.pop(PrivateField)
+            return file_
+        else:
+            return None
+
+
     def sendFile(self):
-        file_ = self.userlist.currentUser.file
+        file_ = self.getSanitizedCurrentUserFile()
         if self._protocol and self._protocol.logged and file_:
             self._protocol.sendFileSetting(file_)
 

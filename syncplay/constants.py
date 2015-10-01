@@ -180,3 +180,5 @@ FILEITEM_SWITCH_STREAM_SWITCH = 2
 SYNCPLAY_UPDATE_URL = u"http://syncplay.pl/checkforupdate?{}" # Params
 SYNCPLAY_DOWNLOAD_URL = "http://syncplay.pl/download/"
 SYNCPLAY_PUBLIC_SERVER_LIST_URL = u"http://syncplay.pl/listpublicservers?{}" # Params
+
+PRIVATE_FILE_FIELDS = ["path"]
