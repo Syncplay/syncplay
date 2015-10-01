@@ -124,6 +124,9 @@ class NewMpvPlayer(OldMpvPlayer):
         self._listener.sendLine(u"print_text ""ANS_{}=${{{}}}""".format(property_, propertyID))
 
     def getCalculatedPosition(self):
+        if self.fileLoaded == False:
+            return self._client.getGlobalPosition()
+
         if self.lastMPVPositionUpdate is None:
             return self._client.getGlobalPosition()
         diff = time.time() - self.lastMPVPositionUpdate
@@ -158,7 +161,7 @@ class NewMpvPlayer(OldMpvPlayer):
         self._getPosition()
         self._positionAsk.wait(constants.MPV_LOCK_WAIT_TIME)
         self._pausedAsk.wait(constants.MPV_LOCK_WAIT_TIME)
-        self._client.updatePlayerStatus(self._paused, self.getCalculatedPosition())
+        self._client.updatePlayerStatus(self._paused if self.fileLoaded else self._client.getGlobalPaused(), self.getCalculatedPosition())
 
     def _preparePlayer(self):
         if self.delayedFilePath:
