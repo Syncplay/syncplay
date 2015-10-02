@@ -166,11 +166,36 @@ class SyncplayClient(object):
         seeked = _playerDiff > constants.SEEK_THRESHOLD and _globalDiff > constants.SEEK_THRESHOLD
         return pauseChange, seeked
 
+    def loadNextFileInPlaylist(self):
+        # TODO: Fix for GUIDs & add path checks (and make more of code re-use?)
+        if len(self._playlist) == self._playlistIndex+1:
+            return
+        filename = self._playlist[self._playlistIndex+1]
+        if utils.isURL(filename):
+            for URI in constants.SAFE_URIS:
+                if filename.startswith(URI):
+                    self._player.openFile(filename, resetPosition=True)
+                    return
+                self.ui.showErrorMessage(u"Could not load {} because it is not known as a safe path.".format(filename))
+                return
+        else:
+            path = self.findFilenameInDirectories(filename)
+            if path:
+                self._player.openFile(path, resetPosition=True)
+            else:
+                self.ui.showErrorMessage(u"Could not find file {} for playlist switch!".format(filename))
+                return
+            # TODO: Find Path properly
+
     def updatePlayerStatus(self, paused, position):
         position -= self.getUserOffset()
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
         self._playerPosition = position
         self._playerPaused = paused
+        currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else None
+        if pauseChange and paused and currentLength and currentLength > 10 and abs(position - currentLength ) < 1:
+            self.loadNextFileInPlaylist()
+
         # TODO: if position +- 1s of the end of a file AND has next file in playlist -> rewind to 0 and switch file
         if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
             if not self.userlist.currentUser.canControl():
