@@ -580,6 +580,18 @@ class MainWindow(QtGui.QMainWindow):
             self.readyPushButton.blockSignals(False)
         self.updateReadyIcon()
 
+    def playlistItemClicked(self, item):
+        # TODO: Integrate into client.py code
+        filename = item.data()
+        if isURL(filename):
+            self._syncplayClient._player.openFile(filename)
+        else:
+            pathFound = MainWindow.FileSwitchManager.findFilepath(filename)
+            if pathFound:
+                self._syncplayClient._player.openFile(pathFound)
+            else:
+                self.ui.showErrorMessage(u"Could not find file {} for playlist switch!".format(filename))
+
     def roomClicked(self, item):
         username = item.sibling(item.row(), 0).data()
         filename = item.sibling(item.row(), 3).data()
@@ -905,6 +917,7 @@ class MainWindow(QtGui.QMainWindow):
         window.playlist.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         window.playlist.setDefaultDropAction(Qt.MoveAction)
         window.playlist.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+        window.playlist.doubleClicked.connect(self.playlistItemClicked)
         noteFont = QtGui.QFont()
         noteFont.setItalic(True)
         playlistItem = QtGui.QListWidgetItem(u"Drag file here to add it to the shared playlist.")
