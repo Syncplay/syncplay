@@ -87,7 +87,7 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
 class MainWindow(QtGui.QMainWindow):
     insertPosition = None
     playlistState = []
-    blockPlaylistUpdateNotifications = False
+    updatingPlaylist = False
 
     def setPlaylistInsertPosition(self, newPosition):
         if MainWindow.insertPosition <> newPosition:
@@ -147,7 +147,6 @@ class MainWindow(QtGui.QMainWindow):
                         window.addFolderToPlaylist(dropfilepath)
             else:
                 super(MainWindow.PlaylistWidget, self).dropEvent(event)
-            window.playlistUpdated()
 
     class PlaylistWidget(QtGui.QListWidget):
         selfWindow = None
@@ -159,16 +158,6 @@ class MainWindow(QtGui.QMainWindow):
             window = self.parent().parent().parent().parent().parent().parent()
             window.setPlaylistInsertPosition(None)
 
-        def rowsMoved(self, sourceParent, sourceStart, sourceEnd, destinationParent, destinationRow):
-            if self.selfWindow:
-                super(MainWindow.PlaylistWidget, self).rowsMoved(sourceParent, sourceStart, sourceEnd, destinationParent, destinationRow)
-                self.selfWindow.playlistUpdated()
-
-        def rowsRemoved(self, parent, start, end):
-            if self.selfWindow:
-                super(MainWindow.PlaylistWidget, self).rowsRemoved(parent, start, end)
-                self.selfWindow.playlistUpdated()
-
         def forceUpdate(self):
             root = self.rootIndex()
             self.dataChanged(root, root)
@@ -179,10 +168,14 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 super(MainWindow.PlaylistWidget, self).keyPressEvent(event)
 
+        def updatePlaylist(self, newPlaylist):
+            for index in xrange(self.count()):
+                self.takeItem(0)
+            self.insertItems(0, newPlaylist)
+
         def _remove_selected_items(self):
             for item in self.selectedItems():
                 self.takeItem(self.row(item))
-                self.selfWindow.playlistUpdated()
 
         def dragEnterEvent(self, event):
             data = event.mimeData()
@@ -204,7 +197,6 @@ class MainWindow(QtGui.QMainWindow):
                 window.setPlaylistInsertPosition(indexRow)
             else:
                 super(MainWindow.PlaylistWidget, self).dragMoveEvent(event)
-            self.selfWindow.playlistUpdated()
 
         def dropEvent(self, event):
             window = self.parent().parent().parent().parent().parent().parent()
@@ -228,7 +220,6 @@ class MainWindow(QtGui.QMainWindow):
                         window.addFolderToPlaylist(dropfilepath)
             else:
                 super(MainWindow.PlaylistWidget, self).dropEvent(event)
-            self.selfWindow.playlistUpdated()
 
     class FileSwitchManager(object):
         def __init__(self):
@@ -853,14 +844,16 @@ class MainWindow(QtGui.QMainWindow):
     def getPlaylistState(self):
         playlistItems = []
         for playlistItem in xrange(self.playlist.count()):
-            platlistItemText = self.playlist.item(playlistItem).text()
-            if platlistItemText <> u"Drag file here to add it to the shared playlist.":
-                playlistItems.append(platlistItemText)
+            playlistItemText = self.playlist.item(playlistItem).text()
+            if playlistItemText <> u"Drag file here to add it to the shared playlist.":
+                playlistItems.append(playlistItemText)
         return playlistItems
 
-    def playlistUpdated(self):
+    def playlistChangeCheck(self):
+        if self.updatingPlaylist:
+            return
         newPlaylist = self.getPlaylistState()
-        if newPlaylist <> self.playlistState and self._syncplayClient and not self.blockPlaylistUpdateNotifications:
+        if newPlaylist <> self.playlistState and self._syncplayClient and not self.updatingPlaylist:
             self.playlistState = newPlaylist
             self._syncplayClient.changePlaylist(newPlaylist)
 
@@ -966,6 +959,8 @@ class MainWindow(QtGui.QMainWindow):
         window.playlist.setDefaultDropAction(Qt.MoveAction)
         window.playlist.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
         window.playlist.doubleClicked.connect(self.playlistItemClicked)
+        self.playlistUpdateTimer = task.LoopingCall(self.playlistChangeCheck)
+        self.playlistUpdateTimer.start(0.1, True)
         noteFont = QtGui.QFont()
         noteFont.setItalic(True)
         playlistItem = QtGui.QListWidgetItem(u"Drag file here to add it to the shared playlist.")
@@ -1270,12 +1265,12 @@ class MainWindow(QtGui.QMainWindow):
                 self._syncplayClient.setPosition(0)
 
     def setPlaylist(self, newPlaylist):
-        if newPlaylist == [] and not self.clearedPlaylistNote:
+        if newPlaylist == self.playlistState:
             return
-        self.blockPlaylistUpdateNotifications = True
-        self.playlist.clear()
-        self.playlist.insertItems(0, newPlaylist)
-        self.blockPlaylistUpdateNotifications = False
+        self.updatingPlaylist = True
+        self.playlistState = newPlaylist
+        self.playlist.updatePlaylist(newPlaylist)
+        self.updatingPlaylist = False
 
     def addFileToPlaylist(self, filePath, index = -1):
         if os.path.isfile(filePath):
@@ -1284,7 +1279,6 @@ class MainWindow(QtGui.QMainWindow):
                 self.playlist.addItem(os.path.basename(filePath))
             else:
                 self.playlist.insertItem(index, os.path.basename(filePath))
-            self.playlistUpdated()
 
     def openFile(self, filePath, resetPosition=False):
         self._syncplayClient._player.openFile(filePath, resetPosition)
@@ -1292,7 +1286,6 @@ class MainWindow(QtGui.QMainWindow):
     def addStreamToPlaylist(self, streamURI):
         self.removePlaylistNote()
         self.playlist.addItem(streamURI)
-        self.playlistUpdated()
 
     def removePlaylistNote(self):
         if not self.clearedPlaylistNote:
