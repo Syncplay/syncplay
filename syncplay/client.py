@@ -168,7 +168,7 @@ class SyncplayClient(object):
 
     def loadNextFileInPlaylist(self):
         # TODO: Fix for GUIDs & add path checks (and make more of code re-use?)
-        if len(self._playlist) == self._playlistIndex+1:
+        if self._playlistIndex is None or len(self._playlist) == self._playlistIndex+1:
             return
         filename = self._playlist[self._playlistIndex+1]
         if utils.isURL(filename):
