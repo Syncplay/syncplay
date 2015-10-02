@@ -1289,7 +1289,8 @@ class MainWindow(QtGui.QMainWindow):
 
     def removePlaylistNote(self):
         if not self.clearedPlaylistNote:
-            self.playlist.clear()
+            for index in xrange(self.playlist.count()):
+                self.playlist.takeItem(0)
             self.clearedPlaylistNote = True
 
     def addFolderToPlaylist(self, folderPath):
