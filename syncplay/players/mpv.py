@@ -3,6 +3,7 @@ import subprocess
 from syncplay.players.mplayer import MplayerPlayer
 from syncplay.messages import getMessage
 from syncplay import constants
+from syncplay.utils import isURL
 import os, sys, time
 
 class MpvPlayer(MplayerPlayer):
@@ -129,7 +130,12 @@ class NewMpvPlayer(OldMpvPlayer):
 
         if self.lastMPVPositionUpdate is None:
             return self._client.getGlobalPosition()
+
+        if self._recentlyReset:
+            return self._position
+
         diff = time.time() - self.lastMPVPositionUpdate
+
         if diff > constants.MPV_UNRESPONSIVE_THRESHOLD:
             self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("mpv-unresponsive-error").format(int(diff)), True)
             self.drop()
@@ -184,10 +190,15 @@ class NewMpvPlayer(OldMpvPlayer):
     def openFile(self, filePath, resetPosition=False):
         if resetPosition:
             self.lastResetTime = time.time()
+            if isURL(filePath):
+                self.lastResetTime += constants.STREAM_ADDITIONAL_IGNORE_TIME
         self._loadFile(filePath)
         if self._paused != self._client.getGlobalPaused():
             self.setPaused(self._client.getGlobalPaused())
-        self.setPosition(self._client.getGlobalPosition())
+        if resetPosition == False:
+            self.setPosition(self._client.getGlobalPosition())
+        else:
+            self._storePosition(0)
 
     def _handleUnknownLine(self, line):
         self.mpvVersionErrorCheck(line)
