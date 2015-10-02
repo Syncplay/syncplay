@@ -487,6 +487,7 @@ class SyncplayClient(object):
                 pass
 
     def changePlaylist(self, files, username = None):
+        oldPlaylistIsEmpty = self._playlist == []
         self._playlist = files
 
         if username is None and self._protocol and self._protocol.logged:
@@ -494,6 +495,9 @@ class SyncplayClient(object):
         elif username != self.getUsername():
             self.ui.setPlaylist(self._playlist)
             self.ui.showMessage(u"{} updated the playlist".format(username))
+        elif oldPlaylistIsEmpty and self._playlist != []: # To catch being re-sent own playlist after disconnect
+            self.ui.setPlaylist(self._playlist)
+
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
