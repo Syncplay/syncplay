@@ -532,10 +532,10 @@ class MainWindow(QtGui.QMainWindow):
                 if isControlledRoom and not isController:
                     useritem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOTCONTROLLER_COLOR)))
                 useritem.setFont(font)
-                useritem.setFlags(useritem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
-                filenameitem.setFlags(filenameitem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
-                filesizeitem.setFlags(filesizeitem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
-                filedurationitem.setFlags(filedurationitem.flags() & ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable)
+                useritem.setFlags(useritem.flags() & ~Qt.ItemIsEditable)
+                filenameitem.setFlags(filenameitem.flags() & ~Qt.ItemIsEditable)
+                filesizeitem.setFlags(filesizeitem.flags() & ~Qt.ItemIsEditable)
+                filedurationitem.setFlags(filedurationitem.flags() & ~Qt.ItemIsEditable)
                 roomitem.appendRow((useritem, filesizeitem, filedurationitem, filenameitem))
         self.listTreeModel = self._usertreebuffer
         self.listTreeView.setModel(self.listTreeModel)
@@ -546,6 +546,51 @@ class MainWindow(QtGui.QMainWindow):
         self.updateListGeometry()
         MainWindow.FileSwitchManager.setFilenameWatchlist(self.newWatchlist)
         self.checkForDisabledDir()
+
+    def openRoomMenu(self, position):
+        # TODO: Deselect items after right click
+        indexes = self.listTreeView.selectedIndexes()
+        if sys.platform.startswith('win'):
+            resourcespath = utils.findWorkingDir() + "\\resources\\"
+        else:
+            resourcespath = utils.findWorkingDir() + "/resources/"
+        if len(indexes) > 0:
+            item = self.listTreeView.selectedIndexes()[0]
+        else:
+            return
+
+        menu = QtGui.QMenu()
+        username = item.sibling(item.row(), 0).data()
+        if username == self._syncplayClient.userlist.currentUser.username:
+            shortUsername = "your" # TODO: Use messages.py
+        elif len(username) < 15:
+            shortUsername = u"{}'s".format(username)
+        else:
+            shortUsername = "{}'s...".format(username[0:12])
+
+        filename = item.sibling(item.row(), 3).data()
+        while item.parent().row() != -1:
+            item = item.parent()
+        roomToJoin = item.sibling(item.row(), 0).data()
+        if roomToJoin <> self._syncplayClient.getRoom():
+            menu.addAction("Join room {}".format(roomToJoin), lambda: self.joinRoom(roomToJoin))
+        elif username and filename and filename <> getMessage("nofile-note"):
+            if isURL(filename):
+                menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), "Add {} stream to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+            else:
+                menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), "Add {} file to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+
+            if self._syncplayClient.userlist.currentUser.file is None or filename <> self._syncplayClient.userlist.currentUser.file["name"]:
+                if isURL(filename):
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), "Open stream {} stream".format(shortUsername), lambda: self.openFile(filename))
+                else:
+                    pathFound = MainWindow.FileSwitchManager.findFilepath(filename)
+                    if pathFound:
+                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), "Open {} file".format(shortUsername), lambda: self.openFile(pathFound))
+        else:
+            return
+        menu.exec_(self.listTreeView.viewport().mapToGlobal(position))
+
 
     def checkForDisabledDir(self):
         if MainWindow.FileSwitchManager.disabledDir is not None and MainWindow.FileSwitchManager.currentWindow is not None:
@@ -590,7 +635,7 @@ class MainWindow(QtGui.QMainWindow):
             if pathFound:
                 self._syncplayClient._player.openFile(pathFound)
             else:
-                self.ui.showErrorMessage(u"Could not find file {} for playlist switch!".format(filename))
+                self._syncplayClient.ui.showErrorMessage(u"Could not find file {} for playlist switch!".format(filename))
 
     def roomClicked(self, item):
         username = item.sibling(item.row(), 0).data()
@@ -848,6 +893,9 @@ class MainWindow(QtGui.QMainWindow):
         window.listTreeView.setModel(window.listTreeModel)
         window.listTreeView.setIndentation(21)
         window.listTreeView.doubleClicked.connect(self.roomClicked)
+        self.listTreeView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.listTreeView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.listTreeView.customContextMenuRequested.connect(self.openRoomMenu)
         window.listlabel = QtGui.QLabel(getMessage("userlist-heading-label"))
         window.listFrame = QtGui.QFrame()
         window.listFrame.setLineWidth(0)
@@ -1236,10 +1284,15 @@ class MainWindow(QtGui.QMainWindow):
                 self.playlist.addItem(os.path.basename(filePath))
             else:
                 self.playlist.insertItem(index, os.path.basename(filePath))
+            self.playlistUpdated()
 
-    def addStreamToPlaylist(self, filePath):
-        self.removePlayListNote()
-        self.playlist.addItem(os.path.basename(filePath))
+    def openFile(self, filePath, resetPosition=False):
+        self._syncplayClient._player.openFile(filePath, resetPosition)
+
+    def addStreamToPlaylist(self, streamURI):
+        self.removePlaylistNote()
+        self.playlist.addItem(streamURI)
+        self.playlistUpdated()
 
     def removePlaylistNote(self):
         if not self.clearedPlaylistNote:

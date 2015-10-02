@@ -176,8 +176,8 @@ class SyncplayClient(object):
                 if filename.startswith(URI):
                     self._player.openFile(filename, resetPosition=True)
                     return
-                self.ui.showErrorMessage(u"Could not load {} because it is not known as a safe path.".format(filename))
-                return
+            self.ui.showErrorMessage(u"Could not load {} because it is not known as a safe path.".format(filename))
+            return
         else:
             path = self.findFilenameInDirectories(filename)
             if path:
