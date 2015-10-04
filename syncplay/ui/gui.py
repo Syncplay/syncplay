@@ -164,7 +164,7 @@ class MainWindow(QtGui.QMainWindow):
 
         def keyPressEvent(self, event):
             if event.key() == Qt.Key_Delete:
-                self._remove_selected_items()
+                self.remove_selected_items()
             else:
                 super(MainWindow.PlaylistWidget, self).keyPressEvent(event)
 
@@ -173,7 +173,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.takeItem(0)
             self.insertItems(0, newPlaylist)
 
-        def _remove_selected_items(self):
+        def remove_selected_items(self):
             for item in self.selectedItems():
                 self.takeItem(self.row(item))
 
@@ -538,6 +538,36 @@ class MainWindow(QtGui.QMainWindow):
         MainWindow.FileSwitchManager.setFilenameWatchlist(self.newWatchlist)
         self.checkForDisabledDir()
 
+    def undoPlaylistChange(self):
+        self.showErrorMessage("TODO: Undo playlist change!")
+
+    def openPlaylistMenu(self, position):
+        indexes = self.playlist.selectedIndexes()
+        if sys.platform.startswith('win'):
+            resourcespath = utils.findWorkingDir() + "\\resources\\"
+        else:
+            resourcespath = utils.findWorkingDir() + "/resources/"
+        if len(indexes) > 0:
+            item = self.playlist.selectedIndexes()[0]
+        else:
+            item = None
+        menu = QtGui.QMenu()
+
+        if item:
+            firstFile = item.sibling(item.row(), 0).data()
+            if self._syncplayClient.userlist.currentUser.file is None or firstFile <> self._syncplayClient.userlist.currentUser.file["name"]:
+                if isURL(firstFile):
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), "Open stream", lambda: self.openFile(firstFile))
+                else:
+                    pathFound = MainWindow.FileSwitchManager.findFilepath(firstFile)
+                    if pathFound:
+                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), "Open file", lambda: self.openFile(pathFound))
+            menu.addAction(QtGui.QPixmap(resourcespath + "delete.png"), "Remove from playlist", lambda: self.deleteSelectedPlaylistItems())
+            menu.addSeparator()
+        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_undo.png"), "Undo last change to playlist", lambda: self.undoPlaylistChange())
+        menu.exec_(self.playlist.viewport().mapToGlobal(position))
+
+
     def openRoomMenu(self, position):
         # TODO: Deselect items after right click
         indexes = self.listTreeView.selectedIndexes()
@@ -573,7 +603,7 @@ class MainWindow(QtGui.QMainWindow):
 
             if self._syncplayClient.userlist.currentUser.file is None or filename <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(filename):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), "Open stream {} stream".format(shortUsername), lambda: self.openFile(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), "Open {} stream".format(shortUsername), lambda: self.openFile(filename))
                 else:
                     pathFound = MainWindow.FileSwitchManager.findFilepath(filename)
                     if pathFound:
@@ -959,6 +989,9 @@ class MainWindow(QtGui.QMainWindow):
         window.playlist.setDefaultDropAction(Qt.MoveAction)
         window.playlist.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
         window.playlist.doubleClicked.connect(self.playlistItemClicked)
+        window.playlist.setContextMenuPolicy(Qt.CustomContextMenu)
+        window.playlist.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        window.playlist.customContextMenuRequested.connect(self.openPlaylistMenu)
         self.playlistUpdateTimer = task.LoopingCall(self.playlistChangeCheck)
         self.playlistUpdateTimer.start(0.1, True)
         noteFont = QtGui.QFont()
@@ -1295,6 +1328,9 @@ class MainWindow(QtGui.QMainWindow):
 
     def addFolderToPlaylist(self, folderPath):
         self.showErrorMessage("Add Folder {}".format(folderPath))
+        
+    def deleteSelectedPlaylistItems(self):
+        self.playlist.remove_selected_items()
 
     def saveSettings(self):
         settings = QSettings("Syncplay", "MainWindow")
