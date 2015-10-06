@@ -834,7 +834,7 @@ de = {
       "vlc-interface-oldversion-warning": u"Warnung: Es ist eine alte Version des Syncplay Interface-Moduls für VLC im VLC-Verzeichnis installiert. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du Details zur Installation des syncplay.lua-Skripts.",
       "vlc-interface-not-installed": u"Warnung: Es wurde kein Syncplay Interface-Modul für VLC im VLC-Verzeichnis gefunden. Daher wird, wenn du VLC 2.0 nutzt, die syncplay.lua die mit Syncplay mitgeliefert wurde, verwendet. Dies bedeutet allerdings, dass keine anderen Interface-Skripts und Erweiterungen geladen werden. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du  Details zur Installation des syncplay.lua-Skripts.",
       "media-player-latency-warning": u"Warnung: Der Mediaplayer brauchte {} Sekunden zum Antworten. Wenn Probleme bei der Synchronisation auftreten, schließe bitte andere Anwendungen, um Ressourcen freizugeben. Sollte das nicht funktionieren, versuche es mit einem anderen Media-Player.", # Seconds to respond
-      "mpv-unresponsive-error": u"mpv has not responded for {} seconds so appears to have malfunctioned. Please restart Syncplay.", # Seconds to respond # TODO: Translate to German
+      "mpv-unresponsive-error": u"MPV hat für {} Sekunden nicht geantwortet und scheint abgestürzt zu sein. Bitte starte Syncplay neu.", # Seconds to respond
 
       # Client prompts
       "enter-to-exit-prompt" : u"Enter drücken zum Beenden\n",
