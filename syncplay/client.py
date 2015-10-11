@@ -5,7 +5,7 @@ import re
 import sys
 import ast
 from twisted.internet.protocol import ClientFactory
-from twisted.internet import reactor, task
+from twisted.internet import reactor, task, defer
 from functools import wraps
 from copy import deepcopy
 from syncplay.protocols import SyncClientProtocol
@@ -115,6 +115,7 @@ class SyncplayClient(object):
 
         self._playlist = []
         self._playlistIndex = None
+        self.__playerReady = defer.Deferred()
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
@@ -139,6 +140,7 @@ class SyncplayClient(object):
         if not self._player.secondaryOSDSupported:
             constants.OSD_WARNING_MESSAGE_DURATION = constants.NO_SECONDARY_OSD_WARNING_DURATION
         self.scheduleAskPlayer()
+        self.__playerReady.callback(player)
 
     def scheduleAskPlayer(self, when=constants.PLAYER_ASK_DELAY):
         self._askPlayerTimer = task.LoopingCall(self.askPlayer)
@@ -192,40 +194,43 @@ class SyncplayClient(object):
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
         self._playerPosition = position
         self._playerPaused = paused
-        currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else None
-        if pauseChange and paused and currentLength and currentLength > 10 and abs(position - currentLength ) < 1:
+        currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
+        if pauseChange and paused and currentLength > 10 and abs(position - currentLength ) < 5:
             self.loadNextFileInPlaylist()
+        elif pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
+            pauseChange = self._toggleReady(pauseChange, paused)
 
-        # TODO: if position +- 1s of the end of a file AND has next file in playlist -> rewind to 0 and switch file
-        if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
-            if not self.userlist.currentUser.canControl():
-                self._player.setPaused(self._globalPaused)
-                self.toggleReady(manuallyInitiated=True)
-                self._playerPaused = self._globalPaused
-                pauseChange = False
-                if self.userlist.currentUser.isReady():
-                    self.ui.showMessage(getMessage("set-as-ready-notification"))
-                else:
-                    self.ui.showMessage(getMessage("set-as-not-ready-notification"))
-            elif not paused and not self.instaplayConditionsMet():
-                paused = True
-                self._player.setPaused(paused)
-                self._playerPaused = paused
-                self.changeReadyState(True, manuallyInitiated=True)
-                pauseChange = False
-                self.ui.showMessage(getMessage("ready-to-unpause-notification"))
-            else:
-                lastPausedDiff = time.time() - self.lastPausedOnLeaveTime if self.lastPausedOnLeaveTime else None
-                if lastPausedDiff is not None and lastPausedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
-                    self.lastPausedOnLeaveTime = None
-                else:
-                    self.changeReadyState(not self.getPlayerPaused(), manuallyInitiated=False)
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
             if (pauseChange or seeked) and self._protocol:
                 if seeked:
                     self.playerPositionBeforeLastSeek = self.getGlobalPosition()
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)
+
+    def _toggleReady(self, pauseChange, paused):
+        if not self.userlist.currentUser.canControl():
+            self._player.setPaused(self._globalPaused)
+            self.toggleReady(manuallyInitiated=True)
+            self._playerPaused = self._globalPaused
+            pauseChange = False
+            if self.userlist.currentUser.isReady():
+                self.ui.showMessage(getMessage("set-as-ready-notification"))
+            else:
+                self.ui.showMessage(getMessage("set-as-not-ready-notification"))
+        elif not paused and not self.instaplayConditionsMet():
+            paused = True
+            self._player.setPaused(paused)
+            self._playerPaused = paused
+            self.changeReadyState(True, manuallyInitiated=True)
+            pauseChange = False
+            self.ui.showMessage(getMessage("ready-to-unpause-notification"))
+        else:
+            lastPausedDiff = time.time() - self.lastPausedOnLeaveTime if self.lastPausedOnLeaveTime else None
+            if lastPausedDiff is not None and lastPausedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
+                self.lastPausedOnLeaveTime = None
+            else:
+                self.changeReadyState(not self.getPlayerPaused(), manuallyInitiated=False)
+        return pauseChange
 
     def getLocalState(self):
         paused = self.getPlayerPaused()
@@ -436,7 +441,6 @@ class SyncplayClient(object):
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
 
-        # TODO: Fix for GUIDS
         try:
             index = self._playlist.index(filename)
             self.changeToPlaylistIndex(index)
@@ -456,14 +460,22 @@ class SyncplayClient(object):
 
     def changeToPlaylistIndex(self, index, username = None):
         path = None
-        if self._playlistIndex == index:
+        if index is None:
             return
+        try:
+            filename = self._playlist[index]
+            if username is not None and self.userlist.currentUser.file and filename == self.userlist.currentUser.file['name']:
+                return
+        except IndexError:
+            pass
+
         if self._player is None:
+            self.__playerReady.addCallback(lambda x: self.changeToPlaylistIndex(index, username))
             return
         self._playlistIndex = index
         if username is None and self._protocol and self._protocol.logged:
             self._protocol.setPlaylistIndex(index)
-        elif username != self.getUsername():
+        else:
             self.ui.showMessage(u"{} changed the playlist selection".format(username))
             # TODO: Display info about playlist file change
             try:
@@ -487,17 +499,19 @@ class SyncplayClient(object):
                 pass
 
     def changePlaylist(self, files, username = None):
-        oldPlaylistIsEmpty = self._playlist == []
+        try:
+            filename = self._playlist[self._playlistIndex]
+            newIndex = files.index(filename)
+        except:
+            newIndex = 0
         self._playlist = files
 
         if username is None and self._protocol and self._protocol.logged:
             self._protocol.setPlaylist(files)
-        elif username != self.getUsername():
+            self.changeToPlaylistIndex(newIndex)
+        else:
             self.ui.setPlaylist(self._playlist)
             self.ui.showMessage(u"{} updated the playlist".format(username))
-        elif oldPlaylistIsEmpty and self._playlist != []: # To catch being re-sent own playlist after disconnect
-            self.ui.setPlaylist(self._playlist)
-
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
@@ -645,7 +659,7 @@ class SyncplayClient(object):
     def changeAutoplayState(self, newState):
         self.autoPlay = newState
         self.autoplayCheck()
-    
+
     def changeAutoPlayThrehsold(self, newThreshold):
         oldAutoplayConditionsMet = self.autoplayConditionsMet()
         self.autoPlayThreshold = newThreshold
@@ -833,7 +847,7 @@ class SyncplayClient(object):
 
         def _checkIfYouAreOnlyUserInRoomWhoSupportsReadiness(self):
             self._userlist._onlyUserInRoomWhoSupportsReadiness()
-        
+
         def _checkIfYouReAloneInTheRoom(self, OSDOnly):
             if self._userlist.areYouAloneInRoom():
                 self._ui.showOSDMessage(getMessage("alone-in-the-room"), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True)
