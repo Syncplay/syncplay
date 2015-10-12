@@ -1301,6 +1301,8 @@ class MainWindow(QtGui.QMainWindow):
         if newPlaylist == self.playlistState:
             return
         self.updatingPlaylist = True
+        if len(newPlaylist) > 0:
+            self.clearedPlaylistNote = True
         self.playlistState = newPlaylist
         self.playlist.updatePlaylist(newPlaylist)
         self.updatingPlaylist = False
