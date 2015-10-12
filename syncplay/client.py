@@ -688,7 +688,7 @@ class SyncplayClient(object):
             return False
 
     def autoplayConditionsMet(self):
-        return self._playerPaused and self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady() and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold
+        return self._playerPaused and self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady(requireSameFilenames=self._config["autoplayRequireSameFilenames"]) and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold
 
     def autoplayTimerIsRunning(self):
         return self.autoplayTimer.running
@@ -1117,14 +1117,17 @@ class SyncplayUserlist(object):
             user = self._users[username]
             user.setControllerStatus(True)
 
-    def areAllUsersInRoomReady(self):
+    def areAllUsersInRoomReady(self, requireSameFilenames=False):
         if not self.currentUser.canControl():
             return True
         if not self.currentUser.isReady():
             return False
         for user in self._users.itervalues():
-            if user.room == self.currentUser.room and user.isReadyWithFile() == False:
-                return False
+            if user.room == self.currentUser.room:
+                if user.isReadyWithFile() == False:
+                    return False
+                elif requireSameFilenames and (self.currentUser.file is None or user.file is None or not utils.sameFilename(self.currentUser.file['name'], user.file['name'])):
+                    return False
         return True
 
     def areAllOtherUsersInRoomReady(self):

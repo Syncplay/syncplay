@@ -51,6 +51,7 @@ class ConfigurationGetter(object):
                         "unpauseAction": constants.UNPAUSE_IFOTHERSREADY_MODE,
                         "autoplayInitialState" : None,
                         "autoplayMinUsers" : -1,
+                        "autoplayRequireSameFilenames": True,
                         "clearGUIData": False,
                         "language" : "",
                         "checkForUpdatesAutomatically" : None,
@@ -87,6 +88,7 @@ class ConfigurationGetter(object):
                          "dontSlowDownWithMe",
                          "pauseOnLeave",
                          "readyAtStart",
+                         "autoplayRequireSameFilenames",
                          "clearGUIData",
                          "rewindOnDesync",
                          "slowOnDesync",
@@ -121,7 +123,7 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "perPlayerArguments", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState", "mediaSearchDirectories"],
+                        "client_settings": ["name", "room", "playerPath", "perPlayerArguments", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState", "autoplayRequireSameFilenames", "mediaSearchDirectories"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showDurationNotification"],
                         "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
                         }
