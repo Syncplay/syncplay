@@ -538,8 +538,9 @@ class MainWindow(QtGui.QMainWindow):
         MainWindow.FileSwitchManager.setFilenameWatchlist(self.newWatchlist)
         self.checkForDisabledDir()
 
+    @needsClient
     def undoPlaylistChange(self):
-        self.showErrorMessage("TODO: Undo playlist change!")
+        self._syncplayClient.undoPlaylistChange()
 
     def openPlaylistMenu(self, position):
         indexes = self.playlist.selectedIndexes()

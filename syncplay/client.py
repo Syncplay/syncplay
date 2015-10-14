@@ -114,6 +114,7 @@ class SyncplayClient(object):
         self.autoplayTimeLeft = constants.AUTOPLAY_DELAY
 
         self._playlist = []
+        self._previousPlaylist = None
         self._playlistIndex = None
         self.__playerReady = defer.Deferred()
 
@@ -504,6 +505,11 @@ class SyncplayClient(object):
             newIndex = files.index(filename)
         except:
             newIndex = 0
+        if self._previousPlaylist is None:
+            if self._playlist <> None and self._playlist <> []:
+                self._previousPlaylist = self._playlist
+        elif self._previousPlaylist <> self._playlist and self._playlist <> files:
+            self._previousPlaylist = self._playlist
         self._playlist = files
 
         if username is None and self._protocol and self._protocol.logged:
@@ -512,6 +518,13 @@ class SyncplayClient(object):
         else:
             self.ui.setPlaylist(self._playlist)
             self.ui.showMessage(u"{} updated the playlist".format(username))
+
+    def undoPlaylistChange(self):
+        if self._previousPlaylist is not None and self._playlist <> self._previousPlaylist:
+            undidPlaylist = self._playlist
+            self.ui.setPlaylist(self._previousPlaylist)
+            self.changePlaylist(self._previousPlaylist)
+            self._previousPlaylist = undidPlaylist
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
@@ -557,6 +570,7 @@ class SyncplayClient(object):
         return self.userlist.currentUser.username
 
     def setRoom(self, roomName, resetAutoplay=False):
+        self._previousPlaylist = None
         self.userlist.currentUser.room = roomName
         if resetAutoplay:
             self.resetAutoPlayState()
