@@ -115,6 +115,7 @@ class SyncplayClient(object):
 
         self._playlist = []
         self._previousPlaylist = None
+        self._previousPlaylistRoom = None
         self._playlistIndex = None
         self.__playerReady = defer.Deferred()
 
@@ -505,9 +506,10 @@ class SyncplayClient(object):
             newIndex = files.index(filename)
         except:
             newIndex = 0
-        if self._previousPlaylist is None:
-            if self._playlist <> None and self._playlist <> []:
-                self._previousPlaylist = self._playlist
+
+        if self._previousPlaylistRoom <> self.userlist.currentUser.room:
+            self._previousPlaylist = None
+            self._previousPlaylistRoom = self.userlist.currentUser.room
         elif self._previousPlaylist <> self._playlist and self._playlist <> files:
             self._previousPlaylist = self._playlist
         self._playlist = files
@@ -570,7 +572,6 @@ class SyncplayClient(object):
         return self.userlist.currentUser.username
 
     def setRoom(self, roomName, resetAutoplay=False):
-        self._previousPlaylist = None
         self.userlist.currentUser.room = roomName
         if resetAutoplay:
             self.resetAutoPlayState()
