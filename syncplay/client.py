@@ -258,6 +258,10 @@ class SyncplayClient(object):
 
     def _serverUnpaused(self, setBy):
         hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
+        # In high-player-latency situations we might report our state back to
+        # the server before any player status is accepted as fresh. Override
+        # the locally-stored playback state.
+        self._playerPaused = False
         self._playerCommand(self._player.setPaused, False)
         madeChangeOnPlayer = True
         self.ui.showMessage(getMessage("unpause-notification").format(setBy), hideFromOSD)
@@ -265,6 +269,7 @@ class SyncplayClient(object):
 
     def _serverPaused(self, setBy):
         hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
+        self._playerPaused = True
         if constants.SYNC_ON_PAUSE and self.getUsername() <> setBy:
             self.setPosition(self.getGlobalPosition())
         self._playerCommand(self._player.setPaused, True)
