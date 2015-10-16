@@ -6,6 +6,7 @@ from datetime import datetime
 from syncplay import utils
 import os
 import sys
+import threading
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
 from syncplay import constants
 
@@ -140,15 +141,52 @@ class ConfigDialog(QtGui.QDialog):
             settings.endGroup()
         return foundpath
 
-    def updateExecutableIcon(self):
-        currentplayerpath = unicode(self.executablepathCombobox.currentText())
-        iconpath = PlayerFactory().getPlayerIconByPath(currentplayerpath)
+    class _GetIconPath(threading.Thread, QtCore.QObject):
+        daemon = True
+        done = QtCore.Signal(int, str, str)
+
+        def __init__(self, playerpath, seqnum):
+            threading.Thread.__init__(self)
+            QtCore.QObject.__init__(self)
+            self.playerpath = playerpath
+            self.seqnum = seqnum
+
+        def run(self):
+            iconpath = PlayerFactory().getPlayerIconByPath(self.playerpath)
+            self.done.emit(self.seqnum, iconpath, self.playerpath)
+
+    @QtCore.Slot(int, str, str)
+    def _updateExecutableIcon(self, seqnum, iconpath, playerpath):
+        if seqnum < self._lastThreadSeqnum:
+            return
         if iconpath != None and iconpath != "":
-            self.executableiconImage.load(self.resourcespath + iconpath)
-            self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(self.executableiconImage))
+            if iconpath.endswith('.mng'):
+                movie = QtGui.QMovie(self.resourcespath + iconpath)
+                movie.setCacheMode(QtGui.QMovie.CacheMode.CacheAll)
+                self.executableiconLabel.setMovie(movie)
+                movie.start()
+            else:
+                self.executableiconImage.load(self.resourcespath + iconpath)
+                self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(self.executableiconImage))
         else:
             self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(QtGui.QImage()))
-        self.updatePlayerArguments(currentplayerpath)
+        self.updatePlayerArguments(playerpath)
+
+    def updateExecutableIcon(self):
+        """
+        Start getting the icon path in another thread, which will set the GUI
+        icon if valid.
+
+        This is performed outside the main thread because networked players may
+        take a long time to perform their checks and hang the GUI while doing
+        so.
+        """
+        currentplayerpath = unicode(self.executablepathCombobox.currentText())
+        self._lastThreadSeqnum += 1
+        thread = self._GetIconPath(currentplayerpath, self._lastThreadSeqnum)
+        thread.done.connect(self._updateExecutableIcon)
+        thread.done.emit(self._lastThreadSeqnum, 'spinner.mng', '')
+        thread.start()
 
     def updatePlayerArguments(self, currentplayerpath):
         argumentsForPath = utils.getPlayerArgumentsByPathAsText(self.perPlayerArgs, currentplayerpath)
@@ -924,6 +962,7 @@ class ConfigDialog(QtGui.QDialog):
                 self.hostCombobox.setEditText(currentServer)
         
     def __init__(self, config, playerpaths, error, defaultConfig):
+        self._lastThreadSeqnum = 0
 
         self.config = config
         self.defaultConfig = defaultConfig
