@@ -194,6 +194,9 @@ en = {
       "forceguiprompt-label" : "Don't always show the Syncplay configuration window", # (Inverted)
       "nostore-label" : "Don't store this configuration", # (Inverted)
       "showosd-label" : "Enable OSD Messages",
+      "playercommanddelay-title" : "Player latency compensation",
+      "playercommanddelay-label" : "Seconds to ignore player status after commands",
+      "playercommanddelay-tooltip" : "Larger values are less likely to spuriously (un)pause but tend to sync less accurately.",
 
       "showosdwarnings-label" : "Include warnings (e.g. when files are different, users not ready)",
       "showsameroomosd-label" : "Include events in your room",

@@ -178,7 +178,7 @@ class SyncplayClient(object):
     def updatePlayerStatus(self, paused, position, cookie=None):
         # Ignore status report if the cookie is stale
         if cookie is not None and \
-                cookie < constants.PLAYER_COMMAND_DELAY + self._lastPlayerCommand:
+                cookie < self._lastPlayerCommand + self._config['playerCommandDelay']:
             return
 
         position -= self.getUserOffset()

@@ -63,7 +63,8 @@ class ConfigurationGetter(object):
                         "showSameRoomOSD" : True,
                         "showNonControllerOSD" : False,
                         "showContactInfo" : True,
-                        "showDurationNotification" : True
+                        "showDurationNotification" : True,
+                        "playerCommandDelay": constants.DEFAULT_PLAYER_COMMAND_DELAY
                         }
 
         self._defaultConfig = self._config.copy()
@@ -117,11 +118,21 @@ class ConfigurationGetter(object):
             "rewindThreshold",
             "fastforwardThreshold",
             "autoplayMinUsers",
+            "playerCommandDelay",
         ]
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "perPlayerArguments", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState", "mediaSearchDirectories"],
+                        "client_settings": ["name", "room", "playerPath",
+                            "perPlayerArguments", "slowdownThreshold",
+                            "rewindThreshold", "fastforwardThreshold",
+                            "slowOnDesync", "rewindOnDesync",
+                            "fastforwardOnDesync", "dontSlowDownWithMe",
+                            "forceGuiPrompt", "filenamePrivacyMode",
+                            "filesizePrivacyMode", "unpauseAction",
+                            "pauseOnLeave", "readyAtStart", "autoplayMinUsers",
+                            "autoplayInitialState", "mediaSearchDirectories",
+                            "playerCommandDelay"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showDurationNotification"],
                         "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
                         }
