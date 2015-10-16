@@ -154,14 +154,16 @@ class NewMpvPlayer(OldMpvPlayer):
         else:
             self._paused = self._client.getGlobalPaused()
 
-    def askForStatus(self):
+    def askForStatus(self, cookie=None):
         self._positionAsk.clear()
         self._pausedAsk.clear()
         self._getPaused()
         self._getPosition()
         self._positionAsk.wait(constants.MPV_LOCK_WAIT_TIME)
         self._pausedAsk.wait(constants.MPV_LOCK_WAIT_TIME)
-        self._client.updatePlayerStatus(self._paused if self.fileLoaded else self._client.getGlobalPaused(), self.getCalculatedPosition())
+        self._client.updatePlayerStatus(self._paused if self.fileLoaded else self._client.getGlobalPaused(),
+                                        self.getCalculatedPosition(),
+                                        cookie=cookie)
 
     def _preparePlayer(self):
         if self.delayedFilePath:
