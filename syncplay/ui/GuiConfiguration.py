@@ -389,6 +389,8 @@ class ConfigDialog(QtGui.QDialog):
                 self.config[radioName] = radioValue
         elif isinstance(widget, QLineEdit):
             self.config[valueName] = widget.text()
+        elif isinstance(widget, QDoubleSpinBox):
+            self.config[valueName] = widget.value()
 
     def connectChildren(self, widget):
         widgetName = str(widget.objectName())
@@ -687,7 +689,7 @@ class ConfigDialog(QtGui.QDialog):
         self.commandDelaySpinbox = QDoubleSpinBox()
         self.commandDelaySpinbox.setObjectName("playerCommandDelay")
         self.commandDelaySpinbox.setMaximum(10)
-        self.commandDelaySpinbox.setSingleStep(.01)
+        self.commandDelaySpinbox.setSingleStep(.1)
 
         self.desyncSettingsLayout = QtGui.QGridLayout()
         self.desyncSettingsLayout.setSpacing(2)
