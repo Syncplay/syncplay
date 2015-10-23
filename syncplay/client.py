@@ -175,10 +175,15 @@ class SyncplayClient(object):
         seeked = _playerDiff > constants.SEEK_THRESHOLD and _globalDiff > constants.SEEK_THRESHOLD
         return pauseChange, seeked
 
+    def _ignoringPlayerStatus(self, cookie=None):
+        if cookie is None:
+            cookie = time.time()
+        return cookie < self._lastPlayerCommand + self._config['playerCommandDelay']
+
     def updatePlayerStatus(self, paused, position, cookie=None):
         # Ignore status report if the cookie is stale
-        if cookie is not None and \
-                cookie < self._lastPlayerCommand + self._config['playerCommandDelay']:
+        if self._ignoringPlayerStatus(cookie):
+            self.ui.showDebugMessage('Ignoring stale player status with cookie {}'.format(cookie))
             return
 
         position -= self.getUserOffset()
@@ -515,6 +520,7 @@ class SyncplayClient(object):
     def setPosition(self, position):
         if self._lastPlayerUpdate:
             self._lastPlayerUpdate = time.time()
+        self._playerPosition = position
         position += self.getUserOffset()
         if self._player and self.userlist.currentUser.file:
             if position < 0:
