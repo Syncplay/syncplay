@@ -975,8 +975,6 @@ class ConfigDialog(QtGui.QDialog):
                 self.hostCombobox.setEditText(currentServer)
         
     def __init__(self, config, playerpaths, error, defaultConfig):
-        self._lastThreadSeqnum = 0
-
         self.config = config
         self.defaultConfig = defaultConfig
         self.playerpaths = playerpaths
