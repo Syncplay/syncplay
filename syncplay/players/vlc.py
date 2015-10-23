@@ -141,6 +141,10 @@ class VlcPlayer(BasePlayer):
         return fileURL
 
     def openFile(self, filePath, resetPosition=False):
+        if not utils.isURL(filePath):
+            normedPath = os.path.normpath(filePath)
+            if os.path.isfile(normedPath):
+                filePath = normedPath
         if utils.isASCII(filePath):
             self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii', 'ignore')))
         else:
