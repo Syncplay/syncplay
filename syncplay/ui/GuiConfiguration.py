@@ -32,6 +32,39 @@ class GuiConfiguration:
     class WindowClosed(Exception):
         pass
 
+
+class GetPlayerIconThread(threading.Thread, QtCore.QObject):
+    daemon = True
+    done = QtCore.Signal(str, str)
+
+    def __init__(self):
+        threading.Thread.__init__(self, name='GetPlayerIcon')
+        QtCore.QObject.__init__(self)
+        self.condvar = threading.Condition()
+        self.playerpath = None
+
+    def setPlayerPath(self, playerpath):
+        self.condvar.acquire()
+        was_none = self.playerpath is None
+        self.playerpath = playerpath
+        if was_none:
+            self.condvar.notify()
+        self.condvar.release()
+
+    def run(self):
+        while True:
+            self.condvar.acquire()
+            if self.playerpath is None:
+                self.condvar.wait()
+            playerpath = self.playerpath
+            self.playerpath = None
+            self.condvar.release()
+
+            self.done.emit('spinner.mng', '')
+            iconpath = PlayerFactory().getPlayerIconByPath(playerpath)
+            self.done.emit(iconpath, playerpath)
+
+
 class ConfigDialog(QtGui.QDialog):
 
     pressedclosebutton = False
@@ -141,25 +174,9 @@ class ConfigDialog(QtGui.QDialog):
             settings.endGroup()
         return foundpath
 
-    class _GetIconPath(threading.Thread, QtCore.QObject):
-        daemon = True
-        done = QtCore.Signal(int, str, str)
-
-        def __init__(self, playerpath, seqnum):
-            threading.Thread.__init__(self)
-            QtCore.QObject.__init__(self)
-            self.playerpath = playerpath
-            self.seqnum = seqnum
-
-        def run(self):
-            iconpath = PlayerFactory().getPlayerIconByPath(self.playerpath)
-            self.done.emit(self.seqnum, iconpath, self.playerpath)
-
-    @QtCore.Slot(int, str, str)
-    def _updateExecutableIcon(self, seqnum, iconpath, playerpath):
-        if seqnum < self._lastThreadSeqnum:
-            return
-        if iconpath != None and iconpath != "":
+    @QtCore.Slot(str, str)
+    def _updateExecutableIcon(self, iconpath, playerpath):
+        if iconpath is not None and iconpath != "":
             if iconpath.endswith('.mng'):
                 movie = QtGui.QMovie(self.resourcespath + iconpath)
                 movie.setCacheMode(QtGui.QMovie.CacheMode.CacheAll)
@@ -182,11 +199,7 @@ class ConfigDialog(QtGui.QDialog):
         so.
         """
         currentplayerpath = unicode(self.executablepathCombobox.currentText())
-        self._lastThreadSeqnum += 1
-        thread = self._GetIconPath(currentplayerpath, self._lastThreadSeqnum)
-        thread.done.connect(self._updateExecutableIcon)
-        thread.done.emit(self._lastThreadSeqnum, 'spinner.mng', '')
-        thread.start()
+        self._playerProbeThread.setPlayerPath(currentplayerpath)
 
     def updatePlayerArguments(self, currentplayerpath):
         argumentsForPath = utils.getPlayerArgumentsByPathAsText(self.perPlayerArgs, currentplayerpath)
@@ -971,6 +984,10 @@ class ConfigDialog(QtGui.QDialog):
         self.config['resetConfig'] = False
         self.subitems = {}
         self.publicServers = None
+
+        self._playerProbeThread = GetPlayerIconThread()
+        self._playerProbeThread.done.connect(self._updateExecutableIcon)
+        self._playerProbeThread.start()
 
         if self.config['clearGUIData'] == True:
             self.config['clearGUIData'] = False
