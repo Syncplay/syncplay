@@ -105,12 +105,12 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 resourcespath = utils.findWorkingDir() + "/resources/"
             if currentlyPlayingFile:
-                fileSwitchIconQPixmap = QtGui.QPixmap(resourcespath + "chevrons_right.png")
+                currentlyplayingIconQPixmap = QtGui.QPixmap(resourcespath + "bullet_right_grey.png")
                 itemQPainter.drawPixmap (
-                    (optionQStyleOptionViewItem.rect.x()),
+                    (optionQStyleOptionViewItem.rect.x()+4),
                     optionQStyleOptionViewItem.rect.y(),
-                    fileSwitchIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
-                optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
+                    currentlyplayingIconQPixmap.scaled(6, 16, Qt.KeepAspectRatio))
+                optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+10)
 
             QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
