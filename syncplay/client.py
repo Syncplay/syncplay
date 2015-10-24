@@ -466,6 +466,7 @@ class SyncplayClient(object):
             return
         try:
             filename = self._playlist[index]
+            self.ui.setPlaylistIndexFilename(filename)
             if username is not None and self.userlist.currentUser.file and filename == self.userlist.currentUser.file['name']:
                 return
         except IndexError:
@@ -1281,6 +1282,9 @@ class UiManager(object):
 
     def setPlaylist(self, newPlaylist):
         self.__ui.setPlaylist(newPlaylist)
+
+    def setPlaylistIndexFilename(self, filename):
+        self.__ui.setPlaylistIndexFilename(filename)
 
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():

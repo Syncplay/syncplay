@@ -25,6 +25,9 @@ class ConsoleUI(threading.Thread):
 
     def setPlaylist(self, newPlaylist):
         pass
+
+    def setPlaylistIndexFilename(self, filename):
+        pass
     
     def run(self):
         try:

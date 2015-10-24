@@ -88,6 +88,7 @@ class MainWindow(QtGui.QMainWindow):
     insertPosition = None
     playlistState = []
     updatingPlaylist = False
+    playlistIndex = None
 
     def setPlaylistInsertPosition(self, newPosition):
         if MainWindow.insertPosition <> newPosition:
@@ -96,8 +97,23 @@ class MainWindow(QtGui.QMainWindow):
 
     class PlaylistItemDelegate(QtGui.QStyledItemDelegate):
         def paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex):
-            QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
             itemQPainter.save()
+            currentQAbstractItemModel = indexQModelIndex.model()
+            currentlyPlayingFile = currentQAbstractItemModel.data(indexQModelIndex, Qt.UserRole + constants.PLAYLISTITEM_CURRENTLYPLAYING_ROLE)
+            if sys.platform.startswith('win'):
+                resourcespath = utils.findWorkingDir() + "\\resources\\"
+            else:
+                resourcespath = utils.findWorkingDir() + "/resources/"
+            if currentlyPlayingFile:
+                fileSwitchIconQPixmap = QtGui.QPixmap(resourcespath + "chevrons_right.png")
+                itemQPainter.drawPixmap (
+                    (optionQStyleOptionViewItem.rect.x()),
+                    optionQStyleOptionViewItem.rect.y(),
+                    fileSwitchIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
+                optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
+
+            QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
+
             lineAbove = False
             lineBelow = False
             if MainWindow.insertPosition == 0 and indexQModelIndex.row() == 0:
@@ -150,6 +166,18 @@ class MainWindow(QtGui.QMainWindow):
 
     class PlaylistWidget(QtGui.QListWidget):
         selfWindow = None
+        playlistIndexFilename = None
+
+        def setPlaylistIndexFilename(self, filename):
+            if filename <> self.playlistIndexFilename:
+                self.playlistIndexFilename = filename
+                self.updatePlaylistIndexIcon()
+
+        def updatePlaylistIndexIcon(self):
+            for item in xrange(self.count()):
+                isPlayingFilename = self.item(item).text() == self.playlistIndexFilename
+                self.item(item).setData(Qt.UserRole + constants.PLAYLISTITEM_CURRENTLYPLAYING_ROLE, isPlayingFilename)
+            self.forceUpdate()
 
         def setWindow(self, window):
             self.selfWindow = window
@@ -172,6 +200,7 @@ class MainWindow(QtGui.QMainWindow):
             for index in xrange(self.count()):
                 self.takeItem(0)
             self.insertItems(0, newPlaylist)
+            self.updatePlaylistIndexIcon()
 
         def remove_selected_items(self):
             for item in self.selectedItems():
@@ -1307,6 +1336,9 @@ class MainWindow(QtGui.QMainWindow):
         self.playlistState = newPlaylist
         self.playlist.updatePlaylist(newPlaylist)
         self.updatingPlaylist = False
+
+    def setPlaylistIndexFilename(self, filename):
+        self.playlist.setPlaylistIndexFilename(filename)
 
     def addFileToPlaylist(self, filePath, index = -1):
         if os.path.isfile(filePath):
