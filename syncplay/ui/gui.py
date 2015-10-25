@@ -199,7 +199,11 @@ class MainWindow(QtGui.QMainWindow):
         def updatePlaylist(self, newPlaylist):
             for index in xrange(self.count()):
                 self.takeItem(0)
-            self.insertItems(0, newPlaylist)
+            uniquePlaylist = []
+            for item in newPlaylist:
+                if item not in uniquePlaylist:
+                    uniquePlaylist.append(item)
+            self.insertItems(0, uniquePlaylist)
             self.updatePlaylistIndexIcon()
 
         def remove_selected_items(self):
@@ -1346,14 +1350,25 @@ class MainWindow(QtGui.QMainWindow):
             if index == -1:
                 self.playlist.addItem(os.path.basename(filePath))
             else:
-                self.playlist.insertItem(index, os.path.basename(filePath))
+                filename = os.path.basename(filePath)
+
+                if self.noPlaylistDuplicates(filename):
+                    self.playlist.insertItem(index, filename)
 
     def openFile(self, filePath, resetPosition=False):
         self._syncplayClient._player.openFile(filePath, resetPosition)
 
+    def noPlaylistDuplicates(self, filename):
+        for playlistindex in xrange(self.playlist.count()):
+            if self.playlist.item(playlistindex).text() == filename:
+                self.showErrorMessage(u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.".format(filename))
+                return False
+        return True
+
     def addStreamToPlaylist(self, streamURI):
         self.removePlaylistNote()
-        self.playlist.addItem(streamURI)
+        if self.noPlaylistDuplicates(streamURI):
+            self.playlist.addItem(streamURI)
 
     def removePlaylistNote(self):
         if not self.clearedPlaylistNote:
