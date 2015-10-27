@@ -102,7 +102,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^UninstConfig $${LANG_RUSSIAN} "Удалить файл настроек."
 
   LangString ^SyncplayLanguage $${LANG_GERMAN} "de"
-  LangString ^Associate $${LANG_GERMAN} "Syncplay als Standardprogramm für Multimedia-Dateien verwenden." // This translation represents better what is actually happening
+  LangString ^Associate $${LANG_GERMAN} "Syncplay als Standardprogramm für Multimedia-Dateien verwenden."
   LangString ^VLC $${LANG_GERMAN} "Syncplay-Interface für VLC installieren (ab VLC 2+)"
   LangString ^Shortcut $${LANG_GERMAN} "Erstelle Verknüpfungen an folgenden Orten:"
   LangString ^BrowseVLCBtn $${LANG_GERMAN} "VLC-Ordner wählen"
