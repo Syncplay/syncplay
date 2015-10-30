@@ -6,6 +6,7 @@ from datetime import datetime
 from syncplay import utils
 import os
 import sys
+import threading
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
 from syncplay import constants
 
@@ -30,6 +31,39 @@ class GuiConfiguration:
 
     class WindowClosed(Exception):
         pass
+
+
+class GetPlayerIconThread(threading.Thread, QtCore.QObject):
+    daemon = True
+    done = QtCore.Signal(str, str)
+
+    def __init__(self):
+        threading.Thread.__init__(self, name='GetPlayerIcon')
+        QtCore.QObject.__init__(self)
+        self.condvar = threading.Condition()
+        self.playerpath = None
+
+    def setPlayerPath(self, playerpath):
+        self.condvar.acquire()
+        was_none = self.playerpath is None
+        self.playerpath = playerpath
+        if was_none:
+            self.condvar.notify()
+        self.condvar.release()
+
+    def run(self):
+        while True:
+            self.condvar.acquire()
+            if self.playerpath is None:
+                self.condvar.wait()
+            playerpath = self.playerpath
+            self.playerpath = None
+            self.condvar.release()
+
+            self.done.emit('spinner.mng', '')
+            iconpath = PlayerFactory().getPlayerIconByPath(playerpath)
+            self.done.emit(iconpath, playerpath)
+
 
 class ConfigDialog(QtGui.QDialog):
 
@@ -140,15 +174,32 @@ class ConfigDialog(QtGui.QDialog):
             settings.endGroup()
         return foundpath
 
-    def updateExecutableIcon(self):
-        currentplayerpath = unicode(self.executablepathCombobox.currentText())
-        iconpath = PlayerFactory().getPlayerIconByPath(currentplayerpath)
-        if iconpath != None and iconpath != "":
-            self.executableiconImage.load(self.resourcespath + iconpath)
-            self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(self.executableiconImage))
+    @QtCore.Slot(str, str)
+    def _updateExecutableIcon(self, iconpath, playerpath):
+        if iconpath is not None and iconpath != "":
+            if iconpath.endswith('.mng'):
+                movie = QtGui.QMovie(self.resourcespath + iconpath)
+                movie.setCacheMode(QtGui.QMovie.CacheMode.CacheAll)
+                self.executableiconLabel.setMovie(movie)
+                movie.start()
+            else:
+                self.executableiconImage.load(self.resourcespath + iconpath)
+                self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(self.executableiconImage))
         else:
             self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(QtGui.QImage()))
-        self.updatePlayerArguments(currentplayerpath)
+        self.updatePlayerArguments(playerpath)
+
+    def updateExecutableIcon(self):
+        """
+        Start getting the icon path in another thread, which will set the GUI
+        icon if valid.
+
+        This is performed outside the main thread because networked players may
+        take a long time to perform their checks and hang the GUI while doing
+        so.
+        """
+        currentplayerpath = unicode(self.executablepathCombobox.currentText())
+        self._playerProbeThread.setPlayerPath(currentplayerpath)
 
     def updatePlayerArguments(self, currentplayerpath):
         argumentsForPath = utils.getPlayerArgumentsByPathAsText(self.perPlayerArgs, currentplayerpath)
@@ -924,7 +975,6 @@ class ConfigDialog(QtGui.QDialog):
                 self.hostCombobox.setEditText(currentServer)
         
     def __init__(self, config, playerpaths, error, defaultConfig):
-
         self.config = config
         self.defaultConfig = defaultConfig
         self.playerpaths = playerpaths
@@ -932,6 +982,10 @@ class ConfigDialog(QtGui.QDialog):
         self.config['resetConfig'] = False
         self.subitems = {}
         self.publicServers = None
+
+        self._playerProbeThread = GetPlayerIconThread()
+        self._playerProbeThread.done.connect(self._updateExecutableIcon)
+        self._playerProbeThread.start()
 
         if self.config['clearGUIData'] == True:
             self.config['clearGUIData'] = False
