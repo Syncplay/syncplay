@@ -653,7 +653,7 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/chevrons_right.png',
      'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',
      'resources/tick.png', 'resources/lock_open.png', 'resources/empty_checkbox.png', 'resources/tick_checkbox.png',
-     'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png',
+     'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png', 'resources/arrow_switch.png',
      'resources/film_go.png', 'resources/world_go.png', 'resources/arrow_refresh.png', 'resources/bullet_right_grey.png',
      'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png'
     ]

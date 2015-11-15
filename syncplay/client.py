@@ -4,6 +4,7 @@ import time
 import re
 import sys
 import ast
+import random
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task, defer
 from functools import wraps
@@ -529,6 +530,16 @@ class SyncplayClient(object):
             self.changePlaylist(self._previousPlaylist)
             self._previousPlaylist = undidPlaylist
 
+    def shufflePlaylist(self):
+        if self._playlist and len(self._playlist) > 0:
+            oldPlaylist = self._playlist
+            random.seed()
+            shuffledPlaylist = deepcopy(self._playlist)
+            random.shuffle(shuffledPlaylist)
+            self.ui.setPlaylist(shuffledPlaylist)
+            self.changePlaylist(shuffledPlaylist)
+            self._previousPlaylist = oldPlaylist
+
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
             filename = utils.hashFilename(filename)
@@ -564,7 +575,6 @@ class SyncplayClient(object):
         if username and username <> "":
             self.userlist.currentUser.username = username
         else:
-            import random
             random.seed()
             random_number = random.randrange(1000, 9999)
             self.userlist.currentUser.username = "Anonymous" + str(random_number) # Not localised as this would give away locale

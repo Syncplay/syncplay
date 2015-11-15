@@ -575,6 +575,10 @@ class MainWindow(QtGui.QMainWindow):
     def undoPlaylistChange(self):
         self._syncplayClient.undoPlaylistChange()
 
+    @needsClient
+    def shufflePlaylist(self):
+        self._syncplayClient.shufflePlaylist()
+
     def openPlaylistMenu(self, position):
         indexes = self.playlist.selectedIndexes()
         if sys.platform.startswith('win'):
@@ -598,6 +602,7 @@ class MainWindow(QtGui.QMainWindow):
                         menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), "Open file", lambda: self.openFile(pathFound))
             menu.addAction(QtGui.QPixmap(resourcespath + "delete.png"), "Remove from playlist", lambda: self.deleteSelectedPlaylistItems())
             menu.addSeparator()
+        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_switch.png"), "Shuffle playlist", lambda: self.shufflePlaylist())
         menu.addAction(QtGui.QPixmap(resourcespath + "arrow_undo.png"), "Undo last change to playlist", lambda: self.undoPlaylistChange())
         menu.exec_(self.playlist.viewport().mapToGlobal(position))
 
@@ -1335,7 +1340,7 @@ class MainWindow(QtGui.QMainWindow):
         if newPlaylist == self.playlistState:
             return
         self.updatingPlaylist = True
-        if len(newPlaylist) > 0:
+        if newPlaylist and len(newPlaylist) > 0:
             self.clearedPlaylistNote = True
         self.playlistState = newPlaylist
         self.playlist.updatePlaylist(newPlaylist)
