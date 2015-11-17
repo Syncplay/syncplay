@@ -291,6 +291,7 @@ class ConfigDialog(QtGui.QDialog):
         self.processWidget(self, lambda w: self.saveValues(w))
         if self.hostCombobox.currentText():
             self.config['host'] = self.hostCombobox.currentText() if ":" in self.hostCombobox.currentText() else self.hostCombobox.currentText() + ":" + unicode(constants.DEFAULT_PORT)
+            self.config['host'] = self.config['host'].replace(" ","").replace("\t", "").replace("\n","").replace("\r","")
         else:
             self.config['host'] = None
         self.config['playerPath'] = unicode(self.safenormcaseandpath(self.executablepathCombobox.currentText()))
