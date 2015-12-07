@@ -418,20 +418,22 @@ class MPCHCAPIPlayer(BasePlayer):
         self._mpcApi.askForCurrentPosition()
         self.__positionUpdate.wait(constants.MPC_LOCK_WAIT_TIME)
         return self._mpcApi.lastFilePosition
-    
-    @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
+
     def askForStatus(self):
-        if self._mpcApi.filePlaying and self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0):
-            self.__fileUpdate.release()
-            position = self.__getPosition()
-            paused = self._mpcApi.isPaused()
-            position = float(position)
-            if self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0):
-                self.__client.updatePlayerStatus(paused, position)
+        try:
+            if self._mpcApi.filePlaying and self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0):
                 self.__fileUpdate.release()
-            return
-        self.__echoGlobalStatus()
-            
+                position = self.__getPosition()
+                paused = self._mpcApi.isPaused()
+                position = float(position)
+                if self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0):
+                    self.__client.updatePlayerStatus(paused, position)
+                    self.__fileUpdate.release()
+            else:
+                self.__echoGlobalStatus()
+        except MpcHcApi.PlayerNotReadyException:
+            self.__echoGlobalStatus()
+
     def __echoGlobalStatus(self):
         self.__client.updatePlayerStatus(self.__client.getGlobalPaused(), self.__client.getGlobalPosition())
 
