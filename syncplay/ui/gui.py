@@ -875,7 +875,8 @@ class MainWindow(QtGui.QMainWindow):
         window.updateAction.triggered.connect(self.userCheckForUpdates)
 
         window.menuBar.addMenu(window.helpMenu)
-        window.mainLayout.setMenuBar(window.menuBar)
+        if not sys.platform.startswith('darwin'):
+            window.mainLayout.setMenuBar(window.menuBar)
 
     def addMainFrame(self, window):
         window.mainFrame = QtGui.QFrame()
