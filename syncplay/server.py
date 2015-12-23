@@ -11,7 +11,7 @@ import codecs
 import os
 from string import Template
 import argparse
-from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion
+from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion,displayIP
 
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False):
@@ -22,6 +22,7 @@ class SyncFactory(Factory):
         if salt is None:
             salt = RandomStringGenerator.generate_server_salt()
             print getMessage("no-salt-notification").format(salt)
+        displayIP()
         self._salt = salt
         self._motdFilePath = motdFilePath
         self.disableReady = disableReady

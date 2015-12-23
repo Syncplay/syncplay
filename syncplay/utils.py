@@ -115,6 +115,33 @@ def formatSize (bytes, precise=False):
 def isASCII(s):
     return all(ord(c) < 128 for c in s)
 
+def displayIP():
+    print "---------------------------"
+    print "Your Local IP's are:"
+    displayLocalIPs()
+    print "---------------------------"
+    print "Your active network IP is."
+    displayNetworkIP()
+    print "---------------------------"
+    
+
+def displayLocalIPs():
+    from netifaces import interfaces, ifaddresses, AF_INET
+    addresses=[]
+    for ifaceName in interfaces():
+        for i in ifaddresses(ifaceName).setdefault(AF_INET, [{'addr':'No IP addr'}] ):
+            if i['addr'] not in ('127.0.0.1','No IP addr') and not i['addr'].startswith('169.254') :
+                addresses.append(i['addr'])
+    for j in addresses:
+        print j
+
+def displayNetworkIP():
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("syncplay.pl",80))
+    print(s.getsockname()[0])
+    s.close()
+    
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
     if not frozen:
