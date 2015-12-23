@@ -137,10 +137,13 @@ def displayLocalIPs():
 
 def displayNetworkIP():
     import socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("syncplay.pl",80))
-    print(s.getsockname()[0])
-    s.close()
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("syncplay.pl",80))
+        print(s.getsockname()[0])
+        s.close()
+    except:
+        print "Could not connect to syncplay.pl"
     
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
