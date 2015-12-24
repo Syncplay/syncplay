@@ -14,15 +14,15 @@ import argparse
 from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion,displayIP
 
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False):
-        print getMessage("welcome-server-notification").format(syncplay.version)
+    def __init__(self, port,password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False,determineIP=False,):
+        print getMessage("welcome-server-notification").format(syncplay.version,port)
         if password:
             password = hashlib.md5(password).hexdigest()
         self.password = password
         if salt is None:
             salt = RandomStringGenerator.generate_server_salt()
             print getMessage("no-salt-notification").format(salt)
-        displayIP()
+        displayIP(determineIP)
         self._salt = salt
         self._motdFilePath = motdFilePath
         self.disableReady = disableReady
@@ -442,5 +442,6 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
         self._argparser.add_argument('--disable-ready', action='store_true', help=getMessage("server-disable-ready-argument"))
+        self._argparser.add_argument('--determine-ip', action='store_true', help=getMessage("server-determine-ip-argument"))
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))

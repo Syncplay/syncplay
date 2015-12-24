@@ -115,13 +115,14 @@ def formatSize (bytes, precise=False):
 def isASCII(s):
     return all(ord(c) < 128 for c in s)
 
-def displayIP():
+def displayIP(determineIP):
     print "---------------------------"
-    print "Your Local IP's are:"
     displayLocalIPs()
     print "---------------------------"
-    print "Your active network IP is."
-    displayNetworkIP()
+    if determineIP:
+        displayNetworkIP()
+    else:
+        print getMessage("no-ip-notification")
     print "---------------------------"
     
 
@@ -132,14 +133,14 @@ def displayLocalIPs():
         for i in ifaddresses(ifaceName).setdefault(AF_INET, [{'addr':'No IP addr'}] ):
             if i['addr'] not in ('127.0.0.1','No IP addr') and not i['addr'].startswith('169.254') :
                 addresses.append(i['addr'])
-    for j in addresses:
-        print j
+    print (getMessage("local-ip-notification") + "\n"+"\n".join(addresses))
 
 def displayNetworkIP():
     import socket
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("syncplay.pl",80))
+        print getMessage("network-ip-notification")
         print(s.getsockname()[0])
         s.close()
     except:
