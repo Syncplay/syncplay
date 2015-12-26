@@ -134,6 +134,9 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
         elif command.group('command') in constants.COMMANDS_LIST:
             self._syncplayClient.getUserList()
+        elif command.group('command') in constants.COMMANDS_CHAT:
+            message= command.group('parameter')            
+            self._syncplayClient.sendChat(message)
         elif command.group('command') in constants.COMMANDS_PAUSE:
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
         elif command.group('command') in constants.COMMANDS_ROOM:

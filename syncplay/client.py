@@ -454,7 +454,11 @@ class SyncplayClient(object):
         self.userlist.currentUser.room = roomName
         if resetAutoplay:
             self.resetAutoPlayState()
-
+           
+    def sendChat(self,message):
+        if self._protocol and self._protocol.logged:
+            self._protocol.sendChatMessage(message)
+        
     def sendRoom(self):
         room = self.userlist.currentUser.room
         if self._protocol and self._protocol.logged and room:

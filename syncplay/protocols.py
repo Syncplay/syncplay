@@ -22,6 +22,8 @@ class JSONCommandProtocol(LineReceiver):
                 self.handleState(message[1])
             elif command == "Error":
                 self.handleError(message[1])
+            elif command == "Chat":
+                self.handleChat(message[1])
             else:
                 self.dropWithError(getMessage("unknown-command-server-error").format(message[1]))  # TODO: log, not drop
 
@@ -153,7 +155,8 @@ class SyncClientProtocol(JSONCommandProtocol):
     def sendFileSetting(self, file_):
         self.sendSet({"file": file_})
         self.sendList()
-
+    def sendChatMessage(self,chatMessage):
+        self.sendMessage({"Chat": chatMessage})
     def handleList(self, userList):
         self._client.userlist.clearList()
         for room in userList.iteritems():
@@ -326,7 +329,8 @@ class SyncServerProtocol(JSONCommandProtocol):
             self._factory.addWatcher(self, username, roomName)
             self._logged = True
             self.sendHello(version)
-
+    def handleChat(self,chatMessage):
+        #TODO
     def setWatcher(self, watcher):
         self._watcher = watcher
 

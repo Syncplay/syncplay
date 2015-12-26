@@ -358,6 +358,7 @@ en = {
       "server-salt-argument" : "random string used to generate managed room passwords",
       "server-disable-ready-argument" : u"disable readiness feature",
       "server-motd-argument": "path to file from which motd will be fetched",
+      "server-chat-argument" : "Should chat be enabled?",
       "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
       "server-messed-up-motd-too-long": "Message of the Day is too long - maximum of {} chars, {} given.",
 
