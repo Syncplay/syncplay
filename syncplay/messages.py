@@ -82,6 +82,7 @@ en = {
       "commandlist-notification/toggle" : u"\tt - toggles whether you are ready to watch or not",
       "commandlist-notification/create" : "\tc [name] - create managed room using name of current room",
       "commandlist-notification/auth" : "\ta [password] - authenticate as room operator with operator password",
+      "commandlist-notification/chat" : "\tch [message] - send a chat message in a room",
       "syncplay-version-notification" : "Syncplay version: {}",  # syncplay.version
       "more-info-notification" : "More info available at: {}",  # projectURL
 

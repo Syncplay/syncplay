@@ -241,6 +241,9 @@ class SyncClientProtocol(JSONCommandProtocol):
                 "password": password
             }
         })
+    def handleChat(self,message):
+        self._client.ui.showMessage(message)
+        #TODO
 
     def setReady(self, isReady, manuallyInitiated=True):
         self.sendSet({
@@ -330,7 +333,9 @@ class SyncServerProtocol(JSONCommandProtocol):
             self._logged = True
             self.sendHello(version)
     def handleChat(self,chatMessage):
-        #TODO
+        if self._factory.chat:
+            self._factory.sendChat(self._watcher,chatMessage)
+
     def setWatcher(self, watcher):
         self._watcher = watcher
 

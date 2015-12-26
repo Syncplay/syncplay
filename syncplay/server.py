@@ -129,6 +129,9 @@ class SyncFactory(Factory):
         except ValueError:
             self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
 
+    def sendChat(self,watcher,message):
+        self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(message))
+
     def setReady(self, watcher, isReady, manuallyInitiated=True):
         watcher.setReady(isReady)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), manuallyInitiated))
@@ -367,6 +370,9 @@ class Watcher(object):
 
     def sendControlledRoomAuthStatus(self, success, username, room):
         self._connector.sendControlledRoomAuthStatus(success, username, room)
+
+    def sendChatMessage(self,message):
+        self._connector.sendMessage({"Chat" : message}) 
 
     def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self._connector.sendSetReady(username, isReady, manuallyInitiated)

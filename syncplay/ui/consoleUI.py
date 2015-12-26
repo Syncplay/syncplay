@@ -175,6 +175,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/toggle"), True)
             self.showMessage(getMessage("commandlist-notification/create"), True)
             self.showMessage(getMessage("commandlist-notification/auth"), True)
+            self.showMessage(getMessage("commandlist-notification/chat"), True)
             self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)
             self.showMessage(getMessage("more-info-notification").format(syncplay.projectURL), True)
     
