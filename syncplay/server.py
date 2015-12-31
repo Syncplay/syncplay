@@ -130,7 +130,8 @@ class SyncFactory(Factory):
             self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
 
     def sendChat(self,watcher,message):
-        self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(message))
+        messageDict={"message":message,"username" : watcher.getName()}
+        self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(messageDict))
 
     def setReady(self, watcher, isReady, manuallyInitiated=True):
         watcher.setReady(isReady)
