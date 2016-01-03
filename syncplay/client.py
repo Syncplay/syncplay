@@ -521,6 +521,7 @@ class SyncplayClient(object):
             self.changeToPlaylistIndex(newIndex)
         else:
             self.ui.setPlaylist(self._playlist)
+            self.changeToPlaylistIndex(newIndex, username)
             self.ui.showMessage(u"{} updated the playlist".format(username))
 
     def undoPlaylistChange(self):
