@@ -138,12 +138,22 @@ class SyncFactory(Factory):
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), manuallyInitiated))
 
     def setPlaylist(self, watcher, files):
-        watcher.getRoom().setPlaylist(files, watcher)
-        self._roomManager.broadcastRoom(watcher, lambda w: w.setPlaylist(watcher.getName(), files))
+        room = watcher.getRoom()
+        if room.canControl(watcher):
+            watcher.getRoom().setPlaylist(files, watcher)
+            self._roomManager.broadcastRoom(watcher, lambda w: w.setPlaylist(watcher.getName(), files))
+        else:
+            watcher.setPlaylist(room.getName(), room.getPlaylist())
+            watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
+
 
     def setPlaylistIndex(self, watcher, index):
-        watcher.getRoom().setPlaylistIndex(index, watcher)
-        self._roomManager.broadcastRoom(watcher, lambda w: w.setPlaylistIndex(watcher.getName(), index))
+        room = watcher.getRoom()
+        if room.canControl(watcher):
+            watcher.getRoom().setPlaylistIndex(index, watcher)
+            self._roomManager.broadcastRoom(watcher, lambda w: w.setPlaylistIndex(watcher.getName(), index))
+        else:
+            watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
 
 class RoomManager(object):
     def __init__(self):
