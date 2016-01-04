@@ -74,8 +74,9 @@ class SyncFactory(Factory):
             self.sendRoomSwitchMessage(watcher)
 
         room = watcher.getRoom()
-        watcher.setPlaylist(room.getSetBy().getName(), room.getPlaylist())
-        watcher.setPlaylistIndex(room.getSetBy().getName(), room.getPlaylistIndex())
+        roomSetByName = room.getSetBy().getName() if room.getSetBy() else None
+        watcher.setPlaylist(roomSetByName, room.getPlaylist())
+        watcher.setPlaylistIndex(roomSetByName, room.getPlaylistIndex())
         if RoomPasswordProvider.isControlledRoom(roomName):
             for controller in room.getControllers():
                 watcher.sendControlledRoomAuthStatus(True, controller, roomName)
