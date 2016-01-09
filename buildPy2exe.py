@@ -102,14 +102,14 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^UninstConfig $${LANG_RUSSIAN} "Удалить файл настроек."
 
   LangString ^SyncplayLanguage $${LANG_GERMAN} "de"
-  LangString ^Associate $${LANG_GERMAN} "Syncplay mit Multimedia-Dateien assoziieren."
+  LangString ^Associate $${LANG_GERMAN} "Syncplay als Standardprogramm für Multimedia-Dateien verwenden."
   LangString ^VLC $${LANG_GERMAN} "Syncplay-Interface für VLC installieren (ab VLC 2+)"
   LangString ^Shortcut $${LANG_GERMAN} "Erstelle Verknüpfungen an folgenden Orten:"
   LangString ^BrowseVLCBtn $${LANG_GERMAN} "VLC-Ordner wählen"
   LangString ^StartMenu $${LANG_GERMAN} "Startmenü"
   LangString ^Desktop $${LANG_GERMAN} "Desktop"
   LangString ^QuickLaunchBar $${LANG_GERMAN} "Schnellstartleiste"
-  LangString ^AutomaticUpdates $${LANG_GERMAN} "Automatisch nach Updates suchen"; TODO: Confirm German translation ("Check for updates automatically")
+  LangString ^AutomaticUpdates $${LANG_GERMAN} "Automatisch nach Updates suchen";
   LangString ^UninstConfig $${LANG_GERMAN} "Konfigurationsdatei löschen."
 
   ; Remove text to save space
@@ -655,7 +655,7 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/tick.png', 'resources/lock_open.png', 'resources/empty_checkbox.png', 'resources/tick_checkbox.png',
      'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png', 'resources/arrow_switch.png',
      'resources/film_go.png', 'resources/world_go.png', 'resources/arrow_refresh.png', 'resources/bullet_right_grey.png',
-     'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png'
+     'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
     ]
 resources = ["resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)
