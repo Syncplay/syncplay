@@ -604,6 +604,8 @@ class MainWindow(QtGui.QMainWindow):
             menu.addSeparator()
         menu.addAction(QtGui.QPixmap(resourcespath + "arrow_switch.png"), "Shuffle playlist", lambda: self.shufflePlaylist())
         menu.addAction(QtGui.QPixmap(resourcespath + "arrow_undo.png"), "Undo last change to playlist", lambda: self.undoPlaylistChange())
+        menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), "Add file(s) to bottom of playlist", lambda: self.OpenAddFilesToPlaylistDialog())
+        menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), "Add URL(s) to bottom of playlist", lambda: self.OpenAddURIsToPlaylistDialog())
         menu.exec_(self.playlist.viewport().mapToGlobal(position))
 
 
@@ -758,6 +760,8 @@ class MainWindow(QtGui.QMainWindow):
         if ok and seekTime != '':
             self.seekPosition(seekTime)
 
+
+
     def seekFromButton(self):
         self.seekPosition(self.seekInput.text())
 
@@ -813,6 +817,19 @@ class MainWindow(QtGui.QMainWindow):
         settings.setValue("mediadir", self.mediadirectory)
         settings.endGroup()
 
+    def getInitialMediaDirectory(self):
+        if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
+            defaultdirectory = self.config["mediaSearchDirectories"][0]
+        elif os.path.isdir(self.mediadirectory):
+            defaultdirectory = self.mediadirectory
+        elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)):
+            defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)
+        elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)):
+            defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)
+        else:
+            defaultdirectory = ""
+        return defaultdirectory
+
     @needsClient
     def browseMediapath(self):
         if self._syncplayClient._player.customOpenDialog == True:
@@ -825,16 +842,8 @@ class MainWindow(QtGui.QMainWindow):
         currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
         if currentdirectory and os.path.isdir(currentdirectory):
             defaultdirectory = currentdirectory
-        elif self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
-            defaultdirectory = self.config["mediaSearchDirectories"][0]
-        elif os.path.isdir(self.mediadirectory):
-            defaultdirectory = self.mediadirectory
-        elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)):
-            defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)
-        elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)):
-            defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)
         else:
-            defaultdirectory = ""
+            defaultdirectory = self.getInitialMediaDirectory()
         browserfilter = "All files (*)"
         fileName, filtr = QtGui.QFileDialog.getOpenFileName(self, getMessage("browseformedia-label"), defaultdirectory,
                                                             browserfilter, "", options)
@@ -845,6 +854,59 @@ class MainWindow(QtGui.QMainWindow):
             self.FileSwitchManager.setCurrentDirectory(self.mediadirectory)
             self.saveMediaBrowseSettings()
             self._syncplayClient._player.openFile(fileName)
+
+    @needsClient
+    def OpenAddFilesToPlaylistDialog(self):
+        if self._syncplayClient._player.customOpenDialog == True:
+            self._syncplayClient._player.openCustomOpenDialog()
+            return
+
+        self.loadMediaBrowseSettings()
+        options = QtGui.QFileDialog.Options()
+        self.mediadirectory = ""
+        currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
+        if currentdirectory and os.path.isdir(currentdirectory):
+            defaultdirectory = currentdirectory
+        else:
+            defaultdirectory = self.getInitialMediaDirectory()
+        browserfilter = "All files (*)"
+        fileNames, filtr = QtGui.QFileDialog.getOpenFileNames(self, getMessage("browseformedia-label"), defaultdirectory,
+                                                            browserfilter, "", options)
+        self.updatingPlaylist = True
+        if fileNames:
+            for fileName in fileNames:
+                if sys.platform.startswith('win'):
+                    fileName = fileName.replace("/", "\\")
+                self.mediadirectory = os.path.dirname(fileName)
+                self.FileSwitchManager.setCurrentDirectory(self.mediadirectory)
+                self.saveMediaBrowseSettings()
+                self.addFileToPlaylist(fileName)
+        self.updatingPlaylist = False
+        self.playlist.updatePlaylist(self.getPlaylistState())
+
+    @needsClient
+    def OpenAddURIsToPlaylistDialog(self):
+        URIsDialog = QtGui.QDialog()
+        URIsDialog.setWindowTitle("Add URLs to playlist (one per line)")
+        URIsLayout = QtGui.QGridLayout()
+        URIsTextbox = QtGui.QPlainTextEdit()
+        URIsTextbox.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        URIsLayout.addWidget(URIsTextbox, 0, 0, 1, 1)
+        URIsButtonBox = QtGui.QDialogButtonBox()
+        URIsButtonBox.setOrientation(Qt.Horizontal)
+        URIsButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok|QtGui.QDialogButtonBox.Cancel)
+        URIsButtonBox.accepted.connect(URIsDialog.accept)
+        URIsButtonBox.rejected.connect(URIsDialog.reject)
+        URIsLayout.addWidget(URIsButtonBox, 1, 0, 1, 1)
+        URIsDialog.setLayout(URIsLayout)
+        URIsDialog.show()
+        result = URIsDialog.exec_()
+        if result == QtGui.QDialog.Accepted:
+            URIsToAdd = utils.convertMultilineStringToList(URIsTextbox.toPlainText())
+            self.updatingPlaylist = True
+            for URI in URIsToAdd:
+                self.addStreamToPlaylist(URI)
+            self.updatingPlaylist = False
 
     @needsClient
     def promptForStreamURL(self):
@@ -1352,13 +1414,18 @@ class MainWindow(QtGui.QMainWindow):
     def addFileToPlaylist(self, filePath, index = -1):
         if os.path.isfile(filePath):
             self.removePlaylistNote()
-            if index == -1:
-                self.playlist.addItem(os.path.basename(filePath))
+            filename = os.path.basename(filePath)
+            if self.playlist == -1:
+                self.playlist.addItem(filename)
             else:
-                filename = os.path.basename(filePath)
-
-                if self.noPlaylistDuplicates(filename):
-                    self.playlist.insertItem(index, filename)
+                self.playlist.insertItem(index, filename)
+        elif isURL(filePath):
+            self.removePlaylistNote()
+            if self.noPlaylistDuplicates(filePath):
+                if index == -1:
+                    self.playlist.addItem(filePath)
+                else:
+                    self.playlist.insertItem(index, filePath)
 
     def openFile(self, filePath, resetPosition=False):
         self._syncplayClient._player.openFile(filePath, resetPosition)
@@ -1382,7 +1449,7 @@ class MainWindow(QtGui.QMainWindow):
             self.clearedPlaylistNote = True
 
     def addFolderToPlaylist(self, folderPath):
-        self.showErrorMessage("Add Folder {}".format(folderPath))
+        self.showErrorMessage("Add Folder {}".format(folderPath)) # TODO: Implement "add folder to playlist"
         
     def deleteSelectedPlaylistItems(self):
         self.playlist.remove_selected_items()
