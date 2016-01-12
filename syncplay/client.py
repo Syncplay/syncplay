@@ -176,6 +176,8 @@ class SyncplayClient(object):
         if self._playlistIndex is None or len(self._playlist) <= self._playlistIndex+1:
             return
         filename = self._playlist[self._playlistIndex+1]
+        if filename == "<LOOP>":
+            filename = self._playlist[0]
         if utils.isURL(filename):
             for URI in constants.SAFE_URIS:
                 if filename.startswith(URI):
