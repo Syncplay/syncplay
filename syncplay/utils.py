@@ -144,7 +144,7 @@ def displayNetworkIP():
         print(s.getsockname()[0])
         s.close()
     except:
-        print "Could not connect to syncplay.pl"
+        print getMessage("connection-error-notification")
     
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
