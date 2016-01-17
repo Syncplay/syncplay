@@ -130,6 +130,15 @@ class SyncplayClient(object):
             if missingStrings is not None and missingStrings is not "":
                 self.ui.showDebugMessage("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
 
+    def needsSharedPlaylistsEnabled(f):  # @NoSelf
+        @wraps(f)
+        def wrapper(self, *args, **kwds):
+            if not self._config['sharedPlaylistEnabled']:
+                self.ui.showDebugMessage("Tried to use shared playlists when it was disabled!")
+                return
+            return f(self, *args, **kwds)
+        return wrapper
+
     def initProtocol(self, protocol):
         self._protocol = protocol
 
@@ -171,6 +180,7 @@ class SyncplayClient(object):
         seeked = _playerDiff > constants.SEEK_THRESHOLD and _globalDiff > constants.SEEK_THRESHOLD
         return pauseChange, seeked
 
+    @needsSharedPlaylistsEnabled
     def loadNextFileInPlaylist(self):
         # TODO: Fix for GUIDs & add path checks (and make more of code re-use?)
         if self._playlistIndex is None or len(self._playlist) <= self._playlistIndex+1:
@@ -467,9 +477,12 @@ class SyncplayClient(object):
         path = None
         if index is None:
             return
+        if username is None and not self._config['sharedPlaylistEnabled']:
+            return
         try:
             filename = self._playlist[index]
             self.ui.setPlaylistIndexFilename(filename)
+            self._playlistIndex = index
             if username is not None and self.userlist.currentUser.file and filename == self.userlist.currentUser.file['name']:
                 return
         except IndexError:
@@ -478,31 +491,37 @@ class SyncplayClient(object):
         if self._player is None:
             self.__playerReady.addCallback(lambda x: self.changeToPlaylistIndex(index, username))
             return
-        self._playlistIndex = index
-        if username is None and self._protocol and self._protocol.logged:
+
+        if username is None and self._protocol and self._protocol.logged and self._config["sharedPlaylistEnabled"]:
+            self._playlistIndex = index
             self._protocol.setPlaylistIndex(index)
         else:
             self.ui.showMessage(u"{} changed the playlist selection".format(username))
-            # TODO: Display info about playlist file change
-            try:
-                filename = self._playlist[index]
-                if utils.isURL(filename):
-                    for URI in constants.SAFE_URIS:
-                        if filename.startswith(URI):
-                            self._player.openFile(filename)
-                            return
-                    self.ui.showErrorMessage(u"Could not load {} because it is not known as a safe path.".format(filename))
-                    return
-                else:
-                    path = self.findFilenameInDirectories(filename)
-                    # TODO: Find Path properly
-                if path:
-                    self._player.openFile(path)
-                else:
-                    self.ui.showErrorMessage(u"Could not find file {} for playlist switch!".format(filename))
-                    return
-            except IndexError:
-                pass
+            self._playlistIndex = index
+            self.switchToNewPlaylistIndex(index)
+
+
+    @needsSharedPlaylistsEnabled
+    def switchToNewPlaylistIndex(self, index):
+        try:
+            filename = self._playlist[index]
+            if utils.isURL(filename):
+                for URI in constants.SAFE_URIS:
+                    if filename.startswith(URI):
+                        self._player.openFile(filename)
+                        return
+                self.ui.showErrorMessage(u"Could not load {} because it is not known as a safe path.".format(filename))
+                return
+            else:
+                path = self.findFilenameInDirectories(filename)
+                # TODO: Find Path properly
+            if path:
+                self._player.openFile(path)
+            else:
+                self.ui.showErrorMessage(u"Could not find file {} for playlist switch!".format(filename))
+                return
+        except IndexError:
+            self.ui.showDebugMessage("Could not change playlist index due to IndexError")
 
     def changePlaylist(self, files, username = None):
         try:
@@ -519,13 +538,15 @@ class SyncplayClient(object):
         self._playlist = files
 
         if username is None and self._protocol and self._protocol.logged:
-            self._protocol.setPlaylist(files)
-            self.changeToPlaylistIndex(newIndex)
+            if self._config['sharedPlaylistEnabled']:
+                self._protocol.setPlaylist(files)
+                self.changeToPlaylistIndex(newIndex)
         else:
             self.ui.setPlaylist(self._playlist)
             self.changeToPlaylistIndex(newIndex, username)
             self.ui.showMessage(u"{} updated the playlist".format(username))
 
+    @needsSharedPlaylistsEnabled
     def undoPlaylistChange(self):
         if self._previousPlaylist is not None and self._playlist <> self._previousPlaylist:
             undidPlaylist = self._playlist
@@ -533,6 +554,7 @@ class SyncplayClient(object):
             self.changePlaylist(self._previousPlaylist)
             self._previousPlaylist = undidPlaylist
 
+    @needsSharedPlaylistsEnabled
     def shufflePlaylist(self):
         if self._playlist and len(self._playlist) > 0:
             oldPlaylist = self._playlist
@@ -684,6 +706,14 @@ class SyncplayClient(object):
                 return f(self, *args, **kwds)
             return wrapper
         return requireMinVersionDecorator
+
+    def changePlaylistEnabledState(self, newState):
+        oldState = self._config["sharedPlaylistEnabled"]
+        from syncplay.ui.ConfigurationGetter import ConfigurationGetter
+        ConfigurationGetter().setConfigOption("sharedPlaylistEnabled", newState)
+        self._config["sharedPlaylistEnabled"] = newState
+        if oldState == False and newState == True:
+            self.changeToPlaylistIndex(self._playlistIndex)
 
     def changeAutoplayState(self, newState):
         self.autoPlay = newState

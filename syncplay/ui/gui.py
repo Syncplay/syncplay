@@ -91,6 +91,8 @@ class MainWindow(QtGui.QMainWindow):
     playlistIndex = None
 
     def setPlaylistInsertPosition(self, newPosition):
+        if not self.playlist.isEnabled():
+            return
         if MainWindow.insertPosition <> newPosition:
             MainWindow.insertPosition = newPosition
             self.playlist.forceUpdate()
@@ -146,6 +148,8 @@ class MainWindow(QtGui.QMainWindow):
 
         def dropEvent(self, event):
             window = self.parent().parent().parent().parent().parent()
+            if not window.playlist.isEnabled():
+                return
             window.setPlaylistInsertPosition(None)
             if QtGui.QDropEvent.proposedAction(event) == Qt.MoveAction:
                 QtGui.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
@@ -233,6 +237,8 @@ class MainWindow(QtGui.QMainWindow):
 
         def dropEvent(self, event):
             window = self.parent().parent().parent().parent().parent().parent()
+            if not window.playlist.isEnabled():
+                return
             window.setPlaylistInsertPosition(None)
             if QtGui.QDropEvent.proposedAction(event) == Qt.MoveAction:
                 QtGui.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
@@ -425,6 +431,9 @@ class MainWindow(QtGui.QMainWindow):
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
         try:
+            self.playlistGroup.blockSignals(True)
+            self.playlistGroup.setChecked(self.config['sharedPlaylistEnabled'])
+            self.playlistGroup.blockSignals(False)
             self.FileSwitchManager.setMediaDirectories(self.config["mediaSearchDirectories"])
             self.updateReadyState(self.config['readyAtStart'])
             autoplayInitialState = self.config['autoplayInitialState']
@@ -637,10 +646,11 @@ class MainWindow(QtGui.QMainWindow):
         if roomToJoin <> self._syncplayClient.getRoom():
             menu.addAction("Join room {}".format(roomToJoin), lambda: self.joinRoom(roomToJoin))
         elif username and filename and filename <> getMessage("nofile-note"):
-            if isURL(filename):
-                menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), "Add {} stream to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
-            else:
-                menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), "Add {} file to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+            if self.config['sharedPlaylistEnabled']:
+                if isURL(filename):
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), "Add {} stream to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+                else:
+                    menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), "Add {} file to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
 
             if self._syncplayClient.userlist.currentUser.file is None or filename <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(filename):
@@ -1077,6 +1087,7 @@ class MainWindow(QtGui.QMainWindow):
 
         window.playlistGroup = self.PlaylistGroupBox(u"Enable shared playlists")
         window.playlistGroup.setCheckable(True)
+        window.playlistGroup.toggled.connect(self.changePlaylistEnabledState)
         window.playlistLayout = QtGui.QHBoxLayout()
         window.playlistGroup.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         window.playlistGroup.setAcceptDrops(True)
@@ -1299,6 +1310,9 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient.changeReadyState(self.readyPushButton.isChecked())
         else:
             self.showDebugMessage("Tried to change ready state too soon.")
+
+    def changePlaylistEnabledState(self):
+        self._syncplayClient.changePlaylistEnabledState(self.playlistGroup.isChecked())
 
     @needsClient
     def changeAutoplayThreshold(self, source=None):

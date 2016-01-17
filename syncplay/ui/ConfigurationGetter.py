@@ -34,6 +34,7 @@ class ConfigurationGetter(object):
                         "playerPath": None,
                         "perPlayerArguments": None,
                         "mediaSearchDirectories": None,
+                        "sharedPlaylistEnabled": False,
                         "file": None,
                         "playerArgs": [],
                         "playerClass": None,
@@ -102,7 +103,8 @@ class ConfigurationGetter(object):
                          "showDifferentRoomOSD",
                          "showSameRoomOSD",
                          "showNonControllerOSD",
-                         "showDurationNotification"
+                         "showDurationNotification",
+                         "sharedPlaylistEnabled"
                         ]
         self._tristate = [
             "checkForUpdatesAutomatically",
@@ -123,7 +125,7 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "perPlayerArguments", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState", "autoplayRequireSameFilenames", "mediaSearchDirectories"],
+                        "client_settings": ["name", "room", "playerPath", "perPlayerArguments", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState", "autoplayRequireSameFilenames", "mediaSearchDirectories", "sharedPlaylistEnabled"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showDurationNotification"],
                         "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
                         }
@@ -410,6 +412,15 @@ class ConfigurationGetter(object):
                 self.app = QtGui.QApplication(sys.argv)
             qt4reactor.install()
         return self._config
+
+    def setConfigOption(self, option, value):
+        path = self._getConfigurationFilePath()
+        backup = self._config.copy()
+        self._parseConfigFile(path)
+        self._config[option] = value
+        backup[option] = value
+        self._saveConfig(path)
+        self._config = backup
 
 class SafeConfigParserUnicode(SafeConfigParser):
     def write(self, fp):
