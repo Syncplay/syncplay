@@ -175,6 +175,7 @@ en = {
       "player-arguments-label" : "Player arguments (if any):",
       "browse-label" : "Browse",
       "update-server-list-label" : u"Update list",
+      "sharedplaylistenabled-label" : u"Enable shared playlists",
 
       "more-title" : "Show more settings",
       "never-rewind-value" : "Never",
@@ -192,7 +193,6 @@ en = {
       "pauseonleave-label" : "Pause when user leaves (e.g. if they are disconnected)",
       "readyatstart-label" : "Set me as 'ready to watch' by default",
       "forceguiprompt-label" : "Don't always show the Syncplay configuration window", # (Inverted)
-      "nostore-label" : "Don't store this configuration", # (Inverted)
       "showosd-label" : "Enable OSD Messages",
 
       "showosdwarnings-label" : "Include warnings (e.g. when files are different, users not ready)",
@@ -293,6 +293,7 @@ en = {
       "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
       "player-arguments-tooltip" : "Additional command line arguments / switches to pass on to this media player.",
+      "sharedplaylistenabled-tooltip" : u"Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.",
       "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.",
 
       "more-tooltip" : "Display less frequently used settings.",
@@ -543,8 +544,10 @@ ru = {
       "executable-path-label" : u"Путь к проигрывателю:",
       "media-path-label" : u"Путь к видеофайлу:",
       "player-arguments-label" : u"Аргументы для запуска проигрывателя:",
+      "sharedplaylistenabled-tooltip" : u"Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.", # TODO: Translate into Russian
       "browse-label" : u"Выбрать",
       "update-server-list-label" : u"Update list", # TODO: Translate into Russian
+      "sharedplaylistenabled-label" : u"Enable shared playlists", # TODO: Translate into Russian
 
       "more-title" : u"Больше настроек",
       "never-rewind-value" : u"Никогда",
@@ -562,7 +565,6 @@ ru = {
       "readyatstart-label" : u"Выставить статус 'готово к просмотру' по умолчанию",
       "fastforwardondesync-label" : u"Ускорять видео при отставании (рекомендуется)",
       "forceguiprompt-label" : u"Не показывать больше этот диалог", # (Inverted)
-      "nostore-label" : u"Не сохранять текущую конфигурацию", # (Inverted)
       "showosd-label" : u"Включить экранные сообщения (поверх видео)",
 
       "showosdwarnings-label" : u"Показывать предупреждения (напр., когда файлы не совпадают)",
@@ -663,6 +665,7 @@ ru = {
       "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, VLC, mplayer2 или mpv).",
       "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mpv и mplayer2.",
       "player-arguments-tooltip" : u"Передавать дополнительные аргументы командной строки этому проигрывателю.",
+      "sharedplaylistenabled-tooltip" : u"Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.", #  TODO: Translate into Russian
       "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.", # TODO: Translate into Russian
 
       "more-tooltip" : u"Показать дополнительные настройки.",
@@ -915,6 +918,7 @@ de = {
       "player-arguments-label" : u"Playerparameter:",
       "browse-label" : u"Durchsuchen",
       "update-server-list-label" : u"Liste aktualisieren",
+      "sharedplaylistenabled-label" : u"Enable shared playlists", # TODO: Translate into German
 
       "more-title" : u"Mehr Einstellungen zeigen",
       "never-rewind-value" : u"Niemals",
@@ -930,7 +934,7 @@ de = {
       "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
       "readyatstart-label" : u"Standardmäßig auf \'Bereit\' stellen",
       "forceguiprompt-label" : u"Diesen Dialog nicht mehr anzeigen",
-      "nostore-label" : u"Diese Konfiguration nicht speichern",
+
       "showosd-label" : u"OSD-Nachrichten anzeigen",
 
       "showosdwarnings-label" : u"Zeige Warnungen (z.B. wenn Dateien verschieden)",
@@ -1031,6 +1035,7 @@ de = {
       "executable-path-tooltip" : u"Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, VLC, mplayer2 or mpv).",
       "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
       "player-arguments-tooltip" : u"Zusätzliche Kommandozeilenparameter / -schalter für diesen Mediaplayer.",
+      "sharedplaylistenabled-tooltip" : u"Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.", # TODO: Translate into German
       "mediasearcdirectories-arguments-tooltip" : u"Verzeichnisse, in denen Syncplay nach Mediendateien suchen soll, z.B. wenn du das Click-to-switch-Feature verwendest. Syncplay wird rekursiv Unterordner durchsuchen.", # TODO: Translate Click-to-switch? (or use as name for feature)
 
       "more-tooltip" : u"Weitere Einstellungen anzeigen.",

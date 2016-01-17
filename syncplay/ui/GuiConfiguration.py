@@ -71,7 +71,7 @@ class ConfigDialog(QtGui.QDialog):
     moreToggling = False
 
     def automaticUpdatePromptCheck(self):
-        if self.automaticupdatesCheckbox.checkState() == Qt.PartiallyChecked and not self.nostoreCheckbox.isChecked():
+        if self.automaticupdatesCheckbox.checkState() == Qt.PartiallyChecked:
             reply = QtGui.QMessageBox.question(self, "Syncplay",
                     getMessage("promptforupdate-label"), QtGui.QMessageBox.StandardButton.Yes | QtGui.QMessageBox.StandardButton.No)
             if reply == QtGui.QMessageBox.Yes:
@@ -87,9 +87,9 @@ class ConfigDialog(QtGui.QDialog):
             if self.showmoreCheckbox.isChecked():
                 self.tabListFrame.show()
                 self.resetButton.show()
-                self.nostoreCheckbox.show()
                 self.playerargsTextbox.show()
                 self.playerargsLabel.show()
+                self.runButton.show()
                 self.saveMoreState(True)
                 self.tabListWidget.setCurrentRow(0)
                 self.ensureTabListIsVisible()
@@ -97,9 +97,9 @@ class ConfigDialog(QtGui.QDialog):
             else:
                 self.tabListFrame.hide()
                 self.resetButton.hide()
-                self.nostoreCheckbox.hide()
                 self.playerargsTextbox.hide()
                 self.playerargsLabel.hide()
+                self.runButton.hide()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
                 newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
@@ -111,12 +111,6 @@ class ConfigDialog(QtGui.QDialog):
         self.moreToggling = False
         self.setFixedWidth(self.minimumSizeHint().width())
         self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
-
-    def runButtonTextUpdate(self):
-        if self.nostoreCheckbox.isChecked():
-            self.runButton.setText(getMessage("run-label"))
-        else:
-            self.runButton.setText(getMessage("storeandrun-label"))
 
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
@@ -331,9 +325,14 @@ class ConfigDialog(QtGui.QDialog):
             self.mediapathTextbox.setText(os.path.normpath(fileName))
             self.mediadirectory = os.path.dirname(fileName)
             self.saveMediaBrowseSettings()
-
-    def _saveDataAndLeave(self):
-        self.automaticUpdatePromptCheck()
+    
+    def _runWithoutStoringConfig(self):
+        self._saveDataAndLeave(storeConfiguration=False)
+    
+    def _saveDataAndLeave(self, storeConfiguration=True):
+        self.config['noStore'] = storeConfiguration
+        if storeConfiguration:
+            self.automaticUpdatePromptCheck()
         self.loadLastUpdateCheckDate()
 
         self.config["perPlayerArguments"] = self.perPlayerArgs
@@ -877,14 +876,16 @@ class ConfigDialog(QtGui.QDialog):
         self.resetButton.setObjectName("reset")
         self.resetButton.pressed.connect(self.resetSettings)
 
-        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("storeandrun-label"))
+        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("run-label"))
         self.runButton.pressed.connect(self._saveDataAndLeave)
+        self.runButton.setToolTip(getMessage("nostore-tooltip"))
+        self.storeAndRunButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("storeandrun-label"))
+        self.storeAndRunButton.pressed.connect(self._runWithoutStoringConfig)
         self.bottomButtonLayout.addWidget(self.helpButton)
         self.bottomButtonLayout.addWidget(self.resetButton)
         self.bottomButtonLayout.addWidget(self.runButton)
+        self.bottomButtonLayout.addWidget(self.storeAndRunButton)
         self.bottomButtonFrame.setLayout(self.bottomButtonLayout)
-        if config['noStore'] == True:
-            self.runButton.setText(getMessage("run-label"))
         self.bottomButtonLayout.setContentsMargins(5,0,5,0)
         self.mainLayout.addWidget(self.bottomButtonFrame, 1, 0, 1, 2)
 
@@ -893,12 +894,11 @@ class ConfigDialog(QtGui.QDialog):
         self.bottomCheckboxLayout = QtGui.QGridLayout()
         self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
 
-        self.nostoreCheckbox = QCheckBox(getMessage("nostore-label"))
+        self.enableplaylistsCheckbox = QCheckBox(getMessage("sharedplaylistenabled-label"))
         self.bottomCheckboxLayout.addWidget(self.showmoreCheckbox)
-        self.bottomCheckboxLayout.addWidget(self.nostoreCheckbox, 0, 2, Qt.AlignRight)
+        self.bottomCheckboxLayout.addWidget(self.enableplaylistsCheckbox, 0, 2, Qt.AlignRight)
         self.alwaysshowCheckbox.setObjectName(constants.INVERTED_STATE_MARKER + "forceGuiPrompt")
-        self.nostoreCheckbox.setObjectName("noStore")
-        self.nostoreCheckbox.toggled.connect(self.runButtonTextUpdate)
+        self.enableplaylistsCheckbox.setObjectName("sharedPlaylistEnabled")
         self.bottomCheckboxFrame.setLayout(self.bottomCheckboxLayout)
 
         self.mainLayout.addWidget(self.bottomCheckboxFrame, 2, 0, 1, 2)
@@ -1027,10 +1027,10 @@ class ConfigDialog(QtGui.QDialog):
 
         if self.getMoreState() == False:
             self.tabListFrame.hide()
-            self.nostoreCheckbox.hide()
             self.resetButton.hide()
             self.playerargsTextbox.hide()
             self.playerargsLabel.hide()
+            self.runButton.hide()
             newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
             if self.error:
                 newHeight +=self.errorLabel.height()+3
