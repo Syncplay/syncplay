@@ -604,17 +604,17 @@ class MainWindow(QtGui.QMainWindow):
             firstFile = item.sibling(item.row(), 0).data()
             if self._syncplayClient.userlist.currentUser.file is None or firstFile <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(firstFile):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), "Open stream", lambda: self.openFile(firstFile))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), u"Open stream", lambda: self.openFile(firstFile))
                 else:
                     pathFound = MainWindow.FileSwitchManager.findFilepath(firstFile)
                     if pathFound:
-                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), "Open file", lambda: self.openFile(pathFound))
-            menu.addAction(QtGui.QPixmap(resourcespath + "delete.png"), "Remove from playlist", lambda: self.deleteSelectedPlaylistItems())
+                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), u"Open file", lambda: self.openFile(pathFound))
+            menu.addAction(QtGui.QPixmap(resourcespath + "delete.png"), u"Remove from playlist", lambda: self.deleteSelectedPlaylistItems())
             menu.addSeparator()
-        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_switch.png"), "Shuffle playlist", lambda: self.shufflePlaylist())
-        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_undo.png"), "Undo last change to playlist", lambda: self.undoPlaylistChange())
-        menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), "Add file(s) to bottom of playlist", lambda: self.OpenAddFilesToPlaylistDialog())
-        menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), "Add URL(s) to bottom of playlist", lambda: self.OpenAddURIsToPlaylistDialog())
+        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_switch.png"), u"Shuffle playlist", lambda: self.shufflePlaylist())
+        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_undo.png"), u"Undo last change to playlist", lambda: self.undoPlaylistChange())
+        menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), u"Add file(s) to bottom of playlist", lambda: self.OpenAddFilesToPlaylistDialog())
+        menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), u"Add URL(s) to bottom of playlist", lambda: self.OpenAddURIsToPlaylistDialog())
         menu.exec_(self.playlist.viewport().mapToGlobal(position))
 
 
@@ -644,21 +644,21 @@ class MainWindow(QtGui.QMainWindow):
             item = item.parent()
         roomToJoin = item.sibling(item.row(), 0).data()
         if roomToJoin <> self._syncplayClient.getRoom():
-            menu.addAction("Join room {}".format(roomToJoin), lambda: self.joinRoom(roomToJoin))
+            menu.addAction(u"Join room {}".format(roomToJoin), lambda: self.joinRoom(roomToJoin))
         elif username and filename and filename <> getMessage("nofile-note"):
             if self.config['sharedPlaylistEnabled']:
                 if isURL(filename):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), "Add {} stream to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), u"Add {} stream to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
                 else:
-                    menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), "Add {} file to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), u"Add {} file to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
 
             if self._syncplayClient.userlist.currentUser.file is None or filename <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(filename):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), "Open {} stream".format(shortUsername), lambda: self.openFile(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), u"Open {} stream".format(shortUsername), lambda: self.openFile(filename))
                 else:
                     pathFound = MainWindow.FileSwitchManager.findFilepath(filename)
                     if pathFound:
-                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), "Open {} file".format(shortUsername), lambda: self.openFile(pathFound))
+                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), u"Open {} file".format(shortUsername), lambda: self.openFile(pathFound))
         else:
             return
         menu.exec_(self.listTreeView.viewport().mapToGlobal(position))
