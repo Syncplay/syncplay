@@ -646,7 +646,7 @@ class MainWindow(QtGui.QMainWindow):
         if roomToJoin <> self._syncplayClient.getRoom():
             menu.addAction(u"Join room {}".format(roomToJoin), lambda: self.joinRoom(roomToJoin))
         elif username and filename and filename <> getMessage("nofile-note"):
-            if self.config['sharedPlaylistEnabled']:
+            if self.config['sharedPlaylistEnabled'] and not self.isItemInPlaylist(filename):
                 if isURL(filename):
                     menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), u"Add {} stream to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
                 else:
@@ -1447,11 +1447,17 @@ class MainWindow(QtGui.QMainWindow):
         self._syncplayClient._player.openFile(filePath, resetPosition)
 
     def noPlaylistDuplicates(self, filename):
+        if self.isItemInPlaylist(filename):
+            self.showErrorMessage(u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.".format(filename))
+            return False
+        else:
+            return True
+
+    def isItemInPlaylist(self, filename):
         for playlistindex in xrange(self.playlist.count()):
             if self.playlist.item(playlistindex).text() == filename:
-                self.showErrorMessage(u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.".format(filename))
-                return False
-        return True
+                return True
+        return False
 
     def addStreamToPlaylist(self, streamURI):
         self.removePlaylistNote()
