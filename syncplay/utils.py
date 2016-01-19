@@ -115,6 +115,37 @@ def formatSize (bytes, precise=False):
 def isASCII(s):
     return all(ord(c) < 128 for c in s)
 
+def displayIP(determineIP):
+    print "---------------------------"
+    displayLocalIPs()
+    print "---------------------------"
+    if determineIP:
+        displayNetworkIP()
+    else:
+        print getMessage("no-ip-notification")
+    print "---------------------------"
+    
+
+def displayLocalIPs():
+    from netifaces import interfaces, ifaddresses, AF_INET
+    addresses=[]
+    for ifaceName in interfaces():
+        for i in ifaddresses(ifaceName).setdefault(AF_INET, [{'addr':'No IP addr'}] ):
+            if i['addr'] not in ('127.0.0.1','No IP addr') and not i['addr'].startswith('169.254') :
+                addresses.append(i['addr'])
+    print (getMessage("local-ip-notification") + "\n"+"\n".join(addresses))
+
+def displayNetworkIP():
+    import socket
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("syncplay.pl",80))
+        print getMessage("network-ip-notification")
+        print(s.getsockname()[0])
+        s.close()
+    except:
+        print getMessage("connection-error-notification")
+    
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
     if not frozen:
