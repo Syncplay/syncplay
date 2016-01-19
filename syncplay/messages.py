@@ -134,6 +134,8 @@ en = {
 
        "invalid-seek-value" : u"Invalid seek value",
        "invalid-offset-value" : u"Invalid offset value",
+      "cannot-find-file-for-playlist-switch-error " : u"Could not find file {} for playlist switch!", # Filename
+      "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename
 
       "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found
       "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder
@@ -230,7 +232,8 @@ en = {
 
       "contact-label" : "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>raise an issue</nobr></a> via GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>like us on Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>follow us on Twitter</nobr></a>, or visit <a href=\"http://syncplay.pl/\"><nobr>http://syncplay.pl/</nobr></a>",
 
-      "joinroom-menu-label" : "Join room",
+      "joinroom-label" : "Join room",
+      "joinroom-menu-label" : u"Join room {}",
       "seektime-menu-label" : "Seek to time",
       "undoseek-menu-label" : "Undo seek",
       "play-menu-label" : "Play",
@@ -266,6 +269,21 @@ en = {
       "help-menu-label" : "&Help",
       "userguide-menu-label" : "Open user &guide",
       "update-menu-label" : "Check for &update",
+
+      "removefromplaylist-menu-label" : u"Remove from playlist",
+      "shuffleplaylist-menuu-label" : u"Shuffle playlist",
+      "undoplaylist-menu-label" : u"Undo last change to playlist",
+      "addfilestoplaylist-menu-label" : u"Add file(s) to bottom of playlist",
+      "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",
+
+      "addusersfiletoplaylist-menu-label" : u"Add {} file to playlist", # item owner indicator
+      "addusersstreamstoplaylist-menu-label" : u"Add {} stream to playlist", # item owner indicator
+      "openusersstream-menu-label" : u"Open {} stream", # [username]'s
+      "openusersfile-menu-label" : u"Open {} file", # [username]'s
+      "item-is-yours-indicator" : u"your", # Goes with addusersfiletoplaylist/addusersstreamstoplaylist
+      "item-is-others-indicator" : u"{}'s", # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist
+
+      "playlist-instruction-item-message" : u"Drag file here to add it to the shared playlist.",
 
       "setoffset-msgbox-label" : "Set offset",
       "offsetinfo-msgbox-label" : "Offset (see http://syncplay.pl/guide/ for usage instructions):",
@@ -465,7 +483,7 @@ ru = {
       "vlc-interface-oldversion-warning" : u"Внимание: Syncplay обнаружил, что старая версия модуля интерфейса Syncplay для VLC уже установлена в директорию VLC. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
       "vlc-interface-not-installed" : u"Внимание: Модуль интерфейса Syncplay для VLC не обнаружен в директории VLC. По существу, если Вы используете VLC 2.0, то VLC будет использовать модуль syncplay.lua из директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
       "media-player-latency-warning": u"Внимание: У Вашего проигрывателя слишком большой отклик ({} секунд). Если Вы замечаете проблемы с синхронизацией, то закройте ресурсоемкие приложения, а если это не помогло - попробуйте другой проигрыватель.", # Seconds to respond
-      "mpv-unresponsive-error": u"mpv has not responded for {} seconds so appears to have malfunctioned. Please restart Syncplay.", # Seconds to respond # TODO: Translate to Russian
+      "mpv-unresponsive-error": u"mpv has not responded for {} seconds so appears to have malfunctioned. Please restart Syncplay.", # Seconds to respond # TODO: Translate into Russian
 
       # Client prompts
       "enter-to-exit-prompt" : u"Для выхода нажмите Enter\n",
@@ -505,6 +523,8 @@ ru = {
 
       "invalid-seek-value" : u"Некорректное значение для перемотки",
       "invalid-offset-value" : u"Некорректное смещение",
+      "cannot-find-file-for-playlist-switch-error " : u"Could not find file {} for playlist switch!", # Filename # TODO: Translate into Russian
+      "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename # TODO: Translate into Russian
 
       "switch-file-not-found-error" : u"Невозможно переключиться на файл '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found # TODO: Translate last part into Russian
       "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder # TODO: Translate into Russian
@@ -602,7 +622,8 @@ ru = {
 
       "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> за инорфмацией, помощью и обновлениями!",
 
-      "joinroom-menu-label" : u"Зайти в комнату",
+      "joinroom-label" : u"Зайти в комнату",
+      "joinroom-menu-label" : u"Зайти в комнату {}",
       "seektime-menu-label" : u"Перемотать",
       "undoseek-menu-label" : u"Отменить перемотку",
       "play-menu-label" : u"Play",
@@ -638,6 +659,21 @@ ru = {
       "help-menu-label" : u"&Помощь",
       "userguide-menu-label" : u"&Руководство Пользователя",
       "update-menu-label" : u"Проверить &обновления",
+
+      "removefromplaylist-menu-label" : u"Remove from playlist", # TODO: Translate into Russian
+      "shuffleplaylist-menuu-label" : u"Shuffle playlist", # TODO: Translate into Russian
+      "undoplaylist-menu-label" : u"Undo last change to playlist", # TODO: Translate into Russian
+      "addfilestoplaylist-menu-label" : u"Add file(s) to bottom of playlist", # TODO: Translate into Russian
+      "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist", # TODO: Translate into Russian
+
+      "addusersfiletoplaylist-menu-label" : u"Add {} file to playlist", # item owner indicator # TODO: Translate into Russian
+      "addusersstreamstoplaylist-menu-label" : u"Add {} stream to playlist", # item owner indicator  # TODO: Translate into Russian
+      "openusersstream-menu-label" : u"Open {} stream", # [username]'s # TODO: Translate into Russian
+      "openusersfile-menu-label" : u"Open {} file", # [username]'s # TODO: Translate into Russian
+      "item-is-yours-indicator" : u"your", # Goes with addusersfiletoplaylist/addusersstreamstoplaylist # TODO: Translate into Russian
+      "item-is-others-indicator" : u"{}'s", # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist # TODO: Translate into Russian
+
+      "playlist-instruction-item-message" : u"Drag file here to add it to the shared playlist.", # TODO: Translate into Russian
 
       "setoffset-msgbox-label" : u"Установить смещение",
       "offsetinfo-msgbox-label" : u"Смещение (см. инструкцию на странице http://syncplay.pl/guide/):",
@@ -704,7 +740,7 @@ ru = {
       "seektime-msgbox-label" : u"Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",
       "ready-tooltip" : u"Показывает, готовы ли Вы к просмотру или нет.",
       "autoplay-tooltip" : u"Автоматическое воспроизведение, когда все пользователи с индикаторами готовности будут готовы и присутствует достаточное число пользователей.",
-      "switch-to-file-tooltip" : u"Double click to switch to {}", # Filename # TODO: Translate to Russian
+      "switch-to-file-tooltip" : u"Double click to switch to {}", # Filename # TODO: Translate into Russian
 
       # In-userlist notes (GUI)
       "differentsize-note" : u"Размер файла не совпадает!",
@@ -877,6 +913,8 @@ de = {
 
        "invalid-seek-value" : u"Ungültige Zeitangabe",
        "invalid-offset-value" : u"Ungültiger Offset-Wert",
+      "cannot-find-file-for-playlist-switch-error " : u"Could not find file {} for playlist switch!", # Filename # TODO: Translate into German
+      "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename # TODO: Translate into German
 
       "switch-file-not-found-error" : u"Konnte nicht zur Datei '{0}' wechseln. Syncplay sucht im Ordner der aktuellen Datei und angegebenen Medien-Verzeichnissen.", # File not found, folder it was not found in
       "folder-search-timeout-error" : u"Die Suche nach Mediendateien in '{}' wurde abgebrochen weil sie zu lange gedauert hat. Dies tritt auf, wenn ein zu durchsuchender Medienordner zu viele Unterordner hat. Syncplay wird bis zum Neustart nur noch das Verzeichnis der aktuellen Datei durchsuchen.", #Folder
@@ -972,7 +1010,8 @@ de = {
 
       "contact-label" : u"Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates.",
 
-      "joinroom-menu-label" : u"Raum beitreten",
+      "joinroom-label" : u"Raum beitreten",
+      "joinroom-menu-label" : u"Raum beitreten {}",
       "seektime-menu-label" : u"Spule zu Zeit",
       "undoseek-menu-label" : u"Rückgängig",
       "play-menu-label" : u"Wiedergabe",
@@ -1008,6 +1047,21 @@ de = {
       "help-menu-label" : u"&Hilfe",
       "userguide-menu-label" : u"&Benutzerhandbuch öffnen",
       "update-menu-label" : u"auf &Aktualisierung prüfen",
+
+      "removefromplaylist-menu-label" : u"Remove from playlist", # TODO: Translate into German
+      "shuffleplaylist-menuu-label" : u"Shuffle playlist", # TODO: Translate into German
+      "undoplaylist-menu-label" : u"Undo last change to playlist", # TODO: Translate into German
+      "addfilestoplaylist-menu-label" : u"Add file(s) to bottom of playlist", # TODO: Translate into German
+      "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist", # TODO: Translate into German
+
+      "addusersfiletoplaylist-menu-label" : u"Add {} file to playlist", # item owner indicator # TODO: Translate into German
+      "addusersstreamstoplaylist-menu-label" : u"Add {} stream to playlist", # item owner indicator  # TODO: Translate into German
+      "openusersstream-menu-label" : u"Open {} stream", # [username]'s # TODO: Translate into German
+      "openusersfile-menu-label" : u"Open {} file", # [username]'s # TODO: Translate into German
+      "item-is-yours-indicator" : u"your", # Goes with addusersfiletoplaylist/addusersstreamstoplaylist # TODO: Translate into German
+      "item-is-others-indicator" : u"{}'s", # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist # TODO: Translate into German
+
+      "playlist-instruction-item-message" : u"Drag file here to add it to the shared playlist.", # TODO: Translate into German
 
       "setoffset-msgbox-label" : u"Offset einstellen",
       "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",

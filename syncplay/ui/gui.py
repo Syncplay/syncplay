@@ -604,17 +604,17 @@ class MainWindow(QtGui.QMainWindow):
             firstFile = item.sibling(item.row(), 0).data()
             if self._syncplayClient.userlist.currentUser.file is None or firstFile <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(firstFile):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), u"Open stream", lambda: self.openFile(firstFile))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile))
                 else:
                     pathFound = MainWindow.FileSwitchManager.findFilepath(firstFile)
                     if pathFound:
-                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), u"Open file", lambda: self.openFile(pathFound))
-            menu.addAction(QtGui.QPixmap(resourcespath + "delete.png"), u"Remove from playlist", lambda: self.deleteSelectedPlaylistItems())
+                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound))
+            menu.addAction(QtGui.QPixmap(resourcespath + "delete.png"), getMessage("removefromplaylist-menu-label"), lambda: self.deleteSelectedPlaylistItems())
             menu.addSeparator()
-        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_switch.png"), u"Shuffle playlist", lambda: self.shufflePlaylist())
-        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_undo.png"), u"Undo last change to playlist", lambda: self.undoPlaylistChange())
-        menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), u"Add file(s) to bottom of playlist", lambda: self.OpenAddFilesToPlaylistDialog())
-        menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), u"Add URL(s) to bottom of playlist", lambda: self.OpenAddURIsToPlaylistDialog())
+        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_switch.png"), getMessage("shuffleplaylist-menuu-label"), lambda: self.shufflePlaylist())
+        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_undo.png"), getMessage("undoplaylist-menu-label"), lambda: self.undoPlaylistChange())
+        menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"),getMessage("addfilestoplaylist-menu-label"), lambda: self.OpenAddFilesToPlaylistDialog())
+        menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), getMessage("addurlstoplaylist-menu-label"), lambda: self.OpenAddURIsToPlaylistDialog())
         menu.exec_(self.playlist.viewport().mapToGlobal(position))
 
 
@@ -633,32 +633,32 @@ class MainWindow(QtGui.QMainWindow):
         menu = QtGui.QMenu()
         username = item.sibling(item.row(), 0).data()
         if username == self._syncplayClient.userlist.currentUser.username:
-            shortUsername = "your" # TODO: Use messages.py
+            shortUsername = getMessage("item-is-yours-indicator")
         elif len(username) < 15:
-            shortUsername = u"{}'s".format(username)
+            shortUsername = getMessage("item-is-others-indicator").format(username)
         else:
-            shortUsername = "{}'s...".format(username[0:12])
+            shortUsername = u"{}...".format(getMessage("item-is-others-indicator").format(username[0:12])) # TODO: Enforce username limits in client and server
 
         filename = item.sibling(item.row(), 3).data()
         while item.parent().row() != -1:
             item = item.parent()
         roomToJoin = item.sibling(item.row(), 0).data()
         if roomToJoin <> self._syncplayClient.getRoom():
-            menu.addAction(u"Join room {}".format(roomToJoin), lambda: self.joinRoom(roomToJoin))
+            menu.addAction(getMessage("joinroom-menu-label").format(roomToJoin), lambda: self.joinRoom(roomToJoin))
         elif username and filename and filename <> getMessage("nofile-note"):
             if self.config['sharedPlaylistEnabled'] and not self.isItemInPlaylist(filename):
                 if isURL(filename):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), u"Add {} stream to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"),getMessage("addusersstreamstoplaylist-menu-label").format(shortUsername), lambda: self.addStreamToPlaylist(filename))
                 else:
-                    menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), u"Add {} file to playlist".format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), getMessage("addusersfiletoplaylist-menu-label").format(shortUsername), lambda: self.addStreamToPlaylist(filename))
 
             if self._syncplayClient.userlist.currentUser.file is None or filename <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(filename):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), u"Open {} stream".format(shortUsername), lambda: self.openFile(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), getMessage("openusersstream-menu-label").format(shortUsername), lambda: self.openFile(filename))
                 else:
                     pathFound = MainWindow.FileSwitchManager.findFilepath(filename)
                     if pathFound:
-                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), u"Open {} file".format(shortUsername), lambda: self.openFile(pathFound))
+                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openusersfile-menu-label").format(shortUsername), lambda: self.openFile(pathFound))
         else:
             return
         menu.exec_(self.listTreeView.viewport().mapToGlobal(position))
@@ -707,7 +707,7 @@ class MainWindow(QtGui.QMainWindow):
             if pathFound:
                 self._syncplayClient._player.openFile(pathFound)
             else:
-                self._syncplayClient.ui.showErrorMessage(u"Could not find file {} for playlist switch!".format(filename))
+                self._syncplayClient.ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
 
     def roomClicked(self, item):
         username = item.sibling(item.row(), 0).data()
@@ -986,7 +986,7 @@ class MainWindow(QtGui.QMainWindow):
         playlistItems = []
         for playlistItem in xrange(self.playlist.count()):
             playlistItemText = self.playlist.item(playlistItem).text()
-            if playlistItemText <> u"Drag file here to add it to the shared playlist.":
+            if playlistItemText <> getMessage("playlist-instruction-item-message"):
                 playlistItems.append(playlistItemText)
         return playlistItems
 
@@ -1054,7 +1054,7 @@ class MainWindow(QtGui.QMainWindow):
         window.roomInput = QtGui.QLineEdit()
         window.roomInput.returnPressed.connect(self.joinRoom)
         window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'),
-                                              getMessage("joinroom-menu-label"))
+                                              getMessage("joinroom-label"))
         window.roomButton.pressed.connect(self.joinRoom)
         window.roomLayout = QtGui.QHBoxLayout()
         window.roomFrame = QtGui.QFrame()
@@ -1085,7 +1085,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.addPlaybackLayout(window)
 
-        window.playlistGroup = self.PlaylistGroupBox(u"Enable shared playlists")
+        window.playlistGroup = self.PlaylistGroupBox(getMessage("sharedplaylistenabled-label"))
         window.playlistGroup.setCheckable(True)
         window.playlistGroup.toggled.connect(self.changePlaylistEnabledState)
         window.playlistLayout = QtGui.QHBoxLayout()
@@ -1108,7 +1108,7 @@ class MainWindow(QtGui.QMainWindow):
         self.playlistUpdateTimer.start(0.1, True)
         noteFont = QtGui.QFont()
         noteFont.setItalic(True)
-        playlistItem = QtGui.QListWidgetItem(u"Drag file here to add it to the shared playlist.")
+        playlistItem = QtGui.QListWidgetItem(getMessage("playlist-instruction-item-message"))
         playlistItem.setFont(noteFont)
         window.playlist.addItem(playlistItem)
         playlistItem.setFont(noteFont)
@@ -1448,7 +1448,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def noPlaylistDuplicates(self, filename):
         if self.isItemInPlaylist(filename):
-            self.showErrorMessage(u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.".format(filename))
+            self.showErrorMessage(getMessage("cannot-add-duplicate-error").format(filename))
             return False
         else:
             return True
