@@ -474,6 +474,8 @@ class SyncplayClient(object):
             return None
 
     def changeToPlaylistIndex(self, index, username = None):
+        if not self._playlist or len(self._playlist) == 0:
+            return
         path = None
         if index is None:
             return
