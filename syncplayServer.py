@@ -19,6 +19,5 @@ from syncplay.server import SyncFactory, ConfigurationGetter
 if __name__ == '__main__':
     argsGetter = ConfigurationGetter()
     args = argsGetter.getConfiguration()
-
-    reactor.listenTCP(int(args.port), SyncFactory(args.password, args.motd_file, args.isolate_rooms, args.salt, args.disable_ready))
+    reactor.listenTCP(int(args.port), SyncFactory(args.password, args.motd_file, args.isolate_rooms, args.salt, args.disable_ready,args.chat))
     reactor.run()

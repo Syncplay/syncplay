@@ -82,6 +82,7 @@ en = {
       "commandlist-notification/toggle" : u"\tt - toggles whether you are ready to watch or not",
       "commandlist-notification/create" : "\tc [name] - create managed room using name of current room",
       "commandlist-notification/auth" : "\ta [password] - authenticate as room operator with operator password",
+      "commandlist-notification/chat" : "\tch [message] - send a chat message in a room",
       "syncplay-version-notification" : "Syncplay version: {}",  # syncplay.version
       "more-info-notification" : "More info available at: {}",  # projectURL
 
@@ -358,6 +359,7 @@ en = {
       "server-salt-argument" : "random string used to generate managed room passwords",
       "server-disable-ready-argument" : u"disable readiness feature",
       "server-motd-argument": "path to file from which motd will be fetched",
+      "server-chat-argument" : "Should chat be enabled?",
       "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
       "server-messed-up-motd-too-long": "Message of the Day is too long - maximum of {} chars, {} given.",
 

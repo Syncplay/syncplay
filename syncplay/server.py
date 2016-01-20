@@ -14,7 +14,7 @@ import argparse
 from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion
 
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False):
+    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False,chat =False):
         print getMessage("welcome-server-notification").format(syncplay.version)
         if password:
             password = hashlib.md5(password).hexdigest()
@@ -25,6 +25,7 @@ class SyncFactory(Factory):
         self._salt = salt
         self._motdFilePath = motdFilePath
         self.disableReady = disableReady
+        self.chat=chat
         if not isolateRooms:
             self._roomManager = RoomManager()
         else:
@@ -127,6 +128,10 @@ class SyncFactory(Factory):
             watcher.sendNewControlledRoom(newName, password)
         except ValueError:
             self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
+
+    def sendChat(self,watcher,message):
+        messageDict={"message":message,"username" : watcher.getName()}
+        self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(messageDict))
 
     def setReady(self, watcher, isReady, manuallyInitiated=True):
         watcher.setReady(isReady)
@@ -367,6 +372,9 @@ class Watcher(object):
     def sendControlledRoomAuthStatus(self, success, username, room):
         self._connector.sendControlledRoomAuthStatus(success, username, room)
 
+    def sendChatMessage(self,message):
+        self._connector.sendMessage({"Chat" : message}) 
+
     def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self._connector.sendSetReady(username, isReady, manuallyInitiated)
 
@@ -441,5 +449,6 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
         self._argparser.add_argument('--disable-ready', action='store_true', help=getMessage("server-disable-ready-argument"))
+        self._argparser.add_argument('--chat', action='store_true', help=getMessage("server-chat-argument"))
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
