@@ -34,7 +34,7 @@ class ConfigurationGetter(object):
                         "playerPath": None,
                         "perPlayerArguments": None,
                         "mediaSearchDirectories": None,
-                        "sharedPlaylistEnabled": False,
+                        "sharedPlaylistEnabled": True,
                         "file": None,
                         "playerArgs": [],
                         "playerClass": None,
