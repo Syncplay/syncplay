@@ -420,20 +420,22 @@ class MPCHCAPIPlayer(BasePlayer):
         return self._mpcApi.lastFilePosition
     
     @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
-    def askForStatus(self):
+    def askForStatus(self, cookie=None):
         if self._mpcApi.filePlaying and self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0):
             self.__fileUpdate.release()
             position = self.__getPosition()
             paused = self._mpcApi.isPaused()
             position = float(position)
             if self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0):
-                self.__client.updatePlayerStatus(paused, position)
+                self.__client.updatePlayerStatus(paused, position, cookie=cookie)
                 self.__fileUpdate.release()
             return
-        self.__echoGlobalStatus()
+        self.__echoGlobalStatus(cookie)
             
-    def __echoGlobalStatus(self):
-        self.__client.updatePlayerStatus(self.__client.getGlobalPaused(), self.__client.getGlobalPosition())
+    def __echoGlobalStatus(self, cookie):
+        self.__client.updatePlayerStatus(self.__client.getGlobalPaused(),
+                                         self.__client.getGlobalPosition(),
+                                         cookie=cookie)
 
     def __forcePause(self):
         for _ in xrange(constants.MPC_MAX_RETRIES):
