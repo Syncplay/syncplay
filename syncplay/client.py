@@ -484,7 +484,8 @@ class SyncplayClient(object):
         try:
             filename = self._playlist[index]
             self.ui.setPlaylistIndexFilename(filename)
-            self._playlistIndex = index
+            if not self._config['sharedPlaylistEnabled']:
+                self._playlistIndex = index
             if username is not None and self.userlist.currentUser.file and filename == self.userlist.currentUser.file['name']:
                 return
         except IndexError:
@@ -493,13 +494,11 @@ class SyncplayClient(object):
         if self._player is None:
             self.__playerReady.addCallback(lambda x: self.changeToPlaylistIndex(index, username))
             return
-
+        self._playlistIndex = index
         if username is None and self._protocol and self._protocol.logged and self._config["sharedPlaylistEnabled"]:
-            self._playlistIndex = index
             self._protocol.setPlaylistIndex(index)
         else:
             self.ui.showMessage(u"{} changed the playlist selection".format(username))
-            self._playlistIndex = index
             self.switchToNewPlaylistIndex(index)
 
 
