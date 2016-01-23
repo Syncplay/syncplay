@@ -209,7 +209,8 @@ class SyncplayClient(object):
         self._playerPosition = position
         self._playerPaused = paused
         currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
-        if pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
+        if pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
+            and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
             self.loadNextFileInPlaylist()
         elif pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
             pauseChange = self._toggleReady(pauseChange, paused)
@@ -355,7 +356,8 @@ class SyncplayClient(object):
                     self.behindFirstDetected = time.time()
                 else:
                     durationBehind = time.time() - self.behindFirstDetected
-                    if (durationBehind > (self._config['fastforwardThreshold']-constants.FASTFORWARD_BEHIND_THRESHOLD)) and (diff < (self._config['fastforwardThreshold'] * -1)):
+                    if (durationBehind > (self._config['fastforwardThreshold']-constants.FASTFORWARD_BEHIND_THRESHOLD))\
+                            and (diff < (self._config['fastforwardThreshold'] * -1)):
                         madeChangeOnPlayer = self._fastforwardPlayerDueToTimeDifference(position, setBy)
                         self.behindFirstDetected = time.time() + constants.FASTFORWARD_RESET_THRESHOLD
             else:
@@ -760,13 +762,16 @@ class SyncplayClient(object):
             return True
         elif unpauseAction == constants.UNPAUSE_IFOTHERSREADY_MODE and self.userlist.areAllOtherUsersInRoomReady():
             return True
-        elif unpauseAction == constants.UNPAUSE_IFMINUSERSREADY_MODE and self.userlist.areAllOtherUsersInRoomReady() and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold:
+        elif unpauseAction == constants.UNPAUSE_IFMINUSERSREADY_MODE and self.userlist.areAllOtherUsersInRoomReady()\
+                and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold:
             return True
         else:
             return False
 
     def autoplayConditionsMet(self):
-        return self._playerPaused and self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady(requireSameFilenames=self._config["autoplayRequireSameFilenames"]) and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold
+        return self._playerPaused and self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported()\
+               and self.userlist.areAllUsersInRoomReady(requireSameFilenames=self._config["autoplayRequireSameFilenames"])\
+               and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold
 
     def autoplayTimerIsRunning(self):
         return self.autoplayTimer.running
@@ -785,7 +790,9 @@ class SyncplayClient(object):
         if not self.autoplayConditionsMet():
             self.stopAutoplayCountdown()
             return
-        countdownMessage = u"{}{}{}".format(getMessage("all-users-ready").format(self.userlist.readyUserCount()),self._player.osdMessageSeparator, getMessage("autoplaying-notification").format(int(self.autoplayTimeLeft)))
+        allReadyMessage = getMessage("all-users-ready").format(self.userlist.readyUserCount())
+        autoplayingMessage = getMessage("autoplaying-notification").format(int(self.autoplayTimeLeft))
+        countdownMessage = u"{}{}{}".format(allReadyMessage,self._player.osdMessageSeparator, autoplayingMessage)
         self.ui.showOSDMessage(countdownMessage, 1, secondaryOSD=True)
         if self.autoplayTimeLeft <= 0:
             self.setPaused(False)
@@ -876,9 +883,11 @@ class SyncplayClient(object):
             response = json.loads(response)
             publicServers = None
             if response["public-servers"]:
-                publicServers = response["public-servers"].replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","")
+                publicServers = response["public-servers"].\
+                    replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","")
                 publicServers = ast.literal_eval(publicServers)
-            return response["version-status"], response["version-message"] if response.has_key("version-message") else None, response["version-url"] if response.has_key("version-url") else None, publicServers
+            return response["version-status"], response["version-message"] if response.has_key("version-message")\
+                else None, response["version-url"] if response.has_key("version-url") else None, publicServers
         except:
             return "failed", getMessage("update-check-failed-notification").format(syncplay.version), constants.SYNCPLAY_DOWNLOAD_URL, None
 
@@ -963,9 +972,11 @@ class SyncplayClient(object):
                 fileDifferencesMessage = getMessage("room-file-differences").format(fileDifferencesForRoom)
                 if self._userlist.currentUser.canControl() and self._userlist.isReadinessSupported():
                     if self._userlist.areAllUsersInRoomReady():
-                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("all-users-ready").format(self._userlist.readyUserCount()))
+                        allReadyMessage = getMessage("all-users-ready").format(self._userlist.readyUserCount())
+                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, allReadyMessage)
                     else:
-                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady()))
+                        notAllReadyMessage = getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady())
+                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, notAllReadyMessage)
                 else:
                     osdMessage = fileDifferencesMessage
             elif self._userlist.isReadinessSupported():
@@ -1204,7 +1215,10 @@ class SyncplayUserlist(object):
             if user.room == self.currentUser.room:
                 if user.isReadyWithFile() == False:
                     return False
-                elif requireSameFilenames and (self.currentUser.file is None or user.file is None or not utils.sameFilename(self.currentUser.file['name'], user.file['name'])):
+                elif requireSameFilenames and\
+                        (self.currentUser.file is None
+                         or user.file is None
+                         or not utils.sameFilename(self.currentUser.file['name'], user.file['name'])):
                     return False
         return True
 
