@@ -115,12 +115,11 @@ class SyncplayClient(object):
         self.autoplayTimeLeft = constants.AUTOPLAY_DELAY
 
         self._playlist = []
-        self._previousPlaylist = None
-        self._previousPlaylistRoom = None
         self._playlistIndex = None
         self.__playerReady = defer.Deferred()
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
+        self._undoPlaylist = self._UndoPlaylistManager()
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
             paths = "; ".join(self._config['loadedRelativePaths'])
             self.ui.showMessage(getMessage("relative-config-notification").format(paths), noPlayer=True, noTimestamp=True)
@@ -531,7 +530,7 @@ class SyncplayClient(object):
         except:
             newIndex = 0
 
-        self.updateUndoPlaylistBuffer(currentPlaylist=self._playlist, newPlaylist=files)
+        self._undoPlaylist.updateUndoPlaylistBuffer(currentPlaylist=self._playlist, newPlaylist=files, newRoom=self.userlist.currentUser.room)
         self._playlist = files
 
         if username is None and self._protocol and self._protocol.logged:
@@ -543,40 +542,48 @@ class SyncplayClient(object):
             self.changeToPlaylistIndex(newIndex, username)
             self.ui.showMessage(u"{} updated the playlist".format(username))
 
-    def updateUndoPlaylistBuffer(self, currentPlaylist, newPlaylist):
-        if self.playlistBufferIsFromOldRoom():
-            self.movePlaylistBufferToNewRoom()
-        elif self.playlistBufferNeedsUpdating(currentPlaylist, newPlaylist):
-            self._previousPlaylist = currentPlaylist
-
-    def playlistBufferIsFromOldRoom(self):
-        return self._previousPlaylistRoom <> self.userlist.currentUser.room
-
-    def movePlaylistBufferToNewRoom(self):
-        self._previousPlaylist = None
-        self._previousPlaylistRoom = self.userlist.currentUser.room
-
-    def playlistBufferNeedsUpdating(self, currentPlaylist, newPlaylist):
-        return self._previousPlaylist <> currentPlaylist and currentPlaylist <> newPlaylist
-
     @needsSharedPlaylistsEnabled
     def undoPlaylistChange(self):
-        if self._previousPlaylist is not None and self._playlist <> self._previousPlaylist:
-            undidPlaylist = self._playlist
-            self.ui.setPlaylist(self._previousPlaylist)
-            self.changePlaylist(self._previousPlaylist)
-            self._previousPlaylist = undidPlaylist
+        if self._undoPlaylist.canUndoPlaylist(self._playlist):
+            newPlaylist = self._undoPlaylist.getPreviousPlaylist()
+            self.ui.setPlaylist(newPlaylist)
+            self.changePlaylist(newPlaylist)
 
     @needsSharedPlaylistsEnabled
     def shufflePlaylist(self):
         if self._playlist and len(self._playlist) > 0:
-            oldPlaylist = self._playlist
             random.seed()
             shuffledPlaylist = deepcopy(self._playlist)
             random.shuffle(shuffledPlaylist)
             self.ui.setPlaylist(shuffledPlaylist)
             self.changePlaylist(shuffledPlaylist)
-            self._previousPlaylist = oldPlaylist
+            
+    class _UndoPlaylistManager():
+        def __init__(self):
+            self._previousPlaylist = None
+            self._previousPlaylistRoom = None
+            
+        def updateUndoPlaylistBuffer(self, currentPlaylist, newPlaylist, newRoom):
+            if self.playlistBufferIsFromOldRoom(newRoom):
+                self.movePlaylistBufferToNewRoom(newRoom)
+            elif self.playlistBufferNeedsUpdating(currentPlaylist, newPlaylist):
+                self._previousPlaylist = currentPlaylist
+
+        def playlistBufferIsFromOldRoom(self, newRoom):
+            return self._previousPlaylistRoom <> newRoom
+
+        def movePlaylistBufferToNewRoom(self, currentRoom):
+            self._previousPlaylist = None
+            self._previousPlaylistRoom = currentRoom
+
+        def playlistBufferNeedsUpdating(self, currentPlaylist, newPlaylist):
+            return self._previousPlaylist <> currentPlaylist and currentPlaylist <> newPlaylist
+        
+        def canUndoPlaylist(self, currentPlaylist):
+            return self._previousPlaylist is not None and currentPlaylist <> self._previousPlaylist
+            
+        def getPreviousPlaylist(self):
+            return self._previousPlaylist
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
