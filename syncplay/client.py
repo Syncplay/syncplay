@@ -570,7 +570,6 @@ class SyncplayClient(object):
     @needsSharedPlaylistsEnabled
     def shufflePlaylist(self):
         if self._playlist and len(self._playlist) > 0:
-            random.seed()
             shuffledPlaylist = deepcopy(self._playlist)
             random.shuffle(shuffledPlaylist)
             self.ui.setPlaylist(shuffledPlaylist)
