@@ -181,7 +181,6 @@ class SyncplayClient(object):
 
     @needsSharedPlaylistsEnabled
     def loadNextFileInPlaylist(self):
-        # TODO: Fix for GUIDs & add path checks (and make more of code re-use?)
         if self._playlistIndex is None or len(self._playlist) <= self._playlistIndex+1:
             return
         filename = self._playlist[self._playlistIndex+1]
