@@ -210,7 +210,7 @@ class SyncplayClient(object):
         self._playerPosition = position
         self._playerPaused = paused
         currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
-        if pauseChange and paused and currentLength > 10 and abs(position - currentLength ) < 5:
+        if pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
             self.loadNextFileInPlaylist()
         elif pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
             pauseChange = self._toggleReady(pauseChange, paused)

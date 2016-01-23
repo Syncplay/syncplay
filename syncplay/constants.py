@@ -17,6 +17,8 @@ SHOW_TOOLTIPS = True
 WARN_ABOUT_MISSING_STRINGS = False # (If debug mode is enabled)
 FALLBACK_INITIAL_LANGUAGE = "en"
 FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [[u'syncplay.pl:8995 (France)', u'syncplay.pl:8995'],[u'syncplay.pl:8996 (France)', u'syncplay.pl:8996'],[u'syncplay.pl:8997 (France)', u'syncplay.pl:8997'],[u'syncplay.pl:8998 (France)', u'syncplay.pl:8998'],[u'syncplay.pl:8999 (France)', u'syncplay.pl:8999']]
+PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH = 10 # Seconds
+PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD = 5 # Seconds (only triggered if file is paused, e.g. due to EOF)
 
 #Overriden by config
 SHOW_OSD = True  # Sends Syncplay messages to media player OSD
