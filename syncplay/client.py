@@ -531,11 +531,7 @@ class SyncplayClient(object):
         except:
             newIndex = 0
 
-        if self._previousPlaylistRoom <> self.userlist.currentUser.room:
-            self._previousPlaylist = None
-            self._previousPlaylistRoom = self.userlist.currentUser.room
-        elif self._previousPlaylist <> self._playlist and self._playlist <> files:
-            self._previousPlaylist = self._playlist
+        self.updateUndoPlaylistBuffer(currentPlaylist=self._playlist, newPlaylist=files)
         self._playlist = files
 
         if username is None and self._protocol and self._protocol.logged:
@@ -546,6 +542,22 @@ class SyncplayClient(object):
             self.ui.setPlaylist(self._playlist)
             self.changeToPlaylistIndex(newIndex, username)
             self.ui.showMessage(u"{} updated the playlist".format(username))
+
+    def updateUndoPlaylistBuffer(self, currentPlaylist, newPlaylist):
+        if self.playlistBufferIsFromOldRoom():
+            self.movePlaylistBufferToNewRoom()
+        elif self.playlistBufferNeedsUpdating(currentPlaylist, newPlaylist):
+            self._previousPlaylist = currentPlaylist
+
+    def playlistBufferIsFromOldRoom(self):
+        return self._previousPlaylistRoom <> self.userlist.currentUser.room
+
+    def movePlaylistBufferToNewRoom(self):
+        self._previousPlaylist = None
+        self._previousPlaylistRoom = self.userlist.currentUser.room
+
+    def playlistBufferNeedsUpdating(self, currentPlaylist, newPlaylist):
+        return self._previousPlaylist <> currentPlaylist and currentPlaylist <> newPlaylist
 
     @needsSharedPlaylistsEnabled
     def undoPlaylistChange(self):
