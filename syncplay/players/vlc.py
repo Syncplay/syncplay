@@ -22,7 +22,6 @@ class VlcPlayer(BasePlayer):
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS
     if not sys.platform.startswith('darwin'):
          SLAVE_ARGS.extend(constants.VLC_SLAVE_NONOSX_ARGS)
-    random.seed()
     vlcport = random.randrange(constants.VLC_MIN_PORT, constants.VLC_MAX_PORT) if (constants.VLC_MIN_PORT < constants.VLC_MAX_PORT) else constants.VLC_MIN_PORT
 
     def __init__(self, client, playerPath, filePath, args):
