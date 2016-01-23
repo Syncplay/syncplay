@@ -181,26 +181,43 @@ class SyncplayClient(object):
 
     @needsSharedPlaylistsEnabled
     def loadNextFileInPlaylist(self):
-        if self._playlistIndex is None or len(self._playlist) <= self._playlistIndex+1:
+        if self._notPlayingCurrentIndex():
             return
-        filename = self._playlist[self._playlistIndex+1]
-        if filename == "<LOOP>":
-            filename = self._playlist[0]
-        if utils.isURL(filename):
-            for URI in constants.SAFE_URIS:
-                if filename.startswith(URI):
-                    self._player.openFile(filename, resetPosition=True)
-                    return
-            self.ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
-            return
+        if self._thereIsNextPlaylistIndex():
+            self.switchToNewPlaylistIndex(self._nextPlaylistIndex(), resetPosition=True)
         else:
-            path = self.findFilenameInDirectories(filename)
-            if path:
-                self._player.openFile(path, resetPosition=True)
-            else:
-                self.ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
-                return
-            # TODO: Find Path properly
+            self.rewindFile()
+
+    def _notPlayingCurrentIndex(self):
+        if self._playlistIndex is None or self._playlist is None or len(self._playlist) <= self._playlistIndex:
+            self.ui.showDebugMessage(u"Not playing current index - Index none or length issue")
+            return True
+        currentPlaylistFilename = self._playlist[self._playlistIndex]
+        if self.userlist.currentUser.file and currentPlaylistFilename == self.userlist.currentUser.file['name']:
+            return False
+        else:
+            self.ui.showDebugMessage(u"Not playing current index - Filename mismatch or no file")
+            return True
+
+    def _thereIsNextPlaylistIndex(self):
+        if self._playlistIndex is None:
+            return False
+        elif len(self._playlist) == 1:
+            return False
+        else:
+            return True
+
+    def _nextPlaylistIndex(self):
+        if self.playlistIsAtEnd():
+            return 0
+        else:
+            return self._playlistIndex+1
+
+    def playlistIsAtEnd(self):
+        return len(self._playlist) <= self._playlistIndex+1
+
+    def rewindFile(self):
+        self.setPosition(0)
 
     def updatePlayerStatus(self, paused, position):
         position -= self.getUserOffset()
@@ -503,13 +520,13 @@ class SyncplayClient(object):
 
 
     @needsSharedPlaylistsEnabled
-    def switchToNewPlaylistIndex(self, index):
+    def switchToNewPlaylistIndex(self, index, resetPosition=False):
         try:
             filename = self._playlist[index]
             if utils.isURL(filename):
                 for URI in constants.SAFE_URIS:
                     if filename.startswith(URI):
-                        self._player.openFile(filename)
+                        self._player.openFile(filename, resetPosition=resetPosition)
                         return
                 self.ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
                 return
@@ -517,7 +534,7 @@ class SyncplayClient(object):
                 path = self.findFilenameInDirectories(filename)
                 # TODO: Find Path properly
             if path:
-                self._player.openFile(path)
+                self._player.openFile(path, resetPosition)
             else:
                 self.ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
                 return
