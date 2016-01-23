@@ -191,14 +191,14 @@ class SyncplayClient(object):
                 if filename.startswith(URI):
                     self._player.openFile(filename, resetPosition=True)
                     return
-            self.ui.showErrorMessage(u"Could not load {} because it is not known as a safe path.".format(filename))
+            self.ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
             return
         else:
             path = self.findFilenameInDirectories(filename)
             if path:
                 self._player.openFile(path, resetPosition=True)
             else:
-                self.ui.showErrorMessage(u"Could not find file {} for playlist switch!".format(filename))
+                self.ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
                 return
             # TODO: Find Path properly
 
@@ -498,7 +498,7 @@ class SyncplayClient(object):
         if username is None and self._protocol and self._protocol.logged and self._config["sharedPlaylistEnabled"]:
             self._protocol.setPlaylistIndex(index)
         else:
-            self.ui.showMessage(u"{} changed the playlist selection".format(username))
+            self.ui.showMessage(getMessage("playlist-selection-changed-notification").format(username))
             self.switchToNewPlaylistIndex(index)
 
 
@@ -511,7 +511,7 @@ class SyncplayClient(object):
                     if filename.startswith(URI):
                         self._player.openFile(filename)
                         return
-                self.ui.showErrorMessage(u"Could not load {} because it is not known as a safe path.".format(filename))
+                self.ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
                 return
             else:
                 path = self.findFilenameInDirectories(filename)
@@ -519,7 +519,7 @@ class SyncplayClient(object):
             if path:
                 self._player.openFile(path)
             else:
-                self.ui.showErrorMessage(u"Could not find file {} for playlist switch!".format(filename))
+                self.ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
                 return
         except IndexError:
             self.ui.showDebugMessage("Could not change playlist index due to IndexError")
@@ -541,7 +541,7 @@ class SyncplayClient(object):
         else:
             self.ui.setPlaylist(self._playlist)
             self.changeToPlaylistIndex(newIndex, username)
-            self.ui.showMessage(u"{} updated the playlist".format(username))
+            self.ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
 
     @needsSharedPlaylistsEnabled
     def undoPlaylistChange(self):

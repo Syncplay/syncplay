@@ -62,6 +62,9 @@ en = {
       "userlist-file-notification" : "File",
       "controller-userlist-userflag" : "Operator",
       "ready-userlist-userflag" : "Ready",
+
+      "playlist-selection-changed-notification" :  u"{} changed the playlist selection", # Username
+      "playlist-contents-changed-notification" : u"{} updated the playlist", # Username
       
       "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version
       "syncplay-uptodate-notification" : u"Syncplay is up to date",
@@ -134,8 +137,9 @@ en = {
 
        "invalid-seek-value" : u"Invalid seek value",
        "invalid-offset-value" : u"Invalid offset value",
-      "cannot-find-file-for-playlist-switch-error " : u"Could not find file {} for playlist switch!", # Filename
+      "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} for playlist switch!", # Filename
       "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename
+      "cannot-add-unsafe-path-error" : u"Could not load {} because it is not known as a safe path.", # Filename
 
       "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found
       "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder
@@ -451,6 +455,9 @@ ru = {
       "userlist-file-notification" : u"Файл",
       "controller-userlist-userflag" : u"Оператор",
       "ready-userlist-userflag" : u"Готов",
+
+      "playlist-selection-changed-notification" :  u"{} changed the playlist selection", # Username # TODO: Translate into Russian
+      "playlist-contents-changed-notification" : u"{} updated the playlist", # Username # TODO: Translate into Russian
       
       "update-check-failed-notification" : u"Невозможно автоматически проверить, что версия Syncplay {} все еще актуальна. Хотите зайти на http://syncplay.pl/ и вручную проверить наличие обновлений?",
       "syncplay-uptodate-notification" : u"Syncplay обновлен",
@@ -523,8 +530,9 @@ ru = {
 
       "invalid-seek-value" : u"Некорректное значение для перемотки",
       "invalid-offset-value" : u"Некорректное смещение",
-      "cannot-find-file-for-playlist-switch-error " : u"Could not find file {} for playlist switch!", # Filename # TODO: Translate into Russian
+      "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} for playlist switch!", # Filename # TODO: Translate into Russian
       "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename # TODO: Translate into Russian
+      "cannot-add-unsafe-path-error" : u"Could not load {} because it is not known as a safe path.", # Filename # TODO: Translate to Russian
 
       "switch-file-not-found-error" : u"Невозможно переключиться на файл '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found # TODO: Translate last part into Russian
       "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder # TODO: Translate into Russian
@@ -841,6 +849,9 @@ de = {
       "userlist-file-notification" : u"Datei",
       "controller-userlist-userflag" : u"Raumleiter",
       "ready-userlist-userflag" : u"Bereit",
+
+      "playlist-selection-changed-notification" :  u"{} changed the playlist selection", # Username # TODO: Translate into German
+      "playlist-contents-changed-notification" : u"{} updated the playlist", # Username # TODO: Translate into German
       
       "update-check-failed-notification" : u"Konnte nicht automatisch prüfen, ob Syncplay {} aktuell ist. Soll http://syncplay.pl/ geöffnet werden, um manuell nach Updates zu suchen?", #Syncplay version
         "syncplay-uptodate-notification" : u"Syncplay ist aktuell",
@@ -913,8 +924,9 @@ de = {
 
        "invalid-seek-value" : u"Ungültige Zeitangabe",
        "invalid-offset-value" : u"Ungültiger Offset-Wert",
-      "cannot-find-file-for-playlist-switch-error " : u"Could not find file {} for playlist switch!", # Filename # TODO: Translate into German
+      "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} for playlist switch!", # Filename # TODO: Translate into German
       "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename # TODO: Translate into German
+      "cannot-add-unsafe-path-error" : u"Could not load {} because it is not known as a safe path.", # Filename # TODO: Translate to German
 
       "switch-file-not-found-error" : u"Konnte nicht zur Datei '{0}' wechseln. Syncplay sucht im Ordner der aktuellen Datei und angegebenen Medien-Verzeichnissen.", # File not found, folder it was not found in
       "folder-search-timeout-error" : u"Die Suche nach Mediendateien in '{}' wurde abgebrochen weil sie zu lange gedauert hat. Dies tritt auf, wenn ein zu durchsuchender Medienordner zu viele Unterordner hat. Syncplay wird bis zum Neustart nur noch das Verzeichnis der aktuellen Datei durchsuchen.", #Folder
