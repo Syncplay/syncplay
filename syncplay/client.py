@@ -581,26 +581,26 @@ class SyncplayClient(object):
             self._previousPlaylistRoom = None
             
         def updateUndoPlaylistBuffer(self, currentPlaylist, newPlaylist, newRoom):
-            if self.playlistBufferIsFromOldRoom(newRoom):
-                self.movePlaylistBufferToNewRoom(newRoom)
-            elif self.playlistBufferNeedsUpdating(currentPlaylist, newPlaylist):
+            if self._playlistBufferIsFromOldRoom(newRoom):
+                self._movePlaylistBufferToNewRoom(newRoom)
+            elif self._playlistBufferNeedsUpdating(currentPlaylist, newPlaylist):
                 self._previousPlaylist = currentPlaylist
 
-        def playlistBufferIsFromOldRoom(self, newRoom):
-            return self._previousPlaylistRoom <> newRoom
-
-        def movePlaylistBufferToNewRoom(self, currentRoom):
-            self._previousPlaylist = None
-            self._previousPlaylistRoom = currentRoom
-
-        def playlistBufferNeedsUpdating(self, currentPlaylist, newPlaylist):
-            return self._previousPlaylist <> currentPlaylist and currentPlaylist <> newPlaylist
-        
         def canUndoPlaylist(self, currentPlaylist):
             return self._previousPlaylist is not None and currentPlaylist <> self._previousPlaylist
             
         def getPreviousPlaylist(self):
             return self._previousPlaylist
+        
+        def _playlistBufferIsFromOldRoom(self, newRoom):
+            return self._previousPlaylistRoom <> newRoom
+
+        def _movePlaylistBufferToNewRoom(self, currentRoom):
+            self._previousPlaylist = None
+            self._previousPlaylistRoom = currentRoom
+
+        def _playlistBufferNeedsUpdating(self, currentPlaylist, newPlaylist):
+            return self._previousPlaylist <> currentPlaylist and currentPlaylist <> newPlaylist
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
