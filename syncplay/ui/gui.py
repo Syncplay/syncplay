@@ -582,11 +582,11 @@ class MainWindow(QtGui.QMainWindow):
 
     @needsClient
     def undoPlaylistChange(self):
-        self._syncplayClient.undoPlaylistChange()
+        self._syncplayClient.playlist.undoPlaylistChange()
 
     @needsClient
     def shufflePlaylist(self):
-        self._syncplayClient.shufflePlaylist()
+        self._syncplayClient.playlist.shufflePlaylist()
 
     def openPlaylistMenu(self, position):
         indexes = self.playlist.selectedIndexes()
@@ -996,7 +996,7 @@ class MainWindow(QtGui.QMainWindow):
         newPlaylist = self.getPlaylistState()
         if newPlaylist <> self.playlistState and self._syncplayClient and not self.updatingPlaylist:
             self.playlistState = newPlaylist
-            self._syncplayClient.changePlaylist(newPlaylist)
+            self._syncplayClient.playlist.changePlaylist(newPlaylist)
 
     def addTopLayout(self, window):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)

@@ -141,9 +141,9 @@ class SyncClientProtocol(JSONCommandProtocol):
                 manuallyInitiated = values["manuallyInitiated"] if values.has_key("manuallyInitiated") else True
                 self._client.setReady(user, isReady, manuallyInitiated)
             elif command == "playlistIndex":
-                self._client.changeToPlaylistIndex(values['index'], values['user'])
+                self._client.playlist.changeToPlaylistIndex(values['index'], values['user'])
             elif command == "playlistChange":
-                self._client.changePlaylist(values['files'], values['user'])
+                self._client.playlist.changePlaylist(values['files'], values['user'])
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})

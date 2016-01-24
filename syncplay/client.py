@@ -114,12 +114,10 @@ class SyncplayClient(object):
         self.autoplayTimer = task.LoopingCall(self.autoplayCountdown)
         self.autoplayTimeLeft = constants.AUTOPLAY_DELAY
 
-        self._playlist = []
-        self._playlistIndex = None
         self.__playerReady = defer.Deferred()
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
-        self._undoPlaylist = self._UndoPlaylistManager()
+        self.playlist = SyncplayPlaylist(self)
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
             paths = "; ".join(self._config['loadedRelativePaths'])
             self.ui.showMessage(getMessage("relative-config-notification").format(paths), noPlayer=True, noTimestamp=True)
@@ -128,15 +126,6 @@ class SyncplayClient(object):
             missingStrings = getMissingStrings()
             if missingStrings is not None and missingStrings is not "":
                 self.ui.showDebugMessage("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
-
-    def needsSharedPlaylistsEnabled(f):  # @NoSelf
-        @wraps(f)
-        def wrapper(self, *args, **kwds):
-            if not self._config['sharedPlaylistEnabled']:
-                self.ui.showDebugMessage("Tried to use shared playlists when it was disabled!")
-                return
-            return f(self, *args, **kwds)
-        return wrapper
 
     def initProtocol(self, protocol):
         self._protocol = protocol
@@ -152,6 +141,12 @@ class SyncplayClient(object):
             constants.OSD_WARNING_MESSAGE_DURATION = constants.NO_SECONDARY_OSD_WARNING_DURATION
         self.scheduleAskPlayer()
         self.__playerReady.callback(player)
+
+    def addPlayerReadyCallback(self, lambdaToCall):
+        self.__playerReady.addCallback(lambdaToCall)
+
+    def playerIsNotReady(self):
+        return self._player is None
 
     def scheduleAskPlayer(self, when=constants.PLAYER_ASK_DELAY):
         self._askPlayerTimer = task.LoopingCall(self.askPlayer)
@@ -179,43 +174,6 @@ class SyncplayClient(object):
         seeked = _playerDiff > constants.SEEK_THRESHOLD and _globalDiff > constants.SEEK_THRESHOLD
         return pauseChange, seeked
 
-    @needsSharedPlaylistsEnabled
-    def loadNextFileInPlaylist(self):
-        if self._notPlayingCurrentIndex():
-            return
-        if self._thereIsNextPlaylistIndex():
-            self.switchToNewPlaylistIndex(self._nextPlaylistIndex(), resetPosition=True)
-        else:
-            self.rewindFile()
-
-    def _notPlayingCurrentIndex(self):
-        if self._playlistIndex is None or self._playlist is None or len(self._playlist) <= self._playlistIndex:
-            self.ui.showDebugMessage(u"Not playing current index - Index none or length issue")
-            return True
-        currentPlaylistFilename = self._playlist[self._playlistIndex]
-        if self.userlist.currentUser.file and currentPlaylistFilename == self.userlist.currentUser.file['name']:
-            return False
-        else:
-            self.ui.showDebugMessage(u"Not playing current index - Filename mismatch or no file")
-            return True
-
-    def _thereIsNextPlaylistIndex(self):
-        if self._playlistIndex is None:
-            return False
-        elif len(self._playlist) == 1:
-            return False
-        else:
-            return True
-
-    def _nextPlaylistIndex(self):
-        if self.playlistIsAtEnd():
-            return 0
-        else:
-            return self._playlistIndex+1
-
-    def playlistIsAtEnd(self):
-        return len(self._playlist) <= self._playlistIndex+1
-
     def rewindFile(self):
         self.setPosition(0)
 
@@ -227,7 +185,7 @@ class SyncplayClient(object):
         currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
         if pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
             and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
-            self.loadNextFileInPlaylist()
+            self.playlist.loadNextFileInPlaylist()
         elif pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
             pauseChange = self._toggleReady(pauseChange, paused)
 
@@ -472,13 +430,7 @@ class SyncplayClient(object):
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
-
-        try:
-            index = self._playlist.index(filename)
-            self.changeToPlaylistIndex(index)
-        except ValueError:
-            pass
-
+        self.playlist.changeToPlaylistIndexFromFilename(filename)
 
     def findFilenameInDirectories(self, filename):
         # TODO: Replace this with the code in gui.py
@@ -490,117 +442,14 @@ class SyncplayClient(object):
                         return os.path.join(root,filename)
             return None
 
-    def changeToPlaylistIndex(self, index, username = None):
-        if not self._playlist or len(self._playlist) == 0:
-            return
-        path = None
-        if index is None:
-            return
-        if username is None and not self._config['sharedPlaylistEnabled']:
-            return
-        try:
-            filename = self._playlist[index]
-            self.ui.setPlaylistIndexFilename(filename)
-            if not self._config['sharedPlaylistEnabled']:
-                self._playlistIndex = index
-            if username is not None and self.userlist.currentUser.file and filename == self.userlist.currentUser.file['name']:
-                return
-        except IndexError:
-            pass
+    def openFile(self, filePath, resetPosition=False):
+        self._player.openFile(filePath, resetPosition)
 
-        if self._player is None:
-            self.__playerReady.addCallback(lambda x: self.changeToPlaylistIndex(index, username))
-            return
-        self._playlistIndex = index
-        if username is None and self._protocol and self._protocol.logged and self._config["sharedPlaylistEnabled"]:
-            self._protocol.setPlaylistIndex(index)
-        else:
-            self.ui.showMessage(getMessage("playlist-selection-changed-notification").format(username))
-            self.switchToNewPlaylistIndex(index)
+    def setPlaylistIndex(self, index):
+        self._protocol.setPlaylistIndex(index)
 
-
-    @needsSharedPlaylistsEnabled
-    def switchToNewPlaylistIndex(self, index, resetPosition=False):
-        try:
-            filename = self._playlist[index]
-            if utils.isURL(filename):
-                for URI in constants.SAFE_URIS:
-                    if filename.startswith(URI):
-                        self._player.openFile(filename, resetPosition=resetPosition)
-                        return
-                self.ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
-                return
-            else:
-                path = self.findFilenameInDirectories(filename)
-                # TODO: Find Path properly
-            if path:
-                self._player.openFile(path, resetPosition)
-            else:
-                self.ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
-                return
-        except IndexError:
-            self.ui.showDebugMessage("Could not change playlist index due to IndexError")
-
-    def changePlaylist(self, files, username = None):
-        try:
-            filename = self._playlist[self._playlistIndex]
-            newIndex = files.index(filename)
-        except:
-            newIndex = 0
-
-        self._undoPlaylist.updateUndoPlaylistBuffer(currentPlaylist=self._playlist, newPlaylist=files, newRoom=self.userlist.currentUser.room)
-        self._playlist = files
-
-        if username is None and self._protocol and self._protocol.logged:
-            if self._config['sharedPlaylistEnabled']:
-                self._protocol.setPlaylist(files)
-                self.changeToPlaylistIndex(newIndex)
-        else:
-            self.ui.setPlaylist(self._playlist)
-            self.changeToPlaylistIndex(newIndex, username)
-            self.ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
-
-    @needsSharedPlaylistsEnabled
-    def undoPlaylistChange(self):
-        if self._undoPlaylist.canUndoPlaylist(self._playlist):
-            newPlaylist = self._undoPlaylist.getPreviousPlaylist()
-            self.ui.setPlaylist(newPlaylist)
-            self.changePlaylist(newPlaylist)
-
-    @needsSharedPlaylistsEnabled
-    def shufflePlaylist(self):
-        if self._playlist and len(self._playlist) > 0:
-            shuffledPlaylist = deepcopy(self._playlist)
-            random.shuffle(shuffledPlaylist)
-            self.ui.setPlaylist(shuffledPlaylist)
-            self.changePlaylist(shuffledPlaylist)
-            
-    class _UndoPlaylistManager():
-        def __init__(self):
-            self._previousPlaylist = None
-            self._previousPlaylistRoom = None
-            
-        def updateUndoPlaylistBuffer(self, currentPlaylist, newPlaylist, newRoom):
-            if self._playlistBufferIsFromOldRoom(newRoom):
-                self._movePlaylistBufferToNewRoom(newRoom)
-            elif self._playlistBufferNeedsUpdating(currentPlaylist, newPlaylist):
-                self._previousPlaylist = currentPlaylist
-
-        def canUndoPlaylist(self, currentPlaylist):
-            return self._previousPlaylist is not None and currentPlaylist <> self._previousPlaylist
-            
-        def getPreviousPlaylist(self):
-            return self._previousPlaylist
-        
-        def _playlistBufferIsFromOldRoom(self, newRoom):
-            return self._previousPlaylistRoom <> newRoom
-
-        def _movePlaylistBufferToNewRoom(self, currentRoom):
-            self._previousPlaylist = None
-            self._previousPlaylistRoom = currentRoom
-
-        def _playlistBufferNeedsUpdating(self, currentPlaylist, newPlaylist):
-            return self._previousPlaylist <> currentPlaylist and currentPlaylist <> newPlaylist
+    def changeToPlaylistIndex(self, *args, **kwargs):
+        self.playlist.changeToPlaylistIndex(*args, **kwargs)
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
@@ -661,6 +510,12 @@ class SyncplayClient(object):
             storedRoomPassword = self.getControlledRoomPassword(room)
             if storedRoomPassword:
                 self.identifyAsController(storedRoomPassword)
+
+    def isConnectedAndInARoom(self):
+        return self._protocol and self._protocol.logged and self.userlist.currentUser.room
+
+    def sharedPlaylistIsEnabled(self):
+        return self._config['sharedPlaylistEnabled']
 
     def connected(self):
         readyState = self._config['readyAtStart'] if self.userlist.currentUser.isReady() is None else self.userlist.currentUser.isReady()
@@ -744,12 +599,12 @@ class SyncplayClient(object):
         return requireMinVersionDecorator
 
     def changePlaylistEnabledState(self, newState):
-        oldState = self._config["sharedPlaylistEnabled"]
+        oldState = self.sharedPlaylistIsEnabled()
         from syncplay.ui.ConfigurationGetter import ConfigurationGetter
         ConfigurationGetter().setConfigOption("sharedPlaylistEnabled", newState)
         self._config["sharedPlaylistEnabled"] = newState
         if oldState == False and newState == True:
-            self.changeToPlaylistIndex(self._playlistIndex)
+            self.playlist.loadCurrentPlaylistIndex()
 
     def changeAutoplayState(self, newState):
         self.autoPlay = newState
@@ -1437,4 +1292,179 @@ class UiManager(object):
     def drop(self):
         self.__ui.drop()
 
+class SyncplayPlaylist():
+    def __init__(self, client):
+        self._client = client
+        self._ui = self._client.ui
+        self._previousPlaylist = None
+        self._previousPlaylistRoom = None
+        self._playlist = []
+        self._playlistIndex = None
 
+    def needsSharedPlaylistsEnabled(f):  # @NoSelf
+        @wraps(f)
+        def wrapper(self, *args, **kwds):
+            if not self._client.sharedPlaylistIsEnabled():
+                self._ui.showDebugMessage("Tried to use shared playlists when it was disabled!")
+                return
+            return f(self, *args, **kwds)
+        return wrapper
+
+    def changeToPlaylistIndexFromFilename(self, filename):
+        try:
+            index = self._playlist.index(filename)
+            self.changeToPlaylistIndex(index)
+        except ValueError:
+            pass
+
+    def changeToPlaylistIndex(self, index, username = None):
+        if not self._playlist or len(self._playlist) == 0:
+            return
+        path = None
+        if index is None:
+            return
+        if username is None and not self._client.sharedPlaylistIsEnabled():
+            return
+        try:
+            filename = self._playlist[index]
+            self._ui.setPlaylistIndexFilename(filename)
+            if not self._client.sharedPlaylistIsEnabled():
+                self._playlistIndex = index
+            if username is not None and self._client.userlist.currentUser.file and filename == self._client.userlist.currentUser.file['name']:
+                return
+        except IndexError:
+            pass
+
+        if self._client.playerIsNotReady():
+            self._client.addPlayerReadyCallback(lambda x: self.changeToPlaylistIndex(index, username))
+            return
+
+        self._playlistIndex = index
+        if username is None and self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
+            self._client.setPlaylistIndex(index)
+        else:
+            self._ui.showMessage(getMessage("playlist-selection-changed-notification").format(username))
+            self.switchToNewPlaylistIndex(index)
+
+    @needsSharedPlaylistsEnabled
+    def switchToNewPlaylistIndex(self, index, resetPosition=False):
+        if self._client.playerIsNotReady():
+            self._client.addPlayerReadyCallback(lambda x: self.switchToNewPlaylistIndex(index, resetPosition))
+            return
+
+        try:
+            filename = self._playlist[index]
+            if utils.isURL(filename):
+                for URI in constants.SAFE_URIS:
+                    if filename.startswith(URI):
+                        self._client.openFile(filename, resetPosition=resetPosition)
+                        return
+                self._ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
+                return
+            else:
+                path = self._client.findFilenameInDirectories(filename)
+                # TODO: Find Path properly
+            if path:
+                self._client.openFile(path, resetPosition)
+            else:
+                self._ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
+                return
+        except IndexError:
+            self._ui.showDebugMessage("Could not change playlist index due to IndexError")
+
+    def changePlaylist(self, files, username = None):
+        try:
+            filename = self._playlist[self._playlistIndex]
+            newIndex = files.index(filename)
+        except:
+            newIndex = 0
+
+        self._updateUndoPlaylistBuffer(newPlaylist=files, newRoom=self._client.userlist.currentUser.room)
+        self._playlist = files
+
+        if username is None and self._client.isConnectedAndInARoom():
+            if self._client.sharedPlaylistIsEnabled():
+                self._client._protocol.setPlaylist(files)
+                self.changeToPlaylistIndex(newIndex)
+        else:
+            self._ui.setPlaylist(self._playlist)
+            self.changeToPlaylistIndex(newIndex, username)
+            self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
+
+    @needsSharedPlaylistsEnabled
+    def undoPlaylistChange(self):
+        if self.canUndoPlaylist(self._playlist):
+            newPlaylist = self._getPreviousPlaylist()
+            self._ui.setPlaylist(newPlaylist)
+            self.changePlaylist(newPlaylist)
+
+    @needsSharedPlaylistsEnabled
+    def shufflePlaylist(self):
+        if self._playlist and len(self._playlist) > 0:
+            shuffledPlaylist = deepcopy(self._playlist)
+            random.shuffle(shuffledPlaylist)
+            self._ui.setPlaylist(shuffledPlaylist)
+            self.changePlaylist(shuffledPlaylist)
+
+    def canUndoPlaylist(self, currentPlaylist):
+        return self._previousPlaylist is not None and currentPlaylist <> self._previousPlaylist
+
+    def loadCurrentPlaylistIndex(self):
+        if self._notPlayingCurrentIndex():
+            self.switchToNewPlaylistIndex(self._playlistIndex)
+
+    @needsSharedPlaylistsEnabled
+    def loadNextFileInPlaylist(self):
+        if self._notPlayingCurrentIndex():
+            return
+        if self._thereIsNextPlaylistIndex():
+            self.switchToNewPlaylistIndex(self._nextPlaylistIndex(), resetPosition=True)
+        else:
+            self._client.rewindFile()
+
+    def _updateUndoPlaylistBuffer(self, newPlaylist, newRoom):
+        if self._playlistBufferIsFromOldRoom(newRoom):
+            self._movePlaylistBufferToNewRoom(newRoom)
+        elif self._playlistBufferNeedsUpdating(newPlaylist):
+            self._previousPlaylist = self._playlist
+
+    def _getPreviousPlaylist(self):
+        return self._previousPlaylist
+
+    def _notPlayingCurrentIndex(self):
+        if self._playlistIndex is None or self._playlist is None or len(self._playlist) <= self._playlistIndex:
+            self._ui.showDebugMessage(u"Not playing current index - Index none or length issue")
+            return True
+        currentPlaylistFilename = self._playlist[self._playlistIndex]
+        if self._client.userlist.currentUser.file and currentPlaylistFilename == self._client.userlist.currentUser.file['name']:
+            return False
+        else:
+            self._ui.showDebugMessage(u"Not playing current index - Filename mismatch or no file")
+            return True
+
+    def _thereIsNextPlaylistIndex(self):
+        if self._playlistIndex is None:
+            return False
+        elif len(self._playlist) == 1:
+            return False
+        else:
+            return True
+
+    def _nextPlaylistIndex(self):
+        if self._playlistIsAtEnd():
+            return 0
+        else:
+            return self._playlistIndex+1
+
+    def _playlistIsAtEnd(self):
+        return len(self._playlist) <= self._playlistIndex+1
+
+    def _playlistBufferIsFromOldRoom(self, newRoom):
+        return self._previousPlaylistRoom <> newRoom
+
+    def _movePlaylistBufferToNewRoom(self, currentRoom):
+        self._previousPlaylist = None
+        self._previousPlaylistRoom = currentRoom
+
+    def _playlistBufferNeedsUpdating(self, newPlaylist):
+        return self._previousPlaylist <> self._playlist and self._playlist <> newPlaylist
