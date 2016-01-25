@@ -1,5 +1,7 @@
 # coding:utf8
 
+"""Deutsch dictionary"""
+
 de = {
       "LANGUAGE" : u"Deutsch", # (German)
 
