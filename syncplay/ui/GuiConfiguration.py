@@ -416,6 +416,8 @@ class ConfigDialog(QtGui.QDialog):
                 widget.setChecked(True)
         elif isinstance(widget, QLineEdit):
             widget.setText(self.config[valueName])
+        elif isinstance(widget, QDoubleSpinBox):
+            widget.setValue(self.config[valueName])
 
     def saveValues(self, widget):
         valueName = str(widget.objectName())
@@ -438,6 +440,8 @@ class ConfigDialog(QtGui.QDialog):
                 self.config[radioName] = radioValue
         elif isinstance(widget, QLineEdit):
             self.config[valueName] = widget.text()
+        elif isinstance(widget, QDoubleSpinBox):
+            self.config[valueName] = widget.value()
 
     def connectChildren(self, widget):
         widgetName = str(widget.objectName())
@@ -733,6 +737,10 @@ class ConfigDialog(QtGui.QDialog):
         self.rewindCheckbox.setObjectName("rewindOnDesync")
         self.fastforwardCheckbox = QCheckBox(getMessage("fastforwardondesync-label"))
         self.fastforwardCheckbox.setObjectName("fastforwardOnDesync")
+        self.commandDelaySpinbox = QDoubleSpinBox()
+        self.commandDelaySpinbox.setObjectName("playerCommandDelay")
+        self.commandDelaySpinbox.setMaximum(10)
+        self.commandDelaySpinbox.setSingleStep(.1)
 
         self.desyncSettingsLayout = QtGui.QGridLayout()
         self.desyncSettingsLayout.setSpacing(2)
@@ -761,10 +769,17 @@ class ConfigDialog(QtGui.QDialog):
         self.othersyncSettingsLayout.setAlignment(Qt.AlignLeft)
         self.othersyncSettingsLayout.addWidget(self.fastforwardCheckbox, 3, 0,1,2, Qt.AlignLeft)
 
+        self.playerLatencyGroup = QtGui.QGroupBox(getMessage("playercommanddelay-title"))
+        self.playerLatencyLayout = QtGui.QHBoxLayout()
+        self.playerLatencyGroup.setLayout(self.playerLatencyLayout)
+        self.playerLatencyLayout.addWidget(self.commandDelaySpinbox)
+        self.playerLatencyLayout.addWidget(QLabel(getMessage("playercommanddelay-label")))
+
         self.othersyncSettingsGroup.setLayout(self.othersyncSettingsLayout)
         self.othersyncSettingsGroup.setMaximumHeight(self.othersyncSettingsGroup.minimumSizeHint().height())
         self.syncSettingsLayout.addWidget(self.othersyncSettingsGroup)
         self.syncSettingsLayout.addWidget(self.desyncSettingsGroup)
+        self.syncSettingsLayout.addWidget(self.playerLatencyGroup)
         self.syncSettingsFrame.setLayout(self.syncSettingsLayout)
         self.desyncSettingsGroup.setMaximumHeight(self.desyncSettingsGroup.minimumSizeHint().height())
         self.syncSettingsLayout.setAlignment(Qt.AlignTop)

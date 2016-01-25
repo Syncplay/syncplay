@@ -52,6 +52,7 @@ SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
 AUTOPLAY_DELAY = 3.0
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
+DEFAULT_PLAYER_COMMAND_DELAY = 0.05
 
 # Options for the File Switch feature:
 FOLDER_SEARCH_TIMEOUT = 60.0 # Secs - How long to wait until searches in folder to update cache are aborted (may be longer than this if hard drive needs to spin up)
