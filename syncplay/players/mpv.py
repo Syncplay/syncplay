@@ -83,7 +83,7 @@ class OldMpvPlayer(MpvPlayer):
             self._paused = not self._paused
             self._listener.sendLine('cycle pause')
 
-    def mpvVersionErrorCheck(self, line):
+    def mpvErrorCheck(self, line):
         if "Error parsing option" in line or "Error parsing commandline option" in line:
             self.quitReason = getMessage("mpv-version-error")
 
@@ -91,14 +91,11 @@ class OldMpvPlayer(MpvPlayer):
             self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("mpv-version-error"), True)
             self.drop()
 
-        elif "[ytdl_hook] Your version of youtube-dl is too old" in line:
-            self._client.ui.showErrorMessage(line)
-
-        elif "[ytdl_hook] youtube-dl failed" in line:
+        if any(errormsg in line for errormsg in constants.MPV_ERROR_MESSAGES_TO_REPEAT):
             self._client.ui.showErrorMessage(line)
 
     def _handleUnknownLine(self, line):
-        self.mpvVersionErrorCheck(line)
+        self.mpvErrorCheck(line)
         if "Playing: " in line:
             newpath = line[9:]
             oldpath = self._filepath
@@ -208,7 +205,7 @@ class NewMpvPlayer(OldMpvPlayer):
             self._storePosition(0)
 
     def _handleUnknownLine(self, line):
-        self.mpvVersionErrorCheck(line)
+        self.mpvErrorCheck(line)
 
         if line == "<SyncplayUpdateFile>" or "Playing:" in line:
             self._clearFileLoaded()

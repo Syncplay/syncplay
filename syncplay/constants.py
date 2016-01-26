@@ -111,6 +111,8 @@ MPV_ICONPATH = "mpv.png"
 MPC_ICONPATH = "mpc-hc.png"
 MPC64_ICONPATH = "mpc-hc64.png"
 
+MPV_ERROR_MESSAGES_TO_REPEAT = ['[ytdl_hook] Your version of youtube-dl is too old', '[ytdl_hook] youtube-dl failed', 'Failed to recognize file format.']
+
 #Changing these is usually not something you're looking for
 PLAYER_ASK_DELAY = 0.1
 PING_MOVING_AVERAGE_WEIGHT = 0.85
