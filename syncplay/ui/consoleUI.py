@@ -23,7 +23,7 @@ class ConsoleUI(threading.Thread):
     def drop(self):
         pass
 
-    def setPlaylist(self, newPlaylist):
+    def setPlaylist(self, newPlaylist, newIndexFilename=None):
         pass
 
     def setPlaylistIndexFilename(self, filename):

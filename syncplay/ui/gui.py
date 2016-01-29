@@ -175,7 +175,7 @@ class MainWindow(QtGui.QMainWindow):
         def setPlaylistIndexFilename(self, filename):
             if filename <> self.playlistIndexFilename:
                 self.playlistIndexFilename = filename
-                self.updatePlaylistIndexIcon()
+            self.updatePlaylistIndexIcon()
 
         def updatePlaylistIndexIcon(self):
             for item in xrange(self.count()):
@@ -1413,14 +1413,19 @@ class MainWindow(QtGui.QMainWindow):
                 self._syncplayClient._player.openFile(dropfilepath, resetPosition=True)
                 self._syncplayClient.setPosition(0)
 
-    def setPlaylist(self, newPlaylist):
+    def setPlaylist(self, newPlaylist, newIndexFilename=None):
+        if self.updatingPlaylist:
+            self.ui.showDebugMessage("Trying to set playlist while it is already being updated")
         if newPlaylist == self.playlistState:
+            self.playlist.setPlaylistIndexFilename(newIndexFilename)
             return
         self.updatingPlaylist = True
         if newPlaylist and len(newPlaylist) > 0:
             self.clearedPlaylistNote = True
         self.playlistState = newPlaylist
         self.playlist.updatePlaylist(newPlaylist)
+        if newIndexFilename:
+            self.playlist.setPlaylistIndexFilename(newIndexFilename)
         self.updatingPlaylist = False
 
     def setPlaylistIndexFilename(self, filename):

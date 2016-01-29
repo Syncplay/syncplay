@@ -1255,8 +1255,8 @@ class UiManager(object):
         self.lastSecondaryOSDEndTime = None
         self.lastError = ""
 
-    def setPlaylist(self, newPlaylist):
-        self.__ui.setPlaylist(newPlaylist)
+    def setPlaylist(self, newPlaylist, newIndexFilename=None):
+        self.__ui.setPlaylist(newPlaylist, newIndexFilename)
 
     def setPlaylistIndexFilename(self, filename):
         self.__ui.setPlaylistIndexFilename(filename)
@@ -1349,11 +1349,11 @@ class SyncplayPlaylist():
     def changeToPlaylistIndex(self, index, username = None):
         if not self._playlist or len(self._playlist) == 0:
             return
-        path = None
         if index is None:
             return
         if username is None and not self._client.sharedPlaylistIsEnabled():
             return
+        self._playlistIndex = index
         try:
             filename = self._playlist[index]
             self._ui.setPlaylistIndexFilename(filename)
@@ -1401,22 +1401,53 @@ class SyncplayPlaylist():
         except IndexError:
             self._ui.showDebugMessage("Could not change playlist index due to IndexError")
 
-    def changePlaylist(self, files, username = None):
-        try:
-            filename = self._playlist[self._playlistIndex]
-            newIndex = files.index(filename)
-        except:
+    def _getValidIndexFromNewPlaylist(self, newPlaylist=None):
+        if self._playlistIndex is None or not newPlaylist or len(newPlaylist) <= 1:
+            return 0
+
+        i = self._playlistIndex
+        while i <= len(self._playlist):
+            try:
+                filename = self._playlist[i]
+                validIndex = newPlaylist.index(filename)
+                return validIndex
+            except:
+                i += 1
+
+        i = self._playlistIndex
+        while i > 0:
+            try:
+                filename = self._playlist[i]
+                validIndex = newPlaylist.index(filename)
+                return validIndex+1 if validIndex < len(newPlaylist)-1 else validIndex
+            except:
+                i -= 1
+        return 0
+
+    def _getFilenameFromIndexInGivenPlaylist(self, _playlist, _index):
+        if not _index or not _playlist:
+            return None
+        filename = _playlist[_index] if len(_playlist) > _index else None
+        return filename
+
+    def changePlaylist(self, files, username = None, resetIndex=False):
+        if resetIndex:
             newIndex = 0
+            filename = files[0] if files and len(files) > 0 else None
+        else:
+            newIndex = self._getValidIndexFromNewPlaylist(files)
+            filename = self._getFilenameFromIndexInGivenPlaylist(files, newIndex)
 
         self._updateUndoPlaylistBuffer(newPlaylist=files, newRoom=self._client.userlist.currentUser.room)
         self._playlist = files
 
-        if username is None and self._client.isConnectedAndInARoom():
-            if self._client.sharedPlaylistIsEnabled():
+        if username is None:
+            if  self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
                 self._client._protocol.setPlaylist(files)
                 self.changeToPlaylistIndex(newIndex)
+                self._ui.setPlaylist(self._playlist, filename)
         else:
-            self._ui.setPlaylist(self._playlist)
+            self._ui.setPlaylist(self._playlist, filename)
             self.changeToPlaylistIndex(newIndex, username)
             self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
 
@@ -1424,16 +1455,14 @@ class SyncplayPlaylist():
     def undoPlaylistChange(self):
         if self.canUndoPlaylist(self._playlist):
             newPlaylist = self._getPreviousPlaylist()
-            self._ui.setPlaylist(newPlaylist)
-            self.changePlaylist(newPlaylist)
+            self.changePlaylist(newPlaylist, username=None)
 
     @needsSharedPlaylistsEnabled
     def shufflePlaylist(self):
         if self._playlist and len(self._playlist) > 0:
             shuffledPlaylist = deepcopy(self._playlist)
             random.shuffle(shuffledPlaylist)
-            self._ui.setPlaylist(shuffledPlaylist)
-            self.changePlaylist(shuffledPlaylist)
+            self.changePlaylist(shuffledPlaylist, username=None, resetIndex=True)
 
     def canUndoPlaylist(self, currentPlaylist):
         return self._previousPlaylist is not None and currentPlaylist <> self._previousPlaylist
