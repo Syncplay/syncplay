@@ -105,7 +105,7 @@ class MplayerPlayer(BasePlayer):
         self.setPosition(self._client.getGlobalPosition())
 
     def setPosition(self, value):
-        self._position = value
+        self._position = max(value,0)
         self._setProperty(self.POSITION_QUERY, "{}".format(value))
         time.sleep(0.03)
 
@@ -142,7 +142,7 @@ class MplayerPlayer(BasePlayer):
         pass
 
     def _storePosition(self, value):
-        self._position = value
+        self._position = max(value,0)
 
     def _storePauseState(self, value):
         self._paused = value

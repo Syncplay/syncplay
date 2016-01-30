@@ -150,7 +150,7 @@ class NewMpvPlayer(OldMpvPlayer):
         if self._recentlyReset():
             self._position = 0
         elif self._fileIsLoaded():
-            self._position = value
+            self._position = max(value,0)
         else:
             self._position = self._client.getGlobalPosition()
 
