@@ -1437,14 +1437,14 @@ class MainWindow(QtGui.QMainWindow):
             self.removePlaylistNote()
             filename = os.path.basename(filePath)
             if self.noPlaylistDuplicates(filename):
-                if self.playlist == -1:
+                if self.playlist == -1 or index == -1:
                     self.playlist.addItem(filename)
                 else:
                     self.playlist.insertItem(index, filename)
         elif isURL(filePath):
             self.removePlaylistNote()
             if self.noPlaylistDuplicates(filePath):
-                if index == -1:
+                if self.playlist == -1 or index == -1:
                     self.playlist.addItem(filePath)
                 else:
                     self.playlist.insertItem(index, filePath)
