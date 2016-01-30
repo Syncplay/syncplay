@@ -1418,6 +1418,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.showDebugMessage("Trying to set playlist while it is already being updated")
         if newPlaylist == self.playlistState:
             self.playlist.setPlaylistIndexFilename(newIndexFilename)
+            self.updatingPlaylist = False
             return
         self.updatingPlaylist = True
         if newPlaylist and len(newPlaylist) > 0:

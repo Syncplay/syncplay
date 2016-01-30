@@ -91,7 +91,7 @@ class OldMpvPlayer(MpvPlayer):
             self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("mpv-version-error"), True)
             self.drop()
 
-        if any(errormsg in line for errormsg in constants.MPV_ERROR_MESSAGES_TO_REPEAT):
+        if constants and any(errormsg in line for errormsg in constants.MPV_ERROR_MESSAGES_TO_REPEAT):
             self._client.ui.showErrorMessage(line)
 
     def _handleUnknownLine(self, line):

@@ -1329,6 +1329,7 @@ class SyncplayPlaylist():
         self._previousPlaylistRoom = None
         self._playlist = []
         self._playlistIndex = None
+        self.addedChangeListCallback = False
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
         @wraps(f)
@@ -1342,18 +1343,23 @@ class SyncplayPlaylist():
     def changeToPlaylistIndexFromFilename(self, filename):
         try:
             index = self._playlist.index(filename)
-            self.changeToPlaylistIndex(index)
+            if index <> self._playlistIndex:
+                self.changeToPlaylistIndex(index)
         except ValueError:
             pass
 
     def changeToPlaylistIndex(self, index, username = None):
-        if not self._playlist or len(self._playlist) == 0:
+        if self._playlist is None or len(self._playlist) == 0:
             return
         if index is None:
             return
         if username is None and not self._client.sharedPlaylistIsEnabled():
             return
-        self._playlistIndex = index
+        if self._client.playerIsNotReady():
+            if not self.addedChangeListCallback:
+                self.addedChangeListCallback = True
+                self._client.addPlayerReadyCallback(lambda x: self.changeToPlaylistIndex(index, username))
+            return
         try:
             filename = self._playlist[index]
             self._ui.setPlaylistIndexFilename(filename)
@@ -1364,13 +1370,10 @@ class SyncplayPlaylist():
         except IndexError:
             pass
 
-        if self._client.playerIsNotReady():
-            self._client.addPlayerReadyCallback(lambda x: self.changeToPlaylistIndex(index, username))
-            return
-
         self._playlistIndex = index
-        if username is None and self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
-            self._client.setPlaylistIndex(index)
+        if username is None:
+            if self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
+                self._client.setPlaylistIndex(index)
         else:
             self._ui.showMessage(getMessage("playlist-selection-changed-notification").format(username))
             self.switchToNewPlaylistIndex(index)
@@ -1431,6 +1434,11 @@ class SyncplayPlaylist():
         return filename
 
     def changePlaylist(self, files, username = None, resetIndex=False):
+        if self._playlist == files:
+            if self._playlistIndex <> 0 and resetIndex:
+                self.changeToPlaylistIndex(0)
+            return
+
         if resetIndex:
             newIndex = 0
             filename = files[0] if files and len(files) > 0 else None
@@ -1442,13 +1450,13 @@ class SyncplayPlaylist():
         self._playlist = files
 
         if username is None:
-            if  self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
+            if self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
                 self._client._protocol.setPlaylist(files)
                 self.changeToPlaylistIndex(newIndex)
                 self._ui.setPlaylist(self._playlist, filename)
+                self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(self._client.getUsername()))
         else:
-            self._ui.setPlaylist(self._playlist, filename)
-            self.changeToPlaylistIndex(newIndex, username)
+            self._ui.setPlaylist(self._playlist)
             self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
 
     @needsSharedPlaylistsEnabled
