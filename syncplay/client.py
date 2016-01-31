@@ -479,6 +479,9 @@ class SyncplayClient(object):
     def changeToPlaylistIndex(self, *args, **kwargs):
         self.playlist.changeToPlaylistIndex(*args, **kwargs)
 
+    def isPlaylistLoopingEnabled(self):
+        return self._config["loopAtEndOfPlaylist"]
+
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
             filename = utils.hashFilename(filename)
@@ -1485,8 +1488,6 @@ class SyncplayPlaylist():
             return
         if self._thereIsNextPlaylistIndex():
             self.switchToNewPlaylistIndex(self._nextPlaylistIndex(), resetPosition=True)
-        else:
-            self._client.rewindFile()
 
     def _updateUndoPlaylistBuffer(self, newPlaylist, newRoom):
         if self._playlistBufferIsFromOldRoom(newRoom):
@@ -1513,6 +1514,8 @@ class SyncplayPlaylist():
             return False
         elif len(self._playlist) == 1:
             return False
+        elif self._playlistIsAtEnd():
+            return self._client.isPlaylistLoopingEnabled()
         else:
             return True
 
