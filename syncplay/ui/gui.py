@@ -178,8 +178,14 @@ class MainWindow(QtGui.QMainWindow):
 
         def updatePlaylistIndexIcon(self):
             for item in xrange(self.count()):
-                isPlayingFilename = self.item(item).text() == self.playlistIndexFilename
+                itemFilename = self.item(item).text()
+                isPlayingFilename = itemFilename == self.playlistIndexFilename
                 self.item(item).setData(Qt.UserRole + constants.PLAYLISTITEM_CURRENTLYPLAYING_ROLE, isPlayingFilename)
+                fileSwitchState = self.selfWindow.getFileSwitchState(itemFilename)
+                if fileSwitchState == constants.FILEITEM_SWITCH_NO_SWITCH and not isPlayingFilename:
+                    self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                else:
+                    self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(QtGui.QPalette.ColorRole(QtGui.QPalette.Text))))
             self.forceUpdate()
 
         def setWindow(self, window):
