@@ -1558,16 +1558,14 @@ class FileSwitchManager(object):
         self.mediaDirectories = mediaDirs
         self.updateInfo()
 
-    def checkForFileSwitchUpdate(self, bob=None):
-        if bob is not None:
-            print bob
+    def checkForFileSwitchUpdate(self):
         if self.newInfo:
             self.newInfo = False
             self.infoUpdated()
 
     def updateInfo(self):
         if len(self.filenameWatchlist) > 0 or len(self.mediaFilesCache) == 0 and self.currentlyUpdating == False:
-            threads.deferToThread(self._updateInfoThread).addCallback(self.checkForFileSwitchUpdate)
+            threads.deferToThread(self._updateInfoThread).addCallback(lambda x: self.checkForFileSwitchUpdate())
 
     def setFilenameWatchlist(self, unfoundFilenames):
         self.filenameWatchlist = unfoundFilenames
@@ -1622,8 +1620,9 @@ class FileSwitchManager(object):
 
         if self.mediaFilesCache is not None:
             for directory in self.mediaFilesCache:
+                if self.currentDirectory and self.currentDirectory == directory:
+                    continue
                 files = self.mediaFilesCache[directory]
-
                 if len(files) > 0 and filename in files:
                     filepath = os.path.join(directory, filename)
                     if os.path.isfile(filepath):
