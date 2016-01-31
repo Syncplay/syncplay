@@ -5,8 +5,9 @@ import re
 import sys
 import ast
 import random
+import threading
 from twisted.internet.protocol import ClientFactory
-from twisted.internet import reactor, task, defer
+from twisted.internet import reactor, task, defer, threads
 from functools import wraps
 from copy import deepcopy
 from syncplay.protocols import SyncClientProtocol
@@ -119,7 +120,9 @@ class SyncplayClient(object):
         self.__playerReady = defer.Deferred()
 
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
+        self.fileSwitch = FileSwitchManager(self)
         self.playlist = SyncplayPlaylist(self)
+
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
             paths = "; ".join(self._config['loadedRelativePaths'])
             self.ui.showMessage(getMessage("relative-config-notification").format(paths), noPlayer=True, noTimestamp=True)
@@ -459,16 +462,6 @@ class SyncplayClient(object):
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
         self.playlist.changeToPlaylistIndexFromFilename(filename)
-
-    def findFilenameInDirectories(self, filename):
-        # TODO: Replace this with the code in gui.py
-        directoryList = self._config["mediaSearchDirectories"]
-        if filename and directoryList:
-            for directory in directoryList:
-                for root, dirs, files in os.walk(directory):
-                    if filename in files:
-                        return os.path.join(root,filename)
-            return None
 
     def openFile(self, filePath, resetPosition=False):
         self._player.openFile(filePath, resetPosition)
@@ -1397,8 +1390,7 @@ class SyncplayPlaylist():
                 self._ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
                 return
             else:
-                path = self._client.findFilenameInDirectories(filename)
-                # TODO: Find Path properly
+                path = self._client.fileSwitch.findFilepath(filename)
             if path:
                 self._client.openFile(path, resetPosition)
             else:
@@ -1537,3 +1529,128 @@ class SyncplayPlaylist():
 
     def _playlistBufferNeedsUpdating(self, newPlaylist):
         return self._previousPlaylist <> self._playlist and self._playlist <> newPlaylist
+
+class FileSwitchManager(object):
+    def __init__(self, client):
+        self._client = client
+        self.fileSwitchTimer = task.LoopingCall(self.updateInfo)
+        self.mediaFilesCache = {}
+        self.filenameWatchlist = []
+        self.currentDirectory = None
+        self.mediaDirectories = None
+        self.lock = threading.Lock()
+        self.folderSearchEnabled = True
+        self.disabledDir = None
+        self.newInfo = False
+        self.currentlyUpdating = False
+        self.newInfo = False
+        self.newWatchlist = []
+        self.fileSwitchTimer.start(constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL, True)
+
+    def setClient(self, newClient):
+        self.client = newClient
+
+    def setCurrentDirectory(self, curDir):
+        self.currentDirectory = curDir
+        self.updateInfo()
+
+    def setMediaDirectories(self, mediaDirs):
+        self.mediaDirectories = mediaDirs
+        self.updateInfo()
+
+    def checkForFileSwitchUpdate(self, bob=None):
+        if bob is not None:
+            print bob
+        if self.newInfo:
+            self.newInfo = False
+            self.infoUpdated()
+
+    def updateInfo(self):
+        if len(self.filenameWatchlist) > 0 or len(self.mediaFilesCache) == 0 and self.currentlyUpdating == False:
+            threads.deferToThread(self._updateInfoThread).addCallback(self.checkForFileSwitchUpdate)
+
+    def setFilenameWatchlist(self, unfoundFilenames):
+        self.filenameWatchlist = unfoundFilenames
+
+    def _updateInfoThread(self):
+        if not self.folderSearchEnabled:
+            if self.areWatchedFilenamesInCurrentDir():
+                self.newInfo = True
+            return
+
+        with self.lock:
+            try:
+                self.currentlyUpdating = True
+                dirsToSearch = self.mediaDirectories
+
+                if dirsToSearch:
+                    newMediaFilesCache = {}
+                    startTime = time.time()
+                    for directory in dirsToSearch:
+                        for root, dirs, files in os.walk(directory):
+                            newMediaFilesCache[root] = files
+                            if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
+                                self.disabledDir = directory
+                                self.folderSearchEnabled = False
+                                if self.areWatchedFilenamesInCurrentDir():
+                                    self.newInfo = True
+                                return
+
+                    if self.mediaFilesCache <> newMediaFilesCache:
+                        self.mediaFilesCache = newMediaFilesCache
+                        self.newInfo = True
+                    elif self.areWatchedFilenamesInCurrentDir():
+                        self.newInfo = True
+            finally:
+                self.currentlyUpdating = False
+
+    def infoUpdated(self):
+        if self.areWatchedFilenamesInCache() or self.areWatchedFilenamesInCurrentDir():
+            self.updateListOfWhoIsPlayingWhat()
+
+    def updateListOfWhoIsPlayingWhat(self):
+        self._client.showUserList()
+
+    def findFilepath(self, filename):
+        if filename is None:
+            return
+
+        if self.currentDirectory is not None:
+            candidatePath = os.path.join(self.currentDirectory,filename)
+            if os.path.isfile(candidatePath):
+                return candidatePath
+
+        if self.mediaFilesCache is not None:
+            for directory in self.mediaFilesCache:
+                files = self.mediaFilesCache[directory]
+
+                if len(files) > 0 and filename in files:
+                    filepath = os.path.join(directory, filename)
+                    if os.path.isfile(filepath):
+                        return filepath
+
+    def areWatchedFilenamesInCurrentDir(self):
+        if self.filenameWatchlist is not None and self.currentDirectory is not None:
+            for filename in self.filenameWatchlist:
+                potentialPath = os.path.join(self.currentDirectory,filename)
+                if os.path.isfile(potentialPath):
+                    return True
+
+    def areWatchedFilenamesInCache(self):
+        if self.filenameWatchlist is not None:
+            for filename in self.filenameWatchlist:
+                if self.isFilenameInCache(filename):
+                    return True
+
+    def isFilenameInCurrentDir(self, filename):
+        if filename is not None and self.currentDirectory is not None:
+            potentialPath = os.path.join(self.currentDirectory,filename)
+            if os.path.isfile(potentialPath):
+                return True
+
+    def isFilenameInCache(self, filename):
+        if filename is not None and self.mediaFilesCache is not None:
+            for directory in self.mediaFilesCache:
+                files = self.mediaFilesCache[directory]
+                if filename in files:
+                    return True
