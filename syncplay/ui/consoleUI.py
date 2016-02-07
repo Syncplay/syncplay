@@ -83,6 +83,9 @@ class ConsoleUI(threading.Thread):
     def userListChange(self):
         pass
 
+    def fileSwitchFoundFiles(self):
+        pass
+
     def showMessage(self, message, noTimestamp=False):
         message = message.encode(sys.stdout.encoding, 'replace')
         if noTimestamp:

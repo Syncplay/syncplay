@@ -466,6 +466,10 @@ class SyncplayClient(object):
     def openFile(self, filePath, resetPosition=False):
         self._player.openFile(filePath, resetPosition)
 
+    def fileSwitchFoundFiles(self):
+        self.ui.fileSwitchFoundFiles()
+        self.playlist.loadCurrentPlaylistIndex()
+
     def setPlaylistIndex(self, index):
         self._protocol.setPlaylistIndex(index)
 
@@ -1257,6 +1261,9 @@ class UiManager(object):
     def setPlaylistIndexFilename(self, filename):
         self.__ui.setPlaylistIndexFilename(filename)
 
+    def fileSwitchFoundFiles(self):
+        self.__ui.fileSwitchFoundFiles()
+
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():
             sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip()))
@@ -1390,7 +1397,7 @@ class SyncplayPlaylist():
                 self._ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
                 return
             else:
-                path = self._client.fileSwitch.findFilepath(filename)
+                path = self._client.fileSwitch.findFilepath(filename, highPriority=True)
             if path:
                 self._client.openFile(path, resetPosition)
             else:
@@ -1533,7 +1540,6 @@ class SyncplayPlaylist():
 class FileSwitchManager(object):
     def __init__(self, client):
         self._client = client
-        self.fileSwitchTimer = task.LoopingCall(self.updateInfo)
         self.mediaFilesCache = {}
         self.filenameWatchlist = []
         self.currentDirectory = None
@@ -1543,8 +1549,8 @@ class FileSwitchManager(object):
         self.disabledDir = None
         self.newInfo = False
         self.currentlyUpdating = False
-        self.newInfo = False
         self.newWatchlist = []
+        self.fileSwitchTimer = task.LoopingCall(self.updateInfo)
         self.fileSwitchTimer.start(constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL, True)
 
     def setClient(self, newClient):
@@ -1604,12 +1610,9 @@ class FileSwitchManager(object):
 
     def infoUpdated(self):
         if self.areWatchedFilenamesInCache() or self.areWatchedFilenamesInCurrentDir():
-            self.updateListOfWhoIsPlayingWhat()
+            self._client.fileSwitchFoundFiles()
 
-    def updateListOfWhoIsPlayingWhat(self):
-        self._client.showUserList()
-
-    def findFilepath(self, filename):
+    def findFilepath(self, filename, highPriority=False):
         if filename is None:
             return
 
@@ -1627,6 +1630,20 @@ class FileSwitchManager(object):
                     filepath = os.path.join(directory, filename)
                     if os.path.isfile(filepath):
                         return filepath
+
+        if highPriority and self.folderSearchEnabled:
+            directoryList = self.mediaDirectories
+            startTime = time.time()
+            if filename and directoryList:
+                for directory in directoryList:
+                    for root, dirs, files in os.walk(directory):
+                        if filename in files:
+                            return os.path.join(root,filename)
+                        if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
+                            self.disabledDir = directory
+                            self.folderSearchEnabled = False
+                            return None
+            return None
 
     def areWatchedFilenamesInCurrentDir(self):
         if self.filenameWatchlist is not None and self.currentDirectory is not None:

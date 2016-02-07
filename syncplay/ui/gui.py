@@ -181,11 +181,12 @@ class MainWindow(QtGui.QMainWindow):
                 itemFilename = self.item(item).text()
                 isPlayingFilename = itemFilename == self.playlistIndexFilename
                 self.item(item).setData(Qt.UserRole + constants.PLAYLISTITEM_CURRENTLYPLAYING_ROLE, isPlayingFilename)
-                fileSwitchState = self.selfWindow.getFileSwitchState(itemFilename)
-                if fileSwitchState == constants.FILEITEM_SWITCH_NO_SWITCH and not isPlayingFilename:
-                    self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
-                else:
+                fileIsAvailable = self.selfWindow.isFileAvailable(itemFilename)
+                if fileIsAvailable:
                     self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(QtGui.QPalette.ColorRole(QtGui.QPalette.Text))))
+                else:
+                    self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+            self.selfWindow._syncplayClient.fileSwitch.setFilenameWatchlist(self.selfWindow.newWatchlist)
             self.forceUpdate()
 
         def setWindow(self, window):
@@ -345,6 +346,20 @@ class MainWindow(QtGui.QMainWindow):
                 else:
                     self.newWatchlist.extend([filename])
         return constants.FILEITEM_SWITCH_NO_SWITCH
+
+    @needsClient
+    def isFileAvailable(self, filename):
+        if filename:
+            if filename == getMessage("nofile-note"):
+                return None
+            if isURL(filename):
+                return True
+            elif filename not in self.newWatchlist:
+                if self._syncplayClient.fileSwitch.findFilepath(filename):
+                    return True
+                else:
+                    self.newWatchlist.extend([filename])
+        return False
 
     @needsClient
     def showUserList(self, currentUser, rooms):
@@ -571,7 +586,7 @@ class MainWindow(QtGui.QMainWindow):
         if isURL(filename):
             self._syncplayClient._player.openFile(filename)
         else:
-            pathFound = self._syncplayClient.fileSwitch.findFilepath(filename)
+            pathFound = self._syncplayClient.fileSwitch.findFilepath(filename, highPriority=True)
             if pathFound:
                 self._syncplayClient._player.openFile(pathFound)
             else:
@@ -591,7 +606,7 @@ class MainWindow(QtGui.QMainWindow):
             if isURL(filename):
                 self._syncplayClient._player.openFile(filename)
             else:
-                pathFound = self._syncplayClient.fileSwitch.findFilepath(filename)
+                pathFound = self._syncplayClient.fileSwitch.findFilepath(filename, highPriority=True)
                 if pathFound:
                     self._syncplayClient._player.openFile(pathFound)
                 else:
@@ -601,6 +616,10 @@ class MainWindow(QtGui.QMainWindow):
     @needsClient
     def userListChange(self):
         self._syncplayClient.showUserList()
+
+    def fileSwitchFoundFiles(self):
+        self._syncplayClient.showUserList()
+        self.playlist.updatePlaylistIndexIcon()
 
     def updateRoomName(self, room=""):
         self.roomInput.setText(room)
