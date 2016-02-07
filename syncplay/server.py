@@ -239,6 +239,8 @@ class Room(object):
         self._setBy = None
         self._playlist = []
         self._playlistIndex = None
+        self.__lastUpdate = time.time()
+        self.__position = 0
 
     def __str__(self, *args, **kwargs):
         return self.getName()
@@ -247,18 +249,22 @@ class Room(object):
         return self._name
 
     def getPosition(self):
-        if self._watchers:
+        age = time.time() - self.__lastUpdate
+        if self._watchers and age > 1:
             watcher = min(self._watchers.values())
             self._setBy = watcher
-            return watcher.getPosition()
+            self.__position = watcher.getPosition()
+            self.__lastUpdate = time.time()
+            return self.__position
         else:
-            return 0
+            return self.__position + age if self._playState == self.STATE_PLAYING else 0
 
     def setPaused(self, paused=STATE_PAUSED, setBy=None):
         self._playState = paused
         self._setBy = setBy
 
     def setPosition(self, position, setBy=None):
+        self.__position = position
         for watcher in self._watchers.itervalues():
             watcher.setPosition(position)
             self._setBy = setBy
@@ -283,6 +289,8 @@ class Room(object):
             return
         del self._watchers[watcher.getName()]
         watcher.setRoom(None)
+        if not self._watchers:
+            self.__position = 0
 
     def isEmpty(self):
         return not bool(self._watchers)
@@ -311,12 +319,15 @@ class ControlledRoom(Room):
         self._controllers = {}
 
     def getPosition(self):
-        if self._controllers:
+        age = time.time() - self.__lastUpdate
+        if self._controllers and age > 1:
             watcher = min(self._controllers.values())
             self._setBy = watcher
-            return watcher.getPosition()
+            self.__position = watcher.getPosition()
+            self.__lastUpdate = time.time()
+            return self.__position
         else:
-            return 0
+            return self.__position + age if self._playState == self.STATE_PLAYING else 0
 
     def addController(self, watcher):
         self._controllers[watcher.getName()] = watcher
