@@ -257,7 +257,7 @@ class Room(object):
             self.__lastUpdate = time.time()
             return self.__position
         else:
-            return self.__position + age if self._playState == self.STATE_PLAYING else 0
+            return self.__position + (age if self._playState == self.STATE_PLAYING else 0)
 
     def setPaused(self, paused=STATE_PAUSED, setBy=None):
         self._playState = paused
@@ -327,7 +327,7 @@ class ControlledRoom(Room):
             self.__lastUpdate = time.time()
             return self.__position
         else:
-            return self.__position + age if self._playState == self.STATE_PLAYING else 0
+            return self.__position + (age if self._playState == self.STATE_PLAYING else 0)
 
     def addController(self, watcher):
         self._controllers[watcher.getName()] = watcher
