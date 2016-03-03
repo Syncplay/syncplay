@@ -237,6 +237,39 @@ class ConfigDialog(QtGui.QDialog):
                 defaultdirectory,
                 browserfilter, "", options)
         if fileName:
+            if sys.platform.startswith('darwin') and fileName.endswith('.app'):  # see GitHub issue #91
+                # Mac OS X application bundles contain a Info.plist in the Contents subdirectory of the .app.
+                # This plist file includes the 'CFBundleExecutable' key, which specifies the name of the
+                # executable.  I would have used plistlib here, but since the version of this library in
+                # py < 3.4 can't read from binary plist files it's pretty much useless.  Therefore, let's
+                # play a game of "Guess my executable!"
+                
+                # Step 1: get all the executable files.  In a Mac OS X Application bundle, executables are stored
+                # inside <bundle root>/Contents/MacOS.
+                execPath = os.path.join(os.path.normpath(fileName), 'Contents', 'MacOS')
+                execFiles = []
+                for fn in os.listdir(execPath):
+                    fn = os.path.join(execPath, fn)
+                    if os.path.isfile(fn) and os.access(fn, os.X_OK):
+                        execFiles.append(fn)
+                
+                # Step 2: figure out which file name looks like the application name
+                baseAppName = os.path.basename(fileName).replace('.app', '').lower()
+                foundExe = False
+                for fn in execFiles:
+                    baseExecName = os.path.basename(fn).lower()
+                    if baseAppName == baseExecName:
+                        fileName = fn
+                        foundExe = True
+                        break
+                
+                # Step 3: use the first executable in the list if no executable was found
+                try:
+                    if not foundExe:
+                      fileName = execFiles[0]
+                except IndexError:  # whoops, looks like this .app doesn't contain a executable file at all
+                    pass
+                
             self.executablepathCombobox.setEditText(os.path.normpath(fileName))
 
     def loadLastUpdateCheckDate(self):
