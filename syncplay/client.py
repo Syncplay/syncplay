@@ -112,8 +112,6 @@ class SyncplayClient(object):
         self.autoPlay = False
         self.autoPlayThreshold = None
 
-        self._lastPlayerCommand = time.time()
-
         self.autoplayTimer = task.LoopingCall(self.autoplayCountdown)
         self.autoplayTimeLeft = constants.AUTOPLAY_DELAY
 
@@ -153,16 +151,6 @@ class SyncplayClient(object):
     def playerIsNotReady(self):
         return self._player is None
 
-    def _playerRequest(self, f, *args, **kwargs):
-        """Send a request with cookie to the player."""
-        kwargs['cookie'] = time.time()
-        f(*args, **kwargs)
-
-    def _playerCommand(self, f, *args, **kwargs):
-        """Send a command to the player, affecting cookie freshness."""
-        self._lastPlayerCommand = time.time()
-        f(*args, **kwargs)
-
     def scheduleAskPlayer(self, when=constants.PLAYER_ASK_DELAY):
         self._askPlayerTimer = task.LoopingCall(self.askPlayer)
         self._askPlayerTimer.start(when)
@@ -171,7 +159,7 @@ class SyncplayClient(object):
         if not self._running:
             return
         if self._player:
-            self._playerRequest(self._player.askForStatus)
+            self._player.askForStatus()
         self.checkIfConnected()
 
     def checkIfConnected(self):
@@ -192,22 +180,11 @@ class SyncplayClient(object):
     def rewindFile(self):
         self.setPosition(0)
 
-    def _ignoringPlayerStatus(self, cookie=None):
-        if cookie is None:
-            cookie = time.time()
-        return cookie < self._lastPlayerCommand + self._config['playerCommandDelay']
-
-    def updatePlayerStatus(self, paused, position, cookie=None):
-        # Ignore status report if the cookie is stale
-        if self._ignoringPlayerStatus(cookie):
-            self.ui.showDebugMessage('Ignoring stale player status with cookie {}'.format(cookie))
-            return
-
+    def updatePlayerStatus(self, paused, position):
         position -= self.getUserOffset()
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
         self._playerPosition = position
         self._playerPaused = paused
-
         currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
         if pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
             and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
@@ -224,7 +201,7 @@ class SyncplayClient(object):
 
     def _toggleReady(self, pauseChange, paused):
         if not self.userlist.currentUser.canControl():
-            self._playerCommand(self._player.setPaused, self._globalPaused)
+            self._player.setPaused(self._globalPaused)
             self.toggleReady(manuallyInitiated=True)
             self._playerPaused = self._globalPaused
             pauseChange = False
@@ -234,7 +211,7 @@ class SyncplayClient(object):
                 self.ui.showMessage(getMessage("set-as-not-ready-notification"))
         elif not paused and not self.instaplayConditionsMet():
             paused = True
-            self._playerCommand(self._player.setPaused, paused)
+            self._player.setPaused(paused)
             self._playerPaused = paused
             self.changeReadyState(True, manuallyInitiated=True)
             pauseChange = False
@@ -262,7 +239,7 @@ class SyncplayClient(object):
     def _initPlayerState(self, position, paused):
         if self.userlist.currentUser.file:
             self.setPosition(position)
-            self._playerCommand(self._player.setPaused, paused)
+            self._player.setPaused(paused)
             madeChangeOnPlayer = True
             return madeChangeOnPlayer
 
@@ -290,21 +267,16 @@ class SyncplayClient(object):
 
     def _serverUnpaused(self, setBy):
         hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
-        # In high-player-latency situations we might report our state back to
-        # the server before any player status is accepted as fresh. Override
-        # the locally-stored playback state.
-        self._playerPaused = False
-        self._playerCommand(self._player.setPaused, False)
+        self._player.setPaused(False)
         madeChangeOnPlayer = True
         self.ui.showMessage(getMessage("unpause-notification").format(setBy), hideFromOSD)
         return madeChangeOnPlayer
 
     def _serverPaused(self, setBy):
         hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
-        self._playerPaused = True
         if constants.SYNC_ON_PAUSE and self.getUsername() <> setBy:
             self.setPosition(self.getGlobalPosition())
-        self._playerCommand(self._player.setPaused, True)
+        self._player.setPaused(True)
         madeChangeOnPlayer = True
         if (self.lastLeftTime < time.time() - constants.OSD_DURATION) or (hideFromOSD == True):
             self.ui.showMessage(getMessage("pause-notification").format(setBy), hideFromOSD)
@@ -569,19 +541,18 @@ class SyncplayClient(object):
     def setPosition(self, position):
         if self._lastPlayerUpdate:
             self._lastPlayerUpdate = time.time()
-        self._playerPosition = position
         position += self.getUserOffset()
         if self._player and self.userlist.currentUser.file:
             if position < 0:
                 position = 0
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), True, None, True)
-            self._playerCommand(self._player.setPosition, position)
+            self._player.setPosition(position)
 
     def setPaused(self, paused):
         if self._player and self.userlist.currentUser.file:
             if self._lastPlayerUpdate and not paused:
                 self._lastPlayerUpdate = time.time()
-            self._playerCommand(self._player.setPaused, paused)
+            self._player.setPaused(paused)
 
     def start(self, host, port):
         if self._running:

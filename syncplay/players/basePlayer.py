@@ -6,7 +6,7 @@ class BasePlayer(object):
     execute updatePlayerStatus(paused, position) on client
     Given the arguments: boolean paused and float position in seconds 
     '''
-    def askForStatus(self, cookie=None):
+    def askForStatus(self):
         raise NotImplementedError()
 
     '''

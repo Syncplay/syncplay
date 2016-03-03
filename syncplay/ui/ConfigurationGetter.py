@@ -66,8 +66,7 @@ class ConfigurationGetter(object):
                         "showSameRoomOSD" : True,
                         "showNonControllerOSD" : False,
                         "showContactInfo" : True,
-                        "showDurationNotification" : True,
-                        "playerCommandDelay": constants.DEFAULT_PLAYER_COMMAND_DELAY
+                        "showDurationNotification" : True
                         }
 
         self._defaultConfig = self._config.copy()
@@ -124,7 +123,6 @@ class ConfigurationGetter(object):
             "rewindThreshold",
             "fastforwardThreshold",
             "autoplayMinUsers",
-            "playerCommandDelay",
         ]
 
         self._iniStructure = {
@@ -138,8 +136,7 @@ class ConfigurationGetter(object):
                             "filesizePrivacyMode", "unpauseAction",
                             "pauseOnLeave", "readyAtStart", "autoplayMinUsers",
                             "autoplayInitialState", "mediaSearchDirectories",
-                            "sharedPlaylistEnabled", "playerCommandDelay",
-                            "loopAtEndOfPlaylist"],
+                            "sharedPlaylistEnabled", "loopAtEndOfPlaylist"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD",
                             "showDifferentRoomOSD", "showSameRoomOSD",
                             "showNonControllerOSD", "showDurationNotification"],

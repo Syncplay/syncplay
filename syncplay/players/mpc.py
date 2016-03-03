@@ -2,8 +2,7 @@
 import time
 import threading
 import thread
-# noinspection PyUnresolvedReferences
-import win32con, win32api, win32gui, ctypes, ctypes.wintypes
+import win32con, win32api, win32gui, ctypes, ctypes.wintypes #@UnresolvedImport @UnusedImport
 from functools import wraps
 from syncplay.players.basePlayer import BasePlayer
 import re
@@ -420,7 +419,7 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__positionUpdate.wait(constants.MPC_LOCK_WAIT_TIME)
         return self._mpcApi.lastFilePosition
 
-    def askForStatus(self, cookie=None):
+    def askForStatus(self):
         try:
             if self._mpcApi.filePlaying and self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0):
                 self.__fileUpdate.release()
@@ -428,17 +427,15 @@ class MPCHCAPIPlayer(BasePlayer):
                 paused = self._mpcApi.isPaused()
                 position = float(position)
                 if self.__preventAsking.wait(0) and self.__fileUpdate.acquire(0):
-                    self.__client.updatePlayerStatus(paused, position, cookie=cookie)
+                    self.__client.updatePlayerStatus(paused, position)
                     self.__fileUpdate.release()
             else:
-                self.__echoGlobalStatus(cookie)
+                self.__echoGlobalStatus()
         except MpcHcApi.PlayerNotReadyException:
-            self.__echoGlobalStatus(cookie)
+            self.__echoGlobalStatus()
 
-    def __echoGlobalStatus(self, cookie):
-        self.__client.updatePlayerStatus(self.__client.getGlobalPaused(),
-                                         self.__client.getGlobalPosition(),
-                                         cookie=cookie)
+    def __echoGlobalStatus(self):
+        self.__client.updatePlayerStatus(self.__client.getGlobalPaused(), self.__client.getGlobalPosition())
 
     def __forcePause(self):
         for _ in xrange(constants.MPC_MAX_RETRIES):

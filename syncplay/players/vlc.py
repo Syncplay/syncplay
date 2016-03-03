@@ -83,20 +83,16 @@ class VlcPlayer(BasePlayer):
         self.setPaused(self._client.getGlobalPaused())
         self.setPosition(self._client.getGlobalPosition())
 
-    def askForStatus(self, cookie=None):
+    def askForStatus(self):
         self._filechanged = False
         self._positionAsk.clear()
         self._pausedAsk.clear()
         self._listener.sendLine(".")
         if self._filename and not self._filechanged:
             self._positionAsk.wait(constants.PLAYER_ASK_DELAY)
-            self._client.updatePlayerStatus(self._paused,
-                                            self.getCalculatedPosition(),
-                                            cookie=cookie)
+            self._client.updatePlayerStatus(self._paused, self.getCalculatedPosition())
         else:
-            self._client.updatePlayerStatus(self._client.getGlobalPaused(),
-                                            self._client.getGlobalPosition(),
-                                            cookie=cookie)
+            self._client.updatePlayerStatus(self._client.getGlobalPaused(), self._client.getGlobalPosition())
 
     def getCalculatedPosition(self):
         if self._lastVLCPositionUpdate is None:

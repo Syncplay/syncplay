@@ -200,9 +200,6 @@ en = {
       "readyatstart-label" : "Set me as 'ready to watch' by default",
       "forceguiprompt-label" : "Don't always show the Syncplay configuration window", # (Inverted)
       "showosd-label" : "Enable OSD Messages",
-      "playercommanddelay-title" : "Player latency compensation",
-      "playercommanddelay-label" : "Seconds to ignore player status after commands",
-      "playercommanddelay-tooltip" : "Larger values are less likely to spuriously (un)pause but tend to sync less accurately.",
 
       "showosdwarnings-label" : "Include warnings (e.g. when files are different, users not ready)",
       "showsameroomosd-label" : "Include events in your room",
