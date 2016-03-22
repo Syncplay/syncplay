@@ -406,6 +406,9 @@ class SyncplayClient(object):
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
+        self.toggleReady()
+        self.updatePlayerStatus(True, 0)
+        self.setPosition(0)
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
@@ -495,7 +498,7 @@ class SyncplayClient(object):
             self._lastPlayerUpdate = time.time()
         position += self.getUserOffset()
         if self._player and self.userlist.currentUser.file:
-            if position < 0:
+            if position <= 0:
                 position = 0
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), True, None, True)
             self._player.setPosition(position)
