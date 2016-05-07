@@ -463,6 +463,9 @@ class SyncplayClient(object):
     def changeToPlaylistIndex(self, *args, **kwargs):
         self.playlist.changeToPlaylistIndex(*args, **kwargs)
 
+    def loopSingleFiles(self):
+        return self._config["loopSingleFiles"]
+
     def isPlaylistLoopingEnabled(self):
         return self._config["loopAtEndOfPlaylist"]
 
@@ -1486,7 +1489,13 @@ class SyncplayPlaylist():
     def loadNextFileInPlaylist(self):
         if self._notPlayingCurrentIndex():
             return
-        if self._thereIsNextPlaylistIndex():
+
+        if len(self._playlist) == 1 and self._client.loopSingleFiles():
+            self._client.rewindFile()
+            self._client.setPaused(False)
+            reactor.callLater(0.5, self._client.setPaused, False,)
+
+        elif self._thereIsNextPlaylistIndex():
             self.switchToNewPlaylistIndex(self._nextPlaylistIndex(), resetPosition=True)
 
     def _updateUndoPlaylistBuffer(self, newPlaylist, newRoom):
@@ -1512,7 +1521,7 @@ class SyncplayPlaylist():
     def _thereIsNextPlaylistIndex(self):
         if self._playlistIndex is None:
             return False
-        elif len(self._playlist) == 1:
+        elif len(self._playlist) == 1 and not self._client.loopSingleFiles():
             return False
         elif self._playlistIsAtEnd():
             return self._client.isPlaylistLoopingEnabled()

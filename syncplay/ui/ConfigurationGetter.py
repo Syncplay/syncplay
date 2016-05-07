@@ -36,6 +36,7 @@ class ConfigurationGetter(object):
                         "mediaSearchDirectories": None,
                         "sharedPlaylistEnabled": True,
                         "loopAtEndOfPlaylist": False,
+                        "loopSingleFiles" : False,
                         "onlySwitchToTrustedURIs": False,
                         "trustedURIs": None,
                         "file": None,
@@ -109,6 +110,7 @@ class ConfigurationGetter(object):
                          "showDurationNotification",
                          "sharedPlaylistEnabled",
                          "loopAtEndOfPlaylist",
+                         "loopSingleFiles",
                          "onlySwitchToTrustedURIs"
                         ]
         self._tristate = [
@@ -141,6 +143,7 @@ class ConfigurationGetter(object):
                             "pauseOnLeave", "readyAtStart", "autoplayMinUsers",
                             "autoplayInitialState", "mediaSearchDirectories",
                             "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
+                            "loopSingleFiles",
                             "onlySwitchToTrustedURIs", "trustedURIs"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD",
                             "showDifferentRoomOSD", "showSameRoomOSD",
