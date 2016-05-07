@@ -188,7 +188,7 @@ class SyncplayClient(object):
         currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
         if pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
             and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
-            self.playlist.loadNextFileInPlaylist()
+            self.playlist.advancePlaylistCheck()
         elif pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
             pauseChange = self._toggleReady(pauseChange, paused)
 
@@ -394,6 +394,9 @@ class SyncplayClient(object):
             diff = time.time() - self._lastPlayerUpdate
             position += diff
         return position
+
+    def getStoredPlayerPosition(self):
+        return self._playerPosition if self._playerPosition is not None else None
 
     def getPlayerPaused(self):
         if not self._lastPlayerUpdate:
@@ -1314,6 +1317,7 @@ class SyncplayPlaylist():
         self._playlist = []
         self._playlistIndex = None
         self.addedChangeListCallback = False
+        self._lastPlaylistIndexChange = time.time()
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
         @wraps(f)
@@ -1339,6 +1343,7 @@ class SyncplayPlaylist():
             return
         if username is None and not self._client.sharedPlaylistIsEnabled():
             return
+        self._lastPlaylistIndexChange = time.time()
         if self._client.playerIsNotReady():
             if not self.addedChangeListCallback:
                 self.addedChangeListCallback = True
@@ -1364,6 +1369,7 @@ class SyncplayPlaylist():
 
     @needsSharedPlaylistsEnabled
     def switchToNewPlaylistIndex(self, index, resetPosition=False):
+        self._lastPlaylistIndexChange = time.time()
         if self._client.playerIsNotReady():
             self._client.addPlayerReadyCallback(lambda x: self.switchToNewPlaylistIndex(index, resetPosition))
             return
@@ -1460,6 +1466,19 @@ class SyncplayPlaylist():
     def loadCurrentPlaylistIndex(self):
         if self._notPlayingCurrentIndex():
             self.switchToNewPlaylistIndex(self._playlistIndex)
+
+    @needsSharedPlaylistsEnabled
+    def advancePlaylistCheck(self):
+        position = self._client.getStoredPlayerPosition()
+        currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
+        if currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
+        and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD\
+            and self._notJustChangedPlaylist():
+                self.loadNextFileInPlaylist()
+
+    def _notJustChangedPlaylist(self):
+        secondsSinceLastChange = time.time() - self._lastPlaylistIndexChange
+        return secondsSinceLastChange > constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
 
     @needsSharedPlaylistsEnabled
     def loadNextFileInPlaylist(self):
