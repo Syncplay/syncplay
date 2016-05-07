@@ -36,6 +36,8 @@ class ConfigurationGetter(object):
                         "mediaSearchDirectories": None,
                         "sharedPlaylistEnabled": True,
                         "loopAtEndOfPlaylist": False,
+                        "onlySwitchToTrustedURIs": False,
+                        "trustedURIs": None,
                         "file": None,
                         "playerArgs": [],
                         "playerClass": None,
@@ -106,7 +108,8 @@ class ConfigurationGetter(object):
                          "showNonControllerOSD",
                          "showDurationNotification",
                          "sharedPlaylistEnabled",
-                         "loopAtEndOfPlaylist"
+                         "loopAtEndOfPlaylist",
+                         "onlySwitchToTrustedURIs"
                         ]
         self._tristate = [
             "checkForUpdatesAutomatically",
@@ -116,6 +119,7 @@ class ConfigurationGetter(object):
         self._serialised = [
             "perPlayerArguments",
             "mediaSearchDirectories",
+            "trustedURIs",
         ]
 
         self._numeric = [
@@ -136,7 +140,8 @@ class ConfigurationGetter(object):
                             "filesizePrivacyMode", "unpauseAction",
                             "pauseOnLeave", "readyAtStart", "autoplayMinUsers",
                             "autoplayInitialState", "mediaSearchDirectories",
-                            "sharedPlaylistEnabled", "loopAtEndOfPlaylist"],
+                            "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
+                            "onlySwitchToTrustedURIs", "trustedURIs"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD",
                             "showDifferentRoomOSD", "showSameRoomOSD",
                             "showNonControllerOSD", "showDurationNotification"],

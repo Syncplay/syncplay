@@ -435,6 +435,16 @@ class SyncplayClient(object):
         self.sendFile()
         self.playlist.changeToPlaylistIndexFromFilename(filename)
 
+    def isURITrusted(self, URIToTest):
+        if self._config['onlySwitchToTrustedURIs']:
+            if self._config['trustedURIs']:
+                for URI in self._config['trustedURIs']:
+                    if URIToTest.startswith(URI):
+                        return True
+            return False
+        else:
+            return True
+
     def openFile(self, filePath, resetPosition=False):
         self._player.openFile(filePath, resetPosition)
 
@@ -1361,11 +1371,10 @@ class SyncplayPlaylist():
         try:
             filename = self._playlist[index]
             if utils.isURL(filename):
-                for URI in constants.SAFE_URIS:
-                    if filename.startswith(URI):
-                        self._client.openFile(filename, resetPosition=resetPosition)
-                        return
-                self._ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
+                if self._client.isURITrusted(filename):
+                    self._client.openFile(filename, resetPosition=resetPosition)
+                else:
+                    self._ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
                 return
             else:
                 path = self._client.fileSwitch.findFilepath(filename, highPriority=True)

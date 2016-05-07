@@ -376,7 +376,7 @@ en = {
     "playlist-contents-changed-notification" : u"{} updated the playlist", # Username
     "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} for playlist switch!", # Filename
     "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename
-    "cannot-add-unsafe-path-error" : u"Could not load {} because it is not known as a safe path.", # Filename
+    "cannot-add-unsafe-path-error" : u"Could not load {} because it is not known as a trusted path.", # Filename
     "sharedplaylistenabled-label" : u"Enable shared playlists",
     "removefromplaylist-menu-label" : u"Remove from playlist",
     "shuffleplaylist-menuu-label" : u"Shuffle playlist",

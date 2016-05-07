@@ -188,4 +188,3 @@ SYNCPLAY_DOWNLOAD_URL = "http://syncplay.pl/download/"
 SYNCPLAY_PUBLIC_SERVER_LIST_URL = u"http://syncplay.pl/listpublicservers?{}" # Params
 
 PRIVATE_FILE_FIELDS = ["path"]
-SAFE_URIS = [u"http://www.youtube.com/", u"https://www.youtube.com/", u"http://www.vimeo.com/", u"https://www.vimeo.com/",u"http://player.vimeo.com",u"https://player.vimeo.com",u"http://www.youtu.be/", u"https://www.youtu.be/",u"http://youtu.be/", u"https://youtu.be/"] # TODO: Move into config
