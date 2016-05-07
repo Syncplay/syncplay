@@ -884,6 +884,7 @@ class MainWindow(QtGui.QMainWindow):
         if newPlaylist <> self.playlistState and self._syncplayClient and not self.updatingPlaylist:
             self.playlistState = newPlaylist
             self._syncplayClient.playlist.changePlaylist(newPlaylist)
+            self._syncplayClient.fileSwitch.updateInfo()
 
     def addTopLayout(self, window):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)
@@ -1316,6 +1317,7 @@ class MainWindow(QtGui.QMainWindow):
         if newIndexFilename:
             self.playlist.setPlaylistIndexFilename(newIndexFilename)
         self.updatingPlaylist = False
+        self._syncplayClient.fileSwitch.updateInfo()
 
     def setPlaylistIndexFilename(self, filename):
         self.playlist.setPlaylistIndexFilename(filename)
