@@ -190,7 +190,9 @@ class SyncplayClient(object):
             and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
             self.playlist.advancePlaylistCheck()
         elif pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
-            pauseChange = self._toggleReady(pauseChange, paused)
+            if currentLength == 0 or currentLength == -1 or\
+                not (not self.playlist.notJustChangedPlaylist() and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD):
+                pauseChange = self._toggleReady(pauseChange, paused)
 
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
@@ -1473,10 +1475,10 @@ class SyncplayPlaylist():
         currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
         if currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
         and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD\
-            and self._notJustChangedPlaylist():
+            and self.notJustChangedPlaylist():
                 self.loadNextFileInPlaylist()
 
-    def _notJustChangedPlaylist(self):
+    def notJustChangedPlaylist(self):
         secondsSinceLastChange = time.time() - self._lastPlaylistIndexChange
         return secondsSinceLastChange > constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
 
