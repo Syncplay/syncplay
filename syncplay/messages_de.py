@@ -220,6 +220,7 @@ de = {
     "unpause-ifothersready-option" : u"Wiedergeben wenn bereits als Bereit gesetzt oder alle anderen bereit sind (Standard)",
     "unpause-ifminusersready-option" : u"Wiedergeben wenn bereits als Bereit gesetzt oder die minimale Anzahl anderer Nutzer bereit ist",
     "unpause-always" : u"Immer wiedergeben",
+    "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)", # TODO: Translate into German
 
     "help-label" : u"Hilfe",
     "reset-label" : u"Standardwerte zurücksetzen",
@@ -323,6 +324,7 @@ de = {
     "unpause-ifalreadyready-tooltip" : u"Wenn du nicht bereit bist und Play drückst wirst du als bereit gesetzt - zum Starten der Wiedergabe nochmal drücken.",
     "unpause-ifothersready-tooltip" : u"Wenn du Play drückst und nicht bereit bist, wird nur gestartet, wenn alle anderen bereit sind.",
     "unpause-ifminusersready-tooltip" : u"Wenn du Play drückst und nicht bereit bist, wird nur gestartet, wenn die minimale Anzahl anderer Benutzer bereit ist.",
+    "trusteddomains-arguments-tooltip" : u"Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.", # TODO: Translate into German
 
     "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
     "reset-tooltip" : u"Alle Einstellungen auf Standardwerte zurücksetzen.",

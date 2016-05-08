@@ -187,4 +187,7 @@ SYNCPLAY_UPDATE_URL = u"http://syncplay.pl/checkforupdate?{}" # Params
 SYNCPLAY_DOWNLOAD_URL = "http://syncplay.pl/download/"
 SYNCPLAY_PUBLIC_SERVER_LIST_URL = u"http://syncplay.pl/listpublicservers?{}" # Params
 
+DEFAULT_TRUSTED_DOMAINS = [u"youtube.com",u"youtu.be",u"vimeo.com"]
+TRUSTABLE_WEB_PROTOCOLS = [u"http://www.",u"https://www.",u"http://",u"https://"]
+
 PRIVATE_FILE_FIELDS = ["path"]

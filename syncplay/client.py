@@ -453,14 +453,18 @@ class SyncplayClient(object):
         self.playlist.changeToPlaylistIndexFromFilename(filename)
 
     def isURITrusted(self, URIToTest):
-        if self._config['onlySwitchToTrustedURIs']:
-            if self._config['trustedURIs']:
-                for URI in self._config['trustedURIs']:
-                    if URIToTest.startswith(URI):
-                        return True
-            return False
-        else:
-            return True
+        for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:
+            if URIToTest.startswith(trustedProtocol):
+                if self._config['onlySwitchToTrustedDomains']:
+                    if self._config['trustedDomains']:
+                        for trustedDomain in self._config['trustedDomains']:
+                            trustableURI = ''.join([trustedProtocol,trustedDomain,u"/"])
+                            if URIToTest.startswith(trustableURI):
+                                return True
+                    return False
+                else:
+                    return True
+        return False
 
     def openFile(self, filePath, resetPosition=False):
         self._player.openFile(filePath, resetPosition)

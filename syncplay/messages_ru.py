@@ -222,6 +222,7 @@ ru = {
     "unpause-ifothersready-option" : u"Unpause if already ready or others in room are ready (default)", # TODO: Translate into Russian
     "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready", # TODO: Translate into Russian
     "unpause-always" : u"Always unpause", # TODO: Translate into Russian
+    "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)", # TODO: Translate into Russian
 
     "help-label" : u"Помощь",
     "reset-label" : u"Сброс настроек",
@@ -323,6 +324,7 @@ ru = {
     "unpause-ifalreadyready-tooltip" : u"If you press unpause when not ready it will set you as ready - press unpause again to unpause.", # TODO: Translate into Russian
     "unpause-ifothersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready.", # TODO: Translate into Russian
     "unpause-ifminusersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready and minimum users threshold is met.", # TODO: Translate into Russian
+    "trusteddomains-arguments-tooltip" : u"Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.", # TODO: Translate into Russian
 
     "help-tooltip" : u"Открыть Руководство Пользователя на Syncplay.pl.",
     "reset-tooltip" : u"Сбрасывает все настройки Syncplay в начальное состояние.",

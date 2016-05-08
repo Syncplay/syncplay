@@ -222,6 +222,7 @@ en = {
     "unpause-ifothersready-option" : u"Unpause if already ready or others in room are ready (default)",
     "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready",
     "unpause-always" : u"Always unpause",
+    "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)",
 
     "help-label" : "Help",
     "reset-label" : "Restore defaults",
@@ -323,6 +324,7 @@ en = {
     "unpause-ifalreadyready-tooltip" : u"If you press unpause when not ready it will set you as ready - press unpause again to unpause.",
     "unpause-ifothersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready.",
     "unpause-ifminusersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready and minimum users threshold is met.",
+    "trusteddomains-arguments-tooltip" : u"Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.",
 
     "help-tooltip" : "Opens the Syncplay.pl user guide.",
     "reset-tooltip" : "Reset all settings to the default configuration.",

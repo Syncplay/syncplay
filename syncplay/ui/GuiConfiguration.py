@@ -370,6 +370,7 @@ class ConfigDialog(QtGui.QDialog):
 
         self.config["perPlayerArguments"] = self.perPlayerArgs
         self.config["mediaSearchDirectories"] = utils.convertMultilineStringToList(self.mediasearchTextEdit.toPlainText())
+        self.config["trustedDomains"] = utils.convertMultilineStringToList(self.trusteddomainsTextEdit.toPlainText())
 
         self.processWidget(self, lambda w: self.saveValues(w))
         if self.hostCombobox.currentText():
@@ -504,6 +505,7 @@ class ConfigDialog(QtGui.QDialog):
 
         self.perPlayerArgs = self.config["perPlayerArguments"]
         self.mediaSearchDirectories = self.config["mediaSearchDirectories"]
+        self.trustedDomains = self.config["trustedDomains"]
 
         self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
         self.loadSavedPublicServerList()
@@ -794,10 +796,24 @@ class ConfigDialog(QtGui.QDialog):
         self.othersyncSettingsLayout.setAlignment(Qt.AlignLeft)
         self.othersyncSettingsLayout.addWidget(self.fastforwardCheckbox, 3, 0,1,2, Qt.AlignLeft)
 
+
+        ## Trusted domains
+
+        self.trusteddomainsSettingsGroup = QtGui.QGroupBox(getMessage("syncplay-trusteddomains-title"))
+        self.trusteddomainsSettingsLayout = QtGui.QVBoxLayout()
+        self.trusteddomainsSettingsGroup.setLayout(self.trusteddomainsSettingsLayout)
+
+        self.trusteddomainsTextEdit = QPlainTextEdit(utils.getListAsMultilineString(self.trustedDomains))
+        self.trusteddomainsTextEdit.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "trusteddomains-arguments")
+        self.trusteddomainsTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.trusteddomainsSettingsLayout.addWidget(self.trusteddomainsTextEdit)
+        self.trusteddomainsSettingsGroup.setMaximumHeight(self.trusteddomainsSettingsGroup.minimumSizeHint().height())
+
         self.othersyncSettingsGroup.setLayout(self.othersyncSettingsLayout)
         self.othersyncSettingsGroup.setMaximumHeight(self.othersyncSettingsGroup.minimumSizeHint().height())
         self.syncSettingsLayout.addWidget(self.othersyncSettingsGroup)
         self.syncSettingsLayout.addWidget(self.desyncSettingsGroup)
+        self.syncSettingsLayout.addWidget(self.trusteddomainsSettingsGroup)
         self.syncSettingsFrame.setLayout(self.syncSettingsLayout)
         self.desyncSettingsGroup.setMaximumHeight(self.desyncSettingsGroup.minimumSizeHint().height())
         self.syncSettingsLayout.setAlignment(Qt.AlignTop)
