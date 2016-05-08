@@ -88,7 +88,7 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine("get_property {}".format(property_))
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), secondaryOSD=False):
-        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
+        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, self._stripNewlines(message), duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
 
     def setSpeed(self, value):
         self._setProperty('speed', "{:.2f}".format(value))
@@ -129,10 +129,17 @@ class MplayerPlayer(BasePlayer):
     def _getPosition(self):
         self._getProperty(self.POSITION_QUERY)
 
+    def _stripNewlines(self, text):
+        text = text.replace("\r", "")
+        text = text.replace("\n", "")
+        return text
+
     def _quoteArg(self, arg):
         arg = arg.replace('\\', '\\\\')
         arg = arg.replace("'", "\\'")
         arg = arg.replace('"', '\\"')
+        arg = arg.replace("\r", "")
+        arg = arg.replace("\n", "")
         return u'"{}"'.format(arg)
 
     def _fileIsLoaded(self):
