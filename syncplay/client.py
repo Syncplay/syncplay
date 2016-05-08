@@ -71,6 +71,7 @@ class SyncplayClient(object):
         self.lastControlPasswordAttempt = None
         self.serverVersion = "0.0.0"
 
+        self.lastRewindTime = None
         self.lastLeftTime = 0
         self.lastPausedOnLeaveTime = None
         self.lastLeftUser = u""
@@ -178,7 +179,18 @@ class SyncplayClient(object):
         return pauseChange, seeked
 
     def rewindFile(self):
-        self.setPosition(0)
+        self.setPosition(-1)
+        self.establishRewindDoubleCheck()
+
+    def establishRewindDoubleCheck(self):
+        reactor.callLater(0.5, self.doubleCheckRewindFile,)
+        reactor.callLater(1, self.doubleCheckRewindFile,)
+        reactor.callLater(1.5, self.doubleCheckRewindFile,)
+
+    def doubleCheckRewindFile(self):
+        if self.getStoredPlayerPosition() > 5:
+            self.setPosition(-1)
+            self.ui.showDebugMessage("Rewinded after double-check")
 
     def updatePlayerStatus(self, paused, position):
         position -= self.getUserOffset()
@@ -452,6 +464,9 @@ class SyncplayClient(object):
 
     def openFile(self, filePath, resetPosition=False):
         self._player.openFile(filePath, resetPosition)
+        if resetPosition:
+            self.establishRewindDoubleCheck()
+            self.lastRewindTime = time.time()
 
     def fileSwitchFoundFiles(self):
         self.ui.fileSwitchFoundFiles()
@@ -559,6 +574,9 @@ class SyncplayClient(object):
     def setPosition(self, position):
         if self._lastPlayerUpdate:
             self._lastPlayerUpdate = time.time()
+        if self.lastRewindTime is not None and abs(time.time() - self.lastRewindTime) < 1.0 and position > 5:
+            self.ui.showDebugMessage("Ignored seek to {} after rewind".format(position))
+            return
         position += self.getUserOffset()
         if self._player and self.userlist.currentUser.file:
             if position < 0:
