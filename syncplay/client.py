@@ -1575,6 +1575,7 @@ class FileSwitchManager(object):
         self.mediaFilesCache = {}
         self.filenameWatchlist = []
         self.currentDirectory = None
+        self.lastCheckedCurrentDirectory = None
         self.mediaDirectories = None
         self.lock = threading.Lock()
         self.folderSearchEnabled = True
@@ -1602,15 +1603,19 @@ class FileSwitchManager(object):
             self.infoUpdated()
 
     def updateInfo(self):
-        if len(self.filenameWatchlist) > 0 or len(self.mediaFilesCache) == 0 and self.currentlyUpdating == False:
+        if not self.currentlyUpdating:
             threads.deferToThread(self._updateInfoThread).addCallback(lambda x: self.checkForFileSwitchUpdate())
 
     def setFilenameWatchlist(self, unfoundFilenames):
         self.filenameWatchlist = unfoundFilenames
 
     def _updateInfoThread(self):
+
         if not self.folderSearchEnabled:
-            if self.areWatchedFilenamesInCurrentDir():
+            if self.lastCheckedCurrentDirecotry <> self.currentDirectory:
+                self.lastCheckedCurrentDirectory = self.currentDirectory
+                self.newInfo = True
+            elif self.areWatchedFilenamesInCurrentDir():
                 self.newInfo = True
             return
 
@@ -1632,8 +1637,9 @@ class FileSwitchManager(object):
                                     self.newInfo = True
                                 return
 
-                    if self.mediaFilesCache <> newMediaFilesCache:
+                    if self.mediaFilesCache <> newMediaFilesCache or self.lastCheckedCurrentDirectory <> self.currentDirectory:
                         self.mediaFilesCache = newMediaFilesCache
+                        self.lastCheckedCurrentDirectory = self.currentDirectory
                         self.newInfo = True
                     elif self.areWatchedFilenamesInCurrentDir():
                         self.newInfo = True
@@ -1702,3 +1708,11 @@ class FileSwitchManager(object):
                 files = self.mediaFilesCache[directory]
                 if filename in files:
                     return True
+
+    def getDirectoryOfFilenameInCache(self, filename):
+        if filename is not None and self.mediaFilesCache is not None:
+            for directory in self.mediaFilesCache:
+                files = self.mediaFilesCache[directory]
+                if filename in files:
+                    return directory
+        return None
