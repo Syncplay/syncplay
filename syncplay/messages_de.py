@@ -136,7 +136,7 @@ de = {
     "invalid-seek-value" : u"Ungültige Zeitangabe",
     "invalid-offset-value" : u"Ungültiger Offset-Wert",
 
-    "switch-file-not-found-error" : u"Konnte nicht zur Datei '{0}' wechseln. Syncplay sucht im Ordner der aktuellen Datei und angegebenen Medien-Verzeichnissen.", # File not found, folder it was not found in
+    "switch-file-not-found-error" : u"Konnte nicht zur Datei '{0}' wechseln. Syncplay looks in the specified media directories.", # File not found, folder it was not found in # TODO: Re-translate "Syncplay sucht im Ordner der aktuellen Datei und angegebenen Medien-Verzeichnissen." to reference to checking in "current media directory"
     "folder-search-timeout-error" : u"Die Suche nach Mediendateien in '{}' wurde abgebrochen weil sie zu lange gedauert hat. Dies tritt auf, wenn ein zu durchsuchender Medienordner zu viele Unterordner hat. Syncplay wird bis zum Neustart nur noch das Verzeichnis der aktuellen Datei durchsuchen.", #Folder
 
     "failed-to-load-server-list-error" : u"Konnte die Liste der öffentlichen Server nicht laden. Bitte besuche http://www.syncplay.pl/ [Englisch] mit deinem Browser.",
@@ -375,7 +375,7 @@ de = {
     # Playlists TODO: Translate all this to German
     "playlist-selection-changed-notification" :  u"{} changed the playlist selection", # Username
     "playlist-contents-changed-notification" : u"{} updated the playlist", # Username
-    "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} for playlist switch!", # Filename
+    "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} in media directories for playlist switch!", # Filename
     "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename
     "cannot-add-unsafe-path-error" : u"Could not load {} because it is not known as a trusted path.", # Filename
     "sharedplaylistenabled-label" : u"Enable shared playlists",

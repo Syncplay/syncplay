@@ -136,7 +136,7 @@ en = {
     "invalid-seek-value" : u"Invalid seek value",
     "invalid-offset-value" : u"Invalid offset value",
 
-    "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in the folder of the currently playing file and specified media directories.", # File not found
+    "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks specified media directories.", # File not found
     "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder
 
     "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.",
@@ -376,7 +376,7 @@ en = {
     # Playlists
     "playlist-selection-changed-notification" :  u"{} changed the playlist selection", # Username
     "playlist-contents-changed-notification" : u"{} updated the playlist", # Username
-    "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} for playlist switch!", # Filename
+    "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} in media directories for playlist switch!", # Filename
     "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename
     "cannot-add-unsafe-path-error" : u"Could not load {} because it is not known as a trusted path.", # Filename
     "sharedplaylistenabled-label" : u"Enable shared playlists",
