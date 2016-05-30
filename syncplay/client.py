@@ -1631,8 +1631,7 @@ class FileSwitchManager(object):
                 self.currentlyUpdating = False
 
     def infoUpdated(self):
-        if self.areWatchedFilenamesInCache():
-            self._client.fileSwitchFoundFiles()
+        self._client.fileSwitchFoundFiles()
 
     def findFilepath(self, filename, highPriority=False):
         if filename is None:
