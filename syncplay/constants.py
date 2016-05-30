@@ -53,8 +53,9 @@ AUTOPLAY_DELAY = 3.0
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 
 # Options for the File Switch feature:
-FOLDER_SEARCH_TIMEOUT = 60.0 # Secs - How long to wait until searches in folder to update cache are aborted (may be longer than this if hard drive needs to spin up)
-FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 65.0 # Secs - Frequency of updating cache when someone is playing a file not in current cache
+FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 10.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
+FOLDER_SEARCH_TIMEOUT = 3.0 # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)
+FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0 # Secs - Frequency of updating cache when someone is playing a file not in current cache
 
 #Usually there's no need to adjust these
 LAST_PAUSED_DIFF_THRESHOLD = 2
