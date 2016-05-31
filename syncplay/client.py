@@ -1614,6 +1614,18 @@ class FileSwitchManager(object):
                 dirsToSearch = self.mediaDirectories
 
                 if dirsToSearch:
+                    # Spin up hard drives to prevent premature timeout
+                    randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
+                    for directory in dirsToSearch:
+                        startTime = time.time()
+                        if os.path.isfile(os.path.join(directory, randomFilename)):
+                            randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
+                        if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
+                            self.disabledDir = directory
+                            self.folderSearchEnabled = False
+                            return
+
+                    # Actual directory search
                     newMediaFilesCache = {}
                     startTime = time.time()
                     for directory in dirsToSearch:
@@ -1647,6 +1659,17 @@ class FileSwitchManager(object):
 
         if highPriority and self.folderSearchEnabled:
             directoryList = self.mediaDirectories
+            # Spin up hard drives to prevent premature timeout
+            randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
+            for directory in directoryList:
+                startTime = time.time()
+                if os.path.isfile(os.path.join(directory, randomFilename)):
+                    randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
+                if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
+                    self.disabledDir = directory
+                    self.folderSearchEnabled = False
+                    return
+
             startTime = time.time()
             if filename and directoryList:
                 for directory in directoryList:
