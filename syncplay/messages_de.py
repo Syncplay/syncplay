@@ -279,6 +279,8 @@ de = {
     "promptforstreamurl-msgbox-label" : u"Stream URL öffnen",
     "promptforstreamurlinfo-msgbox-label" : u"Stream URL",
 
+    "adduris-msgbox-label" : u"Add URLs to playlist (one per line)", # TODO: Translate
+
     "createcontrolledroom-msgbox-label" : u"Zentral gesteuerten Raum erstellen",
     "controlledroominfo-msgbox-label" : u"Namen des zentral gesteuerten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 

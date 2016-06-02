@@ -281,6 +281,8 @@ en = {
     "promptforstreamurl-msgbox-label" : "Open media stream URL",
     "promptforstreamurlinfo-msgbox-label" : "Stream URL",
 
+    "adduris-msgbox-label" : u"Add URLs to playlist (one per line)",
+
     "createcontrolledroom-msgbox-label" : "Create managed room",
     "controlledroominfo-msgbox-label" : "Enter name of managed room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
 

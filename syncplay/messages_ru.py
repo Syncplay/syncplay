@@ -281,6 +281,8 @@ ru = {
     "promptforstreamurl-msgbox-label" : u"Открыть URL потокового вещания",
     "promptforstreamurlinfo-msgbox-label" : u"URL потока",
 
+    "adduris-msgbox-label" : u"Add URLs to playlist (one per line)", # TODO: Translate
+
     "createcontrolledroom-msgbox-label" : u"Создать управляемую комнату",
     "controlledroominfo-msgbox-label" : u"Введите имя управляемой комнаты\r\n(см. инструкцию на странице http://syncplay.pl/guide/):",
 
