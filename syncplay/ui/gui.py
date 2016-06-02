@@ -458,7 +458,6 @@ class MainWindow(QtGui.QMainWindow):
         self.listTreeView.expandAll()
         self.updateListGeometry()
         self._syncplayClient.fileSwitch.setFilenameWatchlist(self.newWatchlist)
-        self.checkForDisabledDir()
 
     @needsClient
     def undoPlaylistChange(self):
@@ -543,13 +542,6 @@ class MainWindow(QtGui.QMainWindow):
         else:
             return
         menu.exec_(self.listTreeView.viewport().mapToGlobal(position))
-
-
-    @needsClient
-    def checkForDisabledDir(self):
-        if self._syncplayClient.fileSwitch.disabledDir is not None and self._syncplayClient.fileSwitch.currentWindow is not None:
-            self.showErrorMessage(getMessage("folder-search-timeout-error").format(self._syncplayClient.fileSwitch.disabledDir))
-            self._syncplayClient.fileSwitch.disabledDir = None
 
     def updateListGeometry(self):
         try:

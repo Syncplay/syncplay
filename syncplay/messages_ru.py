@@ -137,7 +137,8 @@ ru = {
     "invalid-offset-value" : u"Некорректное смещение",
 
     "switch-file-not-found-error" : u"Невозможно переключиться на файл '{0}'. Syncplay looks in the folder specified media directories.", # File not found # TODO: Translate last part into Russian
-    "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder # TODO: Translate into Russian
+    "folder-search-timeout-error" : u"The search for media in media directories was aborted as it took too long to search through '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. For automatic file switching to work again please remove this directory as a media directory (optionally using a sub-directory instead) and re-open Syncplay.", #Folder # TODO: Translate
+    "folder-search-first-file-timeout-error" : u"The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please remove this directory as a media directory or resolve the issue (e.g. by changing power saving settings) and re-open Syncplay.", #Folder # TODO: Translate
 
     "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.", # TODO: Translate into Russian
 

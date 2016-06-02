@@ -136,8 +136,9 @@ en = {
     "invalid-seek-value" : u"Invalid seek value",
     "invalid-offset-value" : u"Invalid offset value",
 
-    "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks specified media directories.", # File not found
-    "folder-search-timeout-error" : u"The search for media in '{}' was aborted as it took too long. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. Until Syncplay is restarted only the directory of the currently open file will be checked.", #Folder
+    "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in specified media directories.", # File not found
+    "folder-search-timeout-error" : u"The search for media in media directories was aborted as it took too long to search through '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. For automatic file switching to work again please remove this directory as a media directory (optionally using a sub-directory instead) and re-open Syncplay.", #Folder
+    "folder-search-first-file-timeout-error" : u"The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please remove this directory as a media directory or resolve the issue (e.g. by changing power saving settings) and re-open Syncplay.", #Folder
 
     "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.",
 

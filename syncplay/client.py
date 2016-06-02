@@ -1621,8 +1621,8 @@ class FileSwitchManager(object):
                         if os.path.isfile(os.path.join(directory, randomFilename)):
                             randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
                         if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
-                            self.disabledDir = directory
                             self.folderSearchEnabled = False
+                            self._client.ui.showErrorMessage(getMessage("folder-search-first-file-timeout-error").format(directory))
                             return
 
                     # Actual directory search
@@ -1634,6 +1634,10 @@ class FileSwitchManager(object):
                             if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
                                 self.disabledDir = directory
                                 self.folderSearchEnabled = False
+                            if not self.folderSearchEnabled:
+                                if self.disabledDir is not None:
+                                    self._client.ui.showErrorMessage(getMessage("folder-search-timeout-error").format(self.disabledDir))
+                                    self.disabledDir = None
                                 return
 
                     if self.mediaFilesCache <> newMediaFilesCache:
@@ -1665,9 +1669,9 @@ class FileSwitchManager(object):
                 startTime = time.time()
                 if os.path.isfile(os.path.join(directory, randomFilename)):
                     randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
+                if not self.folderSearchEnabled:
+                    return
                 if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
-                    self.disabledDir = directory
-                    self.folderSearchEnabled = False
                     return
 
             startTime = time.time()

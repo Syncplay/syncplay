@@ -137,7 +137,8 @@ de = {
     "invalid-offset-value" : u"Ungültiger Offset-Wert",
 
     "switch-file-not-found-error" : u"Konnte nicht zur Datei '{0}' wechseln. Syncplay looks in the specified media directories.", # File not found, folder it was not found in # TODO: Re-translate "Syncplay sucht im Ordner der aktuellen Datei und angegebenen Medien-Verzeichnissen." to reference to checking in "current media directory"
-    "folder-search-timeout-error" : u"Die Suche nach Mediendateien in '{}' wurde abgebrochen weil sie zu lange gedauert hat. Dies tritt auf, wenn ein zu durchsuchender Medienordner zu viele Unterordner hat. Syncplay wird bis zum Neustart nur noch das Verzeichnis der aktuellen Datei durchsuchen.", #Folder
+    "folder-search-timeout-error" : u"The search for media in media directories was aborted as it took too long to search through '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. For automatic file switching to work again please remove this directory as a media directory (optionally using a sub-directory instead) and re-open Syncplay.", #Folder # TODO: Re-translate using new language
+    "folder-search-first-file-timeout-error" : u"The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please remove this directory as a media directory or resolve the issue (e.g. by changing power saving settings) and re-open Syncplay.", #Folder # TODO: Translate
 
     "failed-to-load-server-list-error" : u"Konnte die Liste der öffentlichen Server nicht laden. Bitte besuche http://www.syncplay.pl/ [Englisch] mit deinem Browser.",
 
