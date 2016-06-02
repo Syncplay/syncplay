@@ -299,6 +299,8 @@ class MainWindow(QtGui.QMainWindow):
             self.playlistGroup.setChecked(self.config['sharedPlaylistEnabled'])
             self.playlistGroup.blockSignals(False)
             self._syncplayClient.fileSwitch.setMediaDirectories(self.config["mediaSearchDirectories"])
+            if not self.config["mediaSearchDirectories"]:
+                self._syncplayClient.ui.showErrorMessage(getMessage("no-media-directories-error"))
             self.updateReadyState(self.config['readyAtStart'])
             autoplayInitialState = self.config['autoplayInitialState']
             if autoplayInitialState is not None:

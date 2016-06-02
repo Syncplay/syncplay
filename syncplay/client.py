@@ -1405,6 +1405,9 @@ class SyncplayPlaylist():
             return
 
         try:
+            if index is None:
+                self._ui.showDebugMessage(u"Cannot switch to None index in playlist")
+                return
             filename = self._playlist[index]
             # TODO: Handle isse with index being None
             if utils.isURL(filename):
@@ -1597,14 +1600,18 @@ class FileSwitchManager(object):
         self.currentDirectory = curDir
 
     def changeMediaDirectories(self, mediaDirs):
-        if mediaDirs <> self._client._config["mediaSearchDirectories"]:
-            from syncplay.ui.ConfigurationGetter import ConfigurationGetter
-            ConfigurationGetter().setConfigOption("mediaSearchDirectories", mediaDirs)
-            self._client._config["mediaSearchDirectories"] = mediaDirs
-            self._client.ui.showMessage(getMessage("media-directory-list-updated-notification"))
+        from syncplay.ui.ConfigurationGetter import ConfigurationGetter
+        ConfigurationGetter().setConfigOption("mediaSearchDirectories", mediaDirs)
+        self._client._config["mediaSearchDirectories"] = mediaDirs
+        self._client.ui.showMessage(getMessage("media-directory-list-updated-notification"))
         self.mediaDirectoriesNotFound = []
         self.folderSearchEnabled = True
         self.setMediaDirectories(mediaDirs)
+        if mediaDirs == "":
+            self._client.ui.showErrorMessage(getMessage("no-media-directories-error"))
+            self.mediaFilesCache = {}
+            self.newInfo = True
+            self.checkForFileSwitchUpdate()
 
     def setMediaDirectories(self, mediaDirs):
         self.mediaDirectories = mediaDirs
