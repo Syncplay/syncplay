@@ -1348,6 +1348,7 @@ class MainWindow(QtGui.QMainWindow):
                     self.playlist.addItem(filename)
                 else:
                     self.playlist.insertItem(index, filename)
+                self._syncplayClient.fileSwitch.notifyUserIfFileNotInMediaDirectory(filename, filePath)
         elif isURL(filePath):
             self.removePlaylistNote()
             if self.noPlaylistDuplicates(filePath):

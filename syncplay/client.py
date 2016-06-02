@@ -434,6 +434,7 @@ class SyncplayClient(object):
         return self._globalPaused
 
     def updateFile(self, filename, duration, path):
+        newPath = u""
         if utils.isURL(path):
             filename = path
 
@@ -447,6 +448,8 @@ class SyncplayClient(object):
                 size = os.path.getsize(path)
             except:
                 size = 0
+        if not utils.isURL(path) and os.path.exists(path):
+            self.fileSwitch.notifyUserIfFileNotInMediaDirectory(filename, path)
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
@@ -1403,6 +1406,7 @@ class SyncplayPlaylist():
 
         try:
             filename = self._playlist[index]
+            # TODO: Handle isse with index being None
             if utils.isURL(filename):
                 if self._client.isURITrusted(filename):
                     self._client.openFile(filename, resetPosition=resetPosition)
@@ -1578,12 +1582,13 @@ class FileSwitchManager(object):
         self.mediaDirectories = None
         self.lock = threading.Lock()
         self.folderSearchEnabled = True
-        self.disabledDir = None
+        self.directorySearchError = None
         self.newInfo = False
         self.currentlyUpdating = False
         self.newWatchlist = []
         self.fileSwitchTimer = task.LoopingCall(self.updateInfo)
         self.fileSwitchTimer.start(constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL, True)
+        self.mediaDirectoriesNotFound = []
 
     def setClient(self, newClient):
         self.client = newClient
@@ -1597,6 +1602,7 @@ class FileSwitchManager(object):
             ConfigurationGetter().setConfigOption("mediaSearchDirectories", mediaDirs)
             self._client._config["mediaSearchDirectories"] = mediaDirs
             self._client.ui.showMessage(getMessage("media-directory-list-updated-notification"))
+        self.mediaDirectoriesNotFound = []
         self.folderSearchEnabled = True
         self.setMediaDirectories(mediaDirs)
 
@@ -1608,6 +1614,9 @@ class FileSwitchManager(object):
         if self.newInfo:
             self.newInfo = False
             self.infoUpdated()
+        if self.directorySearchError:
+            self._client.ui.showErrorMessage(self.directorySearchError)
+            self.directorySearchError = None
 
     def updateInfo(self):
         if not self.currentlyUpdating and self.mediaDirectories:
@@ -1631,7 +1640,7 @@ class FileSwitchManager(object):
                             randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
                         if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
                             self.folderSearchEnabled = False
-                            self._client.ui.showErrorMessage(getMessage("folder-search-first-file-timeout-error").format(directory))
+                            self.directorySearchError = getMessage("folder-search-first-file-timeout-error").format(directory)
                             return
 
                     # Actual directory search
@@ -1641,12 +1650,8 @@ class FileSwitchManager(object):
                         for root, dirs, files in os.walk(directory):
                             newMediaFilesCache[root] = files
                             if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
-                                self.disabledDir = directory
+                                self.directorySearchError = getMessage("folder-search-timeout-error").format(directory)
                                 self.folderSearchEnabled = False
-                            if not self.folderSearchEnabled:
-                                if self.disabledDir is not None:
-                                    self._client.ui.showErrorMessage(getMessage("folder-search-timeout-error").format(self.disabledDir))
-                                    self.disabledDir = None
                                 return
 
                     if self.mediaFilesCache <> newMediaFilesCache:
@@ -1690,8 +1695,8 @@ class FileSwitchManager(object):
                         if filename in files:
                             return os.path.join(root,filename)
                         if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
-                            self.disabledDir = directory
                             self.folderSearchEnabled = False
+                            self.directorySearchError = getMessage("folder-search-timeout-error").format(directory)
                             return None
             return None
 
@@ -1715,3 +1720,20 @@ class FileSwitchManager(object):
                 if filename in files:
                     return directory
         return None
+
+    def notifyUserIfFileNotInMediaDirectory(self, filenameToFind, path):
+        directoryToFind = os.path.dirname(path)
+        if directoryToFind in self.mediaDirectoriesNotFound:
+            return
+        if self.mediaDirectories and self.mediaFilesCache is not None:
+            if self.mediaFilesCache:
+                if directoryToFind in self.mediaFilesCache:
+                    return
+                for directory in self.mediaFilesCache:
+                    files = self.mediaFilesCache[directory]
+                    if filenameToFind in files:
+                        return
+                    if directoryToFind in self.mediaFilesCache:
+                        return
+        self._client.ui.showErrorMessage(getMessage("added-file-not-in-media-directory-error").format(directoryToFind))
+        self.mediaDirectoriesNotFound.append(directoryToFind)
