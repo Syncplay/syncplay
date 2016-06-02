@@ -1412,7 +1412,7 @@ class MainWindow(QtGui.QMainWindow):
             self.clearedPlaylistNote = True
 
     def addFolderToPlaylist(self, folderPath):
-        self.showErrorMessage("Add Folder {}".format(folderPath)) # TODO: Implement "add folder to playlist"
+        self.showErrorMessage(u"You tried to add the folder '{}' to the playlist. Syncplay only currently supports adding files to the playlist.".format(folderPath)) # TODO: Implement "add folder to playlist"
         
     def deleteSelectedPlaylistItems(self):
         self.playlist.remove_selected_items()
