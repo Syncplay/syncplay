@@ -1601,7 +1601,7 @@ class FileSwitchManager(object):
             self.infoUpdated()
 
     def updateInfo(self):
-        if not self.currentlyUpdating:
+        if not self.currentlyUpdating and self.mediaDirectories:
             threads.deferToThread(self._updateInfoThread).addCallback(lambda x: self.checkForFileSwitchUpdate())
 
     def setFilenameWatchlist(self, unfoundFilenames):
