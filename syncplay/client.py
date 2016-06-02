@@ -1642,6 +1642,9 @@ class FileSwitchManager(object):
                     # Spin up hard drives to prevent premature timeout
                     randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
                     for directory in dirsToSearch:
+                        if not os.path.isdir(directory):
+                            self.directorySearchError = getMessage("cannot-find-directory-error").format(directory)
+
                         startTime = time.time()
                         if os.path.isfile(os.path.join(directory, randomFilename)):
                             randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
