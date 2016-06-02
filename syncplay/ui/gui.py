@@ -794,6 +794,7 @@ class MainWindow(QtGui.QMainWindow):
         URIsButtonBox.rejected.connect(URIsDialog.reject)
         URIsLayout.addWidget(URIsButtonBox, 2, 0, 1, 1)
         URIsDialog.setLayout(URIsLayout)
+        URIsDialog.setModal(True)
         URIsDialog.show()
         result = URIsDialog.exec_()
         if result == QtGui.QDialog.Accepted:
@@ -824,6 +825,7 @@ class MainWindow(QtGui.QMainWindow):
         MediaDirectoriesAddFolderButton.pressed.connect(lambda: self.openAddMediaDirectoryDialog(MediaDirectoriesTextbox, MediaDirectoriesDialog))
         MediaDirectoriesLayout.addWidget(MediaDirectoriesAddFolderButton, 1, 1, 1, 1, Qt.AlignTop)
         MediaDirectoriesDialog.setLayout(MediaDirectoriesLayout)
+        MediaDirectoriesDialog.setModal(True)
         MediaDirectoriesDialog.show()
         result = MediaDirectoriesDialog.exec_()
         if result == QtGui.QDialog.Accepted:
