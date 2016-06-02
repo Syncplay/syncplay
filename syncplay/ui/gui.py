@@ -710,10 +710,10 @@ class MainWindow(QtGui.QMainWindow):
         settings.setValue("mediadir", self.mediadirectory)
         settings.endGroup()
 
-    def getInitialMediaDirectory(self):
-        if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
+    def getInitialMediaDirectory(self, includeUserSpecifiedDirectories=True):
+        if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]) and includeUserSpecifiedDirectories:
             defaultdirectory = self.config["mediaSearchDirectories"][0]
-        elif os.path.isdir(self.mediadirectory):
+        elif includeUserSpecifiedDirectories and os.path.isdir(self.mediadirectory):
             defaultdirectory = self.mediadirectory
         elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)):
             defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)
@@ -803,12 +803,13 @@ class MainWindow(QtGui.QMainWindow):
                 self.addStreamToPlaylist(URI)
             self.updatingPlaylist = False
 
+    @needsClient
     def openSetMediaDirectoriesDialog(self):
         MediaDirectoriesDialog = QtGui.QDialog()
         MediaDirectoriesDialog.setWindowTitle(getMessage("syncplay-mediasearchdirectories-title")) # TODO: Move to messages_*.py
         MediaDirectoriesLayout = QtGui.QGridLayout()
         MediaDirectoriesLabel = QtGui.QLabel(getMessage("syncplay-mediasearchdirectories-title"))
-        MediaDirectoriesLayout.addWidget(MediaDirectoriesLabel, 0, 0, 1, 1)
+        MediaDirectoriesLayout.addWidget(MediaDirectoriesLabel, 0, 0, 1, 2)
         MediaDirectoriesTextbox = QtGui.QPlainTextEdit()
         MediaDirectoriesTextbox.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         MediaDirectoriesTextbox.setPlainText(utils.getListAsMultilineString(self.config["mediaSearchDirectories"]))
@@ -819,12 +820,28 @@ class MainWindow(QtGui.QMainWindow):
         MediaDirectoriesButtonBox.accepted.connect(MediaDirectoriesDialog.accept)
         MediaDirectoriesButtonBox.rejected.connect(MediaDirectoriesDialog.reject)
         MediaDirectoriesLayout.addWidget(MediaDirectoriesButtonBox, 2, 0, 1, 1)
+        MediaDirectoriesAddFolderButton = QtGui.QPushButton(getMessage("addfolder-label"))
+        MediaDirectoriesAddFolderButton.pressed.connect(lambda: self.openAddMediaDirectoryDialog(MediaDirectoriesTextbox, MediaDirectoriesDialog))
+        MediaDirectoriesLayout.addWidget(MediaDirectoriesAddFolderButton, 1, 1, 1, 1, Qt.AlignTop)
         MediaDirectoriesDialog.setLayout(MediaDirectoriesLayout)
         MediaDirectoriesDialog.show()
         result = MediaDirectoriesDialog.exec_()
         if result == QtGui.QDialog.Accepted:
             newMediaDirectories = utils.convertMultilineStringToList(MediaDirectoriesTextbox.toPlainText())
             self._syncplayClient.fileSwitch.changeMediaDirectories(newMediaDirectories)
+
+    @needsClient
+    def openAddMediaDirectoryDialog(self, MediaDirectoriesTextbox, MediaDirectoriesDialog):
+        folderName = unicode(QtGui.QFileDialog.getExistingDirectory(self,None,self.getInitialMediaDirectory(includeUserSpecifiedDirectories=False),QtGui.QFileDialog.ShowDirsOnly))
+        if folderName:
+            existingMediaDirs = MediaDirectoriesTextbox.toPlainText()
+            if existingMediaDirs == "":
+                newMediaDirList = folderName
+            else:
+                newMediaDirList = existingMediaDirs + u"\n" + folderName
+            MediaDirectoriesTextbox.setPlainText(newMediaDirList)
+        MediaDirectoriesDialog.raise_()
+        MediaDirectoriesDialog.activateWindow()
 
     @needsClient
     def promptForStreamURL(self):

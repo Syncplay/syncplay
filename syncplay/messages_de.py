@@ -279,6 +279,8 @@ de = {
     "promptforstreamurl-msgbox-label" : u"Stream URL öffnen",
     "promptforstreamurlinfo-msgbox-label" : u"Stream URL",
 
+    "addfolder-label" : u"Add folder", # TODO: Translate
+
     "adduris-msgbox-label" : u"Add URLs to playlist (one per line)", # TODO: Translate
 
     "createcontrolledroom-msgbox-label" : u"Zentral gesteuerten Raum erstellen",

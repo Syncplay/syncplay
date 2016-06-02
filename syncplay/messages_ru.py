@@ -281,6 +281,8 @@ ru = {
     "promptforstreamurl-msgbox-label" : u"Открыть URL потокового вещания",
     "promptforstreamurlinfo-msgbox-label" : u"URL потока",
 
+    "addfolder-label" : u"Add folder", # TODO: Translate
+
     "adduris-msgbox-label" : u"Add URLs to playlist (one per line)", # TODO: Translate
 
     "createcontrolledroom-msgbox-label" : u"Создать управляемую комнату",

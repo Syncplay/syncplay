@@ -281,6 +281,8 @@ en = {
     "promptforstreamurl-msgbox-label" : "Open media stream URL",
     "promptforstreamurlinfo-msgbox-label" : "Stream URL",
 
+    "addfolder-label" : u"Add folder",
+
     "adduris-msgbox-label" : u"Add URLs to playlist (one per line)",
 
     "createcontrolledroom-msgbox-label" : "Create managed room",
