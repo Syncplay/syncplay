@@ -28,6 +28,8 @@ en = {
 
     "current-offset-notification" : "Current offset: {} seconds",  # Offset
 
+    "media-directory-list-updated-notification" : u"Syncplay media directories have been updated.",
+
     "room-join-notification" : u"<{}> has joined the room: '{}'",  # User
     "left-notification" : u"<{}> has left",  # User
     "left-paused-notification" : u"<{}> left, <{}> paused",  # User who left, User who paused
@@ -137,8 +139,8 @@ en = {
     "invalid-offset-value" : u"Invalid offset value",
 
     "switch-file-not-found-error" : u"Could not switch to file '{0}'. Syncplay looks in specified media directories.", # File not found
-    "folder-search-timeout-error" : u"The search for media in media directories was aborted as it took too long to search through '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. For automatic file switching to work again please remove this directory as a media directory (optionally using a sub-directory instead) and re-open Syncplay.", #Folder
-    "folder-search-first-file-timeout-error" : u"The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please remove this directory as a media directory or resolve the issue (e.g. by changing power saving settings) and re-open Syncplay.", #Folder
+    "folder-search-timeout-error" : u"The search for media in media directories was aborted as it took too long to search through '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. For automatic file switching to work again please select File->Set Media Directories in the menu bar and remove this directory or replace it with an appropriate sub-folder.", #Folder
+    "folder-search-first-file-timeout-error" : u"The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please go to File->Set Media Directories and either remove the directory or resolve the issue (e.g. by changing power saving settings).", #Folder
 
     "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.",
 
@@ -257,6 +259,7 @@ en = {
     "file-menu-label" : "&File", # & precedes shortcut key
     "openmedia-menu-label" : "&Open media file",
     "openstreamurl-menu-label" : "Open &media stream URL",
+    "setmediadirectories-menu-label" : u"Set media &directories",
     "exit-menu-label" : "E&xit",
     "advanced-menu-label" : "&Advanced",
     "window-menu-label" : "&Window",

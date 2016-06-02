@@ -776,7 +776,7 @@ class MainWindow(QtGui.QMainWindow):
     @needsClient
     def OpenAddURIsToPlaylistDialog(self):
         URIsDialog = QtGui.QDialog()
-        URIsDialog.setWindowTitle("Add URLs to playlist (one per line)")
+        URIsDialog.setWindowTitle(u"Add URLs to playlist (one per line)") # TODO: Move to messages_*.py
         URIsLayout = QtGui.QGridLayout()
         URIsTextbox = QtGui.QPlainTextEdit()
         URIsTextbox.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
@@ -796,6 +796,27 @@ class MainWindow(QtGui.QMainWindow):
             for URI in URIsToAdd:
                 self.addStreamToPlaylist(URI)
             self.updatingPlaylist = False
+
+    def openSetMediaDirectoriesDialog(self):
+        MediaDirectoriesDialog = QtGui.QDialog()
+        MediaDirectoriesDialog.setWindowTitle(getMessage("syncplay-mediasearchdirectories-title")) # TODO: Move to messages_*.py
+        MediaDirectoriesLayout = QtGui.QGridLayout()
+        MediaDirectoriesTextbox = QtGui.QPlainTextEdit()
+        MediaDirectoriesTextbox.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        MediaDirectoriesTextbox.setPlainText(utils.getListAsMultilineString(self.config["mediaSearchDirectories"]))
+        MediaDirectoriesLayout.addWidget(MediaDirectoriesTextbox, 0, 0, 1, 1)
+        MediaDirectoriesButtonBox = QtGui.QDialogButtonBox()
+        MediaDirectoriesButtonBox.setOrientation(Qt.Horizontal)
+        MediaDirectoriesButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok|QtGui.QDialogButtonBox.Cancel)
+        MediaDirectoriesButtonBox.accepted.connect(MediaDirectoriesDialog.accept)
+        MediaDirectoriesButtonBox.rejected.connect(MediaDirectoriesDialog.reject)
+        MediaDirectoriesLayout.addWidget(MediaDirectoriesButtonBox, 1, 0, 1, 1)
+        MediaDirectoriesDialog.setLayout(MediaDirectoriesLayout)
+        MediaDirectoriesDialog.show()
+        result = MediaDirectoriesDialog.exec_()
+        if result == QtGui.QDialog.Accepted:
+            newMediaDirectories = utils.convertMultilineStringToList(MediaDirectoriesTextbox.toPlainText())
+            self._syncplayClient.fileSwitch.changeMediaDirectories(newMediaDirectories)
 
     @needsClient
     def promptForStreamURL(self):
@@ -1092,6 +1113,10 @@ class MainWindow(QtGui.QMainWindow):
         window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'world_explore.png'),
                                                       getMessage("openstreamurl-menu-label"))
         window.openAction.triggered.connect(self.promptForStreamURL)
+        window.openAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'film_folder_edit.png'),
+                                                      getMessage("setmediadirectories-menu-label"))
+        window.openAction.triggered.connect(self.openSetMediaDirectoriesDialog)
+
 
         window.exitAction = window.fileMenu.addAction(QtGui.QIcon(self.resourcespath + 'cross.png'),
                                                       getMessage("exit-menu-label"))

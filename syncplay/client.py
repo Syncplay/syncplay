@@ -1591,6 +1591,15 @@ class FileSwitchManager(object):
     def setCurrentDirectory(self, curDir):
         self.currentDirectory = curDir
 
+    def changeMediaDirectories(self, mediaDirs):
+        if mediaDirs <> self._client._config["mediaSearchDirectories"]:
+            from syncplay.ui.ConfigurationGetter import ConfigurationGetter
+            ConfigurationGetter().setConfigOption("mediaSearchDirectories", mediaDirs)
+            self._client._config["mediaSearchDirectories"] = mediaDirs
+            self._client.ui.showMessage(getMessage("media-directory-list-updated-notification"))
+        self.folderSearchEnabled = True
+        self.setMediaDirectories(mediaDirs)
+
     def setMediaDirectories(self, mediaDirs):
         self.mediaDirectories = mediaDirs
         self.updateInfo()

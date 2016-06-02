@@ -28,6 +28,8 @@ ru = {
 
     "current-offset-notification" : u"Текущее смещение: {} секунд(ы)",  # Offset
 
+    "media-directory-list-updated-notification" : u"Syncplay media directories have been updated.", # TODO: Translate
+
     "room-join-notification" : u"<{}> зашел(зашла) в комнату: '{}'",  # User
     "left-notification" : u"<{}> покинул(а) комнату",  # User
     "left-paused-notification" : u"<{}> покинул(а) комнату, <{}> приостановил(а) воспроизведение",  # User who left, User who paused
@@ -137,8 +139,8 @@ ru = {
     "invalid-offset-value" : u"Некорректное смещение",
 
     "switch-file-not-found-error" : u"Невозможно переключиться на файл '{0}'. Syncplay looks in the folder specified media directories.", # File not found # TODO: Translate last part into Russian
-    "folder-search-timeout-error" : u"The search for media in media directories was aborted as it took too long to search through '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. For automatic file switching to work again please remove this directory as a media directory (optionally using a sub-directory instead) and re-open Syncplay.", #Folder # TODO: Translate
-    "folder-search-first-file-timeout-error" : u"The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please remove this directory as a media directory or resolve the issue (e.g. by changing power saving settings) and re-open Syncplay.", #Folder # TODO: Translate
+    "folder-search-timeout-error" : u"The search for media in media directories was aborted as it took too long to search through '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. For automatic file switching to work again please select File->Set Media Directories in the menu bar and remove this directory or replace it with an appropriate sub-folder.", #Folder # TODO: Translate
+    "folder-search-first-file-timeout-error" : u"The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please go to File->Set Media Directories and either remove the directory or resolve the issue (e.g. by changing power saving settings).", #Folder # TODO: Translate
 
     "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.", # TODO: Translate into Russian
 
@@ -257,6 +259,7 @@ ru = {
     "file-menu-label" : u"&Файл", # & precedes shortcut key
     "openmedia-menu-label" : u"&Открыть видеофайл",
     "openstreamurl-menu-label" : u"Открыть URL &потокового вещания",
+    "setmediadirectories-menu-label" : u"Set media &directories", # TODO: Translate
     "exit-menu-label" : u"&Выход",
     "advanced-menu-label" : u"&Дополнительно",
     "window-menu-label" : u"&Окна",
