@@ -103,7 +103,7 @@ class MpcHcApi:
                 
         elif cmd == self.CMD_STATE:
             self.loadState = int(value)
-            fileNotReady = self.loadState == self.__MPC_LOADSTATE.MLS_CLOSING or self.loadState == self.__MPC_LOADSTATE.MLS_LOADING
+            fileNotReady = self.loadState == self.__MPC_LOADSTATE.MLS_CLOSING or self.loadState == self.__MPC_LOADSTATE.MLS_LOADING or self.loadState == self.__MPC_LOADSTATE.MLS_CLOSED
             if fileNotReady:
                 self.playState = None
                 self.__locks.fileReady.clear()
