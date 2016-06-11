@@ -327,7 +327,7 @@ class MplayerPlayer(BasePlayer):
                 if not isinstance(line, unicode):
                     line = line.decode('utf8')
                 line = (line + u"\n").encode('utf8')
-                self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
+                self.__playerController._client.ui.showDebugMessage(u"player >> {}".format(line))
                 self.__process.stdin.write(line)
             except IOError:
                 pass
