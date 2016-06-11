@@ -801,7 +801,10 @@ class MainWindow(QtGui.QMainWindow):
             URIsToAdd = utils.convertMultilineStringToList(URIsTextbox.toPlainText())
             self.updatingPlaylist = True
             for URI in URIsToAdd:
-                self.addStreamToPlaylist(URI)
+                if URI.endswith(u" "):
+                    URI = URI[:-1]
+                if URI <> "":
+                    self.addStreamToPlaylist(URI)
             self.updatingPlaylist = False
 
     @needsClient
