@@ -266,6 +266,10 @@ class MplayerPlayer(BasePlayer):
 
     class __Listener(threading.Thread):
         def __init__(self, playerController, playerPath, filePath, args):
+            self.sendQueue = []
+            self.readyToSend = True
+            self.lastSendTime = None
+            self.lastNotReadyTime = None
             self.__playerController = playerController
             if self.__playerController.getPlayerPathErrors(playerPath,filePath):
                 raise ValueError()
@@ -322,12 +326,54 @@ class MplayerPlayer(BasePlayer):
                 self.__playerController.lineReceived(line)
             self.__playerController.drop()
 
-        def sendLine(self, line):
+        def isReadyForSend(self):
+            self.checkForReadinessOverride()
+            return self.readyToSend
+
+        def setReadyToSend(self, newReadyState):
+            oldState = self.readyToSend
+            self.readyToSend = newReadyState
+            self.lastNotReadyTime = time.time() if newReadyState == False else None
+            if self.readyToSend == True:
+                self.__playerController._client.ui.showDebugMessage("<mpv> Ready to send: True")
+            else:
+                self.__playerController._client.ui.showDebugMessage("<mpv> Ready to send: False")
+            if self.readyToSend == True and oldState == False:
+                self.processSendQueue()
+
+        def checkForReadinessOverride(self):
+            if self.lastNotReadyTime and time.time() - self.lastNotReadyTime > constants.MPV_MAX_NEWFILE_COOLDOWN_TIME:
+                self.setReadyToSend(True)
+
+        def sendLine(self, line, notReadyAfterThis=None):
+            self.checkForReadinessOverride()
+            if self.readyToSend == False and "print_text ANS_pause" in line:
+                self.__playerController._client.ui.showDebugMessage("<mpv> Not ready to get status update, so skipping")
+                return
+            self.sendQueue.append(line)
+            self.processSendQueue()
+            if notReadyAfterThis:
+                self.setReadyToSend(False)
+
+        def processSendQueue(self):
+            while self.sendQueue and self.readyToSend:
+                if self.lastSendTime and time.time() - self.lastSendTime < constants.MPV_SENDMESSAGE_COOLDOWN_TIME:
+                    self.__playerController._client.ui.showDebugMessage("<mpv> Throttling message send, so sleeping for {}".format(constants.MPV_SENDMESSAGE_COOLDOWN_TIME))
+                    time.sleep(constants.MPV_SENDMESSAGE_COOLDOWN_TIME)
+                try:
+                    lineToSend = self.sendQueue.pop()
+                    if lineToSend:
+                        self.lastSendTime = time.time()
+                        self.actuallySendLine(lineToSend)
+                except IndexError:
+                    pass
+
+        def actuallySendLine(self, line):
             try:
                 if not isinstance(line, unicode):
                     line = line.decode('utf8')
                 line = (line + u"\n").encode('utf8')
-                self.__playerController._client.ui.showDebugMessage(u"player >> {}".format(line))
+                self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
                 self.__process.stdin.write(line)
             except IOError:
                 pass

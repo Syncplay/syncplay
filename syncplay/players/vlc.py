@@ -368,7 +368,7 @@ class VlcPlayer(BasePlayer):
                     self.sendLine("get-vlc-version")
                 try:
                     self.push(line + "\n")
-                    self.__playerController._client.ui.showDebugMessage(u"player >> {}".format(line))
+                    self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
                 except:
                     pass
             if line == "close-vlc":

@@ -163,6 +163,10 @@ class NewMpvPlayer(OldMpvPlayer):
     def askForStatus(self):
         self._positionAsk.clear()
         self._pausedAsk.clear()
+        if not self._listener.isReadyForSend:
+            self._client.ui.showDebugMessage("mpv not ready for update")
+            return
+
         self._getPausedAndPosition()
         self._positionAsk.wait(constants.MPV_LOCK_WAIT_TIME)
         self._pausedAsk.wait(constants.MPV_LOCK_WAIT_TIME)
@@ -183,7 +187,7 @@ class NewMpvPlayer(OldMpvPlayer):
 
     def _loadFile(self, filePath):
         self._clearFileLoaded()
-        self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
+        self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)), notReadyAfterThis=True)
 
     def setPosition(self, value):
         super(self.__class__, self).setPosition(value)
@@ -206,10 +210,15 @@ class NewMpvPlayer(OldMpvPlayer):
         self.mpvErrorCheck(line)
 
         if line == "<SyncplayUpdateFile>" or "Playing:" in line:
+            self._listener.setReadyToSend(False)
             self._clearFileLoaded()
 
         elif line == "</SyncplayUpdateFile>":
             self._onFileUpdate()
+            self._listener.setReadyToSend(True)
+
+        elif "Failed" in line or "failed" in line or "No video or audio streams selected" in line or "error" in line:
+            self._listener.setReadyToSend(True)
 
     def _recentlyReset(self):
         if not self.lastResetTime:

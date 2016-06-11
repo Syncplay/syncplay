@@ -1280,7 +1280,7 @@ class UiManager(object):
 
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():
-            sys.stderr.write(u"{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip()))
+            sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip()))
 
     def showMessage(self, message, noPlayer=False, noTimestamp=False, secondaryOSD=False):
         if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, secondaryOSD=secondaryOSD)
