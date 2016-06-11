@@ -835,27 +835,27 @@ class ConfigDialog(QtGui.QDialog):
 
         self.showSameRoomOSDCheckbox = QCheckBox(getMessage("showsameroomosd-label"))
         self.showSameRoomOSDCheckbox.setObjectName("showSameRoomOSD")
-        self.showSameRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.showSameRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showSameRoomOSDCheckbox)
 
         self.showNonControllerOSDCheckbox = QCheckBox(getMessage("shownoncontrollerosd-label"))
         self.showNonControllerOSDCheckbox.setObjectName("showNonControllerOSD")
-        self.showNonControllerOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.showNonControllerOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showNonControllerOSDCheckbox)
 
         self.showDifferentRoomOSDCheckbox = QCheckBox(getMessage("showdifferentroomosd-label"))
         self.showDifferentRoomOSDCheckbox.setObjectName("showDifferentRoomOSD")
-        self.showDifferentRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.showDifferentRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showDifferentRoomOSDCheckbox)
 
         self.slowdownOSDCheckbox = QCheckBox(getMessage("showslowdownosd-label"))
         self.slowdownOSDCheckbox.setObjectName("showSlowdownOSD")
-        self.slowdownOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.slowdownOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.slowdownOSDCheckbox)
 
         self.showOSDWarningsCheckbox = QCheckBox(getMessage("showosdwarnings-label"))
         self.showOSDWarningsCheckbox.setObjectName("showOSDWarnings")
-        self.showOSDWarningsCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.showOSDWarningsCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showOSDWarningsCheckbox)
 
         self.subitems['showOSD'] = ["showSameRoomOSD", "showDifferentRoomOSD", "showSlowdownOSD", "showOSDWarnings", "showNonControllerOSD"]
@@ -915,20 +915,20 @@ class ConfigDialog(QtGui.QDialog):
 
         self.bottomButtonFrame = QtGui.QFrame()
         self.bottomButtonLayout = QtGui.QHBoxLayout()
-        self.helpButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'help.png'), getMessage("help-label"))
+        self.helpButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + u'help.png'), getMessage("help-label"))
         self.helpButton.setObjectName("help")
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.pressed.connect(self.openHelp)
 
-        self.resetButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'cog_delete.png'),getMessage("reset-label"))
+        self.resetButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'cog_delete.png'),getMessage("reset-label"))
         self.resetButton.setMaximumSize(self.resetButton.sizeHint())
         self.resetButton.setObjectName("reset")
         self.resetButton.pressed.connect(self.resetSettings)
 
-        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("run-label"))
+        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
         self.runButton.pressed.connect(self._saveDataAndLeave)
         self.runButton.setToolTip(getMessage("nostore-tooltip"))
-        self.storeAndRunButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("storeandrun-label"))
+        self.storeAndRunButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("storeandrun-label"))
         self.storeAndRunButton.pressed.connect(self._runWithoutStoringConfig)
         self.bottomButtonLayout.addWidget(self.helpButton)
         self.bottomButtonLayout.addWidget(self.resetButton)
@@ -956,11 +956,11 @@ class ConfigDialog(QtGui.QDialog):
         self.tabListLayout = QtGui.QHBoxLayout()
         self.tabListFrame = QtGui.QFrame()
         self.tabListWidget = QtGui.QListWidget()
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "house.png"),getMessage("basics-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "control_pause_blue.png"),getMessage("readiness-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "film_link.png"),getMessage("sync-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "comments.png"),getMessage("messages-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "cog.png"),getMessage("misc-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"house.png"),getMessage("basics-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"control_pause_blue.png"),getMessage("readiness-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"film_link.png"),getMessage("sync-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"comments.png"),getMessage("messages-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"cog.png"),getMessage("misc-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
         self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width())
@@ -1046,15 +1046,15 @@ class ConfigDialog(QtGui.QDialog):
         if sys.platform.startswith('win'):
             resourcespath = utils.findWorkingDir() + "\\resources\\"
         else:
-            resourcespath = utils.findWorkingDir() + "/resources/"
-        self.posixresourcespath = utils.findWorkingDir().replace("\\","/") + "/resources/"
+            resourcespath = utils.findWorkingDir() + u"/resources/"
+        self.posixresourcespath = utils.findWorkingDir().replace(u"\\","/") + u"/resources/"
         self.resourcespath = resourcespath
 
         super(ConfigDialog, self).__init__()
 
         self.setWindowTitle(getMessage("config-window-title"))
         self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & ~Qt.WindowContextHelpButtonHint)
-        self.setWindowIcon(QtGui.QIcon(resourcespath + "syncplay.png"))
+        self.setWindowIcon(QtGui.QIcon(resourcespath + u"syncplay.png"))
 
         self.stackedLayout = QtGui.QStackedLayout()
         self.stackedFrame = QtGui.QFrame()

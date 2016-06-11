@@ -76,7 +76,7 @@ class OldMpvPlayer(MpvPlayer):
     OSD_QUERY = 'show_text'
 
     def _setProperty(self, property_, value):
-        self._listener.sendLine("no-osd set {} {}".format(property_, value))
+        self._listener.sendLine(u"no-osd set {} {}".format(property_, value))
 
     def setPaused(self, value):
         if self._paused <> value:

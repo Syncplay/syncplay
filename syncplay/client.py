@@ -129,7 +129,7 @@ class SyncplayClient(object):
         if constants.DEBUG_MODE and constants.WARN_ABOUT_MISSING_STRINGS:
             missingStrings = getMissingStrings()
             if missingStrings is not None and missingStrings is not "":
-                self.ui.showDebugMessage("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
+                self.ui.showDebugMessage(u"MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
 
     def initProtocol(self, protocol):
         self._protocol = protocol
@@ -953,9 +953,9 @@ class SyncplayUser(object):
 
     def __repr__(self, *args, **kwargs):
         if self.file:
-            return "{}: {} ({}, {})".format(self.username, self.file['name'], self.file['duration'], self.file['size'])
+            return u"{}: {} ({}, {})".format(self.username, self.file['name'], self.file['duration'], self.file['size'])
         else:
-            return "{}".format(self.username)
+            return u"{}".format(self.username)
 
     def setControllerStatus(self, isController):
         self._controller = isController
@@ -1280,7 +1280,7 @@ class UiManager(object):
 
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():
-            sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip()))
+            sys.stderr.write(u"{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip()))
 
     def showMessage(self, message, noPlayer=False, noTimestamp=False, secondaryOSD=False):
         if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, secondaryOSD=secondaryOSD)
@@ -1353,7 +1353,7 @@ class SyncplayPlaylist():
         @wraps(f)
         def wrapper(self, *args, **kwds):
             if not self._client.sharedPlaylistIsEnabled():
-                self._ui.showDebugMessage("Tried to use shared playlists when it was disabled!")
+                self._ui.showDebugMessage(u"Tried to use shared playlists when it was disabled!")
                 return
             return f(self, *args, **kwds)
         return wrapper
@@ -1640,14 +1640,14 @@ class FileSwitchManager(object):
 
                 if dirsToSearch:
                     # Spin up hard drives to prevent premature timeout
-                    randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
+                    randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+u".txt"
                     for directory in dirsToSearch:
                         if not os.path.isdir(directory):
                             self.directorySearchError = getMessage("cannot-find-directory-error").format(directory)
 
                         startTime = time.time()
                         if os.path.isfile(os.path.join(directory, randomFilename)):
-                            randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
+                            randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+u".txt"
                         if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
                             self.folderSearchEnabled = False
                             self.directorySearchError = getMessage("folder-search-first-file-timeout-error").format(directory)
@@ -1688,11 +1688,11 @@ class FileSwitchManager(object):
         if highPriority and self.folderSearchEnabled:
             directoryList = self.mediaDirectories
             # Spin up hard drives to prevent premature timeout
-            randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
+            randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+u".txt"
             for directory in directoryList:
                 startTime = time.time()
                 if os.path.isfile(os.path.join(directory, randomFilename)):
-                    randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+".txt"
+                    randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+u".txt"
                 if not self.folderSearchEnabled:
                     return
                 if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:

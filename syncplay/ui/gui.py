@@ -29,12 +29,12 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
             currentQAbstractItemModel = indexQModelIndex.model()
             itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), constants.USERLIST_GUI_USERNAME_COLUMN, indexQModelIndex.parent())
             if sys.platform.startswith('win'):
-                resourcespath = utils.findWorkingDir() + "\\resources\\"
+                resourcespath = utils.findWorkingDir() + u"\\resources\\"
             else:
-                resourcespath = utils.findWorkingDir() + "/resources/"
-            controlIconQPixmap = QtGui.QPixmap(resourcespath + "user_key.png")
-            tickIconQPixmap = QtGui.QPixmap(resourcespath + "tick.png")
-            crossIconQPixmap = QtGui.QPixmap(resourcespath + "cross.png")
+                resourcespath = utils.findWorkingDir() + u"/resources/"
+            controlIconQPixmap = QtGui.QPixmap(resourcespath + u"user_key.png")
+            tickIconQPixmap = QtGui.QPixmap(resourcespath + u"tick.png")
+            crossIconQPixmap = QtGui.QPixmap(resourcespath + u"cross.png")
             roomController = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
             userReady = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.USERITEM_READY_ROLE)
 
@@ -60,14 +60,14 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+constants.USERLIST_GUI_USERNAME_OFFSET)
         if column == constants.USERLIST_GUI_FILENAME_COLUMN:
             if sys.platform.startswith('win'):
-                resourcespath = utils.findWorkingDir() + "\\resources\\"
+                resourcespath = utils.findWorkingDir() + u"\\resources\\"
             else:
-                resourcespath = utils.findWorkingDir() + "/resources/"
+                resourcespath = utils.findWorkingDir() + u"/resources/"
             currentQAbstractItemModel = indexQModelIndex.model()
             itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), constants.USERLIST_GUI_FILENAME_COLUMN, indexQModelIndex.parent())
             fileSwitchRole = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.FILEITEM_SWITCH_ROLE)
             if fileSwitchRole == constants.FILEITEM_SWITCH_FILE_SWITCH:
-                fileSwitchIconQPixmap = QtGui.QPixmap(resourcespath + "film_go.png")
+                fileSwitchIconQPixmap = QtGui.QPixmap(resourcespath + u"film_go.png")
                 itemQPainter.drawPixmap (
                     (optionQStyleOptionViewItem.rect.x()),
                     optionQStyleOptionViewItem.rect.y(),
@@ -75,7 +75,7 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
 
             elif fileSwitchRole == constants.FILEITEM_SWITCH_STREAM_SWITCH:
-                streamSwitchIconQPixmap = QtGui.QPixmap(resourcespath + "world_go.png")
+                streamSwitchIconQPixmap = QtGui.QPixmap(resourcespath + u"world_go.png")
                 itemQPainter.drawPixmap (
                     (optionQStyleOptionViewItem.rect.x()),
                     optionQStyleOptionViewItem.rect.y(),
@@ -102,11 +102,11 @@ class MainWindow(QtGui.QMainWindow):
             currentQAbstractItemModel = indexQModelIndex.model()
             currentlyPlayingFile = currentQAbstractItemModel.data(indexQModelIndex, Qt.UserRole + constants.PLAYLISTITEM_CURRENTLYPLAYING_ROLE)
             if sys.platform.startswith('win'):
-                resourcespath = utils.findWorkingDir() + "\\resources\\"
+                resourcespath = utils.findWorkingDir() + u"\\resources\\"
             else:
-                resourcespath = utils.findWorkingDir() + "/resources/"
+                resourcespath = utils.findWorkingDir() + u"/resources/"
             if currentlyPlayingFile:
-                currentlyplayingIconQPixmap = QtGui.QPixmap(resourcespath + "bullet_right_grey.png")
+                currentlyplayingIconQPixmap = QtGui.QPixmap(resourcespath + u"bullet_right_grey.png")
                 itemQPainter.drawPixmap (
                     (optionQStyleOptionViewItem.rect.x()+4),
                     optionQStyleOptionViewItem.rect.y(),
@@ -324,14 +324,14 @@ class MainWindow(QtGui.QMainWindow):
 
     def showMessage(self, message, noTimestamp=False):
         message = unicode(message)
-        message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
-        message = message.replace("&lt;", "<span style=\"{}\">&lt;".format(constants.STYLE_USERNAME))
-        message = message.replace("&gt;", "&gt;</span>")
-        message = message.replace("\n", "<br />")
+        message = message.replace(u"&", u"&amp;").replace(u'"', u"&quot;").replace(u"<", u"&lt;").replace(">", u"&gt;")
+        message = message.replace(u"&lt;", u"<span style=\"{}\">&lt;".format(constants.STYLE_USERNAME))
+        message = message.replace(u"&gt;", u"&gt;</span>")
+        message = message.replace(u"\n", u"<br />")
         if noTimestamp:
             self.newMessage(u"{}<br />".format(message))
         else:
-            self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
+            self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + u"<br />")
 
     @needsClient
     def getFileSwitchState(self, filename):
@@ -404,7 +404,7 @@ class MainWindow(QtGui.QMainWindow):
                 useritem.setData(isReadyWithFile, Qt.UserRole + constants.USERITEM_READY_ROLE)
                 if user.file:
                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size']))
-                    filedurationitem = QtGui.QStandardItem("({})".format(formatTime(user.file['duration'])))
+                    filedurationitem = QtGui.QStandardItem(u"({})".format(formatTime(user.file['duration'])))
                     filename = user.file['name']
                     if isURL(filename):
                         filename = urllib.unquote(filename)
@@ -473,9 +473,9 @@ class MainWindow(QtGui.QMainWindow):
     def openPlaylistMenu(self, position):
         indexes = self.playlist.selectedIndexes()
         if sys.platform.startswith('win'):
-            resourcespath = utils.findWorkingDir() + "\\resources\\"
+            resourcespath = utils.findWorkingDir() + u"\\resources\\"
         else:
-            resourcespath = utils.findWorkingDir() + "/resources/"
+            resourcespath = utils.findWorkingDir() + u"/resources/"
         if len(indexes) > 0:
             item = self.playlist.selectedIndexes()[0]
         else:
@@ -486,19 +486,19 @@ class MainWindow(QtGui.QMainWindow):
             firstFile = item.sibling(item.row(), 0).data()
             if self._syncplayClient.userlist.currentUser.file is None or firstFile <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(firstFile):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile))
+                    menu.addAction(QtGui.QPixmap(resourcespath + u"world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile))
                 else:
                     pathFound = self._syncplayClient.fileSwitch.findFilepath(firstFile)
                     if pathFound:
-                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound))
-            menu.addAction(QtGui.QPixmap(resourcespath + "delete.png"), getMessage("removefromplaylist-menu-label"), lambda: self.deleteSelectedPlaylistItems())
+                        menu.addAction(QtGui.QPixmap(resourcespath + u"film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound))
+            menu.addAction(QtGui.QPixmap(resourcespath + u"delete.png"), getMessage("removefromplaylist-menu-label"), lambda: self.deleteSelectedPlaylistItems())
             menu.addSeparator()
-        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_switch.png"), getMessage("shuffleplaylist-menuu-label"), lambda: self.shufflePlaylist())
-        menu.addAction(QtGui.QPixmap(resourcespath + "arrow_undo.png"), getMessage("undoplaylist-menu-label"), lambda: self.undoPlaylistChange())
-        menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"),getMessage("addfilestoplaylist-menu-label"), lambda: self.OpenAddFilesToPlaylistDialog())
-        menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), getMessage("addurlstoplaylist-menu-label"), lambda: self.OpenAddURIsToPlaylistDialog())
+        menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_switch.png"), getMessage("shuffleplaylist-menuu-label"), lambda: self.shufflePlaylist())
+        menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_undo.png"), getMessage("undoplaylist-menu-label"), lambda: self.undoPlaylistChange())
+        menu.addAction(QtGui.QPixmap(resourcespath + u"film_add.png"),getMessage("addfilestoplaylist-menu-label"), lambda: self.OpenAddFilesToPlaylistDialog())
+        menu.addAction(QtGui.QPixmap(resourcespath + u"world_add.png"), getMessage("addurlstoplaylist-menu-label"), lambda: self.OpenAddURIsToPlaylistDialog())
         menu.addSeparator()
-        menu.addAction(QtGui.QPixmap(resourcespath + "film_folder_edit.png"), getMessage("setmediadirectories-menu-label"), lambda: self.openSetMediaDirectoriesDialog())
+        menu.addAction(QtGui.QPixmap(resourcespath + u"film_folder_edit.png"), getMessage("setmediadirectories-menu-label"), lambda: self.openSetMediaDirectoriesDialog())
         menu.exec_(self.playlist.viewport().mapToGlobal(position))
 
 
@@ -506,9 +506,9 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: Deselect items after right click
         indexes = self.listTreeView.selectedIndexes()
         if sys.platform.startswith('win'):
-            resourcespath = utils.findWorkingDir() + "\\resources\\"
+            resourcespath = utils.findWorkingDir() + u"\\resources\\"
         else:
-            resourcespath = utils.findWorkingDir() + "/resources/"
+            resourcespath = utils.findWorkingDir() + u"/resources/"
         if len(indexes) > 0:
             item = self.listTreeView.selectedIndexes()[0]
         else:
@@ -532,17 +532,17 @@ class MainWindow(QtGui.QMainWindow):
         elif username and filename and filename <> getMessage("nofile-note"):
             if self.config['sharedPlaylistEnabled'] and not self.isItemInPlaylist(filename):
                 if isURL(filename):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"),getMessage("addusersstreamstoplaylist-menu-label").format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + u"world_add.png"),getMessage("addusersstreamstoplaylist-menu-label").format(shortUsername), lambda: self.addStreamToPlaylist(filename))
                 else:
-                    menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), getMessage("addusersfiletoplaylist-menu-label").format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + u"film_add.png"), getMessage("addusersfiletoplaylist-menu-label").format(shortUsername), lambda: self.addStreamToPlaylist(filename))
 
             if self._syncplayClient.userlist.currentUser.file is None or filename <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(filename):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), getMessage("openusersstream-menu-label").format(shortUsername), lambda: self.openFile(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + u"world_go.png"), getMessage("openusersstream-menu-label").format(shortUsername), lambda: self.openFile(filename))
                 else:
                     pathFound = self._syncplayClient.fileSwitch.findFilepath(filename)
                     if pathFound:
-                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openusersfile-menu-label").format(shortUsername), lambda: self.openFile(pathFound))
+                        menu.addAction(QtGui.QPixmap(resourcespath + u"film_go.png"), getMessage("openusersfile-menu-label").format(shortUsername), lambda: self.openFile(pathFound))
         else:
             return
         menu.exec_(self.listTreeView.viewport().mapToGlobal(position))
@@ -627,10 +627,10 @@ class MainWindow(QtGui.QMainWindow):
         message = unicode(message)
         if criticalerror:
             QtGui.QMessageBox.critical(self, "Syncplay", message)
-        message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
-        message = message.replace("\n", "<br />")
-        message = "<span style=\"{}\">".format(constants.STYLE_ERRORNOTIFICATION) + message + "</span>"
-        self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
+        message = message.replace(u"&", u"&amp;").replace(u'"', u"&quot;").replace(u"<", u"&lt;").replace(u">", u"&gt;")
+        message = message.replace(u"\n", u"<br />")
+        message = u"<span style=\"{}\">".format(constants.STYLE_ERRORNOTIFICATION) + message + u"</span>"
+        self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + u"<br />")
 
     @needsClient
     def joinRoom(self, room=None):
@@ -649,7 +649,7 @@ class MainWindow(QtGui.QMainWindow):
     def seekPositionDialog(self):
         seekTime, ok = QtGui.QInputDialog.getText(self, getMessage("seektime-menu-label"),
                                                    getMessage("seektime-msgbox-label"), QtGui.QLineEdit.Normal,
-                                                   "0:00")
+                                                   u"0:00")
         if ok and seekTime != '':
             self.seekPosition(seekTime)
 
@@ -1103,20 +1103,20 @@ class MainWindow(QtGui.QMainWindow):
         window.playbackFrame.setLayout(window.playbackLayout)
         window.seekInput = QtGui.QLineEdit()
         window.seekInput.returnPressed.connect(self.seekFromButton)
-        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'clock_go.png'), "")
+        window.seekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + u'clock_go.png'), "")
         window.seekButton.setToolTip(getMessage("seektime-menu-label"))
         window.seekButton.pressed.connect(self.seekFromButton)
         window.seekInput.setText("0:00")
         window.seekInput.setFixedWidth(60)
         window.playbackLayout.addWidget(window.seekInput)
         window.playbackLayout.addWidget(window.seekButton)
-        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'arrow_undo.png'), "")
+        window.unseekButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + u'arrow_undo.png'), "")
         window.unseekButton.setToolTip(getMessage("undoseek-menu-label"))
         window.unseekButton.pressed.connect(self.undoSeek)
 
         window.miscLayout = QtGui.QHBoxLayout()
         window.playbackLayout.addWidget(window.unseekButton)
-        window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'control_play_blue.png'), "")
+        window.playButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + u'control_play_blue.png'), "")
         window.playButton.setToolTip(getMessage("play-menu-label"))
         window.playButton.pressed.connect(self.play)
         window.playbackLayout.addWidget(window.playButton)
@@ -1347,7 +1347,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def setPlaylist(self, newPlaylist, newIndexFilename=None):
         if self.updatingPlaylist:
-            self.ui.showDebugMessage("Trying to set playlist while it is already being updated")
+            self.ui.showDebugMessage(u"Trying to set playlist while it is already being updated")
         if newPlaylist == self.playlistState:
             if newIndexFilename:
                 self.playlist.setPlaylistIndexFilename(newIndexFilename)
@@ -1470,9 +1470,9 @@ class MainWindow(QtGui.QMainWindow):
         self.folderSearchEnabled = True
         self.QtGui = QtGui
         if sys.platform.startswith('win'):
-            self.resourcespath = utils.findWorkingDir() + "\\resources\\"
+            self.resourcespath = utils.findWorkingDir() + u"\\resources\\"
         else:
-            self.resourcespath = utils.findWorkingDir() + "/resources/"
+            self.resourcespath = utils.findWorkingDir() + u"/resources/"
         self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
         self.setWindowTitle("Syncplay v" + version)
         self.mainLayout = QtGui.QVBoxLayout()
@@ -1481,7 +1481,7 @@ class MainWindow(QtGui.QMainWindow):
         self.addMenubar(self)
         self.addMainFrame(self)
         self.loadSettings()
-        self.setWindowIcon(QtGui.QIcon(self.resourcespath + "syncplay.png"))
+        self.setWindowIcon(QtGui.QIcon(self.resourcespath + u"syncplay.png"))
         self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.AA_DontUseNativeMenuBar & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.show()
         self.setAcceptDrops(True)
