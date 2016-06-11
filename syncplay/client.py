@@ -1731,19 +1731,29 @@ class FileSwitchManager(object):
                     return directory
         return None
 
+    def isDirectoryInList(self, directoryToFind, folderList):
+        if directoryToFind and folderList:
+            normedDirectoryToFind = os.path.normcase(os.path.normpath(directoryToFind))
+            for listedFolder in folderList:
+                normedListedFolder = os.path.normcase(os.path.normpath(listedFolder))
+                if normedDirectoryToFind.startswith(normedListedFolder):
+                    return True
+            return False
+
     def notifyUserIfFileNotInMediaDirectory(self, filenameToFind, path):
         directoryToFind = os.path.dirname(path)
         if directoryToFind in self.mediaDirectoriesNotFound:
             return
-        if self.mediaDirectories and self.mediaFilesCache is not None:
-            if self.mediaFilesCache:
+        if self.mediaDirectories is not None and self.mediaFilesCache is not None:
+            if directoryToFind in self.mediaFilesCache:
+                return
+            for directory in self.mediaFilesCache:
+                files = self.mediaFilesCache[directory]
+                if filenameToFind in files:
+                    return
                 if directoryToFind in self.mediaFilesCache:
                     return
-                for directory in self.mediaFilesCache:
-                    files = self.mediaFilesCache[directory]
-                    if filenameToFind in files:
-                        return
-                    if directoryToFind in self.mediaFilesCache:
-                        return
+        if self.isDirectoryInList(directoryToFind, self.mediaDirectories):
+            return
         self._client.ui.showErrorMessage(getMessage("added-file-not-in-media-directory-error").format(directoryToFind))
         self.mediaDirectoriesNotFound.append(directoryToFind)
