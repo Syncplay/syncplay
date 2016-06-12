@@ -350,6 +350,27 @@ class MplayerPlayer(BasePlayer):
             if self.readyToSend == False and "print_text ANS_pause" in line:
                 self.__playerController._client.ui.showDebugMessage("<mpv> Not ready to get status update, so skipping")
                 return
+            try:
+                if self.sendQueue:
+                    if constants.MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS:
+                        for command in constants.MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS:
+                            if line.startswith(command):
+                                for itemID, deletionCandidate in enumerate(self.sendQueue):
+                                    if deletionCandidate.startswith(command):
+                                        self.__playerController._client.ui.showDebugMessage(u"<mpv> Remove duplicate (supersede): {}".format(self.sendQueue[itemID]))
+                                        self.sendQueue.remove(self.sendQueue[itemID])
+                                        break
+                            break
+                    if constants.MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS:
+                        for command in constants.MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS:
+                            if line == command:
+                                for itemID, deletionCandidate in enumerate(self.sendQueue):
+                                    if deletionCandidate == command:
+                                        self.__playerController._client.ui.showDebugMessage(u"<mpv> Remove duplicate (delete both): {}".format(self.sendQueue[itemID]))
+                                        self.__playerController._client.ui.showDebugMessage(self.sendQueue[itemID])
+                                        return
+            except:
+                self.__playerController._client.ui.showDebugMessage("<mpv> Problem removing duplicates, etc")
             self.sendQueue.append(line)
             self.processSendQueue()
             if notReadyAfterThis:
