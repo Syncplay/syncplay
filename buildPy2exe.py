@@ -127,13 +127,13 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Var Dialog
   Var Icon_Syncplay
   Var Icon_Syncplay_Handle
-  Var CheckBox_Associate
+  ;Var CheckBox_Associate
   Var CheckBox_VLC
   Var CheckBox_AutomaticUpdates
   Var CheckBox_StartMenuShortcut
   Var CheckBox_DesktopShortcut
   Var CheckBox_QuickLaunchShortcut
-  Var CheckBox_Associate_State
+  ;Var CheckBox_Associate_State
   Var CheckBox_VLC_State
   Var CheckBox_AutomaticUpdates_State
   Var CheckBox_StartMenuShortcut_State
@@ -165,13 +165,13 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Var Drive
   Var VLC_Directory
 
-  !macro APP_ASSOCIATE EXT FileCLASS DESCRIPTION COMMANDTEXT COMMAND
-    WriteRegStr HKCR ".$${EXT}" "" "$${FileCLASS}"
-    WriteRegStr HKCR "$${FileCLASS}" "" `$${DESCRIPTION}`
-    WriteRegStr HKCR "$${FileCLASS}\shell" "" "open"
-    WriteRegStr HKCR "$${FileCLASS}\shell\open" "" `$${COMMANDTEXT}`
-    WriteRegStr HKCR "$${FileCLASS}\shell\open\command" "" `$${COMMAND}`
-  !macroend
+  ;!macro APP_ASSOCIATE EXT FileCLASS DESCRIPTION COMMANDTEXT COMMAND
+  ;  WriteRegStr HKCR ".$${EXT}" "" "$${FileCLASS}"
+  ;  WriteRegStr HKCR "$${FileCLASS}" "" `$${DESCRIPTION}`
+  ;  WriteRegStr HKCR "$${FileCLASS}\shell" "" "open"
+  ;  WriteRegStr HKCR "$${FileCLASS}\shell\open" "" `$${COMMANDTEXT}`
+  ;  WriteRegStr HKCR "$${FileCLASS}\shell\open\command" "" `$${COMMAND}`
+  ;!macroend
 
   !macro APP_UNASSOCIATE EXT FileCLASS
     ; Backup the previously associated File class
@@ -180,10 +180,10 @@ NSIS_SCRIPT_TEMPLATE = r"""
     DeleteRegKey HKCR `$${FileCLASS}`
   !macroend
 
-  !macro ASSOCIATE EXT
-    !insertmacro APP_ASSOCIATE "$${EXT}" "Syncplay.$${EXT}" "$$INSTDIR\Syncplay.exe,%1%" \
-    "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
-  !macroend
+  ;!macro ASSOCIATE EXT
+  ;  !insertmacro APP_ASSOCIATE "$${EXT}" "Syncplay.$${EXT}" "$$INSTDIR\Syncplay.exe,%1%" \
+  ;  "Open with Syncplay" "$$INSTDIR\Syncplay.exe $$\"%1$$\""
+  ;!macroend
 
   !macro UNASSOCIATE EXT
     !insertmacro APP_UNASSOCIATE "$${EXT}" "Syncplay.$${EXT}"
@@ -197,7 +197,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     MessageBox MB_OK|MB_ICONEXCLAMATION "The installer is already running."
       Abort
 
-    StrCpy $$CheckBox_Associate_State $${BST_CHECKED}
+    ;StrCpy $$CheckBox_Associate_State $${BST_CHECKED}
     StrCpy $$CheckBox_StartMenuShortcut_State $${BST_CHECKED}
     Call GetVLCDir
     Call UpdateVLCCheckbox
@@ -257,8 +257,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${NSD_CreateLabel} 321u 122u 132 8u "$$(^SpaceAvailable)$$AvailibleSpaceGiB.$$AvailibleSpaceGB"
     Pop $$Label_Space
 
-    $${NSD_CreateCheckBox} 8u 59u 187u 10u "$$(^Associate)"
-    Pop $$CheckBox_Associate
+    ;$${NSD_CreateCheckBox} 8u 59u 187u 10u "$$(^Associate)"
+    ;Pop $$CheckBox_Associate
 
     $${NSD_CreateBrowseButton} 185u 70u 70u 14u "$$(^BrowseVLCBtn)"
     Pop $$Button_Browse_VLC
@@ -283,9 +283,9 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${NSD_CreateCheckbox} 158u 111u 130u 10u "$$(^QuickLaunchBar)"
     Pop $$CheckBox_QuickLaunchShortcut
 
-    $${If} $$CheckBox_Associate_State == $${BST_CHECKED}
-      $${NSD_Check} $$CheckBox_Associate
-    $${EndIf}
+    ;$${If} $$CheckBox_Associate_State == $${BST_CHECKED}
+    ;  $${NSD_Check} $$CheckBox_Associate
+    ;$${EndIf}
 
     $${If} $$CheckBox_VLC_State == $${BST_CHECKED}
     	$${NSD_Check} $$CheckBox_VLC
@@ -317,7 +317,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
   Function DirectoryCustomLeave
     $${NSD_GetText} $$Text_Directory $$INSTDIR
-    $${NSD_GetState} $$CheckBox_Associate $$CheckBox_Associate_State
+    ;$${NSD_GetState} $$CheckBox_Associate $$CheckBox_Associate_State
     $${NSD_GetState} $$CheckBox_VLC $$CheckBox_VLC_State
     $${NSD_GetState} $$CheckBox_AutomaticUpdates $$CheckBox_AutomaticUpdates_State
     $${NSD_GetState} $$CheckBox_StartMenuShortcut $$CheckBox_StartMenuShortcut_State
@@ -395,10 +395,10 @@ NSIS_SCRIPT_TEMPLATE = r"""
   FunctionEnd
 
   Function InstallOptions
-    $${If} $$CheckBox_Associate_State == $${BST_CHECKED}
-      Call Associate
-      DetailPrint "Associated Syncplay with multimedia files"
-    $${EndIf}
+    ;$${If} $$CheckBox_Associate_State == $${BST_CHECKED}
+    ;  Call Associate
+    ;  DetailPrint "Associated Syncplay with multimedia files"
+    ;$${EndIf}
 
     $${If} $$CheckBox_StartMenuShortcut_State == $${BST_CHECKED}
       CreateDirectory $$SMPROGRAMS\Syncplay
@@ -425,32 +425,32 @@ NSIS_SCRIPT_TEMPLATE = r"""
   FunctionEnd
 
   ;Associates extensions with Syncplay
-  Function Associate
-    !insertmacro ASSOCIATE avi
-    !insertmacro ASSOCIATE mpg
-    !insertmacro ASSOCIATE mpeg
-    !insertmacro ASSOCIATE mpe
-    !insertmacro ASSOCIATE m1v
-    !insertmacro ASSOCIATE m2v
-    !insertmacro ASSOCIATE mpv2
-    !insertmacro ASSOCIATE mp2v
-    !insertmacro ASSOCIATE mkv
-    !insertmacro ASSOCIATE mp4
-    !insertmacro ASSOCIATE m4v
-    !insertmacro ASSOCIATE mp4v
-    !insertmacro ASSOCIATE 3gp
-    !insertmacro ASSOCIATE 3gpp
-    !insertmacro ASSOCIATE 3g2
-    !insertmacro ASSOCIATE 3pg2
-    !insertmacro ASSOCIATE flv
-    !insertmacro ASSOCIATE f4v
-    !insertmacro ASSOCIATE rm
-    !insertmacro ASSOCIATE wmv
-    !insertmacro ASSOCIATE swf
-    !insertmacro ASSOCIATE rmvb
-    !insertmacro ASSOCIATE divx
-    !insertmacro ASSOCIATE amv
-  FunctionEnd
+  ;Function Associate
+  ;  !insertmacro ASSOCIATE avi
+  ;  !insertmacro ASSOCIATE mpg
+  ;  !insertmacro ASSOCIATE mpeg
+  ;  !insertmacro ASSOCIATE mpe
+  ;  !insertmacro ASSOCIATE m1v
+  ;  !insertmacro ASSOCIATE m2v
+  ;  !insertmacro ASSOCIATE mpv2
+  ;  !insertmacro ASSOCIATE mp2v
+  ;  !insertmacro ASSOCIATE mkv
+  ;  !insertmacro ASSOCIATE mp4
+  ;  !insertmacro ASSOCIATE m4v
+  ;  !insertmacro ASSOCIATE mp4v
+  ;  !insertmacro ASSOCIATE 3gp
+  ;  !insertmacro ASSOCIATE 3gpp
+  ;  !insertmacro ASSOCIATE 3g2
+  ;  !insertmacro ASSOCIATE 3pg2
+  ;  !insertmacro ASSOCIATE flv
+  ;  !insertmacro ASSOCIATE f4v
+  ;  !insertmacro ASSOCIATE rm
+  ;  !insertmacro ASSOCIATE wmv
+  ;  !insertmacro ASSOCIATE swf
+  ;  !insertmacro ASSOCIATE rmvb
+  ;  !insertmacro ASSOCIATE divx
+  ;  !insertmacro ASSOCIATE amv
+  ;FunctionEnd
 
   Function WriteRegistry
     Call GetSize
@@ -653,9 +653,11 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/chevrons_right.png',
      'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',
      'resources/tick.png', 'resources/lock_open.png', 'resources/empty_checkbox.png', 'resources/tick_checkbox.png',
-     'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png',
-     'resources/film_go.png', 'resources/world_go.png',
-     'resources/arrow_refresh.png', 'resources/spinner.mng'
+     'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png', 'resources/arrow_switch.png',
+     'resources/film_go.png', 'resources/world_go.png', 'resources/arrow_refresh.png', 'resources/bullet_right_grey.png',
+     'resources/film_folder_edit.png',
+     'resources/shield_edit.png',
+     'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
     ]
 resources = ["resources/icon.ico", "resources/syncplay.png"]
 resources.extend(guiIcons)

@@ -140,6 +140,10 @@ class SyncClientProtocol(JSONCommandProtocol):
                 user, isReady = values["username"], values["isReady"]
                 manuallyInitiated = values["manuallyInitiated"] if values.has_key("manuallyInitiated") else True
                 self._client.setReady(user, isReady, manuallyInitiated)
+            elif command == "playlistIndex":
+                self._client.playlist.changeToPlaylistIndex(values['index'], values['user'])
+            elif command == "playlistChange":
+                self._client.playlist.changePlaylist(values['files'], values['user'])
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -246,6 +250,21 @@ class SyncClientProtocol(JSONCommandProtocol):
                 "manuallyInitiated": manuallyInitiated
             }
         })
+
+    def setPlaylist(self, files):
+        self.sendSet({
+            "playlistChange": {
+                "files": files
+            }
+        })
+
+    def setPlaylistIndex(self, index):
+        self.sendSet({
+            "playlistIndex": {
+                "index": index
+            }
+        })
+
 
     def handleError(self, error):
         self.dropWithError(error["message"])
@@ -358,6 +377,10 @@ class SyncServerProtocol(JSONCommandProtocol):
             elif command == "ready":
                 manuallyInitiated = set_[1]['manuallyInitiated'] if set_[1].has_key("manuallyInitiated") else False
                 self._factory.setReady(self._watcher, set_[1]['isReady'], manuallyInitiated=manuallyInitiated)
+            elif command ==  "playlistChange":
+                self._factory.setPlaylist(self._watcher, set_[1]['files'])
+            elif command == "playlistIndex":
+                self._factory.setPlaylistIndex(self._watcher, set_[1]['index'])
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -386,6 +409,22 @@ class SyncServerProtocol(JSONCommandProtocol):
                 "username": username,
                 "isReady": isReady,
                 "manuallyInitiated": manuallyInitiated
+            }
+        })
+
+    def setPlaylist(self, username, files):
+        self.sendSet({
+            "playlistChange": {
+                "user": username,
+                "files": files
+            }
+        })
+
+    def setPlaylistIndex(self, username, index):
+        self.sendSet({
+            "playlistIndex": {
+                "user": username,
+                "index": index
             }
         })
 

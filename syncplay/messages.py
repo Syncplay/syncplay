@@ -1,5 +1,6 @@
 # coding:utf8
 from syncplay import constants
+
 import messages_en
 import messages_ru
 import messages_de

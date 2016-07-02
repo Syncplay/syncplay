@@ -17,6 +17,8 @@ SHOW_TOOLTIPS = True
 WARN_ABOUT_MISSING_STRINGS = False # (If debug mode is enabled)
 FALLBACK_INITIAL_LANGUAGE = "en"
 FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [[u'syncplay.pl:8995 (France)', u'syncplay.pl:8995'],[u'syncplay.pl:8996 (France)', u'syncplay.pl:8996'],[u'syncplay.pl:8997 (France)', u'syncplay.pl:8997'],[u'syncplay.pl:8998 (France)', u'syncplay.pl:8998'],[u'syncplay.pl:8999 (France)', u'syncplay.pl:8999']]
+PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH = 10 # Seconds
+PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD = 5 # Seconds (only triggered if file is paused, e.g. due to EOF)
 
 #Overriden by config
 SHOW_OSD = True  # Sends Syncplay messages to media player OSD
@@ -51,8 +53,9 @@ AUTOPLAY_DELAY = 3.0
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 
 # Options for the File Switch feature:
-FOLDER_SEARCH_TIMEOUT = 60.0 # Secs - How long to wait until searches in folder to update cache are aborted (may be longer than this if hard drive needs to spin up)
-FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 120.0 # Secs - Frequency of updating cache when someone is playing a file not in current cache
+FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 10.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
+FOLDER_SEARCH_TIMEOUT = 3.0 # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)
+FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0 # Secs - Frequency of updating cache when someone is playing a file not in current cache
 
 #Usually there's no need to adjust these
 LAST_PAUSED_DIFF_THRESHOLD = 2
@@ -69,7 +72,7 @@ COMMANDS_AUTH = ['a','auth']
 COMMANDS_TOGGLE = ['t','toggle']
 MPC_MIN_VER = "1.6.4"
 VLC_MIN_VERSION = "2.2.1"
-VLC_INTERFACE_MIN_VERSION = "0.2.8"
+VLC_INTERFACE_MIN_VERSION = "0.2.9"
 VLC_LATENCY_ERROR_THRESHOLD = 2.0
 MPV_UNRESPONSIVE_THRESHOLD = 60.0
 CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
@@ -107,6 +110,8 @@ MPV_ICONPATH = "mpv.png"
 MPC_ICONPATH = "mpc-hc.png"
 MPC64_ICONPATH = "mpc-hc64.png"
 
+MPV_ERROR_MESSAGES_TO_REPEAT = ['[ytdl_hook] Your version of youtube-dl is too old', '[ytdl_hook] youtube-dl failed', 'Failed to recognize file format.']
+
 #Changing these is usually not something you're looking for
 PLAYER_ASK_DELAY = 0.1
 PING_MOVING_AVERAGE_WEIGHT = 0.85
@@ -116,7 +121,10 @@ MPC_RETRY_WAIT_TIME = 0.01
 MPC_MAX_RETRIES = 30
 MPC_PAUSE_TOGGLE_DELAY = 0.05
 MPV_NEWFILE_IGNORE_TIME = 1
-MPV_LOCK_WAIT_TIME = 0.2
+MPV_SENDMESSAGE_COOLDOWN_TIME = 0.05
+MPV_MAX_NEWFILE_COOLDOWN_TIME = 3
+STREAM_ADDITIONAL_IGNORE_TIME = 10
+MPV_LOCK_WAIT_TIME = 0.05
 VLC_OPEN_MAX_WAIT_TIME = 15
 VLC_MIN_PORT = 10000
 VLC_MAX_PORT = 55000
@@ -136,6 +144,7 @@ STYLE_ERRORNOTIFICATION = "color: red;"
 STYLE_DIFFERENTITEM_COLOR = 'red'
 STYLE_NOFILEITEM_COLOR = 'blue'
 STYLE_NOTCONTROLLER_COLOR = 'grey'
+STYLE_UNTRUSTEDITEM_COLOR = 'purple'
 
 USERLIST_GUI_USERNAME_OFFSET = 21 # Pixels
 USERLIST_GUI_USERNAME_COLUMN = 0
@@ -149,6 +158,8 @@ MPV_NEW_VERSION = False
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
 VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
+MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS = ["no-osd set time-pos ", "loadfile "]
+MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS = ["cycle pause"]
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
 VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_]+)(?:\: )?(?P<argument>.*))"
 UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
@@ -176,9 +187,13 @@ FILEITEM_SWITCH_ROLE = 1
 FILEITEM_SWITCH_NO_SWITCH = 0
 FILEITEM_SWITCH_FILE_SWITCH = 1
 FILEITEM_SWITCH_STREAM_SWITCH = 2
+PLAYLISTITEM_CURRENTLYPLAYING_ROLE = 3
 
 SYNCPLAY_UPDATE_URL = u"http://syncplay.pl/checkforupdate?{}" # Params
 SYNCPLAY_DOWNLOAD_URL = "http://syncplay.pl/download/"
 SYNCPLAY_PUBLIC_SERVER_LIST_URL = u"http://syncplay.pl/listpublicservers?{}" # Params
+
+DEFAULT_TRUSTED_DOMAINS = [u"youtube.com",u"youtu.be"]
+TRUSTABLE_WEB_PROTOCOLS = [u"http://www.",u"https://www.",u"http://",u"https://"]
 
 PRIVATE_FILE_FIELDS = ["path"]

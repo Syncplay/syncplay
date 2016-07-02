@@ -88,7 +88,7 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine("get_property {}".format(property_))
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), secondaryOSD=False):
-        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
+        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, self._stripNewlines(message), duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
 
     def setSpeed(self, value):
         self._setProperty('speed', "{:.2f}".format(value))
@@ -105,7 +105,7 @@ class MplayerPlayer(BasePlayer):
         self.setPosition(self._client.getGlobalPosition())
 
     def setPosition(self, value):
-        self._position = value
+        self._position = max(value,0)
         self._setProperty(self.POSITION_QUERY, "{}".format(value))
         time.sleep(0.03)
 
@@ -129,10 +129,17 @@ class MplayerPlayer(BasePlayer):
     def _getPosition(self):
         self._getProperty(self.POSITION_QUERY)
 
+    def _stripNewlines(self, text):
+        text = text.replace("\r", "")
+        text = text.replace("\n", "")
+        return text
+
     def _quoteArg(self, arg):
         arg = arg.replace('\\', '\\\\')
         arg = arg.replace("'", "\\'")
         arg = arg.replace('"', '\\"')
+        arg = arg.replace("\r", "")
+        arg = arg.replace("\n", "")
         return u'"{}"'.format(arg)
 
     def _fileIsLoaded(self):
@@ -142,7 +149,7 @@ class MplayerPlayer(BasePlayer):
         pass
 
     def _storePosition(self, value):
-        self._position = value
+        self._position = max(value,0)
 
     def _storePauseState(self, value):
         self._paused = value
@@ -216,7 +223,7 @@ class MplayerPlayer(BasePlayer):
 
     @staticmethod
     def isValidPlayerPath(path):
-        if "mplayer" in path and MplayerPlayer.getExpandedPath(path):
+        if "mplayer" in path and MplayerPlayer.getExpandedPath(path)  and not "mplayerc.exe" in path: # "mplayerc.exe" is Media Player Classic (not Home Cinema):
             return True
         return False
 
@@ -259,6 +266,10 @@ class MplayerPlayer(BasePlayer):
 
     class __Listener(threading.Thread):
         def __init__(self, playerController, playerPath, filePath, args):
+            self.sendQueue = []
+            self.readyToSend = True
+            self.lastSendTime = None
+            self.lastNotReadyTime = None
             self.__playerController = playerController
             if self.__playerController.getPlayerPathErrors(playerPath,filePath):
                 raise ValueError()
@@ -315,7 +326,70 @@ class MplayerPlayer(BasePlayer):
                 self.__playerController.lineReceived(line)
             self.__playerController.drop()
 
-        def sendLine(self, line):
+        def isReadyForSend(self):
+            self.checkForReadinessOverride()
+            return self.readyToSend
+
+        def setReadyToSend(self, newReadyState):
+            oldState = self.readyToSend
+            self.readyToSend = newReadyState
+            self.lastNotReadyTime = time.time() if newReadyState == False else None
+            if self.readyToSend == True:
+                self.__playerController._client.ui.showDebugMessage("<mpv> Ready to send: True")
+            else:
+                self.__playerController._client.ui.showDebugMessage("<mpv> Ready to send: False")
+            if self.readyToSend == True and oldState == False:
+                self.processSendQueue()
+
+        def checkForReadinessOverride(self):
+            if self.lastNotReadyTime and time.time() - self.lastNotReadyTime > constants.MPV_MAX_NEWFILE_COOLDOWN_TIME:
+                self.setReadyToSend(True)
+
+        def sendLine(self, line, notReadyAfterThis=None):
+            self.checkForReadinessOverride()
+            if self.readyToSend == False and "print_text ANS_pause" in line:
+                self.__playerController._client.ui.showDebugMessage("<mpv> Not ready to get status update, so skipping")
+                return
+            try:
+                if self.sendQueue:
+                    if constants.MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS:
+                        for command in constants.MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS:
+                            if line.startswith(command):
+                                for itemID, deletionCandidate in enumerate(self.sendQueue):
+                                    if deletionCandidate.startswith(command):
+                                        self.__playerController._client.ui.showDebugMessage(u"<mpv> Remove duplicate (supersede): {}".format(self.sendQueue[itemID]))
+                                        self.sendQueue.remove(self.sendQueue[itemID])
+                                        break
+                            break
+                    if constants.MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS:
+                        for command in constants.MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS:
+                            if line == command:
+                                for itemID, deletionCandidate in enumerate(self.sendQueue):
+                                    if deletionCandidate == command:
+                                        self.__playerController._client.ui.showDebugMessage(u"<mpv> Remove duplicate (delete both): {}".format(self.sendQueue[itemID]))
+                                        self.__playerController._client.ui.showDebugMessage(self.sendQueue[itemID])
+                                        return
+            except:
+                self.__playerController._client.ui.showDebugMessage("<mpv> Problem removing duplicates, etc")
+            self.sendQueue.append(line)
+            self.processSendQueue()
+            if notReadyAfterThis:
+                self.setReadyToSend(False)
+
+        def processSendQueue(self):
+            while self.sendQueue and self.readyToSend:
+                if self.lastSendTime and time.time() - self.lastSendTime < constants.MPV_SENDMESSAGE_COOLDOWN_TIME:
+                    self.__playerController._client.ui.showDebugMessage("<mpv> Throttling message send, so sleeping for {}".format(constants.MPV_SENDMESSAGE_COOLDOWN_TIME))
+                    time.sleep(constants.MPV_SENDMESSAGE_COOLDOWN_TIME)
+                try:
+                    lineToSend = self.sendQueue.pop()
+                    if lineToSend:
+                        self.lastSendTime = time.time()
+                        self.actuallySendLine(lineToSend)
+                except IndexError:
+                    pass
+
+        def actuallySendLine(self, line):
             try:
                 if not isinstance(line, unicode):
                     line = line.decode('utf8')

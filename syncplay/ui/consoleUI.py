@@ -22,6 +22,12 @@ class ConsoleUI(threading.Thread):
         
     def drop(self):
         pass
+
+    def setPlaylist(self, newPlaylist, newIndexFilename=None):
+        pass
+
+    def setPlaylistIndexFilename(self, filename):
+        pass
     
     def run(self):
         try:
@@ -75,6 +81,9 @@ class ConsoleUI(threading.Thread):
                     self.showMessage(message, True)
 
     def userListChange(self):
+        pass
+
+    def fileSwitchFoundFiles(self):
         pass
 
     def showMessage(self, message, noTimestamp=False):

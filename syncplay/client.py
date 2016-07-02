@@ -4,8 +4,10 @@ import time
 import re
 import sys
 import ast
+import random
+import threading
 from twisted.internet.protocol import ClientFactory
-from twisted.internet import reactor, task
+from twisted.internet import reactor, task, defer, threads
 from functools import wraps
 from copy import deepcopy
 from syncplay.protocols import SyncClientProtocol
@@ -69,6 +71,7 @@ class SyncplayClient(object):
         self.lastControlPasswordAttempt = None
         self.serverVersion = "0.0.0"
 
+        self.lastRewindTime = None
         self.lastLeftTime = 0
         self.lastPausedOnLeaveTime = None
         self.lastLeftUser = u""
@@ -113,7 +116,12 @@ class SyncplayClient(object):
         self.autoplayTimer = task.LoopingCall(self.autoplayCountdown)
         self.autoplayTimeLeft = constants.AUTOPLAY_DELAY
 
+        self.__playerReady = defer.Deferred()
+
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
+        self.fileSwitch = FileSwitchManager(self)
+        self.playlist = SyncplayPlaylist(self)
+
         if constants.LIST_RELATIVE_CONFIGS and self._config.has_key('loadedRelativePaths') and self._config['loadedRelativePaths']:
             paths = "; ".join(self._config['loadedRelativePaths'])
             self.ui.showMessage(getMessage("relative-config-notification").format(paths), noPlayer=True, noTimestamp=True)
@@ -121,7 +129,7 @@ class SyncplayClient(object):
         if constants.DEBUG_MODE and constants.WARN_ABOUT_MISSING_STRINGS:
             missingStrings = getMissingStrings()
             if missingStrings is not None and missingStrings is not "":
-                self.ui.showDebugMessage("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
+                self.ui.showDebugMessage(u"MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
 
     def initProtocol(self, protocol):
         self._protocol = protocol
@@ -136,6 +144,13 @@ class SyncplayClient(object):
         if not self._player.secondaryOSDSupported:
             constants.OSD_WARNING_MESSAGE_DURATION = constants.NO_SECONDARY_OSD_WARNING_DURATION
         self.scheduleAskPlayer()
+        self.__playerReady.callback(player)
+
+    def addPlayerReadyCallback(self, lambdaToCall):
+        self.__playerReady.addCallback(lambdaToCall)
+
+    def playerIsNotReady(self):
+        return self._player is None
 
     def scheduleAskPlayer(self, when=constants.PLAYER_ASK_DELAY):
         self._askPlayerTimer = task.LoopingCall(self.askPlayer)
@@ -163,40 +178,65 @@ class SyncplayClient(object):
         seeked = _playerDiff > constants.SEEK_THRESHOLD and _globalDiff > constants.SEEK_THRESHOLD
         return pauseChange, seeked
 
+    def rewindFile(self):
+        self.setPosition(-1)
+        self.establishRewindDoubleCheck()
+
+    def establishRewindDoubleCheck(self):
+        reactor.callLater(0.5, self.doubleCheckRewindFile,)
+        reactor.callLater(1, self.doubleCheckRewindFile,)
+        reactor.callLater(1.5, self.doubleCheckRewindFile,)
+
+    def doubleCheckRewindFile(self):
+        if self.getStoredPlayerPosition() > 5:
+            self.setPosition(-1)
+            self.ui.showDebugMessage("Rewinded after double-check")
+
     def updatePlayerStatus(self, paused, position):
         position -= self.getUserOffset()
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
         self._playerPosition = position
         self._playerPaused = paused
-        if pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
-            if not self.userlist.currentUser.canControl():
-                self._player.setPaused(self._globalPaused)
-                self.toggleReady(manuallyInitiated=True)
-                self._playerPaused = self._globalPaused
-                pauseChange = False
-                if self.userlist.currentUser.isReady():
-                    self.ui.showMessage(getMessage("set-as-ready-notification"))
-                else:
-                    self.ui.showMessage(getMessage("set-as-not-ready-notification"))
-            elif not paused and not self.instaplayConditionsMet():
-                paused = True
-                self._player.setPaused(paused)
-                self._playerPaused = paused
-                self.changeReadyState(True, manuallyInitiated=True)
-                pauseChange = False
-                self.ui.showMessage(getMessage("ready-to-unpause-notification"))
-            else:
-                lastPausedDiff = time.time() - self.lastPausedOnLeaveTime if self.lastPausedOnLeaveTime else None
-                if lastPausedDiff is not None and lastPausedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
-                    self.lastPausedOnLeaveTime = None
-                else:
-                    self.changeReadyState(not self.getPlayerPaused(), manuallyInitiated=False)
+        currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
+        if pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
+            and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
+            self.playlist.advancePlaylistCheck()
+        elif pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
+            if currentLength == 0 or currentLength == -1 or\
+                not (not self.playlist.notJustChangedPlaylist() and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD):
+                pauseChange = self._toggleReady(pauseChange, paused)
+
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
             if (pauseChange or seeked) and self._protocol:
                 if seeked:
                     self.playerPositionBeforeLastSeek = self.getGlobalPosition()
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)
+
+    def _toggleReady(self, pauseChange, paused):
+        if not self.userlist.currentUser.canControl():
+            self._player.setPaused(self._globalPaused)
+            self.toggleReady(manuallyInitiated=True)
+            self._playerPaused = self._globalPaused
+            pauseChange = False
+            if self.userlist.currentUser.isReady():
+                self.ui.showMessage(getMessage("set-as-ready-notification"))
+            else:
+                self.ui.showMessage(getMessage("set-as-not-ready-notification"))
+        elif not paused and not self.instaplayConditionsMet():
+            paused = True
+            self._player.setPaused(paused)
+            self._playerPaused = paused
+            self.changeReadyState(True, manuallyInitiated=True)
+            pauseChange = False
+            self.ui.showMessage(getMessage("ready-to-unpause-notification"))
+        else:
+            lastPausedDiff = time.time() - self.lastPausedOnLeaveTime if self.lastPausedOnLeaveTime else None
+            if lastPausedDiff is not None and lastPausedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
+                self.lastPausedOnLeaveTime = None
+            else:
+                self.changeReadyState(not self.getPlayerPaused(), manuallyInitiated=False)
+        return pauseChange
 
     def getLocalState(self):
         paused = self.getPlayerPaused()
@@ -307,7 +347,8 @@ class SyncplayClient(object):
                     self.behindFirstDetected = time.time()
                 else:
                     durationBehind = time.time() - self.behindFirstDetected
-                    if (durationBehind > (self._config['fastforwardThreshold']-constants.FASTFORWARD_BEHIND_THRESHOLD)) and (diff < (self._config['fastforwardThreshold'] * -1)):
+                    if (durationBehind > (self._config['fastforwardThreshold']-constants.FASTFORWARD_BEHIND_THRESHOLD))\
+                            and (diff < (self._config['fastforwardThreshold'] * -1)):
                         madeChangeOnPlayer = self._fastforwardPlayerDueToTimeDifference(position, setBy)
                         self.behindFirstDetected = time.time() + constants.FASTFORWARD_RESET_THRESHOLD
             else:
@@ -368,6 +409,9 @@ class SyncplayClient(object):
             position += diff
         return position
 
+    def getStoredPlayerPosition(self):
+        return self._playerPosition if self._playerPosition is not None else None
+
     def getPlayerPaused(self):
         if not self._lastPlayerUpdate:
             if self._lastGlobalUpdate:
@@ -390,6 +434,7 @@ class SyncplayClient(object):
         return self._globalPaused
 
     def updateFile(self, filename, duration, path):
+        newPath = u""
         if utils.isURL(path):
             filename = path
 
@@ -403,9 +448,54 @@ class SyncplayClient(object):
                 size = os.path.getsize(path)
             except:
                 size = 0
+        if not utils.isURL(path) and os.path.exists(path):
+            self.fileSwitch.notifyUserIfFileNotInMediaDirectory(filename, path)
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
+        self.playlist.changeToPlaylistIndexFromFilename(filename)
+
+    def setTrustedDomains(self, newTrustedDomains):
+        from syncplay.ui.ConfigurationGetter import ConfigurationGetter
+        ConfigurationGetter().setConfigOption("trustedDomains", newTrustedDomains)
+        self._config['trustedDomains'] = newTrustedDomains
+        self.fileSwitchFoundFiles()
+
+    def isURITrusted(self, URIToTest):
+        for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:
+            if URIToTest.startswith(trustedProtocol):
+                if self._config['onlySwitchToTrustedDomains']:
+                    if self._config['trustedDomains']:
+                        for trustedDomain in self._config['trustedDomains']:
+                            trustableURI = ''.join([trustedProtocol,trustedDomain,u"/"])
+                            if URIToTest.startswith(trustableURI):
+                                return True
+                    return False
+                else:
+                    return True
+        return False
+
+    def openFile(self, filePath, resetPosition=False):
+        self._player.openFile(filePath, resetPosition)
+        if resetPosition:
+            self.establishRewindDoubleCheck()
+            self.lastRewindTime = time.time()
+
+    def fileSwitchFoundFiles(self):
+        self.ui.fileSwitchFoundFiles()
+        self.playlist.loadCurrentPlaylistIndex()
+
+    def setPlaylistIndex(self, index):
+        self._protocol.setPlaylistIndex(index)
+
+    def changeToPlaylistIndex(self, *args, **kwargs):
+        self.playlist.changeToPlaylistIndex(*args, **kwargs)
+
+    def loopSingleFiles(self):
+        return self._config["loopSingleFiles"]
+
+    def isPlaylistLoopingEnabled(self):
+        return self._config["loopAtEndOfPlaylist"]
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
@@ -442,8 +532,6 @@ class SyncplayClient(object):
         if username and username <> "":
             self.userlist.currentUser.username = username
         else:
-            import random
-            random.seed()
             random_number = random.randrange(1000, 9999)
             self.userlist.currentUser.username = "Anonymous" + str(random_number) # Not localised as this would give away locale
 
@@ -469,6 +557,12 @@ class SyncplayClient(object):
             if storedRoomPassword:
                 self.identifyAsController(storedRoomPassword)
 
+    def isConnectedAndInARoom(self):
+        return self._protocol and self._protocol.logged and self.userlist.currentUser.room
+
+    def sharedPlaylistIsEnabled(self):
+        return self._config['sharedPlaylistEnabled']
+
     def connected(self):
         readyState = self._config['readyAtStart'] if self.userlist.currentUser.isReady() is None else self.userlist.currentUser.isReady()
         self._protocol.setReady(readyState, manuallyInitiated=False)
@@ -493,6 +587,9 @@ class SyncplayClient(object):
     def setPosition(self, position):
         if self._lastPlayerUpdate:
             self._lastPlayerUpdate = time.time()
+        if self.lastRewindTime is not None and abs(time.time() - self.lastRewindTime) < 1.0 and position > 5:
+            self.ui.showDebugMessage("Ignored seek to {} after rewind".format(position))
+            return
         position += self.getUserOffset()
         if self._player and self.userlist.currentUser.file:
             if position < 0:
@@ -550,10 +647,18 @@ class SyncplayClient(object):
             return wrapper
         return requireMinVersionDecorator
 
+    def changePlaylistEnabledState(self, newState):
+        oldState = self.sharedPlaylistIsEnabled()
+        from syncplay.ui.ConfigurationGetter import ConfigurationGetter
+        ConfigurationGetter().setConfigOption("sharedPlaylistEnabled", newState)
+        self._config["sharedPlaylistEnabled"] = newState
+        if oldState == False and newState == True:
+            self.playlist.loadCurrentPlaylistIndex()
+
     def changeAutoplayState(self, newState):
         self.autoPlay = newState
         self.autoplayCheck()
-    
+
     def changeAutoPlayThrehsold(self, newThreshold):
         oldAutoplayConditionsMet = self.autoplayConditionsMet()
         self.autoPlayThreshold = newThreshold
@@ -576,13 +681,16 @@ class SyncplayClient(object):
             return True
         elif unpauseAction == constants.UNPAUSE_IFOTHERSREADY_MODE and self.userlist.areAllOtherUsersInRoomReady():
             return True
-        elif unpauseAction == constants.UNPAUSE_IFMINUSERSREADY_MODE and self.userlist.areAllOtherUsersInRoomReady() and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold:
+        elif unpauseAction == constants.UNPAUSE_IFMINUSERSREADY_MODE and self.userlist.areAllOtherUsersInRoomReady()\
+                and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold:
             return True
         else:
             return False
 
     def autoplayConditionsMet(self):
-        return self._playerPaused and self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported() and self.userlist.areAllUsersInRoomReady() and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold
+        return self._playerPaused and self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported()\
+               and self.userlist.areAllUsersInRoomReady(requireSameFilenames=self._config["autoplayRequireSameFilenames"])\
+               and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold
 
     def autoplayTimerIsRunning(self):
         return self.autoplayTimer.running
@@ -601,7 +709,9 @@ class SyncplayClient(object):
         if not self.autoplayConditionsMet():
             self.stopAutoplayCountdown()
             return
-        countdownMessage = u"{}{}{}".format(getMessage("all-users-ready").format(self.userlist.readyUserCount()),self._player.osdMessageSeparator, getMessage("autoplaying-notification").format(int(self.autoplayTimeLeft)))
+        allReadyMessage = getMessage("all-users-ready").format(self.userlist.readyUserCount())
+        autoplayingMessage = getMessage("autoplaying-notification").format(int(self.autoplayTimeLeft))
+        countdownMessage = u"{}{}{}".format(allReadyMessage,self._player.osdMessageSeparator, autoplayingMessage)
         self.ui.showOSDMessage(countdownMessage, 1, secondaryOSD=True)
         if self.autoplayTimeLeft <= 0:
             self.setPaused(False)
@@ -692,9 +802,11 @@ class SyncplayClient(object):
             response = json.loads(response)
             publicServers = None
             if response["public-servers"]:
-                publicServers = response["public-servers"].replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","")
+                publicServers = response["public-servers"].\
+                    replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","")
                 publicServers = ast.literal_eval(publicServers)
-            return response["version-status"], response["version-message"] if response.has_key("version-message") else None, response["version-url"] if response.has_key("version-url") else None, publicServers
+            return response["version-status"], response["version-message"] if response.has_key("version-message")\
+                else None, response["version-url"] if response.has_key("version-url") else None, publicServers
         except:
             return "failed", getMessage("update-check-failed-notification").format(syncplay.version), constants.SYNCPLAY_DOWNLOAD_URL, None
 
@@ -741,7 +853,7 @@ class SyncplayClient(object):
 
         def _checkIfYouAreOnlyUserInRoomWhoSupportsReadiness(self):
             self._userlist._onlyUserInRoomWhoSupportsReadiness()
-        
+
         def _checkIfYouReAloneInTheRoom(self, OSDOnly):
             if self._userlist.areYouAloneInRoom():
                 self._ui.showOSDMessage(getMessage("alone-in-the-room"), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True)
@@ -779,9 +891,11 @@ class SyncplayClient(object):
                 fileDifferencesMessage = getMessage("room-file-differences").format(fileDifferencesForRoom)
                 if self._userlist.currentUser.canControl() and self._userlist.isReadinessSupported():
                     if self._userlist.areAllUsersInRoomReady():
-                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("all-users-ready").format(self._userlist.readyUserCount()))
+                        allReadyMessage = getMessage("all-users-ready").format(self._userlist.readyUserCount())
+                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, allReadyMessage)
                     else:
-                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady()))
+                        notAllReadyMessage = getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady())
+                        osdMessage = u"{}{}{}".format(fileDifferencesMessage, self._client._player.osdMessageSeparator, notAllReadyMessage)
                 else:
                     osdMessage = fileDifferencesMessage
             elif self._userlist.isReadinessSupported():
@@ -845,9 +959,9 @@ class SyncplayUser(object):
 
     def __repr__(self, *args, **kwargs):
         if self.file:
-            return "{}: {} ({}, {})".format(self.username, self.file['name'], self.file['duration'], self.file['size'])
+            return u"{}: {} ({}, {})".format(self.username, self.file['name'], self.file['duration'], self.file['size'])
         else:
-            return "{}".format(self.username)
+            return u"{}".format(self.username)
 
     def setControllerStatus(self, isController):
         self._controller = isController
@@ -1011,14 +1125,20 @@ class SyncplayUserlist(object):
             user = self._users[username]
             user.setControllerStatus(True)
 
-    def areAllUsersInRoomReady(self):
+    def areAllUsersInRoomReady(self, requireSameFilenames=False):
         if not self.currentUser.canControl():
             return True
         if not self.currentUser.isReady():
             return False
         for user in self._users.itervalues():
-            if user.room == self.currentUser.room and user.isReadyWithFile() == False:
-                return False
+            if user.room == self.currentUser.room:
+                if user.isReadyWithFile() == False:
+                    return False
+                elif requireSameFilenames and\
+                        (self.currentUser.file is None
+                         or user.file is None
+                         or not utils.sameFilename(self.currentUser.file['name'], user.file['name'])):
+                    return False
         return True
 
     def areAllOtherUsersInRoomReady(self):
@@ -1155,6 +1275,15 @@ class UiManager(object):
         self.lastSecondaryOSDEndTime = None
         self.lastError = ""
 
+    def setPlaylist(self, newPlaylist, newIndexFilename=None):
+        self.__ui.setPlaylist(newPlaylist, newIndexFilename)
+
+    def setPlaylistIndexFilename(self, filename):
+        self.__ui.setPlaylistIndexFilename(filename)
+
+    def fileSwitchFoundFiles(self):
+        self.__ui.fileSwitchFoundFiles()
+
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():
             sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip()))
@@ -1215,4 +1344,422 @@ class UiManager(object):
     def drop(self):
         self.__ui.drop()
 
+class SyncplayPlaylist():
+    def __init__(self, client):
+        self._client = client
+        self._ui = self._client.ui
+        self._previousPlaylist = None
+        self._previousPlaylistRoom = None
+        self._playlist = []
+        self._playlistIndex = None
+        self.addedChangeListCallback = False
+        self._lastPlaylistIndexChange = time.time()
 
+    def needsSharedPlaylistsEnabled(f):  # @NoSelf
+        @wraps(f)
+        def wrapper(self, *args, **kwds):
+            if not self._client.sharedPlaylistIsEnabled():
+                self._ui.showDebugMessage(u"Tried to use shared playlists when it was disabled!")
+                return
+            return f(self, *args, **kwds)
+        return wrapper
+
+    def changeToPlaylistIndexFromFilename(self, filename):
+        try:
+            index = self._playlist.index(filename)
+            if index <> self._playlistIndex:
+                self.changeToPlaylistIndex(index)
+        except ValueError:
+            pass
+
+    def changeToPlaylistIndex(self, index, username = None):
+        if self._playlist is None or len(self._playlist) == 0:
+            return
+        if index is None:
+            return
+        if username is None and not self._client.sharedPlaylistIsEnabled():
+            return
+        self._lastPlaylistIndexChange = time.time()
+        if self._client.playerIsNotReady():
+            if not self.addedChangeListCallback:
+                self.addedChangeListCallback = True
+                self._client.addPlayerReadyCallback(lambda x: self.changeToPlaylistIndex(index, username))
+            return
+        try:
+            filename = self._playlist[index]
+            self._ui.setPlaylistIndexFilename(filename)
+            if not self._client.sharedPlaylistIsEnabled():
+                self._playlistIndex = index
+            if username is not None and self._client.userlist.currentUser.file and filename == self._client.userlist.currentUser.file['name']:
+                return
+        except IndexError:
+            pass
+
+        self._playlistIndex = index
+        if username is None:
+            if self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
+                self._client.setPlaylistIndex(index)
+        else:
+            self._ui.showMessage(getMessage("playlist-selection-changed-notification").format(username))
+            self.switchToNewPlaylistIndex(index)
+
+    @needsSharedPlaylistsEnabled
+    def switchToNewPlaylistIndex(self, index, resetPosition=False):
+        self._lastPlaylistIndexChange = time.time()
+        if self._client.playerIsNotReady():
+            self._client.addPlayerReadyCallback(lambda x: self.switchToNewPlaylistIndex(index, resetPosition))
+            return
+
+        try:
+            if index is None:
+                self._ui.showDebugMessage(u"Cannot switch to None index in playlist")
+                return
+            filename = self._playlist[index]
+            # TODO: Handle isse with index being None
+            if utils.isURL(filename):
+                if self._client.isURITrusted(filename):
+                    self._client.openFile(filename, resetPosition=resetPosition)
+                else:
+                    self._ui.showErrorMessage(getMessage("cannot-add-unsafe-path-error").format(filename))
+                return
+            else:
+                path = self._client.fileSwitch.findFilepath(filename, highPriority=True)
+            if path:
+                self._client.openFile(path, resetPosition)
+            else:
+                self._ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
+                return
+        except IndexError:
+            self._ui.showDebugMessage("Could not change playlist index due to IndexError")
+
+    def _getValidIndexFromNewPlaylist(self, newPlaylist=None):
+        if self._playlistIndex is None or not newPlaylist or len(newPlaylist) <= 1:
+            return 0
+
+        i = self._playlistIndex
+        while i <= len(self._playlist):
+            try:
+                filename = self._playlist[i]
+                validIndex = newPlaylist.index(filename)
+                return validIndex
+            except:
+                i += 1
+
+        i = self._playlistIndex
+        while i > 0:
+            try:
+                filename = self._playlist[i]
+                validIndex = newPlaylist.index(filename)
+                return validIndex+1 if validIndex < len(newPlaylist)-1 else validIndex
+            except:
+                i -= 1
+        return 0
+
+    def _getFilenameFromIndexInGivenPlaylist(self, _playlist, _index):
+        if not _index or not _playlist:
+            return None
+        filename = _playlist[_index] if len(_playlist) > _index else None
+        return filename
+
+    def changePlaylist(self, files, username = None, resetIndex=False):
+        if self._playlist == files:
+            if self._playlistIndex <> 0 and resetIndex:
+                self.changeToPlaylistIndex(0)
+            return
+
+        if resetIndex:
+            newIndex = 0
+            filename = files[0] if files and len(files) > 0 else None
+        else:
+            newIndex = self._getValidIndexFromNewPlaylist(files)
+            filename = self._getFilenameFromIndexInGivenPlaylist(files, newIndex)
+
+        self._updateUndoPlaylistBuffer(newPlaylist=files, newRoom=self._client.userlist.currentUser.room)
+        self._playlist = files
+
+        if username is None:
+            if self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
+                self._client._protocol.setPlaylist(files)
+                self.changeToPlaylistIndex(newIndex)
+                self._ui.setPlaylist(self._playlist, filename)
+                self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(self._client.getUsername()))
+        else:
+            self._ui.setPlaylist(self._playlist)
+            self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
+
+    @needsSharedPlaylistsEnabled
+    def undoPlaylistChange(self):
+        if self.canUndoPlaylist(self._playlist):
+            newPlaylist = self._getPreviousPlaylist()
+            self.changePlaylist(newPlaylist, username=None)
+
+    @needsSharedPlaylistsEnabled
+    def shufflePlaylist(self):
+        if self._playlist and len(self._playlist) > 0:
+            shuffledPlaylist = deepcopy(self._playlist)
+            random.shuffle(shuffledPlaylist)
+            self.changePlaylist(shuffledPlaylist, username=None, resetIndex=True)
+
+    def canUndoPlaylist(self, currentPlaylist):
+        return self._previousPlaylist is not None and currentPlaylist <> self._previousPlaylist
+
+    def loadCurrentPlaylistIndex(self):
+        if self._notPlayingCurrentIndex():
+            self.switchToNewPlaylistIndex(self._playlistIndex)
+
+    @needsSharedPlaylistsEnabled
+    def advancePlaylistCheck(self):
+        position = self._client.getStoredPlayerPosition()
+        currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
+        if currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
+        and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD\
+            and self.notJustChangedPlaylist():
+                self.loadNextFileInPlaylist()
+
+    def notJustChangedPlaylist(self):
+        secondsSinceLastChange = time.time() - self._lastPlaylistIndexChange
+        return secondsSinceLastChange > constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
+
+    @needsSharedPlaylistsEnabled
+    def loadNextFileInPlaylist(self):
+        if self._notPlayingCurrentIndex():
+            return
+
+        if len(self._playlist) == 1 and self._client.loopSingleFiles():
+            self._client.rewindFile()
+            self._client.setPaused(False)
+            reactor.callLater(0.5, self._client.setPaused, False,)
+
+        elif self._thereIsNextPlaylistIndex():
+            self.switchToNewPlaylistIndex(self._nextPlaylistIndex(), resetPosition=True)
+
+    def _updateUndoPlaylistBuffer(self, newPlaylist, newRoom):
+        if self._playlistBufferIsFromOldRoom(newRoom):
+            self._movePlaylistBufferToNewRoom(newRoom)
+        elif self._playlistBufferNeedsUpdating(newPlaylist):
+            self._previousPlaylist = self._playlist
+
+    def _getPreviousPlaylist(self):
+        return self._previousPlaylist
+
+    def _notPlayingCurrentIndex(self):
+        if self._playlistIndex is None or self._playlist is None or len(self._playlist) <= self._playlistIndex:
+            self._ui.showDebugMessage(u"Not playing current index - Index none or length issue")
+            return True
+        currentPlaylistFilename = self._playlist[self._playlistIndex]
+        if self._client.userlist.currentUser.file and currentPlaylistFilename == self._client.userlist.currentUser.file['name']:
+            return False
+        else:
+            self._ui.showDebugMessage(u"Not playing current index - Filename mismatch or no file")
+            return True
+
+    def _thereIsNextPlaylistIndex(self):
+        if self._playlistIndex is None:
+            return False
+        elif len(self._playlist) == 1 and not self._client.loopSingleFiles():
+            return False
+        elif self._playlistIsAtEnd():
+            return self._client.isPlaylistLoopingEnabled()
+        else:
+            return True
+
+    def _nextPlaylistIndex(self):
+        if self._playlistIsAtEnd():
+            return 0
+        else:
+            return self._playlistIndex+1
+
+    def _playlistIsAtEnd(self):
+        return len(self._playlist) <= self._playlistIndex+1
+
+    def _playlistBufferIsFromOldRoom(self, newRoom):
+        return self._previousPlaylistRoom <> newRoom
+
+    def _movePlaylistBufferToNewRoom(self, currentRoom):
+        self._previousPlaylist = None
+        self._previousPlaylistRoom = currentRoom
+
+    def _playlistBufferNeedsUpdating(self, newPlaylist):
+        return self._previousPlaylist <> self._playlist and self._playlist <> newPlaylist
+
+class FileSwitchManager(object):
+    def __init__(self, client):
+        self._client = client
+        self.mediaFilesCache = {}
+        self.filenameWatchlist = []
+        self.currentDirectory = None
+        self.mediaDirectories = None
+        self.lock = threading.Lock()
+        self.folderSearchEnabled = True
+        self.directorySearchError = None
+        self.newInfo = False
+        self.currentlyUpdating = False
+        self.newWatchlist = []
+        self.fileSwitchTimer = task.LoopingCall(self.updateInfo)
+        self.fileSwitchTimer.start(constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL, True)
+        self.mediaDirectoriesNotFound = []
+
+    def setClient(self, newClient):
+        self.client = newClient
+
+    def setCurrentDirectory(self, curDir):
+        self.currentDirectory = curDir
+
+    def changeMediaDirectories(self, mediaDirs):
+        from syncplay.ui.ConfigurationGetter import ConfigurationGetter
+        ConfigurationGetter().setConfigOption("mediaSearchDirectories", mediaDirs)
+        self._client._config["mediaSearchDirectories"] = mediaDirs
+        self._client.ui.showMessage(getMessage("media-directory-list-updated-notification"))
+        self.mediaDirectoriesNotFound = []
+        self.folderSearchEnabled = True
+        self.setMediaDirectories(mediaDirs)
+        if mediaDirs == "":
+            self._client.ui.showErrorMessage(getMessage("no-media-directories-error"))
+            self.mediaFilesCache = {}
+            self.newInfo = True
+            self.checkForFileSwitchUpdate()
+
+    def setMediaDirectories(self, mediaDirs):
+        self.mediaDirectories = mediaDirs
+        self.updateInfo()
+
+    def checkForFileSwitchUpdate(self):
+        if self.newInfo:
+            self.newInfo = False
+            self.infoUpdated()
+        if self.directorySearchError:
+            self._client.ui.showErrorMessage(self.directorySearchError)
+            self.directorySearchError = None
+
+    def updateInfo(self):
+        if not self.currentlyUpdating and self.mediaDirectories:
+            threads.deferToThread(self._updateInfoThread).addCallback(lambda x: self.checkForFileSwitchUpdate())
+
+    def setFilenameWatchlist(self, unfoundFilenames):
+        self.filenameWatchlist = unfoundFilenames
+
+    def _updateInfoThread(self):
+        with self.lock:
+            try:
+                self.currentlyUpdating = True
+                dirsToSearch = self.mediaDirectories
+
+                if dirsToSearch:
+                    # Spin up hard drives to prevent premature timeout
+                    randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+u".txt"
+                    for directory in dirsToSearch:
+                        if not os.path.isdir(directory):
+                            self.directorySearchError = getMessage("cannot-find-directory-error").format(directory)
+
+                        startTime = time.time()
+                        if os.path.isfile(os.path.join(directory, randomFilename)):
+                            randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+u".txt"
+                        if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
+                            self.folderSearchEnabled = False
+                            self.directorySearchError = getMessage("folder-search-first-file-timeout-error").format(directory)
+                            return
+
+                    # Actual directory search
+                    newMediaFilesCache = {}
+                    startTime = time.time()
+                    for directory in dirsToSearch:
+                        for root, dirs, files in os.walk(directory):
+                            newMediaFilesCache[root] = files
+                            if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
+                                self.directorySearchError = getMessage("folder-search-timeout-error").format(directory)
+                                self.folderSearchEnabled = False
+                                return
+
+                    if self.mediaFilesCache <> newMediaFilesCache:
+                        self.mediaFilesCache = newMediaFilesCache
+                        self.newInfo = True
+            finally:
+                self.currentlyUpdating = False
+
+    def infoUpdated(self):
+        self._client.fileSwitchFoundFiles()
+
+    def findFilepath(self, filename, highPriority=False):
+        if filename is None:
+            return
+
+        if self.mediaFilesCache is not None:
+            for directory in self.mediaFilesCache:
+                files = self.mediaFilesCache[directory]
+                if len(files) > 0 and filename in files:
+                    filepath = os.path.join(directory, filename)
+                    if os.path.isfile(filepath):
+                        return filepath
+
+        if highPriority and self.folderSearchEnabled:
+            directoryList = self.mediaDirectories
+            # Spin up hard drives to prevent premature timeout
+            randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+u".txt"
+            for directory in directoryList:
+                startTime = time.time()
+                if os.path.isfile(os.path.join(directory, randomFilename)):
+                    randomFilename = u"RandomFile"+unicode(random.randrange(10000, 99999))+u".txt"
+                if not self.folderSearchEnabled:
+                    return
+                if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
+                    return
+
+            startTime = time.time()
+            if filename and directoryList:
+                for directory in directoryList:
+                    for root, dirs, files in os.walk(directory):
+                        if filename in files:
+                            return os.path.join(root,filename)
+                        if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
+                            self.folderSearchEnabled = False
+                            self.directorySearchError = getMessage("folder-search-timeout-error").format(directory)
+                            return None
+            return None
+
+    def areWatchedFilenamesInCache(self):
+        if self.filenameWatchlist is not None:
+            for filename in self.filenameWatchlist:
+                if self.isFilenameInCache(filename):
+                    return True
+
+    def isFilenameInCache(self, filename):
+        if filename is not None and self.mediaFilesCache is not None:
+            for directory in self.mediaFilesCache:
+                files = self.mediaFilesCache[directory]
+                if filename in files:
+                    return True
+
+    def getDirectoryOfFilenameInCache(self, filename):
+        if filename is not None and self.mediaFilesCache is not None:
+            for directory in self.mediaFilesCache:
+                files = self.mediaFilesCache[directory]
+                if filename in files:
+                    return directory
+        return None
+
+    def isDirectoryInList(self, directoryToFind, folderList):
+        if directoryToFind and folderList:
+            normedDirectoryToFind = os.path.normcase(os.path.normpath(directoryToFind))
+            for listedFolder in folderList:
+                normedListedFolder = os.path.normcase(os.path.normpath(listedFolder))
+                if normedDirectoryToFind.startswith(normedListedFolder):
+                    return True
+            return False
+
+    def notifyUserIfFileNotInMediaDirectory(self, filenameToFind, path):
+        directoryToFind = os.path.dirname(path)
+        if directoryToFind in self.mediaDirectoriesNotFound:
+            return
+        if self.mediaDirectories is not None and self.mediaFilesCache is not None:
+            if directoryToFind in self.mediaFilesCache:
+                return
+            for directory in self.mediaFilesCache:
+                files = self.mediaFilesCache[directory]
+                if filenameToFind in files:
+                    return
+                if directoryToFind in self.mediaFilesCache:
+                    return
+        if self.isDirectoryInList(directoryToFind, self.mediaDirectories):
+            return
+        self._client.ui.showErrorMessage(getMessage("added-file-not-in-media-directory-error").format(directoryToFind))
+        self.mediaDirectoriesNotFound.append(directoryToFind)

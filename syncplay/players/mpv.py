@@ -3,6 +3,7 @@ import subprocess
 from syncplay.players.mplayer import MplayerPlayer
 from syncplay.messages import getMessage
 from syncplay import constants
+from syncplay.utils import isURL
 import os, sys, time
 
 class MpvPlayer(MplayerPlayer):
@@ -75,14 +76,14 @@ class OldMpvPlayer(MpvPlayer):
     OSD_QUERY = 'show_text'
 
     def _setProperty(self, property_, value):
-        self._listener.sendLine("no-osd set {} {}".format(property_, value))
+        self._listener.sendLine(u"no-osd set {} {}".format(property_, value))
 
     def setPaused(self, value):
         if self._paused <> value:
             self._paused = not self._paused
             self._listener.sendLine('cycle pause')
 
-    def mpvVersionErrorCheck(self, line):
+    def mpvErrorCheck(self, line):
         if "Error parsing option" in line or "Error parsing commandline option" in line:
             self.quitReason = getMessage("mpv-version-error")
 
@@ -90,11 +91,11 @@ class OldMpvPlayer(MpvPlayer):
             self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("mpv-version-error"), True)
             self.drop()
 
-        elif "[ytdl_hook] Your version of youtube-dl is too old" in line:
+        if constants and any(errormsg in line for errormsg in constants.MPV_ERROR_MESSAGES_TO_REPEAT):
             self._client.ui.showErrorMessage(line)
 
     def _handleUnknownLine(self, line):
-        self.mpvVersionErrorCheck(line)
+        self.mpvErrorCheck(line)
         if "Playing: " in line:
             newpath = line[9:]
             oldpath = self._filepath
@@ -129,7 +130,12 @@ class NewMpvPlayer(OldMpvPlayer):
 
         if self.lastMPVPositionUpdate is None:
             return self._client.getGlobalPosition()
+
+        if self._recentlyReset:
+            return self._position
+
         diff = time.time() - self.lastMPVPositionUpdate
+
         if diff > constants.MPV_UNRESPONSIVE_THRESHOLD:
             self.reactor.callFromThread(self._client.ui.showErrorMessage, getMessage("mpv-unresponsive-error").format(int(diff)), True)
             self.drop()
@@ -144,7 +150,7 @@ class NewMpvPlayer(OldMpvPlayer):
         if self._recentlyReset():
             self._position = 0
         elif self._fileIsLoaded():
-            self._position = value
+            self._position = max(value,0)
         else:
             self._position = self._client.getGlobalPosition()
 
@@ -157,11 +163,17 @@ class NewMpvPlayer(OldMpvPlayer):
     def askForStatus(self):
         self._positionAsk.clear()
         self._pausedAsk.clear()
-        self._getPaused()
-        self._getPosition()
+        if not self._listener.isReadyForSend:
+            self._client.ui.showDebugMessage("mpv not ready for update")
+            return
+
+        self._getPausedAndPosition()
         self._positionAsk.wait(constants.MPV_LOCK_WAIT_TIME)
         self._pausedAsk.wait(constants.MPV_LOCK_WAIT_TIME)
         self._client.updatePlayerStatus(self._paused if self.fileLoaded else self._client.getGlobalPaused(), self.getCalculatedPosition())
+
+    def _getPausedAndPosition(self):
+        self._listener.sendLine(u"print_text ANS_pause=${pause}\r\nprint_text ANS_time-pos=${=time-pos}")
 
     def _preparePlayer(self):
         if self.delayedFilePath:
@@ -175,7 +187,7 @@ class NewMpvPlayer(OldMpvPlayer):
 
     def _loadFile(self, filePath):
         self._clearFileLoaded()
-        self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
+        self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)), notReadyAfterThis=True)
 
     def setPosition(self, value):
         super(self.__class__, self).setPosition(value)
@@ -184,19 +196,29 @@ class NewMpvPlayer(OldMpvPlayer):
     def openFile(self, filePath, resetPosition=False):
         if resetPosition:
             self.lastResetTime = time.time()
+            if isURL(filePath):
+                self.lastResetTime += constants.STREAM_ADDITIONAL_IGNORE_TIME
         self._loadFile(filePath)
         if self._paused != self._client.getGlobalPaused():
             self.setPaused(self._client.getGlobalPaused())
-        self.setPosition(self._client.getGlobalPosition())
+        if resetPosition == False:
+            self.setPosition(self._client.getGlobalPosition())
+        else:
+            self._storePosition(0)
 
     def _handleUnknownLine(self, line):
-        self.mpvVersionErrorCheck(line)
+        self.mpvErrorCheck(line)
 
         if line == "<SyncplayUpdateFile>" or "Playing:" in line:
+            self._listener.setReadyToSend(False)
             self._clearFileLoaded()
 
         elif line == "</SyncplayUpdateFile>":
             self._onFileUpdate()
+            self._listener.setReadyToSend(True)
+
+        elif "Failed" in line or "failed" in line or "No video or audio streams selected" in line or "error" in line:
+            self._listener.setReadyToSend(True)
 
     def _recentlyReset(self):
         if not self.lastResetTime:

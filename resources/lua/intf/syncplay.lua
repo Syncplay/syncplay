@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb
  Project: http://syncplay.pl/
- Version: 0.2.8
+ Version: 0.2.9
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -84,7 +84,7 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 --]==========================================================================]
 
-local connectorversion = "0.2.8"
+local connectorversion = "0.2.9"
 local vlcversion = vlc.misc.version()
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
 local loopsleepduration = 2500 -- Pause for every event loop (uses microseconds)
@@ -463,7 +463,9 @@ function load_file (filepath)
     -- [Used by load-file command]
 
     local uri = vlc.strings.make_uri(filepath)
-    vlc.playlist.add({{path=uri}})
+    vlc.playlist.clear()
+    vlc.playlist.enqueue({{path=uri}})
+    vlc.playlist.next()
     return "load-file-attempted\n"
 end
 

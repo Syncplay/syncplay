@@ -34,6 +34,11 @@ class ConfigurationGetter(object):
                         "playerPath": None,
                         "perPlayerArguments": None,
                         "mediaSearchDirectories": None,
+                        "sharedPlaylistEnabled": True,
+                        "loopAtEndOfPlaylist": False,
+                        "loopSingleFiles" : False,
+                        "onlySwitchToTrustedDomains": True,
+                        "trustedDomains": constants.DEFAULT_TRUSTED_DOMAINS,
                         "file": None,
                         "playerArgs": [],
                         "playerClass": None,
@@ -51,6 +56,7 @@ class ConfigurationGetter(object):
                         "unpauseAction": constants.UNPAUSE_IFOTHERSREADY_MODE,
                         "autoplayInitialState" : None,
                         "autoplayMinUsers" : -1,
+                        "autoplayRequireSameFilenames": True,
                         "clearGUIData": False,
                         "language" : "",
                         "checkForUpdatesAutomatically" : None,
@@ -87,6 +93,7 @@ class ConfigurationGetter(object):
                          "dontSlowDownWithMe",
                          "pauseOnLeave",
                          "readyAtStart",
+                         "autoplayRequireSameFilenames",
                          "clearGUIData",
                          "rewindOnDesync",
                          "slowOnDesync",
@@ -100,7 +107,11 @@ class ConfigurationGetter(object):
                          "showDifferentRoomOSD",
                          "showSameRoomOSD",
                          "showNonControllerOSD",
-                         "showDurationNotification"
+                         "showDurationNotification",
+                         "sharedPlaylistEnabled",
+                         "loopAtEndOfPlaylist",
+                         "loopSingleFiles",
+                         "onlySwitchToTrustedDomains"
                         ]
         self._tristate = [
             "checkForUpdatesAutomatically",
@@ -110,6 +121,7 @@ class ConfigurationGetter(object):
         self._serialised = [
             "perPlayerArguments",
             "mediaSearchDirectories",
+            "trustedDomains",
         ]
 
         self._numeric = [
@@ -121,9 +133,23 @@ class ConfigurationGetter(object):
 
         self._iniStructure = {
                         "server_data": ["host", "port", "password"],
-                        "client_settings": ["name", "room", "playerPath", "perPlayerArguments", "slowdownThreshold", "rewindThreshold", "fastforwardThreshold", "slowOnDesync", "rewindOnDesync", "fastforwardOnDesync", "dontSlowDownWithMe", "forceGuiPrompt", "filenamePrivacyMode", "filesizePrivacyMode", "unpauseAction", "pauseOnLeave", "readyAtStart", "autoplayMinUsers", "autoplayInitialState", "mediaSearchDirectories"],
-                        "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD", "showDifferentRoomOSD", "showSameRoomOSD", "showNonControllerOSD", "showDurationNotification"],
-                        "general": ["language", "checkForUpdatesAutomatically", "lastCheckedForUpdates"]
+                        "client_settings": ["name", "room", "playerPath",
+                            "perPlayerArguments", "slowdownThreshold",
+                            "rewindThreshold", "fastforwardThreshold",
+                            "slowOnDesync", "rewindOnDesync",
+                            "fastforwardOnDesync", "dontSlowDownWithMe",
+                            "forceGuiPrompt", "filenamePrivacyMode",
+                            "filesizePrivacyMode", "unpauseAction",
+                            "pauseOnLeave", "readyAtStart", "autoplayMinUsers",
+                            "autoplayInitialState", "mediaSearchDirectories",
+                            "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
+                            "loopSingleFiles",
+                            "onlySwitchToTrustedDomains", "trustedDomains"],
+                        "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD",
+                            "showDifferentRoomOSD", "showSameRoomOSD",
+                            "showNonControllerOSD", "showDurationNotification"],
+                        "general": ["language", "checkForUpdatesAutomatically",
+                            "lastCheckedForUpdates"]
                         }
 
         self._playerFactory = PlayerFactory()
@@ -352,7 +378,7 @@ class ConfigurationGetter(object):
             for name in constants.CONFIG_NAMES:
                 path = location + os.path.sep + name
                 if os.path.isfile(path) and (os.name == 'nt' or path != os.path.join(os.getenv('HOME', '.'), constants.DEFAULT_CONFIG_NAME_LINUX)):
-                    loadedPaths.append("'" + os.path.normpath(path) + "'")
+                    loadedPaths.append(u"'{}'".format(os.path.normpath(path)))
                     self._parseConfigFile(path, createConfig=False)
                     self._checkConfig()
         return loadedPaths
@@ -408,6 +434,15 @@ class ConfigurationGetter(object):
                 self.app = QtGui.QApplication(sys.argv)
             qt4reactor.install()
         return self._config
+
+    def setConfigOption(self, option, value):
+        path = self._getConfigurationFilePath()
+        backup = self._config.copy()
+        self._parseConfigFile(path)
+        self._config[option] = value
+        backup[option] = value
+        self._saveConfig(path)
+        self._config = backup
 
 class SafeConfigParserUnicode(SafeConfigParser):
     def write(self, fp):

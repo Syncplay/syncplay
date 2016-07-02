@@ -71,7 +71,7 @@ class ConfigDialog(QtGui.QDialog):
     moreToggling = False
 
     def automaticUpdatePromptCheck(self):
-        if self.automaticupdatesCheckbox.checkState() == Qt.PartiallyChecked and not self.nostoreCheckbox.isChecked():
+        if self.automaticupdatesCheckbox.checkState() == Qt.PartiallyChecked:
             reply = QtGui.QMessageBox.question(self, "Syncplay",
                     getMessage("promptforupdate-label"), QtGui.QMessageBox.StandardButton.Yes | QtGui.QMessageBox.StandardButton.No)
             if reply == QtGui.QMessageBox.Yes:
@@ -87,9 +87,9 @@ class ConfigDialog(QtGui.QDialog):
             if self.showmoreCheckbox.isChecked():
                 self.tabListFrame.show()
                 self.resetButton.show()
-                self.nostoreCheckbox.show()
                 self.playerargsTextbox.show()
                 self.playerargsLabel.show()
+                self.runButton.show()
                 self.saveMoreState(True)
                 self.tabListWidget.setCurrentRow(0)
                 self.ensureTabListIsVisible()
@@ -97,9 +97,9 @@ class ConfigDialog(QtGui.QDialog):
             else:
                 self.tabListFrame.hide()
                 self.resetButton.hide()
-                self.nostoreCheckbox.hide()
                 self.playerargsTextbox.hide()
                 self.playerargsLabel.hide()
+                self.runButton.hide()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
                 newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
@@ -111,12 +111,6 @@ class ConfigDialog(QtGui.QDialog):
         self.moreToggling = False
         self.setFixedWidth(self.minimumSizeHint().width())
         self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
-
-    def runButtonTextUpdate(self):
-        if self.nostoreCheckbox.isChecked():
-            self.runButton.setText(getMessage("run-label"))
-        else:
-            self.runButton.setText(getMessage("storeandrun-label"))
 
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
@@ -364,17 +358,24 @@ class ConfigDialog(QtGui.QDialog):
             self.mediapathTextbox.setText(os.path.normpath(fileName))
             self.mediadirectory = os.path.dirname(fileName)
             self.saveMediaBrowseSettings()
-
-    def _saveDataAndLeave(self):
-        self.automaticUpdatePromptCheck()
+    
+    def _runWithoutStoringConfig(self):
+        self._saveDataAndLeave(storeConfiguration=False)
+    
+    def _saveDataAndLeave(self, storeConfiguration=True):
+        self.config['noStore'] = storeConfiguration
+        if storeConfiguration:
+            self.automaticUpdatePromptCheck()
         self.loadLastUpdateCheckDate()
 
         self.config["perPlayerArguments"] = self.perPlayerArgs
         self.config["mediaSearchDirectories"] = utils.convertMultilineStringToList(self.mediasearchTextEdit.toPlainText())
+        self.config["trustedDomains"] = utils.convertMultilineStringToList(self.trusteddomainsTextEdit.toPlainText())
 
         self.processWidget(self, lambda w: self.saveValues(w))
         if self.hostCombobox.currentText():
             self.config['host'] = self.hostCombobox.currentText() if ":" in self.hostCombobox.currentText() else self.hostCombobox.currentText() + ":" + unicode(constants.DEFAULT_PORT)
+            self.config['host'] = self.config['host'].replace(" ","").replace("\t", "").replace("\n","").replace("\r","")
         else:
             self.config['host'] = None
         self.config['playerPath'] = unicode(self.safenormcaseandpath(self.executablepathCombobox.currentText()))
@@ -504,6 +505,7 @@ class ConfigDialog(QtGui.QDialog):
 
         self.perPlayerArgs = self.config["perPlayerArguments"]
         self.mediaSearchDirectories = self.config["mediaSearchDirectories"]
+        self.trustedDomains = self.config["trustedDomains"]
 
         self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
         self.loadSavedPublicServerList()
@@ -794,10 +796,24 @@ class ConfigDialog(QtGui.QDialog):
         self.othersyncSettingsLayout.setAlignment(Qt.AlignLeft)
         self.othersyncSettingsLayout.addWidget(self.fastforwardCheckbox, 3, 0,1,2, Qt.AlignLeft)
 
+
+        ## Trusted domains
+
+        self.trusteddomainsSettingsGroup = QtGui.QGroupBox(getMessage("syncplay-trusteddomains-title"))
+        self.trusteddomainsSettingsLayout = QtGui.QVBoxLayout()
+        self.trusteddomainsSettingsGroup.setLayout(self.trusteddomainsSettingsLayout)
+
+        self.trusteddomainsTextEdit = QPlainTextEdit(utils.getListAsMultilineString(self.trustedDomains))
+        self.trusteddomainsTextEdit.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "trusteddomains-arguments")
+        self.trusteddomainsTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.trusteddomainsSettingsLayout.addWidget(self.trusteddomainsTextEdit)
+        self.trusteddomainsSettingsGroup.setMaximumHeight(self.trusteddomainsSettingsGroup.minimumSizeHint().height())
+
         self.othersyncSettingsGroup.setLayout(self.othersyncSettingsLayout)
         self.othersyncSettingsGroup.setMaximumHeight(self.othersyncSettingsGroup.minimumSizeHint().height())
         self.syncSettingsLayout.addWidget(self.othersyncSettingsGroup)
         self.syncSettingsLayout.addWidget(self.desyncSettingsGroup)
+        self.syncSettingsLayout.addWidget(self.trusteddomainsSettingsGroup)
         self.syncSettingsFrame.setLayout(self.syncSettingsLayout)
         self.desyncSettingsGroup.setMaximumHeight(self.desyncSettingsGroup.minimumSizeHint().height())
         self.syncSettingsLayout.setAlignment(Qt.AlignTop)
@@ -819,27 +835,27 @@ class ConfigDialog(QtGui.QDialog):
 
         self.showSameRoomOSDCheckbox = QCheckBox(getMessage("showsameroomosd-label"))
         self.showSameRoomOSDCheckbox.setObjectName("showSameRoomOSD")
-        self.showSameRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.showSameRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showSameRoomOSDCheckbox)
 
         self.showNonControllerOSDCheckbox = QCheckBox(getMessage("shownoncontrollerosd-label"))
         self.showNonControllerOSDCheckbox.setObjectName("showNonControllerOSD")
-        self.showNonControllerOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.showNonControllerOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showNonControllerOSDCheckbox)
 
         self.showDifferentRoomOSDCheckbox = QCheckBox(getMessage("showdifferentroomosd-label"))
         self.showDifferentRoomOSDCheckbox.setObjectName("showDifferentRoomOSD")
-        self.showDifferentRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.showDifferentRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showDifferentRoomOSDCheckbox)
 
         self.slowdownOSDCheckbox = QCheckBox(getMessage("showslowdownosd-label"))
         self.slowdownOSDCheckbox.setObjectName("showSlowdownOSD")
-        self.slowdownOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.slowdownOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.slowdownOSDCheckbox)
 
         self.showOSDWarningsCheckbox = QCheckBox(getMessage("showosdwarnings-label"))
         self.showOSDWarningsCheckbox.setObjectName("showOSDWarnings")
-        self.showOSDWarningsCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.showOSDWarningsCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showOSDWarningsCheckbox)
 
         self.subitems['showOSD'] = ["showSameRoomOSD", "showDifferentRoomOSD", "showSlowdownOSD", "showOSDWarnings", "showNonControllerOSD"]
@@ -899,24 +915,26 @@ class ConfigDialog(QtGui.QDialog):
 
         self.bottomButtonFrame = QtGui.QFrame()
         self.bottomButtonLayout = QtGui.QHBoxLayout()
-        self.helpButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'help.png'), getMessage("help-label"))
+        self.helpButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + u'help.png'), getMessage("help-label"))
         self.helpButton.setObjectName("help")
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.pressed.connect(self.openHelp)
 
-        self.resetButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'cog_delete.png'),getMessage("reset-label"))
+        self.resetButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'cog_delete.png'),getMessage("reset-label"))
         self.resetButton.setMaximumSize(self.resetButton.sizeHint())
         self.resetButton.setObjectName("reset")
         self.resetButton.pressed.connect(self.resetSettings)
 
-        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("storeandrun-label"))
+        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
         self.runButton.pressed.connect(self._saveDataAndLeave)
+        self.runButton.setToolTip(getMessage("nostore-tooltip"))
+        self.storeAndRunButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("storeandrun-label"))
+        self.storeAndRunButton.pressed.connect(self._runWithoutStoringConfig)
         self.bottomButtonLayout.addWidget(self.helpButton)
         self.bottomButtonLayout.addWidget(self.resetButton)
         self.bottomButtonLayout.addWidget(self.runButton)
+        self.bottomButtonLayout.addWidget(self.storeAndRunButton)
         self.bottomButtonFrame.setLayout(self.bottomButtonLayout)
-        if config['noStore'] == True:
-            self.runButton.setText(getMessage("run-label"))
         self.bottomButtonLayout.setContentsMargins(5,0,5,0)
         self.mainLayout.addWidget(self.bottomButtonFrame, 1, 0, 1, 2)
 
@@ -925,12 +943,11 @@ class ConfigDialog(QtGui.QDialog):
         self.bottomCheckboxLayout = QtGui.QGridLayout()
         self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
 
-        self.nostoreCheckbox = QCheckBox(getMessage("nostore-label"))
+        self.enableplaylistsCheckbox = QCheckBox(getMessage("sharedplaylistenabled-label"))
         self.bottomCheckboxLayout.addWidget(self.showmoreCheckbox)
-        self.bottomCheckboxLayout.addWidget(self.nostoreCheckbox, 0, 2, Qt.AlignRight)
+        self.bottomCheckboxLayout.addWidget(self.enableplaylistsCheckbox, 0, 2, Qt.AlignRight)
         self.alwaysshowCheckbox.setObjectName(constants.INVERTED_STATE_MARKER + "forceGuiPrompt")
-        self.nostoreCheckbox.setObjectName("noStore")
-        self.nostoreCheckbox.toggled.connect(self.runButtonTextUpdate)
+        self.enableplaylistsCheckbox.setObjectName("sharedPlaylistEnabled")
         self.bottomCheckboxFrame.setLayout(self.bottomCheckboxLayout)
 
         self.mainLayout.addWidget(self.bottomCheckboxFrame, 2, 0, 1, 2)
@@ -939,11 +956,11 @@ class ConfigDialog(QtGui.QDialog):
         self.tabListLayout = QtGui.QHBoxLayout()
         self.tabListFrame = QtGui.QFrame()
         self.tabListWidget = QtGui.QListWidget()
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "house.png"),getMessage("basics-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "control_pause_blue.png"),getMessage("readiness-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "film_link.png"),getMessage("sync-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "comments.png"),getMessage("messages-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + "cog.png"),getMessage("misc-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"house.png"),getMessage("basics-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"control_pause_blue.png"),getMessage("readiness-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"film_link.png"),getMessage("sync-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"comments.png"),getMessage("messages-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"cog.png"),getMessage("misc-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
         self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width())
@@ -1029,15 +1046,15 @@ class ConfigDialog(QtGui.QDialog):
         if sys.platform.startswith('win'):
             resourcespath = utils.findWorkingDir() + "\\resources\\"
         else:
-            resourcespath = utils.findWorkingDir() + "/resources/"
-        self.posixresourcespath = utils.findWorkingDir().replace("\\","/") + "/resources/"
+            resourcespath = utils.findWorkingDir() + u"/resources/"
+        self.posixresourcespath = utils.findWorkingDir().replace(u"\\","/") + u"/resources/"
         self.resourcespath = resourcespath
 
         super(ConfigDialog, self).__init__()
 
         self.setWindowTitle(getMessage("config-window-title"))
         self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & ~Qt.WindowContextHelpButtonHint)
-        self.setWindowIcon(QtGui.QIcon(resourcespath + "syncplay.png"))
+        self.setWindowIcon(QtGui.QIcon(resourcespath + u"syncplay.png"))
 
         self.stackedLayout = QtGui.QStackedLayout()
         self.stackedFrame = QtGui.QFrame()
@@ -1059,10 +1076,10 @@ class ConfigDialog(QtGui.QDialog):
 
         if self.getMoreState() == False:
             self.tabListFrame.hide()
-            self.nostoreCheckbox.hide()
             self.resetButton.hide()
             self.playerargsTextbox.hide()
             self.playerargsLabel.hide()
+            self.runButton.hide()
             newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
             if self.error:
                 newHeight +=self.errorLabel.height()+3
