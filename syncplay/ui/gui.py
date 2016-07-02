@@ -506,6 +506,7 @@ class MainWindow(QtGui.QMainWindow):
         menu.addAction(QtGui.QPixmap(resourcespath + u"world_add.png"), getMessage("addurlstoplaylist-menu-label"), lambda: self.OpenAddURIsToPlaylistDialog())
         menu.addSeparator()
         menu.addAction(QtGui.QPixmap(resourcespath + u"film_folder_edit.png"), getMessage("setmediadirectories-menu-label"), lambda: self.openSetMediaDirectoriesDialog())
+        menu.addAction(QtGui.QPixmap(resourcespath + u"shield_edit.png"), getMessage("settrusteddomains-menu-label"), lambda: self.openSetTrustedDomainsDialog())
         menu.exec_(self.playlist.viewport().mapToGlobal(position))
 
 
