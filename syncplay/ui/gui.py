@@ -844,7 +844,7 @@ class MainWindow(QtGui.QMainWindow):
     @needsClient
     def openSetTrustedDomainsDialog(self):
         TrustedDomainsDialog = QtGui.QDialog()
-        TrustedDomainsDialog.setWindowTitle(getMessage("settrusteddomains-menu-label"))
+        TrustedDomainsDialog.setWindowTitle(getMessage("syncplay-trusteddomains-title"))
         TrustedDomainsLayout = QtGui.QGridLayout()
         TrustedDomainsLabel = QtGui.QLabel(getMessage("trusteddomains-msgbox-label"))
         TrustedDomainsLayout.addWidget(TrustedDomainsLabel, 0, 0, 1, 1)
@@ -1205,16 +1205,15 @@ class MainWindow(QtGui.QMainWindow):
         window.setoffsetAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'timeline_marker.png'),
                                                                getMessage("setoffset-menu-label"))
         window.setoffsetAction.triggered.connect(self.setOffset)
-
+        window.setTrustedDomainsAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'shield_edit.png'),
+                                                      getMessage("settrusteddomains-menu-label"))
+        window.setTrustedDomainsAction.triggered.connect(self.openSetTrustedDomainsDialog)
         window.createcontrolledroomAction = window.advancedMenu.addAction(
             QtGui.QIcon(self.resourcespath + 'page_white_key.png'), getMessage("createcontrolledroom-menu-label"))
         window.createcontrolledroomAction.triggered.connect(self.createControlledRoom)
         window.identifyascontroller = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'key_go.png'),
                                                                     getMessage("identifyascontroller-menu-label"))
         window.identifyascontroller.triggered.connect(self.identifyAsController)
-        window.setTrustedDomainsAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'film_folder_edit.png'),
-                                                      getMessage("settrusteddomains-menu-label"))
-        window.setTrustedDomainsAction.triggered.connect(self.openSetTrustedDomainsDialog)
 
         window.menuBar.addMenu(window.advancedMenu)
 
