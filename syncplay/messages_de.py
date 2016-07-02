@@ -267,6 +267,7 @@ de = {
     "setoffset-menu-label" : u"&Offset einstellen",
     "createcontrolledroom-menu-label" : u"&Zentral gesteuerten Raum erstellen",
     "identifyascontroller-menu-label" : u"Als Raumleiter &identifizieren",
+    "settrusteddomains-menu-label" : u"Set &trusted domains", # TODO: Translate
 
     "playback-menu-label" : u"&Wiedergabe",
 
@@ -283,6 +284,7 @@ de = {
     "addfolder-label" : u"Add folder", # TODO: Translate
 
     "adduris-msgbox-label" : u"Add URLs to playlist (one per line)", # TODO: Translate
+    "trusteddomains-msgbox-label" : u"Domains it is okay to automatically switch to (one per line)", # TODO: Translate
 
     "createcontrolledroom-msgbox-label" : u"Zentral gesteuerten Raum erstellen",
     "controlledroominfo-msgbox-label" : u"Namen des zentral gesteuerten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
@@ -388,7 +390,7 @@ de = {
     "playlist-contents-changed-notification" : u"{} updated the playlist", # Username
     "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} in media directories for playlist switch!", # Filename
     "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename
-    "cannot-add-unsafe-path-error" : u"Could not load {} because it is not known as a trusted path.", # Filename
+    "cannot-add-unsafe-path-error" : u"Could not automatically load {} because it is not on a trusted domain. You can switch to the URL manually by double clicking it in the playlist, and add trusted domains via File->Advanced->Set Trusted Domains.", # Filename
     "sharedplaylistenabled-label" : u"Enable shared playlists",
     "removefromplaylist-menu-label" : u"Remove from playlist",
     "shuffleplaylist-menuu-label" : u"Shuffle playlist",

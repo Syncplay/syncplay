@@ -455,6 +455,12 @@ class SyncplayClient(object):
         self.sendFile()
         self.playlist.changeToPlaylistIndexFromFilename(filename)
 
+    def setTrustedDomains(self, newTrustedDomains):
+        from syncplay.ui.ConfigurationGetter import ConfigurationGetter
+        ConfigurationGetter().setConfigOption("trustedDomains", newTrustedDomains)
+        self._config['trustedDomains'] = newTrustedDomains
+        self.fileSwitchFoundFiles()
+
     def isURITrusted(self, URIToTest):
         for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:
             if URIToTest.startswith(trustedProtocol):

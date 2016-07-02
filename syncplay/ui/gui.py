@@ -182,7 +182,10 @@ class MainWindow(QtGui.QMainWindow):
                 isPlayingFilename = itemFilename == self.playlistIndexFilename
                 self.item(item).setData(Qt.UserRole + constants.PLAYLISTITEM_CURRENTLYPLAYING_ROLE, isPlayingFilename)
                 fileIsAvailable = self.selfWindow.isFileAvailable(itemFilename)
-                if fileIsAvailable:
+                fileIsUntrusted = self.selfWindow.isItemUntrusted(itemFilename)
+                if fileIsUntrusted:
+                    self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_UNTRUSTEDITEM_COLOR)))
+                elif fileIsAvailable:
                     self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(QtGui.QPalette.ColorRole(QtGui.QPalette.Text))))
                 else:
                     self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
@@ -349,6 +352,10 @@ class MainWindow(QtGui.QMainWindow):
                     self.newWatchlist.extend([filename])
         return constants.FILEITEM_SWITCH_NO_SWITCH
 
+    @needsClient
+    def isItemUntrusted(self, filename):
+        return isURL(filename) and not self._syncplayClient.isURITrusted(filename)
+    
     @needsClient
     def isFileAvailable(self, filename):
         if filename:
@@ -835,6 +842,32 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient.fileSwitch.changeMediaDirectories(newMediaDirectories)
 
     @needsClient
+    def openSetTrustedDomainsDialog(self):
+        TrustedDomainsDialog = QtGui.QDialog()
+        TrustedDomainsDialog.setWindowTitle(getMessage("settrusteddomains-menu-label"))
+        TrustedDomainsLayout = QtGui.QGridLayout()
+        TrustedDomainsLabel = QtGui.QLabel(getMessage("trusteddomains-msgbox-label"))
+        TrustedDomainsLayout.addWidget(TrustedDomainsLabel, 0, 0, 1, 1)
+        TrustedDomainsTextbox = QtGui.QPlainTextEdit()
+        TrustedDomainsTextbox.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        TrustedDomainsTextbox.setPlainText(utils.getListAsMultilineString(self.config["trustedDomains"]))
+        TrustedDomainsLayout.addWidget(TrustedDomainsTextbox, 1, 0, 1, 1)
+        TrustedDomainsButtonBox = QtGui.QDialogButtonBox()
+        TrustedDomainsButtonBox.setOrientation(Qt.Horizontal)
+        TrustedDomainsButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok|QtGui.QDialogButtonBox.Cancel)
+        TrustedDomainsButtonBox.accepted.connect(TrustedDomainsDialog.accept)
+        TrustedDomainsButtonBox.rejected.connect(TrustedDomainsDialog.reject)
+        TrustedDomainsLayout.addWidget(TrustedDomainsButtonBox, 2, 0, 1, 1)
+        TrustedDomainsDialog.setLayout(TrustedDomainsLayout)
+        TrustedDomainsDialog.setModal(True)
+        TrustedDomainsDialog.show()
+        result = TrustedDomainsDialog.exec_()
+        if result == QtGui.QDialog.Accepted:
+            newTrustedDomains = utils.convertMultilineStringToList(TrustedDomainsTextbox.toPlainText())
+            self._syncplayClient.setTrustedDomains(newTrustedDomains)
+
+
+    @needsClient
     def openAddMediaDirectoryDialog(self, MediaDirectoriesTextbox, MediaDirectoriesDialog):
         folderName = unicode(QtGui.QFileDialog.getExistingDirectory(self,None,self.getInitialMediaDirectory(includeUserSpecifiedDirectories=False),QtGui.QFileDialog.ShowDirsOnly))
         if folderName:
@@ -1179,6 +1212,9 @@ class MainWindow(QtGui.QMainWindow):
         window.identifyascontroller = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'key_go.png'),
                                                                     getMessage("identifyascontroller-menu-label"))
         window.identifyascontroller.triggered.connect(self.identifyAsController)
+        window.setTrustedDomainsAction = window.advancedMenu.addAction(QtGui.QIcon(self.resourcespath + 'film_folder_edit.png'),
+                                                      getMessage("settrusteddomains-menu-label"))
+        window.setTrustedDomainsAction.triggered.connect(self.openSetTrustedDomainsDialog)
 
         window.menuBar.addMenu(window.advancedMenu)
 

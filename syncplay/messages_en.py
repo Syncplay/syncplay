@@ -269,6 +269,7 @@ en = {
     "setoffset-menu-label" : "Set &offset",
     "createcontrolledroom-menu-label" : "&Create managed room",
     "identifyascontroller-menu-label" : "&Identify as room operator",
+    "settrusteddomains-menu-label" : u"Set &trusted domains",
 
     "playback-menu-label" : u"&Playback",
 
@@ -285,6 +286,7 @@ en = {
     "addfolder-label" : u"Add folder",
 
     "adduris-msgbox-label" : u"Add URLs to playlist (one per line)",
+    "trusteddomains-msgbox-label" : u"Domains it is okay to automatically switch to (one per line)",
 
     "createcontrolledroom-msgbox-label" : "Create managed room",
     "controlledroominfo-msgbox-label" : "Enter name of managed room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
@@ -389,7 +391,7 @@ en = {
     "playlist-contents-changed-notification" : u"{} updated the playlist", # Username
     "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} in media directories for playlist switch!", # Filename
     "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename
-    "cannot-add-unsafe-path-error" : u"Could not load {} because it is not known as a trusted path.", # Filename
+    "cannot-add-unsafe-path-error" : u"Could not automatically load {} because it is not on a trusted domain. You can switch to the URL manually by double clicking it in the playlist, and add trusted domains via File->Advanced->Set Trusted Domains.", # Filename
     "sharedplaylistenabled-label" : u"Enable shared playlists",
     "removefromplaylist-menu-label" : u"Remove from playlist",
     "shuffleplaylist-menuu-label" : u"Shuffle playlist",
