@@ -378,7 +378,7 @@ class ConfigurationGetter(object):
             for name in constants.CONFIG_NAMES:
                 path = location + os.path.sep + name
                 if os.path.isfile(path) and (os.name == 'nt' or path != os.path.join(os.getenv('HOME', '.'), constants.DEFAULT_CONFIG_NAME_LINUX)):
-                    loadedPaths.append("'" + os.path.normpath(path).decode('utf-8') + "'")
+                    loadedPaths.append(u"'{}'".format(os.path.normpath(path)))
                     self._parseConfigFile(path, createConfig=False)
                     self._checkConfig()
         return loadedPaths
