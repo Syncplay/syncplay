@@ -379,7 +379,7 @@ de = {
     "server-salt-argument" : u"zufällige Zeichenkette, die zur Erstellung von Passwörtern verwendet wird",
     "server-disable-ready-argument" : u"Bereitschaftsfeature deaktivieren",
     "server-motd-argument": u"Pfad zur Datei, von der die Nachricht des Tages geladen wird",
-    "server-chat-argument" : "Should chat be enabled?", # TODO: Translate
+    "server-chat-argument" : "Should chat be disabled?", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders": u"Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
     "server-messed-up-motd-too-long": u"Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
 

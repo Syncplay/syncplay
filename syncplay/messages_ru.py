@@ -379,7 +379,7 @@ ru = {
     "server-salt-argument" : u"генерировать пароли к управляемым комнатам на основании указанной строки (соли)",
     "server-disable-ready-argument" : u"отключить статусы готов/не готов",
     "server-motd-argument" : u"путь к файлу, из которого будет извлекаться MOTD-сообщение",
-    "server-chat-argument" : "Should chat be enabled?", # TODO: Translate
+    "server-chat-argument" : "Should chat be disabled?", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders" : u"MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
     "server-messed-up-motd-too-long" : u"MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
 

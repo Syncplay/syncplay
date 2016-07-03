@@ -355,7 +355,7 @@ class SyncServerProtocol(JSONCommandProtocol):
             self._logged = True
             self.sendHello(version)
     def handleChat(self,chatMessage):
-        if self._factory.chat:
+        if not self._factory.disableChat:
             self._factory.sendChat(self._watcher,chatMessage)
 
     def setWatcher(self, watcher):

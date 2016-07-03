@@ -14,7 +14,7 @@ import argparse
 from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion
 
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False,chat =False):
+    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False,disableChat=False):
         self.isolateRooms = isolateRooms
         print getMessage("welcome-server-notification").format(syncplay.version)
         if password:
@@ -26,7 +26,7 @@ class SyncFactory(Factory):
         self._salt = salt
         self._motdFilePath = motdFilePath
         self.disableReady = disableReady
-        self.chat=chat
+        self.disableChat = disableChat
         if not isolateRooms:
             self._roomManager = RoomManager()
         else:
@@ -47,7 +47,7 @@ class SyncFactory(Factory):
         features["isolateRooms"] = self.isolateRooms
         features["readiness"] = not self.disableReady
         features["managedRooms"] = True
-        features["chat"] = self.chat
+        features["chat"] = not self.disableChat
         return features
 
     def getMotd(self, userIp, username, room, clientVersion):
@@ -524,6 +524,6 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
         self._argparser.add_argument('--disable-ready', action='store_true', help=getMessage("server-disable-ready-argument"))
-        self._argparser.add_argument('--chat', action='store_true', help=getMessage("server-chat-argument"))
+        self._argparser.add_argument('--disable-chat', action='store_true', help=getMessage("server-chat-argument"))
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
