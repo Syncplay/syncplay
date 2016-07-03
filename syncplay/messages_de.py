@@ -85,6 +85,7 @@ de = {
     "commandlist-notification/toggle" : u"\tt - Bereitschaftsanzeige umschalten",
     "commandlist-notification/create" : u"\tc [name] - erstelle zentral gesteuerten Raum mit dem aktuellen Raumnamen",
     "commandlist-notification/auth" : u"\ta [password] - authentifiziere als Raumleiter mit Passwort",
+    "commandlist-notification/chat" : "\tch [message] - send a chat message in a room", # TODO: Translate
     "syncplay-version-notification" : u"Syncplay Version: {}",  # syncplay.version
     "more-info-notification" : u"Weitere Informationen auf: {}",  # projectURL
 
@@ -374,6 +375,7 @@ de = {
     "server-salt-argument" : u"zufällige Zeichenkette, die zur Erstellung von Passwörtern verwendet wird",
     "server-disable-ready-argument" : u"Bereitschaftsfeature deaktivieren",
     "server-motd-argument": u"Pfad zur Datei, von der die Nachricht des Tages geladen wird",
+    "server-chat-argument" : "Should chat be enabled?", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders": u"Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
     "server-messed-up-motd-too-long": u"Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
 
