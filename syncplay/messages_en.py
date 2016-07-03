@@ -136,6 +136,7 @@ en = {
 
     "not-supported-by-server-error" : "This feature is not supported by the server. The feature requires a server running Syncplay {}+, but the server is running Syncplay {}.", #minVersion, serverVersion
     "shared-playlists-not-supported-by-server-error" : "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.", #minVersion, serverVersion
+    "shared-playlists-disabled-by-server-error" : "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.",
 
     "invalid-seek-value" : u"Invalid seek value",
     "invalid-offset-value" : u"Invalid offset value",

@@ -86,6 +86,9 @@ class ConsoleUI(threading.Thread):
     def fileSwitchFoundFiles(self):
         pass
 
+    def setFeatures(self, featureList):
+        pass
+
     def showMessage(self, message, noTimestamp=False):
         message = message.encode(sys.stdout.encoding, 'replace')
         if noTimestamp:

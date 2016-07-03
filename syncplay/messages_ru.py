@@ -136,6 +136,7 @@ ru = {
 
     "not-supported-by-server-error" : u"Эта возможность не поддерживается сервером. The feature requires a server running Syncplay {}+, but the server is running Syncplay {}.", #minVersion, serverVersion #TODO: Translate into Russian
     "shared-playlists-not-supported-by-server-error" : "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.", #minVersion, serverVersion # TODO: Translate
+    "shared-playlists-disabled-by-server-error" : "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.", # TODO: Translate
 
     "invalid-seek-value" : u"Некорректное значение для перемотки",
     "invalid-offset-value" : u"Некорректное смещение",

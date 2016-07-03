@@ -80,10 +80,11 @@ class SyncClientProtocol(JSONCommandProtocol):
         version = hello["version"] if hello.has_key("version") else None
         version = hello["realversion"] if hello.has_key("realversion") else version # Used for 1.2.X compatibility
         motd = hello["motd"] if hello.has_key("motd") else None
-        return username, roomName, version, motd
+        features = hello["features"] if hello.has_key("features") else None
+        return username, roomName, version, motd, features
 
     def handleHello(self, hello):
-        username, roomName, version, motd = self._extractHelloArguments(hello)
+        username, roomName, version, motd, featureList = self._extractHelloArguments(hello)
         if not username or not roomName or not version:
             self.dropWithError(getMessage("hello-server-error").format(hello))
         else:
@@ -95,7 +96,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         self._client.ui.showMessage(getMessage("connected-successful-notification"))
         self._client.connected()
         self._client.sendFile()
-        self._client.setServerVersion(version)
+        self._client.setServerVersion(version, featureList)
 
     def sendHello(self):
         hello = {}
@@ -370,6 +371,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         hello["version"] = clientVersion # Used so 1.2.X client works on newer server
         hello["realversion"] = syncplay.version
         hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
+        hello["features"] = self._factory.getFeatures()
         self.sendMessage({"Hello": hello})
 
     @requireLogged

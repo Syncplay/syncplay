@@ -325,6 +325,14 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: Prompt user
         return None
 
+    def setFeatures(self, featureList):
+        if not featureList["readiness"]:
+            self.readyPushButton.setEnabled(False)
+        if not featureList["chat"]:
+            self.chatFrame.setEnabled(False)
+        if not featureList["sharedPlaylists"]:
+            self.playlistGroup.setEnabled(False)
+
     def showMessage(self, message, noTimestamp=False):
         message = unicode(message)
         message = message.replace(u"&", u"&amp;").replace(u'"', u"&quot;").replace(u"<", u"&lt;").replace(">", u"&gt;")

@@ -71,6 +71,8 @@ class SyncplayClient(object):
         self.lastControlPasswordAttempt = None
         self.serverVersion = "0.0.0"
 
+        self.serverFeatures = {}
+
         self.lastRewindTime = None
         self.lastLeftTime = 0
         self.lastPausedOnLeaveTime = None
@@ -201,7 +203,7 @@ class SyncplayClient(object):
         if pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
             and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
             self.playlist.advancePlaylistCheck()
-        elif pauseChange and utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION):
+        elif pauseChange and self.serverFeatures["readiness"]:
             if currentLength == 0 or currentLength == -1 or\
                 not (not self.playlist.notJustChangedPlaylist() and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD):
                 pauseChange = self._toggleReady(pauseChange, paused)
@@ -508,13 +510,25 @@ class SyncplayClient(object):
             size = 0
         return filename, size
 
-    def setServerVersion(self, version):
+    def setServerVersion(self, version, featureList):
         self.serverVersion = version
-        self.checkForFeatureSupport()
+        self.checkForFeatureSupport(featureList)
 
-    def checkForFeatureSupport(self):
+    def checkForFeatureSupport(self, featureList):
+        self.serverFeatures = {
+            "featureList": utils.meetsMinVersion(self.serverVersion, constants.FEATURE_LIST_MIN_VERSION),
+            "sharedPlaylists": utils.meetsMinVersion(self.serverVersion, constants.SHARED_PLAYLIST_MIN_VERSION),
+            "chat": utils.meetsMinVersion(self.serverVersion, constants.CHAT_MIN_VERSION),
+            "readiness": utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION),
+            "managedRooms": utils.meetsMinVersion(self.serverVersion, constants.CONTROLLED_ROOMS_MIN_VERSION)
+        }
+        if featureList:
+            self.serverFeatures.update(featureList)
         if not utils.meetsMinVersion(self.serverVersion, constants.SHARED_PLAYLIST_MIN_VERSION):
             self.ui.showErrorMessage(getMessage("shared-playlists-not-supported-by-server-error").format(constants.SHARED_PLAYLIST_MIN_VERSION, self.serverVersion))
+        elif not self.serverFeatures["sharedPlaylists"]:
+            self.ui.showErrorMessage(getMessage("shared-playlists-disabled-by-server-error"))
+        self.ui.setFeatures(self.serverFeatures)
 
     def getSanitizedCurrentUserFile(self):
         if self.userlist.currentUser.file:
@@ -570,7 +584,11 @@ class SyncplayClient(object):
         return self._protocol and self._protocol.logged and self.userlist.currentUser.room
 
     def sharedPlaylistIsEnabled(self):
-        return self._config['sharedPlaylistEnabled']
+        if self.serverFeatures.has_key("sharedPlaylists") and not self.serverFeatures["sharedPlaylists"]:
+            sharedPlaylistEnabled = False
+        else:
+            sharedPlaylistEnabled = self._config['sharedPlaylistEnabled']
+        return sharedPlaylistEnabled
 
     def connected(self):
         readyState = self._config['readyAtStart'] if self.userlist.currentUser.isReady() is None else self.userlist.currentUser.isReady()
@@ -1004,13 +1022,12 @@ class SyncplayUserlist(object):
         self._roomUsersChanged = True
 
     def isReadinessSupported(self):
-        # TODO: Return False if server is run with --disable-ready
         if not utils.meetsMinVersion(self._client.serverVersion,constants.USER_READY_MIN_VERSION):
             return False
         elif self.onlyUserInRoomWhoSupportsReadiness():
             return False
         else:
-            return True
+            return self._client.serverFeatures["readiness"]
 
     def isRoomSame(self, room):
         if room and self.currentUser.room and self.currentUser.room == room:
@@ -1292,6 +1309,9 @@ class UiManager(object):
 
     def fileSwitchFoundFiles(self):
         self.__ui.fileSwitchFoundFiles()
+
+    def setFeatures(self, featureList):
+        self.__ui.setFeatures(featureList)
 
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():

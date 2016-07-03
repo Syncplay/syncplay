@@ -15,6 +15,7 @@ from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomString
 
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False,chat =False):
+        self.isolateRooms = isolateRooms
         print getMessage("welcome-server-notification").format(syncplay.version)
         if password:
             password = hashlib.md5(password).hexdigest()
@@ -40,6 +41,14 @@ class SyncFactory(Factory):
             paused, position = room.isPaused(), room.getPosition()
             setBy = room.getSetBy()
             watcher.sendState(position, paused, doSeek, setBy, forcedUpdate)
+
+    def getFeatures(self):
+        features = dict()
+        features["isolateRooms"] = self.isolateRooms
+        features["readiness"] = not self.disableReady
+        features["managedRooms"] = True
+        features["chat"] = self.chat
+        return features
 
     def getMotd(self, userIp, username, room, clientVersion):
         oldClient = False
