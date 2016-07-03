@@ -246,7 +246,8 @@ class SyncClientProtocol(JSONCommandProtocol):
             }
         })
     def handleChat(self,message):
-        messageString = '<'+message['username']+'>'+message['message']
+        userMessage = message['message'].replace(u"<",u"<<").replace(u">",u">>")
+        messageString = u"<{}> {}".format(message['username'], userMessage)
         self._client.ui.showMessage(messageString)
         #TODO
 

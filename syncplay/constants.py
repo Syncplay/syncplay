@@ -79,6 +79,7 @@ MPV_UNRESPONSIVE_THRESHOLD = 60.0
 CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
 USER_READY_MIN_VERSION = "1.3.0"
 SHARED_PLAYLIST_MIN_VERSION = "1.4.0"
+CHAT_MIN_VERSION = "1.5.0"
 MPC_PATHS = [
     r"c:\program files (x86)\mpc-hc\mpc-hc.exe",
     r"c:\program files\mpc-hc\mpc-hc.exe",

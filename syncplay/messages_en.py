@@ -250,6 +250,8 @@ en = {
     "autoplay-guipushbuttonlabel" : u"Play when all ready",
     "autoplay-minimum-label" : u"Min users:",
 
+    "sendmessage-label" : u"Send",
+
     "ready-guipushbuttonlabel" : u"I'm ready to watch!",
 
     "roomuser-heading-label" : "Room / User",
@@ -350,6 +352,7 @@ en = {
     "ready-tooltip" : "Indicates whether you are ready to watch.",
     "autoplay-tooltip" : "Auto-play when all users who have readiness indicator are ready and minimum user threshold met.",
     "switch-to-file-tooltip" : u"Double click to switch to {}", # Filename
+    "sendmessage-tooltip" : u"Send message to room",
 
     # In-userlist notes (GUI)
     "differentsize-note" : "Different size!",

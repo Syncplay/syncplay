@@ -250,6 +250,8 @@ ru = {
     "autoplay-guipushbuttonlabel" : u"Воспроизвести автоматически, когда все будут готовы",
     "autoplay-minimum-label" : u"Минимум пользователей:",
 
+    "sendmessage-label" : u"Send", # TODO: Translate
+
     "ready-guipushbuttonlabel" : u"Я готов к просмотру!",
 
     "roomuser-heading-label" : u"Комната / Пользователь",
@@ -350,6 +352,7 @@ ru = {
     "ready-tooltip" : u"Показывает, готовы ли Вы к просмотру или нет.",
     "autoplay-tooltip" : u"Автоматическое воспроизведение, когда все пользователи с индикаторами готовности будут готовы и присутствует достаточное число пользователей.",
     "switch-to-file-tooltip" : u"Double click to switch to {}", # Filename # TODO: Translate to Russian
+    "sendmessage-tooltip" : u"Send message to room", # TODO: Translate
 
     # In-userlist notes (GUI)
     "differentsize-note" : u"Размер файла не совпадает!",

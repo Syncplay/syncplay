@@ -248,6 +248,8 @@ de = {
     "autoplay-guipushbuttonlabel" : u"Automatisch abspielen wenn alle bereit sind",
     "autoplay-minimum-label" : u"Minimum an Nutzern:",
 
+    "sendmessage-label" : u"Send", # TODO: Translate
+
     "ready-guipushbuttonlabel" : u"Ich bin bereit den Film anzuschauen!",
 
     "roomuser-heading-label" : u"Raum / Benutzer",
@@ -350,6 +352,7 @@ de = {
     "ready-tooltip" : u"Zeigt an, ob du bereit zum anschauen bist",
     "autoplay-tooltip" : u"Automatisch abspielen, wenn alle Nutzer bereit sind oder die minimale Nutzerzahl erreicht ist.",
     "switch-to-file-tooltip" : u"Doppelklicken um zu {} zu wechseln", # Filename
+    "sendmessage-tooltip" : u"Send message to room", # TODO: Translate
 
     # In-userlist notes (GUI)
     "differentsize-note" : u"Verschiedene Größe!",

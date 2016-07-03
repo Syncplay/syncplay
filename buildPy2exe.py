@@ -657,6 +657,7 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/film_go.png', 'resources/world_go.png', 'resources/arrow_refresh.png', 'resources/bullet_right_grey.png',
      'resources/film_folder_edit.png',
      'resources/shield_edit.png',
+     'resources/email_go.png',
      'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
     ]
 resources = ["resources/icon.ico", "resources/syncplay.png"]
