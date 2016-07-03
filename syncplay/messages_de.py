@@ -134,6 +134,7 @@ de = {
     "vlc-failed-other" : u"Beim Laden des syncplay.lua Interface-Skripts durch VLC trat folgender Fehler auf: {}",  # Syncplay Error
 
     "not-supported-by-server-error" : u"Dieses Feature wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.", #minVersion, serverVersion
+    "shared-playlists-not-supported-by-server-error" : "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.", #minVersion, serverVersion # TODO: Translate
 
     "invalid-seek-value" : u"Ungültige Zeitangabe",
     "invalid-offset-value" : u"Ungültiger Offset-Wert",

@@ -510,6 +510,11 @@ class SyncplayClient(object):
 
     def setServerVersion(self, version):
         self.serverVersion = version
+        self.checkForFeatureSupport()
+
+    def checkForFeatureSupport(self):
+        if not utils.meetsMinVersion(self.serverVersion, constants.SHARED_PLAYLIST_MIN_VERSION):
+            self.ui.showErrorMessage(getMessage("shared-playlists-not-supported-by-server-error").format(constants.SHARED_PLAYLIST_MIN_VERSION, self.serverVersion))
 
     def getSanitizedCurrentUserFile(self):
         if self.userlist.currentUser.file:
