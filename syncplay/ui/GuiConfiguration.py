@@ -67,7 +67,7 @@ class GetPlayerIconThread(threading.Thread, QtCore.QObject):
 
 class ConfigDialog(QtGui.QDialog):
 
-    pressedclosebutton = False
+    pressedclosebutton = True
     moreToggling = False
 
     def automaticUpdatePromptCheck(self):
@@ -360,10 +360,10 @@ class ConfigDialog(QtGui.QDialog):
             self.saveMediaBrowseSettings()
     
     def _runWithoutStoringConfig(self):
-        self._saveDataAndLeave(storeConfiguration=False)
+        self._saveDataAndLeave(False)
     
     def _saveDataAndLeave(self, storeConfiguration=True):
-        self.config['noStore'] = storeConfiguration
+        self.config['noStore'] = not storeConfiguration
         if storeConfiguration:
             self.automaticUpdatePromptCheck()
         self.loadLastUpdateCheckDate()
@@ -387,12 +387,13 @@ class ConfigDialog(QtGui.QDialog):
         else:
             self.config['file'] = unicode(self.mediapathTextbox.text())
 
-        self.pressedclosebutton = True
+        self.pressedclosebutton = False
         self.close()
         return
 
     def closeEvent(self, event):
-        if self.pressedclosebutton == False:
+        if self.pressedclosebutton:
+            super(ConfigDialog, self).closeEvent(event)
             sys.exit()
 
     def keyPressEvent(self, event):
@@ -926,10 +927,10 @@ class ConfigDialog(QtGui.QDialog):
         self.resetButton.pressed.connect(self.resetSettings)
 
         self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
-        self.runButton.pressed.connect(self._saveDataAndLeave)
+        self.runButton.pressed.connect(self._runWithoutStoringConfig)
         self.runButton.setToolTip(getMessage("nostore-tooltip"))
         self.storeAndRunButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("storeandrun-label"))
-        self.storeAndRunButton.pressed.connect(self._runWithoutStoringConfig)
+        self.storeAndRunButton.pressed.connect(self._saveDataAndLeave)
         self.bottomButtonLayout.addWidget(self.helpButton)
         self.bottomButtonLayout.addWidget(self.resetButton)
         self.bottomButtonLayout.addWidget(self.runButton)
@@ -983,7 +984,7 @@ class ConfigDialog(QtGui.QDialog):
     def resetSettings(self):
         self.clearGUIData(leaveMore=True)
         self.config['resetConfig'] = True
-        self.pressedclosebutton = True
+        self.pressedclosebutton = False
         self.close()
 
     def showEvent(self, *args, **kwargs):
