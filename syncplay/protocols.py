@@ -160,8 +160,10 @@ class SyncClientProtocol(JSONCommandProtocol):
     def sendFileSetting(self, file_):
         self.sendSet({"file": file_})
         self.sendList()
+
     def sendChatMessage(self,chatMessage):
         self.sendMessage({"Chat": chatMessage})
+
     def handleList(self, userList):
         self._client.userlist.clearList()
         for room in userList.iteritems():
@@ -284,6 +286,7 @@ class SyncClientProtocol(JSONCommandProtocol):
 class SyncServerProtocol(JSONCommandProtocol):
     def __init__(self, factory):
         self._factory = factory
+        self._version = None
         self._logged = False
         self.clientIgnoringOnTheFly = 0
         self.serverIgnoringOnTheFly = 0
@@ -320,6 +323,9 @@ class SyncServerProtocol(JSONCommandProtocol):
     def isLogged(self):
         return self._logged
 
+    def meetsMinVersion(self, version):
+        return self._version >= version
+
     def _extractHelloArguments(self, hello):
         roomName = None
         username = hello["username"] if hello.has_key("username") else None
@@ -353,7 +359,9 @@ class SyncServerProtocol(JSONCommandProtocol):
                 return
             self._factory.addWatcher(self, username, roomName)
             self._logged = True
+            self._version = version
             self.sendHello(version)
+
     def handleChat(self,chatMessage):
         if not self._factory.disableChat:
             self._factory.sendChat(self._watcher,chatMessage)

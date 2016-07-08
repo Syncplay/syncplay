@@ -442,7 +442,8 @@ class Watcher(object):
         self._connector.sendControlledRoomAuthStatus(success, username, room)
 
     def sendChatMessage(self,message):
-        self._connector.sendMessage({"Chat" : message}) 
+        if self._connector.meetsMinVersion(constants.CHAT_MIN_VERSION):
+            self._connector.sendMessage({"Chat" : message})
 
     def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self._connector.sendSetReady(username, isReady, manuallyInitiated)
