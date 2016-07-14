@@ -326,6 +326,9 @@ class SyncServerProtocol(JSONCommandProtocol):
     def meetsMinVersion(self, version):
         return self._version >= version
 
+    def getVersion(self):
+        return self._version
+
     def _extractHelloArguments(self, hello):
         roomName = None
         username = hello["username"] if hello.has_key("username") else None
@@ -357,9 +360,9 @@ class SyncServerProtocol(JSONCommandProtocol):
         else:
             if not self._checkPassword(serverPassword):
                 return
+            self._version = version
             self._factory.addWatcher(self, username, roomName)
             self._logged = True
-            self._version = version
             self.sendHello(version)
 
     def handleChat(self,chatMessage):

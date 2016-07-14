@@ -106,7 +106,7 @@ class SyncFactory(Factory):
         self._roomManager.broadcast(watcher, l)
 
     def sendJoinMessage(self, watcher):
-        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True}) if w != watcher else None
+        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True, "version": watcher.getVersion()}) if w != watcher else None
         self._roomManager.broadcast(watcher, l)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
 
@@ -416,6 +416,9 @@ class Watcher(object):
 
     def getName(self):
         return self._name
+
+    def getVersion(self):
+        return self._connector.getVersion()
 
     def getFile(self):
         return self._file
