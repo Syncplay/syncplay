@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb
  Project: http://syncplay.pl/
- Version: 0.2.9
+ Version: 0.3.0
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -19,7 +19,7 @@
 
 Place the syncplay.lua file in the main (all user) VLC /lua/intf/ sub-directory:
 * Window: %ProgramFiles%\VideoLAN\VLC\lua\intf\
-* Linux: /usr/lib/vlc/lua/intf/
+* Linux: /usr/lib/vlc/lua/intf/ or on some systems /usr/lib64/vlc/lua/intf/ (use whichever one already has .luac files in it)
 * Mac OS X: /Applications/VLC.app/Contents/MacOS/share/lua/intf/
 * FreeBSD, OpenBSD etc.: /usr/local/lib/vlc/lua/intf/
 
@@ -84,7 +84,7 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 --]==========================================================================]
 
-local connectorversion = "0.2.9"
+local connectorversion = "0.3.0"
 local vlcversion = vlc.misc.version()
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
 local loopsleepduration = 2500 -- Pause for every event loop (uses microseconds)
@@ -466,6 +466,7 @@ function load_file (filepath)
     vlc.playlist.clear()
     vlc.playlist.enqueue({{path=uri}})
     vlc.playlist.next()
+    vlc.playlist.play()
     return "load-file-attempted\n"
 end
 
@@ -532,8 +533,8 @@ function set_playstate(argument)
     return errormsg
 end
 
-if string.sub(vlcversion,1,2) == "1." then
-    vlc.msg.err("This version of VLC is not known to support the Syncplay interface module. Please use VLC 2+.")
+if string.sub(vlcversion,1,2) == "1." or string.sub(vlcversion,1,3) == "2.0" or string.sub(vlcversion,1,3) == "2.1" or string.sub(vlcversion,1,5) == "2.2.0" then
+    vlc.msg.err("This version of VLC does not support Syncplay. Please use VLC 2.2.1+.")
     quit_vlc()
 else
     l = vlc.net.listen_tcp(host, port)

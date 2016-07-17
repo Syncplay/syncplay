@@ -1420,6 +1420,7 @@ class SyncplayPlaylist():
             if not self._client.sharedPlaylistIsEnabled():
                 self._playlistIndex = index
             if username is not None and self._client.userlist.currentUser.file and filename == self._client.userlist.currentUser.file['name']:
+                self._playlistIndex = index
                 return
         except IndexError:
             pass
