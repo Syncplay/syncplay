@@ -86,6 +86,7 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 local connectorversion = "0.3.0"
 local vlcversion = vlc.misc.version()
+local vlcmajorversion = tonumber(vlcversion:sub(1,1)) -- get the major version of VLC
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
 local loopsleepduration = 2500 -- Pause for every event loop (uses microseconds)
 local quitcheckfrequency = 20 -- Check whether VLC has closed every X loops
@@ -242,6 +243,10 @@ function get_var( vartoget, fallbackvar )
         errormsg = noinput
     end
 
+    if vlcmajorversion == 3 and vartoget == "time" then
+        response = response / 1000000
+    end
+
     return response, errormsg
 end
 
@@ -251,6 +256,10 @@ function set_var(vartoset, varvalue)
 
     local errormsg
     local input = vlc.object.input()
+
+    if vlcmajorversion == 3 and vartoset == "time" then
+        varvalue = varvalue * 1000000
+    end
 
     if input then
         vlc.var.set(input,tostring(vartoset),varvalue)
