@@ -325,11 +325,11 @@ class SyncServerProtocol(JSONCommandProtocol):
         return username, serverPassword, roomName, version
 
     def _checkPassword(self, serverPassword):
-        if self._factory.password:
+        if self._factory.password_sha512 or self._factory.password_md5:
             if not serverPassword:
                 self.dropWithError(getMessage("password-required-server-error"))
                 return False
-            if serverPassword != self._factory.password:
+            if serverPassword != self._factory.password_md5 and serverPassword != self._factory.password_sha512:
                 self.dropWithError(getMessage("wrong-password-server-error"))
                 return False
         return True
