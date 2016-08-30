@@ -3,9 +3,9 @@
 --[==========================================================================[
 
  Principal author: Etoh
- Other contributors: DerGenaue, jb
+ Other contributors: DerGenaue, jb, Pilotat
  Project: http://syncplay.pl/
- Version: 0.3.0
+ Version: 0.3.2
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -84,8 +84,9 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 --]==========================================================================]
 
-local connectorversion = "0.3.0"
+local connectorversion = "0.3.2"
 local vlcversion = vlc.misc.version()
+local vlcmajorversion = tonumber(vlcversion:sub(1,1)) -- get the major version of VLC
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
 local loopsleepduration = 2500 -- Pause for every event loop (uses microseconds)
 local quitcheckfrequency = 20 -- Check whether VLC has closed every X loops
@@ -121,6 +122,15 @@ local l
 
 local running = true
 
+if vlcmajorversion == 3 then
+    -- VLC 3 does not currently support syncplay
+    running = false
+    vlc.msg.err("This version of VLC does not support Syncplay. Please use VLC 2.2.1+ or an alternative media player. VLC 3 does not support Syncplay.")
+    while true do
+        vlc.misc.quit()
+        vlc.misc.mwait(vlc.misc.mdate()+100000)
+    end
+end
 
 function radixsafe_tonumber(str)
     -- Version of tonumber that works with any radix character (but not thousand seperators)
@@ -534,9 +544,9 @@ function set_playstate(argument)
 end
 
 if string.sub(vlcversion,1,2) == "1." or string.sub(vlcversion,1,3) == "2.0" or string.sub(vlcversion,1,3) == "2.1" or string.sub(vlcversion,1,5) == "2.2.0" then
-    vlc.msg.err("This version of VLC does not support Syncplay. Please use VLC 2.2.1+.")
+    vlc.msg.err("This version of VLC does not support Syncplay. Please use VLC 2.2.1+ or an alternative media player. VLC 3 does not support Syncplay.")
     quit_vlc()
-else
+elseif vlcmajorversion ~= 3 then
     l = vlc.net.listen_tcp(host, port)
     vlc.msg.info("Hosting Syncplay interface on port: "..port)
 end
