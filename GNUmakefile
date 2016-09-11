@@ -19,21 +19,21 @@ endif
 
 ifeq ($(SINGLE_USER),false)
 ifneq ($(BSD),true)
-	BASE_PATH    = /usr
-	VLC_LIB_PATH = ${PREFIX}/usr/lib
+	PREFIX      ?= /usr
+	VLC_LIB_PATH = ${PREFIX}/lib
 else
-	BASE_PATH    = /usr/local
-	VLC_LIB_PATH = ${PREFIX}/usr/local/lib	
+	PREFIX 	    ?= /usr/local
+	VLC_LIB_PATH = ${PREFIX}/lib
 endif
 else
-	BASE_PATH    = ${HOME}/.local
+	PREFIX       = ${HOME}/.local
 	VLC_LIB_PATH = ${HOME}/.local/share
 endif
 
-	BIN_PATH          = ${PREFIX}$(BASE_PATH)/bin
-	LIB_PATH          = ${PREFIX}$(BASE_PATH)/lib
-	APP_SHORTCUT_PATH = ${PREFIX}$(BASE_PATH)/share/applications
-	SHARE_PATH        = ${PREFIX}$(BASE_PATH)/share
+	BIN_PATH          = ${DESTDIR}${PREFIX}/bin
+	LIB_PATH          = ${DESTDIR}${PREFIX}/lib
+	APP_SHORTCUT_PATH = ${DESTDIR}${PREFIX}/share/applications
+	SHARE_PATH        = ${DESTDIR}${PREFIX}/share
 
 common:
 	-mkdir -p $(LIB_PATH)/syncplay/resources/lua/intf
@@ -57,7 +57,7 @@ u-common:
 client:
 	-mkdir -p $(BIN_PATH)
 	cp syncplayClient.py $(BIN_PATH)/syncplay
-	sed -i -e 's%# libpath%site.addsitedir\("$(BASE_PATH)/lib/syncplay"\)%' $(BIN_PATH)/syncplay
+	sed -i -e 's%# libpath%site.addsitedir\("${PREFIX}/lib/syncplay"\)%' $(BIN_PATH)/syncplay
 	chmod 755 $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
@@ -67,20 +67,20 @@ ifeq ($(SINGLE_USER),false)
 endif
 	
 ifeq ($(VLC_SUPPORT),true)
-	-mkdir -p $(VLC_LIB_PATH)/vlc/lua/intf/
-	cp resources/lua/intf/syncplay.lua $(VLC_LIB_PATH)/vlc/lua/intf/
+	-mkdir -p ${DESTDIR}$(VLC_LIB_PATH)/vlc/lua/intf/
+	cp resources/lua/intf/syncplay.lua ${DESTDIR}$(VLC_LIB_PATH)/vlc/lua/intf/
 endif
 
 u-client:
 	-rm $(BIN_PATH)/syncplay
 	-rm $(LIB_PATH)/syncplay/syncplayClient.py
-	-rm $(VLC_LIB_PATH)/vlc/lua/intf/syncplay.lua
+	-rm ${DESTDIR}$(VLC_LIB_PATH)/vlc/lua/intf/syncplay.lua
 	-rm $(APP_SHORTCUT_PATH)/syncplay.desktop
 
 server:
 	-mkdir -p $(BIN_PATH)
 	cp syncplayServer.py $(BIN_PATH)/syncplay-server
-	sed -i -e 's%# libpath%site.addsitedir\("$(BASE_PATH)/lib/syncplay"\)%' $(BIN_PATH)/syncplay-server
+	sed -i -e 's%# libpath%site.addsitedir\("${PREFIX}/lib/syncplay"\)%' $(BIN_PATH)/syncplay-server
 	chmod 755 $(BIN_PATH)/syncplay-server
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
