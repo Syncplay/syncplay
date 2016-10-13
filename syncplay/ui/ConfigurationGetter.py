@@ -7,13 +7,6 @@ from syncplay import constants, utils, version, milestone
 from syncplay.messages import getMessage, setLanguage, isValidLanguage
 from syncplay.players.playerFactory import PlayerFactory
 import codecs
-try:
-    from syncplay.ui.GuiConfiguration import GuiConfiguration
-    from PySide import QtGui  # @UnresolvedImport
-    from PySide.QtCore import QCoreApplication
-except ImportError:
-    print getMessage("unable-import-gui-error")
-    GuiConfiguration = None
 
 class InvalidConfigValue(Exception):
     def __init__(self, message):
@@ -305,12 +298,13 @@ class ConfigurationGetter(object):
                 sys.exit()
 
     def _promptForMissingArguments(self, error=None):
-        if self._config['noGui'] or not GuiConfiguration:
+        if self._config['noGui']:
             if error:
                 print "{}!".format(error)
             print getMessage("missing-arguments-error")
             sys.exit()
-        elif GuiConfiguration:
+        else:
+            from syncplay.ui.GuiConfiguration import GuiConfiguration
             gc = GuiConfiguration(self._config, error=error)
             gc.setAvailablePaths(self._playerFactory.getAvailablePlayerPaths())
             gc.run()
@@ -342,24 +336,17 @@ class ConfigurationGetter(object):
 
 
     def _forceGuiPrompt(self):
-        if GuiConfiguration:
-            try:
-                self._validateArguments()
-            except InvalidConfigValue:
-                pass
+        from syncplay.ui.GuiConfiguration import GuiConfiguration
+        try:
+            self._validateArguments()
+        except InvalidConfigValue:
+            pass
 
-            try:
-                if self._config['noGui'] == False:
-                    for key, value in self._promptForMissingArguments().items():
-                        self._config[key] = value
-            except GuiConfiguration.WindowClosed:
-                sys.exit()
-        else:
-            try:
-                self._validateArguments()
-            except InvalidConfigValue:
-                self._promptForMissingArguments()
-                sys.exit()
+        try:
+            for key, value in self._promptForMissingArguments().items():
+                self._config[key] = value
+        except GuiConfiguration.WindowClosed:
+            sys.exit()
 
     def __getRelativeConfigLocations(self):
         locations = []
@@ -412,13 +399,24 @@ class ConfigurationGetter(object):
             print getMessage("version-message").format(version, milestone)
             sys.exit()
         self._overrideConfigWithArgs(args)
+        if not self._config['noGui']:
+            try:
+                from PySide import QtGui  # @UnresolvedImport
+                from PySide.QtCore import QCoreApplication
+                from syncplay.vendor import qt4reactor
+                if QCoreApplication.instance() is None:
+                    self.app = QtGui.QApplication(sys.argv)
+                qt4reactor.install()
+            except ImportError:
+                print getMessage("unable-import-gui-error")
+                self._config['noGui'] = True
         if self._config['file'] and self._config['file'][:2] == "--":
             self._config['playerArgs'].insert(0, self._config['file'])
             self._config['file'] = None
         # Arguments not validated yet - booleans are still text values
         if self._config['language']:
             setLanguage(self._config['language'])
-        if (self._config['forceGuiPrompt'] == "True" or not self._config['file']) and GuiConfiguration and not self._config['noGui']:
+        if (self._config['forceGuiPrompt'] == "True" or not self._config['file']) and not self._config['noGui']:
             self._forceGuiPrompt()
         self._checkConfig()
         self._saveConfig(iniPath)
@@ -426,13 +424,6 @@ class ConfigurationGetter(object):
             self._config['loadedRelativePaths'] = self._loadRelativeConfiguration()
         if self._config['language']:
             setLanguage(self._config['language'])
-        if not GuiConfiguration:
-            self._config['noGui'] = True
-        if not self._config['noGui']:
-            from syncplay.vendor import qt4reactor
-            if QCoreApplication.instance() is None:
-                self.app = QtGui.QApplication(sys.argv)
-            qt4reactor.install()
         return self._config
 
     def setConfigOption(self, option, value):
