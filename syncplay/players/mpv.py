@@ -133,7 +133,7 @@ class NewMpvPlayer(OldMpvPlayer):
             self._client.ui.showDebugMessage("MPV not updated position so using GlobalPosition for getCalculatedPosition ({})".format(self._client.getGlobalPosition()))
             return self._client.getGlobalPosition()
 
-        if self._recentlyReset:
+        if self._recentlyReset():
             self._client.ui.showDebugMessage("Recently reset so using self.position for getCalculatedPosition ({})".format(self._position))
             return self._position
 
