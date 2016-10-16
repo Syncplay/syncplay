@@ -126,12 +126,15 @@ class NewMpvPlayer(OldMpvPlayer):
 
     def getCalculatedPosition(self):
         if self.fileLoaded == False:
+            self._client.ui.showDebugMessage("File not loaded so using GlobalPosition for getCalculatedPosition({})".format(self._client.getGlobalPosition()))
             return self._client.getGlobalPosition()
 
         if self.lastMPVPositionUpdate is None:
+            self._client.ui.showDebugMessage("MPV not updated position so using GlobalPosition for getCalculatedPosition ({})".format(self._client.getGlobalPosition()))
             return self._client.getGlobalPosition()
 
         if self._recentlyReset:
+            self._client.ui.showDebugMessage("Recently reset so using self.position for getCalculatedPosition ({})".format(self._position))
             return self._position
 
         diff = time.time() - self.lastMPVPositionUpdate
@@ -148,10 +151,12 @@ class NewMpvPlayer(OldMpvPlayer):
     def _storePosition(self, value):
         self.lastMPVPositionUpdate = time.time()
         if self._recentlyReset():
+            self._client.ui.showDebugMessage("Recently reset, so storing position as 0")
             self._position = 0
         elif self._fileIsLoaded():
             self._position = max(value,0)
         else:
+            self._client.ui.showDebugMessage("No file loaded so storing position as GlobalPosition ({})".format(self._client.getGlobalPosition()))
             self._position = self._client.getGlobalPosition()
 
     def _storePauseState(self, value):
@@ -194,6 +199,7 @@ class NewMpvPlayer(OldMpvPlayer):
         self.lastMPVPositionUpdate = time.time()
 
     def openFile(self, filePath, resetPosition=False):
+        self._client.ui.showDebugMessage("openFile, resetPosition=={}".format(resetPosition))
         if resetPosition:
             self.lastResetTime = time.time()
             if isURL(filePath):
