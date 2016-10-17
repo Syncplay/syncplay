@@ -1093,7 +1093,10 @@ class ConfigDialog(QtGui.QDialog):
         self.showmoreCheckbox.toggled.connect(self.moreToggled)
 
         self.setLayout(self.mainLayout)
-        self.runButton.setFocus()
+        if self.config['noStore']:
+            self.runButton.setFocus()
+        else:
+            self.storeAndRunButton.setFocus()
         self.setFixedSize(self.sizeHint())
         self.setAcceptDrops(True)
 
