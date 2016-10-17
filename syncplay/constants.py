@@ -54,8 +54,8 @@ DO_NOT_RESET_POSITION_THRESHOLD = 1.0
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 
 # Options for the File Switch feature:
-FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 10.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
-FOLDER_SEARCH_TIMEOUT = 3.0 # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)
+FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 15.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
+FOLDER_SEARCH_TIMEOUT = 6.0 # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)
 FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0 # Secs - Frequency of updating cache when someone is playing a file not in current cache
 
 #Usually there's no need to adjust these
