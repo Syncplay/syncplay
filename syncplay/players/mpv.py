@@ -156,7 +156,7 @@ class NewMpvPlayer(OldMpvPlayer):
         if self._recentlyReset():
             self._client.ui.showDebugMessage("Recently reset, so storing position as 0")
             self._position = 0
-        elif self._fileIsLoaded():
+        elif self._fileIsLoaded() or (value < constants.MPV_NEWFILE_IGNORE_TIME and self._fileIsLoaded(ignoreDelay=True)):
             self._position = max(value,0)
         else:
             self._client.ui.showDebugMessage("No file loaded so storing position as GlobalPosition ({})".format(self._client.getGlobalPosition()))
@@ -198,6 +198,9 @@ class NewMpvPlayer(OldMpvPlayer):
         self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)), notReadyAfterThis=True)
 
     def setPosition(self, value):
+        if value < constants.DO_NOT_RESET_POSITION_THRESHOLD and self._recentlyReset():
+            self._client.ui.showDebugMessage("Did not seek as recently reset and {} below 'do not reset position' threshold".format(value))
+            return
         super(self.__class__, self).setPosition(value)
         self.lastMPVPositionUpdate = time.time()
 
@@ -209,7 +212,9 @@ class NewMpvPlayer(OldMpvPlayer):
                 self.lastResetTime += constants.STREAM_ADDITIONAL_IGNORE_TIME
         self._loadFile(filePath)
         if self._paused != self._client.getGlobalPaused():
-            self.setPaused(self._client.getGlobalPaused())
+            self._client.ui.showDebugMessage("Want to set paused to {}".format(self._client.getGlobalPaused()))
+        else:
+            self._client.ui.showDebugMessage("Don't want to set paused to {}".format(self._client.getGlobalPaused()))
         if resetPosition == False:
             self.setPosition(self._client.getGlobalPosition())
         else:
@@ -246,7 +251,11 @@ class NewMpvPlayer(OldMpvPlayer):
         if self._paused != self._client.getGlobalPaused():
             self.reactor.callFromThread(self._client.getGlobalPaused)
 
-    def _fileIsLoaded(self):
+    def _fileIsLoaded(self, ignoreDelay=False):
+        if ignoreDelay:
+            self._client.ui.showDebugMessage("Ignoring _fileIsLoaded MPV_NEWFILE delay")
+            return True if self.fileLoaded else False
+
         if self.fileLoaded == True and self.lastLoadedTime != None and time.time() > (self.lastLoadedTime + constants.MPV_NEWFILE_IGNORE_TIME):
             return True
         else:

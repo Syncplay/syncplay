@@ -50,6 +50,7 @@ RECONNECT_RETRIES = 10
 SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
 AUTOPLAY_DELAY = 3.0
+DO_NOT_RESET_POSITION_THRESHOLD = 1.0
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 
 # Options for the File Switch feature:
