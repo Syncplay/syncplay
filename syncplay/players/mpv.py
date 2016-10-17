@@ -110,11 +110,14 @@ class NewMpvPlayer(OldMpvPlayer):
     lastMPVPositionUpdate = None
 
     def setPaused(self, value):
-        if self._paused <> value:
-            self._paused = not self._paused
-            self._listener.sendLine('cycle pause')
-            if value == False:
-                self.lastMPVPositionUpdate = time.time()
+        if self._paused == value:
+            self._client.ui.showDebugMessage("Not sending setPaused to mpv as state is already {}".format(value))
+            return
+        pauseValue = "yes" if value else "no"
+        self._setProperty("pause", pauseValue)
+        self._paused = value
+        if value == False:
+            self.lastMPVPositionUpdate = time.time()
 
     def _getProperty(self, property_):
         floatProperties = ['length','time-pos']
