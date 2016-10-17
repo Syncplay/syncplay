@@ -35,6 +35,9 @@ class VlcPlayer(BasePlayer):
         self._filechanged = False
         self._lastVLCPositionUpdate = None
         self.shownVLCLatencyError = False
+        self._previousPreviousPosition = -2
+        self._previousPosition = -1
+        self._position = 0
         try: # Hack to fix locale issue without importing locale library
             self.radixChar = "{:n}".format(1.5)[1:2]
             if self.radixChar == "" or self.radixChar == "1" or self.radixChar == "5":
@@ -192,8 +195,17 @@ class VlcPlayer(BasePlayer):
             self._durationAsk.set()
         elif name == "playstate":
             self._paused = bool(value != 'playing') if(value != "no-input" and self._filechanged == False) else self._client.getGlobalPaused()
+            if self._paused == False \
+            and self._position == self._previousPreviousPosition \
+            and self._previousPosition == self._position \
+            and self._duration > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH \
+            and abs(self._position - self._duration) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
+                self._paused = True
+                self._client.ui.showDebugMessage("Treating 'playing' response as 'paused' due to VLC EOF bug")
             self._pausedAsk.set()
         elif name == "position":
+            self._previousPreviousPosition = self._previousPosition
+            self._previousPosition = self._position
             self._position = float(value.replace(",", ".")) if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPosition()
             self._lastVLCPositionUpdate = time.time()
             self._positionAsk.set()
