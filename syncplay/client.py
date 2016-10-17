@@ -213,6 +213,10 @@ class SyncplayClient(object):
                     self.playerPositionBeforeLastSeek = self.getGlobalPosition()
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)
 
+    def prepareToAdvancePlaylist(self):
+        self.ui.showDebugMessage("Preparing to advance playlist...")
+        self._protocol.sendState(0, True, True, None, True)
+
     def _toggleReady(self, pauseChange, paused):
         if not self.userlist.currentUser.canControl():
             self._player.setPaused(self._globalPaused)
@@ -1539,6 +1543,7 @@ class SyncplayPlaylist():
             reactor.callLater(0.5, self._client.setPaused, False,)
 
         elif self._thereIsNextPlaylistIndex():
+            self._client.prepareToAdvancePlaylist()
             self.switchToNewPlaylistIndex(self._nextPlaylistIndex(), resetPosition=True)
 
     def _updateUndoPlaylistBuffer(self, newPlaylist, newRoom):
