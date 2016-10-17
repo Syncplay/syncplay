@@ -480,6 +480,7 @@ class SyncplayClient(object):
         if resetPosition:
             self.establishRewindDoubleCheck()
             self.lastRewindTime = time.time()
+            self.autoplayCheck()
 
     def fileSwitchFoundFiles(self):
         self.ui.fileSwitchFoundFiles()
@@ -693,9 +694,10 @@ class SyncplayClient(object):
             return False
 
     def autoplayConditionsMet(self):
-        return self._playerPaused and self.autoPlay and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported()\
+        recentlyReset = (self.lastRewindTime is not None and abs(time.time() - self.lastRewindTime) < 10) and self._playerPosition < 3
+        return self._playerPaused and (self.autoPlay or recentlyReset) and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported()\
                and self.userlist.areAllUsersInRoomReady(requireSameFilenames=self._config["autoplayRequireSameFilenames"])\
-               and self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold
+               and ((self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold) or recentlyReset)
 
     def autoplayTimerIsRunning(self):
         return self.autoplayTimer.running
