@@ -287,6 +287,7 @@ ru = {
     "addfolder-label" : u"Add folder", # TODO: Translate
 
     "adduris-msgbox-label" : u"Add URLs to playlist (one per line)", # TODO: Translate
+    "editplaylist-msgbox-label" : u"Set playlist (one per line)", # TODO: Translate
     "trusteddomains-msgbox-label" : u"Domains it is okay to automatically switch to (one per line)", # TODO: Translate
 
     "createcontrolledroom-msgbox-label" : u"Создать управляемую комнату",
@@ -398,6 +399,7 @@ ru = {
     "undoplaylist-menu-label" : u"Undo last change to playlist",
     "addfilestoplaylist-menu-label" : u"Add file(s) to bottom of playlist",
     "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",
+    "editplaylist-menu-label": u"Edit playlist",
 
     "addusersfiletoplaylist-menu-label" : u"Add {} file to playlist", # item owner indicator
     "addusersstreamstoplaylist-menu-label" : u"Add {} stream to playlist", # item owner indicator

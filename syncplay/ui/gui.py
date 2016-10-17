@@ -502,6 +502,7 @@ class MainWindow(QtGui.QMainWindow):
             menu.addSeparator()
         menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_switch.png"), getMessage("shuffleplaylist-menuu-label"), lambda: self.shufflePlaylist())
         menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_undo.png"), getMessage("undoplaylist-menu-label"), lambda: self.undoPlaylistChange())
+        menu.addAction(QtGui.QPixmap(resourcespath + u"film_edit.png"), getMessage("editplaylist-menu-label"), lambda: self.openEditPlaylistDialog())
         menu.addAction(QtGui.QPixmap(resourcespath + u"film_add.png"),getMessage("addfilestoplaylist-menu-label"), lambda: self.OpenAddFilesToPlaylistDialog())
         menu.addAction(QtGui.QPixmap(resourcespath + u"world_add.png"), getMessage("addurlstoplaylist-menu-label"), lambda: self.OpenAddURIsToPlaylistDialog())
         menu.addSeparator()
@@ -813,6 +814,36 @@ class MainWindow(QtGui.QMainWindow):
                 if URI <> "":
                     self.addStreamToPlaylist(URI)
             self.updatingPlaylist = False
+
+    @needsClient
+    def openEditPlaylistDialog(self):
+        oldPlaylist = utils.getListAsMultilineString(self.getPlaylistState())
+        editPlaylistDialog = QtGui.QDialog()
+        editPlaylistDialog.setWindowTitle(getMessage("editplaylist-msgbox-label"))
+        editPlaylistLayout = QtGui.QGridLayout()
+        editPlaylistLabel = QtGui.QLabel(getMessage("editplaylist-msgbox-label"))
+        editPlaylistLayout.addWidget(editPlaylistLabel, 0, 0, 1, 1)
+        editPlaylistTextbox = QtGui.QPlainTextEdit(oldPlaylist)
+        editPlaylistTextbox.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        editPlaylistLayout.addWidget(editPlaylistTextbox, 1, 0, 1, 1)
+        editPlaylistButtonBox = QtGui.QDialogButtonBox()
+        editPlaylistButtonBox.setOrientation(Qt.Horizontal)
+        editPlaylistButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok|QtGui.QDialogButtonBox.Cancel)
+        editPlaylistButtonBox.accepted.connect(editPlaylistDialog.accept)
+        editPlaylistButtonBox.rejected.connect(editPlaylistDialog.reject)
+        editPlaylistLayout.addWidget(editPlaylistButtonBox, 2, 0, 1, 1)
+        editPlaylistDialog.setLayout(editPlaylistLayout)
+        editPlaylistDialog.setModal(True)
+        editPlaylistDialog.setMinimumWidth(600)
+        editPlaylistDialog.setMinimumHeight(500)
+        editPlaylistDialog.show()
+        result = editPlaylistDialog.exec_()
+        if result == QtGui.QDialog.Accepted:
+            newPlaylist = utils.convertMultilineStringToList(editPlaylistTextbox.toPlainText())
+            if newPlaylist <> self.playlistState and self._syncplayClient and not self.updatingPlaylist:
+                self.setPlaylist(newPlaylist)
+                self._syncplayClient.playlist.changePlaylist(newPlaylist)
+                self._syncplayClient.fileSwitch.updateInfo()
 
     @needsClient
     def openSetMediaDirectoriesDialog(self):

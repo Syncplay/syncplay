@@ -287,6 +287,7 @@ en = {
     "addfolder-label" : u"Add folder",
 
     "adduris-msgbox-label" : u"Add URLs to playlist (one per line)",
+    "editplaylist-msgbox-label" : u"Set playlist (one per line)",
     "trusteddomains-msgbox-label" : u"Domains it is okay to automatically switch to (one per line)",
 
     "createcontrolledroom-msgbox-label" : "Create managed room",
@@ -399,6 +400,7 @@ en = {
     "undoplaylist-menu-label" : u"Undo last change to playlist",
     "addfilestoplaylist-menu-label" : u"Add file(s) to bottom of playlist",
     "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",
+    "editplaylist-menu-label": u"Edit playlist",
 
     "addusersfiletoplaylist-menu-label" : u"Add {} file to playlist", # item owner indicator
     "addusersstreamstoplaylist-menu-label" : u"Add {} stream to playlist", # item owner indicator
