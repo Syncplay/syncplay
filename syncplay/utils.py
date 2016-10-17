@@ -250,6 +250,12 @@ def getListAsMultilineString(pathArray):
 def convertMultilineStringToList(multilineString):
     return unicode.split(multilineString,u"\n") if multilineString else ""
 
+def getDomainFromURL(URL):
+    try:
+        return URL.split("//")[-1].split("/")[0]
+    except:
+        return None
+
 def getListOfPublicServers():
     try:
         import urllib, syncplay, sys, messages, json

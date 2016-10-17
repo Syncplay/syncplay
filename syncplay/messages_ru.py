@@ -230,6 +230,7 @@ ru = {
     "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready", # TODO: Translate into Russian
     "unpause-always" : u"Always unpause", # TODO: Translate into Russian
     "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)", # TODO: Translate into Russian
+"addtrusteddomain-menu-label" : u"Add {} as trusted domain", # Domain # TODO: Translate
 
     "help-label" : u"Помощь",
     "reset-label" : u"Сброс настроек",

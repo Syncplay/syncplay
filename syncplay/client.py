@@ -462,10 +462,22 @@ class SyncplayClient(object):
     def setTrustedDomains(self, newTrustedDomains):
         from syncplay.ui.ConfigurationGetter import ConfigurationGetter
         ConfigurationGetter().setConfigOption("trustedDomains", newTrustedDomains)
-        self._config['trustedDomains'] = newTrustedDomains
-        self.fileSwitchFoundFiles()
+        oldTrustedDomains = self._config['trustedDomains']
+        if oldTrustedDomains <> newTrustedDomains:
+            self._config['trustedDomains'] = newTrustedDomains
+            self.fileSwitchFoundFiles()
+            self.ui.showMessage("Trusted domains updated")
+            # TODO: Properly add message for setting trusted domains!
+
+    def isUntrustedTrustableURI(self, URIToTest):
+        if utils.isURL(URIToTest):
+            for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:
+                if URIToTest.startswith(trustedProtocol) and not self.isURITrusted(URIToTest):
+                    return True
+        return False
 
     def isURITrusted(self, URIToTest):
+        URIToTest = URIToTest+u"/"
         for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:
             if URIToTest.startswith(trustedProtocol):
                 if self._config['onlySwitchToTrustedDomains']:

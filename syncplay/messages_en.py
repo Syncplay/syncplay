@@ -271,6 +271,7 @@ en = {
     "createcontrolledroom-menu-label" : "&Create managed room",
     "identifyascontroller-menu-label" : "&Identify as room operator",
     "settrusteddomains-menu-label" : u"Set &trusted domains",
+    "addtrusteddomain-menu-label" : u"Add {} as trusted domain", # Domain
 
     "playback-menu-label" : u"&Playback",
 

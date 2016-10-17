@@ -269,6 +269,7 @@ de = {
     "createcontrolledroom-menu-label" : u"&Zentral gesteuerten Raum erstellen",
     "identifyascontroller-menu-label" : u"Als Raumleiter &identifizieren",
     "settrusteddomains-menu-label" : u"Set &trusted domains", # TODO: Translate
+    "addtrusteddomain-menu-label" : u"Add {} as trusted domain", # Domain # TODO: Translate
 
     "playback-menu-label" : u"&Wiedergabe",
 

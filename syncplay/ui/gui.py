@@ -498,6 +498,9 @@ class MainWindow(QtGui.QMainWindow):
                     pathFound = self._syncplayClient.fileSwitch.findFilepath(firstFile)
                     if pathFound:
                         menu.addAction(QtGui.QPixmap(resourcespath + u"film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound))
+            if self._syncplayClient.isUntrustedTrustableURI(firstFile):
+                domain = utils.getDomainFromURL(firstFile)
+                menu.addAction(QtGui.QPixmap(resourcespath + u"shield_add.png"),getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
             menu.addAction(QtGui.QPixmap(resourcespath + u"delete.png"), getMessage("removefromplaylist-menu-label"), lambda: self.deleteSelectedPlaylistItems())
             menu.addSeparator()
         menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_switch.png"), getMessage("shuffleplaylist-menuu-label"), lambda: self.shufflePlaylist())
@@ -897,7 +900,12 @@ class MainWindow(QtGui.QMainWindow):
         if result == QtGui.QDialog.Accepted:
             newTrustedDomains = utils.convertMultilineStringToList(TrustedDomainsTextbox.toPlainText())
             self._syncplayClient.setTrustedDomains(newTrustedDomains)
-
+    @needsClient
+    def addTrustedDomain(self, newDomain):
+        trustedDomains = self.config["trustedDomains"][:]
+        if newDomain:
+            trustedDomains.append(newDomain)
+            self._syncplayClient.setTrustedDomains(trustedDomains)
 
     @needsClient
     def openAddMediaDirectoryDialog(self, MediaDirectoriesTextbox, MediaDirectoriesDialog):
