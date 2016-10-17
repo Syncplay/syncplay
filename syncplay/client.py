@@ -468,6 +468,7 @@ class SyncplayClient(object):
             self.fileSwitchFoundFiles()
             self.ui.showMessage("Trusted domains updated")
             # TODO: Properly add message for setting trusted domains!
+            # TODO: Handle cases where users add www. to start of domain
 
     def isUntrustedTrustableURI(self, URIToTest):
         if utils.isURL(URIToTest):

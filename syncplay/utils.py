@@ -252,7 +252,10 @@ def convertMultilineStringToList(multilineString):
 
 def getDomainFromURL(URL):
     try:
-        return URL.split("//")[-1].split("/")[0]
+        URL = URL.split("//")[-1].split("/")[0]
+        if URL.startswith("www."):
+            URL = URL[4:]
+        return URL
     except:
         return None
 
