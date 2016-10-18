@@ -214,8 +214,11 @@ class SyncplayClient(object):
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)
 
     def prepareToAdvancePlaylist(self):
-        self.ui.showDebugMessage("Preparing to advance playlist...")
-        self._protocol.sendState(0, True, True, None, True)
+        if self.playlist.canSwitchToNextPlaylistIndex():
+            self.ui.showDebugMessage("Preparing to advance playlist...")
+            self._protocol.sendState(0, True, True, None, True)
+        else:
+            self.ui.showDebugMessage("Not preparing to advance playlist because the next file cannot be switched to")
 
     def _toggleReady(self, pauseChange, paused):
         if not self.userlist.currentUser.canControl():
@@ -1427,6 +1430,22 @@ class SyncplayPlaylist():
         else:
             self._ui.showMessage(getMessage("playlist-selection-changed-notification").format(username))
             self.switchToNewPlaylistIndex(index)
+
+    def canSwitchToNextPlaylistIndex(self):
+        if self._thereIsNextPlaylistIndex() and self._client.sharedPlaylistIsEnabled():
+            try:
+                index = self._nextPlaylistIndex()
+                if index is None:
+                    return False
+                filename = self._playlist[index]
+                if utils.isURL(filename):
+                    return True if self._client.isURITrusted(filename) else False
+                else:
+                    path = self._client.fileSwitch.findFilepath(filename, highPriority=True)
+                return True if path else False
+            except:
+                return False
+        return False
 
     @needsSharedPlaylistsEnabled
     def switchToNewPlaylistIndex(self, index, resetPosition=False):
