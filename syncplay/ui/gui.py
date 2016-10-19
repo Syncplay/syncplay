@@ -25,6 +25,7 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
 
     def paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex):
         column = indexQModelIndex.column()
+        midY = int((optionQStyleOptionViewItem.rect.y() + optionQStyleOptionViewItem.rect.bottomLeft().y()) / 2)
         if column == constants.USERLIST_GUI_USERNAME_COLUMN:
             currentQAbstractItemModel = indexQModelIndex.model()
             itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), constants.USERLIST_GUI_USERNAME_COLUMN, indexQModelIndex.parent())
@@ -41,19 +42,19 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
             if roomController and not controlIconQPixmap.isNull():
                 itemQPainter.drawPixmap (
                     optionQStyleOptionViewItem.rect.x()+6,
-                    optionQStyleOptionViewItem.rect.y(),
+                    midY-8,
                     controlIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
 
             if userReady and not tickIconQPixmap.isNull():
                 itemQPainter.drawPixmap (
                     (optionQStyleOptionViewItem.rect.x()-10),
-                    optionQStyleOptionViewItem.rect.y(),
+                    midY - 8,
                     tickIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
 
             elif userReady == False and not crossIconQPixmap.isNull():
                 itemQPainter.drawPixmap (
                     (optionQStyleOptionViewItem.rect.x()-10),
-                    optionQStyleOptionViewItem.rect.y(),
+                    midY - 8,
                     crossIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
             isUserRow = indexQModelIndex.parent() != indexQModelIndex.parent().parent()
             if isUserRow:
@@ -70,7 +71,7 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
                 fileSwitchIconQPixmap = QtGui.QPixmap(resourcespath + u"film_go.png")
                 itemQPainter.drawPixmap (
                     (optionQStyleOptionViewItem.rect.x()),
-                    optionQStyleOptionViewItem.rect.y(),
+                    midY - 8,
                     fileSwitchIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
 
@@ -78,7 +79,7 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
                 streamSwitchIconQPixmap = QtGui.QPixmap(resourcespath + u"world_go.png")
                 itemQPainter.drawPixmap (
                     (optionQStyleOptionViewItem.rect.x()),
-                    optionQStyleOptionViewItem.rect.y(),
+                    midY - 8,
                     streamSwitchIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
@@ -107,9 +108,10 @@ class MainWindow(QtGui.QMainWindow):
                 resourcespath = utils.findWorkingDir() + u"/resources/"
             if currentlyPlayingFile:
                 currentlyplayingIconQPixmap = QtGui.QPixmap(resourcespath + u"bullet_right_grey.png")
+                midY = int((optionQStyleOptionViewItem.rect.y() + optionQStyleOptionViewItem.rect.bottomLeft().y()) / 2)
                 itemQPainter.drawPixmap (
                     (optionQStyleOptionViewItem.rect.x()+4),
-                    optionQStyleOptionViewItem.rect.y(),
+                    midY-8,
                     currentlyplayingIconQPixmap.scaled(6, 16, Qt.KeepAspectRatio))
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+10)
 
