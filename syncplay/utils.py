@@ -250,6 +250,13 @@ def getListAsMultilineString(pathArray):
 def convertMultilineStringToList(multilineString):
     return unicode.split(multilineString,u"\n") if multilineString else ""
 
+def playlistIsValid(files):
+    if len(files) > constants.PLAYLIST_MAX_ITEMS:
+        return False
+    elif sum(map(len, files)) > constants.PLAYLIST_MAX_CHARACTERS:
+        return False
+    return True
+
 def getDomainFromURL(URL):
     try:
         URL = URL.split("//")[-1].split("/")[0]

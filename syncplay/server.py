@@ -11,7 +11,7 @@ import codecs
 import os
 from string import Template
 import argparse
-from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion
+from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid
 
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False):
@@ -139,13 +139,12 @@ class SyncFactory(Factory):
 
     def setPlaylist(self, watcher, files):
         room = watcher.getRoom()
-        if room.canControl(watcher):
+        if room.canControl(watcher) and playlistIsValid(files):
             watcher.getRoom().setPlaylist(files, watcher)
             self._roomManager.broadcastRoom(watcher, lambda w: w.setPlaylist(watcher.getName(), files))
         else:
             watcher.setPlaylist(room.getName(), room.getPlaylist())
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
-
 
     def setPlaylistIndex(self, watcher, index):
         room = watcher.getRoom()
@@ -350,7 +349,7 @@ class ControlledRoom(Room):
             Room.setPosition(self, position, setBy)
 
     def setPlaylist(self, files, setBy=None):
-        if self.canControl(setBy):
+        if self.canControl(setBy) and playlistIsValid(files):
             self._playlist = files
 
     def setPlaylistIndex(self, index, setBy=None):
