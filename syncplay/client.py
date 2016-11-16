@@ -496,6 +496,7 @@ class SyncplayClient(object):
         return False
 
     def openFile(self, filePath, resetPosition=False):
+        self.playlist.openedFile()
         self._player.openFile(filePath, resetPosition)
         if resetPosition:
             self.establishRewindDoubleCheck()
@@ -1391,6 +1392,9 @@ class SyncplayPlaylist():
             return f(self, *args, **kwds)
         return wrapper
 
+    def openedFile(self):
+        self._lastPlaylistIndexChange = time.time()
+
     def changeToPlaylistIndexFromFilename(self, filename):
         try:
             index = self._playlist.index(filename)
@@ -1570,6 +1574,7 @@ class SyncplayPlaylist():
             return
 
         if len(self._playlist) == 1 and self._client.loopSingleFiles():
+            self._lastPlaylistIndexChange = time.time()
             self._client.rewindFile()
             self._client.setPaused(False)
             reactor.callLater(0.5, self._client.setPaused, False,)
