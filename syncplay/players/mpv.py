@@ -7,7 +7,7 @@ from syncplay.utils import isURL
 import os, sys, time
 
 class MpvPlayer(MplayerPlayer):
-    RE_VERSION = re.compile('.*mpv (\d)\.(\d)\.\d.*')
+    RE_VERSION = re.compile('.*mpv (\d+)\.(\d+)\.\d+.*')
     osdMessageSeparator = "\\n"
 
     @staticmethod
@@ -120,9 +120,11 @@ class NewMpvPlayer(OldMpvPlayer):
             self.lastMPVPositionUpdate = time.time()
 
     def _getProperty(self, property_):
-        floatProperties = ['length','time-pos']
+        floatProperties = ['time-pos']
         if property_ in floatProperties:
             propertyID = u"={}".format(property_)
+        elif property_ == 'length':
+            propertyID = u'=length:${=duration:0}'
         else:
             propertyID = property_
         self._listener.sendLine(u"print_text ""ANS_{}=${{{}}}""".format(property_, propertyID))
