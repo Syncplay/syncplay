@@ -7,7 +7,7 @@ from syncplay.utils import isURL
 import os, sys, time
 
 class MpvPlayer(MplayerPlayer):
-    RE_VERSION = re.compile('.*mpv (\d)\.(\d)\.\d.*')
+    RE_VERSION = re.compile('.*mpv (\d+)\.(\d+)\.\d+.*')
     osdMessageSeparator = "\\n"
 
     @staticmethod
