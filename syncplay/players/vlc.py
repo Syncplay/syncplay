@@ -190,6 +190,9 @@ class VlcPlayer(BasePlayer):
         elif name == "duration":
             if value == "no-input":
                 self._duration = 0
+            elif value == "invalid-32-bit-value":
+                self._duration = 0
+                self.drop(getMessage("vlc-failed-versioncheck"))
             else:
                 self._duration = float(value.replace(",", "."))
             self._durationAsk.set()
@@ -208,7 +211,7 @@ class VlcPlayer(BasePlayer):
             self._previousPosition = self._position
             self._position = float(value.replace(",", ".")) if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPosition()
             if self._position < 0 and self._duration > 2147 and self._vlcVersion == "3.0.0":
-                self._client.ui.showErrorMessage("VLC reported its playback position as {} seconds, which could indicate you are using an old version of VLC 3 that does not report the position correctly for files 35 minutes and longer. Please update to the latest version of VLC!".format(int(self._position)))
+                self.drop(getMessage("vlc-failed-versioncheck"))
             self._lastVLCPositionUpdate = time.time()
             self._positionAsk.set()
         elif name == "filename":
