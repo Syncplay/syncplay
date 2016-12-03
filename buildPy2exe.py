@@ -3,13 +3,13 @@
 
 ''' *** TROUBLESHOOTING ***
 
-1) If you get the error "ImportError: No module named zope.interface" then add an empty __init__.py file to the PYTHONDIR/Lib/site-packages/zope directory
+) If you get the error "ImportError: No module named zope.interface" then add an empty __init__.py file to the PYTHONDIR/Lib/site-packages/zope directory
 
-2) It is expected that you will have Unicode NSIS from http://www.scratchpaper.com/ installed to: C:\Program Files (x86)\NSIS\Unicode\
+2) It is expected that you will have NSIS 3  NSIS from http://nsis.sourceforge.net installed to: C:\Program Files (x86)\NSIS\
 
 '''
 
-import sys
+import sys, codecs
 try:
     if (sys.version_info.major != 2) or (sys.version_info.minor < 7):
         raise Exception("You must build Syncplay with Python 2.7!")
@@ -31,7 +31,7 @@ if missingStrings is not None and missingStrings is not "":
     import warnings
     warnings.warn("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
 
-p = "C:\\Program Files (x86)\\NSIS\\Unicode\\makensis.exe" #TODO: how to move that into proper place, huh
+p = "C:\\Program Files (x86)\\NSIS\\makensis.exe" #TODO: how to move that into proper place, huh
 NSIS_COMPILE = p if os.path.isfile(p) else "makensis.exe"
 OUT_DIR = "syncplay v{}".format(syncplay.version)
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
@@ -44,6 +44,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Polish.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Russian.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\German.nlf"
+
+  Unicode true
 
   Name "Syncplay $version"
   OutFile "Syncplay $version Setup.exe"
@@ -594,8 +596,8 @@ class NSISScript(object):
                                                               installFiles = installFiles,
                                                               totalSize = totalSize,
                                                               )
-        with open(SETUP_SCRIPT_PATH, "w") as outfile:
-            outfile.write(contents)
+        with codecs.open(SETUP_SCRIPT_PATH, "w", "utf-8-sig") as outfile:
+            outfile.write(contents.decode('utf-8'))
         
     def compile(self):
         if not os.path.isfile(NSIS_COMPILE):
