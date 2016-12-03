@@ -412,6 +412,8 @@ function get_duration ()
                     response = item:duration()
                     if response < 1 then
                         response = 0
+                    elseif string.sub(vlcversion,1,5) == "3.0.0" and response > 2147 and math.abs(response-(vlc.var.get(input,"length")/1000000)) > 5 then
+                        errormsg = "invalid-32-bit-value"
                     end
                 end
                 i = i + 1
@@ -540,7 +542,7 @@ function set_playstate(argument)
 end
 
 if string.sub(vlcversion,1,2) == "1." or string.sub(vlcversion,1,3) == "2.0" or string.sub(vlcversion,1,3) == "2.1" or string.sub(vlcversion,1,5) == "2.2.0" then
-    vlc.msg.err("This version of VLC does not support Syncplay. Please use VLC 2.2.1+ or an alternative media player..")
+    vlc.msg.err("This version of VLC does not support Syncplay. Please use VLC 2.2.1+ or an alternative media player.")
     quit_vlc()
 else
     l = vlc.net.listen_tcp(host, port)
