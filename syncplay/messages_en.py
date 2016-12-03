@@ -92,7 +92,6 @@ en = {
     "language-changed-msgbox-label" : "Language will be changed when you run Syncplay.",
     "promptforupdate-label" : u"Is it okay for Syncplay to automatically check for updates from time to time?",
 
-    "vlc-version-mismatch": u"This version of VLC does not support Syncplay. VLC {}+ supports Syncplay but VLC 3 does not. Please use an alternative media player.", # VLC min version
     "vlc-interface-version-mismatch": "You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above.  Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",  # VLC interface version, VLC interface min version
     "vlc-interface-oldversion-warning": "Warning: Syncplay detected that an old version version of the Syncplay interface module for VLC was installed in the VLC directory. Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
     "vlc-interface-not-installed": "Warning: The Syncplay interface module for VLC was not found in the VLC directory. As such, if you are running VLC 2.0 then VLC will use the syncplay.lua module contained within the Syncplay directory, but this will mean that other custom interface scripts and extensions will not work. Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
@@ -128,10 +127,9 @@ en = {
     "not-json-error" : "Not a json encoded string\n",
     "hello-arguments-error" : "Not enough Hello arguments\n",
     "version-mismatch-error" : "Mismatch between versions of client and server\n",
-    "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua then please refer to http://syncplay.pl/LUA/ for instructions.",
+    "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua and are using the latest verion of VLC then please refer to http://syncplay.pl/LUA/ for instructions.",
     "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to http://syncplay.pl/LUA/ for instructions.",
-    "vlc-failed-versioncheck": "This version of VLC is not supported by Syncplay. Please use VLC 2.",
-    "vlc-failed-other" : "When trying to load the syncplay.lua interface script VLC has provided the following error: {}",  # Syncplay Error
+    "vlc-failed-versioncheck": "This version of VLC is not supported by Syncplay.",
 
     "not-supported-by-server-error" : "This feature is not supported by the server. The feature requires a server running Syncplay {}+, but the server is running Syncplay {}.", #minVersion, serverVersion
     "shared-playlists-not-supported-by-server-error" : "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.", #minVersion, serverVersion

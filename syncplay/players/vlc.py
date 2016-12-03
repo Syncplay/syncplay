@@ -199,7 +199,7 @@ class VlcPlayer(BasePlayer):
             and self._position == self._previousPreviousPosition \
             and self._previousPosition == self._position \
             and self._duration > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH \
-            and abs(self._position - self._duration) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
+            and self._position == self._duration:
                 self._paused = True
                 self._client.ui.showDebugMessage("Treating 'playing' response as 'paused' due to VLC EOF bug")
             self._pausedAsk.set()
@@ -207,6 +207,8 @@ class VlcPlayer(BasePlayer):
             self._previousPreviousPosition = self._previousPosition
             self._previousPosition = self._position
             self._position = float(value.replace(",", ".")) if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPosition()
+            if self._position < 0 and self._duration > 2147 and self._vlcVersion == "3.0.0":
+                self._client.ui.showErrorMessage("VLC reported its playback position as {} seconds, which could indicate you are using an old version of VLC 3 that does not report the position correctly for files 35 minutes and longer. Please update to the latest version of VLC!".format(int(self._position)))
             self._lastVLCPositionUpdate = time.time()
             self._positionAsk.set()
         elif name == "filename":
@@ -214,8 +216,8 @@ class VlcPlayer(BasePlayer):
             self._filename = value.decode('utf-8')
             self._filenameAsk.set()
         elif line.startswith("vlc-version: "):
-            vlc_version = line.split(': ')[1].replace(' ','-').split('-')[0]
-            if not utils.meetsMinVersion(vlc_version, constants.VLC_MIN_VERSION):
+            self._vlcVersion = line.split(': ')[1].replace(' ','-').split('-')[0]
+            if not utils.meetsMinVersion(self._vlcVersion, constants.VLC_MIN_VERSION):
                 self._client.ui.showErrorMessage(getMessage("vlc-version-mismatch").format(constants.VLC_MIN_VERSION))
             self._vlcready.set()
 
@@ -337,25 +339,29 @@ class VlcPlayer(BasePlayer):
 
             self._vlcready = vlcReady
             self._vlcclosed = vlcClosed
+            self._vlcVersion = None
 
             if self.oldIntfVersion:
                 self.__playerController.drop(getMessage("vlc-interface-version-mismatch").format(self.oldIntfVersion,constants.VLC_INTERFACE_MIN_VERSION))
 
             else:
                 self.__process = subprocess.Popen(call, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                for line in iter(self.__process.stderr.readline, ''):
-                    self.vlcHasResponded = True
-                    if "[syncplay]" in line:
-                        if "Listening on host" in line:
-                            break
-                        if "Hosting Syncplay" in line:
-                            break
-                        elif "Couldn't find lua interface" in line:
-                            playerController._client.ui.showErrorMessage(getMessage("vlc-failed-noscript").format(line), True)
-                            break
-                        elif "lua interface error" in line:
-                            playerController._client.ui.showErrorMessage(getMessage("media-player-error").format(line), True)
-                            break
+                if constants.VLC_LISTEN_FOR_STDOUT:
+                    for line in iter(self.__process.stderr.readline, ''):
+                        self.vlcHasResponded = True
+                        if "[syncplay]" in line:
+                            if "Listening on host" in line:
+                                break
+                            if "Hosting Syncplay" in line:
+                                break
+                            elif "Couldn't find lua interface" in line:
+                                playerController._client.ui.showErrorMessage(
+                                    getMessage("vlc-failed-noscript").format(line), True)
+                                break
+                            elif "lua interface error" in line:
+                                playerController._client.ui.showErrorMessage(
+                                    getMessage("media-player-error").format(line), True)
+                                break
                 self.__process.stderr = None
                 threading.Thread.__init__(self, name="VLC Listener")
                 asynchat.async_chat.__init__(self)
@@ -385,9 +391,10 @@ class VlcPlayer(BasePlayer):
             if self.vlcHasResponded:
                 self.__playerController.drop()
             else:
-                self.__playerController.drop(getMessage("vlc-version-mismatch").format(constants.VLC_MIN_VERSION))
+                self.__playerController.drop(getMessage("vlc-failed-connection").format(constants.VLC_MIN_VERSION))
 
         def found_terminator(self):
+            self.vlcHasResponded = True
             self.__playerController.lineReceived("".join(self._ibuffer))
             self._ibuffer = []
 
