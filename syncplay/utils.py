@@ -164,9 +164,16 @@ def blackholeStdoutForFrozenWindow():
 
 def stripfilename(filename, stripURL):
     if filename:
+        try:
+            filename = filename.encode('utf-8')
+        except UnicodeDecodeError:
+            pass
         filename = urllib.unquote(filename)
         if stripURL:
-            filename = filename.split(u"/")[-1]
+            try:
+                filename = urllib.unquote(filename.split(u"/")[-1])
+            except UnicodeDecodeError:
+                filename = urllib.unquote(filename.split("/")[-1])
         return re.sub(constants.FILENAME_STRIP_REGEX, "", filename)
     else:
         return ""
@@ -181,7 +188,15 @@ def stripRoomName(RoomName):
         return ""
 
 def hashFilename(filename, stripURL = False):
-    return hashlib.sha256(stripfilename(filename, stripURL).encode('utf-8')).hexdigest()[:12]
+    if isURL(filename):
+        stripURL = True
+    strippedFilename = stripfilename(filename, stripURL)
+    try:
+        strippedFilename = strippedFilename.encode('utf-8')
+    except UnicodeDecodeError:
+        pass
+    filenameHash = hashlib.sha256(strippedFilename).hexdigest()[:12]
+    return filenameHash
 
 def hashFilesize(size):
     return hashlib.sha256(str(size)).hexdigest()[:12]
@@ -197,6 +212,14 @@ def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
         return True
 
 def sameFilename (filename1, filename2):
+    try:
+        filename1 = filename1.encode('utf-8')
+    except UnicodeDecodeError:
+        pass
+    try:
+        filename2 = filename2.encode('utf-8')
+    except UnicodeDecodeError:
+        pass
     stripURL = True if isURL(filename1) ^ isURL(filename2) else False
     if filename1 == constants.PRIVACY_HIDDENFILENAME or filename2 == constants.PRIVACY_HIDDENFILENAME:
         return True

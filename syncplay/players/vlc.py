@@ -136,6 +136,11 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine('set-playstate: {}'.format("paused" if value else "playing"))
 
     def getMRL(self, fileURL):
+        if utils.isURL(fileURL):
+            fileURL = fileURL.encode('utf8')
+            fileURL = urllib.quote(fileURL, safe="%/:=&?~#+!$,;'@()*[]")
+            return fileURL
+
         fileURL = fileURL.replace(u'\\', u'/')
         fileURL = fileURL.encode('utf8')
         fileURL = urllib.quote_plus(fileURL)
@@ -151,7 +156,7 @@ class VlcPlayer(BasePlayer):
             normedPath = os.path.normpath(filePath)
             if os.path.isfile(normedPath):
                 filePath = normedPath
-        if utils.isASCII(filePath):
+        if utils.isASCII(filePath) and not utils.isURL(filePath):
             self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii', 'ignore')))
         else:
             fileURL = self.getMRL(filePath)
@@ -185,6 +190,9 @@ class VlcPlayer(BasePlayer):
                     value = value.replace("file://", "")
                     if not os.path.isfile(value):
                         value = value.lstrip("/")
+                elif utils.isURL(value):
+                    value = urllib.unquote(value)
+                    value = value.decode('utf-8')
                 self._filepath = value
             self._pathAsk.set()
         elif name == "duration":

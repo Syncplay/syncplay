@@ -343,7 +343,7 @@ class MainWindow(QtGui.QMainWindow):
         if filename:
             if filename == getMessage("nofile-note"):
                 return constants.FILEITEM_SWITCH_NO_SWITCH
-            if self._syncplayClient.userlist.currentUser.file and filename == self._syncplayClient.userlist.currentUser.file['name']:
+            if self._syncplayClient.userlist.currentUser.file and utils.sameFilename(filename,self._syncplayClient.userlist.currentUser.file['name']):
                 return constants.FILEITEM_SWITCH_NO_SWITCH
             if isURL(filename):
                 return constants.FILEITEM_SWITCH_STREAM_SWITCH
@@ -417,6 +417,10 @@ class MainWindow(QtGui.QMainWindow):
                     filename = user.file['name']
                     if isURL(filename):
                         filename = urllib.unquote(filename)
+                        try:
+                            filename = filename.decode('utf-8')
+                        except UnicodeEncodeError:
+                            pass
                     filenameitem = QtGui.QStandardItem(filename)
                     fileSwitchState = self.getFileSwitchState(user.file['name']) if room == currentUser.room else None
                     if fileSwitchState != constants.FILEITEM_SWITCH_NO_SWITCH:
@@ -819,6 +823,12 @@ class MainWindow(QtGui.QMainWindow):
             self.updatingPlaylist = True
             for URI in URIsToAdd:
                 URI = URI.rstrip()
+                try:
+                    URI = URI.encode('utf-8')
+                except UnicodeDecodeError:
+                    pass
+                URI = urllib.unquote(URI)
+                URI = URI.decode('utf-8')
                 if URI <> "":
                     self.addStreamToPlaylist(URI)
             self.updatingPlaylist = False

@@ -443,8 +443,10 @@ class SyncplayClient(object):
     def updateFile(self, filename, duration, path):
         newPath = u""
         if utils.isURL(path):
-            filename = path
-
+            try:
+                filename = path.encode('utf-8')
+            except UnicodeDecodeError:
+                filename = path
         if not path:
             return
         try:
