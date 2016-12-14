@@ -195,7 +195,9 @@ de = {
     "checkforupdatesautomatically-label" : u"Automatisch nach Updates suchen",
     "slowondesync-label" : u"Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC)",
     "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentell)",
+    "pausing-title" : u"Pausing", # TODO: Translate
     "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
+    "readiness-title" : u"Initial readiness state", # TODO: Translate
     "readyatstart-label" : u"Standardmäßig auf \'Bereit\' stellen",
     "forceguiprompt-label" : u"Diesen Dialog nicht mehr anzeigen",
     "showosd-label" : u"OSD-Nachrichten anzeigen",

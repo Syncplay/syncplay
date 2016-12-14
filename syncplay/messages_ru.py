@@ -8,7 +8,7 @@ ru = {
     # Client notifications
     "config-cleared-notification" : u"Настройки сброшены. Изменения вступят в силу при сохранении корректной конфигурации.",
 
-    "relative-config-notification" : u"Загружен(ы) файл(ы) относительной конфигурации: {}",
+    "relative-config-notification" : u"Загружены файлы относительной конфигурации: {}",
 
     "connection-attempt-notification" : u"Подключение к {}:{}",  # Port, IP
     "reconnection-attempt-notification" : u"Соединение с сервером потеряно, переподключение",
@@ -22,22 +22,22 @@ ru = {
     "slowdown-notification" : u"Воспроизведение замедлено из-за разницы во времени с <{}>",  # User
     "revert-notification" : u"Возвращаемся к нормальной скорости воспроизведения",
 
-    "pause-notification" : u"<{}> приостановил(а) воспроизведение",  # User
-    "unpause-notification" : u"<{}> возобновил(а) воспроизведение",  # User
+    "pause-notification" : u"<{}> приостановил воспроизведение",  # User
+    "unpause-notification" : u"<{}> возобновил воспроизведение",  # User
     "seek-notification" : u"<{}> перемотал с {} на {}",  # User, from time, to time
 
     "current-offset-notification" : u"Текущее смещение: {} секунд(ы)",  # Offset
 
-    "media-directory-list-updated-notification" : u"Syncplay media directories have been updated.", # TODO: Translate
+    "media-directory-list-updated-notification" : u"Папки воспроизведения обновлены.",
 
-    "room-join-notification" : u"<{}> зашел(зашла) в комнату: '{}'",  # User
-    "left-notification" : u"<{}> покинул(а) комнату",  # User
-    "left-paused-notification" : u"<{}> покинул(а) комнату, <{}> приостановил(а) воспроизведение",  # User who left, User who paused
+    "room-join-notification" : u"<{}> зашел в комнату: '{}'",  # User
+    "left-notification" : u"<{}> покинул комнату",  # User
+    "left-paused-notification" : u"<{}> покинул комнату, <{}> приостановил воспроизведение",  # User who left, User who paused
     "playing-notification" : u"<{}> включил '{}' ({})",  # User, file, duration
     "playing-notification/room-addendum" : u" в комнате: '{}'",  # Room
 
     "not-all-ready" : u"Не готовы: {}", # Usernames
-    "all-users-ready" : u"Все пользователи готовы ({} чел.)", #Number of ready users
+    "all-users-ready" : u"Все зрители готовы ({} чел.)", #Number of ready users
     "ready-to-unpause-notification" : u"Вы помечены как готовый - нажмите еще раз, чтобы продолжить воспроизведение",
     "set-as-ready-notification" : u"Вы помечены как готовый",
     "set-as-not-ready-notification" : u"Вы помечены как неготовый",
@@ -54,7 +54,7 @@ ru = {
     "file-difference-filename" : u"имя",
     "file-difference-filesize" : u"размер",
     "file-difference-duration" : u"длительность",
-    "alone-in-the-room" : u"В этой комнате кроме Вас никого нет.",
+    "alone-in-the-room" : u"В комнате кроме Вас никого нет.",
 
     "different-filesize-notification" : u" (размер Вашего файла не совпадает с размером их файла!)",
     "userlist-playing-notification" : u"{} смотрит:", #Username
@@ -67,7 +67,7 @@ ru = {
     "ready-userlist-userflag" : u"Готов",
 
     "update-check-failed-notification" : u"Невозможно автоматически проверить, что версия Syncplay {} все еще актуальна. Хотите зайти на http://syncplay.pl/ и вручную проверить наличие обновлений?",
-    "syncplay-uptodate-notification" : u"Syncplay обновлен",
+    "syncplay-uptodate-notification" : u"У вас последняя версия Syncplay",
     "syncplay-updateavailable-notification" : u"Доступна новая версия Syncplay. Хотите открыть страницу релиза?",
 
     "mplayer-file-required-notification" : u"Для использования Syncplay с mplayer необходимо передать файл в качестве параметра",
@@ -82,22 +82,22 @@ ru = {
     "commandlist-notification/pause" : u"\tp - вкл./выкл. паузу",
     "commandlist-notification/seek" : u"\t[s][+-]time - перемотать к заданному моменту времени, если не указан + или -, то время считается абсолютным (от начала файла) в секундах или мин:сек",
     "commandlist-notification/help" : u"\th - помощь",
-    "commandlist-notification/toggle" : u"\tt - переключить статус готов/неготов к просмотру",
+    "commandlist-notification/toggle" : u"\tt - переключить статус готов/не готов к просмотру",
     "commandlist-notification/create" : u"\tc [name] - создать управляемую комнату с таким же именем, как у текущей",
     "commandlist-notification/auth" : u"\ta [password] - авторизоваться как оператор комнаты с помощью пароля",
     "syncplay-version-notification" : u"Версия Syncplay: {}",  # syncplay.version
     "more-info-notification" : u"Больше информации на {}",  # projectURL
 
     "gui-data-cleared-notification" : u"Syncplay очистил путь и информацию о состоянии окна, использованного GUI.",
-    "language-changed-msgbox-label" : u"Язык переключится при следующем запуске SYncplay.",
+    "language-changed-msgbox-label" : u"Язык переключится при следующем запуске Syncplay.",
     "promptforupdate-label" : u"Вы не против, если Syncplay будет автоматически изредка проверять наличие обновлений?",
 
-    "vlc-version-mismatch": u"This version of VLC does not support Syncplay. VLC {}+ supports Syncplay but VLC 3 does not. Please use an alternative media player.", # VLC min version # TODO: Translate
-    "vlc-interface-version-mismatch" : u"В используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",  # VLC interface version, VLC interface min version
+    "vlc-version-mismatch": u"Syncplay не поддерживает данную версию VLC. Syncplay поддерживает VLC {}+, но не VLC 3. Используйте другой проигрыватель.", # VLC min version
+    "vlc-interface-version-mismatch" : u"Вы используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",  # VLC interface version, VLC interface min version
     "vlc-interface-oldversion-warning" : u"Внимание: Syncplay обнаружил, что старая версия модуля интерфейса Syncplay для VLC уже установлена в директорию VLC. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
     "vlc-interface-not-installed" : u"Внимание: Модуль интерфейса Syncplay для VLC не обнаружен в директории VLC. По существу, если Вы используете VLC 2.0, то VLC будет использовать модуль syncplay.lua из директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
-    "media-player-latency-warning": u"Внимание: У Вашего проигрывателя слишком большой отклик ({} секунд). Если Вы замечаете проблемы с синхронизацией, то закройте ресурсоемкие приложения, а если это не помогло - попробуйте другой проигрыватель.", # Seconds to respond
-    "mpv-unresponsive-error": u"mpv has not responded for {} seconds so appears to have malfunctioned. Please restart Syncplay.", # Seconds to respond # TODO: Translate to Russian
+    "media-player-latency-warning": u"Внимание: У Вашего проигрывателя слишком большой отклик ({} секунд). Если Вы замечаете проблемы с синхронизацией, то закройте ресурсоемкие приложения. Если это не помогло - попробуйте другой проигрыватель.", # Seconds to respond
+    "mpv-unresponsive-error": u"mpv не отвечает {} секунд, по-видимому, произошел сбой. Пожалуйста, перезапустите Syncplay.", # Seconds to respond
 
     # Client prompts
     "enter-to-exit-prompt" : u"Для выхода нажмите Enter\n",
@@ -133,20 +133,20 @@ ru = {
     "vlc-failed-versioncheck" : u"Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
     "vlc-failed-other" : u"Во время загрузки скрипта интерфейса syncplay.lua в VLC произошла следующая ошибка: {}",  # Syncplay Error
 
-    "not-supported-by-server-error" : u"Эта возможность не поддерживается сервером. The feature requires a server running Syncplay {}+, but the server is running Syncplay {}.", #minVersion, serverVersion #TODO: Translate into Russian
-    "shared-playlists-not-supported-by-server-error" : u"The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.", #minVersion, serverVersion # TODO: Translate
+    "not-supported-by-server-error" : u"Эта возможность не поддерживается сервером. Требуется сервер Syncplay {}+, вы подключены к серверу Syncplay {}.", #minVersion, serverVersion
+    "shared-playlists-not-supported-by-server-error" : u"Общие списки воспроизведения могут не поддерживаться сервером. Для корректной работы требуется сервер Syncplay {}+, вы подключены к серверу Syncplay {}.", #minVersion, serverVersion
 
     "invalid-seek-value" : u"Некорректное значение для перемотки",
     "invalid-offset-value" : u"Некорректное смещение",
 
-    "switch-file-not-found-error" : u"Невозможно переключиться на файл '{0}'. Syncplay looks in the folder specified media directories.", # File not found # TODO: Translate last part into Russian
-    "folder-search-timeout-error" : u"The search for media in media directories was aborted as it took too long to search through '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. For automatic file switching to work again please select File->Set Media Directories in the menu bar and remove this directory or replace it with an appropriate sub-folder.", #Folder # TODO: Translate
-    "folder-search-first-file-timeout-error" : u"The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please go to File->Set Media Directories and either remove the directory or resolve the issue (e.g. by changing power saving settings).", #Folder # TODO: Translate
-    "added-file-not-in-media-directory-error" : u"You loaded a file in '{}' which is not a known media directory. You can add this as a media directory by selecting File->Set Media Directories in the menu bar.", #Folder #TODO: Translate
-    "no-media-directories-error" : u"No media directories have been set. For shared playlist and file switching features to work properly please select File->Set Media Directories and specify where Syncplay should look to find media files.", # TODO: Translate
-    "cannot-find-directory-error" : u"Could not find media directory '{}'. To update your list of media directories please select File->Set Media Directories from the menu bar and specify where Syncplay should look to find media files.", # TODO: Translate
+    "switch-file-not-found-error" : u"Невозможно найти файл '{0}'. Проверьте папки воспроизведения.", # File not found
+    "folder-search-timeout-error" : u"Поиск файла был прерван в папке '{}'. Это может происходить из-за большого количества подпапок. Для корректной работы поиска файлов зайдите через выпадающее меню в Файл->Папки воспроизведения и удалите данную папку из списка, или замените её на нужную подпапку.", #Folder
+    "folder-search-first-file-timeout-error" : u"Поиск файла в '{}' был прерван, так как невозможно открыть каталог. Это может происходить, если это сетевой диск или диск перешел в режим экономии энергии. Для корректной работы поиска файлов зайдите через выпадающее меню в Файл->Папки воспроизведения и удалите данную папку, или решите проблему через изменение параметров энергосбережения.", #Folder
+    "added-file-not-in-media-directory-error" : u"Вы загрузили файл из '{}', который не числится в папках воспроизведения. Вы можете добавить его через выпадающее меню Файл->Папки воспроизведения.", #Folder
+    "no-media-directories-error" : u"Вы не указали папки воспроизведения. Для корректной работы зайдите через выпадающее меню в Файл->Папки воспроизведения и укажите нужные каталоги.",
+    "cannot-find-directory-error" : u"Не удалось найти папку воспроизведения '{}'. Для обновления списка папок, через выпадающее меню, перейдите в Файл->Папки воспроизведения и укажите нужные каталоги.",
 
-    "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.", # TODO: Translate into Russian
+    "failed-to-load-server-list-error" : u"Не удалось загрузить список публичных серверов. Откройте http://www.syncplay.pl/ через браузер.",
 
     # Client arguments
     "argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет.',
@@ -171,18 +171,18 @@ ru = {
     # Client labels
     "config-window-title" : u"Настройка Syncplay",
 
-    "connection-group-title" : u"Параметры подключения",
+    "connection-group-title" : u"Подключение",
     "host-label" : u"Адрес сервера: ",
     "name-label" : u"Имя пользователя (не обязательно):",
-    "password-label" : u"Пароль к серверу (если требуется):",
-    "room-label" : u"Начальная комната: ",
+    "password-label" : u"Пароль сервера (если требуется):",
+    "room-label" : u"Комната:",
 
-    "media-setting-title" : u"Параметры проигрывателя",
+    "media-setting-title" : u"Воспроизведение",
     "executable-path-label" : u"Путь к проигрывателю:",
     "media-path-label" : u"Путь к видеофайлу:",
-    "player-arguments-label" : u"Аргументы для запуска проигрывателя:",
+    "player-arguments-label" : u"Аргументы запуска проигрывателя:",
     "browse-label" : u"Выбрать",
-    "update-server-list-label" : u"Update list", # TODO: Translate into Russian
+    "update-server-list-label" : u"Обновить список",
 
     "more-title" : u"Больше настроек",
     "never-rewind-value" : u"Никогда",
@@ -196,8 +196,10 @@ ru = {
     "slowondesync-label" : u"Замедлять при небольших рассинхронизациях (не поддерживаетя в MPC-HC)",
     "rewindondesync-label" : u"Перемотка при больших рассинхронизациях (настоятельно рекомендуется)",
     "dontslowdownwithme-label" : u"Никогда не замедлять и не перематывать видео другим (функция тестируется)",
+    "pausing-title" : u"Приостановка",
     "pauseonleave-label" : u"Приостанавливать, когда кто-то уходит (например, отключился)",
-    "readyatstart-label" : u"Выставить статус 'готово к просмотру' по умолчанию",
+    "readiness-title" : u"Готовность",
+    "readyatstart-label" : u"Выставить статус 'Я готов' по умолчанию",
     "fastforwardondesync-label" : u"Ускорять видео при отставании (рекомендуется)",
     "forceguiprompt-label" : u"Не показывать больше этот диалог", # (Inverted)
     "showosd-label" : u"Включить экранные сообщения (поверх видео)",
@@ -211,93 +213,93 @@ ru = {
     "automatic-language" : u"По умолчанию ({})", # Automatic language
     "showdurationnotification-label" : u"Предупреждать о несовпадении продолжительности видео",
     "basics-label" : u"Основное",
-    "readiness-label" : u"Воспроизведение/Пауза", # TODO: Confirm translation of play/pause
+    "readiness-label" : u"Поведение",
     "misc-label" : u"Прочее",
-    "core-behaviour-title" : u"Core room behaviour", # TODO: Translate into Russian
-    "syncplay-internals-title" : u"Syncplay internals", # TODO: Translate into Russian
-    "syncplay-mediasearchdirectories-title" : u"Directories to search for media (one path per line)", # TODO: Translate into Russian
+    "core-behaviour-title" : u"Информация о файлах",
+    "syncplay-internals-title" : u"Системные настройки",
+    "syncplay-mediasearchdirectories-title" : u"Папки воспроизведения (один путь на строку)",
     "sync-label" : u"Синхронизация",
-    "sync-otherslagging-title" : u"При отставании других зрителей...",
-    "sync-youlaggging-title" : u"Когда я отстаю ...",
+    "sync-otherslagging-title" : u"Опережение",
+    "sync-youlaggging-title" : u"Отставание",
     "messages-label" : u"Сообщения",
     "messages-osd-title" : u"Настройки OSD",
     "messages-other-title" : u"Другие настройки отображения",
     "privacy-label" : u"Приватность",
     "privacy-title" : u"Настройки приватности",
-    "unpause-title" : u"If you press play, set as ready and:", # TODO: Translate into Russian
-    "unpause-ifalreadyready-option" : u"Unpause if already set as ready", # TODO: Translate into Russian
-    "unpause-ifothersready-option" : u"Unpause if already ready or others in room are ready (default)", # TODO: Translate into Russian
-    "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready", # TODO: Translate into Russian
-    "unpause-always" : u"Always unpause", # TODO: Translate into Russian
-    "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)", # TODO: Translate into Russian
-"addtrusteddomain-menu-label" : u"Add {} as trusted domain", # Domain # TODO: Translate
+    "unpause-title" : u"Если вы стартуете, то:",
+    "unpause-ifalreadyready-option" : u"Снять паузу, если уже готов",
+    "unpause-ifothersready-option" : u"Снять паузу, если Вы и остальные в комнате готовы (по-умолчанию)",
+    "unpause-ifminusersready-option" : u"Снять паузу, если все в комнате готовы и присутствует минимум зрителей",
+    "unpause-always" : u"Всегда снимать паузу",
+    "syncplay-trusteddomains-title": u"Доверенные сайты (стрим-сервисы, видеохостинги, файлы в сети)",
+"addtrusteddomain-menu-label" : u"Добавить {} как доверенный сайт", # Domain
 
     "help-label" : u"Помощь",
     "reset-label" : u"Сброс настроек",
-    "run-label" : u"Запустить Syncplay",
-    "storeandrun-label" : u"Сохранить настройки и зап. Syncplay",
+    "run-label" : u"Запустить",
+    "storeandrun-label" : u"Сохранить и запустить",
 
-    "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> за инорфмацией, помощью и обновлениями!",
+    "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">www.syncplay.pl</a> за инорфмацией, помощью и обновлениями!",
 
     "joinroom-label" : u"Зайти в комнату",
-    "joinroom-menu-label" : u"Зайти в комнату {}", #TODO: Might want to fix this
-    "seektime-menu-label" : u"Перемотать",
-    "undoseek-menu-label" : u"Отменить перемотку",
-    "play-menu-label" : u"Play",
-    "pause-menu-label" : u"Пауза",
-    "playbackbuttons-menu-label" : u"Показывать кнопки воспроизведения",
-    "autoplay-menu-label" : u"Показывать кнопку автовоспроизведения",
-    "autoplay-guipushbuttonlabel" : u"Воспроизвести автоматически, когда все будут готовы",
-    "autoplay-minimum-label" : u"Минимум пользователей:",
+    "joinroom-menu-label" : u"Зайти в комнату {}",
+    "seektime-menu-label" : u"Пере&мотать",
+    "undoseek-menu-label" : u"&Отменить перемотку",
+    "play-menu-label" : u"&Старт",
+    "pause-menu-label" : u"&Пауза",
+    "playbackbuttons-menu-label" : u"&Показывать кнопки управления",
+    "autoplay-menu-label" : u"Показывать кнопку &автовоспроизведения",
+    "autoplay-guipushbuttonlabel" : u"Стартовать, когда все будут готовы",
+    "autoplay-minimum-label" : u"Минимум зрителей:",
 
-    "ready-guipushbuttonlabel" : u"Я готов к просмотру!",
+    "ready-guipushbuttonlabel" : u"Я готов",
 
-    "roomuser-heading-label" : u"Комната / Пользователь",
+    "roomuser-heading-label" : u"Комната / Зритель",
     "size-heading-label" : u"Размер",
-    "duration-heading-label" : u"Длительность",
+    "duration-heading-label" : u"Время",
     "filename-heading-label" : u"Имя файла",
     "notifications-heading-label" : u"Уведомления",
     "userlist-heading-label" : u"Кто что смотрит",
 
-    "browseformedia-label" : u"Выбрать видеофайл",
+    "browseformedia-label" : u"Выбрать файл",
 
     "file-menu-label" : u"&Файл", # & precedes shortcut key
-    "openmedia-menu-label" : u"&Открыть видеофайл",
-    "openstreamurl-menu-label" : u"Открыть URL &потокового вещания",
-    "setmediadirectories-menu-label" : u"Set media &directories", # TODO: Translate
+    "openmedia-menu-label" : u"&Открыть файл",
+    "openstreamurl-menu-label" : u"Открыть &ссылку",
+    "setmediadirectories-menu-label" : u"&Папки воспроизведения",
     "exit-menu-label" : u"&Выход",
     "advanced-menu-label" : u"&Дополнительно",
-    "window-menu-label" : u"&Окна",
-    "setoffset-menu-label" : u"Установить &смещение",
-    "createcontrolledroom-menu-label" : u"&Создать управляемую комнату",
+    "window-menu-label" : u"&Вид",
+    "setoffset-menu-label" : u"&Установить смещение",
+    "createcontrolledroom-menu-label" : u"Создать управляемую &комнату",
     "identifyascontroller-menu-label" : u"&Войти как оператор комнаты",
-    "settrusteddomains-menu-label" : u"Set &trusted domains", # TODO: Translate
+    "settrusteddomains-menu-label" : u"Доверенные &сайты",
 
-    "playback-menu-label" : u"&Воспроизведение",
+    "playback-menu-label" : u"&Управление",
 
     "help-menu-label" : u"&Помощь",
-    "userguide-menu-label" : u"&Руководство Пользователя",
+    "userguide-menu-label" : u"&Руководство пользователя",
     "update-menu-label" : u"Проверить &обновления",
 
     "setoffset-msgbox-label" : u"Установить смещение",
-    "offsetinfo-msgbox-label" : u"Смещение (см. инструкцию на странице http://syncplay.pl/guide/):",
+    "offsetinfo-msgbox-label" : u"Смещение (см. инструкцию на странице www.syncplay.pl/guide):",
 
-    "promptforstreamurl-msgbox-label" : u"Открыть URL потокового вещания",
-    "promptforstreamurlinfo-msgbox-label" : u"URL потока",
+    "promptforstreamurl-msgbox-label" : u"Открыть ссылку",
+    "promptforstreamurlinfo-msgbox-label" : u"Ссылка:",
 
-    "addfolder-label" : u"Add folder", # TODO: Translate
+    "addfolder-label" : u"Добавить папку",
 
-    "adduris-msgbox-label" : u"Add URLs to playlist (one per line)", # TODO: Translate
-    "editplaylist-msgbox-label" : u"Set playlist (one per line)", # TODO: Translate
-    "trusteddomains-msgbox-label" : u"Domains it is okay to automatically switch to (one per line)", # TODO: Translate
+    "adduris-msgbox-label" : u"Список ссылок (одна на строку)",
+    "editplaylist-msgbox-label" : u"Список воспроизведения (один на строку)",
+    "trusteddomains-msgbox-label" : u"Список доверенных сайтов для автоматического воспроизведения (один на строку)",
 
     "createcontrolledroom-msgbox-label" : u"Создать управляемую комнату",
-    "controlledroominfo-msgbox-label" : u"Введите имя управляемой комнаты\r\n(см. инструкцию на странице http://syncplay.pl/guide/):",
+    "controlledroominfo-msgbox-label" : u"Введите имя управляемой комнаты\r\n(см. инструкцию на странице www.syncplay.pl/guide):",
 
     "identifyascontroller-msgbox-label" : u"Войти как оператор комнаты",
-    "identifyinfo-msgbox-label" : u"Введите пароль оператора комнаты\r\n(см. инструкцию на странице http://syncplay.pl/guide/):",
+    "identifyinfo-msgbox-label" : u"Введите пароль оператора комнаты\r\n(см. инструкцию на странице www.syncplay.pl/guide):",
 
-    "public-server-msgbox-label" : u"Select the public server for this viewing session", # TODO: Translate into Russian
+    "public-server-msgbox-label" : u"Выбите публичный сервер для данной сессии",
 
     "megabyte-suffix" : u" МБ", # Technically it is a mebibyte
 
@@ -306,12 +308,12 @@ ru = {
     "host-tooltip" : u"Имя или IP-адрес, к которому будет произведено подключение, может содержать номер порта (напр., syncplay.pl:8999). Синхронизация возможна только в рамках одного сервера/порта.",
     "name-tooltip" : u"Имя, под которым Вы будете известны. Регистриция не требуется, так что имя пользователя можно легко сменить в любой момент. Будет сгенерировано случайным образом, если не указать.",
     "password-tooltip" : u"Пароли нужны для подключения к приватным серверам.",
-    "room-tooltip" : u"Комната, в которую Вы попадете сразу после подключения. Можно не указывать. Синхронизация возможна только между людьми в одной и той же комнате.",
+    "room-tooltip" : u"Комната, в которую Вы попадете сразу после подключения. Синхронизация возможна только между людьми в одной и той же комнате.",
 
     "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, VLC, mplayer2 или mpv).",
     "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mpv и mplayer2.",
     "player-arguments-tooltip" : u"Передавать дополнительные аргументы командной строки этому проигрывателю.",
-    "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.", # TODO: Translate into Russian
+    "mediasearcdirectories-arguments-tooltip" : u"Папки, где Syncplay будет искать медиа файлы, включая подпапки.",
 
     "more-tooltip" : u"Показать дополнительные настройки.",
     "filename-privacy-tooltip" : u"Режим приватности для передачи имени воспроизводимого файла на сервер.",
@@ -336,35 +338,35 @@ ru = {
     "showslowdownosd-tooltip" : u"Показывать уведомления о замедлении или перемотке в целях синхронизации.",
     "showdurationnotification-tooltip" : u"Полезно, когда сегмент составного файла отсутствует. Возможны ложные срабатывания.",
     "language-tooltip" : u"Язык, используемый Syncplay.",
-    "unpause-always-tooltip" : u"If you press unpause it always sets you as ready and unpause, rather than just setting you as ready.", # TODO: Translate into Russian
-    "unpause-ifalreadyready-tooltip" : u"If you press unpause when not ready it will set you as ready - press unpause again to unpause.", # TODO: Translate into Russian
-    "unpause-ifothersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready.", # TODO: Translate into Russian
-    "unpause-ifminusersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready and minimum users threshold is met.", # TODO: Translate into Russian
-    "trusteddomains-arguments-tooltip" : u"Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.", # TODO: Translate into Russian
+    "unpause-always-tooltip" : u"Когда вы стартуете, статус изменится на готов и начнется воспроизведение, а не просто смена статуса.",
+    "unpause-ifalreadyready-tooltip" : u"Когда вы стартуете не готовым, это меняет статус на готов - нажмите старт еще раз для начала воспроизведения.",
+    "unpause-ifothersready-tooltip" : u"Когда вы стартуете не готовым, воспроизведение начнется, если остальные готовы.",
+    "unpause-ifminusersready-tooltip" : u"Когда вы стартуете не готовым, воспроизведение начнется, если остальные готовы и присутствует достаточное число зрителей.",
+    "trusteddomains-arguments-tooltip" : u"Сайты, которые разрешены для автоматического воспроизведения из общего списка воспроизведения.",
 
     "help-tooltip" : u"Открыть Руководство Пользователя на Syncplay.pl.",
     "reset-tooltip" : u"Сбрасывает все настройки Syncplay в начальное состояние.",
-    "update-server-list-tooltip" : u"Connect to syncplay.pl to update list of public servers.", # TODO: Translate to Russian
+    "update-server-list-tooltip" : u"Обновить список публичных серверов от syncplay.pl.",
 
     "joinroom-tooltip" : u"Покинуть комнату и зайти в другую, указанную комнату.",
     "seektime-msgbox-label" : u"Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",
     "ready-tooltip" : u"Показывает, готовы ли Вы к просмотру или нет.",
-    "autoplay-tooltip" : u"Автоматическое воспроизведение, когда все пользователи с индикаторами готовности будут готовы и присутствует достаточное число пользователей.",
-    "switch-to-file-tooltip" : u"Double click to switch to {}", # Filename # TODO: Translate to Russian
+    "autoplay-tooltip" : u"Автоматическое воспроизведение, когда все пользователи с индикаторами готовности будут готовы и присутствует достаточное число зрителей.",
+    "switch-to-file-tooltip" : u"Кликните два раза для воспроизведения {}", # Filename
 
     # In-userlist notes (GUI)
     "differentsize-note" : u"Размер файла не совпадает!",
     "differentsizeandduration-note" : u"Размер и продолжительность файла не совпадают!",
     "differentduration-note" : u"Продолжительность файла не совпадает!",
-    "nofile-note" : u"(Ничего не воспроизводим)",
+    "nofile-note" : u"(ничего)",
 
     # Server messages to client
     "new-syncplay-available-motd-message" : u"<NOTICE> Вы используете Syncplay версии {}. Доступна более новая версия на http://syncplay.pl/ . </NOTICE>",  # ClientVersion
 
     # Server notifications
     "welcome-server-notification" : u"Добро пожаловать на сервер Syncplay версии {0}",  # version
-    "client-connected-room-server-notification" : u"{0}({2}) подключился(-лась) к комнате '{1}'",  # username, host, room
-    "client-left-server-notification" : u"{0} покинул(а) сервер",  # name
+    "client-connected-room-server-notification" : u"{0}({2}) подключился к комнате '{1}'",  # username, host, room
+    "client-left-server-notification" : u"{0} покинул сервер",  # name
     "no-salt-notification" : u"ВНИМАНИЕ: Чтобы сгенерированные сервером пароли операторов комнат работали после перезагрузки сервера, необходимо указать следующий аргумент командной строки при запуске сервера Syncplay: --salt {}", #Salt
 
     # Server arguments
@@ -388,27 +390,26 @@ ru = {
     "wrong-password-server-error" : u"Указан неверный пароль.",
     "hello-server-error" : u"Не хватает аргументов Hello.",
 
-    # Playlists TODO: Translate all this to Russian
-    "playlist-selection-changed-notification" :  u"{} changed the playlist selection", # Username
-    "playlist-contents-changed-notification" : u"{} updated the playlist", # Username
-    "cannot-find-file-for-playlist-switch-error" : u"Could not find file {} in media directories for playlist switch!", # Filename
-    "cannot-add-duplicate-error" : u"Could not add second entry for '{}' to the playlist as no duplicates are allowed.", #Filename
-    "cannot-add-unsafe-path-error" : u"Could not automatically load {} because it is not on a trusted domain. You can switch to the URL manually by double clicking it in the playlist, and add trusted domains via File->Advanced->Set Trusted Domains. If you right click on a URL then you can add its domain as a trusted domain via the context menu.", # Filename # TODO: Translate
-    "sharedplaylistenabled-label" : u"Enable shared playlists",
-    "removefromplaylist-menu-label" : u"Remove from playlist",
-    "shuffleplaylist-menuu-label" : u"Shuffle playlist",
-    "undoplaylist-menu-label" : u"Undo last change to playlist",
-    "addfilestoplaylist-menu-label" : u"Add file(s) to bottom of playlist",
-    "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",
-    "editplaylist-menu-label": u"Edit playlist",
+    "playlist-selection-changed-notification" :  u"{} изменил выбор в списке воспроизведения", # Username
+    "playlist-contents-changed-notification" : u"{} обновил список воспроизведения", # Username
+    "cannot-find-file-for-playlist-switch-error" : u"Не удалось найти файл {} в папках воспроизведения!", # Filename
+    "cannot-add-duplicate-error" : u"'{}' уже есть в списке воспроизведения.", #Filename
+    "cannot-add-unsafe-path-error" : u"Не удалось автоматически переключиться на {}, потому что ссылка не соответствует доверенным сайтам. Её можно включить вручную, дважны кливнув по ссылке в списке воспроизведения. Добавить доверенный сайт можно в выпадающем меню 'Дополнительно' или просто кликнув по ссылке правой кнопкой мыши.", # Filename
+    "sharedplaylistenabled-label" : u"Включить общий список воспроизведения",
+    "removefromplaylist-menu-label" : u"Удалить",
+    "shuffleplaylist-menuu-label" : u"Перемешать список",
+    "undoplaylist-menu-label" : u"Отменить последнее действие",
+    "addfilestoplaylist-menu-label" : u"Добавить файлы в очередь",
+    "addurlstoplaylist-menu-label" : u"Добавить ссылку в очередь",
+    "editplaylist-menu-label": u"Редактировать список",
 
-    "addusersfiletoplaylist-menu-label" : u"Add {} file to playlist", # item owner indicator
-    "addusersstreamstoplaylist-menu-label" : u"Add {} stream to playlist", # item owner indicator
-    "openusersstream-menu-label" : u"Open {} stream", # [username]'s
-    "openusersfile-menu-label" : u"Open {} file", # [username]'s
-    "item-is-yours-indicator" : u"your", # Goes with addusersfiletoplaylist/addusersstreamstoplaylist
-    "item-is-others-indicator" : u"{}'s", # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist
+    "addusersfiletoplaylist-menu-label" : u"Добавить файл {} в список воспроизведения", # item owner indicator
+    "addusersstreamstoplaylist-menu-label" : u"Добавить поток {} в список воспроизведения", # item owner indicator
+    "openusersstream-menu-label" : u"Открыть поток от {}", # [username]'s
+    "openusersfile-menu-label" : u"Открыть файл от {}", # [username]'s
+    "item-is-yours-indicator" : u"от вас", # Goes with addusersfiletoplaylist/addusersstreamstoplaylist
+    "item-is-others-indicator" : u"{}", # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist
 
-    "playlist-instruction-item-message" : u"Drag file here to add it to the shared playlist.",
-    "sharedplaylistenabled-tooltip" : u"Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.",
+    "playlist-instruction-item-message" : u"Перетащите сюда файлы, чтобы добавить их в общий список.",
+    "sharedplaylistenabled-tooltip" : u"Оператор комнаты может добавлять файлы в список общего воспроизведения для удобного совместного просмотра. Папки воспроизведения настраиваются во вкладке 'Файл'.",
 }

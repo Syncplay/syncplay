@@ -195,7 +195,9 @@ en = {
     "rewindondesync-label" : "Rewind on major desync (recommended)",
     "fastforwardondesync-label" : "Fast-forward if lagging behind (recommended)",
     "dontslowdownwithme-label" : "Never slow down or rewind others (experimental)",
+    "pausing-title" : u"Pausing",
     "pauseonleave-label" : "Pause when user leaves (e.g. if they are disconnected)",
+    "readiness-title" : u"Initial readiness state",
     "readyatstart-label" : "Set me as 'ready to watch' by default",
     "forceguiprompt-label" : "Don't always show the Syncplay configuration window", # (Inverted)
     "showosd-label" : "Enable OSD Messages",
@@ -337,7 +339,7 @@ en = {
     "unpause-always-tooltip" : u"If you press unpause it always sets you as ready and unpause, rather than just setting you as ready.",
     "unpause-ifalreadyready-tooltip" : u"If you press unpause when not ready it will set you as ready - press unpause again to unpause.",
     "unpause-ifothersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready.",
-    "unpause-ifminusersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready and minimum users threshold is met.",
+    "unpause-ifminusersready-tooltip" : u"If you press unpause when not ready, it will only unpause if others are ready and minimum users threshold is met.",
     "trusteddomains-arguments-tooltip" : u"Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.",
 
     "help-tooltip" : "Opens the Syncplay.pl user guide.",
