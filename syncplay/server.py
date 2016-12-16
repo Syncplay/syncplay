@@ -101,8 +101,9 @@ class SyncFactory(Factory):
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
 
     def sendFileUpdate(self, watcher):
-        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), watcher.getFile(), None)
-        self._roomManager.broadcast(watcher, l)
+        if watcher.getFile():
+            l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), watcher.getFile(), None)
+            self._roomManager.broadcast(watcher, l)
 
     def forcePositionUpdate(self, watcher, doSeek, watcherPauseState):
         room = watcher.getRoom()
