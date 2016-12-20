@@ -600,6 +600,8 @@ class MainWindow(QtGui.QMainWindow):
     def playlistItemClicked(self, item):
         # TODO: Integrate into client.py code
         filename = item.data()
+        if self._isTryingToChangeToCurrentFile(filename):
+            return
         if isURL(filename):
             self._syncplayClient._player.openFile(filename)
         else:
@@ -608,6 +610,13 @@ class MainWindow(QtGui.QMainWindow):
                 self._syncplayClient._player.openFile(pathFound)
             else:
                 self._syncplayClient.ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
+
+    def _isTryingToChangeToCurrentFile(self, filename):
+        if self._syncplayClient.userlist.currentUser.file and filename == self._syncplayClient.userlist.currentUser.file["name"]:
+            self.showDebugMessage("File change request ignored (Syncplay should not be asked to change to current filename)")
+            return True
+        else:
+            return False
 
     def roomClicked(self, item):
         username = item.sibling(item.row(), 0).data()
@@ -618,7 +627,7 @@ class MainWindow(QtGui.QMainWindow):
         if roomToJoin <> self._syncplayClient.getRoom():
             self.joinRoom(item.sibling(item.row(), 0).data())
         elif username and filename and username <> self._syncplayClient.userlist.currentUser.username:
-            if self._syncplayClient.userlist.currentUser.file and filename == self._syncplayClient.userlist.currentUser.file:
+            if self._isTryingToChangeToCurrentFile(filename):
                 return
             if isURL(filename):
                 self._syncplayClient._player.openFile(filename)
