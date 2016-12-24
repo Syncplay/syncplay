@@ -39,7 +39,7 @@ class SyncClientFactory(ClientFactory):
             self._timesTried += 1
             self._client.ui.showMessage(getMessage("reconnection-attempt-notification"))
             self.reconnecting = True
-            reactor.callLater(0.1 * (2 ** self._timesTried), connector.connect)
+            reactor.callLater(0.1 * (2 ** min(self._timesTried,5)), connector.connect)
         else:
             message = getMessage("disconnection-notification")
             self._client.ui.showErrorMessage(message)
