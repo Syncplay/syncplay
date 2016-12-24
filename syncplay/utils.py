@@ -202,6 +202,11 @@ def hashFilesize(size):
     return hashlib.sha256(str(size)).hexdigest()[:12]
 
 def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
+    try:
+        if string1raw.lower() == string2raw.lower():
+            return True
+    except AttributeError:
+        pass
     if string1raw == string2raw:
         return True
     elif string1raw == string2hashed:
