@@ -628,7 +628,7 @@ class ConfigDialog(QtGui.QDialog):
 
         # Initial state
 
-        self.readyInitialGroup = QtGui.QGroupBox(u"Initial readiness state")
+        self.readyInitialGroup = QtGui.QGroupBox(getMessage("readiness-title"))
         self.readyInitialLayout = QtGui.QVBoxLayout()
         self.readyInitialGroup.setLayout(self.readyInitialLayout)
         self.readyatstartCheckbox = QCheckBox(getMessage("readyatstart-label"))
@@ -637,7 +637,7 @@ class ConfigDialog(QtGui.QDialog):
         self.readyLayout.addWidget(self.readyInitialGroup)
 
         # Automatically pausing
-        self.readyPauseGroup = QtGui.QGroupBox(u"Pausing")
+        self.readyPauseGroup = QtGui.QGroupBox(getMessage("pausing-title"))
         self.readyPauseLayout = QtGui.QVBoxLayout()
         self.readyPauseGroup.setLayout(self.readyPauseLayout)
         self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
