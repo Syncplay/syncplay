@@ -215,9 +215,14 @@ class VlcPlayer(BasePlayer):
                 self._client.ui.showDebugMessage("Treating 'playing' response as 'paused' due to VLC EOF bug")
             self._pausedAsk.set()
         elif name == "position":
+            newPosition = float(value.replace(",", ".")) if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPosition()
+            if newPosition == self._previousPosition and newPosition <> self._duration and not self._paused:
+                self._client.ui.showDebugMessage("Not considering position {} duplicate as new time because of VLC time precision bug".format(newPosition))
+                self._positionAsk.set()
+                return
             self._previousPreviousPosition = self._previousPosition
             self._previousPosition = self._position
-            self._position = float(value.replace(",", ".")) if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPosition()
+            self._position = newPosition
             if self._position < 0 and self._duration > 2147 and self._vlcVersion == "3.0.0":
                 self.drop(getMessage("vlc-failed-versioncheck"))
             self._lastVLCPositionUpdate = time.time()
