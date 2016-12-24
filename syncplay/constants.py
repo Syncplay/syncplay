@@ -67,6 +67,7 @@ FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
 CONTROL_PASSWORD_STRIP_REGEX = u"[^a-zA-Z0-9\-]"
 ROOM_NAME_STRIP_REGEX = u"^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
 COMMANDS_UNDO = ["u", "undo", "revert"]
+COMMANDS_CHAT = ["ch","chat"]
 COMMANDS_LIST = ["l", "list", "users"]
 COMMANDS_PAUSE = ["p", "play", "pause"]
 COMMANDS_ROOM = ["r", "room"]
@@ -82,6 +83,8 @@ MPV_UNRESPONSIVE_THRESHOLD = 60.0
 CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
 USER_READY_MIN_VERSION = "1.3.0"
 SHARED_PLAYLIST_MIN_VERSION = "1.4.0"
+CHAT_MIN_VERSION = "1.5.0"
+FEATURE_LIST_MIN_VERSION = "1.5.0"
 MPC_PATHS = [
     r"c:\program files (x86)\mpc-hc\mpc-hc.exe",
     r"c:\program files\mpc-hc\mpc-hc.exe",

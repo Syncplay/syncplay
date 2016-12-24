@@ -85,6 +85,7 @@ de = {
     "commandlist-notification/toggle" : u"\tt - Bereitschaftsanzeige umschalten",
     "commandlist-notification/create" : u"\tc [name] - erstelle zentral gesteuerten Raum mit dem aktuellen Raumnamen",
     "commandlist-notification/auth" : u"\ta [password] - authentifiziere als Raumleiter mit Passwort",
+    "commandlist-notification/chat" : "\tch [message] - send a chat message in a room", # TODO: Translate
     "syncplay-version-notification" : u"Syncplay Version: {}",  # syncplay.version
     "more-info-notification" : u"Weitere Informationen auf: {}",  # projectURL
 
@@ -135,6 +136,7 @@ de = {
 
     "not-supported-by-server-error" : u"Dieses Feature wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.", #minVersion, serverVersion
     "shared-playlists-not-supported-by-server-error" : "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.", #minVersion, serverVersion # TODO: Translate
+    "shared-playlists-disabled-by-server-error" : "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.", # TODO: Translate
 
     "invalid-seek-value" : u"Ungültige Zeitangabe",
     "invalid-offset-value" : u"Ungültiger Offset-Wert",
@@ -249,6 +251,8 @@ de = {
     "autoplay-guipushbuttonlabel" : u"Automatisch abspielen wenn alle bereit sind",
     "autoplay-minimum-label" : u"Minimum an Nutzern:",
 
+    "sendmessage-label" : u"Send", # TODO: Translate
+
     "ready-guipushbuttonlabel" : u"Ich bin bereit den Film anzuschauen!",
 
     "roomuser-heading-label" : u"Raum / Benutzer",
@@ -353,6 +357,7 @@ de = {
     "ready-tooltip" : u"Zeigt an, ob du bereit zum anschauen bist",
     "autoplay-tooltip" : u"Automatisch abspielen, wenn alle Nutzer bereit sind oder die minimale Nutzerzahl erreicht ist.",
     "switch-to-file-tooltip" : u"Doppelklicken um zu {} zu wechseln", # Filename
+    "sendmessage-tooltip" : u"Send message to room", # TODO: Translate
 
     # In-userlist notes (GUI)
     "differentsize-note" : u"Verschiedene Größe!",
@@ -378,6 +383,7 @@ de = {
     "server-salt-argument" : u"zufällige Zeichenkette, die zur Erstellung von Passwörtern verwendet wird",
     "server-disable-ready-argument" : u"Bereitschaftsfeature deaktivieren",
     "server-motd-argument": u"Pfad zur Datei, von der die Nachricht des Tages geladen wird",
+    "server-chat-argument" : "Should chat be disabled?", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders": u"Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
     "server-messed-up-motd-too-long": u"Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
 

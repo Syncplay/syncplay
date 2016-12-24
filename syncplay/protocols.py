@@ -22,6 +22,8 @@ class JSONCommandProtocol(LineReceiver):
                 self.handleState(message[1])
             elif command == "Error":
                 self.handleError(message[1])
+            elif command == "Chat":
+                self.handleChat(message[1])
             else:
                 self.dropWithError(getMessage("unknown-command-server-error").format(message[1]))  # TODO: log, not drop
 
@@ -78,10 +80,11 @@ class SyncClientProtocol(JSONCommandProtocol):
         version = hello["version"] if hello.has_key("version") else None
         version = hello["realversion"] if hello.has_key("realversion") else version # Used for 1.2.X compatibility
         motd = hello["motd"] if hello.has_key("motd") else None
-        return username, roomName, version, motd
+        features = hello["features"] if hello.has_key("features") else None
+        return username, roomName, version, motd, features
 
     def handleHello(self, hello):
-        username, roomName, version, motd = self._extractHelloArguments(hello)
+        username, roomName, version, motd, featureList = self._extractHelloArguments(hello)
         if not username or not roomName or not version:
             self.dropWithError(getMessage("hello-server-error").format(hello))
         else:
@@ -93,7 +96,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         self._client.ui.showMessage(getMessage("connected-successful-notification"))
         self._client.connected()
         self._client.sendFile()
-        self._client.setServerVersion(version)
+        self._client.setServerVersion(version, featureList)
 
     def sendHello(self):
         hello = {}
@@ -157,6 +160,9 @@ class SyncClientProtocol(JSONCommandProtocol):
     def sendFileSetting(self, file_):
         self.sendSet({"file": file_})
         self.sendList()
+
+    def sendChatMessage(self,chatMessage):
+        self.sendMessage({"Chat": chatMessage})
 
     def handleList(self, userList):
         self._client.userlist.clearList()
@@ -242,6 +248,11 @@ class SyncClientProtocol(JSONCommandProtocol):
                 "password": password
             }
         })
+    def handleChat(self,message):
+        userMessage = message['message'].replace(u"<",u"<<").replace(u">",u">>")
+        messageString = u"<{}> {}".format(message['username'], userMessage)
+        self._client.ui.showMessage(messageString)
+        #TODO
 
     def setReady(self, isReady, manuallyInitiated=True):
         self.sendSet({
@@ -275,6 +286,7 @@ class SyncClientProtocol(JSONCommandProtocol):
 class SyncServerProtocol(JSONCommandProtocol):
     def __init__(self, factory):
         self._factory = factory
+        self._version = None
         self._logged = False
         self.clientIgnoringOnTheFly = 0
         self.serverIgnoringOnTheFly = 0
@@ -311,6 +323,12 @@ class SyncServerProtocol(JSONCommandProtocol):
     def isLogged(self):
         return self._logged
 
+    def meetsMinVersion(self, version):
+        return self._version >= version
+
+    def getVersion(self):
+        return self._version
+
     def _extractHelloArguments(self, hello):
         roomName = None
         username = hello["username"] if hello.has_key("username") else None
@@ -342,9 +360,14 @@ class SyncServerProtocol(JSONCommandProtocol):
         else:
             if not self._checkPassword(serverPassword):
                 return
+            self._version = version
             self._factory.addWatcher(self, username, roomName)
             self._logged = True
             self.sendHello(version)
+
+    def handleChat(self,chatMessage):
+        if not self._factory.disableChat:
+            self._factory.sendChat(self._watcher,chatMessage)
 
     def setWatcher(self, watcher):
         self._watcher = watcher
@@ -359,6 +382,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         hello["version"] = clientVersion # Used so 1.2.X client works on newer server
         hello["realversion"] = syncplay.version
         hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
+        hello["features"] = self._factory.getFeatures()
         self.sendMessage({"Hello": hello})
 
     @requireLogged

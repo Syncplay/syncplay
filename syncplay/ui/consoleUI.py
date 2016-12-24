@@ -86,6 +86,9 @@ class ConsoleUI(threading.Thread):
     def fileSwitchFoundFiles(self):
         pass
 
+    def setFeatures(self, featureList):
+        pass
+
     def showMessage(self, message, noTimestamp=False):
         message = message.encode(sys.stdout.encoding, 'replace')
         if noTimestamp:
@@ -143,6 +146,9 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
         elif command.group('command') in constants.COMMANDS_LIST:
             self._syncplayClient.getUserList()
+        elif command.group('command') in constants.COMMANDS_CHAT:
+            message= command.group('parameter')            
+            self._syncplayClient.sendChat(message)
         elif command.group('command') in constants.COMMANDS_PAUSE:
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
         elif command.group('command') in constants.COMMANDS_ROOM:
@@ -181,6 +187,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/toggle"), True)
             self.showMessage(getMessage("commandlist-notification/create"), True)
             self.showMessage(getMessage("commandlist-notification/auth"), True)
+            self.showMessage(getMessage("commandlist-notification/chat"), True)
             self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)
             self.showMessage(getMessage("more-info-notification").format(syncplay.projectURL), True)
     
