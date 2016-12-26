@@ -11,7 +11,7 @@ import codecs
 import os
 from string import Template
 import argparse
-from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid
+from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid, truncateText
 
 class SyncFactory(Factory):
     def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False,disableChat=False):
@@ -72,11 +72,13 @@ class SyncFactory(Factory):
             return ""
 
     def addWatcher(self, watcherProtocol, username, roomName):
+        roomName = truncateText(roomName, constants.MAX_ROOM_NAME_LENGTH)
         username = self._roomManager.findFreeUsername(username)
         watcher = Watcher(self, watcherProtocol, username)
         self.setWatcherRoom(watcher, roomName, asJoin=True)
 
     def setWatcherRoom(self, watcher, roomName, asJoin=False):
+        roomName = truncateText(roomName, constants.MAX_ROOM_NAME_LENGTH)
         self._roomManager.moveWatcher(watcher, roomName)
         if asJoin:
             self.sendJoinMessage(watcher)
@@ -145,6 +147,7 @@ class SyncFactory(Factory):
             self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
 
     def sendChat(self,watcher,message):
+        message = truncateText(message, constants.MAX_CHAT_MESSAGE_LENGTH)
         messageDict={"message":message,"username" : watcher.getName()}
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(messageDict))
 
@@ -192,6 +195,7 @@ class RoomManager(object):
         return watchers
 
     def moveWatcher(self, watcher, roomName):
+        roomName = truncateText(roomName, constants.MAX_ROOM_NAME_LENGTH)
         self.removeWatcher(watcher)
         room = self._getRoom(roomName)
         room.addWatcher(watcher)
@@ -218,6 +222,7 @@ class RoomManager(object):
             del self._rooms[room.getName()]
 
     def findFreeUsername(self, username):
+        username = truncateText(username,constants.MAX_USERNAME_LENGTH)
         allnames = []
         for room in self._rooms.itervalues():
             for watcher in room.getWatchers():
@@ -392,6 +397,9 @@ class Watcher(object):
         reactor.callLater(0.1, self._scheduleSendState)
 
     def setFile(self, file_):
+        print file_
+        if file_ and file_.has_key("name"):
+            file_["name"] = truncateText(file_["name"],constants.MAX_FILENAME_LENGTH)
         self._file = file_
         self._server.sendFileUpdate(self)
 

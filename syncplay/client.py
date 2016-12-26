@@ -588,6 +588,7 @@ class SyncplayClient(object):
            
     def sendChat(self,message):
         if self._protocol and self._protocol.logged:
+            message = utils.truncateText(message,constants.MAX_CHAT_MESSAGE_LENGTH)
             self._protocol.sendChatMessage(message)
         
     def sendRoom(self):

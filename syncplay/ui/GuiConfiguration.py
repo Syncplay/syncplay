@@ -542,6 +542,9 @@ class ConfigDialog(QtGui.QDialog):
         self.defaultroomLabel.setObjectName("room")
         self.defaultroomTextbox.setObjectName("room")
 
+        self.usernameTextbox.setMaxLength(constants.MAX_USERNAME_LENGTH)
+        self.defaultroomTextbox.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
+
         self.connectionSettingsLayout = QtGui.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
         self.connectionSettingsLayout.addWidget(self.hostCombobox, 0, 1)

@@ -56,6 +56,12 @@ PLAYLIST_MAX_CHARACTERS = 10000
 PLAYLIST_MAX_ITEMS = 250
 VLC_LISTEN_FOR_STDOUT = False # Changing to True this could break VLC 3 on Windows
 
+# Maximum character lengths (for client and server)
+MAX_CHAT_MESSAGE_LENGTH = 50 # Number of displayed characters
+MAX_USERNAME_LENGTH = 12 # Number of displayed characters
+MAX_ROOM_NAME_LENGTH = 35 # Number of displayed characters
+MAX_FILENAME_LENGTH = 250 # Number of displayed characters
+
 # Options for the File Switch feature:
 FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 15.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
 FOLDER_SEARCH_TIMEOUT = 6.0 # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)

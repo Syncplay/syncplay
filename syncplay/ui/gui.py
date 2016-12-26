@@ -1058,6 +1058,7 @@ class MainWindow(QtGui.QMainWindow):
 
         window.outputlabel = QtGui.QLabel(getMessage("notifications-heading-label"))
         window.chatInput = QtGui.QLineEdit()
+        window.chatInput.setMaxLength(constants.MAX_CHAT_MESSAGE_LENGTH)
         window.chatInput.returnPressed.connect(self.sendChatMessage)
         window.chatButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'email_go.png'),
                                               getMessage("sendmessage-label"))
@@ -1112,6 +1113,7 @@ class MainWindow(QtGui.QMainWindow):
         window.listLayout.addWidget(window.listSplit)
 
         window.roomInput = QtGui.QLineEdit()
+        window.roomInput.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
         window.roomInput.returnPressed.connect(self.joinRoom)
         window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'),
                                               getMessage("joinroom-label"))
