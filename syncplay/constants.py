@@ -153,7 +153,8 @@ STYLE_READY_PUSHBUTTON = "QPushButton { text-align: left; padding: 10px 5px 10px
 STYLE_AUTO_PLAY_PUSHBUTTON = "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }"
 STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
 STYLE_CONTACT_INFO = u"<span style=\"color: grey\"><strong><small>{}</span><br /><br />" # Contact info message
-STYLE_USERNAME = "color: #367AA9; font-weight:bold;"
+STYLE_USER_MESSAGE = u"<span style=\"{}\">&lt;{}&gt;</span> {}"
+STYLE_USERNAME = u"color: #367AA9; font-weight:bold;"
 STYLE_ERRORNOTIFICATION = "color: red;"
 STYLE_DIFFERENTITEM_COLOR = 'red'
 STYLE_NOFILEITEM_COLOR = 'blue'
@@ -180,6 +181,7 @@ UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
 UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,9}(?:[^\d\.](?:\d{1,9})){0,2}(?:\.(?:\d{1,3}))?)$"
 UI_SEEK_REGEX = r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
 PARSE_TIME_REGEX = r'(:?(?:(?P<hours>\d+?)[^\d\.])?(?:(?P<minutes>\d+?))?[^\d\.])?(?P<seconds>\d+?)(?:\.(?P<miliseconds>\d+?))?$'
+MESSAGE_WITH_USERNAME_REGEX = "^(<(?P<username>[^<>]+)>)(?P<message>.*)"
 SERVER_MAX_TEMPLATE_LENGTH = 10000
 PRIVACY_SENDRAW_MODE = "SendRaw"
 PRIVACY_SENDHASHED_MODE = "SendHashed"

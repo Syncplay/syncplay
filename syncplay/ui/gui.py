@@ -337,13 +337,14 @@ class MainWindow(QtGui.QMainWindow):
 
     def showMessage(self, message, noTimestamp=False):
         message = unicode(message)
-        message = message.replace(u"&", u"&amp;").replace(u'"', u"&quot;").replace(u"<", u"&lt;").replace(">", u"&gt;")
-        message = message.replace(u"&lt;&lt;", u"<LT>")
-        message = message.replace(u"&gt;&gt;", u"<GT>")
-        message = message.replace(u"&lt;", u"<span style=\"{}\">&lt;".format(constants.STYLE_USERNAME))
-        message = message.replace(u"&gt;", u"&gt;</span>")
-        message = message.replace(u"<LT>;", u"&lt;")
-        message = message.replace(u"<GT>", u"&gt;")
+        username = None
+        messageWithUsername = re.match(constants.MESSAGE_WITH_USERNAME_REGEX, message, re.UNICODE)
+        if messageWithUsername:
+            username = messageWithUsername.group("username")
+            message = messageWithUsername.group("message")
+        message = message.replace(u"&", u"&amp;").replace(u'"', u"&quot;").replace(u"<", u"&lt;").replace(u">", u"&gt;")
+        if username:
+            message = constants.STYLE_USER_MESSAGE.format(constants.STYLE_USERNAME, username, message)
         message = message.replace(u"\n", u"<br />")
         if noTimestamp:
             self.newMessage(u"{}<br />".format(message))
