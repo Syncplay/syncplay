@@ -413,13 +413,18 @@ class VlcPlayer(BasePlayer):
             self._ibuffer.append(data)
 
         def handle_close(self):
-            asynchat.async_chat.handle_close(self)
-            if self.timeVLCLaunched and time.time() - self.timeVLCLaunched > constants.VLC_OPEN_MAX_WAIT_TIME:
-                self.__playerController._client.ui.showDebugMessage("Failed to connect to VLC, but reconnecting as within max wait time")
+            if self.timeVLCLaunched and time.time() - self.timeVLCLaunched < constants.VLC_OPEN_MAX_WAIT_TIME:
+                try:
+                    self.__playerController._client.ui.showDebugMessage("Failed to connect to VLC, but reconnecting as within max wait time")
+                except:
+                    pass
                 self.run()
-            if self.vlcHasResponded:
+            elif self.vlcHasResponded:
+                asynchat.async_chat.handle_close(self)
                 self.__playerController.drop()
             else:
+                self.vlcHasResponded = True
+                asynchat.async_chat.handle_close(self)
                 self.__playerController.drop(getMessage("vlc-failed-connection").format(constants.VLC_MIN_VERSION))
 
         def found_terminator(self):
@@ -440,3 +445,9 @@ class VlcPlayer(BasePlayer):
                     pass
             if line == "close-vlc":
                 self._vlcclosed.set()
+                if not self.connected and not self.timeVLCLaunched:
+                    # For circumstances where Syncplay is not connected to VLC and is not reconnecting
+                    try:
+                        self.__process.terminate()
+                    except: # When VLC is already closed
+                        pass
