@@ -54,7 +54,6 @@ DO_NOT_RESET_POSITION_THRESHOLD = 1.0
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 PLAYLIST_MAX_CHARACTERS = 10000
 PLAYLIST_MAX_ITEMS = 250
-VLC_LISTEN_FOR_STDOUT = False # Changing to True this could break VLC 3 on Windows
 
 # Options for the File Switch feature:
 FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 15.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)

@@ -362,7 +362,7 @@ class VlcPlayer(BasePlayer):
 
             else:
                 self.__process = subprocess.Popen(call, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                if constants.VLC_LISTEN_FOR_STDOUT:
+                if self._shouldListenForSTDOUT():
                     for line in iter(self.__process.stderr.readline, ''):
                         self.vlcHasResponded = True
                         if "[syncplay]" in line:
@@ -385,6 +385,12 @@ class VlcPlayer(BasePlayer):
                 self._ibuffer = []
                 self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
                 self._sendingData = threading.Lock()
+
+        def _shouldListenForSTDOUT(self):
+            if sys.platform.startswith('win'):
+                return False # Due to VLC3 not using STDOUT/STDERR
+            else:
+                return True
 
         def initiate_send(self):
             with self._sendingData:
