@@ -302,6 +302,7 @@ class VlcPlayer(BasePlayer):
             self.requestedVLCVersion = False
             self.vlcHasResponded = False
             self.oldIntfVersion = None
+            self.timeVLCLaunched = None
             call = [playerPath]
             if filePath:
                 if utils.isASCII(filePath):
@@ -362,9 +363,11 @@ class VlcPlayer(BasePlayer):
 
             else:
                 self.__process = subprocess.Popen(call, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                self.timeVLCLaunched = time.time()
                 if self._shouldListenForSTDOUT():
                     for line in iter(self.__process.stderr.readline, ''):
                         self.vlcHasResponded = True
+                        self.timeVLCLaunched = None
                         if "[syncplay]" in line:
                             if "Listening on host" in line:
                                 break
@@ -404,12 +407,16 @@ class VlcPlayer(BasePlayer):
         def handle_connect(self):
             asynchat.async_chat.handle_connect(self)
             self._vlcready.set()
+            self.timeVLCLaunched = None
 
         def collect_incoming_data(self, data):
             self._ibuffer.append(data)
 
         def handle_close(self):
             asynchat.async_chat.handle_close(self)
+            if self.timeVLCLaunched and time.time() - self.timeVLCLaunched > constants.VLC_OPEN_MAX_WAIT_TIME:
+                self.__playerController._client.ui.showDebugMessage("Failed to connect to VLC, but reconnecting as within max wait time")
+                self.run()
             if self.vlcHasResponded:
                 self.__playerController.drop()
             else:
@@ -427,7 +434,8 @@ class VlcPlayer(BasePlayer):
                     self.sendLine("get-vlc-version")
                 try:
                     self.push(line + "\n")
-                    self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
+                    if self.__playerController._client and self.__playerController._client.ui:
+                        self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
                 except:
                     pass
             if line == "close-vlc":
