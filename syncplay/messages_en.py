@@ -409,6 +409,7 @@ en = {
     "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",
     "editplaylist-menu-label": u"Edit playlist",
 
+    "open-containing-folder": u"Open folder containing this file",
     "addusersfiletoplaylist-menu-label" : u"Add {} file to playlist", # item owner indicator
     "addusersstreamstoplaylist-menu-label" : u"Add {} stream to playlist", # item owner indicator
     "openusersstream-menu-label" : u"Open {} stream", # [username]'s

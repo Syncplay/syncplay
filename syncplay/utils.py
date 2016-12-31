@@ -12,6 +12,8 @@ import string
 import urllib
 import ast
 import unicodedata
+import platform
+import subprocess
 
 folderSearchEnabled = True
 
@@ -310,6 +312,17 @@ def getDomainFromURL(URL):
         return URL
     except:
         return None
+
+def open_system_file_browser(path):
+    if isURL(path):
+        return
+    path = os.path.dirname(path)
+    if platform.system() == "Windows":
+        os.startfile(path)
+    elif platform.system() == "Darwin":
+        subprocess.Popen(["open", path])
+    else:
+        subprocess.Popen(["xdg-open", path])
 
 def getListOfPublicServers():
     try:
