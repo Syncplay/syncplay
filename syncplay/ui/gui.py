@@ -327,11 +327,24 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: Prompt user
         return None
 
+    def setFeatures(self, featureList):
+        if not featureList["readiness"]:
+            self.readyPushButton.setEnabled(False)
+        if not featureList["chat"]:
+            self.chatFrame.setEnabled(False)
+        if not featureList["sharedPlaylists"]:
+            self.playlistGroup.setEnabled(False)
+
     def showMessage(self, message, noTimestamp=False):
         message = unicode(message)
-        message = message.replace(u"&", u"&amp;").replace(u'"', u"&quot;").replace(u"<", u"&lt;").replace(">", u"&gt;")
-        message = message.replace(u"&lt;", u"<span style=\"{}\">&lt;".format(constants.STYLE_USERNAME))
-        message = message.replace(u"&gt;", u"&gt;</span>")
+        username = None
+        messageWithUsername = re.match(constants.MESSAGE_WITH_USERNAME_REGEX, message, re.UNICODE)
+        if messageWithUsername:
+            username = messageWithUsername.group("username")
+            message = messageWithUsername.group("message")
+        message = message.replace(u"&", u"&amp;").replace(u'"', u"&quot;").replace(u"<", u"&lt;").replace(u">", u"&gt;")
+        if username:
+            message = constants.STYLE_USER_MESSAGE.format(constants.STYLE_USERNAME, username, message)
         message = message.replace(u"\n", u"<br />")
         if noTimestamp:
             self.newMessage(u"{}<br />".format(message))
@@ -564,6 +577,10 @@ class MainWindow(QtGui.QMainWindow):
             if self._syncplayClient.isUntrustedTrustableURI(filename):
                 domain = utils.getDomainFromURL(filename)
                 menu.addAction(QtGui.QPixmap(resourcespath + u"shield_add.png"),getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
+
+            if not isURL(filename):
+                path = self._syncplayClient.fileSwitch.findFilepath(filename)
+                menu.addAction(QtGui.QPixmap(resourcespath + u"film_folder_edit.png"), getMessage('open-containing-folder'), lambda: utils.open_system_file_browser(path))
         else:
             return
         menu.exec_(self.listTreeView.viewport().mapToGlobal(position))
@@ -1025,6 +1042,11 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient.playlist.changePlaylist(newPlaylist)
             self._syncplayClient.fileSwitch.updateInfo()
 
+    def sendChatMessage(self):
+        if self.chatInput.text() <> "":
+            self._syncplayClient.sendChat(self.chatInput.text())
+            self.chatInput.setText("")
+
     def addTopLayout(self, window):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)
 
@@ -1040,12 +1062,29 @@ class MainWindow(QtGui.QMainWindow):
         window.outputbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
         window.outputlabel = QtGui.QLabel(getMessage("notifications-heading-label"))
+        window.chatInput = QtGui.QLineEdit()
+        window.chatInput.setMaxLength(constants.MAX_CHAT_MESSAGE_LENGTH)
+        window.chatInput.returnPressed.connect(self.sendChatMessage)
+        window.chatButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'email_go.png'),
+                                              getMessage("sendmessage-label"))
+        window.chatButton.pressed.connect(self.sendChatMessage)
+        window.chatLayout = QtGui.QHBoxLayout()
+        window.chatFrame = QtGui.QFrame()
+        window.chatFrame.setLayout(self.chatLayout)
+        window.chatFrame.setContentsMargins(0,0,0,0)
+        window.chatFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        window.chatLayout.setContentsMargins(0,0,0,0)
+        self.chatButton.setToolTip(getMessage("sendmessage-tooltip"))
+        window.chatLayout.addWidget(window.chatInput)
+        window.chatLayout.addWidget(window.chatButton)
+        window.chatFrame.setMaximumHeight(window.chatFrame.sizeHint().height())
         window.outputFrame = QtGui.QFrame()
         window.outputFrame.setLineWidth(0)
         window.outputFrame.setMidLineWidth(0)
         window.outputLayout.setContentsMargins(0, 0, 0, 0)
         window.outputLayout.addWidget(window.outputlabel)
         window.outputLayout.addWidget(window.outputbox)
+        window.outputLayout.addWidget(window.chatFrame)
         window.outputFrame.setLayout(window.outputLayout)
 
         window.listLayout = QtGui.QVBoxLayout()
@@ -1079,6 +1118,7 @@ class MainWindow(QtGui.QMainWindow):
         window.listLayout.addWidget(window.listSplit)
 
         window.roomInput = QtGui.QLineEdit()
+        window.roomInput.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
         window.roomInput.returnPressed.connect(self.joinRoom)
         window.roomButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + 'door_in.png'),
                                               getMessage("joinroom-label"))

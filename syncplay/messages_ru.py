@@ -85,6 +85,7 @@ ru = {
     "commandlist-notification/toggle" : u"\tt - переключить статус готов/не готов к просмотру",
     "commandlist-notification/create" : u"\tc [name] - создать управляемую комнату с таким же именем, как у текущей",
     "commandlist-notification/auth" : u"\ta [password] - авторизоваться как оператор комнаты с помощью пароля",
+    "commandlist-notification/chat" : "\tch [message] - send a chat message in a room", # TODO: Translate
     "syncplay-version-notification" : u"Версия Syncplay: {}",  # syncplay.version
     "more-info-notification" : u"Больше информации на {}",  # projectURL
 
@@ -135,6 +136,7 @@ ru = {
 
     "not-supported-by-server-error" : u"Эта возможность не поддерживается сервером. Требуется сервер Syncplay {}+, вы подключены к серверу Syncplay {}.", #minVersion, serverVersion
     "shared-playlists-not-supported-by-server-error" : u"Общие списки воспроизведения могут не поддерживаться сервером. Для корректной работы требуется сервер Syncplay {}+, вы подключены к серверу Syncplay {}.", #minVersion, serverVersion
+    "shared-playlists-disabled-by-server-error" : "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.", # TODO: Translate
 
     "invalid-seek-value" : u"Некорректное значение для перемотки",
     "invalid-offset-value" : u"Некорректное смещение",
@@ -251,10 +253,12 @@ ru = {
     "autoplay-menu-label" : u"Показывать кнопку &автовоспроизведения",
     "autoplay-guipushbuttonlabel" : u"Стартовать, когда все будут готовы",
     "autoplay-minimum-label" : u"Минимум зрителей:",
+    "sendmessage-label" : u"Send", # TODO: Translate
 
     "ready-guipushbuttonlabel" : u"Я готов",
 
     "roomuser-heading-label" : u"Комната / Зритель",
+
     "size-heading-label" : u"Размер",
     "duration-heading-label" : u"Время",
     "filename-heading-label" : u"Имя файла",
@@ -353,6 +357,7 @@ ru = {
     "ready-tooltip" : u"Показывает, готовы ли Вы к просмотру или нет.",
     "autoplay-tooltip" : u"Автоматическое воспроизведение, когда все пользователи с индикаторами готовности будут готовы и присутствует достаточное число зрителей.",
     "switch-to-file-tooltip" : u"Кликните два раза для воспроизведения {}", # Filename
+    "sendmessage-tooltip" : u"Send message to room", # TODO: Translate
 
     # In-userlist notes (GUI)
     "differentsize-note" : u"Размер файла не совпадает!",
@@ -378,6 +383,7 @@ ru = {
     "server-salt-argument" : u"генерировать пароли к управляемым комнатам на основании указанной строки (соли)",
     "server-disable-ready-argument" : u"отключить статусы готов/не готов",
     "server-motd-argument" : u"путь к файлу, из которого будет извлекаться MOTD-сообщение",
+    "server-chat-argument" : "Should chat be disabled?", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders" : u"MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
     "server-messed-up-motd-too-long" : u"MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
 

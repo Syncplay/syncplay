@@ -11,10 +11,11 @@ import codecs
 import os
 from string import Template
 import argparse
-from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid
+from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid, truncateText
 
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False):
+    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False,disableChat=False):
+        self.isolateRooms = isolateRooms
         print getMessage("welcome-server-notification").format(syncplay.version)
         if password:
             password = hashlib.md5(password).hexdigest()
@@ -25,6 +26,7 @@ class SyncFactory(Factory):
         self._salt = salt
         self._motdFilePath = motdFilePath
         self.disableReady = disableReady
+        self.disableChat = disableChat
         if not isolateRooms:
             self._roomManager = RoomManager()
         else:
@@ -39,6 +41,14 @@ class SyncFactory(Factory):
             paused, position = room.isPaused(), room.getPosition()
             setBy = room.getSetBy()
             watcher.sendState(position, paused, doSeek, setBy, forcedUpdate)
+
+    def getFeatures(self):
+        features = dict()
+        features["isolateRooms"] = self.isolateRooms
+        features["readiness"] = not self.disableReady
+        features["managedRooms"] = True
+        features["chat"] = not self.disableChat
+        return features
 
     def getMotd(self, userIp, username, room, clientVersion):
         oldClient = False
@@ -62,11 +72,13 @@ class SyncFactory(Factory):
             return ""
 
     def addWatcher(self, watcherProtocol, username, roomName):
+        roomName = truncateText(roomName, constants.MAX_ROOM_NAME_LENGTH)
         username = self._roomManager.findFreeUsername(username)
         watcher = Watcher(self, watcherProtocol, username)
         self.setWatcherRoom(watcher, roomName, asJoin=True)
 
     def setWatcherRoom(self, watcher, roomName, asJoin=False):
+        roomName = truncateText(roomName, constants.MAX_ROOM_NAME_LENGTH)
         self._roomManager.moveWatcher(watcher, roomName)
         if asJoin:
             self.sendJoinMessage(watcher)
@@ -96,7 +108,7 @@ class SyncFactory(Factory):
         self._roomManager.broadcast(watcher, l)
 
     def sendJoinMessage(self, watcher):
-        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True}) if w != watcher else None
+        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True, "version": watcher.getVersion()}) if w != watcher else None
         self._roomManager.broadcast(watcher, l)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
 
@@ -133,6 +145,11 @@ class SyncFactory(Factory):
             watcher.sendNewControlledRoom(newName, password)
         except ValueError:
             self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
+
+    def sendChat(self,watcher,message):
+        message = truncateText(message, constants.MAX_CHAT_MESSAGE_LENGTH)
+        messageDict={"message":message,"username" : watcher.getName()}
+        self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(messageDict))
 
     def setReady(self, watcher, isReady, manuallyInitiated=True):
         watcher.setReady(isReady)
@@ -178,6 +195,7 @@ class RoomManager(object):
         return watchers
 
     def moveWatcher(self, watcher, roomName):
+        roomName = truncateText(roomName, constants.MAX_ROOM_NAME_LENGTH)
         self.removeWatcher(watcher)
         room = self._getRoom(roomName)
         room.addWatcher(watcher)
@@ -204,6 +222,7 @@ class RoomManager(object):
             del self._rooms[room.getName()]
 
     def findFreeUsername(self, username):
+        username = truncateText(username,constants.MAX_USERNAME_LENGTH)
         allnames = []
         for room in self._rooms.itervalues():
             for watcher in room.getWatchers():
@@ -378,6 +397,9 @@ class Watcher(object):
         reactor.callLater(0.1, self._scheduleSendState)
 
     def setFile(self, file_):
+        print file_
+        if file_ and file_.has_key("name"):
+            file_["name"] = truncateText(file_["name"],constants.MAX_FILENAME_LENGTH)
         self._file = file_
         self._server.sendFileUpdate(self)
 
@@ -403,6 +425,9 @@ class Watcher(object):
     def getName(self):
         return self._name
 
+    def getVersion(self):
+        return self._connector.getVersion()
+
     def getFile(self):
         return self._file
 
@@ -426,6 +451,10 @@ class Watcher(object):
 
     def sendControlledRoomAuthStatus(self, success, username, room):
         self._connector.sendControlledRoomAuthStatus(success, username, room)
+
+    def sendChatMessage(self,message):
+        if self._connector.meetsMinVersion(constants.CHAT_MIN_VERSION):
+            self._connector.sendMessage({"Chat" : message})
 
     def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self._connector.sendSetReady(username, isReady, manuallyInitiated)
@@ -507,5 +536,6 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
         self._argparser.add_argument('--disable-ready', action='store_true', help=getMessage("server-disable-ready-argument"))
+        self._argparser.add_argument('--disable-chat', action='store_true', help=getMessage("server-chat-argument"))
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))

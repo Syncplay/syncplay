@@ -85,6 +85,7 @@ en = {
     "commandlist-notification/toggle" : u"\tt - toggles whether you are ready to watch or not",
     "commandlist-notification/create" : "\tc [name] - create managed room using name of current room",
     "commandlist-notification/auth" : "\ta [password] - authenticate as room operator with operator password",
+    "commandlist-notification/chat" : "\tch [message] - send a chat message in a room",
     "syncplay-version-notification" : "Syncplay version: {}",  # syncplay.version
     "more-info-notification" : "More info available at: {}",  # projectURL
 
@@ -133,6 +134,7 @@ en = {
 
     "not-supported-by-server-error" : "This feature is not supported by the server. The feature requires a server running Syncplay {}+, but the server is running Syncplay {}.", #minVersion, serverVersion
     "shared-playlists-not-supported-by-server-error" : "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.", #minVersion, serverVersion
+    "shared-playlists-disabled-by-server-error" : "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.",
 
     "invalid-seek-value" : u"Invalid seek value",
     "invalid-offset-value" : u"Invalid offset value",
@@ -249,6 +251,8 @@ en = {
     "autoplay-guipushbuttonlabel" : u"Play when all ready",
     "autoplay-minimum-label" : u"Min users:",
 
+    "sendmessage-label" : u"Send",
+
     "ready-guipushbuttonlabel" : u"I'm ready to watch!",
 
     "roomuser-heading-label" : "Room / User",
@@ -351,6 +355,7 @@ en = {
     "ready-tooltip" : "Indicates whether you are ready to watch.",
     "autoplay-tooltip" : "Auto-play when all users who have readiness indicator are ready and minimum user threshold met.",
     "switch-to-file-tooltip" : u"Double click to switch to {}", # Filename
+    "sendmessage-tooltip" : u"Send message to room",
 
     # In-userlist notes (GUI)
     "differentsize-note" : "Different size!",
@@ -377,6 +382,7 @@ en = {
     "server-salt-argument" : "random string used to generate managed room passwords",
     "server-disable-ready-argument" : u"disable readiness feature",
     "server-motd-argument": "path to file from which motd will be fetched",
+    "server-chat-argument" : "Should chat be disabled?",
     "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
     "server-messed-up-motd-too-long": u"Message of the Day is too long - maximum of {} chars, {} given.",
 
@@ -403,6 +409,7 @@ en = {
     "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",
     "editplaylist-menu-label": u"Edit playlist",
 
+    "open-containing-folder": u"Open folder containing this file",
     "addusersfiletoplaylist-menu-label" : u"Add {} file to playlist", # item owner indicator
     "addusersstreamstoplaylist-menu-label" : u"Add {} stream to playlist", # item owner indicator
     "openusersstream-menu-label" : u"Open {} stream", # [username]'s

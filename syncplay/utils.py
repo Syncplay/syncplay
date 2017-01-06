@@ -11,6 +11,9 @@ import random
 import string
 import urllib
 import ast
+import unicodedata
+import platform
+import subprocess
 
 folderSearchEnabled = True
 
@@ -160,6 +163,22 @@ def blackholeStdoutForFrozenWindow():
         sys.stdout = Blackhole()
         del Blackhole
 
+def truncateText(unicodeText, maxLength):
+    try:
+        unicodeText = unicodedata.normalize('NFC', unicodeText)
+    except:
+        pass
+    try:
+        maxSaneLength= maxLength*5
+        if len(unicodeText) > maxSaneLength:
+            unicodeText = unicode(unicodeText.encode("utf-8")[:maxSaneLength], "utf-8", errors="ignore")
+        while len(unicodeText) > maxLength:
+            unicodeText = unicode(unicodeText.encode("utf-8")[:-1], "utf-8", errors="ignore")
+        return unicodeText
+    except:
+        pass
+    return ""
+
 # Relate to file hashing / difference checking:
 
 def stripfilename(filename, stripURL):
@@ -202,6 +221,11 @@ def hashFilesize(size):
     return hashlib.sha256(str(size)).hexdigest()[:12]
 
 def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
+    try:
+        if string1raw.lower() == string2raw.lower():
+            return True
+    except AttributeError:
+        pass
     if string1raw == string2raw:
         return True
     elif string1raw == string2hashed:
@@ -288,6 +312,17 @@ def getDomainFromURL(URL):
         return URL
     except:
         return None
+
+def open_system_file_browser(path):
+    if isURL(path):
+        return
+    path = os.path.dirname(path)
+    if platform.system() == "Windows":
+        os.startfile(path)
+    elif platform.system() == "Darwin":
+        subprocess.Popen(["open", path])
+    else:
+        subprocess.Popen(["xdg-open", path])
 
 def getListOfPublicServers():
     try:

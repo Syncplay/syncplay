@@ -46,7 +46,7 @@ MINIMUM_SLOWDOWN_THRESHOLD = 1.3
 SLOWDOWN_RESET_THRESHOLD = 0.1
 DIFFERENT_DURATION_THRESHOLD = 2.5
 PROTOCOL_TIMEOUT = 12.5
-RECONNECT_RETRIES = 10
+RECONNECT_RETRIES = 999
 SERVER_STATE_INTERVAL = 1
 WARNING_OSD_MESSAGES_LOOP_INTERVAL = 1
 AUTOPLAY_DELAY = 3.0
@@ -54,6 +54,12 @@ DO_NOT_RESET_POSITION_THRESHOLD = 1.0
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 PLAYLIST_MAX_CHARACTERS = 10000
 PLAYLIST_MAX_ITEMS = 250
+
+# Maximum character lengths (for client and server)
+MAX_CHAT_MESSAGE_LENGTH = 50 # Number of displayed characters
+MAX_USERNAME_LENGTH = 12 # Number of displayed characters
+MAX_ROOM_NAME_LENGTH = 35 # Number of displayed characters
+MAX_FILENAME_LENGTH = 250 # Number of displayed characters
 
 # Options for the File Switch feature:
 FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 15.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
@@ -66,6 +72,7 @@ FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
 CONTROL_PASSWORD_STRIP_REGEX = u"[^a-zA-Z0-9\-]"
 ROOM_NAME_STRIP_REGEX = u"^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
 COMMANDS_UNDO = ["u", "undo", "revert"]
+COMMANDS_CHAT = ["ch","chat"]
 COMMANDS_LIST = ["l", "list", "users"]
 COMMANDS_PAUSE = ["p", "play", "pause"]
 COMMANDS_ROOM = ["r", "room"]
@@ -81,6 +88,8 @@ MPV_UNRESPONSIVE_THRESHOLD = 60.0
 CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
 USER_READY_MIN_VERSION = "1.3.0"
 SHARED_PLAYLIST_MIN_VERSION = "1.4.0"
+CHAT_MIN_VERSION = "1.5.0"
+FEATURE_LIST_MIN_VERSION = "1.5.0"
 MPC_PATHS = [
     r"c:\program files (x86)\mpc-hc\mpc-hc.exe",
     r"c:\program files\mpc-hc\mpc-hc.exe",
@@ -143,7 +152,8 @@ STYLE_READY_PUSHBUTTON = "QPushButton { text-align: left; padding: 10px 5px 10px
 STYLE_AUTO_PLAY_PUSHBUTTON = "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }"
 STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
 STYLE_CONTACT_INFO = u"<span style=\"color: grey\"><strong><small>{}</span><br /><br />" # Contact info message
-STYLE_USERNAME = "color: #367AA9; font-weight:bold;"
+STYLE_USER_MESSAGE = u"<span style=\"{}\">&lt;{}&gt;</span> {}"
+STYLE_USERNAME = u"color: #367AA9; font-weight:bold;"
 STYLE_ERRORNOTIFICATION = "color: red;"
 STYLE_DIFFERENTITEM_COLOR = 'red'
 STYLE_NOFILEITEM_COLOR = 'blue'
@@ -170,6 +180,7 @@ UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
 UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,9}(?:[^\d\.](?:\d{1,9})){0,2}(?:\.(?:\d{1,3}))?)$"
 UI_SEEK_REGEX = r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"
 PARSE_TIME_REGEX = r'(:?(?:(?P<hours>\d+?)[^\d\.])?(?:(?P<minutes>\d+?))?[^\d\.])?(?P<seconds>\d+?)(?:\.(?P<miliseconds>\d+?))?$'
+MESSAGE_WITH_USERNAME_REGEX = "^(<(?P<username>[^<>]+)>)(?P<message>.*)"
 SERVER_MAX_TEMPLATE_LENGTH = 10000
 PRIVACY_SENDRAW_MODE = "SendRaw"
 PRIVACY_SENDHASHED_MODE = "SendHashed"

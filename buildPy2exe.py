@@ -661,6 +661,7 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/film_edit.png',
      'resources/shield_edit.png',
      'resources/shield_add.png',
+     'resources/email_go.png',
      'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
     ]
 resources = ["resources/icon.ico", "resources/syncplay.png"]
@@ -684,7 +685,7 @@ info = dict(
     options={'py2exe': {
                          'dist_dir': OUT_DIR,
                          'packages': 'PySide.QtUiTools',
-                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide, liburl, ast',
+                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide, liburl, ast, unicodedata',
                          'excludes': 'venv, _ssl, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
                          'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
                          'optimize': 2,
