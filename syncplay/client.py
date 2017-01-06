@@ -1761,6 +1761,9 @@ class FileSwitchManager(object):
         if filename is None:
             return
 
+        if self._client.userlist.currentUser.file and utils.sameFilename(filename, self._client.userlist.currentUser.file['name']):
+            return self._client.userlist.currentUser.file['path']
+
         if self.mediaFilesCache is not None:
             for directory in self.mediaFilesCache:
                 files = self.mediaFilesCache[directory]
