@@ -54,7 +54,6 @@ DO_NOT_RESET_POSITION_THRESHOLD = 1.0
 SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear on some media players
 PLAYLIST_MAX_CHARACTERS = 10000
 PLAYLIST_MAX_ITEMS = 250
-VLC_LISTEN_FOR_STDOUT = False # Changing to True this could break VLC 3 on Windows
 
 # Maximum character lengths (for client and server)
 MAX_CHAT_MESSAGE_LENGTH = 50 # Number of displayed characters
@@ -139,7 +138,7 @@ MPV_SENDMESSAGE_COOLDOWN_TIME = 0.05
 MPV_MAX_NEWFILE_COOLDOWN_TIME = 3
 STREAM_ADDITIONAL_IGNORE_TIME = 10
 MPV_LOCK_WAIT_TIME = 0.05
-VLC_OPEN_MAX_WAIT_TIME = 15
+VLC_OPEN_MAX_WAIT_TIME = 20
 VLC_MIN_PORT = 10000
 VLC_MAX_PORT = 55000
 
