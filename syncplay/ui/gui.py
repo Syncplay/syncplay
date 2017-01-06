@@ -517,6 +517,9 @@ class MainWindow(QtGui.QMainWindow):
                     pathFound = self._syncplayClient.fileSwitch.findFilepath(firstFile)
                     if pathFound:
                         menu.addAction(QtGui.QPixmap(resourcespath + u"film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound))
+                        menu.addAction(QtGui.QPixmap(resourcespath + u"film_folder_edit.png"),
+                                               getMessage('open-containing-folder'),
+                                               lambda: utils.open_system_file_browser(pathFound))
             if self._syncplayClient.isUntrustedTrustableURI(firstFile):
                 domain = utils.getDomainFromURL(firstFile)
                 menu.addAction(QtGui.QPixmap(resourcespath + u"shield_add.png"),getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
