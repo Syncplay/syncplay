@@ -578,9 +578,10 @@ class MainWindow(QtGui.QMainWindow):
                 domain = utils.getDomainFromURL(filename)
                 menu.addAction(QtGui.QPixmap(resourcespath + u"shield_add.png"),getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
 
-            if not isURL(filename):
+            if not isURL(filename) and filename <> getMessage("nofile-note"):
                 path = self._syncplayClient.fileSwitch.findFilepath(filename)
-                menu.addAction(QtGui.QPixmap(resourcespath + u"film_folder_edit.png"), getMessage('open-containing-folder'), lambda: utils.open_system_file_browser(path))
+                if path:
+                    menu.addAction(QtGui.QPixmap(resourcespath + u"film_folder_edit.png"), getMessage('open-containing-folder'), lambda: utils.open_system_file_browser(path))
         else:
             return
         menu.exec_(self.listTreeView.viewport().mapToGlobal(position))
