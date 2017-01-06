@@ -517,7 +517,7 @@ class MainWindow(QtGui.QMainWindow):
                     pathFound = self._syncplayClient.fileSwitch.findFilepath(firstFile)
                     if pathFound:
                         menu.addAction(QtGui.QPixmap(resourcespath + u"film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound))
-                        menu.addAction(QtGui.QPixmap(resourcespath + u"film_folder_edit.png"),
+                        menu.addAction(QtGui.QPixmap(resourcespath + u"folder_film.png"),
                                                getMessage('open-containing-folder'),
                                                lambda: utils.open_system_file_browser(pathFound))
             if self._syncplayClient.isUntrustedTrustableURI(firstFile):
@@ -584,7 +584,7 @@ class MainWindow(QtGui.QMainWindow):
             if not isURL(filename) and filename <> getMessage("nofile-note"):
                 path = self._syncplayClient.fileSwitch.findFilepath(filename)
                 if path:
-                    menu.addAction(QtGui.QPixmap(resourcespath + u"film_folder_edit.png"), getMessage('open-containing-folder'), lambda: utils.open_system_file_browser(path))
+                    menu.addAction(QtGui.QPixmap(resourcespath + u"folder_film.png"), getMessage('open-containing-folder'), lambda: utils.open_system_file_browser(path))
         else:
             return
         menu.exec_(self.listTreeView.viewport().mapToGlobal(position))
