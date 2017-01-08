@@ -659,7 +659,7 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/film_go.png', 'resources/world_go.png', 'resources/arrow_refresh.png', 'resources/bullet_right_grey.png',
      'resources/film_folder_edit.png',
      'resources/film_edit.png',
-     'folder_film.png'
+     'resources/folder_film.png',
      'resources/shield_edit.png',
      'resources/shield_add.png',
      'resources/email_go.png',
