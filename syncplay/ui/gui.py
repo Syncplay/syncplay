@@ -510,16 +510,16 @@ class MainWindow(QtGui.QMainWindow):
 
         if item:
             firstFile = item.sibling(item.row(), 0).data()
+            pathFound = self._syncplayClient.fileSwitch.findFilepath(firstFile) if not isURL(firstFile) else None
             if self._syncplayClient.userlist.currentUser.file is None or firstFile <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(firstFile):
                     menu.addAction(QtGui.QPixmap(resourcespath + u"world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile))
-                else:
-                    pathFound = self._syncplayClient.fileSwitch.findFilepath(firstFile)
-                    if pathFound:
+                elif pathFound:
                         menu.addAction(QtGui.QPixmap(resourcespath + u"film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound))
-                        menu.addAction(QtGui.QPixmap(resourcespath + u"folder_film.png"),
-                                               getMessage('open-containing-folder'),
-                                               lambda: utils.open_system_file_browser(pathFound))
+            if pathFound:
+                menu.addAction(QtGui.QPixmap(resourcespath + u"folder_film.png"),
+                               getMessage('open-containing-folder'),
+                               lambda: utils.open_system_file_browser(pathFound))
             if self._syncplayClient.isUntrustedTrustableURI(firstFile):
                 domain = utils.getDomainFromURL(firstFile)
                 menu.addAction(QtGui.QPixmap(resourcespath + u"shield_add.png"),getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
