@@ -21,13 +21,16 @@ ifeq ($(SINGLE_USER),false)
 ifneq ($(BSD),true)
 	PREFIX      ?= /usr
 	VLC_LIB_PATH = ${PREFIX}/lib
+	VLC_LIB_PATH64 = ${PREFIX}/lib/x86_64-linux-gnu
 else
-	PREFIX 	    ?= /usr/local
+	PREFIX      ?= /usr/local
 	VLC_LIB_PATH = ${PREFIX}/lib
+	VLC_LIB_PATH64 = ${PREFIX}/lib
 endif
 else
 	PREFIX       = ${HOME}/.local
 	VLC_LIB_PATH = ${HOME}/.local/share
+	VLC_LIB_PATH64 = ${HOME}/.local/share
 endif
 
 	BIN_PATH          = ${DESTDIR}${PREFIX}/bin
@@ -69,12 +72,15 @@ endif
 ifeq ($(VLC_SUPPORT),true)
 	-mkdir -p ${DESTDIR}$(VLC_LIB_PATH)/vlc/lua/intf/
 	cp resources/lua/intf/syncplay.lua ${DESTDIR}$(VLC_LIB_PATH)/vlc/lua/intf/
+	-mkdir -p ${DESTDIR}$(VLC_LIB_PATH64)/vlc/lua/intf/
+	cp resources/lua/intf/syncplay.lua ${DESTDIR}$(VLC_LIB_PATH64)/vlc/lua/intf/
 endif
 
 u-client:
 	-rm $(BIN_PATH)/syncplay
 	-rm $(LIB_PATH)/syncplay/syncplayClient.py
 	-rm ${DESTDIR}$(VLC_LIB_PATH)/vlc/lua/intf/syncplay.lua
+	-rm ${DESTDIR}$(VLC_LIB_PATH64)/vlc/lua/intf/syncplay.lua
 	-rm $(APP_SHORTCUT_PATH)/syncplay.desktop
 
 server:
