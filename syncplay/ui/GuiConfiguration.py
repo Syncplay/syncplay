@@ -977,7 +977,7 @@ class ConfigDialog(QtGui.QDialog):
 
     def ensureTabListIsVisible(self):
         self.stackedFrame.setFixedWidth(self.stackedFrame.width())
-        while self.tabListWidget.horizontalScrollBar().isVisible() and self.tabListFrame.width() < 200:
+        while self.tabListWidget.horizontalScrollBar().isVisible() and self.tabListFrame.width() < constants.MAXIMUM_TAB_WIDTH:
             self.tabListFrame.setFixedWidth(self.tabListFrame.width()+1)
 
     def tabChange(self):
