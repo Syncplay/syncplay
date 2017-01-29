@@ -63,9 +63,9 @@ MAX_ROOM_NAME_LENGTH = 35 # Number of displayed characters
 MAX_FILENAME_LENGTH = 250 # Number of displayed characters
 
 # Options for the File Switch feature:
-FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 15.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
-FOLDER_SEARCH_TIMEOUT = 6.0 # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)
-FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0 # Secs - Frequency of updating cache when someone is playing a file not in current cache
+FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 25.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
+FOLDER_SEARCH_TIMEOUT = 20.0 # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)
+FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0 # Secs - Frequency of updating cache
 
 #Usually there's no need to adjust these
 LAST_PAUSED_DIFF_THRESHOLD = 2
