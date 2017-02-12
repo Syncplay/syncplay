@@ -118,6 +118,13 @@ def formatSize (bytes, precise=False):
 def isASCII(s):
     return all(ord(c) < 128 for c in s)
 
+def findResourcePath(resourceName):
+    if resourceName == "syncplay.lua":
+        resourcePath = os.path.join(findWorkingDir(), "lua", "intf" , "resources", resourceName)
+    else:
+        resourcePath = os.path.join(findWorkingDir(),"resources", resourceName)
+    return resourcePath
+
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
     if not frozen:

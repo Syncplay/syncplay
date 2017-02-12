@@ -88,6 +88,7 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine("get_property {}".format(property_))
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), secondaryOSD=False):
+        self._listener.sendLine(u'script-message-to syncplayintf chat "{}"'.format(self._stripNewlines(message)))
         self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, self._stripNewlines(message), duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
 
     def setSpeed(self, value):
@@ -325,6 +326,9 @@ class MplayerPlayer(BasePlayer):
                 line = line.rstrip("\r\n")
                 self.__playerController.lineReceived(line)
             self.__playerController.drop()
+
+        def sendChat(self, message):
+            self.__playerController.reactor.callFromThread(self.__playerController._client.sendChat, message)
 
         def isReadyForSend(self):
             self.checkForReadinessOverride()

@@ -3,7 +3,7 @@ import subprocess
 from syncplay.players.mplayer import MplayerPlayer
 from syncplay.messages import getMessage
 from syncplay import constants
-from syncplay.utils import isURL
+from syncplay.utils import isURL, findResourcePath
 import os, sys, time
 
 class MpvPlayer(MplayerPlayer):
@@ -30,6 +30,7 @@ class MpvPlayer(MplayerPlayer):
         args.extend(constants.MPV_SLAVE_ARGS)
         if constants.MPV_NEW_VERSION:
             args.extend(constants.MPV_SLAVE_ARGS_NEW)
+            args.extend([u"--script={}".format(findResourcePath("syncplayintf.lua"))])
         return args
 
     @staticmethod
@@ -224,6 +225,9 @@ class NewMpvPlayer(OldMpvPlayer):
 
     def _handleUnknownLine(self, line):
         self.mpvErrorCheck(line)
+
+        if "<chat>" in line:
+            self._listener.sendChat(line[6:-7])
 
         if line == "<SyncplayUpdateFile>" or "Playing:" in line:
             self._listener.setReadyToSend(False)
