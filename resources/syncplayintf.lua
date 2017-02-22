@@ -8,8 +8,8 @@ local ROW_HEIGHT = 100
 local PIXELS_PER_CHAR = 16
 local CHAT_FORMAT = "{\\fs60}{\an1}{\\q2}"
 local MAX_ROWS = 7
-local MOVEMENT_PER_TICK = 6
-local TICK_FREQUENCY = 0.03
+local MOVEMENT_PER_TICK = 1
+local TICK_DURATION = 0.01
 local INPUT_PROMPT_FONT_SIZE = 25
 local MAX_CHAT_MESSAGE_LENGTH = 50
 
@@ -62,7 +62,7 @@ function chat_update()
 	ass:append(input_ass())
 	mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
 end
-chat_timer=mp.add_periodic_timer(TICK_FREQUENCY, chat_update)
+chat_timer=mp.add_periodic_timer(TICK_DURATION, chat_update)
 
 mp.register_script_message('chat', function(e)
 	add_chat(e)
