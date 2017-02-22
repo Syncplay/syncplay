@@ -11,6 +11,7 @@ class MplayerPlayer(BasePlayer):
     speedSupported = True
     customOpenDialog = False
     secondaryOSDSupported = False
+    chatOSDSupported = False
     osdMessageSeparator = "; "
 
     RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
@@ -88,8 +89,11 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine("get_property {}".format(property_))
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), secondaryOSD=False):
-        self._listener.sendLine(u'script-message-to syncplayintf chat "{}"'.format(self._stripNewlines(message)))
         self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, self._stripNewlines(message), duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
+
+    def displayChatMessage(self, username, message):
+        messageString = u"<{}> {}".format(username, message)
+        self._listener.sendLine(u'script-message-to syncplayintf chat "{}"'.format(self._stripNewlines(messageString)))
 
     def setSpeed(self, value):
         self._setProperty('speed', "{:.2f}".format(value))

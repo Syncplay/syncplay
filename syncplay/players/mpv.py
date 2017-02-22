@@ -109,6 +109,7 @@ class OldMpvPlayer(MpvPlayer):
 class NewMpvPlayer(OldMpvPlayer):
     lastResetTime = None
     lastMPVPositionUpdate = None
+    chatOSDSupported = True
 
     def setPaused(self, value):
         if self._paused == value:

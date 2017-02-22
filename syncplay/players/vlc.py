@@ -16,6 +16,7 @@ class VlcPlayer(BasePlayer):
     speedSupported = True
     customOpenDialog = False
     secondaryOSDSupported = True
+    chatOSDSupported = False
     osdMessageSeparator = "; "
 
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)

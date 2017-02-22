@@ -203,7 +203,7 @@ class SyncplayClient(object):
         if pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
             and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
             self.playlist.advancePlaylistCheck()
-        elif pauseChange and self.serverFeatures["readiness"]:
+        elif pauseChange and self.serverFeatures.has_key("readiness") and self.serverFeatures["readiness"]:
             if currentLength == 0 or currentLength == -1 or\
                 not (not self.playlist.notJustChangedPlaylist() and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD):
                 pauseChange = self._toggleReady(pauseChange, paused)
@@ -1342,6 +1342,14 @@ class UiManager(object):
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():
             sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip()))
+
+    def showChatMessage(self, username, userMessage):
+        messageString = u"<{}> {}".format(username, userMessage)
+        if self._client._player.chatOSDSupported:
+            self._client._player.displayChatMessage(username,userMessage)
+        else:
+            self.showOSDMessage(messageString, duration=constants.OSD_DURATION)
+        self.__ui.showMessage(messageString)
 
     def showMessage(self, message, noPlayer=False, noTimestamp=False, secondaryOSD=False):
         if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, secondaryOSD=secondaryOSD)
