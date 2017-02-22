@@ -89,11 +89,14 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine("get_property {}".format(property_))
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), secondaryOSD=False):
-        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, self._stripNewlines(message), duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
+        message = self._sanitizeText(message)
+        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
 
     def displayChatMessage(self, username, message):
+        username = self._sanitizeText(username)
+        message = self._sanitizeText(message)
         messageString = u"<{}> {}".format(username, message)
-        self._listener.sendLine(u'script-message-to syncplayintf chat "{}"'.format(self._stripNewlines(messageString)))
+        self._listener.sendLine(u'script-message-to syncplayintf chat "{}"'.format(messageString))
 
     def setSpeed(self, value):
         self._setProperty('speed', "{:.2f}".format(value))
@@ -134,9 +137,12 @@ class MplayerPlayer(BasePlayer):
     def _getPosition(self):
         self._getProperty(self.POSITION_QUERY)
 
-    def _stripNewlines(self, text):
+    def _sanitizeText(self, text):
         text = text.replace("\r", "")
         text = text.replace("\n", "")
+        text = text.replace("\\", "\\\\")
+        text = text.replace("{", "\\\\{")
+        text = text.replace("}", "\\\\}")
         return text
 
     def _quoteArg(self, arg):
