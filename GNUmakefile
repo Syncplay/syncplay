@@ -47,6 +47,7 @@ common:
 	chmod 755 $(LIB_PATH)/syncplay/
 	cp -r resources/hicolor $(SHARE_PATH)/icons/
 	cp -r resources/*.png $(LIB_PATH)/syncplay/resources/
+	cp -r resources/*.lua $(LIB_PATH)/syncplay/resources/
 	cp -r resources/lua/intf/*.lua $(LIB_PATH)/syncplay/resources/lua/intf/
 	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/app-install/icons/
 	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/pixmaps/
