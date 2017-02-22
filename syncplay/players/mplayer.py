@@ -89,7 +89,7 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine("get_property {}".format(property_))
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), secondaryOSD=False):
-        message = self._sanitizeText(message)
+        message = self._sanitizeText(message.replace("\\n","<NEWLINE>")).replace("<NEWLINE>","\\n")
         self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
 
     def displayChatMessage(self, username, message):
@@ -140,7 +140,7 @@ class MplayerPlayer(BasePlayer):
     def _sanitizeText(self, text):
         text = text.replace("\r", "")
         text = text.replace("\n", "")
-        text = text.replace("\\", "\\\\")
+        text = text.replace("\\", u"\\\\\\uFEFF")
         text = text.replace("{", "\\\\{")
         text = text.replace("}", "\\\\}")
         return text
