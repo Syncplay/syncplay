@@ -11,6 +11,7 @@ local MAX_ROWS = 7
 local MOVEMENT_PER_TICK = 6
 local TICK_FREQUENCY = 0.03
 local INPUT_PROMPT_FONT_SIZE = 25
+local MAX_CHAT_MESSAGE_LENGTH = 50
 
 local chat_log = {}
 
@@ -84,6 +85,8 @@ end)
 -- CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 -- Default options
+local utils = require 'mp.utils'
+local options = require 'mp.options'
 local opts = {
 	-- All drawing is scaled by this value, including the text borders and the
 	-- cursor. Change it if you have a high-DPI display.
@@ -116,7 +119,7 @@ elseif platform == 'macos' then
 end
 
 -- Apply user-set options
---options.read_options(opts)
+options.read_options(opts)
 
 -- Escape a string for verbatim display on the OSD
 function ass_escape(str)
@@ -189,14 +192,8 @@ end
 function show_and_type(text)
 	text = text or ''
 
-	-- Save the line currently being edited, just in case
-	if line ~= text and line ~= '' and history[#history] ~= line then
-		history[#history + 1] = line
-	end
-
 	line = text
 	cursor = line:len() + 1
-	history_pos = #history + 1
 	insert_mode = false
 	if repl_active then
 		update()
@@ -215,6 +212,10 @@ function next_utf8(str, pos)
 	return pos
 end
 
+-- Naive helper function to find the next UTF-8 character in 'str' after 'pos'
+-- by skipping continuation bytes. Assumes 'str' contains valid UTF-8.
+
+
 -- As above, but finds the previous UTF-8 charcter in 'str' before 'pos'
 function prev_utf8(str, pos)
 	if pos <= 1 then return pos end
@@ -222,6 +223,11 @@ function prev_utf8(str, pos)
 		pos = pos - 1
 	until pos <= 1 or str:byte(pos) < 0x80 or str:byte(pos) > 0xbf
 	return pos
+end
+
+function trim_input()
+	-- TODO
+	return
 end
 
 -- Insert a character at the current cursor position (' '-'~', Shift+Enter)
@@ -232,6 +238,7 @@ function handle_char_input(c)
 		line = line:sub(1, cursor - 1) .. c .. line:sub(cursor)
 	end
 	cursor = cursor + 1
+    trim_input()
 	update()
 end
 
@@ -373,6 +380,7 @@ function paste(clip)
 	local after_cur = line:sub(cursor)
 	line = before_cur .. text .. after_cur
 	cursor = cursor + text:len()
+    trim_input()
 	update()
 end
 
