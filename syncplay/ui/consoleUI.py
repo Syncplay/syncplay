@@ -94,7 +94,7 @@ class ConsoleUI(threading.Thread):
         if noTimestamp:
             print(message)
         else:
-            print(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message)
+            print(time.strftime(constants.UI_TIME_FORMAT, time.localtime()).decode('utf-8') + message)
 
     def showDebugMessage(self, message):
         print(message)
