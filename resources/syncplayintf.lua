@@ -1,16 +1,16 @@
 ﻿-- syncplayintf.lua -- An interface for communication between mpv and Syncplay
 -- Author: Etoh
--- Thanks: RiCON, James Ross-Gowan, Argon-, wm4
+-- Thanks: RiCON, James Ross-Gowan, Argon-, wm4, uau
 
-local CANVAS_WIDTH = 1000
-local CANVAS_HEIGHT = 1000
+local CANVAS_WIDTH = 1920
+local CANVAS_HEIGHT = 1080
 local ROW_HEIGHT = 100
-local PIXELS_PER_CHAR = 16
-local CHAT_FORMAT = "{\\fs60}{\an1}{\\q2}"
+local PIXELS_PER_CHAR = 25
+local CHAT_FORMAT = "{\\fs15}{\an1}{\\q2}"
 local MAX_ROWS = 7
-local MOVEMENT_PER_TICK = 1
-local TICK_DURATION = 0.01
-local INPUT_PROMPT_FONT_SIZE = 25
+local MOVEMENT_PER_SECOND = 200
+local TICK_INTERVAL = 0.01
+local INPUT_PROMPT_FONT_SIZE = 20
 local MAX_CHAT_MESSAGE_LENGTH = 50
 
 local chat_log = {}
@@ -18,7 +18,7 @@ local chat_log = {}
 local assdraw = require "mp.assdraw"
 
 function format_chat(xpos, ypos, text)
-	chat_message = CHAT_FORMAT .. "{\\pos("..xpos..","..ypos..")}"..text.."\n"
+	chat_message = CHAT_FORMAT .. "{\\fs50}{\\pos("..xpos..","..ypos..")}"..text.."\n"
     return string.format(chat_message)
 end
 
@@ -35,7 +35,7 @@ function add_chat(chat_message)
 		end
 	end
 	local row = ((entry-1) % MAX_ROWS)+1
-	chat_log[entry] = { xpos=CANVAS_WIDTH, text=tostring(chat_message), row=row }
+	chat_log[entry] = { xpos=CANVAS_WIDTH, timecreated=mp.get_time(), text=tostring(chat_message), row=row }
 end
 
 function chat_update()
@@ -43,7 +43,9 @@ function chat_update()
 	local chat_ass = ''
 	if #chat_log > 0 then
 		for i = 1, #chat_log do
-			local xpos = chat_log[i].xpos
+			local timecreated = chat_log[i].timecreated
+			local timedelta = mp.get_time() - timecreated
+			local xpos = CANVAS_WIDTH - (timedelta*MOVEMENT_PER_SECOND)
 			local text = chat_log[i].text
 			if text ~= '' then
 				local roughlen = string.len(text) * PIXELS_PER_CHAR
@@ -51,7 +53,6 @@ function chat_update()
 					local row = chat_log[i].row
 					local ypos = row * ROW_HEIGHT
 					chat_ass = chat_ass .. format_chat(xpos,ypos,text)
-					chat_log[i].xpos = xpos-MOVEMENT_PER_TICK
 				else
 					chat_log[i].text = ''
 				end
@@ -62,7 +63,7 @@ function chat_update()
 	ass:append(input_ass())
 	mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
 end
-chat_timer=mp.add_periodic_timer(TICK_DURATION, chat_update)
+chat_timer=mp.add_periodic_timer(TICK_INTERVAL, chat_update)
 
 mp.register_script_message('chat', function(e)
 	add_chat(e)
