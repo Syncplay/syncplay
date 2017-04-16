@@ -134,7 +134,13 @@ ru = {
     "vlc-failed-versioncheck" : u"Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
     "vlc-failed-other" : u"Во время загрузки скрипта интерфейса syncplay.lua в VLC произошла следующая ошибка: {}",  # Syncplay Error
 
-    "not-supported-by-server-error" : u"Эта возможность не поддерживается сервером. Требуется сервер Syncplay {}+, вы подключены к серверу Syncplay {}.", #minVersion, serverVersion
+    "feature-sharedPlaylists": u"shared playlists",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-chat": u"chat",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-readiness": u"readiness",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-managedRooms": u"managed rooms",  # used for not-supported-by-server-error # TODO: Translate
+
+    "not-supported-by-server-error": u"The {} feature is not supported by this server..",  # feature # TODO: Translate
+    #OLD TRANSLATION: "not-supported-by-server-error" : u"Эта возможность не поддерживается сервером. Требуется сервер Syncplay {}+, вы подключены к серверу Syncplay {}.", #minVersion, serverVersion
     "shared-playlists-not-supported-by-server-error" : u"Общие списки воспроизведения могут не поддерживаться сервером. Для корректной работы требуется сервер Syncplay {}+, вы подключены к серверу Syncplay {}.", #minVersion, serverVersion
     "shared-playlists-disabled-by-server-error" : "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.", # TODO: Translate
 

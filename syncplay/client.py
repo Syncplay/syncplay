@@ -585,11 +585,6 @@ class SyncplayClient(object):
         self.userlist.currentUser.room = roomName
         if resetAutoplay:
             self.resetAutoPlayState()
-           
-    def sendChat(self,message):
-        if self._protocol and self._protocol.logged:
-            message = utils.truncateText(message,constants.MAX_CHAT_MESSAGE_LENGTH)
-            self._protocol.sendChatMessage(message)
         
     def sendRoom(self):
         room = self.userlist.currentUser.room
@@ -685,19 +680,27 @@ class SyncplayClient(object):
         if promptForAction:
             self.ui.promptFor(getMessage("enter-to-exit-prompt"))
 
-    def requireMinServerVersion(minVersion):
-        def requireMinVersionDecorator(f):
+    def requireServerFeature(featureRequired):
+        def requireServerFeatureDecorator(f):
             @wraps(f)
             def wrapper(self, *args, **kwds):
-                if not utils.meetsMinVersion(self.serverVersion,minVersion):
-                    if self.serverVersion != "0.0.0":
-                        self.ui.showErrorMessage(getMessage("not-supported-by-server-error").format(minVersion, self.serverVersion))
-                    else:
-                        self.ui.showDebugMessage("Tried to check server version too soon (threshold: {})".format(minVersion))
+                if self.serverVersion == "0.0.0":
+                    self.ui.showDebugMessage(
+                        "Tried to check server version too soon (testing support for: {})".format(featureRequired))
+                    return None
+                if not self.serverFeatures.has_key(featureRequired) or not self.serverFeatures[featureRequired]:
+                    featureName = getMessage(u"feature-{}".format(featureRequired))
+                    self.ui.showErrorMessage(getMessage("not-supported-by-server-error").format(featureName))
                     return
                 return f(self, *args, **kwds)
             return wrapper
-        return requireMinVersionDecorator
+        return requireServerFeatureDecorator
+
+    @requireServerFeature("chat")
+    def sendChat(self,message):
+        if self._protocol and self._protocol.logged:
+            message = utils.truncateText(message,constants.MAX_CHAT_MESSAGE_LENGTH)
+            self._protocol.sendChatMessage(message)
 
     def changePlaylistEnabledState(self, newState):
         oldState = self.sharedPlaylistIsEnabled()
@@ -777,11 +780,11 @@ class SyncplayClient(object):
         self.ui.updateAutoPlayState(False)
         self.stopAutoplayCountdown()
 
-    @requireMinServerVersion(constants.USER_READY_MIN_VERSION)
+    @requireServerFeature("readiness")
     def toggleReady(self, manuallyInitiated=True):
         self._protocol.setReady(not self.userlist.currentUser.isReady(), manuallyInitiated)
 
-    @requireMinServerVersion(constants.USER_READY_MIN_VERSION)
+    @requireServerFeature("readiness")
     def changeReadyState(self, newState, manuallyInitiated=True):
         oldState = self.userlist.currentUser.isReady()
         if newState != oldState:
@@ -796,7 +799,7 @@ class SyncplayClient(object):
         if oldReadyState != isReady:
             self._warnings.checkReadyStates()
 
-    @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
+    @requireServerFeature("managedRooms")
     def createControlledRoom(self, roomName):
         controlPassword = utils.RandomStringGenerator.generate_room_password()
         self.lastControlPasswordAttempt = controlPassword
@@ -815,7 +818,7 @@ class SyncplayClient(object):
         else:
             return ""
 
-    @requireMinServerVersion(constants.CONTROLLED_ROOMS_MIN_VERSION)
+    @requireServerFeature("managedRooms")
     def identifyAsController(self, controlPassword):
         controlPassword = self.stripControlPassword(controlPassword)
         self.ui.showMessage(getMessage("identifying-as-controller-notification").format(controlPassword))

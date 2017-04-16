@@ -134,7 +134,13 @@ de = {
     "vlc-failed-versioncheck": u"Diese VLC-Version wird von Syncplay nicht unterstützt. Bitte nutze VLC 2.0",
     "vlc-failed-other" : u"Beim Laden des syncplay.lua Interface-Skripts durch VLC trat folgender Fehler auf: {}",  # Syncplay Error
 
-    "not-supported-by-server-error" : u"Dieses Feature wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.", #minVersion, serverVersion
+    "feature-sharedPlaylists": u"shared playlists",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-chat": u"chat",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-readiness": u"readiness",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-managedRooms": u"managed rooms",  # used for not-supported-by-server-error # TODO: Translate
+
+    "not-supported-by-server-error": u"The {} feature is not supported by this server..",  # feature # TODO: Translate
+    #OLD TRANSLATION: "not-supported-by-server-error" : u"Dieses Feature wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.", #minVersion, serverVersion
     "shared-playlists-not-supported-by-server-error" : "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.", #minVersion, serverVersion # TODO: Translate
     "shared-playlists-disabled-by-server-error" : "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.", # TODO: Translate
 
