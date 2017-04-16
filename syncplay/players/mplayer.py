@@ -338,7 +338,16 @@ class MplayerPlayer(BasePlayer):
             self.__playerController.drop()
 
         def sendChat(self, message):
-            self.__playerController.reactor.callFromThread(self.__playerController._client.sendChat, message)
+            if message:
+                if message[:1] == "/" and message <> "/":
+                    command = message[1:]
+                    if command and command[:1] == "/":
+                        message = message[1:]
+                    else:
+                        self.__playerController.reactor.callFromThread(self.__playerController._client.ui.executeCommand,
+                                                                       command)
+                        return
+                self.__playerController.reactor.callFromThread(self.__playerController._client.sendChat, message)
 
         def isReadyForSend(self):
             self.checkForReadinessOverride()

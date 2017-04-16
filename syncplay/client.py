@@ -625,8 +625,8 @@ class SyncplayClient(object):
         if self._protocol and self._protocol.logged:
             self._protocol.sendList()
 
-    def showUserList(self):
-        self.userlist.showUserList()
+    def showUserList(self, altUI=None):
+        self.userlist.showUserList(altUI)
 
     def getPassword(self):
         return self._serverPassword
@@ -1298,7 +1298,7 @@ class SyncplayUserlist(object):
     def hasRoomStateChanged(self):
         return self._roomUsersChanged
 
-    def showUserList(self):
+    def showUserList(self, altUI=None):
         rooms = {}
         for user in self._users.itervalues():
             if user.room not in rooms:
@@ -1308,7 +1308,10 @@ class SyncplayUserlist(object):
                 rooms[self.currentUser.room] = []
         rooms[self.currentUser.room].append(self.currentUser)
         rooms = self.sortList(rooms)
-        self.ui.showUserList(self.currentUser, rooms)
+        if altUI:
+            altUI.showUserList(self.currentUser, rooms)
+        else:
+            self.ui.showUserList(self.currentUser, rooms)
         self._client.autoplayCheck()
 
     def clearList(self):
@@ -1406,6 +1409,9 @@ class UiManager(object):
 
     def updateRoomName(self, room=""):
         self.__ui.updateRoomName(room)
+
+    def executeCommand(self, command):
+        self.__ui.executeCommand(command)
 
     def drop(self):
         self.__ui.drop()

@@ -11,7 +11,24 @@ import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from functools import wraps
 from twisted.internet import task
+from syncplay.ui.consoleUI import ConsoleUI
 lastCheckedForUpdates = None
+
+class ConsoleInGUI(ConsoleUI):
+    def showMessage(self, message, noTimestamp=False):
+        self._syncplayClient.ui.showMessage(message, True)
+
+    def showDebugMessage(self, message):
+        self._syncplayClient.ui.showDebugMessage(message)
+
+    def showErrorMessage(self, message, criticalerror=False):
+        self._syncplayClient.ui.showErrorMessage(message, criticalerror)
+
+    def updateRoomName(self, room=""):
+        self._syncplayClient.ui.updateRoomName(room)
+
+    def getUserlist(self):
+        self._syncplayClient.showUserList(self)
 
 class UserlistItemDelegate(QtGui.QStyledItemDelegate):
     def __init__(self):
@@ -297,6 +314,8 @@ class MainWindow(QtGui.QMainWindow):
 
     def addClient(self, client):
         self._syncplayClient = client
+        if self.console:
+            self.console.addClient(client)
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
         try:
@@ -330,8 +349,6 @@ class MainWindow(QtGui.QMainWindow):
     def setFeatures(self, featureList):
         if not featureList["readiness"]:
             self.readyPushButton.setEnabled(False)
-        if not featureList["chat"]:
-            self.chatFrame.setEnabled(False)
         if not featureList["sharedPlaylists"]:
             self.playlistGroup.setEnabled(False)
 
@@ -1046,10 +1063,22 @@ class MainWindow(QtGui.QMainWindow):
             self._syncplayClient.playlist.changePlaylist(newPlaylist)
             self._syncplayClient.fileSwitch.updateInfo()
 
+    def executeCommand(self, command):
+        self.showMessage(u"/{}".format(command))
+        self.console.executeCommand(command)
+
     def sendChatMessage(self):
-        if self.chatInput.text() <> "":
-            self._syncplayClient.sendChat(self.chatInput.text())
-            self.chatInput.setText("")
+        chatText = self.chatInput.text()
+        self.chatInput.setText("")
+        if chatText <> "":
+            if chatText[:1] == "/" and chatText <> "/":
+                command = chatText[1:]
+                if command and command[:1] == "/":
+                    chatText = chatText[1:]
+                else:
+                    self.executeCommand(command)
+                    return
+            self._syncplayClient.sendChat(chatText)
 
     def addTopLayout(self, window):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)
@@ -1608,6 +1637,8 @@ class MainWindow(QtGui.QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.console = ConsoleInGUI()
+        self.console.setDaemon(True)
         self.newWatchlist = []
         self.publicServerList = []
         self.lastCheckedForUpdates = None
