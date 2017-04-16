@@ -349,7 +349,7 @@ class MainWindow(QtGui.QMainWindow):
         if noTimestamp:
             self.newMessage(u"{}<br />".format(message))
         else:
-            self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + u"<br />")
+            self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()).decode('utf-8') + message + u"<br />")
 
     @needsClient
     def getFileSwitchState(self, filename):
@@ -370,7 +370,7 @@ class MainWindow(QtGui.QMainWindow):
     @needsClient
     def isItemUntrusted(self, filename):
         return isURL(filename) and not self._syncplayClient.isURITrusted(filename)
-    
+
     @needsClient
     def isFileAvailable(self, filename):
         if filename:
@@ -681,7 +681,7 @@ class MainWindow(QtGui.QMainWindow):
         message = message.replace(u"&", u"&amp;").replace(u'"', u"&quot;").replace(u"<", u"&lt;").replace(u">", u"&gt;")
         message = message.replace(u"\n", u"<br />")
         message = u"<span style=\"{}\">".format(constants.STYLE_ERRORNOTIFICATION) + message + u"</span>"
-        self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + u"<br />")
+        self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()).decode('utf-8') + message + u"<br />")
 
     @needsClient
     def joinRoom(self, room=None):
