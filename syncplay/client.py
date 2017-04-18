@@ -552,6 +552,7 @@ class SyncplayClient(object):
             self.ui.showErrorMessage(getMessage("shared-playlists-not-supported-by-server-error").format(constants.SHARED_PLAYLIST_MIN_VERSION, self.serverVersion))
         elif not self.serverFeatures["sharedPlaylists"]:
             self.ui.showErrorMessage(getMessage("shared-playlists-disabled-by-server-error"))
+        # TODO: Have messages for all unsupported & disabled features
         self.ui.setFeatures(self.serverFeatures)
 
     def getSanitizedCurrentUserFile(self):
@@ -580,6 +581,24 @@ class SyncplayClient(object):
 
     def getUsername(self):
         return self.userlist.currentUser.username
+
+    def chatIsEnabled(self):
+        return True
+        # TODO: Allow chat to be disabled
+
+    def getFeatures(self):
+        features = dict()
+
+        # Can change during runtime:
+        features["sharedPlaylists"] = self.sharedPlaylistIsEnabled() # Can change during runtime
+        features["chat"] = self.chatIsEnabled() # Can change during runtime
+
+        # Static for this version/release of Syncplay:
+        features["featureList"] = True
+        features["readiness"] = True
+        features["managedRooms"] = True
+
+        return features
 
     def setRoom(self, roomName, resetAutoplay=False):
         self.userlist.currentUser.room = roomName
@@ -702,6 +721,9 @@ class SyncplayClient(object):
             message = utils.truncateText(message,constants.MAX_CHAT_MESSAGE_LENGTH)
             self._protocol.sendChatMessage(message)
 
+    def sendFeaturesUpdate(self, features):
+        self._protocol.sendFeaturesUpdate(features)
+
     def changePlaylistEnabledState(self, newState):
         oldState = self.sharedPlaylistIsEnabled()
         from syncplay.ui.ConfigurationGetter import ConfigurationGetter
@@ -798,6 +820,11 @@ class SyncplayClient(object):
         self.ui.userListChange()
         if oldReadyState != isReady:
             self._warnings.checkReadyStates()
+
+    @requireServerFeature("managedRooms")
+    def setUserFeatures(self, username, features):
+        self.userlist.setFeatures(username, features)
+        self.ui.userListChange()
 
     @requireServerFeature("managedRooms")
     def createControlledRoom(self, roomName):
@@ -989,6 +1016,7 @@ class SyncplayUser(object):
         self.room = room
         self.file = file_
         self._controller = False
+        self._features = {}
 
     def setFile(self, filename, duration, size, path=None):
         file_ = {
@@ -1041,6 +1069,9 @@ class SyncplayUser(object):
 
     def setReady(self, ready):
         self.ready = ready
+
+    def setFeatures(self, features):
+        self._features = features
 
 class SyncplayUserlist(object):
     def __init__(self, ui, client):
@@ -1120,7 +1151,7 @@ class SyncplayUserlist(object):
         if differentDuration: differences.append(getMessage("file-difference-duration"))
         return ", ".join(differences)
 
-    def addUser(self, username, room, file_, noMessage=False, isController=None, isReady=None):
+    def addUser(self, username, room, file_, noMessage=False, isController=None, isReady=None, features={}):
         if username == self.currentUser.username:
             if isController is not None:
                 self.currentUser.setControllerStatus(isController)
@@ -1131,7 +1162,7 @@ class SyncplayUserlist(object):
             user.setControllerStatus(isController)
         self._users[username] = user
         user.setReady(isReady)
-
+        user.setFeatures(features)
         if not noMessage:
             self.__showUserChangeMessage(username, room, file_)
         self.userListChange(room)
