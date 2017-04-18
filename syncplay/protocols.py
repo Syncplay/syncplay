@@ -6,6 +6,7 @@ from functools import wraps
 import time
 from syncplay.messages import getMessage
 from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT, CONTROLLED_ROOMS_MIN_VERSION, USER_READY_MIN_VERSION, SHARED_PLAYLIST_MIN_VERSION, CHAT_MIN_VERSION
+from syncplay.utils import meetsMinVersion
 
 class JSONCommandProtocol(LineReceiver):
     def handleMessages(self, messages):
@@ -329,11 +330,11 @@ class SyncServerProtocol(JSONCommandProtocol):
     def getFeatures(self):
         if not self._features:
             self._features = {}
-            self._features["sharedPlaylists"] = self._version >= SHARED_PLAYLIST_MIN_VERSION
-            self._features["chat"] = self._version >= CHAT_MIN_VERSION
+            self._features["sharedPlaylists"] = meetsMinVersion(self._version, SHARED_PLAYLIST_MIN_VERSION)
+            self._features["chat"] = meetsMinVersion(self._version, CHAT_MIN_VERSION)
             self._features["featureList"] = False
-            self._features["readiness"] = self._version >= USER_READY_MIN_VERSION
-            self._features["managedRooms"] = self._version >= CONTROLLED_ROOMS_MIN_VERSION
+            self._features["readiness"] = meetsMinVersion(self._version, USER_READY_MIN_VERSION)
+            self._features["managedRooms"] = meetsMinVersion(self._version, CONTROLLED_ROOMS_MIN_VERSION)
         return self._features
 
     def isLogged(self):
