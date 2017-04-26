@@ -172,16 +172,11 @@ def blackholeStdoutForFrozenWindow():
 
 def truncateText(unicodeText, maxLength):
     try:
-        unicodeText = unicodedata.normalize('NFC', unicodeText)
+        unicodeText = unicodeText.decode('utf-8')
     except:
         pass
     try:
-        maxSaneLength= maxLength*5
-        if len(unicodeText) > maxSaneLength:
-            unicodeText = unicode(unicodeText.encode("utf-8")[:maxSaneLength], "utf-8", errors="ignore")
-        while len(unicodeText) > maxLength:
-            unicodeText = unicode(unicodeText.encode("utf-8")[:-1], "utf-8", errors="ignore")
-        return unicodeText
+        return(unicode(unicodeText.encode("utf-8"), "utf-8", errors="ignore")[:maxLength])
     except:
         pass
     return ""
