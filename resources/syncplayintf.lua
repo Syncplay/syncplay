@@ -1,4 +1,4 @@
-﻿-- syncplayintf.lua -- An interface for communication between mpv and Syncplay
+-- syncplayintf.lua -- An interface for communication between mpv and Syncplay
 -- Author: Etoh
 -- Thanks: RiCON, James Ross-Gowan, Argon-, wm4, uau
 
