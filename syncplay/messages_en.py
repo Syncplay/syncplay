@@ -229,6 +229,7 @@ en = {
     "messages-label" : "Messages",
     "messages-osd-title" : "On-screen Display settings",
     "messages-other-title" : "Other display settings",
+    "chat-label" : u"Chat",
     "privacy-label" : "Privacy", # Currently unused, but will be brought back if more space is needed in Misc tab
     "privacy-title" : "Privacy settings",
     "unpause-title" : u"If you press play, set as ready and:",
@@ -237,6 +238,16 @@ en = {
     "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready",
     "unpause-always" : u"Always unpause",
     "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)",
+    
+    "chat-title" : u"Chat message input",
+    "chatinputenabled-label" : u"Enable chat input via mpv (using enter key)",
+    "chatinputfont-label" : u"Chat input font",
+    "chatfont-label" : u"Set font",
+    "chatcolour-label" : u"Set colour",
+    "chatinputposition-label" : u"Position of message input area in mpv",
+    "chat-top-option" : u"Top",
+    "chat-middle-option" : u"Middle",
+    "chat-bottom-option" : u"Bottom",
 
     "help-label" : "Help",
     "reset-label" : "Restore defaults",
@@ -350,6 +361,15 @@ en = {
     "unpause-ifothersready-tooltip" : u"If you press unpause when not ready, it will only upause if others are ready.",
     "unpause-ifminusersready-tooltip" : u"If you press unpause when not ready, it will only unpause if others are ready and minimum users threshold is met.",
     "trusteddomains-arguments-tooltip" : u"Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.",
+
+    "chatinputenabled-tooltip" : u"Enable chat input in mpv (press enter to chat, enter to send, escape to cancel)",
+    "font-label-tooltip" : u"Font used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",
+    "set-input-font-tooltip" : u"Font family used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",
+    "set-input-colour-tooltip" : u"Font colour used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",
+    "chatinputposition-tooltip" : u"Location in mpv where chat input text will appear when you press enter and type.",
+    "chatinputposition-top-tooltip" : u"Place chat input at top of mpv window.",
+    "chatinputposition-middle-tooltip" : u"Place chat input in dead centre of mpv window.",
+    "chatinputposition-bottom-tooltip" : u"Place chat input at bottom of mpv window.",
 
     "help-tooltip" : "Opens the Syncplay.pl user guide.",
     "reset-tooltip" : "Reset all settings to the default configuration.",

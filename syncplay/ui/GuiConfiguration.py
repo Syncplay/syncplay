@@ -476,7 +476,7 @@ class ConfigDialog(QtGui.QDialog):
 
     def connectChildren(self, widget):
         widgetName = str(widget.objectName())
-        if self.subitems.has_key(widgetName) and isinstance(widget, QCheckBox):
+        if self.subitems.has_key(widgetName):
             widget.stateChanged.connect(lambda: self.updateSubwidgets(self, widget))
             self.updateSubwidgets(self, widget)
 
@@ -823,6 +823,94 @@ class ConfigDialog(QtGui.QDialog):
         self.syncSettingsLayout.setAlignment(Qt.AlignTop)
         self.stackedLayout.addWidget(self.syncSettingsFrame)
 
+    def addChatTab(self):
+        self.chatFrame = QtGui.QFrame()
+        self.chatLayout = QtGui.QVBoxLayout()
+        self.chatLayout.setAlignment(Qt.AlignTop)
+
+        # Input
+        self.chatInputGroup = QtGui.QGroupBox(getMessage("chat-title"))
+        self.chatInputLayout = QtGui.QGridLayout()
+        self.chatLayout.addWidget(self.chatInputGroup)
+        self.chatInputGroup.setLayout(self.chatInputLayout)
+        self.chatInputEnabledCheckbox = QCheckBox(getMessage("chatinputenabled-label"))
+        self.chatInputEnabledCheckbox.setObjectName("chatInputEnabled")
+        self.chatInputLayout.addWidget(self.chatInputEnabledCheckbox, 1, 0, 1,1, Qt.AlignLeft)
+
+        self.inputFontLayout = QtGui.QHBoxLayout()
+        self.inputFontLayout.setContentsMargins(0, 0, 0, 0)
+        self.inputFontFrame = QtGui.QFrame()
+        self.inputFontFrame.setLayout(self.inputFontLayout)
+        self.inputFontFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.chatFontLabel = QLabel(getMessage("chatinputfont-label"), self)
+        self.chatFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatFontLabel.setObjectName("font-label")
+        self.chatInputFontButton = QtGui.QPushButton(getMessage("chatfont-label"))
+        self.chatInputFontButton.setObjectName("set-input-font")
+        self.chatInputFontButtonGroup = QtGui.QButtonGroup()
+        self.chatInputFontButtonGroup.addButton(self.chatInputFontButton)
+        self.chatInputFontButton.released.connect(lambda: self.fontDialog("chatInput"))
+        self.chatInputColourButton = QtGui.QPushButton(getMessage("chatcolour-label"))
+        self.chatInputColourButton.setObjectName("set-input-colour")
+        self.chatInputColourButtonGroup = QtGui.QButtonGroup()
+        self.chatInputColourButtonGroup.addButton(self.chatInputColourButton)
+        self.chatInputColourButton.released.connect(lambda: self.colourDialog("chatInput"))
+        self.inputFontLayout.addWidget(self.chatFontLabel, Qt.AlignLeft)
+        self.inputFontLayout.addWidget(self.chatInputFontButton, Qt.AlignLeft)
+        self.inputFontLayout.addWidget(self.chatInputColourButton, Qt.AlignLeft)
+        self.chatInputLayout.addWidget(self.inputFontFrame, 2, 0, 1, 3, Qt.AlignLeft)
+
+        self.chatInputPositionLabel = QLabel(getMessage("chatinputposition-label"), self)
+        self.chatInputPositionLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatInputPositionGroup = QButtonGroup()
+        self.chatInputTopOption = QRadioButton(getMessage("chat-top-option"))
+        self.chatInputMiddleOption = QRadioButton(getMessage("chat-middle-option"))
+        self.chatInputBottomOption = QRadioButton(getMessage("chat-bottom-option"))
+        self.chatInputPositionGroup.addButton(self.chatInputTopOption)
+        self.chatInputPositionGroup.addButton(self.chatInputMiddleOption)
+        self.chatInputPositionGroup.addButton(self.chatInputBottomOption)
+
+        self.chatInputPositionLabel.setObjectName("chatinputposition")
+        self.chatInputTopOption.setObjectName("chatinputposition-top" + constants.CONFIG_NAME_MARKER + "chatInputPosition" + constants.CONFIG_VALUE_MARKER + constants.INPUT_POSITION_TOP)
+        self.chatInputMiddleOption.setObjectName("chatinputposition-middle" + constants.CONFIG_NAME_MARKER + "chatInputPosition" + constants.CONFIG_VALUE_MARKER + constants.INPUT_POSITION_MIDDLE)
+        self.chatInputBottomOption.setObjectName("chatinputposition-bottom" + constants.CONFIG_NAME_MARKER + "chatInputPosition" + constants.CONFIG_VALUE_MARKER + constants.INPUT_POSITION_BOTTOM)
+
+        self.chatInputLayout.addWidget(self.chatInputPositionLabel, 3, 0)
+        self.chatInputLayout.addWidget(self.chatInputTopOption, 3, 1, Qt.AlignLeft)
+        self.chatInputLayout.addWidget(self.chatInputMiddleOption, 3, 2, Qt.AlignLeft)
+        self.chatInputLayout.addWidget(self.chatInputBottomOption, 3, 3, Qt.AlignLeft)
+
+        self.subitems['chatInputEnabled'] = [self.chatInputPositionLabel.objectName(), self.chatInputTopOption.objectName(),
+                                             self.chatInputMiddleOption.objectName(), self.chatInputBottomOption.objectName(),
+                                             self.chatInputFontButton.objectName(), self.chatFontLabel.objectName(),
+                                             self.chatInputColourButton.objectName()]
+
+
+
+        # chatFrame
+        self.chatFrame.setLayout(self.chatLayout)
+        self.stackedLayout.addWidget(self.chatFrame)
+
+    def fontDialog(self, configName):
+            font = QtGui.QFont()
+            font.setFamily(self.config[configName+ u"FontFamily"])
+            font.setPointSize(self.config[configName + u"FontSize"])
+            font.setWeight(self.config[configName + u"FontWeight"])
+            font.setUnderline(self.config[configName + u"FontUnderline"])
+            value, ok = QtGui.QFontDialog.getFont(font)
+            if ok:
+                self.config[configName + u"FontFamily"] = value.family()
+                self.config[configName + u"FontSize"] = value.pointSize()
+                self.config[configName + u"FontWeight"] = value.weight()
+                self.config[configName + u"FontUnderline"] = value.underline()
+
+    def colourDialog(self, configName):
+            oldColour = QtGui.QColor()
+            oldColour.setNamedColor(self.config[configName+ u"FontColor"])
+            colour = QtGui.QColorDialog.getColor(oldColour, self)
+            if colour.isValid():
+                self.config[configName + u"FontColor"] = colour.name()
+
     def addMessageTab(self):
         self.messageFrame = QtGui.QFrame()
         self.messageLayout = QtGui.QVBoxLayout()
@@ -922,18 +1010,18 @@ class ConfigDialog(QtGui.QDialog):
         self.helpButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + u'help.png'), getMessage("help-label"))
         self.helpButton.setObjectName("help")
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
-        self.helpButton.pressed.connect(self.openHelp)
+        self.helpButton.released.connect(self.openHelp)
 
         self.resetButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'cog_delete.png'),getMessage("reset-label"))
         self.resetButton.setMaximumSize(self.resetButton.sizeHint())
         self.resetButton.setObjectName("reset")
-        self.resetButton.pressed.connect(self.resetSettings)
+        self.resetButton.released.connect(self.resetSettings)
 
         self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
-        self.runButton.pressed.connect(self._runWithoutStoringConfig)
+        self.runButton.released.connect(self._runWithoutStoringConfig)
         self.runButton.setToolTip(getMessage("nostore-tooltip"))
         self.storeAndRunButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("storeandrun-label"))
-        self.storeAndRunButton.pressed.connect(self._saveDataAndLeave)
+        self.storeAndRunButton.released.connect(self._saveDataAndLeave)
         self.bottomButtonLayout.addWidget(self.helpButton)
         self.bottomButtonLayout.addWidget(self.resetButton)
         self.bottomButtonLayout.addWidget(self.runButton)
@@ -963,7 +1051,8 @@ class ConfigDialog(QtGui.QDialog):
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"house.png"),getMessage("basics-label")))
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"control_pause_blue.png"),getMessage("readiness-label")))
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"film_link.png"),getMessage("sync-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"comments.png"),getMessage("messages-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"user_comment.png"), getMessage("chat-label")))
+        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"error.png"),getMessage("messages-label")))
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"cog.png"),getMessage("misc-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
@@ -1070,6 +1159,7 @@ class ConfigDialog(QtGui.QDialog):
         self.addBasicTab()
         self.addReadinessTab()
         self.addSyncTab()
+        self.addChatTab()
         self.addMessageTab()
         self.addMiscTab()
         self.tabList()

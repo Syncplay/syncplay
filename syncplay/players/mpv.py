@@ -230,6 +230,15 @@ class NewMpvPlayer(OldMpvPlayer):
         if "<chat>" in line:
             self._listener.sendChat(line[6:-7])
 
+        if "<get_syncplayintf_options>" in line:
+            options = []
+            for option in constants.MPV_SYNCPLAYINTF_OPTIONS_TO_SEND:
+                options.append(u"{}={}".format(option,self._client._config[option]))
+            for option in constants.MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND:
+                options.append(option)
+            options_string = ", ".join(options)
+            self._listener.sendLine(u'script-message-to syncplayintf set_syncplayintf_options "{}"'.format(options_string))
+
         if line == "<SyncplayUpdateFile>" or "Playing:" in line:
             self._listener.setReadyToSend(False)
             self._clearFileLoaded()

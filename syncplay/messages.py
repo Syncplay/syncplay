@@ -67,3 +67,4 @@ def getMessage(type_, locale=None):
         return unicode(messages["en"][type_])
     else:
         raise KeyError(type_)
+        #print u"WARNING: Cannot find message '{}'!".format(type_)

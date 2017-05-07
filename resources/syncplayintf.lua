@@ -6,25 +6,24 @@ local CANVAS_WIDTH = 1920
 local CANVAS_HEIGHT = 1080
 local ROW_HEIGHT = 100
 local PIXELS_PER_CHAR = 25
-local CHAT_FORMAT = "{\\fs15}{\an1}{\\q2}"
+local CHAT_FORMAT = "{\\fs50}{\an1}{\\q2}"
 local MAX_ROWS = 7
 local MOVEMENT_PER_SECOND = 200
 local TICK_INTERVAL = 0.01
-local INPUT_PROMPT_FONT_SIZE = 20
-local MAX_CHAT_MESSAGE_LENGTH = 50
 
 local chat_log = {}
 
 local assdraw = require "mp.assdraw"
 
 function format_chat(xpos, ypos, text)
-	chat_message = CHAT_FORMAT .. "{\\fs50}{\\pos("..xpos..","..ypos..")}"..text.."\n"
+	chat_message = CHAT_FORMAT .. "{\\pos("..xpos..","..ypos..")}"..text.."\n"
     return string.format(chat_message)
 end
 
 function clear_chat()
 	chat_log = {}
 end
+
 
 function add_chat(chat_message)
 	local entry = #chat_log+1
@@ -69,6 +68,10 @@ mp.register_script_message('chat', function(e)
 	add_chat(e)
 end)
 
+mp.register_script_message('set_syncplayintf_options', function(e)
+	set_syncplayintf_options(e)
+end)
+
 -- adapted from repl.lua -- A graphical REPL for mpv input commands
 --
 -- c 2016, James Ross-Gowan
@@ -94,10 +97,15 @@ local opts = {
 	scale = 1,
 	-- Set the font used for the REPL and the console. This probably doesn't
 	-- have to be a monospaced font.
-	font = 'monospace',
+	['chatInputFontFamily'] = 'monospace',
 	-- Set the font size used for the REPL and the console. This will be
 	-- multiplied by "scale."
-	['font-size'] = INPUT_PROMPT_FONT_SIZE,
+	['chatInputFontSize'] = 20,
+	['chatInputFontWeight'] = 1,
+	['chatInputFontUnderline'] = false,
+	['chatInputFontColor'] = "#000000",
+	['chatInputPosition'] = "Top",
+	['MaxChatMessageLength'] = 50,
 }
 
 function detect_platform()
@@ -149,30 +157,59 @@ function input_ass()
 	if not repl_active then
 		return ""
 	end
-
+	local bold
+	if opts['chatInputFontWeight'] < 75 then
+		bold = 0
+	else
+		bold = 1
+	end
+	local underline = opts['chatInputFontUnderline'] and 1 or 0
+	local red = string.sub(opts['chatInputFontColor'],2,3)
+	local green = string.sub(opts['chatInputFontColor'],4,5)
+	local blue = string.sub(opts['chatInputFontColor'],6,7)
+	local fontColor = blue .. green .. red
 	local style = '{\\r' ..
 	               '\\1a&H00&\\3a&H00&\\4a&H99&' ..
-	               '\\1c&Heeeeee&\\3c&H111111&\\4c&H000000&' ..
-	               '\\fn' .. opts.font .. '\\fs' .. opts['font-size'] ..
+	               '\\1c&H'..fontColor..'&\\3c&H111111&\\4c&H000000&' ..
+	               '\\fn' .. opts['chatInputFontFamily'] .. '\\fs' .. opts['chatInputFontSize'] .. '\\b' .. bold ..
 	               '\\bord2\\xshad0\\yshad1\\fsp0\\q1}'
+
+	local after_style = '{\\u'  .. underline .. '}'
 	-- Create the cursor glyph as an ASS drawing. ASS will draw the cursor
 	-- inline with the surrounding text, but it sets the advance to the width
 	-- of the drawing. So the cursor doesn't affect layout too much, make it as
 	-- thin as possible and make it appear to be 1px wide by giving it 0.5px
 	-- horizontal borders.
-	local cheight = opts['font-size'] * 8
+	local cheight = opts['chatInputFontSize'] * 8
 	local cglyph = '{\\r' ..
 	                '\\1a&H44&\\3a&H44&\\4a&H99&' ..
-	                '\\1c&Heeeeee&\\3c&Heeeeee&\\4c&H000000&' ..
+	                '\\1c&H'..fontColor..'&\\3c&Heeeeee&\\4c&H000000&' ..
 	                '\\xbord0.5\\ybord0\\xshad0\\yshad1\\p4\\pbo24}' ..
 	               'm 0 0 l 1 0 l 1 ' .. cheight .. ' l 0 ' .. cheight ..
 	               '{\\p0}'
 	local before_cur = ass_escape(line:sub(1, cursor - 1))
 	local after_cur = ass_escape(line:sub(cursor))
 
-	--mp.osd_message("",0)
-	return "{\\an7}{\\pos(5,5)}"..style..'> '..before_cur..cglyph..style..after_cur
+	local alignment = 7
+	local position = "5,5"
+	local end_marker = ""
+	if opts['chatInputPosition'] == "Middle" then
+		alignment = 5
+		position = tostring(CANVAS_WIDTH/2)..","..tostring(CANVAS_HEIGHT/2)
+		end_marker = "{\\u0}".." <"
+	elseif opts['chatInputPosition'] == "Bottom" then
+		alignment = 1
+		position = tostring(5)..","..tostring(CANVAS_HEIGHT-5)
+	end
 
+	--mp.osd_message("",0)
+	return "{\\an"..alignment.."}{\\pos("..position..")}"..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker
+
+end
+
+function escape()
+	set_active(false)
+	clear()
 end
 
 -- Set the REPL visibility (`, Esc)
@@ -227,7 +264,25 @@ function prev_utf8(str, pos)
 end
 
 function trim_input()
-	-- TODO
+	-- Naive helper function to find the next UTF-8 character in 'str' after 'pos'
+-- by skipping continuation bytes. Assumes 'str' contains valid UTF-8.
+	local str = line
+	if str == nil or str == "" or str:len() <= opts['MaxChatMessageLength'] then
+		return
+	end
+	local pos = 0
+	local oldPos = -1
+	local chars = 0
+
+	repeat
+		oldPos = pos
+		pos = next_utf8(str, pos)
+		chars = chars + 1
+	until pos == oldPos or chars > opts['MaxChatMessageLength']
+	line = line:sub(1,pos-1)
+	if cursor > pos then
+		cursor = pos
+	end
 	return
 end
 
@@ -412,7 +467,7 @@ local binding_name_map = {
 -- List of input bindings. This is a weird mashup between common GUI text-input
 -- bindings and readline bindings.
 local bindings = {
-	{ 'esc',         function() set_active(false) end       },
+	{ 'esc',         function() escape() end       },
 	{ 'bs',          handle_backspace                       },
 	{ 'shift+bs',    handle_backspace                       },
 	{ 'del',         handle_del                             },
@@ -450,3 +505,22 @@ end)
 
 mp.add_key_binding('enter', handle_enter)
 mp.add_key_binding('kp_enter', handle_enter)
+mp.command('print-text "<get_syncplayintf_options>"')
+
+function set_syncplayintf_options(input)
+	---mp.command('print-text "<chat>...'..input..'</chat>"')
+	for option, value in string.gmatch(input, "([^ ,=]+)=([^[,]+)") do
+		local valueType = type(opts[option])
+		if valueType == "number" then
+			value = tonumber(value)
+		elseif valueType == "boolean" then
+			if value == "True" then
+				value = true
+			else
+				value = false
+			end
+		end
+		opts[option] = value
+		---mp.command('print-text "<chat>'..option.."="..tostring(value).." - "..valueType..'</chat>"')
+	end
+end

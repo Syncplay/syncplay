@@ -135,6 +135,14 @@ def findWorkingDir():
         path = ""
     return path
 
+def getDefaultMonospaceFont():
+    if platform.system() == "Windows":
+        return constants.DEFAULT_WINDOWS_MONOSPACE_FONT
+    elif platform.system() == "Darwin":
+        return constants.DEFAULT_OSX_MONOSPACE_FONT
+    else:
+        return constants.FALLBACK_MONOSPACE_FONT
+
 def limitedPowerset(s, minLength):
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in xrange(len(s), minLength, -1))
 

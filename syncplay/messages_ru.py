@@ -232,6 +232,7 @@ ru = {
     "messages-label" : u"Сообщения",
     "messages-osd-title" : u"Настройки OSD",
     "messages-other-title" : u"Другие настройки отображения",
+    "chat-label" : u"Chat", # TODO: Translate
     "privacy-label" : u"Приватность",
     "privacy-title" : u"Настройки приватности",
     "unpause-title" : u"Если вы стартуете, то:",
@@ -241,6 +242,16 @@ ru = {
     "unpause-always" : u"Всегда снимать паузу",
     "syncplay-trusteddomains-title": u"Доверенные сайты (стрим-сервисы, видеохостинги, файлы в сети)",
 "addtrusteddomain-menu-label" : u"Добавить {} как доверенный сайт", # Domain
+
+    "chat-title": u"Chat message input",  # TODO: Translate
+    "chatinputenabled-label": u"Enable chat input via mpv (using enter key)",  # TODO: Translate
+    "chatinputfont-label": u"Chat input font",  # TODO: Translate
+    "chatfont-label": u"Set font",  # TODO: Translate
+    "chatcolour-label": u"Set colour",  # TODO: Translate
+    "chatinputposition-label": u"Position of message input area in mpv",  # TODO: Translate
+    "chat-top-option": u"Top",  # TODO: Translate
+    "chat-middle-option": u"Middle",  # TODO: Translate
+    "chat-bottom-option": u"Bottom",  # TODO: Translate
 
     "help-label" : u"Помощь",
     "reset-label" : u"Сброс настроек",

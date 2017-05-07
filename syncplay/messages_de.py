@@ -230,6 +230,7 @@ de = {
     "messages-label" : u"Nachrichten",
     "messages-osd-title" : u"OSD-(OnScreenDisplay)-Einstellungen",
     "messages-other-title" : u"Weitere Display-Einstellungen",
+    "chat-label" : u"Chat", # TODO: Translate
     "privacy-label" : u"Privatsphäre",
     "privacy-title" : u"Privatsphäreneinstellungen",
     "unpause-title" : u"Wenn du Play drückst, auf Bereit setzen und:",
@@ -238,6 +239,16 @@ de = {
     "unpause-ifminusersready-option" : u"Wiedergeben wenn bereits als Bereit gesetzt oder die minimale Anzahl anderer Nutzer bereit ist",
     "unpause-always" : u"Immer wiedergeben",
     "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)", # TODO: Translate into German
+
+    "chat-title": u"Chat message input", # TODO: Translate
+    "chatinputenabled-label": u"Enable chat input via mpv (using enter key)", # TODO: Translate
+    "chatinputfont-label": u"Chat input font", # TODO: Translate
+    "chatfont-label": u"Set font", # TODO: Translate
+    "chatcolour-label": u"Set colour", # TODO: Translate
+    "chatinputposition-label": u"Position of message input area in mpv", # TODO: Translate
+    "chat-top-option": u"Top", # TODO: Translate
+    "chat-middle-option": u"Middle", # TODO: Translate
+    "chat-bottom-option": u"Bottom", # TODO: Translate
 
     "help-label" : u"Hilfe",
     "reset-label" : u"Standardwerte zurücksetzen",
@@ -353,6 +364,15 @@ de = {
     "unpause-ifothersready-tooltip" : u"Wenn du Play drückst und nicht bereit bist, wird nur gestartet, wenn alle anderen bereit sind.",
     "unpause-ifminusersready-tooltip" : u"Wenn du Play drückst und nicht bereit bist, wird nur gestartet, wenn die minimale Anzahl anderer Benutzer bereit ist.",
     "trusteddomains-arguments-tooltip" : u"Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.", # TODO: Translate into German
+
+    "chatinputenabled-tooltip": u"Enable chat input in mpv (press enter to chat, enter to send, escape to cancel)", # TODO: Translate
+    "font-label-tooltip": u"Font used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.", # TODO: Translate
+    "set-input-font-tooltip": u"Font family used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.", # TODO: Translate
+    "set-input-colour-tooltip": u"Font colour used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.", # TODO: Translate
+    "chatinputposition-tooltip": u"Location in mpv where chat input text will appear when you press enter and type.", # TODO: Translate
+    "chatinputposition-top-tooltip": u"Place chat input at top of mpv window.", # TODO: Translate
+    "chatinputposition-middle-tooltip": u"Place chat input in dead centre of mpv window.", # TODO: Translate
+    "chatinputposition-bottom-tooltip": u"Place chat input at bottom of mpv window.", # TODO: Translate
 
     "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
     "reset-tooltip" : u"Alle Einstellungen auf Standardwerte zurücksetzen.",

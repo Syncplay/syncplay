@@ -55,6 +55,12 @@ SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear
 PLAYLIST_MAX_CHARACTERS = 10000
 PLAYLIST_MAX_ITEMS = 250
 MAXIMUM_TAB_WIDTH = 350
+DEFAULT_WINDOWS_MONOSPACE_FONT = "Consolas"
+DEFAULT_OSX_MONOSPACE_FONT = "Menlo"
+FALLBACK_MONOSPACE_FONT = "Monospace"
+DEFAULT_CHAT_INPUT_FONT_SIZE = 18
+DEFAULT_CHAT_INPUT_FONT_COLOR = "#FFFFFF"
+DEFAULT_CHAT_INPUT_FONT_WEIGHT = 1
 
 # Maximum character lengths (for client and server)
 MAX_CHAT_MESSAGE_LENGTH = 50 # Number of displayed characters
@@ -170,6 +176,8 @@ MPV_ARGS = ['--force-window', '--idle', '--hr-seek=always', '--keep-open']
 MPV_SLAVE_ARGS = ['--msg-level=all=error,cplayer=info,term-msg=info', '--input-terminal=no', '--input-file=/dev/stdin']
 MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=length:${=duration:0}}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
 MPV_NEW_VERSION = False
+MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputFontFamily", "chatInputFontSize", "chatInputFontWeight", "chatInputFontUnderline", "chatInputFontColor", "chatInputPosition"]
+MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH)]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
 VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
@@ -190,6 +198,9 @@ UNPAUSE_IFALREADYREADY_MODE = "IfAlreadyReady"
 UNPAUSE_IFOTHERSREADY_MODE = "IfOthersReady"
 UNPAUSE_IFMINUSERSREADY_MODE = "IfMinUsersReady"
 UNPAUSE_ALWAYS_MODE = "Always"
+INPUT_POSITION_TOP = "Top"
+INPUT_POSITION_MIDDLE = "Middle"
+INPUT_POSITION_BOTTOM = "Bottom"
 
 PRIVACY_HIDDENFILENAME = "**Hidden filename**"
 INVERTED_STATE_MARKER = "*"

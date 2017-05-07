@@ -7,6 +7,7 @@ from syncplay import constants, utils, version, milestone
 from syncplay.messages import getMessage, setLanguage, isValidLanguage
 from syncplay.players.playerFactory import PlayerFactory
 import codecs
+import re
 
 class InvalidConfigValue(Exception):
     def __init__(self, message):
@@ -62,7 +63,14 @@ class ConfigurationGetter(object):
                         "showSameRoomOSD" : True,
                         "showNonControllerOSD" : False,
                         "showContactInfo" : True,
-                        "showDurationNotification" : True
+                        "showDurationNotification" : True,
+                        "chatInputEnabled" : True,
+                        "chatInputFontFamily" : utils.getDefaultMonospaceFont(),
+                        "chatInputFontSize" : constants.DEFAULT_CHAT_INPUT_FONT_SIZE,
+                        "chatInputFontWeight" : constants.DEFAULT_CHAT_INPUT_FONT_WEIGHT,
+                        "chatInputFontUnderline": False,
+                        "chatInputFontColor": constants.DEFAULT_CHAT_INPUT_FONT_COLOR,
+                        "chatInputPosition": constants.INPUT_POSITION_TOP
                         }
 
         self._defaultConfig = self._config.copy()
@@ -104,7 +112,9 @@ class ConfigurationGetter(object):
                          "sharedPlaylistEnabled",
                          "loopAtEndOfPlaylist",
                          "loopSingleFiles",
-                         "onlySwitchToTrustedDomains"
+                         "onlySwitchToTrustedDomains",
+                         "chatInputEnabled",
+                         "chatInputFontUnderline",
                         ]
         self._tristate = [
             "checkForUpdatesAutomatically",
@@ -122,6 +132,12 @@ class ConfigurationGetter(object):
             "rewindThreshold",
             "fastforwardThreshold",
             "autoplayMinUsers",
+            "chatInputFontSize",
+            "chatInputFontWeight"
+        ]
+
+        self._hexadecimal = [
+            "chatInputFontColor"
         ]
 
         self._iniStructure = {
@@ -140,7 +156,11 @@ class ConfigurationGetter(object):
                             "onlySwitchToTrustedDomains", "trustedDomains"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD",
                             "showDifferentRoomOSD", "showSameRoomOSD",
-                            "showNonControllerOSD", "showDurationNotification"],
+                            "showNonControllerOSD", "showDurationNotification",
+                            "chatInputEnabled","chatInputFontUnderline",
+                            "chatInputFontFamily", "chatInputFontSize",
+                            "chatInputFontWeight", "chatInputFontColor",
+                            "chatInputPosition"],
                         "general": ["language", "checkForUpdatesAutomatically",
                             "lastCheckedForUpdates"]
                         }
@@ -193,6 +213,11 @@ class ConfigurationGetter(object):
 
         for key in self._numeric:
             self._config[key] = float(self._config[key])
+
+        for key in self._hexadecimal:
+            match = re.search(r'^#(?:[0-9a-fA-F]){6}$', self._config[key])
+            if not match:
+                self._config[key] = u"#FFFFFF"
 
         for key in self._required:
             if key == "playerPath":
