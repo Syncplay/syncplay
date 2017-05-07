@@ -157,6 +157,8 @@ class MplayerPlayer(BasePlayer):
     def lineReceived(self, line):
         if line:
             self._client.ui.showDebugMessage("player << {}".format(line))
+            line = line.replace("   cplayer: ","")  # --msg-module workaround
+            line = line.replace("  term-msg: ", "")
         if "Failed to get value of property" in line or "=(unavailable)" in line or line == "ANS_filename=" or line == "ANS_length=" or line == "ANS_path=":
             if "filename" in line:
                 self._getFilename()
