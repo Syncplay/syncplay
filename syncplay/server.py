@@ -18,8 +18,10 @@ class SyncFactory(Factory):
         self.isolateRooms = isolateRooms
         print getMessage("welcome-server-notification").format(syncplay.version)
         if password:
-            password = hashlib.md5(password).hexdigest()
-        self.password = password
+            password_sha512 = hashlib.sha512(password).hexdigest()
+            password_md5 = hashlib.md5(password).hexdigest()
+        self.password_sha512 = password_sha512
+        self.password_md5 = password_md5
         if salt is None:
             salt = RandomStringGenerator.generate_server_salt()
             print getMessage("no-salt-notification").format(salt)

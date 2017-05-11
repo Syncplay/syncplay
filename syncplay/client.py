@@ -90,7 +90,7 @@ class SyncplayClient(object):
         self.setUsername(config['name'])
         self.setRoom(config['room'])
         if config['password']:
-            config['password'] = hashlib.md5(config['password']).hexdigest()
+            config['password'] = hashlib.sha512(config['password']).hexdigest()
         self._serverPassword = config['password']
         if not config['file']:
             self.__getUserlistOnLogon = True
