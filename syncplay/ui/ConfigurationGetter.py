@@ -136,7 +136,7 @@ class ConfigurationGetter(object):
                             "pauseOnLeave", "readyAtStart", "autoplayMinUsers",
                             "autoplayInitialState", "mediaSearchDirectories",
                             "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
-                            "loopSingleFiles",
+                            "loopSingleFiles", "noGui",
                             "onlySwitchToTrustedDomains", "trustedDomains"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD",
                             "showDifferentRoomOSD", "showSameRoomOSD",
