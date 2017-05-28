@@ -146,7 +146,6 @@ class MplayerPlayer(BasePlayer):
         text = text.replace("\\", "\\\\")
         text = text.replace("{", "\\\\{")
         text = text.replace("}", "\\\\}")
-        text = text.replace("}", "\\\\}")
         text = text.replace("<SYNCPLAY_QUOTE>","\\\"")
         return text
 
