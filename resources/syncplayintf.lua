@@ -357,6 +357,7 @@ function handle_enter()
 	if line == '' then
 		return
 	end
+	line = string.gsub(line,"\\", "\\\\")
 	line = string.gsub(line,"\"", "\\\"")
 	mp.command('print-text "<chat>'..line..'</chat>"')
 	clear()

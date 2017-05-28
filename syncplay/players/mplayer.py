@@ -96,7 +96,6 @@ class MplayerPlayer(BasePlayer):
         username = self._sanitizeText(username)
         message = self._sanitizeText(message)
         messageString = u"<{}> {}".format(username, message)
-        messageString = self._sanitizeText(messageString)
         self._listener.sendLine(u'script-message-to syncplayintf chat "{}"'.format(messageString))
 
     def setSpeed(self, value):
@@ -143,7 +142,8 @@ class MplayerPlayer(BasePlayer):
         text = text.replace("\n", "")
         text = text.replace("\\\"", "<SYNCPLAY_QUOTE>")
         text = text.replace("\"", "<SYNCPLAY_QUOTE>")
-        text = text.replace("\\", u"\\\\\\uFEFF")
+        text = text.replace("%", "%%")
+        text = text.replace("\\", "\\\\")
         text = text.replace("{", "\\\\{")
         text = text.replace("}", "\\\\}")
         text = text.replace("}", "\\\\}")
