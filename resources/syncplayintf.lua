@@ -5,18 +5,26 @@
 local CANVAS_WIDTH = 1920
 local CANVAS_HEIGHT = 1080
 local ROW_HEIGHT = 100
-local PIXELS_PER_CHAR = 25
-local CHAT_FORMAT = "{\\fs50}{\an1}{\\q2}"
-local MAX_ROWS = 7
+local chat_format = "{\\fs50}{\an1}{\\q2}"
+local max_scrolling_rows = 100
 local MOVEMENT_PER_SECOND = 200
 local TICK_INTERVAL = 0.01
+local CHAT_MODE_CHATROOM = "Chatroom"
+local CHAT_MODE_SUBTITLE = "Subtitle"
+local CHAT_MODE_SCROLLING = "Scrolling"
+local last_chat_time = 0
 
 local chat_log = {}
 
 local assdraw = require "mp.assdraw"
 
-function format_chat(xpos, ypos, text)
-	chat_message = CHAT_FORMAT .. "{\\pos("..xpos..","..ypos..")}"..text.."\n"
+function format_scrolling(xpos, ypos, text)
+	local chat_message = chat_format .. "{\\pos("..xpos..","..ypos..")}"..text.."\n"
+    return string.format(chat_message)
+end
+
+function format_chatroom(xpos,ypos,text)
+	local chat_message = chat_format ..  "{\\pos("..xpos..","..ypos..")}" .. text.."\n"
     return string.format(chat_message)
 end
 
@@ -26,35 +34,38 @@ end
 
 
 function add_chat(chat_message)
+    last_chat_time = mp.get_time()
 	local entry = #chat_log+1
 	for i = 1, #chat_log do
 		if chat_log[i].text == '' then
 			entry = i
 			break
 		end
-	end
-	local row = ((entry-1) % MAX_ROWS)+1
+    end
+	local row = ((entry-1) % max_scrolling_rows)+1
+    if opts['chatOutputMode'] == CHAT_MODE_CHATROOM then
+		if entry > opts['chatMaxLines'] then
+             table.remove(chat_log, 1)
+             entry = entry - 1
+        end
+    end
 	chat_log[entry] = { xpos=CANVAS_WIDTH, timecreated=mp.get_time(), text=tostring(chat_message), row=row }
 end
 
 function chat_update()
     ass = assdraw.ass_new()
 	local chat_ass = ''
+    if opts['chatOutputMode'] == CHAT_MODE_CHATROOM then
+        local timedelta = mp.get_time() - last_chat_time
+		if timedelta >= 7 then
+            clear_chat()
+        end
+    end
 	if #chat_log > 0 then
 		for i = 1, #chat_log do
-			local timecreated = chat_log[i].timecreated
-			local timedelta = mp.get_time() - timecreated
-			local xpos = CANVAS_WIDTH - (timedelta*MOVEMENT_PER_SECOND)
-			local text = chat_log[i].text
-			if text ~= '' then
-				local roughlen = string.len(text) * PIXELS_PER_CHAR
-				if xpos > (-1*roughlen) then
-					local row = chat_log[i].row
-					local ypos = row * ROW_HEIGHT
-					chat_ass = chat_ass .. format_chat(xpos,ypos,text)
-				else
-					chat_log[i].text = ''
-				end
+			local to_add = process_chat_item(i)
+			if to_add ~= nil and to_add ~= "" then
+				chat_ass = chat_ass .. to_add
 			end
 		end
 	end
@@ -62,6 +73,68 @@ function chat_update()
 	ass:append(input_ass())
 	mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
 end
+
+function process_chat_item(i)
+    if opts['chatOutputMode'] == CHAT_MODE_CHATROOM then
+		return process_chat_item_chatroom(i)
+    elseif opts['chatOutputMode'] == CHAT_MODE_CHATROOM then
+        return process_chat_item_subtitle(i)
+	elseif opts['chatOutputMode'] == CHAT_MODE_SCROLLING then
+		return process_chat_item_scrolling(i)
+	end
+end
+
+function process_chat_item_scrolling(i)
+	local timecreated = chat_log[i].timecreated
+	local timedelta = mp.get_time() - timecreated
+	local xpos = CANVAS_WIDTH - (timedelta*MOVEMENT_PER_SECOND)
+	local text = chat_log[i].text
+	if text ~= '' then
+		local roughlen = string.len(text) * opts['chatOutputFontSize'] * 1.5
+		if xpos > (-1*roughlen) then
+			local row = chat_log[i].row
+			local ypos = opts['chatTopMargin']+(row * opts['chatOutputFontSize'])
+			return format_scrolling(xpos,ypos,text)
+		else
+			chat_log[i].text = ''
+		end
+	end
+end
+
+function process_chat_item_chatroom(i)
+	local text = chat_log[i].text
+	if text ~= '' then
+        xpos = opts['chatLeftMargin']
+        ypos = opts['chatTopMargin']+(i*opts['chatOutputFontSize'])
+
+        local timecreated = chat_log[i].timecreated
+        local timedelta = 200 * (mp.get_time() - timecreated)
+        -- xpos = timedelta*500-25
+        if timedelta < 10 then
+            ypos = 5+ypos-timedelta
+        end
+
+        return(format_chatroom(xpos,ypos,text))
+	end
+end
+
+function process_chat_item_subtitle(i)
+    local timecreated = chat_log[i].timecreated
+	local timedelta = mp.get_time() - timecreated
+	local xpos = CANVAS_WIDTH - (timedelta*MOVEMENT_PER_SECOND)
+	local text = chat_log[i].text
+	if text ~= '' then
+		local roughlen = string.len(text) * opts['chatOutputFontSize']
+		if xpos > (-1*roughlen) then
+			local row = chat_log[i].row
+			local ypos = row * opts['chatOutputFontSize']
+			return(format_scrolling(xpos,ypos,text))
+		else
+			chat_log[i].text = ''
+		end
+	end
+end
+
 chat_timer=mp.add_periodic_timer(TICK_INTERVAL, chat_update)
 
 mp.register_script_message('chat', function(e)
@@ -91,7 +164,7 @@ end)
 -- Default options
 local utils = require 'mp.utils'
 local options = require 'mp.options'
-local opts = {
+opts = {
 	-- All drawing is scaled by this value, including the text borders and the
 	-- cursor. Change it if you have a high-DPI display.
 	scale = 1,
@@ -106,6 +179,17 @@ local opts = {
 	['chatInputFontColor'] = "#000000",
 	['chatInputPosition'] = "Top",
 	['MaxChatMessageLength'] = 50,
+	['chatOutputFontFamily'] = 'sans serif',
+	['chatOutputFontSize'] = 50,
+	['chatOutputFontWeight'] = 1,
+	['chatOutputFontUnderline'] = false,
+	['chatOutputFontColor'] = "#FFFFFF",
+	['chatOutputMode'] = "Chatroom",
+	-- Can be "Chatroom", "Subtitle" or "Scrolling" style
+    ['chatMaxLines'] = 7,
+    ['chatTopMargin'] = 125,
+    ['chatLeftMargin'] = 20,
+    ['chatBottomMargin'] = 30
 }
 
 function detect_platform()
@@ -204,6 +288,29 @@ function input_ass()
 
 	--mp.osd_message("",0)
 	return "{\\an"..alignment.."}{\\pos("..position..")}"..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker
+
+end
+
+function get_output_style()
+	local bold
+	if opts['chatOutputFontWeight'] < 75 then
+		bold = 0
+	else
+		bold = 1
+	end
+	local underline = opts['chatOutputFontUnderline'] and 1 or 0
+	local red = string.sub(opts['chatOutputFontColor'],2,3)
+	local green = string.sub(opts['chatOutputFontColor'],4,5)
+	local blue = string.sub(opts['chatOutputFontColor'],6,7)
+	local fontColor = blue .. green .. red
+	local style = '{\\r' ..
+	               '\\1a&H00&\\3a&H00&\\4a&H99&' ..
+	               '\\1c&H'..fontColor..'&\\3c&H111111&\\4c&H000000&' ..
+	               '\\fn' .. opts['chatOutputFontFamily'] .. '\\fs' .. opts['chatOutputFontSize'] .. '\\b' .. bold ..
+	               '\\u'  .. underline .. '\\a5\\MarginV=500' .. '}'
+
+	--mp.osd_message("",0)
+	return style
 
 end
 
@@ -524,5 +631,8 @@ function set_syncplayintf_options(input)
 		end
 		opts[option] = value
 		---mp.command('print-text "<chat>'..option.."="..tostring(value).." - "..valueType..'</chat>"')
-	end
+    end
+    chat_format = get_output_style()
+    local vertical_output_area = CANVAS_HEIGHT-(opts['chatTopMargin']+opts['chatBottomMargin'])
+    max_scrolling_rows = math.floor(vertical_output_area/opts['chatOutputFontSize'])
 end
