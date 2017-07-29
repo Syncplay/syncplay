@@ -13,6 +13,7 @@ local CHAT_MODE_CHATROOM = "Chatroom"
 local CHAT_MODE_SUBTITLE = "Subtitle"
 local CHAT_MODE_SCROLLING = "Scrolling"
 local last_chat_time = 0
+local USE_ALPHA_ROWS_FOR_CHAT = True
 
 local chat_log = {}
 
@@ -329,7 +330,10 @@ function set_active(active)
 	else
 		repl_active = false
 		mp.disable_key_bindings('repl-input')
-	end
+    end
+    if USE_ALPHA_ROWS_FOR_CHAT == True then
+        mp.enable_key_bindings('repl-alpha-input', 'allow-hide-cursor+allow-vo-dragging')
+    end
 end
 
 -- Show the repl if hidden and replace its contents with 'text'
@@ -395,6 +399,7 @@ end
 
 -- Insert a character at the current cursor position (' '-'~', Shift+Enter)
 function handle_char_input(c)
+    set_active(true)
 	if insert_mode then
 		line = line:sub(1, cursor - 1) .. c .. line:sub(next_utf8(line, cursor))
 	else
@@ -560,11 +565,25 @@ function add_repl_bindings(bindings)
 		local key = binding[1]
 		local fn = binding[2]
 		local name = '__repl_binding_' .. i
-		mp.add_key_binding(nil, name, fn, 'repeatable')
+		mp.add_forced_key_binding(nil, name, fn, 'repeatable')
 		cfg = cfg .. key .. ' script-binding ' .. mp.script_name .. '/' ..
 		      name .. '\n'
 	end
 	mp.commandv('define-section', 'repl-input', cfg, 'force')
+end
+
+function add_repl_alpharow_bindings(bindings)
+	local cfg = ''
+	for i, binding in ipairs(bindings) do
+		local key = binding[1]
+		local fn = binding[2]
+		local name = '__repl_alpha_binding_' .. i
+		mp.add_forced_key_binding(nil, name, fn, 'repeatable')
+		cfg = cfg .. key .. ' script-binding ' .. mp.script_name .. '/' ..
+		      name .. '\n'
+	end
+	mp.commandv('define-section', 'repl-alpha-input', cfg, 'force')
+    mp.enable_key_bindings('repl-input', 'allow-hide-cursor+allow-vo-dragging')
 end
 
 -- Mapping from characters to mpv key names
@@ -595,6 +614,7 @@ local bindings = {
 	{ 'ctrl+v',      function() paste(true) end             },
 	{ 'meta+v',      function() paste(true) end             },
 }
+local alpharowbindings = {}
 -- Add bindings for all the printable US-ASCII characters from ' ' to '~'
 -- inclusive. Note, this is a pretty hacky way to do text input. mpv's input
 -- system was designed for single-key key bindings rather than text input, so
@@ -605,6 +625,35 @@ for b = (' '):byte(), ('~'):byte() do
 	local binding = binding_name_map[c] or c
 	bindings[#bindings + 1] = {binding, function() handle_char_input(c) end}
 end
+
+function add_alpharowbinding(firstchar,lastchar)
+    for b = (firstchar):byte(), (lastchar):byte() do
+	    local c = string.char(b)
+	    local alphabinding = binding_name_map[c] or c
+	    alpharowbindings[#alpharowbindings + 1] = {alphabinding, function() handle_char_input(c) end}
+    end
+end
+
+if USE_ALPHA_ROWS_FOR_CHAT == True then
+    add_alpharowbinding('a','z')
+    add_alpharowbinding('A','Z')
+    add_alpharowbinding('/','/')
+    add_alpharowbinding(':',':')
+    add_alpharowbinding('(',')')
+    add_alpharowbinding('{','}')
+    add_alpharowbinding(':',';')
+    add_alpharowbinding('<','>')
+    add_alpharowbinding(',','.')
+    add_alpharowbinding('|','|')
+    add_alpharowbinding('\\','\\')
+    add_alpharowbinding('?','?')
+    add_alpharowbinding('[',']')
+    add_alpharowbinding('#','#')
+    add_alpharowbinding('~','~')
+    add_alpharowbinding('\'','\'')
+    add_alpharowbinding('@','@')
+    add_repl_alpharow_bindings(alpharowbindings)
+end
 add_repl_bindings(bindings)
 
 -- Add a script-message to show the REPL and fill it with the provided text
@@ -612,8 +661,8 @@ mp.register_script_message('type', function(text)
 	show_and_type(text)
 end)
 
-mp.add_key_binding('enter', handle_enter)
-mp.add_key_binding('kp_enter', handle_enter)
+mp.add_forced_key_binding('enter', handle_enter)
+mp.add_forced_key_binding('kp_enter', handle_enter)
 mp.command('print-text "<get_syncplayintf_options>"')
 
 function set_syncplayintf_options(input)
