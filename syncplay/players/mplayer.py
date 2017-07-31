@@ -10,7 +10,8 @@ import os, sys
 class MplayerPlayer(BasePlayer):
     speedSupported = True
     customOpenDialog = False
-    secondaryOSDSupported = False
+    #secondaryOSDSupported = False # TODO: Make conditional
+    secondaryOSDSupported = True
     chatOSDSupported = False
     osdMessageSeparator = "; "
 
@@ -89,8 +90,17 @@ class MplayerPlayer(BasePlayer):
         self._listener.sendLine("get_property {}".format(property_))
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), secondaryOSD=False):
+        if not secondaryOSD and self._client.chatIsEnabled(): # TODO: Add check to ensure it is in 'chatroom' mode
+            max_message_length = 3+constants.MAX_USERNAME_LENGTH+constants.MAX_CHAT_MESSAGE_LENGTH
+            messageStrings = utils.splitText(message,max_message_length)
+            for messageString in messageStrings:
+                self._listener.sendLine(u'script-message-to syncplayintf primary-osd "{}"'.format(messageString))
+            return
+        if secondaryOSD:
+            messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")
+            self._listener.sendLine(u'script-message-to syncplayintf secondary-osd "{}"'.format(messageString))
         message = self._sanitizeText(message.replace("\\n","<NEWLINE>")).replace("<NEWLINE>","\\n")
-        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
+        #self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
 
     def displayChatMessage(self, username, message):
         username = self._sanitizeText(username)

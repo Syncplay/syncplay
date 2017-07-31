@@ -33,6 +33,14 @@ function clear_chat()
 	chat_log = {}
 end
 
+local secondary_osd = ""
+local last_secondary_osd_time = nil
+
+function set_secondary_osd(osd_message)
+    secondary_osd = osd_message
+    last_secondary_osd_time = mp.get_time()
+end
+
 
 function add_chat(chat_message)
     last_chat_time = mp.get_time()
@@ -60,6 +68,15 @@ function chat_update()
         local timedelta = mp.get_time() - last_chat_time
 		if timedelta >= 7 then
             clear_chat()
+        end
+    end
+    if secondary_osd ~= "" then
+        if mp.get_time() - last_secondary_osd_time < 5 and last_secondary_osd_time ~= nil then
+            local xpos = opts['chatLeftMargin']
+            local ypos = opts['chatTopMargin']+(0*opts['chatOutputFontSize'])
+            local messageString = '('..secondary_osd..')'
+			messageString = '{\\1c&H0000FF}'..messageString
+            chat_ass = format_chatroom(xpos,ypos,messageString)
         end
     end
 	if #chat_log > 0 then
@@ -103,7 +120,7 @@ function process_chat_item_scrolling(i)
 end
 
 function process_chat_item_chatroom(i)
-	local text = chat_log[i].text
+    local text = chat_log[i].text
 	if text ~= '' then
         xpos = opts['chatLeftMargin']
         ypos = opts['chatTopMargin']+(i*opts['chatOutputFontSize'])
@@ -140,6 +157,14 @@ chat_timer=mp.add_periodic_timer(TICK_INTERVAL, chat_update)
 
 mp.register_script_message('chat', function(e)
 	add_chat(e)
+end)
+
+mp.register_script_message('primary-osd', function(e)
+	add_chat(e)
+end)
+
+mp.register_script_message('secondary-osd', function(e)
+	set_secondary_osd(e)
 end)
 
 mp.register_script_message('set_syncplayintf_options', function(e)
@@ -188,7 +213,7 @@ opts = {
 	['chatOutputMode'] = "Chatroom",
 	-- Can be "Chatroom", "Subtitle" or "Scrolling" style
     ['chatMaxLines'] = 7,
-    ['chatTopMargin'] = 125,
+    ['chatTopMargin'] = 25,
     ['chatLeftMargin'] = 20,
     ['chatBottomMargin'] = 30
 }
@@ -274,6 +299,7 @@ function input_ass()
 	               '{\\p0}'
 	local before_cur = ass_escape(line:sub(1, cursor - 1))
 	local after_cur = ass_escape(line:sub(cursor))
+    local secondary_pos = "10,"..tostring(10+opts['chatInputFontSize'])
 
 	local alignment = 7
 	local position = "5,5"
@@ -281,14 +307,17 @@ function input_ass()
 	if opts['chatInputPosition'] == "Middle" then
 		alignment = 5
 		position = tostring(CANVAS_WIDTH/2)..","..tostring(CANVAS_HEIGHT/2)
+        secondary_pos = tostring(CANVAS_WIDTH/2)..","..tostring((CANVAS_HEIGHT/2)+10+opts['chatInputFontSize'])
 		end_marker = "{\\u0}".." <"
 	elseif opts['chatInputPosition'] == "Bottom" then
 		alignment = 1
 		position = tostring(5)..","..tostring(CANVAS_HEIGHT-5)
-	end
+        secondary_pos = "10,"..tostring(CANVAS_HEIGHT-(20+opts['chatInputFontSize']))
+    end
 
-	--mp.osd_message("",0)
-	return "{\\an"..alignment.."}{\\pos("..position..")}"..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker
+    -- TODO: local osd_help_message = "[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. Send /hint in chat to disable this hint."
+    -- TODO: local help_prompt = '\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatInputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/2) .. '}' .. osd_help_message
+	return "{\\an"..alignment.."}{\\pos("..position..")}"..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker -- TODO: ..help_prompt
 
 end
 
@@ -583,7 +612,7 @@ function add_repl_alpharow_bindings(bindings)
 		      name .. '\n'
 	end
 	mp.commandv('define-section', 'repl-alpha-input', cfg, 'force')
-    mp.enable_key_bindings('repl-input', 'allow-hide-cursor+allow-vo-dragging')
+    mp.enable_key_bindings('repl-alpha-input')
 end
 
 -- Mapping from characters to mpv key names

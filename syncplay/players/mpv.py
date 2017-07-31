@@ -9,6 +9,7 @@ import os, sys, time
 class MpvPlayer(MplayerPlayer):
     RE_VERSION = re.compile('.*mpv (\d+)\.(\d+)\.\d+.*')
     osdMessageSeparator = "\\n"
+    osdMessageSeparator = "; " # TODO: Make conditional
 
     @staticmethod
     def run(client, playerPath, filePath, args):

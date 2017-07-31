@@ -189,6 +189,19 @@ def truncateText(unicodeText, maxLength):
         pass
     return ""
 
+def splitText(unicodeText, maxLength):
+    try:
+        unicodeText = unicodeText.decode('utf-8')
+    except:
+        pass
+    try:
+        unicodeText = unicode(unicodeText.encode("utf-8"), "utf-8", errors="ignore")
+        unicodeArray = [unicodeText[i:i + maxLength] for i in range(0, len(unicodeText), maxLength)]
+        return(unicodeArray)
+    except:
+        pass
+    return [""]
+
 # Relate to file hashing / difference checking:
 
 def stripfilename(filename, stripURL):
