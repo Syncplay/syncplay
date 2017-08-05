@@ -102,7 +102,7 @@ function chat_update()
 
     if use_alpha_rows_for_chat == false then
         local alphawarning_ass = assdraw.ass_new()
-        alphawarning_ass = "{\\a6}You can temporarily use old mpv bindings with a-z keys.\n{\\a6}Press [TAB] to return to Syncplay chat mode."
+        alphawarning_ass = "{\\a6}You can temporarily use old mpv bindings with a-z keys.\n{\\a6}Press [TAB] to return to Syncplay chat mode." -- TODO: Move message to messages.py
         ass:append(alphawarning_ass)
     else
         ass:append(chat_ass)
@@ -297,6 +297,7 @@ local repl_active = false
 local insert_mode = false
 local line = ''
 local cursor = 1
+local key_hints_enabled = true
 
 function input_ass()
 	if not repl_active then
@@ -350,9 +351,10 @@ function input_ass()
         secondary_pos = "10,"..tostring(CANVAS_HEIGHT-(20+opts['chatInputFontSize']))
     end
 
-    -- TODO: local osd_help_message = "[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. Send /hint in chat to disable this hint."
-    -- TODO: local help_prompt = '\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatInputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/2) .. '}' .. osd_help_message
-	return "{\\an"..alignment.."}{\\pos("..position..")}"..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker -- TODO: ..help_prompt
+	local osd_help_message = "[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. This hint disappears after you send a message." -- TODO: Move message to messages.py
+	local help_prompt = '\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatInputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/2) .. '}' .. osd_help_message -- TODO: Move message to messages.py
+	if key_hints_enabled == false then help_prompt = "" end
+	return "{\\an"..alignment.."}{\\pos("..position..")}"..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker..help_prompt
 
 end
 
@@ -545,7 +547,8 @@ function handle_enter()
 
 	if line == '' then
 		return
-	end
+    end
+    key_hints_enabled = false
 	line = string.gsub(line,"\\", "\\\\")
 	line = string.gsub(line,"\"", "\\\"")
 	mp.command('print-text "<chat>'..line..'</chat>"')
