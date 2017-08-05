@@ -176,7 +176,7 @@ MPV_ARGS = ['--force-window', '--idle', '--hr-seek=always', '--keep-open']
 MPV_SLAVE_ARGS = ['--msg-level=all=error,cplayer=info,term-msg=info', '--input-terminal=no', '--input-file=/dev/stdin']
 MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=length:${=duration:0}}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
 MPV_NEW_VERSION = False
-MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputFontFamily", "chatInputFontSize", "chatInputFontWeight", "chatInputFontUnderline", "chatInputFontColor", "chatInputPosition"]
+MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputFontFamily", "chatInputFontSize", "chatInputFontWeight", "chatInputFontUnderline", "chatInputFontColor", "chatInputPosition","chatDirectInput"]
 MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH)]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']

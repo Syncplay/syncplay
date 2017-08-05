@@ -100,7 +100,7 @@ function chat_update()
 		end
 	end
 
-    if use_alpha_rows_for_chat == false then
+    if use_alpha_rows_for_chat == false and opts['chatDirectInput'] == true then
         local alphawarning_ass = assdraw.ass_new()
         alphawarning_ass = "{\\a6}You can temporarily use old mpv bindings with a-z keys.\n{\\a6}Press [TAB] to return to Syncplay chat mode." -- TODO: Move message to messages.py
         ass:append(alphawarning_ass)
@@ -250,7 +250,8 @@ opts = {
     ['chatMaxLines'] = 7,
     ['chatTopMargin'] = 25,
     ['chatLeftMargin'] = 20,
-    ['chatBottomMargin'] = 30
+    ['chatBottomMargin'] = 30,
+    ['chatDirectInput'] = true
 }
 
 function detect_platform()
@@ -297,7 +298,7 @@ local repl_active = false
 local insert_mode = false
 local line = ''
 local cursor = 1
-local key_hints_enabled = true
+local key_hints_enabled = false
 
 function input_ass()
 	if not repl_active then
@@ -731,8 +732,6 @@ add_alpharowbinding('#','#')
 add_alpharowbinding('~','~')
 add_alpharowbinding('\'','\'')
 add_alpharowbinding('@','@')
-add_repl_alpharow_bindings(alpharowbindings)
-mp.add_forced_key_binding('tab', handle_tab)
 
 add_repl_bindings(bindings)
 
@@ -764,4 +763,10 @@ function set_syncplayintf_options(input)
     chat_format = get_output_style()
     local vertical_output_area = CANVAS_HEIGHT-(opts['chatTopMargin']+opts['chatBottomMargin'])
     max_scrolling_rows = math.floor(vertical_output_area/opts['chatOutputFontSize'])
+        if opts['chatDirectInput'] == true then
+        add_repl_alpharow_bindings(alpharowbindings)
+        mp.add_forced_key_binding('tab', handle_tab)
+        key_hints_enabled = true
+    else
+    end
 end

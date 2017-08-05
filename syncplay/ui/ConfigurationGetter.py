@@ -70,7 +70,8 @@ class ConfigurationGetter(object):
                         "chatInputFontWeight" : constants.DEFAULT_CHAT_INPUT_FONT_WEIGHT,
                         "chatInputFontUnderline": False,
                         "chatInputFontColor": constants.DEFAULT_CHAT_INPUT_FONT_COLOR,
-                        "chatInputPosition": constants.INPUT_POSITION_TOP
+                        "chatInputPosition": constants.INPUT_POSITION_TOP,
+                        "chatDirectInput": True,
                         }
 
         self._defaultConfig = self._config.copy()
@@ -115,6 +116,7 @@ class ConfigurationGetter(object):
                          "onlySwitchToTrustedDomains",
                          "chatInputEnabled",
                          "chatInputFontUnderline",
+                         "chatDirectInput"
                         ]
         self._tristate = [
             "checkForUpdatesAutomatically",
@@ -160,7 +162,7 @@ class ConfigurationGetter(object):
                             "chatInputEnabled","chatInputFontUnderline",
                             "chatInputFontFamily", "chatInputFontSize",
                             "chatInputFontWeight", "chatInputFontColor",
-                            "chatInputPosition"],
+                            "chatInputPosition","chatDirectInput"],
                         "general": ["language", "checkForUpdatesAutomatically",
                             "lastCheckedForUpdates"]
                         }
