@@ -386,6 +386,7 @@ end
 
 -- Set the REPL visibility (`, Esc)
 function set_active(active)
+    if use_alpha_rows_for_chat == false then active = false end
 	if active == repl_active then return end
 	if active then
 		repl_active = true
@@ -492,12 +493,18 @@ function handle_ins()
 	insert_mode = not insert_mode
 end
 
+--local was_active_before_tab = false
+
 function handle_tab()
     use_alpha_rows_for_chat = not use_alpha_rows_for_chat
     if use_alpha_rows_for_chat then
         mp.enable_key_bindings('repl-alpha-input')
+        --set_active(was_active_before_tab)
     else
         mp.disable_key_bindings('repl-alpha-input')
+        --was_active_before_tab = repl_active
+        --set_active(false)
+        escape()
     end
 end
 
