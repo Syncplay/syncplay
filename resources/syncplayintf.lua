@@ -13,11 +13,10 @@ local CHAT_MODE_CHATROOM = "Chatroom"
 local CHAT_MODE_SUBTITLE = "Subtitle"
 local CHAT_MODE_SCROLLING = "Scrolling"
 local last_chat_time = 0
-local USE_ALPHA_ROWS_FOR_CHAT = True
+local use_alpha_rows_for_chat = true
 local MOOD_NEUTRAL = 0
 local MOOD_BAD = 1
 local MOOD_GOOD = 2
-
 
 local chat_log = {}
 
@@ -100,8 +99,15 @@ function chat_update()
 			end
 		end
 	end
-	ass:append(chat_ass)
-	ass:append(input_ass())
+
+    if use_alpha_rows_for_chat == false then
+        local alphawarning_ass = assdraw.ass_new()
+        alphawarning_ass = "{\\a6}You can temporarily use old mpv bindings with a-z keys.\n{\\a6}Press [TAB] to return to Syncplay chat mode."
+        ass:append(alphawarning_ass)
+    else
+        ass:append(chat_ass)
+	    ass:append(input_ass())
+    end
 	mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
 end
 
@@ -389,9 +395,6 @@ function set_active(active)
 		repl_active = false
 		mp.disable_key_bindings('repl-input')
     end
-    if USE_ALPHA_ROWS_FOR_CHAT == True then
-        mp.enable_key_bindings('repl-alpha-input', 'allow-hide-cursor+allow-vo-dragging')
-    end
 end
 
 -- Show the repl if hidden and replace its contents with 'text'
@@ -487,6 +490,15 @@ end
 -- Toggle insert mode (Ins)
 function handle_ins()
 	insert_mode = not insert_mode
+end
+
+function handle_tab()
+    use_alpha_rows_for_chat = not use_alpha_rows_for_chat
+    if use_alpha_rows_for_chat then
+        mp.enable_key_bindings('repl-alpha-input')
+    else
+        mp.disable_key_bindings('repl-alpha-input')
+    end
 end
 
 -- Move the cursor to the next character (Right)
@@ -692,26 +704,26 @@ function add_alpharowbinding(firstchar,lastchar)
     end
 end
 
-if USE_ALPHA_ROWS_FOR_CHAT == True then
-    add_alpharowbinding('a','z')
-    add_alpharowbinding('A','Z')
-    add_alpharowbinding('/','/')
-    add_alpharowbinding(':',':')
-    add_alpharowbinding('(',')')
-    add_alpharowbinding('{','}')
-    add_alpharowbinding(':',';')
-    add_alpharowbinding('<','>')
-    add_alpharowbinding(',','.')
-    add_alpharowbinding('|','|')
-    add_alpharowbinding('\\','\\')
-    add_alpharowbinding('?','?')
-    add_alpharowbinding('[',']')
-    add_alpharowbinding('#','#')
-    add_alpharowbinding('~','~')
-    add_alpharowbinding('\'','\'')
-    add_alpharowbinding('@','@')
-    add_repl_alpharow_bindings(alpharowbindings)
-end
+add_alpharowbinding('a','z')
+add_alpharowbinding('A','Z')
+add_alpharowbinding('/','/')
+add_alpharowbinding(':',':')
+add_alpharowbinding('(',')')
+add_alpharowbinding('{','}')
+add_alpharowbinding(':',';')
+add_alpharowbinding('<','>')
+add_alpharowbinding(',','.')
+add_alpharowbinding('|','|')
+add_alpharowbinding('\\','\\')
+add_alpharowbinding('?','?')
+add_alpharowbinding('[',']')
+add_alpharowbinding('#','#')
+add_alpharowbinding('~','~')
+add_alpharowbinding('\'','\'')
+add_alpharowbinding('@','@')
+add_repl_alpharow_bindings(alpharowbindings)
+mp.add_forced_key_binding('tab', handle_tab)
+
 add_repl_bindings(bindings)
 
 -- Add a script-message to show the REPL and fill it with the provided text
