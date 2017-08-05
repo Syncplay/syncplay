@@ -790,7 +790,7 @@ class SyncplayClient(object):
         allReadyMessage = getMessage("all-users-ready").format(self.userlist.readyUserCount())
         autoplayingMessage = getMessage("autoplaying-notification").format(int(self.autoplayTimeLeft))
         countdownMessage = u"{}{}{}".format(allReadyMessage,self._player.osdMessageSeparator, autoplayingMessage)
-        self.ui.showOSDMessage(countdownMessage, 1, secondaryOSD=True)
+        self.ui.showOSDMessage(countdownMessage, 1, secondaryOSD=True, mood=constants.MESSAGE_GOODNEWS)
         if self.autoplayTimeLeft <= 0:
             self.setPaused(False)
             self.stopAutoplayCountdown()
@@ -939,7 +939,7 @@ class SyncplayClient(object):
 
         def _checkIfYouReAloneInTheRoom(self, OSDOnly):
             if self._userlist.areYouAloneInRoom():
-                self._ui.showOSDMessage(getMessage("alone-in-the-room"), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True)
+                self._ui.showOSDMessage(getMessage("alone-in-the-room"), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True, mood=constants.MESSAGE_BADNEWS)
                 if not OSDOnly:
                     self._ui.showMessage(getMessage("alone-in-the-room"), True)
                     if constants.SHOW_OSD_WARNINGS and not self._warnings["alone-in-the-room"]['timer'].running:
@@ -969,8 +969,10 @@ class SyncplayClient(object):
             if not self._client._player or self._client.autoplayTimerIsRunning():
                 return
             osdMessage = None
+            messageMood = constants.MESSAGE_GOODNEWS
             fileDifferencesForRoom = self._userlist.getFileDifferencesForRoom()
             if not self._userlist.areAllFilesInRoomSame() and fileDifferencesForRoom is not None:
+                messageMood = constants.MESSAGE_BADNEWS
                 fileDifferencesMessage = getMessage("room-file-differences").format(fileDifferencesForRoom)
                 if self._userlist.currentUser.canControl() and self._userlist.isReadinessSupported():
                     if self._userlist.areAllUsersInRoomReady():
@@ -985,9 +987,10 @@ class SyncplayClient(object):
                 if self._userlist.areAllUsersInRoomReady():
                     osdMessage = getMessage("all-users-ready").format(self._userlist.readyUserCount())
                 else:
+                    messageMood = constants.MESSAGE_BADNEWS
                     osdMessage = getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady())
             if osdMessage:
-                self._ui.showOSDMessage(osdMessage, constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True)
+                self._ui.showOSDMessage(osdMessage, constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True, mood=messageMood)
 
         def __displayMessageOnOSD(self, warningName, warningFunction):
             if constants.OSD_WARNING_MESSAGE_DURATION > self._warnings[warningName]["displayedFor"]:
@@ -1388,8 +1391,8 @@ class UiManager(object):
             self.showOSDMessage(messageString, duration=constants.OSD_DURATION)
         self.__ui.showMessage(messageString)
 
-    def showMessage(self, message, noPlayer=False, noTimestamp=False, secondaryOSD=False):
-        if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, secondaryOSD=secondaryOSD)
+    def showMessage(self, message, noPlayer=False, noTimestamp=False, secondaryOSD=False,mood=constants.MESSAGE_NEUTRAL):
+        if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, secondaryOSD=secondaryOSD, mood=mood)
         self.__ui.showMessage(message, noTimestamp)
 
     def updateAutoPlayState(self, newState):
@@ -1398,7 +1401,7 @@ class UiManager(object):
     def showUserList(self, currentUser, rooms):
         self.__ui.showUserList(currentUser, rooms)
 
-    def showOSDMessage(self, message, duration=constants.OSD_DURATION, secondaryOSD=False):
+    def showOSDMessage(self, message, duration=constants.OSD_DURATION, secondaryOSD=False, mood=constants.MESSAGE_NEUTRAL):
         autoplayConditionsMet = self._client.autoplayConditionsMet()
         if secondaryOSD and not constants.SHOW_OSD_WARNINGS and not self._client.autoplayTimerIsRunning():
             return
@@ -1419,7 +1422,7 @@ class UiManager(object):
                     self.lastPrimaryOSDEndTime = time.time() + constants.OSD_DURATION
                     if self.lastSecondaryOSDEndTime and time.time() < self.lastSecondaryOSDEndTime:
                         message = u"{}{}{}".format(self.lastSecondaryOSDMessage, self._client._player.osdMessageSeparator, message)
-            self._client._player.displayMessage(message, int(duration * 1000), secondaryOSD)
+            self._client._player.displayMessage(message, int(duration * 1000), secondaryOSD, mood)
 
     def setControllerStatus(self, username, isController):
         self.__ui.setControllerStatus(username, isController)

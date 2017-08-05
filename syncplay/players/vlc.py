@@ -116,7 +116,7 @@ class VlcPlayer(BasePlayer):
         else:
             return self._position
 
-    def displayMessage(self, message, duration=constants.OSD_DURATION * 1000, secondaryOSD=False):
+    def displayMessage(self, message, duration=constants.OSD_DURATION * 1000, secondaryOSD=False, mood=constants.MESSAGE_NEUTRAL):
         duration /= 1000
         if secondaryOSD == False:
             self._listener.sendLine('display-osd: {}, {}, {}'.format('top-right', duration, message.encode('utf8')))

@@ -216,6 +216,11 @@ FILEITEM_SWITCH_FILE_SWITCH = 1
 FILEITEM_SWITCH_STREAM_SWITCH = 2
 PLAYLISTITEM_CURRENTLYPLAYING_ROLE = 3
 
+MESSAGE_NEUTRAL = 0
+MESSAGE_BADNEWS = 1
+MESSAGE_GOODNEWS = 2
+MOOD_LIST = ["neutral","bad","good"]
+
 SYNCPLAY_UPDATE_URL = u"http://syncplay.pl/checkforupdate?{}" # Params
 SYNCPLAY_DOWNLOAD_URL = "http://syncplay.pl/download/"
 SYNCPLAY_PUBLIC_SERVER_LIST_URL = u"http://syncplay.pl/listpublicservers?{}" # Params

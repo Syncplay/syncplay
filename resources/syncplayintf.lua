@@ -14,6 +14,10 @@ local CHAT_MODE_SUBTITLE = "Subtitle"
 local CHAT_MODE_SCROLLING = "Scrolling"
 local last_chat_time = 0
 local USE_ALPHA_ROWS_FOR_CHAT = True
+local MOOD_NEUTRAL = 0
+local MOOD_BAD = 1
+local MOOD_GOOD = 2
+
 
 local chat_log = {}
 
@@ -35,14 +39,15 @@ end
 
 local secondary_osd = ""
 local last_secondary_osd_time = nil
+local secondary_osd_mood = MOOD_NEUTRAL
 
-function set_secondary_osd(osd_message)
+function set_secondary_osd(osd_message, mood)
     secondary_osd = osd_message
     last_secondary_osd_time = mp.get_time()
+    secondary_osd_mood = mood
 end
 
-
-function add_chat(chat_message)
+function add_chat(chat_message, mood)
     last_chat_time = mp.get_time()
 	local entry = #chat_log+1
 	for i = 1, #chat_log do
@@ -75,7 +80,15 @@ function chat_update()
             local xpos = opts['chatLeftMargin']
             local ypos = opts['chatTopMargin']+(0*opts['chatOutputFontSize'])
             local messageString = '('..secondary_osd..')'
-			messageString = '{\\1c&H0000FF}'..messageString
+            local messageColour
+            if secondary_osd_mood == MOOD_NEUTRAL then
+                messageColour = "{\\1c&HFFFFFF}"
+            elseif secondary_osd_mood == MOOD_BAD then
+                messageColour = "{\\1c&H0000FF}"
+            elseif secondary_osd_mood == MOOD_GOOD then
+                messageColour = "{\\1c&H00FF00}"
+            end
+			messageString = messageColour..messageString
             chat_ass = format_chatroom(xpos,ypos,messageString)
         end
     end
@@ -159,12 +172,28 @@ mp.register_script_message('chat', function(e)
 	add_chat(e)
 end)
 
-mp.register_script_message('primary-osd', function(e)
-	add_chat(e)
+mp.register_script_message('primary-osd-neutral', function(e)
+	add_chat(e,MOOD_NEUTRAL)
 end)
 
-mp.register_script_message('secondary-osd', function(e)
-	set_secondary_osd(e)
+mp.register_script_message('primary-osd-bad', function(e)
+	add_chat(e,MOOD_BAD)
+end)
+
+mp.register_script_message('primary-osd-good', function(e)
+	add_chat(e,MOOD_GOOD)
+end)
+
+mp.register_script_message('secondary-osd-neutral', function(e)
+	set_secondary_osd(e,MOOD_NEUTRAL)
+end)
+
+mp.register_script_message('secondary-osd-bad', function(e)
+	set_secondary_osd(e,MOOD_BAD)
+end)
+
+mp.register_script_message('secondary-osd-good', function(e)
+	set_secondary_osd(e,MOOD_GOOD)
 end)
 
 mp.register_script_message('set_syncplayintf_options', function(e)
