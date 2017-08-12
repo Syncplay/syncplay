@@ -70,7 +70,7 @@ class ConfigurationGetter(object):
                         "chatInputFontWeight" : constants.DEFAULT_CHAT_INPUT_FONT_WEIGHT,
                         "chatInputFontUnderline": False,
                         "chatInputFontColor": constants.DEFAULT_CHAT_INPUT_FONT_COLOR,
-                        "chatInputPosition": constants.INPUT_POSITION_TOP,
+                        "chatInputPosition": constants.INPUT_POSITION_MIDDLE,
                         "chatDirectInput": True,
                         "chatOutputEnabled": True,
                         "chatOutputFontFamily": 'sans-serif',
