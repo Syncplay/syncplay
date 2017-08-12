@@ -36,14 +36,24 @@ function clear_chat()
 	chat_log = {}
 end
 
-local secondary_osd = ""
-local last_secondary_osd_time = nil
-local secondary_osd_mood = MOOD_NEUTRAL
+local alert_osd = ""
+local last_alert_osd_time = nil
+local alert_osd_mood = MOOD_NEUTRAL
 
-function set_secondary_osd(osd_message, mood)
-    secondary_osd = osd_message
-    last_secondary_osd_time = mp.get_time()
-    secondary_osd_mood = mood
+local notification_osd = ""
+local last_notification_osd_time = nil
+local notification_osd_mood = MOOD_NEUTRAL
+
+function set_alert_osd(osd_message, mood)
+    alert_osd = osd_message
+    last_alert_osd_time = mp.get_time()
+    alert_osd_mood = mood
+end
+
+function set_notification_osd(osd_message, mood)
+    notification_osd = osd_message
+    last_notification_osd_time = mp.get_time()
+    notification_osd_mood = mood
 end
 
 function add_chat(chat_message, mood)
@@ -68,32 +78,28 @@ end
 function chat_update()
     ass = assdraw.ass_new()
 	local chat_ass = ''
-    if opts['chatOutputMode'] == CHAT_MODE_CHATROOM then
+    local rowsAdded = 0
+    local to_add = ''
+    local incrementRow = 0
+    if opts['chatOutputMode'] == CHAT_MODE_CHATROOM and chat_log ~= {} then
         local timedelta = mp.get_time() - last_chat_time
-		if timedelta >= 7 then
+		if timedelta >= opts['chatTimeout'] then
             clear_chat()
         end
     end
-    if secondary_osd ~= "" then
-        if mp.get_time() - last_secondary_osd_time < 5 and last_secondary_osd_time ~= nil then
-            local xpos = opts['chatLeftMargin']
-            local ypos = opts['chatTopMargin']+(0*opts['chatOutputFontSize'])
-            local messageString = '('..secondary_osd..')'
-            local messageColour
-            if secondary_osd_mood == MOOD_NEUTRAL then
-                messageColour = "{\\1c&HFFFFFF}"
-            elseif secondary_osd_mood == MOOD_BAD then
-                messageColour = "{\\1c&H0000FF}"
-            elseif secondary_osd_mood == MOOD_GOOD then
-                messageColour = "{\\1c&H00FF00}"
-            end
-			messageString = messageColour..messageString
-            chat_ass = format_chatroom(xpos,ypos,messageString)
-        end
+    rowsAdded,to_add = process_alert_osd()
+    if to_add ~= nil and to_add ~= "" then
+        chat_ass = to_add
     end
+    incrementRow,to_add = process_notification_osd(rowsAdded)
+    rowsAdded = rowsAdded + incrementRow
+    if to_add ~= nil and to_add ~= "" then
+        chat_ass = chat_ass .. to_add
+    end
+
 	if #chat_log > 0 then
 		for i = 1, #chat_log do
-			local to_add = process_chat_item(i)
+			local to_add = process_chat_item(i,rowsAdded)
 			if to_add ~= nil and to_add ~= "" then
 				chat_ass = chat_ass .. to_add
 			end
@@ -111,11 +117,69 @@ function chat_update()
 	mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
 end
 
-function process_chat_item(i)
+function process_alert_osd()
+    local rowsCreated = 0
+    local stringToAdd = ""
+    if alert_osd ~= "" and mp.get_time() - last_alert_osd_time < opts['alertTimeout'] and last_alert_osd_time ~= nil then
+        local xpos = opts['chatLeftMargin']
+        local ypos
+        local messageColour
+        if alert_osd_mood == MOOD_NEUTRAL then
+            messageColour = "{\\1c&HFFFFFF}"
+        elseif alert_osd_mood == MOOD_BAD then
+            messageColour = "{\\1c&H0000FF}"
+        elseif alert_osd_mood == MOOD_GOOD then
+            messageColour = "{\\1c&H00FF00}"
+        end
+        local messageString
+        local startRow = 0
+        local stringLeftToProccess = alert_osd
+        while stringLeftToProccess ~= '' and stringLeftToProccess ~= nil do
+            local toDisplay
+            ypos = opts['chatTopMargin'] + ((startRow+rowsCreated)*opts['chatOutputFontSize'])
+            toDisplay, stringLeftToProccess = trim_string(stringLeftToProccess,opts['chatSplitMessageAt'])
+            rowsCreated = rowsCreated + 1
+            messageString = messageColour..toDisplay
+			if stringToAdd ~= "" then
+            	stringToAdd = stringToAdd .. format_chatroom(xpos,ypos,messageString)
+			else
+				stringToAdd = format_chatroom(xpos,ypos,messageString)
+			end
+        end
+    end
+    return rowsCreated, stringToAdd
+end
+
+function process_notification_osd(startRow)
+    local rowsCreated = 0
+    local stringToAdd = ""
+    if notification_osd ~= "" and mp.get_time() - last_notification_osd_time < opts['alertTimeout'] and last_notification_osd_time ~= nil then
+        local xpos = opts['chatLeftMargin']
+        local messageColour
+        messageColour = "{\\1c&HFFFF00}"
+        local messageString
+        local startRow = startRow
+        local stringLeftToProccess = notification_osd
+        while  stringLeftToProccess ~= '' and  stringLeftToProccess ~= nil do
+            local toDisplay
+            local ypos = opts['chatTopMargin'] + ((startRow+rowsCreated)*opts['chatOutputFontSize'])
+            toDisplay, stringLeftToProccess = trim_string(stringLeftToProccess,opts['chatSplitMessageAt'])
+            rowsCreated = rowsCreated + 1
+            messageString = messageColour..toDisplay
+			if stringToAdd ~= "" then
+            	stringToAdd = stringToAdd .. format_chatroom(xpos,ypos,messageString)
+			else
+				stringToAdd =format_chatroom(xpos,ypos,messageString)
+            end
+        end
+    end
+    return rowsCreated, stringToAdd
+end
+
+
+function process_chat_item(i, rowsAdded)
     if opts['chatOutputMode'] == CHAT_MODE_CHATROOM then
-		return process_chat_item_chatroom(i)
-    elseif opts['chatOutputMode'] == CHAT_MODE_CHATROOM then
-        return process_chat_item_subtitle(i)
+		return process_chat_item_chatroom(i, rowsAdded)
 	elseif opts['chatOutputMode'] == CHAT_MODE_SCROLLING then
 		return process_chat_item_scrolling(i)
 	end
@@ -129,7 +193,7 @@ function process_chat_item_scrolling(i)
 	if text ~= '' then
 		local roughlen = string.len(text) * opts['chatOutputFontSize'] * 1.5
 		if xpos > (-1*roughlen) then
-			local row = chat_log[i].row
+			local row = chat_log[i].row-1+opts['scrollingFirstRowOffset']
 			local ypos = opts['chatTopMargin']+(row * opts['chatOutputFontSize'])
 			return format_scrolling(xpos,ypos,text)
 		else
@@ -138,11 +202,12 @@ function process_chat_item_scrolling(i)
 	end
 end
 
-function process_chat_item_chatroom(i)
+function process_chat_item_chatroom(i, startRow)
     local text = chat_log[i].text
 	if text ~= '' then
-        xpos = opts['chatLeftMargin']
-        ypos = opts['chatTopMargin']+(i*opts['chatOutputFontSize'])
+        local xpos = opts['chatLeftMargin']
+        local rowNumber = i+startRow-1
+        local ypos = opts['chatTopMargin']+(rowNumber*opts['chatOutputFontSize'])
 
         local timecreated = chat_log[i].timecreated
         local timedelta = 200 * (mp.get_time() - timecreated)
@@ -178,29 +243,49 @@ mp.register_script_message('chat', function(e)
 	add_chat(e)
 end)
 
-mp.register_script_message('primary-osd-neutral', function(e)
+-- Chat OSD
+
+mp.register_script_message('chat-osd-neutral', function(e)
 	add_chat(e,MOOD_NEUTRAL)
 end)
 
-mp.register_script_message('primary-osd-bad', function(e)
+mp.register_script_message('chat-osd-bad', function(e)
 	add_chat(e,MOOD_BAD)
 end)
 
-mp.register_script_message('primary-osd-good', function(e)
+mp.register_script_message('chat-osd-good', function(e)
 	add_chat(e,MOOD_GOOD)
 end)
 
-mp.register_script_message('secondary-osd-neutral', function(e)
-	set_secondary_osd(e,MOOD_NEUTRAL)
+-- Alert OSD
+
+mp.register_script_message('alert-osd-neutral', function(e)
+	set_alert_osd(e,MOOD_NEUTRAL)
 end)
 
-mp.register_script_message('secondary-osd-bad', function(e)
-	set_secondary_osd(e,MOOD_BAD)
+mp.register_script_message('alert-osd-bad', function(e)
+	set_alert_osd(e,MOOD_BAD)
 end)
 
-mp.register_script_message('secondary-osd-good', function(e)
-	set_secondary_osd(e,MOOD_GOOD)
+mp.register_script_message('alert-osd-good', function(e)
+	set_alert_osd(e,MOOD_GOOD)
 end)
+
+-- Notification OSD
+
+mp.register_script_message('notification-osd-neutral', function(e)
+	set_notification_osd(e,MOOD_NEUTRAL)
+end)
+
+mp.register_script_message('notification-osd-bad', function(e)
+	set_notification_osd(e,MOOD_BAD)
+end)
+
+mp.register_script_message('notification-osd-good', function(e)
+	set_notification_osd(e,MOOD_GOOD)
+end)
+
+--
 
 mp.register_script_message('set_syncplayintf_options', function(e)
 	set_syncplayintf_options(e)
@@ -240,18 +325,24 @@ opts = {
 	['chatInputFontColor'] = "#000000",
 	['chatInputPosition'] = "Top",
 	['MaxChatMessageLength'] = 50,
+    ['chatSplitMessageAt'] = 70,
 	['chatOutputFontFamily'] = 'sans serif',
 	['chatOutputFontSize'] = 50,
 	['chatOutputFontWeight'] = 1,
 	['chatOutputFontUnderline'] = false,
 	['chatOutputFontColor'] = "#FFFFFF",
 	['chatOutputMode'] = "Chatroom",
+    ['scrollingFirstRowOffset'] = 3,
 	-- Can be "Chatroom", "Subtitle" or "Scrolling" style
     ['chatMaxLines'] = 7,
     ['chatTopMargin'] = 25,
     ['chatLeftMargin'] = 20,
     ['chatBottomMargin'] = 30,
-    ['chatDirectInput'] = true
+    ['chatDirectInput'] = true,
+    --
+    ['notificationTimeout'] = 3,
+    ['alertTimeout'] = 5,
+    ['chatTimeout'] = 7,
 }
 
 function detect_platform()
@@ -439,9 +530,31 @@ function prev_utf8(str, pos)
 	return pos
 end
 
-function trim_input()
-	-- Naive helper function to find the next UTF-8 character in 'str' after 'pos'
+function trim_string(line,maxCharacters)
+-- Naive helper function to find the next UTF-8 character in 'str' after 'pos'
 -- by skipping continuation bytes. Assumes 'str' contains valid UTF-8.
+
+	local str = line
+	if str == nil or str == "" or str:len() <= maxCharacters then
+		return str, ""
+	end
+	local pos = 0
+	local oldPos = -1
+	local chars = 0
+
+	repeat
+		oldPos = pos
+		pos = next_utf8(str, pos)
+		chars = chars + 1
+	until pos == oldPos or chars > maxCharacters
+	return str:sub(1,pos-1), str:sub(pos)
+end
+
+
+function trim_input()
+-- Naive helper function to find the next UTF-8 character in 'str' after 'pos'
+-- by skipping continuation bytes. Assumes 'str' contains valid UTF-8.
+
 	local str = line
 	if str == nil or str == "" or str:len() <= opts['MaxChatMessageLength'] then
 		return

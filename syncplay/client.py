@@ -143,8 +143,8 @@ class SyncplayClient(object):
 
     def initPlayer(self, player):
         self._player = player
-        if not self._player.secondaryOSDSupported:
-            constants.OSD_WARNING_MESSAGE_DURATION = constants.NO_SECONDARY_OSD_WARNING_DURATION
+        if not self._player.alertOSDSupported:
+            constants.OSD_WARNING_MESSAGE_DURATION = constants.NO_ALERT_OSD_WARNING_DURATION
         self.scheduleAskPlayer()
         self.__playerReady.callback(player)
 
@@ -790,7 +790,7 @@ class SyncplayClient(object):
         allReadyMessage = getMessage("all-users-ready").format(self.userlist.readyUserCount())
         autoplayingMessage = getMessage("autoplaying-notification").format(int(self.autoplayTimeLeft))
         countdownMessage = u"{}{}{}".format(allReadyMessage,self._player.osdMessageSeparator, autoplayingMessage)
-        self.ui.showOSDMessage(countdownMessage, 1, secondaryOSD=True, mood=constants.MESSAGE_GOODNEWS)
+        self.ui.showOSDMessage(countdownMessage, 1, OSDType=constants.OSD_ALERT, mood=constants.MESSAGE_GOODNEWS)
         if self.autoplayTimeLeft <= 0:
             self.setPaused(False)
             self.stopAutoplayCountdown()
@@ -939,7 +939,7 @@ class SyncplayClient(object):
 
         def _checkIfYouReAloneInTheRoom(self, OSDOnly):
             if self._userlist.areYouAloneInRoom():
-                self._ui.showOSDMessage(getMessage("alone-in-the-room"), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True, mood=constants.MESSAGE_BADNEWS)
+                self._ui.showOSDMessage(getMessage("alone-in-the-room"), constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, OSDType=constants.OSD_ALERT, mood=constants.MESSAGE_BADNEWS)
                 if not OSDOnly:
                     self._ui.showMessage(getMessage("alone-in-the-room"), True)
                     if constants.SHOW_OSD_WARNINGS and not self._warnings["alone-in-the-room"]['timer'].running:
@@ -990,7 +990,7 @@ class SyncplayClient(object):
                     messageMood = constants.MESSAGE_BADNEWS
                     osdMessage = getMessage("not-all-ready").format(self._userlist.usersInRoomNotReady())
             if osdMessage:
-                self._ui.showOSDMessage(osdMessage, constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, secondaryOSD=True, mood=messageMood)
+                self._ui.showOSDMessage(osdMessage, constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, OSDType=constants.OSD_ALERT, mood=messageMood)
 
         def __displayMessageOnOSD(self, warningName, warningFunction):
             if constants.OSD_WARNING_MESSAGE_DURATION > self._warnings[warningName]["displayedFor"]:
@@ -1361,10 +1361,10 @@ class UiManager(object):
     def __init__(self, client, ui):
         self._client = client
         self.__ui = ui
-        self.lastPrimaryOSDMessage = None
-        self.lastPrimaryOSDEndTime = None
-        self.lastSecondaryOSDMessage = None
-        self.lastSecondaryOSDEndTime = None
+        self.lastNotificatinOSDMessage = None
+        self.lastNotificationOSDEndTime = None
+        self.lastAlertOSDMessage = None
+        self.lastAlertOSDEndTime = None
         self.lastError = ""
 
     def setPlaylist(self, newPlaylist, newIndexFilename=None):
@@ -1385,14 +1385,14 @@ class UiManager(object):
 
     def showChatMessage(self, username, userMessage):
         messageString = u"<{}> {}".format(username, userMessage)
-        if self._client._player.chatOSDSupported:
+        if self._client._player.alertOSDSupported:
             self._client._player.displayChatMessage(username,userMessage)
         else:
             self.showOSDMessage(messageString, duration=constants.OSD_DURATION)
         self.__ui.showMessage(messageString)
 
-    def showMessage(self, message, noPlayer=False, noTimestamp=False, secondaryOSD=False,mood=constants.MESSAGE_NEUTRAL):
-        if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, secondaryOSD=secondaryOSD, mood=mood)
+    def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION,mood=constants.MESSAGE_NEUTRAL):
+        if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, OSDType=OSDType, mood=mood)
         self.__ui.showMessage(message, noTimestamp)
 
     def updateAutoPlayState(self, newState):
@@ -1401,28 +1401,28 @@ class UiManager(object):
     def showUserList(self, currentUser, rooms):
         self.__ui.showUserList(currentUser, rooms)
 
-    def showOSDMessage(self, message, duration=constants.OSD_DURATION, secondaryOSD=False, mood=constants.MESSAGE_NEUTRAL):
+    def showOSDMessage(self, message, duration=constants.OSD_DURATION, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL):
         autoplayConditionsMet = self._client.autoplayConditionsMet()
-        if secondaryOSD and not constants.SHOW_OSD_WARNINGS and not self._client.autoplayTimerIsRunning():
+        if OSDType == constants.OSD_ALERT and not constants.SHOW_OSD_WARNINGS and not self._client.autoplayTimerIsRunning():
             return
         if not self._client._player:
             return
         if constants.SHOW_OSD and self._client and self._client._player:
-            if not self._client._player.secondaryOSDSupported:
-                if secondaryOSD:
-                    self.lastSecondaryOSDMessage = message
+            if not self._client._player.alertOSDSupported:
+                if OSDType == constants.OSD_ALERT:
+                    self.lastAlertOSDMessage = message
                     if autoplayConditionsMet:
-                        self.lastSecondaryOSDEndTime = time.time() + 1.0
+                        self.lastAlertOSDEndTime = time.time() + 1.0
                     else:
-                        self.lastSecondaryOSDEndTime = time.time() + constants.NO_SECONDARY_OSD_WARNING_DURATION
-                    if self.lastPrimaryOSDEndTime and time.time() < self.lastPrimaryOSDEndTime:
-                        message = u"{}{}{}".format(message, self._client._player.osdMessageSeparator, self.lastPrimaryOSDMessage)
+                        self.lastAlertOSDEndTime = time.time() + constants.NO_ALERT_OSD_WARNING_DURATION
+                    if self.lastNotificationOSDEndTime and time.time() < self.lastNotificationOSDEndTime:
+                        message = u"{}{}{}".format(message, self._client._player.osdMessageSeparator, self.lastNotificatinOSDMessage)
                 else:
-                    self.lastPrimaryOSDMessage = message
-                    self.lastPrimaryOSDEndTime = time.time() + constants.OSD_DURATION
-                    if self.lastSecondaryOSDEndTime and time.time() < self.lastSecondaryOSDEndTime:
-                        message = u"{}{}{}".format(self.lastSecondaryOSDMessage, self._client._player.osdMessageSeparator, message)
-            self._client._player.displayMessage(message, int(duration * 1000), secondaryOSD, mood)
+                    self.lastNotificatinOSDMessage = message
+                    self.lastNotificationOSDEndTime = time.time() + constants.OSD_DURATION
+                    if self.lastAlertOSDEndTime and time.time() < self.lastAlertOSDEndTime:
+                        message = u"{}{}{}".format(self.lastAlertOSDMessage, self._client._player.osdMessageSeparator, message)
+            self._client._player.displayMessage(message, int(duration * 1000), OSDType, mood)
 
     def setControllerStatus(self, username, isController):
         self.__ui.setControllerStatus(username, isController)
