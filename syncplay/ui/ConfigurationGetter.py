@@ -72,6 +72,19 @@ class ConfigurationGetter(object):
                         "chatInputFontColor": constants.DEFAULT_CHAT_INPUT_FONT_COLOR,
                         "chatInputPosition": constants.INPUT_POSITION_TOP,
                         "chatDirectInput": True,
+                        "chatOutputEnabled": True,
+                        "chatOutputFontFamily": 'sans-serif',
+                        "chatOutputFontSize": 50,
+                        "chatOutputFontWeight": 1,
+                        "chatOutputFontUnderline": False,
+                        "chatOutputMode": constants.CHATROOM_MODE,
+                        "chatMaxLines": 7,
+                        "chatTopMargin": 25,
+                        "chatLeftMargin": 20,
+                        "chatBottomMargin": 30,
+                        "notificationTimeout": 3,
+                        "alertTimeout": 5,
+                        "chatTimeout": 7,
                         }
 
         self._defaultConfig = self._config.copy()
@@ -116,7 +129,9 @@ class ConfigurationGetter(object):
                          "onlySwitchToTrustedDomains",
                          "chatInputEnabled",
                          "chatInputFontUnderline",
-                         "chatDirectInput"
+                         "chatDirectInput",
+                        "chatOutputEnabled",
+                        "chatOutputFontUnderline"
                         ]
         self._tristate = [
             "checkForUpdatesAutomatically",
@@ -135,7 +150,16 @@ class ConfigurationGetter(object):
             "fastforwardThreshold",
             "autoplayMinUsers",
             "chatInputFontSize",
-            "chatInputFontWeight"
+            "chatInputFontWeight",
+            "chatOutputFontWeight",
+            "chatOutputFontSize",
+            "chatMaxLines",
+            "chatTopMargin",
+            "chatLeftMargin",
+            "chatBottomMargin",
+            "notificationTimeout",
+            "alertTimeout",
+            "chatTimeout"
         ]
 
         self._hexadecimal = [
@@ -162,7 +186,14 @@ class ConfigurationGetter(object):
                             "chatInputEnabled","chatInputFontUnderline",
                             "chatInputFontFamily", "chatInputFontSize",
                             "chatInputFontWeight", "chatInputFontColor",
-                            "chatInputPosition","chatDirectInput"],
+                            "chatInputPosition","chatDirectInput",
+                            "chatOutputFontFamily", "chatOutputFontSize",
+                            "chatOutputFontWeight", "chatOutputFontUnderline",
+                            "chatOutputMode", "chatMaxLines",
+                            "chatTopMargin", "chatLeftMargin",
+                            "chatBottomMargin", "chatDirectInput",
+                            "notificationTimeout", "alertTimeout",
+                            "chatTimeout","chatOutputEnabled"],
                         "general": ["language", "checkForUpdatesAutomatically",
                             "lastCheckedForUpdates"]
                         }

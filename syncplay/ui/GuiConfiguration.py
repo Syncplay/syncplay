@@ -884,9 +884,52 @@ class ConfigDialog(QtGui.QDialog):
                                              self.chatInputMiddleOption.objectName(), self.chatInputBottomOption.objectName(),
                                              self.chatInputFontButton.objectName(), self.chatFontLabel.objectName(),
                                              self.chatInputColourButton.objectName()]
+        # Output
+        self.chatOutputGroup = QtGui.QGroupBox(u"Chat message output")
+        self.chatOutputLayout = QtGui.QGridLayout()
+        self.chatLayout.addWidget(self.chatOutputGroup)
+        self.chatOutputGroup.setLayout(self.chatOutputLayout)
+        self.chatOutputEnabledCheckbox = QCheckBox("Enable chat output in media player") # TODO: getMessage("chatoutputenabled-label")
+        self.chatOutputEnabledCheckbox.setObjectName("chatOutputEnabled")
+        self.chatOutputLayout.addWidget(self.chatOutputEnabledCheckbox, 1, 0, 1,1, Qt.AlignLeft)
 
+        self.outputFontLayout = QtGui.QHBoxLayout()
+        self.outputFontLayout.setContentsMargins(0, 0, 0, 0)
+        self.outputFontFrame = QtGui.QFrame()
+        self.outputFontFrame.setLayout(self.outputFontLayout)
+        self.outputFontFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.chatOutputFontLabel = QLabel("Chat output font", self)# TODO: getMessage("chatoutputfont-label")
+        self.chatOutputFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatOutputFontLabel.setObjectName("font-output-label")
+        self.chatOutputFontButton = QtGui.QPushButton(getMessage("chatfont-label"))
+        self.chatOutputFontButton.setObjectName("set-output-font")
+        self.chatOutputFontButtonGroup = QtGui.QButtonGroup()
+        self.chatOutputFontButtonGroup.addButton(self.chatOutputFontButton)
+        self.chatOutputFontButton.released.connect(lambda: self.fontDialog("chatOutput"))
+        self.chatOutputColourButton = QtGui.QPushButton(getMessage("chatcolour-label"))
+        self.outputFontLayout.addWidget(self.chatOutputFontLabel, Qt.AlignLeft)
+        self.outputFontLayout.addWidget(self.chatOutputFontButton, Qt.AlignLeft)
+        self.chatOutputLayout.addWidget(self.outputFontFrame, 2, 0, 1, 3, Qt.AlignLeft)
 
+        self.chatOutputModeLabel = QLabel("Output mode", self) # TODO: getMessage("chatoutputposition-label")
+        self.chatOutputModeLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatOutputModeGroup = QButtonGroup()
+        self.chatOutputChatroomOption = QRadioButton("Chatroom style") # TODO: Messages.py
+        self.chatOutputScrollingOption = QRadioButton("Scrolling style") # TODO: Messages.py
+        self.chatOutputModeGroup.addButton(self.chatOutputChatroomOption)
+        self.chatOutputModeGroup.addButton(self.chatOutputScrollingOption)
 
+        self.chatOutputModeLabel.setObjectName("chatoutputmode")
+        self.chatOutputChatroomOption.setObjectName("chatoutputmode-chatroom" + constants.CONFIG_NAME_MARKER + "chatOutputMode" + constants.CONFIG_VALUE_MARKER + constants.CHATROOM_MODE)
+        self.chatOutputScrollingOption.setObjectName("chatoutputmode-scrolling" + constants.CONFIG_NAME_MARKER + "chatOutputMode" + constants.CONFIG_VALUE_MARKER + constants.SCROLLING_MODE)
+
+        self.chatOutputLayout.addWidget(self.chatOutputModeLabel, 3, 0)
+        self.chatOutputLayout.addWidget(self.chatOutputChatroomOption, 3, 1, Qt.AlignLeft)
+        self.chatOutputLayout.addWidget(self.chatOutputScrollingOption, 3, 2, Qt.AlignLeft)
+
+        self.subitems['chatOutputEnabled'] = [self.chatOutputModeLabel.objectName(), self.chatOutputChatroomOption.objectName(),
+                                             self.chatOutputScrollingOption.objectName(),self.chatOutputFontButton.objectName(),
+                                              self.chatOutputFontLabel.objectName()]
         # chatFrame
         self.chatFrame.setLayout(self.chatLayout)
         self.stackedLayout.addWidget(self.chatFrame)

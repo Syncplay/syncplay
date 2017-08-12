@@ -18,6 +18,13 @@ local MOOD_NEUTRAL = 0
 local MOOD_BAD = 1
 local MOOD_GOOD = 2
 
+local ALPHA_WARNING_TEXT_COLOUR = "FF00FF" -- RBG
+local HINT_TEXT_COLOUR = "00FFFF" -- RBG
+local NEUTRAL_ALERT_TEXT_COLOUR = "FFFFFF" -- RBG
+local BAD_ALERT_TEXT_COLOUR = "0000FF"  -- RBG
+local GOOD_ALERT_TEXT_COLOUR = "00FF00" -- RBG
+local NOTIFICATION_TEXT_COLOUR = "FFFF00" -- RBG
+
 local chat_log = {}
 
 local assdraw = require "mp.assdraw"
@@ -108,7 +115,7 @@ function chat_update()
 
     if use_alpha_rows_for_chat == false and opts['chatDirectInput'] == true then
         local alphawarning_ass = assdraw.ass_new()
-        alphawarning_ass = "{\\a6}You can temporarily use old mpv bindings with a-z keys.\n{\\a6}Press [TAB] to return to Syncplay chat mode." -- TODO: Move message to messages.py
+        alphawarning_ass = "{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}You can temporarily use old mpv bindings with a-z keys.\n{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}Press [TAB] to return to Syncplay chat mode." -- TODO: Move message to messages.py
         ass:append(alphawarning_ass)
     else
         ass:append(chat_ass)
@@ -125,11 +132,13 @@ function process_alert_osd()
         local ypos
         local messageColour
         if alert_osd_mood == MOOD_NEUTRAL then
-            messageColour = "{\\1c&HFFFFFF}"
+
+
+            messageColour = "{\\1c&H"..NEUTRAL_ALERT_TEXT_COLOUR.."}"
         elseif alert_osd_mood == MOOD_BAD then
-            messageColour = "{\\1c&H0000FF}"
+            messageColour = "{\\1c&H"..BAD_ALERT_TEXT_COLOUR.."}"
         elseif alert_osd_mood == MOOD_GOOD then
-            messageColour = "{\\1c&H00FF00}"
+            messageColour = "{\\1c&H"..GOOD_ALERT_TEXT_COLOUR.."}"
         end
         local messageString
         local startRow = 0
@@ -156,7 +165,7 @@ function process_notification_osd(startRow)
     if notification_osd ~= "" and mp.get_time() - last_notification_osd_time < opts['alertTimeout'] and last_notification_osd_time ~= nil then
         local xpos = opts['chatLeftMargin']
         local messageColour
-        messageColour = "{\\1c&HFFFF00}"
+        messageColour = "{\\1c&H"..NOTIFICATION_TEXT_COLOUR.."}"
         local messageString
         local startRow = startRow
         local stringLeftToProccess = notification_osd
@@ -326,7 +335,7 @@ opts = {
 	['chatInputPosition'] = "Top",
 	['MaxChatMessageLength'] = 50,
     ['chatSplitMessageAt'] = 70,
-	['chatOutputFontFamily'] = 'sans serif',
+	['chatOutputFontFamily'] = "sans serif",
 	['chatOutputFontSize'] = 50,
 	['chatOutputFontWeight'] = 1,
 	['chatOutputFontUnderline'] = false,
@@ -337,7 +346,6 @@ opts = {
     ['chatMaxLines'] = 7,
     ['chatTopMargin'] = 25,
     ['chatLeftMargin'] = 20,
-    ['chatBottomMargin'] = 30,
     ['chatDirectInput'] = true,
     --
     ['notificationTimeout'] = 3,
@@ -444,7 +452,7 @@ function input_ass()
     end
 
 	local osd_help_message = "[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. This hint disappears after you send a message." -- TODO: Move message to messages.py
-	local help_prompt = '\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatInputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/2) .. '}' .. osd_help_message -- TODO: Move message to messages.py
+	local help_prompt = '\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatOutputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/1.25) .. '\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message -- TODO: Move message to messages.py
 	if key_hints_enabled == false then help_prompt = "" end
 	return "{\\an"..alignment.."}{\\pos("..position..")}"..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker..help_prompt
 
