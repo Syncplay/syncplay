@@ -93,7 +93,6 @@ de = {
     "language-changed-msgbox-label" : u"Die Sprache wird geändert, wenn du Syncplay neu startest.",
     "promptforupdate-label" : u"Soll Syncplay regelmäßig nach Updates suchen?",
 
-    "vlc-version-mismatch": u"This version of VLC does not support Syncplay. VLC {}+ supports Syncplay but VLC 3 does not. Please use an alternative media player.", # VLC min version # TODO: Translate
     "vlc-interface-version-mismatch": u"Du nutzt Version {} des VLC-Syncplay Interface-Moduls, Syncplay benötigt aber mindestens Version {}. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du Details zur Installation des syncplay.lua-Skripts.",  # VLC interface version, VLC interface min version
     "vlc-interface-oldversion-warning": u"Warnung: Es ist eine alte Version des Syncplay Interface-Moduls für VLC im VLC-Verzeichnis installiert. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du Details zur Installation des syncplay.lua-Skripts.",
     "vlc-interface-not-installed": u"Warnung: Es wurde kein Syncplay Interface-Modul für VLC im VLC-Verzeichnis gefunden. Daher wird, wenn du VLC 2.0 nutzt, die syncplay.lua die mit Syncplay mitgeliefert wurde, verwendet. Dies bedeutet allerdings, dass keine anderen Interface-Skripts und Erweiterungen geladen werden. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du  Details zur Installation des syncplay.lua-Skripts.",
@@ -132,7 +131,6 @@ de = {
     "vlc-failed-connection": u"Kann nicht zu VLC verbinden. Wenn du syncplay.lua nicht installiert hast, findest du auf http://syncplay.pl/LUA/ [Englisch] eine Anleitung.",
     "vlc-failed-noscript": u"Laut VLC ist das syncplay.lua Interface-Skript nicht installiert. Auf http://syncplay.pl/LUA/ [Englisch] findest du eine Anleitung.",
     "vlc-failed-versioncheck": u"Diese VLC-Version wird von Syncplay nicht unterstützt. Bitte nutze VLC 2.0",
-    "vlc-failed-other" : u"Beim Laden des syncplay.lua Interface-Skripts durch VLC trat folgender Fehler auf: {}",  # Syncplay Error
 
     "feature-sharedPlaylists": u"shared playlists",  # used for not-supported-by-server-error # TODO: Translate
     "feature-chat": u"chat",  # used for not-supported-by-server-error # TODO: Translate
@@ -254,6 +252,10 @@ de = {
     "chatoutputposition-label": u"Output mode",  # TODO: Translate
     "chat-chatroom-option": u"Chatroom style",  # TODO: Translate
     "chat-scrolling-option": u"Scrolling style",  # TODO: Translate
+
+    "mpv-key-hint": u"[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. This hint disappears after you send a message.",# TODO: Translate
+    "alphakey-mode-warning-first-line": u"You can temporarily use old mpv bindings with a-z keys.",  # TODO: Translate
+    "alphakey-mode-warning-second-line": u"Press [TAB] to return to Syncplay chat mode.",  # TODO: Translate
 
     "help-label" : u"Hilfe",
     "reset-label" : u"Standardwerte zurücksetzen",
@@ -378,6 +380,7 @@ de = {
     "chatinputposition-top-tooltip": u"Place chat input at top of mpv window.", # TODO: Translate
     "chatinputposition-middle-tooltip": u"Place chat input in dead centre of mpv window.", # TODO: Translate
     "chatinputposition-bottom-tooltip": u"Place chat input at bottom of mpv window.", # TODO: Translate
+    "chatoutputenabled-tooltip": u"Show chat messages in OSD (if supported by media player).", # TODO: Translate
     "font-output-label-tooltip": u"Chat output font.", # TODO: Translate
     "set-output-font-tooltip": u"Font used for when displaying chat messages.", # TODO: Translate
     "chatoutputmode-tooltip": u"How chat messages are displayed.", # TODO: Translate
@@ -446,6 +449,7 @@ de = {
     "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",
     "editplaylist-menu-label": u"Edit playlist",
 
+    "open-containing-folder": u"Open folder containing this file",
     "addusersfiletoplaylist-menu-label" : u"Add {} file to playlist", # item owner indicator
     "addusersstreamstoplaylist-menu-label" : u"Add {} stream to playlist", # item owner indicator
     "openusersstream-menu-label" : u"Open {} stream", # [username]'s

@@ -93,7 +93,6 @@ ru = {
     "language-changed-msgbox-label" : u"Язык переключится при следующем запуске Syncplay.",
     "promptforupdate-label" : u"Вы не против, если Syncplay будет автоматически изредка проверять наличие обновлений?",
 
-    "vlc-version-mismatch": u"Syncplay не поддерживает данную версию VLC. Syncplay поддерживает VLC {}+, но не VLC 3. Используйте другой проигрыватель.", # VLC min version
     "vlc-interface-version-mismatch" : u"Вы используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",  # VLC interface version, VLC interface min version
     "vlc-interface-oldversion-warning" : u"Внимание: Syncplay обнаружил, что старая версия модуля интерфейса Syncplay для VLC уже установлена в директорию VLC. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
     "vlc-interface-not-installed" : u"Внимание: Модуль интерфейса Syncplay для VLC не обнаружен в директории VLC. По существу, если Вы используете VLC 2.0, то VLC будет использовать модуль syncplay.lua из директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
@@ -132,7 +131,6 @@ ru = {
     "vlc-failed-connection" : u"Ошибка подключения к VLC. Если у Вас не установлен syncplay.lua, то обратитесь к http://syncplay.pl/LUA/ за инструкциями.",
     "vlc-failed-noscript" : u"VLC сообщает, что скрипт интерфейса syncplay.lua не установлен. Пожалуйста, обратитесь к http://syncplay.pl/LUA/ за инструкциями.",
     "vlc-failed-versioncheck" : u"Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
-    "vlc-failed-other" : u"Во время загрузки скрипта интерфейса syncplay.lua в VLC произошла следующая ошибка: {}",  # Syncplay Error
 
     "feature-sharedPlaylists": u"shared playlists",  # used for not-supported-by-server-error # TODO: Translate
     "feature-chat": u"chat",  # used for not-supported-by-server-error # TODO: Translate
@@ -258,6 +256,10 @@ ru = {
     "chat-chatroom-option": u"Chatroom style", # TODO: Translate
     "chat-scrolling-option": u"Scrolling style", # TODO: Translate
 
+    "mpv-key-hint": u"[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. This hint disappears after you send a message.", # TODO: Translate
+    "alphakey-mode-warning-first-line": u"You can temporarily use old mpv bindings with a-z keys.", # TODO: Translate
+    "alphakey-mode-warning-second-line": u"Press [TAB] to return to Syncplay chat mode.", # TODO: Translate
+
     "help-label" : u"Помощь",
     "reset-label" : u"Сброс настроек",
     "run-label" : u"Запустить",
@@ -378,6 +380,7 @@ ru = {
     "chatinputposition-top-tooltip": u"Place chat input at top of mpv window.",  # TODO: Translate
     "chatinputposition-middle-tooltip": u"Place chat input in dead centre of mpv window.",  # TODO: Translate
     "chatinputposition-bottom-tooltip": u"Place chat input at bottom of mpv window.",  # TODO: Translate
+    "chatoutputenabled-tooltip": u"Show chat messages in OSD (if supported by media player).",  # TODO: Translate
     "font-output-label-tooltip": u"Chat output font.",  # TODO: Translate
     "set-output-font-tooltip": u"Font used for when displaying chat messages.",  # TODO: Translate
     "chatoutputmode-tooltip": u"How chat messages are displayed.",  # TODO: Translate
@@ -445,6 +448,7 @@ ru = {
     "addurlstoplaylist-menu-label" : u"Добавить ссылку в очередь",
     "editplaylist-menu-label": u"Редактировать список",
 
+    "open-containing-folder": u"Open folder containing this file", # TODO: Traslate
     "addusersfiletoplaylist-menu-label" : u"Добавить файл {} в список воспроизведения", # item owner indicator
     "addusersstreamstoplaylist-menu-label" : u"Добавить поток {} в список воспроизведения", # item owner indicator
     "openusersstream-menu-label" : u"Открыть поток от {}", # [username]'s

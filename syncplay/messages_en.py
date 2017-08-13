@@ -379,7 +379,7 @@ en = {
     "chatinputposition-top-tooltip" : u"Place chat input at top of mpv window.",
     "chatinputposition-middle-tooltip" : u"Place chat input in dead centre of mpv window.",
     "chatinputposition-bottom-tooltip" : u"Place chat input at bottom of mpv window.",
-    "chatoutputenabled-tooltip": u"Show chat messages in mpv.",
+    "chatoutputenabled-tooltip": u"Show chat messages in OSD (if supported by media player).",
     "font-output-label-tooltip": u"Chat output font.",
     "set-output-font-tooltip": u"Font used for when displaying chat messages.",
     "chatoutputmode-tooltip": u"How chat messages are displayed.",

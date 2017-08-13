@@ -667,7 +667,7 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/email_go.png',
      'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
     ]
-resources = ["resources/icon.ico", "resources/syncplay.png"]
+resources = ["resources/icon.ico", "resources/syncplay.png", "resources/syncplayintf.lua"]
 resources.extend(guiIcons)
 intf_resources = ["resources/lua/intf/syncplay.lua"]
 
