@@ -249,6 +249,11 @@ de = {
     "chat-top-option": u"Top", # TODO: Translate
     "chat-middle-option": u"Middle", # TODO: Translate
     "chat-bottom-option": u"Bottom", # TODO: Translate
+    "chatoutputfont-label": u"Chat output font",  # TODO: Translate
+    "chatoutputenabled-label": u"Enable chat output in media player (mpv only for now)",  # TODO: Translate
+    "chatoutputposition-label": u"Output mode",  # TODO: Translate
+    "chat-chatroom-option": u"Chatroom style",  # TODO: Translate
+    "chat-scrolling-option": u"Scrolling style",  # TODO: Translate
 
     "help-label" : u"Hilfe",
     "reset-label" : u"Standardwerte zurücksetzen",
@@ -373,6 +378,11 @@ de = {
     "chatinputposition-top-tooltip": u"Place chat input at top of mpv window.", # TODO: Translate
     "chatinputposition-middle-tooltip": u"Place chat input in dead centre of mpv window.", # TODO: Translate
     "chatinputposition-bottom-tooltip": u"Place chat input at bottom of mpv window.", # TODO: Translate
+    "font-output-label-tooltip": u"Chat output font.", # TODO: Translate
+    "set-output-font-tooltip": u"Font used for when displaying chat messages.", # TODO: Translate
+    "chatoutputmode-tooltip": u"How chat messages are displayed.", # TODO: Translate
+    "chatoutputmode-chatroom-tooltip": u"Display new lines of chat directly below previous line.", # TODO: Translate
+    "chatoutputmode-scrolling-tooltip": u"Scroll chat text from right to left.", # TODO: Translate
 
     "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
     "reset-tooltip" : u"Alle Einstellungen auf Standardwerte zurücksetzen.",

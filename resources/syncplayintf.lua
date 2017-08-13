@@ -115,7 +115,7 @@ function chat_update()
 
     if use_alpha_rows_for_chat == false and opts['chatDirectInput'] == true then
         local alphawarning_ass = assdraw.ass_new()
-        alphawarning_ass = "{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}You can temporarily use old mpv bindings with a-z keys.\n{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}Press [TAB] to return to Syncplay chat mode." -- TODO: Move message to messages.py
+        alphawarning_ass = "{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-first-line'].."\n{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-second-line']
         ass:append(alphawarning_ass)
     else
         ass:append(chat_ass)
@@ -351,6 +351,10 @@ opts = {
     ['notificationTimeout'] = 3,
     ['alertTimeout'] = 5,
     ['chatTimeout'] = 7,
+    --Lang:
+    ['mpv-key-hint'] = "[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. This hint disappears after you send a message.",
+    ['alphakey-mode-warning-first-line'] = "You can temporarily use old mpv bindings with a-z keys.",
+    ['alphakey-mode-warning-second-line'] = "Press [TAB] to return to Syncplay chat mode.",
 }
 
 function detect_platform()
@@ -451,8 +455,8 @@ function input_ass()
         secondary_pos = "10,"..tostring(CANVAS_HEIGHT-(20+opts['chatInputFontSize']))
     end
 
-	local osd_help_message = "[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. This hint disappears after you send a message." -- TODO: Move message to messages.py
-	local help_prompt = '\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatOutputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/1.25) .. '\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message -- TODO: Move message to messages.py
+	local osd_help_message = opts['mpv-key-hint']
+	local help_prompt = '\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatOutputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/1.25) .. '\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message
 	if key_hints_enabled == false then help_prompt = "" end
 	return "{\\an"..alignment.."}{\\pos("..position..")}"..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker..help_prompt
 
@@ -867,7 +871,7 @@ mp.command('print-text "<get_syncplayintf_options>"')
 
 function set_syncplayintf_options(input)
 	---mp.command('print-text "<chat>...'..input..'</chat>"')
-	for option, value in string.gmatch(input, "([^ ,=]+)=([^[,]+)") do
+	for option, value in string.gmatch(input, "([^ ,=]+)=([^,]+)") do
 		local valueType = type(opts[option])
 		if valueType == "number" then
 			value = tonumber(value)
@@ -879,7 +883,7 @@ function set_syncplayintf_options(input)
 			end
 		end
 		opts[option] = value
-		---mp.command('print-text "<chat>'..option.."="..tostring(value).." - "..valueType..'</chat>"')
+		--mp.command('print-text "<chat>'..option.."="..tostring(value).." - "..valueType..'</chat>"')
     end
     chat_format = get_output_style()
     local vertical_output_area = CANVAS_HEIGHT-(opts['chatTopMargin']+opts['chatBottomMargin'])

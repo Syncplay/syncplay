@@ -252,6 +252,11 @@ ru = {
     "chat-top-option": u"Top",  # TODO: Translate
     "chat-middle-option": u"Middle",  # TODO: Translate
     "chat-bottom-option": u"Bottom",  # TODO: Translate
+    "chatoutputfont-label": u"Chat output font", # TODO: Translate
+    "chatoutputenabled-label": u"Enable chat output in media player (mpv only for now)", # TODO: Translate
+    "chatoutputposition-label": u"Output mode", # TODO: Translate
+    "chat-chatroom-option": u"Chatroom style", # TODO: Translate
+    "chat-scrolling-option": u"Scrolling style", # TODO: Translate
 
     "help-label" : u"Помощь",
     "reset-label" : u"Сброс настроек",
@@ -364,6 +369,20 @@ ru = {
     "unpause-ifothersready-tooltip" : u"Когда вы стартуете не готовым, воспроизведение начнется, если остальные готовы.",
     "unpause-ifminusersready-tooltip" : u"Когда вы стартуете не готовым, воспроизведение начнется, если остальные готовы и присутствует достаточное число зрителей.",
     "trusteddomains-arguments-tooltip" : u"Сайты, которые разрешены для автоматического воспроизведения из общего списка воспроизведения.",
+
+    "chatinputenabled-tooltip": u"Enable chat input in mpv (press enter to chat, enter to send, escape to cancel)",# TODO: Translate
+    "font-label-tooltip": u"Font used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",# TODO: Translate
+    "set-input-font-tooltip": u"Font family used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",# TODO: Translate
+    "set-input-colour-tooltip": u"Font colour used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",# TODO: Translate
+    "chatinputposition-tooltip": u"Location in mpv where chat input text will appear when you press enter and type.",# TODO: Translate
+    "chatinputposition-top-tooltip": u"Place chat input at top of mpv window.",  # TODO: Translate
+    "chatinputposition-middle-tooltip": u"Place chat input in dead centre of mpv window.",  # TODO: Translate
+    "chatinputposition-bottom-tooltip": u"Place chat input at bottom of mpv window.",  # TODO: Translate
+    "font-output-label-tooltip": u"Chat output font.",  # TODO: Translate
+    "set-output-font-tooltip": u"Font used for when displaying chat messages.",  # TODO: Translate
+    "chatoutputmode-tooltip": u"How chat messages are displayed.",  # TODO: Translate
+    "chatoutputmode-chatroom-tooltip": u"Display new lines of chat directly below previous line.",  # TODO: Translate
+    "chatoutputmode-scrolling-tooltip": u"Scroll chat text from right to left.",  # TODO: Translate
 
     "help-tooltip" : u"Открыть Руководство Пользователя на Syncplay.pl.",
     "reset-tooltip" : u"Сбрасывает все настройки Syncplay в начальное состояние.",

@@ -238,6 +238,8 @@ class NewMpvPlayer(OldMpvPlayer):
                 options.append(u"{}={}".format(option,self._client._config[option]))
             for option in constants.MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND:
                 options.append(option)
+            for option in constants.MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND:
+                options.append(u"{}={}".format(option,getMessage(option)))
             options_string = ", ".join(options)
             self._listener.sendLine(u'script-message-to syncplayintf set_syncplayintf_options "{}"'.format(options_string))
 

@@ -240,7 +240,7 @@ en = {
     "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)",
     
     "chat-title" : u"Chat message input",
-    "chatinputenabled-label" : u"Enable chat input via mpv (using enter key)",
+    "chatinputenabled-label" : u"Enable chat input via mpv",
     "chatinputfont-label" : u"Chat input font",
     "chatfont-label" : u"Set font",
     "chatcolour-label" : u"Set colour",
@@ -248,6 +248,15 @@ en = {
     "chat-top-option" : u"Top",
     "chat-middle-option" : u"Middle",
     "chat-bottom-option" : u"Bottom",
+    "chatoutputfont-label": u"Chat output font",
+    "chatoutputenabled-label": u"Enable chat output in media player (mpv only for now)",
+    "chatoutputposition-label": u"Output mode",
+    "chat-chatroom-option": u"Chatroom style",
+    "chat-scrolling-option": u"Scrolling style",
+
+    "mpv-key-hint": u"[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. This hint disappears after you send a message.",
+    "alphakey-mode-warning-first-line": u"You can temporarily use old mpv bindings with a-z keys.",
+    "alphakey-mode-warning-second-line": u"Press [TAB] to return to Syncplay chat mode.",
 
     "help-label" : "Help",
     "reset-label" : "Restore defaults",
@@ -370,6 +379,12 @@ en = {
     "chatinputposition-top-tooltip" : u"Place chat input at top of mpv window.",
     "chatinputposition-middle-tooltip" : u"Place chat input in dead centre of mpv window.",
     "chatinputposition-bottom-tooltip" : u"Place chat input at bottom of mpv window.",
+    "chatoutputenabled-tooltip": u"Show chat messages in mpv.",
+    "font-output-label-tooltip": u"Chat output font.",
+    "set-output-font-tooltip": u"Font used for when displaying chat messages.",
+    "chatoutputmode-tooltip": u"How chat messages are displayed.",
+    "chatoutputmode-chatroom-tooltip": u"Display new lines of chat directly below previous line.",
+    "chatoutputmode-scrolling-tooltip": u"Scroll chat text from right to left.",
 
     "help-tooltip" : "Opens the Syncplay.pl user guide.",
     "reset-tooltip" : "Reset all settings to the default configuration.",

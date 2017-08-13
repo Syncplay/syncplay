@@ -859,7 +859,12 @@ class ConfigDialog(QtGui.QDialog):
         self.inputFontLayout.addWidget(self.chatInputFontButton, Qt.AlignLeft)
         self.inputFontLayout.addWidget(self.chatInputColourButton, Qt.AlignLeft)
         self.chatInputLayout.addWidget(self.inputFontFrame, 2, 0, 1, 3, Qt.AlignLeft)
-
+        
+        self.chatInputPositionFrame = QtGui.QFrame()
+        self.chatInputPositionLayout = QtGui.QHBoxLayout()
+        self.chatInputPositionLayout.setContentsMargins(0, 0, 0, 0)
+        self.chatInputPositionFrame.setLayout(self.chatInputPositionLayout)
+        self.chatInputPositionFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.chatInputPositionLabel = QLabel(getMessage("chatinputposition-label"), self)
         self.chatInputPositionLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.chatInputPositionGroup = QButtonGroup()
@@ -875,10 +880,11 @@ class ConfigDialog(QtGui.QDialog):
         self.chatInputMiddleOption.setObjectName("chatinputposition-middle" + constants.CONFIG_NAME_MARKER + "chatInputPosition" + constants.CONFIG_VALUE_MARKER + constants.INPUT_POSITION_MIDDLE)
         self.chatInputBottomOption.setObjectName("chatinputposition-bottom" + constants.CONFIG_NAME_MARKER + "chatInputPosition" + constants.CONFIG_VALUE_MARKER + constants.INPUT_POSITION_BOTTOM)
 
-        self.chatInputLayout.addWidget(self.chatInputPositionLabel, 3, 0)
-        self.chatInputLayout.addWidget(self.chatInputTopOption, 3, 1, Qt.AlignLeft)
-        self.chatInputLayout.addWidget(self.chatInputMiddleOption, 3, 2, Qt.AlignLeft)
-        self.chatInputLayout.addWidget(self.chatInputBottomOption, 3, 3, Qt.AlignLeft)
+        self.chatInputPositionLayout.addWidget(self.chatInputPositionLabel)
+        self.chatInputPositionLayout.addWidget(self.chatInputTopOption)
+        self.chatInputPositionLayout.addWidget(self.chatInputMiddleOption)
+        self.chatInputPositionLayout.addWidget(self.chatInputBottomOption)
+        self.chatInputLayout.addWidget(self.chatInputPositionFrame)
 
         self.subitems['chatInputEnabled'] = [self.chatInputPositionLabel.objectName(), self.chatInputTopOption.objectName(),
                                              self.chatInputMiddleOption.objectName(), self.chatInputBottomOption.objectName(),
@@ -889,7 +895,7 @@ class ConfigDialog(QtGui.QDialog):
         self.chatOutputLayout = QtGui.QGridLayout()
         self.chatLayout.addWidget(self.chatOutputGroup)
         self.chatOutputGroup.setLayout(self.chatOutputLayout)
-        self.chatOutputEnabledCheckbox = QCheckBox("Enable chat output in media player") # TODO: getMessage("chatoutputenabled-label")
+        self.chatOutputEnabledCheckbox = QCheckBox(getMessage("chatoutputenabled-label"))
         self.chatOutputEnabledCheckbox.setObjectName("chatOutputEnabled")
         self.chatOutputLayout.addWidget(self.chatOutputEnabledCheckbox, 1, 0, 1,1, Qt.AlignLeft)
 
@@ -898,7 +904,7 @@ class ConfigDialog(QtGui.QDialog):
         self.outputFontFrame = QtGui.QFrame()
         self.outputFontFrame.setLayout(self.outputFontLayout)
         self.outputFontFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.chatOutputFontLabel = QLabel("Chat output font", self)# TODO: getMessage("chatoutputfont-label")
+        self.chatOutputFontLabel = QLabel(getMessage("chatoutputfont-label"), self)
         self.chatOutputFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.chatOutputFontLabel.setObjectName("font-output-label")
         self.chatOutputFontButton = QtGui.QPushButton(getMessage("chatfont-label"))
@@ -911,11 +917,11 @@ class ConfigDialog(QtGui.QDialog):
         self.outputFontLayout.addWidget(self.chatOutputFontButton, Qt.AlignLeft)
         self.chatOutputLayout.addWidget(self.outputFontFrame, 2, 0, 1, 3, Qt.AlignLeft)
 
-        self.chatOutputModeLabel = QLabel("Output mode", self) # TODO: getMessage("chatoutputposition-label")
+        self.chatOutputModeLabel = QLabel(getMessage("chatoutputposition-label"), self)
         self.chatOutputModeLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.chatOutputModeGroup = QButtonGroup()
-        self.chatOutputChatroomOption = QRadioButton("Chatroom style") # TODO: Messages.py
-        self.chatOutputScrollingOption = QRadioButton("Scrolling style") # TODO: Messages.py
+        self.chatOutputChatroomOption = QRadioButton(getMessage("chat-chatroom-option"))
+        self.chatOutputScrollingOption = QRadioButton(getMessage("chat-scrolling-option"))
         self.chatOutputModeGroup.addButton(self.chatOutputChatroomOption)
         self.chatOutputModeGroup.addButton(self.chatOutputScrollingOption)
 
@@ -923,9 +929,15 @@ class ConfigDialog(QtGui.QDialog):
         self.chatOutputChatroomOption.setObjectName("chatoutputmode-chatroom" + constants.CONFIG_NAME_MARKER + "chatOutputMode" + constants.CONFIG_VALUE_MARKER + constants.CHATROOM_MODE)
         self.chatOutputScrollingOption.setObjectName("chatoutputmode-scrolling" + constants.CONFIG_NAME_MARKER + "chatOutputMode" + constants.CONFIG_VALUE_MARKER + constants.SCROLLING_MODE)
 
-        self.chatOutputLayout.addWidget(self.chatOutputModeLabel, 3, 0)
-        self.chatOutputLayout.addWidget(self.chatOutputChatroomOption, 3, 1, Qt.AlignLeft)
-        self.chatOutputLayout.addWidget(self.chatOutputScrollingOption, 3, 2, Qt.AlignLeft)
+        self.chatOutputModeFrame = QtGui.QFrame()
+        self.chatOutputModeLayout = QtGui.QHBoxLayout()
+        self.chatOutputModeLayout.setContentsMargins(0, 0, 0, 0)
+        self.chatOutputModeFrame.setLayout(self.chatOutputModeLayout)
+        self.chatOutputModeFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.chatOutputModeLayout.addWidget(self.chatOutputModeLabel)
+        self.chatOutputModeLayout.addWidget(self.chatOutputChatroomOption)
+        self.chatOutputModeLayout.addWidget(self.chatOutputScrollingOption)
+        self.chatOutputLayout.addWidget(self.chatOutputModeFrame)
 
         self.subitems['chatOutputEnabled'] = [self.chatOutputModeLabel.objectName(), self.chatOutputChatroomOption.objectName(),
                                              self.chatOutputScrollingOption.objectName(),self.chatOutputFontButton.objectName(),

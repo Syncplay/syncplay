@@ -183,6 +183,7 @@ MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputFontFamily", "chatInputFontSize", 
                                     "notificationTimeout","alertTimeout","chatTimeout","chatOutputEnabled"]
 
 MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH)]
+MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
 VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
