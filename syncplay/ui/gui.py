@@ -1342,6 +1342,10 @@ class MainWindow(QtGui.QMainWindow):
         # Help menu
 
         window.helpMenu = QtGui.QMenu(getMessage("help-menu-label"), self)
+        if sys.platform.startswith('darwin'):
+            window.about = window.helpMenu.addAction("&About")
+            window.about.triggered.connect(self.openAbout)
+        
         window.userguideAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'),
                                                            getMessage("userguide-menu-label"))
         window.userguideAction.triggered.connect(self.openUserGuide)
@@ -1353,6 +1357,15 @@ class MainWindow(QtGui.QMainWindow):
         if not sys.platform.startswith('darwin'):
             window.mainLayout.setMenuBar(window.menuBar)
 
+    def openAbout(self):
+          AboutMsgBox = QtGui.QMessageBox.about(self,"Syncplay","Syncplay v" + version)
+          # AboutMsgBox = QtGui.QMessageBox()
+#           AboutMsgBox.setText("Test text")
+#           AboutMsgBox.setStandardButtons(0)
+#           AboutMsgBox.setModal(True)
+#           AboutMsgBox.exec_()
+          
+		 
     def addMainFrame(self, window):
         window.mainFrame = QtGui.QFrame()
         window.mainFrame.setLineWidth(0)
@@ -1618,7 +1631,10 @@ class MainWindow(QtGui.QMainWindow):
             self.resourcespath = utils.findWorkingDir() + u"\\resources\\"
         else:
             self.resourcespath = utils.findWorkingDir() + u"/resources/"
-        self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
+        if sys.platform.startswith('darwin'):
+            self.setWindowFlags(self.windowFlags())
+        else:
+            self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
         self.setWindowTitle("Syncplay v" + version)
         self.mainLayout = QtGui.QVBoxLayout()
         self.addTopLayout(self)
