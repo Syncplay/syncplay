@@ -401,15 +401,15 @@ class ConfigurationGetter(object):
         self._overrideConfigWithArgs(args)
         if not self._config['noGui']:
             try:
-                from PySide import QtGui  # @UnresolvedImport
-                from PySide.QtCore import QCoreApplication
-                from syncplay.vendor import qt4reactor
+                from PySide2 import QtWidgets
+                from PySide2.QtCore import QCoreApplication
+                from syncplay.vendor import qt5reactor
                 if QCoreApplication.instance() is None:
-                    self.app = QtGui.QApplication(sys.argv)
-                qt4reactor.install()
+                    self.app = QtWidgets.QApplication(sys.argv)
+                qt5reactor.install()
                 if sys.platform.startswith('darwin'):
                     import appnope
-                    appnope.nope()
+                    appnope.nope()                
             except ImportError:
                 print getMessage("unable-import-gui-error")
                 self._config['noGui'] = True

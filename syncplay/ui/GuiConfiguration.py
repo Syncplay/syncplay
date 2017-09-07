@@ -1,6 +1,7 @@
-from PySide import QtCore, QtGui
-from PySide.QtCore import QSettings, Qt, QCoreApplication, QUrl
-from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
+from PySide2 import QtCore, QtWidgets, QtGui
+from PySide2.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine
+from PySide2.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
+from PySide2.QtGui import QCursor, QIcon, QImage, QDesktopServices
 from syncplay.players.playerFactory import PlayerFactory
 from datetime import datetime
 from syncplay import utils
@@ -19,7 +20,7 @@ class GuiConfiguration:
 
     def run(self):
         if QCoreApplication.instance() is None:
-            self.app = QtGui.QApplication(sys.argv)
+            self.app = QtWidgets.QApplication(sys.argv)
         dialog = ConfigDialog(self.config, self._availablePlayerPaths, self.error, self.defaultConfig)
         dialog.exec_()
 
@@ -65,22 +66,22 @@ class GetPlayerIconThread(threading.Thread, QtCore.QObject):
             self.done.emit(iconpath, playerpath)
 
 
-class ConfigDialog(QtGui.QDialog):
+class ConfigDialog(QtWidgets.QDialog):
 
     pressedclosebutton = True
     moreToggling = False
 
     def automaticUpdatePromptCheck(self):
         if self.automaticupdatesCheckbox.checkState() == Qt.PartiallyChecked:
-            reply = QtGui.QMessageBox.question(self, "Syncplay",
-                    getMessage("promptforupdate-label"), QtGui.QMessageBox.StandardButton.Yes | QtGui.QMessageBox.StandardButton.No)
-            if reply == QtGui.QMessageBox.Yes:
+            reply = QtWidgets.QMessageBox.question(self, "Syncplay",
+                    getMessage("promptforupdate-label"), QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.Yes:
                 self.automaticupdatesCheckbox.setChecked(True)
             else:
                 self.automaticupdatesCheckbox.setChecked(False)
 
     def moreToggled(self):
-        self.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         if self.moreToggling == False:
             self.moreToggling = True
 
@@ -113,7 +114,7 @@ class ConfigDialog(QtGui.QDialog):
         self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
 
     def openHelp(self):
-        self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
+        self.QtWidgets.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
 
     def safenormcaseandpath(self, path):
         if utils.isURL(path):
@@ -210,10 +211,10 @@ class ConfigDialog(QtGui.QDialog):
 
     def languageChanged(self):
         setLanguage(unicode(self.languageCombobox.itemData(self.languageCombobox.currentIndex())))
-        QtGui.QMessageBox.information(self, "Syncplay", getMessage("language-changed-msgbox-label"))
+        QtWidgets.QMessageBox.information(self, "Syncplay", getMessage("language-changed-msgbox-label"))
 
     def browsePlayerpath(self):
-        options = QtGui.QFileDialog.Options()
+        options = QtWidgets.QFileDialog.Options()
         defaultdirectory = ""
         browserfilter = "All files (*)"
 
@@ -232,7 +233,7 @@ class ConfigDialog(QtGui.QDialog):
         elif "bsd" in sys.platform or sys.platform.startswith('dragonfly'):
             defaultdirectory = "/usr/local/bin"
 
-        fileName, filtr = QtGui.QFileDialog.getOpenFileName(self,
+        fileName, filtr = QtWidgets.QFileDialog.getOpenFileName(self,
                 "Browse for media player executable",
                 defaultdirectory,
                 browserfilter, "", options)
@@ -336,11 +337,11 @@ class ConfigDialog(QtGui.QDialog):
         self.hostCombobox.setEditText(currentServer)
 
     def showErrorMessage(self, errorMessage):
-        QtGui.QMessageBox.warning(self, "Syncplay", errorMessage)
+        QtWidgets.QMessageBox.warning(self, "Syncplay", errorMessage)
 
     def browseMediapath(self):
         self.loadMediaBrowseSettings()
-        options = QtGui.QFileDialog.Options()
+        options = QtWidgets.QFileDialog.Options()
         if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
             defaultdirectory = self.config["mediaSearchDirectories"][0]
         elif os.path.isdir(self.mediadirectory):
@@ -352,7 +353,7 @@ class ConfigDialog(QtGui.QDialog):
         else:
             defaultdirectory = ""
         browserfilter = "All files (*)"
-        fileName, filtr = QtGui.QFileDialog.getOpenFileName(self, "Browse for media files", defaultdirectory,
+        fileName, filtr = QtWidgets.QFileDialog.getOpenFileName(self, "Browse for media files", defaultdirectory,
                 browserfilter, "", options)
         if fileName:
             self.mediapathTextbox.setText(os.path.normpath(fileName))
@@ -508,9 +509,9 @@ class ConfigDialog(QtGui.QDialog):
         self.mediaSearchDirectories = self.config["mediaSearchDirectories"]
         self.trustedDomains = self.config["trustedDomains"]
 
-        self.connectionSettingsGroup = QtGui.QGroupBox(getMessage("connection-group-title"))
+        self.connectionSettingsGroup = QtWidgets.QGroupBox(getMessage("connection-group-title"))
         self.loadSavedPublicServerList()
-        self.hostCombobox = QtGui.QComboBox(self)
+        self.hostCombobox = QtWidgets.QComboBox(self)
         if self.publicServers:
             i = 0
             for publicServer in self.publicServers:
@@ -521,7 +522,7 @@ class ConfigDialog(QtGui.QDialog):
         self.hostCombobox.setEditText(host)
         self.hostCombobox.setFixedWidth(165)
         self.hostLabel = QLabel(getMessage("host-label"), self)
-        self.findServerButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'arrow_refresh.png'), getMessage("update-server-list-label"))
+        self.findServerButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'arrow_refresh.png'), getMessage("update-server-list-label"))
         self.findServerButton.clicked.connect(self.updateServerList)
         self.findServerButton.setToolTip(getMessage("update-server-list-tooltip"))
         self.usernameTextbox = QLineEdit(self)
@@ -545,7 +546,7 @@ class ConfigDialog(QtGui.QDialog):
         self.usernameTextbox.setMaxLength(constants.MAX_USERNAME_LENGTH)
         self.defaultroomTextbox.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
 
-        self.connectionSettingsLayout = QtGui.QGridLayout()
+        self.connectionSettingsLayout = QtWidgets.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
         self.connectionSettingsLayout.addWidget(self.hostCombobox, 0, 1)
         self.connectionSettingsLayout.addWidget(self.findServerButton, 0, 2)
@@ -562,11 +563,11 @@ class ConfigDialog(QtGui.QDialog):
         self.playerargsTextbox.textEdited.connect(self.changedPlayerArgs)
         self.playerargsLabel = QLabel(getMessage("player-arguments-label"), self)
 
-        self.mediaplayerSettingsGroup = QtGui.QGroupBox(getMessage("media-setting-title"))
+        self.mediaplayerSettingsGroup = QtWidgets.QGroupBox(getMessage("media-setting-title"))
         self.executableiconImage = QtGui.QImage()
         self.executableiconLabel = QLabel(self)
         self.executableiconLabel.setMinimumWidth(16)
-        self.executablepathCombobox = QtGui.QComboBox(self)
+        self.executablepathCombobox = QtWidgets.QComboBox(self)
         self.executablepathCombobox.setEditable(True)
         self.executablepathCombobox.currentIndexChanged.connect(self.updateExecutableIcon)
         self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'], playerpaths))
@@ -574,11 +575,11 @@ class ConfigDialog(QtGui.QDialog):
         self.executablepathCombobox.editTextChanged.connect(self.updateExecutableIcon)
 
         self.executablepathLabel = QLabel(getMessage("executable-path-label"), self)
-        self.executablebrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'), getMessage("browse-label"))
+        self.executablebrowseButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'), getMessage("browse-label"))
         self.executablebrowseButton.clicked.connect(self.browsePlayerpath)
         self.mediapathTextbox = QLineEdit(config['file'], self)
         self.mediapathLabel = QLabel(getMessage("media-path-label"), self)
-        self.mediabrowseButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'), getMessage("browse-label"))
+        self.mediabrowseButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'folder_explore.png'), getMessage("browse-label"))
         self.mediabrowseButton.clicked.connect(self.browseMediapath)
 
         self.executablepathLabel.setObjectName("executable-path")
@@ -588,7 +589,7 @@ class ConfigDialog(QtGui.QDialog):
         self.playerargsLabel.setObjectName("player-arguments")
         self.playerargsTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "player-arguments")
 
-        self.mediaplayerSettingsLayout = QtGui.QGridLayout()
+        self.mediaplayerSettingsLayout = QtWidgets.QGridLayout()
         self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
         self.mediaplayerSettingsLayout.addWidget(self.executableiconLabel, 0, 1)
         self.mediaplayerSettingsLayout.addWidget(self.executablepathCombobox, 0, 2)
@@ -603,8 +604,8 @@ class ConfigDialog(QtGui.QDialog):
         self.showmoreCheckbox = QCheckBox(getMessage("more-title"))
         self.showmoreCheckbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "more")
 
-        self.basicOptionsFrame = QtGui.QFrame()
-        self.basicOptionsLayout = QtGui.QVBoxLayout()
+        self.basicOptionsFrame = QtWidgets.QFrame()
+        self.basicOptionsLayout = QtWidgets.QVBoxLayout()
         if error:
             self.errorLabel = QLabel(self)
             if error[:1] != constants.ERROR_MESSAGE_MARKER:
@@ -620,19 +621,19 @@ class ConfigDialog(QtGui.QDialog):
         self.basicOptionsLayout.addWidget(self.connectionSettingsGroup)
         self.basicOptionsLayout.addSpacing(5)
         self.basicOptionsLayout.addWidget(self.mediaplayerSettingsGroup)
-        self.basicOptionsFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.basicOptionsFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.basicOptionsFrame.setLayout(self.basicOptionsLayout)
         self.stackedLayout.addWidget(self.basicOptionsFrame)
 
     def addReadinessTab(self):
-        self.readyFrame = QtGui.QFrame()
-        self.readyLayout = QtGui.QVBoxLayout()
+        self.readyFrame = QtWidgets.QFrame()
+        self.readyLayout = QtWidgets.QVBoxLayout()
         self.readyFrame.setLayout(self.readyLayout)
 
         # Initial state
 
-        self.readyInitialGroup = QtGui.QGroupBox(getMessage("readiness-title"))
-        self.readyInitialLayout = QtGui.QVBoxLayout()
+        self.readyInitialGroup = QtWidgets.QGroupBox(getMessage("readiness-title"))
+        self.readyInitialLayout = QtWidgets.QVBoxLayout()
         self.readyInitialGroup.setLayout(self.readyInitialLayout)
         self.readyatstartCheckbox = QCheckBox(getMessage("readyatstart-label"))
         self.readyatstartCheckbox.setObjectName("readyAtStart")
@@ -640,8 +641,8 @@ class ConfigDialog(QtGui.QDialog):
         self.readyLayout.addWidget(self.readyInitialGroup)
 
         # Automatically pausing
-        self.readyPauseGroup = QtGui.QGroupBox(getMessage("pausing-title"))
-        self.readyPauseLayout = QtGui.QVBoxLayout()
+        self.readyPauseGroup = QtWidgets.QGroupBox(getMessage("pausing-title"))
+        self.readyPauseLayout = QtWidgets.QVBoxLayout()
         self.readyPauseGroup.setLayout(self.readyPauseLayout)
         self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
         self.pauseonleaveCheckbox.setObjectName("pauseOnLeave")
@@ -649,8 +650,8 @@ class ConfigDialog(QtGui.QDialog):
         self.readyLayout.addWidget(self.readyPauseGroup)
 
         # Unpausing
-        self.readyUnpauseGroup = QtGui.QGroupBox(getMessage("unpause-title"))
-        self.readyUnpauseLayout = QtGui.QVBoxLayout()
+        self.readyUnpauseGroup = QtWidgets.QGroupBox(getMessage("unpause-title"))
+        self.readyUnpauseLayout = QtWidgets.QVBoxLayout()
         self.readyUnpauseGroup.setLayout(self.readyUnpauseLayout)
         self.readyUnpauseButtonGroup = QButtonGroup()
         self.unpauseIfAlreadyReadyOption = QRadioButton(getMessage("unpause-ifalreadyready-option"))
@@ -679,12 +680,12 @@ class ConfigDialog(QtGui.QDialog):
         self.stackedLayout.addWidget(self.readyFrame)
 
     def addMiscTab(self):
-        self.miscFrame = QtGui.QFrame()
-        self.miscLayout = QtGui.QVBoxLayout()
+        self.miscFrame = QtWidgets.QFrame()
+        self.miscLayout = QtWidgets.QVBoxLayout()
         self.miscFrame.setLayout(self.miscLayout)
 
-        self.coreSettingsGroup = QtGui.QGroupBox(getMessage("core-behaviour-title"))
-        self.coreSettingsLayout = QtGui.QGridLayout()
+        self.coreSettingsGroup = QtWidgets.QGroupBox(getMessage("core-behaviour-title"))
+        self.coreSettingsLayout = QtWidgets.QGridLayout()
         self.coreSettingsGroup.setLayout(self.coreSettingsLayout)
 
         ### Privacy:
@@ -727,8 +728,8 @@ class ConfigDialog(QtGui.QDialog):
 
         ## Syncplay internals
 
-        self.internalSettingsGroup = QtGui.QGroupBox(getMessage("syncplay-internals-title"))
-        self.internalSettingsLayout = QtGui.QVBoxLayout()
+        self.internalSettingsGroup = QtWidgets.QGroupBox(getMessage("syncplay-internals-title"))
+        self.internalSettingsLayout = QtWidgets.QVBoxLayout()
         self.internalSettingsGroup.setLayout(self.internalSettingsLayout)
 
         self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
@@ -741,13 +742,13 @@ class ConfigDialog(QtGui.QDialog):
 
         ## Media path directories
 
-        self.mediasearchSettingsGroup = QtGui.QGroupBox(getMessage("syncplay-mediasearchdirectories-title"))
-        self.mediasearchSettingsLayout = QtGui.QVBoxLayout()
+        self.mediasearchSettingsGroup = QtWidgets.QGroupBox(getMessage("syncplay-mediasearchdirectories-title"))
+        self.mediasearchSettingsLayout = QtWidgets.QVBoxLayout()
         self.mediasearchSettingsGroup.setLayout(self.mediasearchSettingsLayout)
 
         self.mediasearchTextEdit = QPlainTextEdit(utils.getListAsMultilineString(self.mediaSearchDirectories))
         self.mediasearchTextEdit.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "mediasearcdirectories-arguments")
-        self.mediasearchTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.mediasearchTextEdit.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
         self.mediasearchSettingsLayout.addWidget(self.mediasearchTextEdit)
         self.mediasearchSettingsGroup.setMaximumHeight(self.mediasearchSettingsGroup.minimumSizeHint().height())
 
@@ -758,12 +759,12 @@ class ConfigDialog(QtGui.QDialog):
         self.stackedLayout.addWidget(self.miscFrame)
 
     def addSyncTab(self):
-        self.syncSettingsFrame = QtGui.QFrame()
-        self.syncSettingsLayout = QtGui.QVBoxLayout()
+        self.syncSettingsFrame = QtWidgets.QFrame()
+        self.syncSettingsLayout = QtWidgets.QVBoxLayout()
 
-        self.desyncSettingsGroup = QtGui.QGroupBox(getMessage("sync-otherslagging-title"))
-        self.desyncOptionsFrame = QtGui.QFrame()
-        self.desyncSettingsOptionsLayout = QtGui.QHBoxLayout()
+        self.desyncSettingsGroup = QtWidgets.QGroupBox(getMessage("sync-otherslagging-title"))
+        self.desyncOptionsFrame = QtWidgets.QFrame()
+        self.desyncSettingsOptionsLayout = QtWidgets.QHBoxLayout()
         config = self.config
 
         self.slowdownCheckbox = QCheckBox(getMessage("slowondesync-label"))
@@ -773,9 +774,9 @@ class ConfigDialog(QtGui.QDialog):
         self.fastforwardCheckbox = QCheckBox(getMessage("fastforwardondesync-label"))
         self.fastforwardCheckbox.setObjectName("fastforwardOnDesync")
 
-        self.desyncSettingsLayout = QtGui.QGridLayout()
+        self.desyncSettingsLayout = QtWidgets.QGridLayout()
         self.desyncSettingsLayout.setSpacing(2)
-        self.desyncFrame = QtGui.QFrame()
+        self.desyncFrame = QtWidgets.QFrame()
         self.desyncFrame.setLineWidth(0)
         self.desyncFrame.setMidLineWidth(0)
 
@@ -788,9 +789,9 @@ class ConfigDialog(QtGui.QDialog):
 
         self.desyncFrame.setLayout(self.syncSettingsLayout)
 
-        self.othersyncSettingsGroup = QtGui.QGroupBox(getMessage("sync-youlaggging-title"))
-        self.othersyncOptionsFrame = QtGui.QFrame()
-        self.othersyncSettingsLayout = QtGui.QGridLayout()
+        self.othersyncSettingsGroup = QtWidgets.QGroupBox(getMessage("sync-youlaggging-title"))
+        self.othersyncOptionsFrame = QtWidgets.QFrame()
+        self.othersyncSettingsLayout = QtWidgets.QGridLayout()
 
         self.dontslowwithmeCheckbox = QCheckBox(getMessage("dontslowdownwithme-label"))
         self.dontslowwithmeCheckbox.setObjectName("dontSlowDownWithMe")
@@ -803,13 +804,13 @@ class ConfigDialog(QtGui.QDialog):
 
         ## Trusted domains
 
-        self.trusteddomainsSettingsGroup = QtGui.QGroupBox(getMessage("syncplay-trusteddomains-title"))
-        self.trusteddomainsSettingsLayout = QtGui.QVBoxLayout()
+        self.trusteddomainsSettingsGroup = QtWidgets.QGroupBox(getMessage("syncplay-trusteddomains-title"))
+        self.trusteddomainsSettingsLayout = QtWidgets.QVBoxLayout()
         self.trusteddomainsSettingsGroup.setLayout(self.trusteddomainsSettingsLayout)
 
         self.trusteddomainsTextEdit = QPlainTextEdit(utils.getListAsMultilineString(self.trustedDomains))
         self.trusteddomainsTextEdit.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "trusteddomains-arguments")
-        self.trusteddomainsTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.trusteddomainsTextEdit.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
         self.trusteddomainsSettingsLayout.addWidget(self.trusteddomainsTextEdit)
         self.trusteddomainsSettingsGroup.setMaximumHeight(self.trusteddomainsSettingsGroup.minimumSizeHint().height())
 
@@ -824,14 +825,14 @@ class ConfigDialog(QtGui.QDialog):
         self.stackedLayout.addWidget(self.syncSettingsFrame)
 
     def addMessageTab(self):
-        self.messageFrame = QtGui.QFrame()
-        self.messageLayout = QtGui.QVBoxLayout()
+        self.messageFrame = QtWidgets.QFrame()
+        self.messageLayout = QtWidgets.QVBoxLayout()
         self.messageLayout.setAlignment(Qt.AlignTop)
 
         # OSD
-        self.osdSettingsGroup = QtGui.QGroupBox(getMessage("messages-osd-title"))
-        self.osdSettingsLayout = QtGui.QVBoxLayout()
-        self.osdSettingsFrame = QtGui.QFrame()
+        self.osdSettingsGroup = QtWidgets.QGroupBox(getMessage("messages-osd-title"))
+        self.osdSettingsLayout = QtWidgets.QVBoxLayout()
+        self.osdSettingsFrame = QtWidgets.QFrame()
 
         self.showOSDCheckbox = QCheckBox(getMessage("showosd-label"))
         self.showOSDCheckbox.setObjectName("showOSD")
@@ -871,23 +872,23 @@ class ConfigDialog(QtGui.QDialog):
 
         # Other display
 
-        self.displaySettingsGroup = QtGui.QGroupBox(getMessage("messages-other-title"))
-        self.displaySettingsLayout = QtGui.QVBoxLayout()
+        self.displaySettingsGroup = QtWidgets.QGroupBox(getMessage("messages-other-title"))
+        self.displaySettingsLayout = QtWidgets.QVBoxLayout()
         self.displaySettingsLayout.setAlignment(Qt.AlignTop & Qt.AlignLeft)
-        self.displaySettingsFrame = QtGui.QFrame()
+        self.displaySettingsFrame = QtWidgets.QFrame()
 
         self.showDurationNotificationCheckbox = QCheckBox(getMessage("showdurationnotification-label"))
         self.showDurationNotificationCheckbox.setObjectName("showDurationNotification")
         self.displaySettingsLayout.addWidget(self.showDurationNotificationCheckbox)
 
-        self.languageFrame = QtGui.QFrame()
-        self.languageLayout = QtGui.QHBoxLayout()
+        self.languageFrame = QtWidgets.QFrame()
+        self.languageLayout = QtWidgets.QHBoxLayout()
         self.languageLayout.setContentsMargins(0, 0, 0, 0)
         self.languageFrame.setLayout(self.languageLayout)
-        self.languageFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.languageFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.languageLayout.setAlignment(Qt.AlignTop & Qt.AlignLeft)
         self.languageLabel = QLabel(getMessage("language-label"), self)
-        self.languageCombobox = QtGui.QComboBox(self)
+        self.languageCombobox = QtWidgets.QComboBox(self)
         self.languageCombobox.addItem(getMessage("automatic-language").format(getMessage("LANGUAGE", getInitialLanguage())))
 
         self.languages = getLanguages()
@@ -917,22 +918,22 @@ class ConfigDialog(QtGui.QDialog):
         config = self.config
         resourcespath = self.resourcespath
 
-        self.bottomButtonFrame = QtGui.QFrame()
-        self.bottomButtonLayout = QtGui.QHBoxLayout()
-        self.helpButton = QtGui.QPushButton(QtGui.QIcon(self.resourcespath + u'help.png'), getMessage("help-label"))
+        self.bottomButtonFrame = QtWidgets.QFrame()
+        self.bottomButtonLayout = QtWidgets.QHBoxLayout()
+        self.helpButton = QtWidgets.QPushButton(QtGui.QIcon(self.resourcespath + u'help.png'), getMessage("help-label"))
         self.helpButton.setObjectName("help")
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.pressed.connect(self.openHelp)
 
-        self.resetButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'cog_delete.png'),getMessage("reset-label"))
+        self.resetButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'cog_delete.png'),getMessage("reset-label"))
         self.resetButton.setMaximumSize(self.resetButton.sizeHint())
         self.resetButton.setObjectName("reset")
         self.resetButton.pressed.connect(self.resetSettings)
 
-        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
+        self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
         self.runButton.pressed.connect(self._runWithoutStoringConfig)
         self.runButton.setToolTip(getMessage("nostore-tooltip"))
-        self.storeAndRunButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("storeandrun-label"))
+        self.storeAndRunButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("storeandrun-label"))
         self.storeAndRunButton.pressed.connect(self._saveDataAndLeave)
         self.bottomButtonLayout.addWidget(self.helpButton)
         self.bottomButtonLayout.addWidget(self.resetButton)
@@ -942,9 +943,9 @@ class ConfigDialog(QtGui.QDialog):
         self.bottomButtonLayout.setContentsMargins(5,0,5,0)
         self.mainLayout.addWidget(self.bottomButtonFrame, 1, 0, 1, 2)
 
-        self.bottomCheckboxFrame = QtGui.QFrame()
+        self.bottomCheckboxFrame = QtWidgets.QFrame()
         self.bottomCheckboxFrame.setContentsMargins(0,0,0,0)
-        self.bottomCheckboxLayout = QtGui.QGridLayout()
+        self.bottomCheckboxLayout = QtWidgets.QGridLayout()
         self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
 
         self.enableplaylistsCheckbox = QCheckBox(getMessage("sharedplaylistenabled-label"))
@@ -957,14 +958,14 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.addWidget(self.bottomCheckboxFrame, 2, 0, 1, 2)
 
     def tabList(self):
-        self.tabListLayout = QtGui.QHBoxLayout()
-        self.tabListFrame = QtGui.QFrame()
-        self.tabListWidget = QtGui.QListWidget()
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"house.png"),getMessage("basics-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"control_pause_blue.png"),getMessage("readiness-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"film_link.png"),getMessage("sync-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"comments.png"),getMessage("messages-label")))
-        self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"cog.png"),getMessage("misc-label")))
+        self.tabListLayout = QtWidgets.QHBoxLayout()
+        self.tabListFrame = QtWidgets.QFrame()
+        self.tabListWidget = QtWidgets.QListWidget()
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"house.png"),getMessage("basics-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"control_pause_blue.png"),getMessage("readiness-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"film_link.png"),getMessage("sync-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"comments.png"),getMessage("messages-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"cog.png"),getMessage("misc-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
         self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width())
@@ -1045,6 +1046,7 @@ class ConfigDialog(QtGui.QDialog):
             self.config['clearGUIData'] = False
             self.clearGUIData()
 
+        self.QtWidgets = QtWidgets
         self.QtGui = QtGui
         self.error = error
         if sys.platform.startswith('win'):
@@ -1060,11 +1062,11 @@ class ConfigDialog(QtGui.QDialog):
         self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QIcon(resourcespath + u"syncplay.png"))
 
-        self.stackedLayout = QtGui.QStackedLayout()
-        self.stackedFrame = QtGui.QFrame()
+        self.stackedLayout = QtWidgets.QStackedLayout()
+        self.stackedFrame = QtWidgets.QFrame()
         self.stackedFrame.setLayout(self.stackedLayout)
 
-        self.mainLayout = QtGui.QGridLayout()
+        self.mainLayout = QtWidgets.QGridLayout()
         self.mainLayout.setSpacing(0)
         self.mainLayout.setContentsMargins(0,0,0,0)
 
