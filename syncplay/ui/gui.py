@@ -1358,8 +1358,15 @@ class MainWindow(QtWidgets.QMainWindow):
             window.mainLayout.setMenuBar(window.menuBar)
 
     def openAbout(self):
-          AboutMsgBox = QtGui.QMessageBox.about(self,"Syncplay","Syncplay v" + version)
-
+        #AboutMsgBox = QtWidgets.QMessageBox.about(self,"Syncplay","Syncplay v" + version)
+        AboutMsgBox = QtWidgets.QMessageBox(self)
+        AboutMsgBox.setText("<center>Syncplay<br><small><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
+        AboutMsgBox.setInformativeText("<center>Version v" + version + "<p>Copyright &copy; 2017 Syncplay</p><p>Licensed under the Apache License, Version 2.0</p></center>")        
+        AboutIcon = QtGui.QPixmap(self.resourcespath + u"syncplay.png")
+        AboutMsgBox.setIconPixmap(AboutIcon.scaled(120, 120))      
+        AboutMsgBox.setModal(True)
+        AboutMsgBox.exec_()
+		
     def addMainFrame(self, window):
         window.mainFrame = QtWidgets.QFrame()
         window.mainFrame.setLineWidth(0)

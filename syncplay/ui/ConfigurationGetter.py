@@ -409,7 +409,7 @@ class ConfigurationGetter(object):
                 qt5reactor.install()
                 if sys.platform.startswith('darwin'):
                     import appnope
-                    appnope.nope()                
+                    appnope.nope()
             except ImportError:
                 print getMessage("unable-import-gui-error")
                 self._config['noGui'] = True
