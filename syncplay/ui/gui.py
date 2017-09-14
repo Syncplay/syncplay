@@ -781,7 +781,10 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.loadMediaBrowseSettings()
-        options = QtGui.QFileDialog.Options()
+        if sys.platform.startswith('darwin'):
+            options = QtGui.QFileDialog.Options(QtGui.QFileDialog.DontUseNativeDialog)
+        else:
+            options = QtGui.QFileDialog.Options()
         self.mediadirectory = ""
         currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
         if currentdirectory and os.path.isdir(currentdirectory):
@@ -954,7 +957,11 @@ class MainWindow(QtGui.QMainWindow):
 
     @needsClient
     def openAddMediaDirectoryDialog(self, MediaDirectoriesTextbox, MediaDirectoriesDialog):
-        folderName = unicode(QtGui.QFileDialog.getExistingDirectory(self,None,self.getInitialMediaDirectory(includeUserSpecifiedDirectories=False),QtGui.QFileDialog.ShowDirsOnly))
+        if sys.platform.startswith('darwin'):
+            options = QtGui.QFileDialog.Options(QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontUseNativeDialog)
+        else:
+            options = QtGui.QFileDialog.Options(QtGui.QFileDialog.ShowDirsOnly)        
+        folderName = unicode(QtGui.QFileDialog.getExistingDirectory(self,None,self.getInitialMediaDirectory(includeUserSpecifiedDirectories=False),options))
         if folderName:
             existingMediaDirs = MediaDirectoriesTextbox.toPlainText()
             if existingMediaDirs == "":
