@@ -11,6 +11,8 @@ import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from functools import wraps
 from twisted.internet import task
+if sys.platform.startswith('darwin'):
+    from Foundation import NSURL
 lastCheckedForUpdates = None
 
 class UserlistItemDelegate(QtGui.QStyledItemDelegate):
@@ -161,7 +163,10 @@ class MainWindow(QtGui.QMainWindow):
                 indexRow = window.playlist.count() if window.clearedPlaylistNote else 0
 
                 for url in urls[::-1]:
-                    dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
+                    if sys.platform.startswith('darwin'):
+                        dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
+                    else:
+                        dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
                     if os.path.isfile(dropfilepath):
                         window.addFileToPlaylist(dropfilepath, indexRow)
                     elif os.path.isdir(dropfilepath):
@@ -263,7 +268,10 @@ class MainWindow(QtGui.QMainWindow):
                 if indexRow == -1:
                     indexRow = window.playlist.count()
                 for url in urls[::-1]:
-                    dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
+                    if sys.platform.startswith('darwin'):
+                        dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
+                    else:
+                        dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
                     if os.path.isfile(dropfilepath):
                         window.addFileToPlaylist(dropfilepath, indexRow)
                     elif os.path.isdir(dropfilepath):
@@ -809,7 +817,10 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.loadMediaBrowseSettings()
-        options = QtGui.QFileDialog.Options()
+        if sys.platform.startswith('darwin'):
+            options = QtGui.QFileDialog.Options(QtGui.QFileDialog.DontUseNativeDialog)
+        else:
+            options = QtGui.QFileDialog.Options()
         self.mediadirectory = ""
         currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
         if currentdirectory and os.path.isdir(currentdirectory):
@@ -1504,7 +1515,10 @@ class MainWindow(QtGui.QMainWindow):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            dropfilepath = os.path.abspath(unicode(event.mimeData().urls()[0].toLocalFile()))
+            if sys.platform.startswith('darwin'):
+                dropfilepath = os.path.abspath(NSURL.URLWithString_(str(event.mimeData().urls()[0].toString())).filePathURL().path())
+            else:
+                dropfilepath = os.path.abspath(unicode(event.mimeData().urls()[0].toLocalFile()))
             if rewindFile == False:
                 self._syncplayClient._player.openFile(dropfilepath)
             else:
