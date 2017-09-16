@@ -1445,12 +1445,12 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         if self.config['lastCheckedForUpdates']:
             configLastChecked = datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f")
-            if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates:
+            if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates.toPython():
                 self.lastCheckedForUpdates = configLastChecked
         if self.lastCheckedForUpdates is None:
             self.checkForUpdates()
         else:
-            timeDelta = currentDateTimeValue - self.lastCheckedForUpdates
+            timeDelta = currentDateTimeValue.toPython() - self.lastCheckedForUpdates.toPython()
             if timeDelta.total_seconds() > constants.AUTOMATIC_UPDATE_CHECK_FREQUENCY:
                 self.checkForUpdates()
 

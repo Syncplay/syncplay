@@ -279,7 +279,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.lastCheckedForUpdates = settings.value("lastChecked", None)
         if self.lastCheckedForUpdates:
             if self.config["lastCheckedForUpdates"] is not None and self.config["lastCheckedForUpdates"] is not "":
-                if self.lastCheckedForUpdates > datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f"):
+                if self.lastCheckedForUpdates.toPython() > datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f"):
                     self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
             else:
                 self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
