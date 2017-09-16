@@ -188,7 +188,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if fileIsUntrusted:
                     self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_UNTRUSTEDITEM_COLOR)))
                 elif fileIsAvailable:
-                    self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(QtWidgets.QPalette.ColorRole(QtWidgets.QPalette.Text))))
+                    self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(QtGui.QPalette.ColorRole(QtGui.QPalette.Text))))
                 else:
                     self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
             self.selfWindow._syncplayClient.fileSwitch.setFilenameWatchlist(self.selfWindow.newWatchlist)
