@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets, QtGui
-from PySide2.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QStandardPaths
+from PySide2.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QStandardPaths, QDateTime
 from syncplay import utils, constants, version
 from syncplay.messages import getMessage
 import sys
@@ -1440,7 +1440,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.autoplayPushButton.setIcon(QtGui.QPixmap(self.resourcespath + 'empty_checkbox.png'))
 
     def automaticUpdateCheck(self):
-        currentDateTime = datetime.utcnow()
+        currentDateTimeValue = QDateTime.currentDateTime()
         if not self.config['checkForUpdatesAutomatically']:
             return
         if self.config['lastCheckedForUpdates']:
@@ -1450,7 +1450,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.lastCheckedForUpdates is None:
             self.checkForUpdates()
         else:
-            timeDelta = currentDateTime - self.lastCheckedForUpdates
+            timeDelta = currentDateTimeValue - self.lastCheckedForUpdates
             if timeDelta.total_seconds() > constants.AUTOMATIC_UPDATE_CHECK_FREQUENCY:
                 self.checkForUpdates()
 
@@ -1459,7 +1459,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def checkForUpdates(self, userInitiated=False):
-        self.lastCheckedForUpdates = datetime.utcnow()
+        self.lastCheckedForUpdates = QDateTime.currentDateTime()
         updateStatus, updateMessage, updateURL, self.publicServerList = self._syncplayClient.checkForUpdate(userInitiated)
 
         if updateMessage is None:
