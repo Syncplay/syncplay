@@ -1,7 +1,7 @@
 from PySide2 import QtCore, QtWidgets, QtGui
-from PySide2.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine
+from PySide2.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine, QStandardPaths
 from PySide2.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
-from PySide2.QtGui import QCursor, QIcon, QImage, QDesktopServices
+from PySide2.QtGui import QCursor, QIcon, QImage
 from syncplay.players.playerFactory import PlayerFactory
 from datetime import datetime
 from syncplay import utils
@@ -114,7 +114,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
 
     def openHelp(self):
-        self.QtWidgets.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
+        self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
 
     def safenormcaseandpath(self, path):
         if utils.isURL(path):
@@ -346,10 +346,10 @@ class ConfigDialog(QtWidgets.QDialog):
             defaultdirectory = self.config["mediaSearchDirectories"][0]
         elif os.path.isdir(self.mediadirectory):
             defaultdirectory = self.mediadirectory
-        elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)):
-            defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)
-        elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.HomeLocation)):
-            defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.HomeLocation)
+        elif os.path.isdir(QStandardPaths.standardLocations(QStandardPaths.MoviesLocation)[0]):
+            defaultdirectory = QStandardPaths.standardLocations(QStandardPaths.MoviesLocation)[0]
+        elif os.path.isdir(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]):
+            defaultdirectory = QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]
         else:
             defaultdirectory = ""
         browserfilter = "All files (*)"

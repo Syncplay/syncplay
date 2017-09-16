@@ -152,8 +152,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if not window.playlist.isEnabled():
                 return
             window.setPlaylistInsertPosition(None)
-            if QtWidgets.QDropEvent.proposedAction(event) == Qt.MoveAction:
-                QtWidgets.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
+            if QtGui.QDropEvent.proposedAction(event) == Qt.MoveAction:
+                QtGui.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
             data = event.mimeData()
             urls = data.urls()
 
@@ -251,8 +251,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if not window.playlist.isEnabled():
                 return
             window.setPlaylistInsertPosition(None)
-            if QtWidgets.QDropEvent.proposedAction(event) == Qt.MoveAction:
-                QtWidgets.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
+            if QtGui.QDropEvent.proposedAction(event) == Qt.MoveAction:
+                QtGui.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
             data = event.mimeData()
             urls = data.urls()
 
@@ -1490,8 +1490,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def dropEvent(self, event):
         rewindFile = False
-        if QtWidgets.QDropEvent.proposedAction(event) == Qt.MoveAction:
-            QtWidgets.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
+        if QtGui.QDropEvent.proposedAction(event) == Qt.MoveAction:
+            QtGui.QDropEvent.setDropAction(event, Qt.CopyAction)  # Avoids file being deleted
             rewindFile = True
         data = event.mimeData()
         urls = data.urls()
