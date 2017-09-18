@@ -84,6 +84,46 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
         QtWidgets.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
+class AboutDialog(QtWidgets.QDialog):
+    if sys.platform.startswith('win'):
+         resourcespath = utils.findWorkingDir() + u"\\resources\\"
+    else:
+         resourcespath = utils.findWorkingDir() + u"/resources/"      
+ 
+    def __init__(self, parent=None):
+         super(AboutDialog, self).__init__(parent)
+         self.setWindowTitle("")      
+         nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
+         nameLabel.setFont(QtGui.QFont("Helvetica", 20))
+         linkLabel = QtWidgets.QLabel("<center><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
+         linkLabel.setOpenExternalLinks(True)
+         versionLabel = QtWidgets.QLabel("<center>Version v" + version + "</center>")
+         licenseLabel = QtWidgets.QLabel("<center><p>Copyright &copy; 2017 Syncplay</p><p>Licensed under the Apache&nbsp;License,&nbsp;Version 2.0</p></center>")
+         aboutIconPixmap = QtGui.QPixmap(self.resourcespath + u"syncplay.png")
+         aboutIconLabel = QtWidgets.QLabel()
+         aboutIconLabel.setPixmap(aboutIconPixmap.scaled(120, 120, Qt.KeepAspectRatio))        
+         aboutLayout = QtWidgets.QGridLayout()
+         aboutLayout.addWidget(aboutIconLabel, 0, 0, 4, 2)
+         aboutLayout.addWidget(nameLabel, 0, 2, 1, 2)
+         aboutLayout.addWidget(linkLabel, 1, 2, 1, 2)
+         aboutLayout.addWidget(versionLabel, 2, 2, 1, 2)
+         aboutLayout.addWidget(licenseLabel, 3, 2, 1, 2)
+         licenseButton = QtWidgets.QPushButton("License")
+         licenseButton.clicked.connect(self.openLicense)
+         aboutLayout.addWidget(licenseButton, 4, 2)
+         dependenciesButton = QtWidgets.QPushButton("Dependencies")
+         dependenciesButton.clicked.connect(self.openDependencies)
+         aboutLayout.addWidget(dependenciesButton, 4, 3)         
+         aboutLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+         self.setSizeGripEnabled(False)         
+         self.setLayout(aboutLayout)
+
+    def openLicense(self):
+         QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"license.txt"))
+         
+    def openDependencies(self):
+         QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"third-party-notices.txt"))
+
 class MainWindow(QtWidgets.QMainWindow):
     insertPosition = None
     playlistState = []
@@ -1358,14 +1398,8 @@ class MainWindow(QtWidgets.QMainWindow):
             window.mainLayout.setMenuBar(window.menuBar)
 
     def openAbout(self):
-        #AboutMsgBox = QtWidgets.QMessageBox.about(self,"Syncplay","Syncplay v" + version)
-        AboutMsgBox = QtWidgets.QMessageBox(self)
-        AboutMsgBox.setText("<center>Syncplay<br><small><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
-        AboutMsgBox.setInformativeText("<center>Version v" + version + "<p>Copyright &copy; 2017 Syncplay</p><p>Licensed under the Apache License, Version 2.0</p></center>")        
-        AboutIcon = QtGui.QPixmap(self.resourcespath + u"syncplay.png")
-        AboutMsgBox.setIconPixmap(AboutIcon.scaled(120, 120))      
-        AboutMsgBox.setModal(True)
-        AboutMsgBox.exec_()
+        aboutMsgBox = AboutDialog()
+        aboutMsgBox.exec_()
 		
     def addMainFrame(self, window):
         window.mainFrame = QtWidgets.QFrame()
