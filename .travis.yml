@@ -1,0 +1,38 @@
+language: objective-c
+osx_image: xcode6.4
+
+branches:
+  only:
+  - macOS_app
+
+script:
+- python buildPy2app.py py2app
+
+before_install:
+- brew install python
+- brew tap cartr/qt4
+- brew tap-pin cartr/qt4
+- brew install pyside
+
+install:
+- export PATH=/usr/local/bin:$PATH
+- pip install twisted appnope pyobjc py2app
+- git clone -b macOS_app https://github.com/alby128/syncplay.git syncplay_app
+- cd syncplay_app
+- git checkout macOS_app
+
+before_deploy:
+- mkdir dist_dmg
+- hdiutil create -fs HFS+ -srcfolder dist -volname Syncplay dist_dmg/Syncplay.dmg
+
+deploy:
+  provider: s3
+  access_key_id: AKIAJS554GLAZJ5L6TUA
+  secret_access_key:
+    secure: "iDuHZ6lgASU1O/9UKncgKfJZ96PpLzdKKvASDKCDPWBXXI5LyjGIIZJxbdjcE+WVoHYCCrN9Xn2XvhEjapqBzD2uKMH4QvN5mOG62FaPPOIPr+CCZxuEQuUQ8LUSIwQO3huu0K4eLn6q5b/ihmiWkTAssZFx1pccv15CJiwVPDwunULC2P55d/GxRohN2HcHDHGbHwlXasgvOx68xxbDEO4Ox7KRwcSIHnmx6vInQtzpqdnme8t1kmGG2vp6juyh39vCN0RzoJ5aH17qht/0nNvkbxnPcUg7jsDayOuWiwMgp4s+EYdyCh33IM3LQugxPqa3za5yjYQqC92SoaQg8FnsoU1sf7FHMCmb4mv8ZwgTD78+Ood/7lKHaOVGnxkoBtdrtXXf2tU/WyAGXTw4zc6eA+MIXC6FmNQFJaRUvGZPF+u+awHNJGAlmIhFOASBW4Ua6qahNzcasRE8e3cuzYuVzK4R24TRWqjYCadHd6SNh2FKVGYEKK1FcADUxn5GzldcovG3wsHRK6ONCS57s5xBlajVfEB4b78EqYkRgQQTAnCvNcUAbfsJOYywtSj/4keaGQeRydoY9qMl6MPpVXqn+r9bbglLBIOPzUr2EWXj/O6gq7bd9eSwCa1PvGplboDahkfWmVZKJ6rZpuvUfoQcKmuJiIpgowCczP9NNco="
+  bucket: syncplay
+  skip_cleanup: true
+  region: eu-central-1
+  local_dir: dist_dmg
+  on:
+    branch: macOS_app
