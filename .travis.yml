@@ -22,8 +22,10 @@ install:
 - git checkout macOS_app
 
 before_deploy:
+- pip install dmgbuild
 - mkdir dist_dmg
-- hdiutil create -fs HFS+ -srcfolder dist -volname Syncplay dist_dmg/Syncplay.dmg
+- mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
+- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay.dmg
 
 deploy:
   provider: s3
