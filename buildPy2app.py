@@ -15,6 +15,7 @@ DATA_FILES = [
 ]
 OPTIONS = {
 	'iconfile':'resources/icon.icns',
+	'qt_plugins': ['platforms/libqcocoa.dylib', 'platforms/libqminimal.dylib','platforms/libqoffscreen.dylib'],	
 	'plist': {
 		'CFBundleName':'Syncplay',
 		'CFBundleShortVersionString':syncplay.version,
