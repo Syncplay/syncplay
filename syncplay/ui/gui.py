@@ -123,10 +123,10 @@ class AboutDialog(QtGui.QDialog):
          self.setLayout(aboutLayout)
 
     def openLicense(self):
-         QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"license.txt"))
+         QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"license.rtf"))
          
     def openDependencies(self):
-         QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"third-party-notices.txt"))
+         QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"third-party-notices.rtf"))
 
 class MainWindow(QtGui.QMainWindow):
     insertPosition = None
