@@ -698,5 +698,5 @@ info = dict(
     cmdclass = {"py2exe": build_installer},               
 )
 
-sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource'])
+sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-p PySide2.QtGui', '-i PySide2.QtWidgets'])
 setup(**info)

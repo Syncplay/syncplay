@@ -15,7 +15,9 @@ DATA_FILES = [
 ]
 OPTIONS = {
 	'iconfile':'resources/icon.icns',
-	'qt_plugins': ['platforms/libqcocoa.dylib', 'platforms/libqminimal.dylib','platforms/libqoffscreen.dylib'],	
+	'includes': {'PySide2.QtCore', 'PySide2.QtUiTools', 'PySide2.QtGui','PySide2.QtWidgets'},
+    'excludes': {'PySide', 'PySide.QtCore', 'PySide.QtUiTools', 'PySide.QtGui'},
+    'qt_plugins': ['platforms/libqcocoa.dylib', 'platforms/libqminimal.dylib','platforms/libqoffscreen.dylib'],
 	'plist': {
 		'CFBundleName':'Syncplay',
 		'CFBundleShortVersionString':syncplay.version,

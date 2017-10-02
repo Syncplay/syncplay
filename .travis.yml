@@ -3,7 +3,7 @@ osx_image: xcode7.3
 
 branches:
   only:
-  - pyside2
+  - qtpy-pyside2
 
 script:
 - python buildPy2app.py py2app
@@ -29,8 +29,8 @@ before_install:
 install:
 
 - pip install twisted appnope pyobjc
-- git clone -b pyside2 https://github.com/alby128/syncplay.git syncplay_PySide2
-- cd syncplay_PySide2
+- git clone -b qtpy-pyside2 https://github.com/alby128/syncplay.git syncplay-qtpy-PySide2
+- cd syncplay-qtpy-PySide2
 - git checkout pyside2
 
 before_deploy:
@@ -49,4 +49,4 @@ deploy:
   region: eu-central-1
   local_dir: dist_dmg
   on:
-    branch: pyside2
+    branch: qtpy-pyside2

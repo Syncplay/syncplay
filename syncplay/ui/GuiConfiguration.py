@@ -1,7 +1,8 @@
-from PySide2 import QtCore, QtWidgets, QtGui
-from PySide2.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine, QStandardPaths
-from PySide2.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
-from PySide2.QtGui import QCursor, QIcon, QImage
+from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__
+from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine
+from syncplay.vendor.Qt.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
+from syncplay.vendor.Qt.QtGui import QCursor, QIcon, QImage
+from PySide2.QtCore import QStandardPaths
 from syncplay.players.playerFactory import PlayerFactory
 from datetime import datetime
 from syncplay import utils

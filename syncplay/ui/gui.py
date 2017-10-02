@@ -1,5 +1,7 @@
-from PySide2 import QtWidgets, QtGui
-from PySide2.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QStandardPaths, QDateTime
+from syncplay.vendor import Qt
+from syncplay.vendor.Qt import QtWidgets, QtGui, __binding__
+from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
+from PySide2.QtCore import QStandardPaths
 from syncplay import utils, constants, version, release_number
 from syncplay.messages import getMessage
 import sys
