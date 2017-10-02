@@ -1,6 +1,6 @@
 from PySide2 import QtWidgets, QtGui
 from PySide2.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QStandardPaths, QDateTime
-from syncplay import utils, constants, version
+from syncplay import utils, constants, version, release_number
 from syncplay.messages import getMessage
 import sys
 import time
@@ -92,12 +92,15 @@ class AboutDialog(QtWidgets.QDialog):
  
     def __init__(self, parent=None):
          super(AboutDialog, self).__init__(parent)
-         self.setWindowTitle("")      
+         if sys.platform.startswith('darwin'):
+             self.setWindowTitle("")
+         else:
+             self.setWindowTitle("About Syncplay")   
          nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
          nameLabel.setFont(QtGui.QFont("Helvetica", 20))
          linkLabel = QtWidgets.QLabel("<center><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
          linkLabel.setOpenExternalLinks(True)
-         versionLabel = QtWidgets.QLabel("<center>Version v" + version + "</center>")
+         versionLabel = QtWidgets.QLabel("<center>Version v" + version + " release " + release_number + "</center>")
          licenseLabel = QtWidgets.QLabel("<center><p>Copyright &copy; 2017 Syncplay</p><p>Licensed under the Apache&nbsp;License,&nbsp;Version 2.0</p></center>")
          aboutIconPixmap = QtGui.QPixmap(self.resourcespath + u"syncplay.png")
          aboutIconLabel = QtWidgets.QLabel()
@@ -121,10 +124,16 @@ class AboutDialog(QtWidgets.QDialog):
          self.setLayout(aboutLayout)
 
     def openLicense(self):
-         QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"license.txt"))
+         if sys.platform.startswith('win'):
+             QtGui.QDesktopServices.openUrl(QUrl("file:///" + self.resourcespath + u"license.rtf"))
+         else:
+             QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"license.rtf"))
          
     def openDependencies(self):
-         QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"third-party-notices.txt"))
+         if sys.platform.startswith('win'):
+             QtGui.QDesktopServices.openUrl(QUrl("file:///" + self.resourcespath + u"third-party-notices.rtf"))
+         else:
+             QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"third-party-notices.rtf"))
 
 class MainWindow(QtWidgets.QMainWindow):
     insertPosition = None
@@ -1384,9 +1393,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Help menu
 
         window.helpMenu = QtWidgets.QMenu(getMessage("help-menu-label"), self)
-        if sys.platform.startswith('darwin'):
-            window.about = window.helpMenu.addAction("&About")
-            window.about.triggered.connect(self.openAbout)
+
+        window.about = window.helpMenu.addAction("&About")
+        window.about.triggered.connect(self.openAbout)
                 
         window.userguideAction = window.helpMenu.addAction(QtGui.QPixmap(self.resourcespath + 'help.png'),
                                                            getMessage("userguide-menu-label"))
