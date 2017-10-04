@@ -1,6 +1,8 @@
 from syncplay.vendor import Qt
-from syncplay.vendor.Qt import QtWidgets, QtGui, __binding__
+from syncplay.vendor.Qt import QtWidgets, QtGui, __binding__, IsPySide, IsPySide2
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
+if IsPySide2:
+    from PySide2.QtCore import QStandardPaths
 from syncplay import utils, constants, version, release_number
 from syncplay.messages import getMessage
 import sys
@@ -12,7 +14,7 @@ import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from functools import wraps
 from twisted.internet import task
-if sys.platform.startswith('darwin'): 
+if sys.platform.startswith('darwin') and IsPySide: 
     from Foundation import NSURL
 lastCheckedForUpdates = None
 
@@ -215,7 +217,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 indexRow = window.playlist.count() if window.clearedPlaylistNote else 0
 
                 for url in urls[::-1]:
-                    if sys.platform.startswith('darwin'):
+                    if sys.platform.startswith('darwin') and IsPySide:
                         dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
                     else:
                         dropfilepath = os.path.abspath(unicode(url.toLocalFile()))                    
@@ -320,7 +322,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if indexRow == -1:
                     indexRow = window.playlist.count()
                 for url in urls[::-1]:
-                    if sys.platform.startswith('darwin'):
+                    if sys.platform.startswith('darwin') and IsPySide:
                         dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
                     else:
                         dropfilepath = os.path.abspath(unicode(url.toLocalFile())) 
@@ -822,16 +824,28 @@ class MainWindow(QtWidgets.QMainWindow):
         settings.endGroup()
 
     def getInitialMediaDirectory(self, includeUserSpecifiedDirectories=True):
-        if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]) and includeUserSpecifiedDirectories:
-            defaultdirectory = self.config["mediaSearchDirectories"][0]
-        elif includeUserSpecifiedDirectories and os.path.isdir(self.mediadirectory):
-            defaultdirectory = self.mediadirectory
-        elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)):
-            defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)
-        elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)):
-            defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)
-        else:
-            defaultdirectory = ""
+        if IsPySide:
+            if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]) and includeUserSpecifiedDirectories:
+                defaultdirectory = self.config["mediaSearchDirectories"][0]
+            elif includeUserSpecifiedDirectories and os.path.isdir(self.mediadirectory):
+                defaultdirectory = self.mediadirectory
+            elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)):
+                defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.MoviesLocation)
+            elif os.path.isdir(QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)):
+                defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)
+            else:
+                defaultdirectory = ""
+        elif IsPySide2:        
+            if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]) and includeUserSpecifiedDirectories:
+                defaultdirectory = self.config["mediaSearchDirectories"][0]
+            elif includeUserSpecifiedDirectories and os.path.isdir(self.mediadirectory):
+                defaultdirectory = self.mediadirectory
+            elif os.path.isdir(QStandardPaths.standardLocations(QStandardPaths.MoviesLocation)[0]):
+                defaultdirectory = QStandardPaths.standardLocations(QStandardPaths.MoviesLocation)[0]
+            elif os.path.isdir(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]):
+                defaultdirectory = QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]
+            else:
+                defaultdirectory = ""        
         return defaultdirectory
 
     @needsClient
@@ -841,7 +855,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.loadMediaBrowseSettings()
-        if sys.platform.startswith('darwin'):
+        if sys.platform.startswith('darwin') and IsPySide:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
             options = QtWidgets.QFileDialog.Options()
@@ -869,7 +883,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.loadMediaBrowseSettings()
-        if sys.platform.startswith('darwin'):
+        if sys.platform.startswith('darwin') and IsPySide:
              options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
              options = QtWidgets.QFileDialog.Options()
@@ -1561,7 +1575,7 @@ class MainWindow(QtWidgets.QMainWindow):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            if sys.platform.startswith('darwin'):
+            if sys.platform.startswith('darwin') and IsPySide:
                 dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
             else:
                 dropfilepath = os.path.abspath(unicode(url.toLocalFile()))

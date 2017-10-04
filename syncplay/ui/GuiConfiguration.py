@@ -1,7 +1,9 @@
-from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__
+from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, IsPySide, IsPySide2
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine
 from syncplay.vendor.Qt.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
 from syncplay.vendor.Qt.QtGui import QCursor, QIcon, QImage, QDesktopServices
+if IsPySide2:
+    from PySide2.QtCore import QStandardPaths
 from syncplay.players.playerFactory import PlayerFactory
 from datetime import datetime
 from syncplay import utils
@@ -342,16 +344,28 @@ class ConfigDialog(QtWidgets.QDialog):
     def browseMediapath(self):
         self.loadMediaBrowseSettings()
         options = QtWidgets.QFileDialog.Options()
-        if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
-            defaultdirectory = self.config["mediaSearchDirectories"][0]
-        elif os.path.isdir(self.mediadirectory):
-            defaultdirectory = self.mediadirectory
-        elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)):
-            defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)
-        elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.HomeLocation)):
-            defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.HomeLocation)
-        else:
-            defaultdirectory = ""
+        if IsPySide:
+            if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
+                defaultdirectory = self.config["mediaSearchDirectories"][0]
+            elif os.path.isdir(self.mediadirectory):
+                defaultdirectory = self.mediadirectory
+            elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)):
+                defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)
+            elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.HomeLocation)):
+                defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.HomeLocation)
+            else:
+                defaultdirectory = ""
+        elif IsPySide2:
+            if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
+                defaultdirectory = self.config["mediaSearchDirectories"][0]
+            elif os.path.isdir(self.mediadirectory):
+                defaultdirectory = self.mediadirectory
+            elif os.path.isdir(QStandardPaths.standardLocations(QStandardPaths.MoviesLocation)[0]):
+                defaultdirectory = QStandardPaths.standardLocations(QStandardPaths.MoviesLocation)[0]
+            elif os.path.isdir(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]):
+                defaultdirectory = QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]
+            else:
+                defaultdirectory = ""        
         browserfilter = "All files (*)"
         fileName, filtr = QtWidgets.QFileDialog.getOpenFileName(self, "Browse for media files", defaultdirectory,
                 browserfilter, "", options)
