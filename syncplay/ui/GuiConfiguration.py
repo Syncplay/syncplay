@@ -1,8 +1,7 @@
 from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine
 from syncplay.vendor.Qt.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
-from syncplay.vendor.Qt.QtGui import QCursor, QIcon, QImage
-from PySide2.QtCore import QStandardPaths
+from syncplay.vendor.Qt.QtGui import QCursor, QIcon, QImage, QDesktopServices
 from syncplay.players.playerFactory import PlayerFactory
 from datetime import datetime
 from syncplay import utils
@@ -347,10 +346,10 @@ class ConfigDialog(QtWidgets.QDialog):
             defaultdirectory = self.config["mediaSearchDirectories"][0]
         elif os.path.isdir(self.mediadirectory):
             defaultdirectory = self.mediadirectory
-        elif os.path.isdir(QStandardPaths.standardLocations(QStandardPaths.MoviesLocation)[0]):
-            defaultdirectory = QStandardPaths.standardLocations(QStandardPaths.MoviesLocation)[0]
-        elif os.path.isdir(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]):
-            defaultdirectory = QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]
+        elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)):
+            defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.MoviesLocation)
+        elif os.path.isdir(QDesktopServices.storageLocation(QDesktopServices.HomeLocation)):
+            defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.HomeLocation)
         else:
             defaultdirectory = ""
         browserfilter = "All files (*)"
