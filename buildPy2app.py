@@ -19,9 +19,7 @@ DATA_FILES = [
 OPTIONS = {
 	'iconfile':'resources/icon.icns',
 	'includes': {'PySide.QtCore', 'PySide.QtUiTools', 'PySide.QtGui'},
-    'excludes': {'PySide2', 'PySide2.QtCore', 'PySide2.QtUiTools', 'PySide2.QtGui','PySide2.QtWidgets', 'PyQt5'},
-    'dylib_excludes': {'QtDesigner.framework', 'QtScript.framework'},
- 	'plist': {
+   	'plist': {
 		'CFBundleName':'Syncplay',
 		'CFBundleShortVersionString':syncplay.version,
 		'CFBundleIdentifier':'pl.syncplay.Syncplay',
