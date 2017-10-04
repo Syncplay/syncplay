@@ -1032,7 +1032,7 @@ def _pyside2():
 
 def _pyside():
     """Initialise PySide"""
-	
+
     import PySide as module
     _setup(module, ["QtUiTools"])
 
@@ -1433,7 +1433,6 @@ def _cli(args):
 def _install():
     # Default order (customise order and content via QT_PREFERRED_BINDING)
     default_order = ("PySide2", "PyQt5", "PySide", "PyQt4")
-
     preferred_order = list(
         b for b in QT_PREFERRED_BINDING.split(os.pathsep) if b
     )
