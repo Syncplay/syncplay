@@ -685,8 +685,8 @@ info = dict(
     # console=['syncplayServer.py', {"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")], 'dest_base': "Syncplay"}],
     options={'py2exe': {
                          'dist_dir': OUT_DIR,
-                         'packages': 'PySide2.QtUiTools',
-                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide2, liburl, ast, unicodedata',
+                         'packages': 'PySide.QtUiTools',
+                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide, liburl, ast, unicodedata',
                          'excludes': 'venv, _ssl, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
                          'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
                          'optimize': 2,
@@ -698,5 +698,5 @@ info = dict(
     cmdclass = {"py2exe": build_installer},               
 )
 
-sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-p PySide2.QtGui', '-i PySide2.QtWidgets'])
+sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-p PySide.QtGui'])
 setup(**info)
