@@ -37,7 +37,7 @@ before_deploy:
 - pip install dmgbuild
 - mkdir dist_dmg
 - mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
-- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay-PySide2.dmg
+- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay-qtpy-pyside2.dmg
 
 deploy:
   provider: s3
