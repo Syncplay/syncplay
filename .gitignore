@@ -11,3 +11,4 @@ syncplay_setup.nsi
 dist.7z
 .*
 !.travis.yml
+!.appveyor.yml
