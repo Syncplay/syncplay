@@ -1,5 +1,5 @@
 from syncplay.vendor import Qt
-from syncplay.vendor.Qt import QtWidgets, QtGui, __binding__, IsPySide, IsPySide2
+from syncplay.vendor.Qt import QtWidgets, QtGui, __binding__, __binding_version__, IsPySide, IsPySide2
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
 if IsPySide2:
     from PySide2.QtCore import QStandardPaths
@@ -105,7 +105,7 @@ class AboutDialog(QtWidgets.QDialog):
          nameLabel.setFont(QtGui.QFont("Helvetica", 20))
          linkLabel = QtWidgets.QLabel("<center><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
          linkLabel.setOpenExternalLinks(True)
-         versionLabel = QtWidgets.QLabel("<center>Version v" + version + " release " + release_number + "</center>")
+         versionLabel = QtWidgets.QLabel("<center>Version v" + version + " release " + release_number + " on " + __binding__ + "</center>")
          licenseLabel = QtWidgets.QLabel("<center><p>Copyright &copy; 2017 Syncplay</p><p>Licensed under the Apache&nbsp;License,&nbsp;Version 2.0</p></center>")
          aboutIconPixmap = QtGui.QPixmap(self.resourcespath + u"syncplay.png")
          aboutIconLabel = QtWidgets.QLabel()
