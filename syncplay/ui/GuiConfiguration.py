@@ -279,10 +279,8 @@ class ConfigDialog(QtWidgets.QDialog):
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
         self.lastCheckedForUpdates = settings.value("lastChecked", None)
-        if self.lastCheckedForUpdates:
+        if self.lastCheckedForUpdates and type(self.lastCheckedForUpdates).__name__ == 'QDateTime':
             if self.config["lastCheckedForUpdates"] is not None and self.config["lastCheckedForUpdates"] is not "":
-                if type(self.lastCheckedForUpdates).__name__ is 'datetime':
-                    self.lastCheckedForUpdates = QDateTime.fromString(self.lastCheckedForUpdates.strftime('%Y-%m-%d %H:%M:%S'),'yyyy-MM-dd hh:mm:ss')       
                 if self.lastCheckedForUpdates.toPython() > datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f"):
                     self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
             else:
