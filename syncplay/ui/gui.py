@@ -1524,8 +1524,10 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         if self.config['lastCheckedForUpdates']:
             configLastChecked = datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f")
+            if type(self.lastCheckedForUpdates).__name__ != 'QDateTime':
+            	self.lastCheckedForUpdates = None
             if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates.toPython():
-                self.lastCheckedForUpdates = configLastChecked
+                self.lastCheckedForUpdates = QDateTime.fromString(self.config["lastCheckedForUpdates"],'yyyy-MM-dd HH-mm-ss')
         if self.lastCheckedForUpdates is None:
             self.checkForUpdates()
         else:

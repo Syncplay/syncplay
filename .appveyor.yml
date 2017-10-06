@@ -34,7 +34,7 @@ build: off
 artifacts:
   path: 'syncplay_v1.5.0'
   type: zip
-  name: Syncplay_win
+  name: Syncplay_win_pyside2
 
 # Push artefact to S3 bucket and list all
 before_deploy:
