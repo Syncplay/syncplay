@@ -33,7 +33,7 @@ if missingStrings is not None and missingStrings is not "":
 
 p = "C:\\Program Files (x86)\\NSIS\\makensis.exe" #TODO: how to move that into proper place, huh
 NSIS_COMPILE = p if os.path.isfile(p) else "makensis.exe"
-OUT_DIR = "syncplay v{}".format(syncplay.version)
+OUT_DIR = "syncplay_v{}".format(syncplay.version)
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
 NSIS_SCRIPT_TEMPLATE = r"""
   !include LogicLib.nsh
@@ -698,5 +698,5 @@ info = dict(
     cmdclass = {"py2exe": build_installer},               
 )
 
-sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource'])
+sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-p PySide.QtGui'])
 setup(**info)
