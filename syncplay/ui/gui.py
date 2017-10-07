@@ -1524,8 +1524,6 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         if self.config['lastCheckedForUpdates']:
             configLastChecked = datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f")
-            if type(self.lastCheckedForUpdates).__name__ != 'QDateTime':
-            	self.lastCheckedForUpdates = None
             if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates.toPython():
                 self.lastCheckedForUpdates = QDateTime.fromString(self.config["lastCheckedForUpdates"],'yyyy-MM-dd HH-mm-ss')
         if self.lastCheckedForUpdates is None:
@@ -1672,7 +1670,7 @@ class MainWindow(QtWidgets.QMainWindow):
         settings.endGroup()
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
-        settings.setValue("lastChecked", self.lastCheckedForUpdates)
+        settings.setValue("lastCheckedQt", self.lastCheckedForUpdates)
         settings.endGroup()
         settings.beginGroup("PublicServerList")
         if self.publicServerList:
@@ -1699,7 +1697,7 @@ class MainWindow(QtWidgets.QMainWindow):
         settings.endGroup()
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
-        self.lastCheckedForUpdates = settings.value("lastChecked", None)
+        self.lastCheckedForUpdates = settings.value("lastCheckedQt", None)
         settings.endGroup()
         settings.beginGroup("PublicServerList")
         self.publicServerList = settings.value("publicServers", None)
