@@ -23,7 +23,9 @@ init:
 install:
   - cmd: cd c:\projects\syncplay
   - cmd: python buildPy2exe.py
+  - cmd: del C:\projects\syncplay\syncplay_v1.5.0\lib\api-*
   - cmd: del C:\projects\syncplay\syncplay_v1.5.0\lib\DNSAPI.dll
+  - cmd: del C:\projects\syncplay\syncplay_v1.5.0\lib\IPHLPAPI.dll
   - cmd: del C:\projects\syncplay\syncplay_v1.5.0\lib\MPR.dll
   - cmd: mkdir C:\projects\syncplay\syncplay_v1.5.0\platforms
   - cmd: copy C:\Miniconda\envs\syncplay\library\plugins\platforms\qwindows.dll C:\projects\syncplay\syncplay_v1.5.0\platforms\
