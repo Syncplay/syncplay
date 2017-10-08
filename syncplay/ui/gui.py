@@ -658,15 +658,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.listTreeView.setFirstColumnSpanned(roomtocheck, self.listTreeView.rootIndex(), True)
                 roomtocheck += 1
             self.listTreeView.header().setStretchLastSection(False)
-            self.listTreeView.header().setResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-            self.listTreeView.header().setResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-            self.listTreeView.header().setResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
-            self.listTreeView.header().setResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+            if IsPySide2:
+                self.listTreeView.header().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+                self.listTreeView.header().setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+                self.listTreeView.header().setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+                self.listTreeView.header().setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)    
+            if IsPySide:
+                self.listTreeView.header().setResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+                self.listTreeView.header().setResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+                self.listTreeView.header().setResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+                self.listTreeView.header().setResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)            
             NarrowTabsWidth = self.listTreeView.header().sectionSize(0)+self.listTreeView.header().sectionSize(1)+self.listTreeView.header().sectionSize(2)
             if self.listTreeView.header().width() < (NarrowTabsWidth+self.listTreeView.header().sectionSize(3)):
                 self.listTreeView.header().resizeSection(3,self.listTreeView.header().width()-NarrowTabsWidth)
             else:
-                self.listTreeView.header().setResizeMode(3, QtWidgets.QHeaderView.Stretch)
+                if IsPySide2:
+                    self.listTreeView.header().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)                
+                if IsPySide:
+                    self.listTreeView.header().setResizeMode(3, QtWidgets.QHeaderView.Stretch)
             self.listTreeView.expandAll()
         except:
             pass
