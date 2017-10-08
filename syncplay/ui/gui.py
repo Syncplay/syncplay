@@ -97,7 +97,9 @@ class AboutDialog(QtGui.QDialog):
          if sys.platform.startswith('darwin'):
              self.setWindowTitle("")
          else:
-             self.setWindowTitle("About Syncplay")     
+             self.setWindowTitle("About Syncplay")
+             if sys.platform.startswith('win'):
+                 self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)     
          nameLabel = QtGui.QLabel("<center><strong>Syncplay</strong></center>")
          nameLabel.setFont(QtGui.QFont("Helvetica", 20))
          linkLabel = QtGui.QLabel("<center><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
@@ -1412,15 +1414,20 @@ class MainWindow(QtGui.QMainWindow):
 
         window.helpMenu = QtGui.QMenu(getMessage("help-menu-label"), self)
         
-        window.about = window.helpMenu.addAction("&About")
-        window.about.triggered.connect(self.openAbout)
-        
         window.userguideAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'),
                                                            getMessage("userguide-menu-label"))
         window.userguideAction.triggered.connect(self.openUserGuide)
         window.updateAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'application_get.png'),
                                                            getMessage("update-menu-label"))
         window.updateAction.triggered.connect(self.userCheckForUpdates)
+
+        if not sys.platform.startswith('darwin'):
+     	    window.helpMenu.addSeparator()
+            window.about = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'syncplay.png'),
+                                                           'About Syncplay')
+        else:												   
+            window.about = window.helpMenu.addAction("&About")
+        window.about.triggered.connect(self.openAbout)
 
         window.menuBar.addMenu(window.helpMenu)
         if not sys.platform.startswith('darwin'):
