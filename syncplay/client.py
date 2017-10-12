@@ -1845,5 +1845,6 @@ class FileSwitchManager(object):
                     return
         if self.isDirectoryInList(directoryToFind, self.mediaDirectories):
             return
+        directoryToFind = unicode(directoryToFind)
         self._client.ui.showErrorMessage(getMessage("added-file-not-in-media-directory-error").format(directoryToFind))
         self.mediaDirectoriesNotFound.append(directoryToFind)
