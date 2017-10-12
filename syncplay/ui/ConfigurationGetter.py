@@ -407,6 +407,9 @@ class ConfigurationGetter(object):
                 if QCoreApplication.instance() is None:
                     self.app = QtGui.QApplication(sys.argv)
                 qt4reactor.install()
+                if sys.platform.startswith('darwin'):
+                    import appnope
+                    appnope.nope()
             except ImportError:
                 print getMessage("unable-import-gui-error")
                 self._config['noGui'] = True
