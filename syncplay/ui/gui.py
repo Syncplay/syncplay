@@ -97,15 +97,15 @@ class AboutDialog(QtGui.QDialog):
          if sys.platform.startswith('darwin'):
              self.setWindowTitle("")
          else:
-             self.setWindowTitle("About Syncplay")
+             self.setWindowTitle(getMessage("about-dialog-title"))
              if sys.platform.startswith('win'):
                  self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)     
          nameLabel = QtGui.QLabel("<center><strong>Syncplay</strong></center>")
          nameLabel.setFont(QtGui.QFont("Helvetica", 20))
          linkLabel = QtGui.QLabel("<center><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
          linkLabel.setOpenExternalLinks(True)
-         versionLabel = QtGui.QLabel("<center>Version v" + version + " release " + release_number + "</center>")
-         licenseLabel = QtGui.QLabel("<center><p>Copyright &copy; 2017 Syncplay</p><p>Licensed under the Apache&nbsp;License,&nbsp;Version 2.0</p></center>")
+         versionLabel = QtGui.QLabel("<center>" + getMessage("about-dialog-release").format(version, release_number) + "</center>")
+         licenseLabel = QtGui.QLabel("<center><p>Copyright &copy; 2017 Syncplay</p><p>" + getMessage("about-dialog-license-text") + "</p></center>")
          aboutIconPixmap = QtGui.QPixmap(self.resourcespath + u"syncplay.png")
          aboutIconLabel = QtGui.QLabel()
          aboutIconLabel.setPixmap(aboutIconPixmap.scaled(120, 120, Qt.KeepAspectRatio))        
@@ -115,11 +115,11 @@ class AboutDialog(QtGui.QDialog):
          aboutLayout.addWidget(linkLabel, 1, 2, 1, 2)
          aboutLayout.addWidget(versionLabel, 2, 2, 1, 2)
          aboutLayout.addWidget(licenseLabel, 3, 2, 1, 2)
-         licenseButton = QtGui.QPushButton("License")
+         licenseButton = QtGui.QPushButton(getMessage("about-dialog-license-button"))
          licenseButton.setAutoDefault(False)
          licenseButton.clicked.connect(self.openLicense)
          aboutLayout.addWidget(licenseButton, 4, 2)
-         dependenciesButton = QtGui.QPushButton("Dependencies")
+         dependenciesButton = QtGui.QPushButton(getMessage("about-dialog-dependencies"))
          dependenciesButton.setAutoDefault(False)
          dependenciesButton.clicked.connect(self.openDependencies)
          aboutLayout.addWidget(dependenciesButton, 4, 3)         
@@ -1424,7 +1424,7 @@ class MainWindow(QtGui.QMainWindow):
         if not sys.platform.startswith('darwin'):
      	    window.helpMenu.addSeparator()
             window.about = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'syncplay.png'),
-                                                           'About Syncplay')
+                                                           getMessage("about-menu-label"))
         else:												   
             window.about = window.helpMenu.addAction("&About")
         window.about.triggered.connect(self.openAbout)
