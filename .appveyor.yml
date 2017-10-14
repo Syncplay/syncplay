@@ -49,6 +49,6 @@ deploy:
   subject: alby128
   repo: Syncplay
   package: Syncplay
-  version: "1.5.0_test"
+  version: "1.5.0"
   publish: true
   override: true

@@ -17,9 +17,6 @@ before_install:
 install:
 - export PATH=/usr/local/bin:$PATH
 - pip install twisted appnope pyobjc py2app
-- git clone -b macOS_app https://github.com/alby128/syncplay.git syncplay_app
-- cd syncplay_app
-- git checkout macOS_app
 
 before_deploy:
 - pip install dmgbuild
