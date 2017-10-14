@@ -521,9 +521,9 @@ class MainWindow(QtGui.QMainWindow):
             pathFound = self._syncplayClient.fileSwitch.findFilepath(firstFile) if not isURL(firstFile) else None
             if self._syncplayClient.userlist.currentUser.file is None or firstFile <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(firstFile):
-                    menu.addAction(QtGui.QPixmap(resourcespath + u"world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile))
+                    menu.addAction(QtGui.QPixmap(resourcespath + u"world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile,resetPosition=True))
                 elif pathFound:
-                        menu.addAction(QtGui.QPixmap(resourcespath + u"film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound))
+                        menu.addAction(QtGui.QPixmap(resourcespath + u"film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound,resetPosition=True))
             if pathFound:
                 menu.addAction(QtGui.QPixmap(resourcespath + u"folder_film.png"),
                                getMessage('open-containing-folder'),
@@ -632,11 +632,11 @@ class MainWindow(QtGui.QMainWindow):
         if self._isTryingToChangeToCurrentFile(filename):
             return
         if isURL(filename):
-            self._syncplayClient._player.openFile(filename)
+            self._syncplayClient._player.openFile(filename, resetPosition=True)
         else:
             pathFound = self._syncplayClient.fileSwitch.findFilepath(filename, highPriority=True)
             if pathFound:
-                self._syncplayClient._player.openFile(pathFound)
+                self._syncplayClient._player.openFile(pathFound, resetPosition=True)
             else:
                 self._syncplayClient.ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
 
