@@ -284,6 +284,14 @@ ru = {
     "help-menu-label" : u"&Помощь",
     "userguide-menu-label" : u"&Руководство пользователя",
     "update-menu-label" : u"Проверить &обновления",
+    
+    #About dialog - TODO: Translate
+    "about-menu-label": u"&About Syncplay",
+    "about-dialog-title": u"About Syncplay",
+    "about-dialog-release": u"Version {} release {}",
+    "about-dialog-license-text" : u"Licensed under the Apache&nbsp;License,&nbsp;Version 2.0",
+    "about-dialog-license-button": u"License",
+    "about-dialog-dependencies": u"Dependencies",
 
     "setoffset-msgbox-label" : u"Установить смещение",
     "offsetinfo-msgbox-label" : u"Смещение (см. инструкцию на странице www.syncplay.pl/guide):",
