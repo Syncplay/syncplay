@@ -282,6 +282,14 @@ de = {
     "help-menu-label" : u"&Hilfe",
     "userguide-menu-label" : u"&Benutzerhandbuch öffnen",
     "update-menu-label" : u"auf &Aktualisierung prüfen",
+    
+    #About dialog - TODO: Translate
+    "about-menu-label": u"&About Syncplay",
+    "about-dialog-title": u"About Syncplay",
+    "about-dialog-release": u"Version {} release {}",
+    "about-dialog-license-text" : u"Licensed under the Apache&nbsp;License,&nbsp;Version 2.0",
+    "about-dialog-license-button": u"License",
+    "about-dialog-dependencies": u"Dependencies",
 
     "setoffset-msgbox-label" : u"Offset einstellen",
     "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
