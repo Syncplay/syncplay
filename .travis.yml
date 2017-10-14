@@ -3,7 +3,7 @@ osx_image: xcode6.4
 
 branches:
   only:
-  - macOS_app
+  - master
 
 script:
 - python buildPy2app.py py2app
@@ -28,7 +28,7 @@ before_deploy:
 - dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_macOS.dmg
 
 deploy:
-  on: macOS_app
+  on: master
   provider: bintray
   file: "bintray.json"
   user: alby128
