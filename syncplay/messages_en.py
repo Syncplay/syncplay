@@ -179,7 +179,7 @@ en = {
 
     "media-setting-title" : "Media player settings",
     "executable-path-label" : "Path to media player:",
-    "media-path-label" : "Path to media file:",
+    "media-path-label" : "Path to video (optional):",
     "player-arguments-label" : "Player arguments (if any):",
     "browse-label" : "Browse",
     "update-server-list-label" : u"Update list",
@@ -321,7 +321,7 @@ en = {
     "room-tooltip" : "Room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
 
     "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or mpv).",
-    "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
+    "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mplayer2.",
     "player-arguments-tooltip" : "Additional command line arguments / switches to pass on to this media player.",
     "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.",
 

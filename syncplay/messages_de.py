@@ -181,7 +181,7 @@ de = {
 
     "media-setting-title" : u"Media-Player Einstellungen",
     "executable-path-label" : u"Pfad zum Media-Player:",
-    "media-path-label" : u"Pfad zur Datei:",
+    "media-path-label" : u"Pfad zur Datei:", # Todo: Translate to 'Path to video (optional)'
     "player-arguments-label" : u"Playerparameter:",
     "browse-label" : u"Durchsuchen",
     "update-server-list-label" : u"Liste aktualisieren",
@@ -321,7 +321,7 @@ de = {
     "room-tooltip" : u"Der Raum, der betreten werden soll, kann ein x-beliebiger sein. Allerdings werden nur Clients im selben Raum synchronisiert.",
 
     "executable-path-tooltip" : u"Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, VLC, mplayer2 or mpv).",
-    "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mpv und mplayer2.",
+    "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mplayer2.", # TODO: Confirm translation
     "player-arguments-tooltip" : u"Zusätzliche Kommandozeilenparameter / -schalter für diesen Mediaplayer.",
     "mediasearcdirectories-arguments-tooltip" : u"Verzeichnisse, in denen Syncplay nach Mediendateien suchen soll, z.B. wenn du das Click-to-switch-Feature verwendest. Syncplay wird rekursiv Unterordner durchsuchen.", # TODO: Translate Click-to-switch? (or use as name for feature)
 
