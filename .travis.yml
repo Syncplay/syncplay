@@ -3,7 +3,7 @@ osx_image: xcode6.4
 
 branches:
   only:
-  - master
+  - chat-osd
 
 script:
 - python buildPy2app.py py2app
@@ -22,10 +22,10 @@ before_deploy:
 - pip install dmgbuild
 - mkdir dist_dmg
 - mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
-- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_macOS.dmg
+- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_chat-osd_macOS.dmg
 
 deploy:
-  on: master
+  on: chat-osd
   provider: bintray
   file: "bintray.json"
   user: alby128

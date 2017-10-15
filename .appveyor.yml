@@ -33,7 +33,7 @@ build: off
 artifacts:
   path: 'syncplay_v1.5.0'
   type: zip
-  name: Syncplay_win
+  name: Syncplay_chat-osd_win
 
 # Push artefact to S3 bucket and list all
 before_deploy:
@@ -46,9 +46,9 @@ deploy:
   username: alby128
   api_key:
     secure: lAocj5KA9Z9x4BefQBIgNlQJbeW4qPBfCgYVBHMyOP3NgyhnMLmvR57ZCqtCKBlQ
-  subject: alby128
+  subject: Syncplay
   repo: Syncplay
   package: Syncplay
-  version: "1.5.0"
+  version: "test"
   publish: true
   override: true
