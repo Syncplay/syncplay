@@ -110,7 +110,7 @@ ru = {
     "mpc-version-insufficient-error" : u"Версия MPC слишком старая, пожалуйста, используйте `mpc-hc` >= `{}`",
     "mpv-version-error" : u"Syncplay не совместим с данной версией mpv. Пожалуйста, используйте другую версию mpv (лучше свежайшую).",
     "player-file-open-error" : u"Проигрыватель не может открыть файл.",
-    "player-path-error" : u"Путь к проигрывателю задан неверно.",
+    "player-path-error" : u"Путь к проигрывателю задан неверно. Supported players are: mpv, VLC, MPC-HC and mplayer2.", # TODO: Translate last sentence
     "hostname-empty-error" : u"Имя пользователя не может быть пустым.",
     "empty-error" : u"{} не может быть пустым.",  # Configuration
     "media-player-error" : u"Ошибка проигрывателя: \"{}\"",  # Error line
@@ -120,7 +120,7 @@ ru = {
 
     "unable-to-start-client-error" : u"Невозможно запустить клиент",
 
-    "player-path-config-error": u"Путь к проигрывателю установлен неверно",
+    "player-path-config-error": u"Путь к проигрывателю установлен неверно. Supported players are: mpv, VLC, MPC-HC and mplayer2", # To do: Translate end
     "no-file-path-config-error" : u"Файл должен быть указан до включения проигрывателя",
     "no-hostname-config-error": u"Имя сервера не может быть пустым",
     "invalid-port-config-error" : u"Неверный номер порта",

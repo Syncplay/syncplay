@@ -110,7 +110,7 @@ de = {
     "mpc-version-insufficient-error" : u"MPC-Version nicht ausreichend, bitte nutze `mpc-hc` >= `{}`",
     "mpv-version-error" : u"Syncplay ist nicht kompatibel mit dieser Version von mpv.  Bitte benutze eine andere Version (z.B. Git HEAD).",
     "player-file-open-error" : u"Fehler beim Öffnen der Datei durch den Player",
-    "player-path-error" : u"Ungültiger Player-Pfad",
+    "player-path-error" : u"Ungültiger Player-Pfad. Supported players are: mpv, VLC, MPC-HC and mplayer2", # To do: Translate end
     "hostname-empty-error" : u"Hostname darf nicht leer sein",
     "empty-error" : u"{} darf nicht leer sein",  # Configuration
     "media-player-error": u"Player-Fehler: \"{}\"",  # Error line
@@ -120,7 +120,7 @@ de = {
 
     "unable-to-start-client-error" : u"Client kann nicht gestartet werden",
 
-    "player-path-config-error": u"Player-Pfad ist nicht ordnungsgemäß gesetzt.",
+    "player-path-config-error": u"Player-Pfad ist nicht ordnungsgemäß gesetzt. Supported players are: mpv, VLC, MPC-HC and mplayer2.", # To do: Translate end
     "no-file-path-config-error": u"Es muss eine Datei ausgewählt werden, bevor der Player gestartet wird.",
     "no-hostname-config-error": u"Hostname darf nicht leer sein",
     "invalid-port-config-error" : u"Port muss gültig sein",
