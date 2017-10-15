@@ -585,6 +585,7 @@ class ConfigDialog(QtGui.QDialog):
         self.executableiconImage = QtGui.QImage()
         self.executableiconLabel = QLabel(self)
         self.executableiconLabel.setMinimumWidth(16)
+        self.executableiconLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.executablepathCombobox = QtGui.QComboBox(self)
         self.executablepathCombobox.setEditable(True)
         self.executablepathCombobox.currentIndexChanged.connect(self.updateExecutableIcon)
