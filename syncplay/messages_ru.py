@@ -110,7 +110,7 @@ ru = {
     "mpc-version-insufficient-error" : u"Версия MPC слишком старая, пожалуйста, используйте `mpc-hc` >= `{}`",
     "mpv-version-error" : u"Syncplay не совместим с данной версией mpv. Пожалуйста, используйте другую версию mpv (лучше свежайшую).",
     "player-file-open-error" : u"Проигрыватель не может открыть файл.",
-    "player-path-error" : u"Путь к проигрывателю задан неверно.",
+    "player-path-error" : u"Путь к проигрывателю задан неверно. Supported players are: mpv, VLC, MPC-HC and mplayer2.", # TODO: Translate last sentence
     "hostname-empty-error" : u"Имя пользователя не может быть пустым.",
     "empty-error" : u"{} не может быть пустым.",  # Configuration
     "media-player-error" : u"Ошибка проигрывателя: \"{}\"",  # Error line
@@ -120,7 +120,7 @@ ru = {
 
     "unable-to-start-client-error" : u"Невозможно запустить клиент",
 
-    "player-path-config-error": u"Путь к проигрывателю установлен неверно",
+    "player-path-config-error": u"Путь к проигрывателю установлен неверно. Supported players are: mpv, VLC, MPC-HC and mplayer2", # To do: Translate end
     "no-file-path-config-error" : u"Файл должен быть указан до включения проигрывателя",
     "no-hostname-config-error": u"Имя сервера не может быть пустым",
     "invalid-port-config-error" : u"Неверный номер порта",
@@ -181,7 +181,7 @@ ru = {
 
     "media-setting-title" : u"Воспроизведение",
     "executable-path-label" : u"Путь к проигрывателю:",
-    "media-path-label" : u"Путь к видеофайлу:",
+    "media-path-label" : u"Путь к видеофайлу:", # Todo: Translate to 'Path to video (optional)'
     "player-arguments-label" : u"Аргументы запуска проигрывателя:",
     "browse-label" : u"Выбрать",
     "update-server-list-label" : u"Обновить список",
@@ -323,7 +323,7 @@ ru = {
     "room-tooltip" : u"Комната, в которую Вы попадете сразу после подключения. Синхронизация возможна только между людьми в одной и той же комнате.",
 
     "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, VLC, mplayer2 или mpv).",
-    "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mpv и mplayer2.",
+    "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mplayer2.", # TODO: Confirm translation
     "player-arguments-tooltip" : u"Передавать дополнительные аргументы командной строки этому проигрывателю.",
     "mediasearcdirectories-arguments-tooltip" : u"Папки, где Syncplay будет искать медиа файлы, включая подпапки.",
 

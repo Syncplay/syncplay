@@ -92,6 +92,9 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.resetButton.show()
                 self.playerargsTextbox.show()
                 self.playerargsLabel.show()
+                self.mediapathTextbox.show()
+                self.mediapathLabel.show()
+                self.mediabrowseButton.show()
                 self.runButton.show()
                 self.saveMoreState(True)
                 self.tabListWidget.setCurrentRow(0)
@@ -103,6 +106,14 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.playerargsTextbox.hide()
                 self.playerargsLabel.hide()
                 self.runButton.hide()
+                if self.mediapathTextbox.text() == "":
+                    self.mediapathTextbox.hide()
+                    self.mediapathLabel.hide()
+                    self.mediabrowseButton.hide()
+                else:
+                    self.mediapathTextbox.show()
+                    self.mediapathLabel.show()
+                    self.mediabrowseButton.show()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
                 newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
@@ -113,7 +124,6 @@ class ConfigDialog(QtWidgets.QDialog):
             self.setFixedSize(self.sizeHint())
         self.moreToggling = False
         self.setFixedWidth(self.minimumSizeHint().width())
-        self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
 
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
@@ -430,6 +440,9 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.executablepathCombobox.setEditText(dropfilepath)
             else:
                 self.mediapathTextbox.setText(dropfilepath)
+                self.mediapathTextbox.show()
+                self.mediapathLabel.show()
+                self.mediabrowseButton.show()
 
     def processWidget(self, container, torun):
         for widget in container.children():
@@ -529,8 +542,12 @@ class ConfigDialog(QtWidgets.QDialog):
         if self.publicServers:
             i = 0
             for publicServer in self.publicServers:
-                self.hostCombobox.addItem(publicServer[1])
-                self.hostCombobox.setItemData(i, publicServer[0], Qt.ToolTipRole)
+                serverTitle = publicServer[0]
+                serverAddressPort = publicServer[1]
+                self.hostCombobox.addItem(serverAddressPort)
+                self.hostCombobox.setItemData(i, serverTitle, Qt.ToolTipRole)
+                if not serverAddressPort in self.publicServerAddresses:
+                    self.publicServerAddresses.append(serverAddressPort)
                 i += 1
         self.hostCombobox.setEditable(True)
         self.hostCombobox.setEditText(host)
@@ -554,6 +571,8 @@ class ConfigDialog(QtWidgets.QDialog):
         self.usernameTextbox.setObjectName("name")
         self.serverpassLabel.setObjectName("password")
         self.serverpassTextbox.setObjectName("password")
+        self.hostCombobox.editTextChanged.connect(self.updatePasswordVisibilty)
+        self.hostCombobox.currentIndexChanged.connect(self.updatePasswordVisibilty)
         self.defaultroomLabel.setObjectName("room")
         self.defaultroomTextbox.setObjectName("room")
 
@@ -581,11 +600,12 @@ class ConfigDialog(QtWidgets.QDialog):
         self.executableiconImage = QtGui.QImage()
         self.executableiconLabel = QLabel(self)
         self.executableiconLabel.setMinimumWidth(16)
+        self.executableiconLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.executablepathCombobox = QtWidgets.QComboBox(self)
         self.executablepathCombobox.setEditable(True)
         self.executablepathCombobox.currentIndexChanged.connect(self.updateExecutableIcon)
         self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'], playerpaths))
-        self.executablepathCombobox.setFixedWidth(165)
+        self.executablepathCombobox.setFixedWidth(250)
         self.executablepathCombobox.editTextChanged.connect(self.updateExecutableIcon)
 
         self.executablepathLabel = QLabel(getMessage("executable-path-label"), self)
@@ -1008,7 +1028,6 @@ class ConfigDialog(QtWidgets.QDialog):
     def showEvent(self, *args, **kwargs):
         self.ensureTabListIsVisible()
         self.setFixedWidth(self.minimumSizeHint().width())
-        self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
 
     def clearGUIData(self, leaveMore=False):
         settings = QSettings("Syncplay", "PlayerList")
@@ -1040,8 +1059,25 @@ class ConfigDialog(QtWidgets.QDialog):
                 for server in self.publicServers:
                     self.hostCombobox.addItem(server[1])
                     self.hostCombobox.setItemData(i, server[0], Qt.ToolTipRole)
+                    if not server[1] in self.publicServerAddresses:
+                        self.publicServerAddresses.append(server[1])
                     i += 1
                 self.hostCombobox.setEditText(currentServer)
+
+    def updatePasswordVisibilty(self):
+        if (self.hostCombobox.currentText() == "" and self.serverpassTextbox.text() == "") or unicode(self.hostCombobox.currentText()) in self.publicServerAddresses:
+            self.serverpassLabel.hide()
+            self.serverpassTextbox.hide()
+            self.serverpassTextbox.setText("")
+        else:
+            self.serverpassLabel.show()
+            self.serverpassTextbox.show()
+        newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
+        if self.error:
+            newHeight += self.errorLabel.height()+3
+        self.stackedFrame.setFixedHeight(newHeight)
+        self.adjustSize()
+        self.setFixedSize(self.sizeHint())
         
     def __init__(self, config, playerpaths, error, defaultConfig):
         self.config = config
@@ -1051,6 +1087,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.config['resetConfig'] = False
         self.subitems = {}
         self.publicServers = None
+        self.publicServerAddresses = []
 
         self._playerProbeThread = GetPlayerIconThread()
         self._playerProbeThread.done.connect(self._updateExecutableIcon)
@@ -1100,6 +1137,14 @@ class ConfigDialog(QtWidgets.QDialog):
             self.playerargsTextbox.hide()
             self.playerargsLabel.hide()
             self.runButton.hide()
+            if self.mediapathTextbox.text() == "":
+                self.mediapathTextbox.hide()
+                self.mediapathLabel.hide()
+                self.mediabrowseButton.hide()
+            else:
+                self.mediapathTextbox.show()
+                self.mediapathLabel.show()
+                self.mediabrowseButton.show()
             newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
             if self.error:
                 newHeight +=self.errorLabel.height()+3
@@ -1124,3 +1169,4 @@ class ConfigDialog(QtWidgets.QDialog):
         self.processWidget(self, lambda w: self.loadValues(w))
         self.processWidget(self, lambda w: self.connectChildren(w))
         self.populateEmptyServerList()
+        self.updatePasswordVisibilty()
