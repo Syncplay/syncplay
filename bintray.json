@@ -1,0 +1,19 @@
+{
+    "package": {
+        "name": "Syncplay",
+        "repo": "Syncplay",
+        "subject": "alby128"
+    },
+
+    "version": {
+        "name": "1.5.0"
+    },
+
+    "files":
+        [
+        {"includePattern": "dist_dmg/(.*)", "uploadPattern": "$1", 
+           "matrixParams": {
+           "override": 1 }}
+	    ],
+    "publish": true
+}

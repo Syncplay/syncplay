@@ -1,6 +1,6 @@
 from PySide import QtGui
 from PySide.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine
-from syncplay import utils, constants, version
+from syncplay import utils, constants, version, release_number
 from syncplay.messages import getMessage
 import sys
 import time
@@ -12,6 +12,8 @@ from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFiledurat
 from functools import wraps
 from twisted.internet import task
 from syncplay.ui.consoleUI import ConsoleUI
+if sys.platform.startswith('darwin'):
+    from Foundation import NSURL
 lastCheckedForUpdates = None
 
 class ConsoleInGUI(ConsoleUI):
@@ -101,6 +103,59 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
+class AboutDialog(QtGui.QDialog):
+    if sys.platform.startswith('win'):
+         resourcespath = utils.findWorkingDir() + u"\\resources\\"
+    else:
+         resourcespath = utils.findWorkingDir() + u"/resources/"
+
+    def __init__(self, parent=None):
+         super(AboutDialog, self).__init__(parent)
+         if sys.platform.startswith('darwin'):
+             self.setWindowTitle("")
+         else:
+             self.setWindowTitle(getMessage("about-dialog-title"))
+             if sys.platform.startswith('win'):
+                 self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+         nameLabel = QtGui.QLabel("<center><strong>Syncplay</strong></center>")
+         nameLabel.setFont(QtGui.QFont("Helvetica", 20))
+         linkLabel = QtGui.QLabel("<center><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
+         linkLabel.setOpenExternalLinks(True)
+         versionLabel = QtGui.QLabel("<center>" + getMessage("about-dialog-release").format(version, release_number) + "</center>")
+         licenseLabel = QtGui.QLabel("<center><p>Copyright &copy; 2017 Syncplay</p><p>" + getMessage("about-dialog-license-text") + "</p></center>")
+         aboutIconPixmap = QtGui.QPixmap(self.resourcespath + u"syncplay.png")
+         aboutIconLabel = QtGui.QLabel()
+         aboutIconLabel.setPixmap(aboutIconPixmap.scaled(120, 120, Qt.KeepAspectRatio))
+         aboutLayout = QtGui.QGridLayout()
+         aboutLayout.addWidget(aboutIconLabel, 0, 0, 4, 2)
+         aboutLayout.addWidget(nameLabel, 0, 2, 1, 2)
+         aboutLayout.addWidget(linkLabel, 1, 2, 1, 2)
+         aboutLayout.addWidget(versionLabel, 2, 2, 1, 2)
+         aboutLayout.addWidget(licenseLabel, 3, 2, 1, 2)
+         licenseButton = QtGui.QPushButton(getMessage("about-dialog-license-button"))
+         licenseButton.setAutoDefault(False)
+         licenseButton.clicked.connect(self.openLicense)
+         aboutLayout.addWidget(licenseButton, 4, 2)
+         dependenciesButton = QtGui.QPushButton(getMessage("about-dialog-dependencies"))
+         dependenciesButton.setAutoDefault(False)
+         dependenciesButton.clicked.connect(self.openDependencies)
+         aboutLayout.addWidget(dependenciesButton, 4, 3)
+         aboutLayout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+         self.setSizeGripEnabled(False)
+         self.setLayout(aboutLayout)
+
+    def openLicense(self):
+         if sys.platform.startswith('win'):
+             QtGui.QDesktopServices.openUrl(QUrl("file:///" + self.resourcespath + u"license.rtf"))
+         else:
+             QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"license.rtf"))
+
+    def openDependencies(self):
+         if sys.platform.startswith('win'):
+             QtGui.QDesktopServices.openUrl(QUrl("file:///" + self.resourcespath + u"third-party-notices.rtf"))
+         else:
+             QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"third-party-notices.rtf"))
+
 class MainWindow(QtGui.QMainWindow):
     insertPosition = None
     playlistState = []
@@ -178,7 +233,10 @@ class MainWindow(QtGui.QMainWindow):
                 indexRow = window.playlist.count() if window.clearedPlaylistNote else 0
 
                 for url in urls[::-1]:
-                    dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
+                    if sys.platform.startswith('darwin'):
+                        dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
+                    else:
+                        dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
                     if os.path.isfile(dropfilepath):
                         window.addFileToPlaylist(dropfilepath, indexRow)
                     elif os.path.isdir(dropfilepath):
@@ -280,7 +338,10 @@ class MainWindow(QtGui.QMainWindow):
                 if indexRow == -1:
                     indexRow = window.playlist.count()
                 for url in urls[::-1]:
-                    dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
+                    if sys.platform.startswith('darwin'):
+                        dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
+                    else:
+                        dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
                     if os.path.isfile(dropfilepath):
                         window.addFileToPlaylist(dropfilepath, indexRow)
                     elif os.path.isdir(dropfilepath):
@@ -530,9 +591,9 @@ class MainWindow(QtGui.QMainWindow):
             pathFound = self._syncplayClient.fileSwitch.findFilepath(firstFile) if not isURL(firstFile) else None
             if self._syncplayClient.userlist.currentUser.file is None or firstFile <> self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(firstFile):
-                    menu.addAction(QtGui.QPixmap(resourcespath + u"world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile))
+                    menu.addAction(QtGui.QPixmap(resourcespath + u"world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile,resetPosition=True))
                 elif pathFound:
-                        menu.addAction(QtGui.QPixmap(resourcespath + u"film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound))
+                        menu.addAction(QtGui.QPixmap(resourcespath + u"film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound,resetPosition=True))
             if pathFound:
                 menu.addAction(QtGui.QPixmap(resourcespath + u"folder_film.png"),
                                getMessage('open-containing-folder'),
@@ -641,11 +702,11 @@ class MainWindow(QtGui.QMainWindow):
         if self._isTryingToChangeToCurrentFile(filename):
             return
         if isURL(filename):
-            self._syncplayClient._player.openFile(filename)
+            self._syncplayClient._player.openFile(filename, resetPosition=True)
         else:
             pathFound = self._syncplayClient.fileSwitch.findFilepath(filename, highPriority=True)
             if pathFound:
-                self._syncplayClient._player.openFile(pathFound)
+                self._syncplayClient._player.openFile(pathFound, resetPosition=True)
             else:
                 self._syncplayClient.ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
 
@@ -798,7 +859,10 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.loadMediaBrowseSettings()
-        options = QtGui.QFileDialog.Options()
+        if sys.platform.startswith('darwin'):
+            options = QtGui.QFileDialog.Options(QtGui.QFileDialog.DontUseNativeDialog)
+        else:
+            options = QtGui.QFileDialog.Options()
         self.mediadirectory = ""
         currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
         if currentdirectory and os.path.isdir(currentdirectory):
@@ -823,7 +887,10 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.loadMediaBrowseSettings()
-        options = QtGui.QFileDialog.Options()
+        if sys.platform.startswith('darwin'):
+            options = QtGui.QFileDialog.Options(QtGui.QFileDialog.DontUseNativeDialog)
+        else:
+            options = QtGui.QFileDialog.Options()
         self.mediadirectory = ""
         currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
         if currentdirectory and os.path.isdir(currentdirectory):
@@ -971,7 +1038,11 @@ class MainWindow(QtGui.QMainWindow):
 
     @needsClient
     def openAddMediaDirectoryDialog(self, MediaDirectoriesTextbox, MediaDirectoriesDialog):
-        folderName = unicode(QtGui.QFileDialog.getExistingDirectory(self,None,self.getInitialMediaDirectory(includeUserSpecifiedDirectories=False),QtGui.QFileDialog.ShowDirsOnly))
+        if sys.platform.startswith('darwin'):
+            options = QtGui.QFileDialog.Options(QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontUseNativeDialog)
+        else:
+            options = QtGui.QFileDialog.Options(QtGui.QFileDialog.ShowDirsOnly)
+        folderName = unicode(QtGui.QFileDialog.getExistingDirectory(self,None,self.getInitialMediaDirectory(includeUserSpecifiedDirectories=False),options))
         if folderName:
             existingMediaDirs = MediaDirectoriesTextbox.toPlainText()
             if existingMediaDirs == "":
@@ -1371,6 +1442,7 @@ class MainWindow(QtGui.QMainWindow):
         # Help menu
 
         window.helpMenu = QtGui.QMenu(getMessage("help-menu-label"), self)
+
         window.userguideAction = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'help.png'),
                                                            getMessage("userguide-menu-label"))
         window.userguideAction.triggered.connect(self.openUserGuide)
@@ -1378,9 +1450,21 @@ class MainWindow(QtGui.QMainWindow):
                                                            getMessage("update-menu-label"))
         window.updateAction.triggered.connect(self.userCheckForUpdates)
 
+        if not sys.platform.startswith('darwin'):
+     	    window.helpMenu.addSeparator()
+            window.about = window.helpMenu.addAction(QtGui.QIcon(self.resourcespath + 'syncplay.png'),
+                                                           getMessage("about-menu-label"))
+        else:
+            window.about = window.helpMenu.addAction("&About")
+        window.about.triggered.connect(self.openAbout)
+
         window.menuBar.addMenu(window.helpMenu)
         if not sys.platform.startswith('darwin'):
             window.mainLayout.setMenuBar(window.menuBar)
+
+    def openAbout(self):
+        aboutMsgBox = AboutDialog()
+        aboutMsgBox.exec_()
 
     def addMainFrame(self, window):
         window.mainFrame = QtGui.QFrame()
@@ -1511,7 +1595,10 @@ class MainWindow(QtGui.QMainWindow):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            dropfilepath = os.path.abspath(unicode(event.mimeData().urls()[0].toLocalFile()))
+            if sys.platform.startswith('darwin'):
+                dropfilepath = os.path.abspath(NSURL.URLWithString_(str(event.mimeData().urls()[0].toString())).filePathURL().path())
+            else:
+                dropfilepath = os.path.abspath(unicode(event.mimeData().urls()[0].toLocalFile()))
             if rewindFile == False:
                 self._syncplayClient._player.openFile(dropfilepath)
             else:
@@ -1649,7 +1736,10 @@ class MainWindow(QtGui.QMainWindow):
             self.resourcespath = utils.findWorkingDir() + u"\\resources\\"
         else:
             self.resourcespath = utils.findWorkingDir() + u"/resources/"
-        self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
+        if sys.platform.startswith('darwin'):
+            self.setWindowFlags(self.windowFlags())
+        else:
+            self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
         self.setWindowTitle("Syncplay v" + version)
         self.mainLayout = QtGui.QVBoxLayout()
         self.addTopLayout(self)
