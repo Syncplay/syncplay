@@ -109,7 +109,7 @@ en = {
     "mpc-version-insufficient-error" : "MPC version not sufficient, please use `mpc-hc` >= `{}`",
     "mpv-version-error" : "Syncplay is not compatible with this version of mpv. Please use a different version of mpv (e.g. Git HEAD).",
     "player-file-open-error" : "Player failed opening file",
-    "player-path-error" : "Player path is not set properly",
+    "player-path-error" : "Player path is not set properly. Supported players are: mpv, VLC, MPC-HC and mplayer2",
     "hostname-empty-error" : "Hostname can't be empty",
     "empty-error" : "{} can't be empty",  # Configuration
     "media-player-error": "Media player error: \"{}\"",  # Error line
@@ -119,7 +119,7 @@ en = {
 
     "unable-to-start-client-error" : "Unable to start client",
 
-    "player-path-config-error": "Player path is not set properly",
+    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, VLC, MPC-HC and mplayer2.",
     "no-file-path-config-error" :"File must be selected before starting your player",
     "no-hostname-config-error": "Hostname can't be empty",
     "invalid-port-config-error" : "Port must be valid",
@@ -179,7 +179,7 @@ en = {
 
     "media-setting-title" : "Media player settings",
     "executable-path-label" : "Path to media player:",
-    "media-path-label" : "Path to media file:",
+    "media-path-label" : "Path to video (optional):",
     "player-arguments-label" : "Player arguments (if any):",
     "browse-label" : "Browse",
     "update-server-list-label" : u"Update list",
@@ -320,8 +320,8 @@ en = {
     "password-tooltip" : "Passwords are only needed for connecting to private servers.",
     "room-tooltip" : "Room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
 
-    "executable-path-tooltip" : "Location of your chosen supported media player (MPC-HC, VLC, mplayer2 or mpv).",
-    "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mpv and mplayer2.",
+    "executable-path-tooltip" : "Location of your chosen supported media player (mpv, VLC, MPC-HC or mplayer2).",
+    "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mplayer2.",
     "player-arguments-tooltip" : "Additional command line arguments / switches to pass on to this media player.",
     "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.",
 
