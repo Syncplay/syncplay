@@ -172,6 +172,7 @@ MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${f
 MPV_NEW_VERSION = False
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
+VLC_SLAVE_OSX_ARGS = ['--verbose=2', '--no-file-logging']
 VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
 MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS = ["no-osd set time-pos ", "loadfile "]
 MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS = ["cycle pause"]
