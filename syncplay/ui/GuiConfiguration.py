@@ -89,6 +89,9 @@ class ConfigDialog(QtGui.QDialog):
                 self.resetButton.show()
                 self.playerargsTextbox.show()
                 self.playerargsLabel.show()
+                self.mediapathTextbox.show()
+                self.mediapathLabel.show()
+                self.mediabrowseButton.show()
                 self.runButton.show()
                 self.saveMoreState(True)
                 self.tabListWidget.setCurrentRow(0)
@@ -100,6 +103,14 @@ class ConfigDialog(QtGui.QDialog):
                 self.playerargsTextbox.hide()
                 self.playerargsLabel.hide()
                 self.runButton.hide()
+                if self.mediapathTextbox.text() == "":
+                    self.mediapathTextbox.hide()
+                    self.mediapathLabel.hide()
+                    self.mediabrowseButton.hide()
+                else:
+                    self.mediapathTextbox.show()
+                    self.mediapathLabel.show()
+                    self.mediabrowseButton.show()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
                 newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
@@ -110,7 +121,6 @@ class ConfigDialog(QtGui.QDialog):
             self.setFixedSize(self.sizeHint())
         self.moreToggling = False
         self.setFixedWidth(self.minimumSizeHint().width())
-        self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
 
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
@@ -415,6 +425,9 @@ class ConfigDialog(QtGui.QDialog):
                 self.executablepathCombobox.setEditText(dropfilepath)
             else:
                 self.mediapathTextbox.setText(dropfilepath)
+                self.mediapathTextbox.show()
+                self.mediapathLabel.show()
+                self.mediabrowseButton.show()
 
     def processWidget(self, container, torun):
         for widget in container.children():
@@ -570,7 +583,8 @@ class ConfigDialog(QtGui.QDialog):
         self.executablepathCombobox.setEditable(True)
         self.executablepathCombobox.currentIndexChanged.connect(self.updateExecutableIcon)
         self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'], playerpaths))
-        self.executablepathCombobox.setFixedWidth(165)
+        #bob
+        self.executablepathCombobox.setFixedWidth(250)
         self.executablepathCombobox.editTextChanged.connect(self.updateExecutableIcon)
 
         self.executablepathLabel = QLabel(getMessage("executable-path-label"), self)
@@ -993,7 +1007,6 @@ class ConfigDialog(QtGui.QDialog):
     def showEvent(self, *args, **kwargs):
         self.ensureTabListIsVisible()
         self.setFixedWidth(self.minimumSizeHint().width())
-        self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
 
     def clearGUIData(self, leaveMore=False):
         settings = QSettings("Syncplay", "PlayerList")
@@ -1084,6 +1097,14 @@ class ConfigDialog(QtGui.QDialog):
             self.playerargsTextbox.hide()
             self.playerargsLabel.hide()
             self.runButton.hide()
+            if self.mediapathTextbox.text() == "":
+                self.mediapathTextbox.hide()
+                self.mediapathLabel.hide()
+                self.mediabrowseButton.hide()
+            else:
+                self.mediapathTextbox.show()
+                self.mediapathLabel.show()
+                self.mediabrowseButton.show()
             newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
             if self.error:
                 newHeight +=self.errorLabel.height()+3
