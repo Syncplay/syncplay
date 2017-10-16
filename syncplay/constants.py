@@ -55,6 +55,7 @@ SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear
 PLAYLIST_MAX_CHARACTERS = 10000
 PLAYLIST_MAX_ITEMS = 250
 MAXIMUM_TAB_WIDTH = 350
+TAB_PADDING = 30
 
 # Maximum character lengths (for client and server)
 MAX_CHAT_MESSAGE_LENGTH = 50 # Number of displayed characters

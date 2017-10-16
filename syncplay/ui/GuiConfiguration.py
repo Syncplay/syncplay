@@ -987,7 +987,7 @@ class ConfigDialog(QtGui.QDialog):
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"cog.png"),getMessage("misc-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
-        self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width())
+        self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width() + constants.TAB_PADDING)
         self.tabListWidget.setStyleSheet(constants.STYLE_TABLIST)
 
         self.tabListWidget.currentItemChanged.connect(self.tabChange)
