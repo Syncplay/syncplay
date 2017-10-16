@@ -411,6 +411,7 @@ class ConfigDialog(QtWidgets.QDialog):
             self.config['file'] = os.path.abspath(self.mediapathTextbox.text())
         else:
             self.config['file'] = unicode(self.mediapathTextbox.text())
+        self.config['publicServers'] = self.publicServerAddresses
 
         self.pressedclosebutton = False
         self.close()
@@ -1068,7 +1069,6 @@ class ConfigDialog(QtWidgets.QDialog):
         if (self.hostCombobox.currentText() == "" and self.serverpassTextbox.text() == "") or unicode(self.hostCombobox.currentText()) in self.publicServerAddresses:
             self.serverpassLabel.hide()
             self.serverpassTextbox.hide()
-            self.serverpassTextbox.setText("")
         else:
             self.serverpassLabel.show()
             self.serverpassTextbox.show()

@@ -92,6 +92,8 @@ class SyncplayClient(object):
         if config['password']:
             config['password'] = hashlib.md5(config['password']).hexdigest()
         self._serverPassword = config['password']
+        self._host = u"{}:{}".format(config['host'],config['port'])
+        self._publicServers = config["publicServers"]
         if not config['file']:
             self.__getUserlistOnLogon = True
         else:
@@ -634,7 +636,20 @@ class SyncplayClient(object):
         self.userlist.showUserList()
 
     def getPassword(self):
-        return self._serverPassword
+        if self.thisIsPublicServer():
+            return ""
+        else:
+            return self._serverPassword
+
+    def thisIsPublicServer(self):
+        self._publicServers = []
+        if self._publicServers and self._host in self._publicServers:
+            return True
+        i = 0
+        for server in constants.FALLBACK_PUBLIC_SYNCPLAY_SERVERS:
+            if server[1] == self._host:
+                return True
+            i += 1
 
     def setPosition(self, position):
         if self._lastPlayerUpdate:
