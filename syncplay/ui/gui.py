@@ -396,6 +396,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.readyPushButton.setEnabled(False)
         if not featureList["chat"]:
             self.chatFrame.setEnabled(False)
+            self.chatInput.setReadOnly(True)
         if not featureList["sharedPlaylists"]:
             self.playlistGroup.setEnabled(False)
 
