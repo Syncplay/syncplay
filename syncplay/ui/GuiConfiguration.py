@@ -397,6 +397,8 @@ class ConfigDialog(QtWidgets.QDialog):
         self.config["mediaSearchDirectories"] = utils.convertMultilineStringToList(self.mediasearchTextEdit.toPlainText())
         self.config["trustedDomains"] = utils.convertMultilineStringToList(self.trusteddomainsTextEdit.toPlainText())
 
+        if self.serverpassTextbox.isEnabled():
+            self.config['password'] = self.serverpassTextbox.text()
         self.processWidget(self, lambda w: self.saveValues(w))
         if self.hostCombobox.currentText():
             self.config['host'] = self.hostCombobox.currentText() if ":" in self.hostCombobox.currentText() else self.hostCombobox.currentText() + ":" + unicode(constants.DEFAULT_PORT)
@@ -444,6 +446,13 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.mediapathTextbox.show()
                 self.mediapathLabel.show()
                 self.mediabrowseButton.show()
+                if not self.showmoreCheckbox.isChecked():
+                    newHeight = self.connectionSettingsGroup.minimumSizeHint().height() + self.mediaplayerSettingsGroup.minimumSizeHint().height() + self.bottomButtonFrame.minimumSizeHint().height() + 3
+                    if self.error:
+                        newHeight += self.errorLabel.height() + 3
+                    self.stackedFrame.setFixedHeight(newHeight)
+                    self.adjustSize()
+                    self.setFixedSize(self.sizeHint())
 
     def processWidget(self, container, torun):
         for widget in container.children():
@@ -564,6 +573,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.defaultroomTextbox = QLineEdit(self)
         self.usernameLabel = QLabel(getMessage("name-label"), self)
         self.serverpassTextbox = QLineEdit(self)
+        self.serverpassTextbox.setText(self.storedPassword)
         self.defaultroomLabel = QLabel(getMessage("room-label"), self)
 
         self.hostLabel.setObjectName("host")
@@ -571,7 +581,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.usernameLabel.setObjectName("name")
         self.usernameTextbox.setObjectName("name")
         self.serverpassLabel.setObjectName("password")
-        self.serverpassTextbox.setObjectName("password")
+        self.serverpassTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "password")
         self.hostCombobox.editTextChanged.connect(self.updatePasswordVisibilty)
         self.hostCombobox.currentIndexChanged.connect(self.updatePasswordVisibilty)
         self.defaultroomLabel.setObjectName("room")
@@ -1067,17 +1077,15 @@ class ConfigDialog(QtWidgets.QDialog):
 
     def updatePasswordVisibilty(self):
         if (self.hostCombobox.currentText() == "" and self.serverpassTextbox.text() == "") or unicode(self.hostCombobox.currentText()) in self.publicServerAddresses:
-            self.serverpassLabel.hide()
-            self.serverpassTextbox.hide()
+            self.serverpassTextbox.setDisabled(True)
+            self.serverpassTextbox.setReadOnly(True)
+            if self.serverpassTextbox.text() != "":
+                self.storedPassword = self.serverpassTextbox.text()
+            self.serverpassTextbox.setText("")
         else:
-            self.serverpassLabel.show()
-            self.serverpassTextbox.show()
-        newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
-        if self.error:
-            newHeight += self.errorLabel.height()+3
-        self.stackedFrame.setFixedHeight(newHeight)
-        self.adjustSize()
-        self.setFixedSize(self.sizeHint())
+            self.serverpassTextbox.setEnabled(True)
+            self.serverpassTextbox.setReadOnly(False)
+            self.serverpassTextbox.setText(self.storedPassword)
         
     def __init__(self, config, playerpaths, error, defaultConfig):
         self.config = config
@@ -1121,6 +1129,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.mainLayout.setSpacing(0)
         self.mainLayout.setContentsMargins(0,0,0,0)
 
+        self.storedPassword = self.config['password']
         self.addBasicTab()
         self.addReadinessTab()
         self.addSyncTab()
@@ -1130,6 +1139,7 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.mainLayout.addWidget(self.stackedFrame, 0, 1)
         self.addBottomLayout()
+        self.updatePasswordVisibilty()
 
         if self.getMoreState() == False:
             self.tabListFrame.hide()
@@ -1169,4 +1179,3 @@ class ConfigDialog(QtWidgets.QDialog):
         self.processWidget(self, lambda w: self.loadValues(w))
         self.processWidget(self, lambda w: self.connectChildren(w))
         self.populateEmptyServerList()
-        self.updatePasswordVisibilty()
