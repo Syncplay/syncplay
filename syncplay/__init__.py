@@ -1,4 +1,4 @@
 version = '1.5.0'
 milestone = 'Yoitsu'
-release_number = '41'
+release_number = '42'
 projectURL = 'http://syncplay.pl/'
