@@ -397,7 +397,6 @@ class Watcher(object):
         reactor.callLater(0.1, self._scheduleSendState)
 
     def setFile(self, file_):
-        print file_
         if file_ and file_.has_key("name"):
             file_["name"] = truncateText(file_["name"],constants.MAX_FILENAME_LENGTH)
         self._file = file_
