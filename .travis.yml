@@ -22,6 +22,8 @@ before_deploy:
 - pip install dmgbuild
 - mkdir dist_dmg
 - mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
+- mv resources/lua/intf/syncplay.lua resources/lua/intf/.syncplay.lua
+- mv resources/macOS_readme.pdf resources/.macOS_readme.pdf
 - dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_macOS.dmg
 
 deploy:
