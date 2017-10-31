@@ -330,13 +330,19 @@ class SyncServerProtocol(JSONCommandProtocol):
 
     def _extractHelloArguments(self, hello):
         roomName = None
-        username = hello["username"] if hello.has_key("username") else None
-        username = username.strip()
+        if hello.has_key("username"):
+            username = hello["username"]
+            username = username.strip()
+        else:
+            username = None
         serverPassword = hello["password"] if hello.has_key("password") else None
         room = hello["room"] if hello.has_key("room") else None
         if room:
-            roomName = room["name"] if room.has_key("name") else None
-            roomName = roomName.strip()
+            if room.has_key("name"):
+                roomName = room["name"]
+                roomName = roomName.strip()
+            else:
+                roomName = None
         version = hello["version"] if hello.has_key("version") else None
         version = hello["realversion"] if hello.has_key("realversion") else version
         return username, serverPassword, roomName, version
