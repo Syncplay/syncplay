@@ -515,7 +515,7 @@ class MainWindow(QtGui.QMainWindow):
                                 filenameitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
                                 filenameitem.setFont(underlinefont)
                             if not sameSize:
-                                if currentUser.file is not None and formatSize(user.file['size']) == formatSize(currentUser.file['size']):
+                                if formatSize(user.file['size']) == formatSize(currentUser.file['size']):
                                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size'],precise=True))
                                 filesizeitem.setFont(underlinefont)
                                 filesizeitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
