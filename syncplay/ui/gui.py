@@ -557,8 +557,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._syncplayClient.playlist.undoPlaylistChange()
 
     @needsClient
-    def shufflePlaylist(self):
-        self._syncplayClient.playlist.shufflePlaylist()
+    def shuffleRemainingPlaylist(self):
+        self._syncplayClient.playlist.shuffleRemainingPlaylist()
+
+    @needsClient
+    def shuffleEntirePlaylist(self):
+        self._syncplayClient.playlist.shuffleEntirePlaylist()
 
     @needsClient
     def openPlaylistMenu(self, position):
@@ -590,7 +594,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 menu.addAction(QtGui.QPixmap(resourcespath + u"shield_add.png"),getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
             menu.addAction(QtGui.QPixmap(resourcespath + u"delete.png"), getMessage("removefromplaylist-menu-label"), lambda: self.deleteSelectedPlaylistItems())
             menu.addSeparator()
-        menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_switch.png"), getMessage("shuffleplaylist-menuu-label"), lambda: self.shufflePlaylist())
+        menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_switch.png"), getMessage("shuffleremainingplaylist-menu-label"), lambda: self.shuffleRemainingPlaylist())
+        menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_switch.png"), getMessage("shuffleentireplaylist-menuu-label"), lambda: self.shuffleEntirePlaylist())
         menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_undo.png"), getMessage("undoplaylist-menu-label"), lambda: self.undoPlaylistChange())
         menu.addAction(QtGui.QPixmap(resourcespath + u"film_edit.png"), getMessage("editplaylist-menu-label"), lambda: self.openEditPlaylistDialog())
         menu.addAction(QtGui.QPixmap(resourcespath + u"film_add.png"),getMessage("addfilestoplaylist-menu-label"), lambda: self.OpenAddFilesToPlaylistDialog())
