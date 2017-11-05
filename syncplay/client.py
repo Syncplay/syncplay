@@ -1584,11 +1584,23 @@ class SyncplayPlaylist():
             self.changePlaylist(newPlaylist, username=None)
 
     @needsSharedPlaylistsEnabled
-    def shufflePlaylist(self):
+    def shuffleRemainingPlaylist(self):
+        if self._playlist and len(self._playlist) > 0:
+            shuffledPlaylist = deepcopy(self._playlist)
+            shufflePoint = self._playlistIndex + 1
+            partToKeep = shuffledPlaylist[:shufflePoint]
+            partToShuffle = shuffledPlaylist[shufflePoint:]
+            random.shuffle(partToShuffle)
+            shuffledPlaylist = partToKeep + partToShuffle
+            self.changePlaylist(shuffledPlaylist, username=None, resetIndex=False)
+
+    @needsSharedPlaylistsEnabled
+    def shuffleEntirePlaylist(self):
         if self._playlist and len(self._playlist) > 0:
             shuffledPlaylist = deepcopy(self._playlist)
             random.shuffle(shuffledPlaylist)
             self.changePlaylist(shuffledPlaylist, username=None, resetIndex=True)
+            self.switchToNewPlaylistIndex(0, resetPosition=True)
 
     def canUndoPlaylist(self, currentPlaylist):
         return self._previousPlaylist is not None and currentPlaylist <> self._previousPlaylist

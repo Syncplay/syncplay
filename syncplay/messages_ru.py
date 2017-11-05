@@ -411,7 +411,8 @@ ru = {
     "cannot-add-unsafe-path-error" : u"Не удалось автоматически переключиться на {}, потому что ссылка не соответствует доверенным сайтам. Её можно включить вручную, дважны кливнув по ссылке в списке воспроизведения. Добавить доверенный сайт можно в выпадающем меню 'Дополнительно' или просто кликнув по ссылке правой кнопкой мыши.", # Filename
     "sharedplaylistenabled-label" : u"Включить общий список воспроизведения",
     "removefromplaylist-menu-label" : u"Удалить",
-    "shuffleplaylist-menuu-label" : u"Перемешать список",
+    "shufflepremaininglaylist-menuu-label" : u"Shuffle remaining playlist", # Was: Перемешать список # TODO: Translate
+    "shuffleentireplaylist-menuu-label" : u"Shuffle entire playlist", # TODO: Translate
     "undoplaylist-menu-label" : u"Отменить последнее действие",
     "addfilestoplaylist-menu-label" : u"Добавить файлы в очередь",
     "addurlstoplaylist-menu-label" : u"Добавить ссылку в очередь",
