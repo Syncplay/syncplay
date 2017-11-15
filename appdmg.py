@@ -27,10 +27,10 @@ compression_level = 9
 size = defines.get('size', None)
 
 # Files to include
-files = [ application, 'resources/lua/intf/syncplay.lua', 'resources/.macos_vlc_install.command' ]
+files = [ application, 'resources/lua/intf/.syncplay.lua', 'resources/.macos_vlc_install.command', 'resources/.macOS_readme.pdf' ]
 
 # Symlinks to create
-symlinks = { 'Applications': '/Applications', 'Install in VLC': '.macos_vlc_install.command' }
+symlinks = { 'Applications': '/Applications', 'Install for VLC': '.macos_vlc_install.command', 'Read Me': '.macOS_readme.pdf' }
 
 # Volume icon
 #
@@ -43,10 +43,10 @@ badge_icon = icon_from_app(application)
 
 # Where to put the icons
 icon_locations = {
-    appname:        (80, 80),
-    'Applications': (280, 80),
-    'syncplay.lua': (80, 240),
-    'Install in VLC': (280, 240)
+    appname:        (150, 110),
+    'Applications': (450, 110),
+    'Read Me': (100, 285),
+    'Install for VLC': (500, 285)
 }
 
 # .. Window configuration ......................................................
@@ -71,7 +71,7 @@ icon_locations = {
 #
 # Other color components may be expressed either in the range 0 to 1, or
 # as percentages (e.g. 60% is equivalent to 0.6).
-background = '#bacbe0'
+background = 'resources/macOS_dmg_bkg.tiff'
 
 show_status_bar = False
 show_tab_view = False
@@ -81,7 +81,7 @@ show_sidebar = False
 sidebar_width = 180
 
 # Window position in ((x, y), (w, h)) format
-window_rect = ((100, 100), (360, 400))
+window_rect = ((100, 100), (600, 460))
 
 # Select the default view; must be one of
 #

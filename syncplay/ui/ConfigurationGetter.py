@@ -85,6 +85,7 @@ class ConfigurationGetter(object):
                         "notificationTimeout": 3,
                         "alertTimeout": 5,
                         "chatTimeout": 7,
+                        "publicServers" : []
                         }
 
         self._defaultConfig = self._config.copy()
@@ -142,6 +143,7 @@ class ConfigurationGetter(object):
             "perPlayerArguments",
             "mediaSearchDirectories",
             "trustedDomains",
+            "publicServers",
         ]
 
         self._numeric = [
@@ -179,7 +181,7 @@ class ConfigurationGetter(object):
                             "autoplayInitialState", "mediaSearchDirectories",
                             "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
                             "loopSingleFiles",
-                            "onlySwitchToTrustedDomains", "trustedDomains"],
+                            "onlySwitchToTrustedDomains", "trustedDomains","publicServers"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD",
                             "showDifferentRoomOSD", "showSameRoomOSD",
                             "showNonControllerOSD", "showDurationNotification",

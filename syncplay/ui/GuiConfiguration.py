@@ -89,6 +89,9 @@ class ConfigDialog(QtGui.QDialog):
                 self.resetButton.show()
                 self.playerargsTextbox.show()
                 self.playerargsLabel.show()
+                self.mediapathTextbox.show()
+                self.mediapathLabel.show()
+                self.mediabrowseButton.show()
                 self.runButton.show()
                 self.saveMoreState(True)
                 self.tabListWidget.setCurrentRow(0)
@@ -100,6 +103,14 @@ class ConfigDialog(QtGui.QDialog):
                 self.playerargsTextbox.hide()
                 self.playerargsLabel.hide()
                 self.runButton.hide()
+                if self.mediapathTextbox.text() == "":
+                    self.mediapathTextbox.hide()
+                    self.mediapathLabel.hide()
+                    self.mediabrowseButton.hide()
+                else:
+                    self.mediapathTextbox.show()
+                    self.mediapathLabel.show()
+                    self.mediabrowseButton.show()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
                 newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
@@ -110,7 +121,6 @@ class ConfigDialog(QtGui.QDialog):
             self.setFixedSize(self.sizeHint())
         self.moreToggling = False
         self.setFixedWidth(self.minimumSizeHint().width())
-        self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
 
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
@@ -372,6 +382,8 @@ class ConfigDialog(QtGui.QDialog):
         self.config["mediaSearchDirectories"] = utils.convertMultilineStringToList(self.mediasearchTextEdit.toPlainText())
         self.config["trustedDomains"] = utils.convertMultilineStringToList(self.trusteddomainsTextEdit.toPlainText())
 
+        if self.serverpassTextbox.isEnabled():
+            self.config['password'] = self.serverpassTextbox.text()
         self.processWidget(self, lambda w: self.saveValues(w))
         if self.hostCombobox.currentText():
             self.config['host'] = self.hostCombobox.currentText() if ":" in self.hostCombobox.currentText() else self.hostCombobox.currentText() + ":" + unicode(constants.DEFAULT_PORT)
@@ -386,6 +398,7 @@ class ConfigDialog(QtGui.QDialog):
             self.config['file'] = os.path.abspath(self.mediapathTextbox.text())
         else:
             self.config['file'] = unicode(self.mediapathTextbox.text())
+        self.config['publicServers'] = self.publicServerAddresses
 
         self.pressedclosebutton = False
         self.close()
@@ -415,6 +428,16 @@ class ConfigDialog(QtGui.QDialog):
                 self.executablepathCombobox.setEditText(dropfilepath)
             else:
                 self.mediapathTextbox.setText(dropfilepath)
+                self.mediapathTextbox.show()
+                self.mediapathLabel.show()
+                self.mediabrowseButton.show()
+                if not self.showmoreCheckbox.isChecked():
+                    newHeight = self.connectionSettingsGroup.minimumSizeHint().height() + self.mediaplayerSettingsGroup.minimumSizeHint().height() + self.bottomButtonFrame.minimumSizeHint().height() + 3
+                    if self.error:
+                        newHeight += self.errorLabel.height() + 3
+                    self.stackedFrame.setFixedHeight(newHeight)
+                    self.adjustSize()
+                    self.setFixedSize(self.sizeHint())
 
     def processWidget(self, container, torun):
         for widget in container.children():
@@ -514,8 +537,12 @@ class ConfigDialog(QtGui.QDialog):
         if self.publicServers:
             i = 0
             for publicServer in self.publicServers:
-                self.hostCombobox.addItem(publicServer[1])
-                self.hostCombobox.setItemData(i, publicServer[0], Qt.ToolTipRole)
+                serverTitle = publicServer[0]
+                serverAddressPort = publicServer[1]
+                self.hostCombobox.addItem(serverAddressPort)
+                self.hostCombobox.setItemData(i, serverTitle, Qt.ToolTipRole)
+                if not serverAddressPort in self.publicServerAddresses:
+                    self.publicServerAddresses.append(serverAddressPort)
                 i += 1
         self.hostCombobox.setEditable(True)
         self.hostCombobox.setEditText(host)
@@ -531,6 +558,7 @@ class ConfigDialog(QtGui.QDialog):
         self.defaultroomTextbox = QLineEdit(self)
         self.usernameLabel = QLabel(getMessage("name-label"), self)
         self.serverpassTextbox = QLineEdit(self)
+        self.serverpassTextbox.setText(self.storedPassword)
         self.defaultroomLabel = QLabel(getMessage("room-label"), self)
 
         self.hostLabel.setObjectName("host")
@@ -538,7 +566,9 @@ class ConfigDialog(QtGui.QDialog):
         self.usernameLabel.setObjectName("name")
         self.usernameTextbox.setObjectName("name")
         self.serverpassLabel.setObjectName("password")
-        self.serverpassTextbox.setObjectName("password")
+        self.serverpassTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "password")
+        self.hostCombobox.editTextChanged.connect(self.updatePasswordVisibilty)
+        self.hostCombobox.currentIndexChanged.connect(self.updatePasswordVisibilty)
         self.defaultroomLabel.setObjectName("room")
         self.defaultroomTextbox.setObjectName("room")
 
@@ -566,11 +596,12 @@ class ConfigDialog(QtGui.QDialog):
         self.executableiconImage = QtGui.QImage()
         self.executableiconLabel = QLabel(self)
         self.executableiconLabel.setMinimumWidth(16)
+        self.executableiconLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.executablepathCombobox = QtGui.QComboBox(self)
         self.executablepathCombobox.setEditable(True)
         self.executablepathCombobox.currentIndexChanged.connect(self.updateExecutableIcon)
         self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'], playerpaths))
-        self.executablepathCombobox.setFixedWidth(165)
+        self.executablepathCombobox.setFixedWidth(250)
         self.executablepathCombobox.editTextChanged.connect(self.updateExecutableIcon)
 
         self.executablepathLabel = QLabel(getMessage("executable-path-label"), self)
@@ -1111,7 +1142,7 @@ class ConfigDialog(QtGui.QDialog):
         self.tabListWidget.addItem(QtGui.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"cog.png"),getMessage("misc-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
-        self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width())
+        self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width() + constants.TAB_PADDING)
         self.tabListWidget.setStyleSheet(constants.STYLE_TABLIST)
 
         self.tabListWidget.currentItemChanged.connect(self.tabChange)
@@ -1136,7 +1167,6 @@ class ConfigDialog(QtGui.QDialog):
     def showEvent(self, *args, **kwargs):
         self.ensureTabListIsVisible()
         self.setFixedWidth(self.minimumSizeHint().width())
-        self.executablepathCombobox.setFixedWidth(self.mediapathTextbox.width())
 
     def clearGUIData(self, leaveMore=False):
         settings = QSettings("Syncplay", "PlayerList")
@@ -1168,8 +1198,22 @@ class ConfigDialog(QtGui.QDialog):
                 for server in self.publicServers:
                     self.hostCombobox.addItem(server[1])
                     self.hostCombobox.setItemData(i, server[0], Qt.ToolTipRole)
+                    if not server[1] in self.publicServerAddresses:
+                        self.publicServerAddresses.append(server[1])
                     i += 1
                 self.hostCombobox.setEditText(currentServer)
+
+    def updatePasswordVisibilty(self):
+        if (self.hostCombobox.currentText() == "" and self.serverpassTextbox.text() == "") or unicode(self.hostCombobox.currentText()) in self.publicServerAddresses:
+            self.serverpassTextbox.setDisabled(True)
+            self.serverpassTextbox.setReadOnly(True)
+            if self.serverpassTextbox.text() != "":
+                self.storedPassword = self.serverpassTextbox.text()
+            self.serverpassTextbox.setText("")
+        else:
+            self.serverpassTextbox.setEnabled(True)
+            self.serverpassTextbox.setReadOnly(False)
+            self.serverpassTextbox.setText(self.storedPassword)
         
     def __init__(self, config, playerpaths, error, defaultConfig):
         self.config = config
@@ -1179,6 +1223,7 @@ class ConfigDialog(QtGui.QDialog):
         self.config['resetConfig'] = False
         self.subitems = {}
         self.publicServers = None
+        self.publicServerAddresses = []
 
         self._playerProbeThread = GetPlayerIconThread()
         self._playerProbeThread.done.connect(self._updateExecutableIcon)
@@ -1211,6 +1256,7 @@ class ConfigDialog(QtGui.QDialog):
         self.mainLayout.setSpacing(0)
         self.mainLayout.setContentsMargins(0,0,0,0)
 
+        self.storedPassword = self.config['password']
         self.addBasicTab()
         self.addReadinessTab()
         self.addSyncTab()
@@ -1221,6 +1267,7 @@ class ConfigDialog(QtGui.QDialog):
 
         self.mainLayout.addWidget(self.stackedFrame, 0, 1)
         self.addBottomLayout()
+        self.updatePasswordVisibilty()
 
         if self.getMoreState() == False:
             self.tabListFrame.hide()
@@ -1228,6 +1275,14 @@ class ConfigDialog(QtGui.QDialog):
             self.playerargsTextbox.hide()
             self.playerargsLabel.hide()
             self.runButton.hide()
+            if self.mediapathTextbox.text() == "":
+                self.mediapathTextbox.hide()
+                self.mediapathLabel.hide()
+                self.mediabrowseButton.hide()
+            else:
+                self.mediapathTextbox.show()
+                self.mediapathLabel.show()
+                self.mediabrowseButton.show()
             newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
             if self.error:
                 newHeight +=self.errorLabel.height()+3

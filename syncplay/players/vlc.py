@@ -21,8 +21,10 @@ class VlcPlayer(BasePlayer):
 
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS
-    if not sys.platform.startswith('darwin'):
-         SLAVE_ARGS.extend(constants.VLC_SLAVE_NONOSX_ARGS)
+    if sys.platform.startswith('darwin'):
+        SLAVE_ARGS.extend(constants.VLC_SLAVE_OSX_ARGS)        
+    else:     
+        SLAVE_ARGS.extend(constants.VLC_SLAVE_NONOSX_ARGS)
     vlcport = random.randrange(constants.VLC_MIN_PORT, constants.VLC_MAX_PORT) if (constants.VLC_MIN_PORT < constants.VLC_MAX_PORT) else constants.VLC_MIN_PORT
 
     def __init__(self, client, playerPath, filePath, args):
@@ -207,18 +209,22 @@ class VlcPlayer(BasePlayer):
             self._durationAsk.set()
         elif name == "playstate":
             self._paused = bool(value != 'playing') if(value != "no-input" and self._filechanged == False) else self._client.getGlobalPaused()
+            diff = time.time() - self._lastVLCPositionUpdate if self._lastVLCPositionUpdate else 0
             if self._paused == False \
             and self._position == self._previousPreviousPosition \
             and self._previousPosition == self._position \
             and self._duration > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH \
-            and self._position == self._duration:
-                self._paused = True
+            and (self._duration - self._position) < constants.VLC_EOF_DURATION_THRESHOLD \
+            and diff > constants.VLC_LATENCY_ERROR_THRESHOLD:
                 self._client.ui.showDebugMessage("Treating 'playing' response as 'paused' due to VLC EOF bug")
+                self.setPaused(True)
             self._pausedAsk.set()
         elif name == "position":
             newPosition = float(value.replace(",", ".")) if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPosition()
             if newPosition == self._previousPosition and newPosition <> self._duration and not self._paused:
                 self._client.ui.showDebugMessage("Not considering position {} duplicate as new time because of VLC time precision bug".format(newPosition))
+                self._previousPreviousPosition = self._previousPosition
+                self._previousPosition = self._position
                 self._positionAsk.set()
                 return
             self._previousPreviousPosition = self._previousPosition
@@ -382,7 +388,12 @@ class VlcPlayer(BasePlayer):
                                 playerController._client.ui.showErrorMessage(
                                     getMessage("media-player-error").format(line), True)
                                 break
-                self.__process.stderr = None
+                if not sys.platform.startswith('darwin'):
+                    self.__process.stderr = None
+                else:
+                    vlcoutputthread = threading.Thread(target = self.handle_vlcoutput, args=())
+                    vlcoutputthread.setDaemon(True)
+                    vlcoutputthread.start()
                 threading.Thread.__init__(self, name="VLC Listener")
                 asynchat.async_chat.__init__(self)
                 self.set_terminator("\n")
@@ -427,6 +438,15 @@ class VlcPlayer(BasePlayer):
                 self.vlcHasResponded = True
                 asynchat.async_chat.handle_close(self)
                 self.__playerController.drop(getMessage("vlc-failed-connection").format(constants.VLC_MIN_VERSION))
+
+        def handle_vlcoutput(self):
+            out = self.__process.stderr
+            for line in iter(out.readline, ''):
+                if '[syncplay] core interface debug: removing module' in line:
+                    self.__playerController.drop()
+                    break
+            out.close()
+        
 
         def found_terminator(self):
             self.vlcHasResponded = True

@@ -55,6 +55,7 @@ SYNC_ON_PAUSE = True  # Client seek to global position - subtitles may disappear
 PLAYLIST_MAX_CHARACTERS = 10000
 PLAYLIST_MAX_ITEMS = 250
 MAXIMUM_TAB_WIDTH = 350
+TAB_PADDING = 30
 DEFAULT_WINDOWS_MONOSPACE_FONT = "Consolas"
 DEFAULT_OSX_MONOSPACE_FONT = "Menlo"
 FALLBACK_MONOSPACE_FONT = "Monospace"
@@ -186,6 +187,7 @@ MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_
 MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
+VLC_SLAVE_OSX_ARGS = ['--verbose=2', '--no-file-logging']
 VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
 MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS = ["no-osd set time-pos ", "loadfile "]
 MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS = ["cycle pause"]
@@ -207,6 +209,8 @@ UNPAUSE_ALWAYS_MODE = "Always"
 INPUT_POSITION_TOP = "Top"
 INPUT_POSITION_MIDDLE = "Middle"
 INPUT_POSITION_BOTTOM = "Bottom"
+
+VLC_EOF_DURATION_THRESHOLD = 2.0
 
 PRIVACY_HIDDENFILENAME = "**Hidden filename**"
 INVERTED_STATE_MARKER = "*"

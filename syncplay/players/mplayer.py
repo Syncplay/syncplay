@@ -395,7 +395,12 @@ class MplayerPlayer(BasePlayer):
                                 for itemID, deletionCandidate in enumerate(self.sendQueue):
                                     if deletionCandidate.startswith(command):
                                         self.__playerController._client.ui.showDebugMessage(u"<mpv> Remove duplicate (supersede): {}".format(self.sendQueue[itemID]))
-                                        self.sendQueue.remove(self.sendQueue[itemID])
+                                        try:
+                                            self.sendQueue.remove(self.sendQueue[itemID])
+                                        except UnicodeWarning:
+                                            self.__playerController._client.ui.showDebugMessage(u"<mpv> Unicode mismatch occured when trying to remove duplicate")
+                                            # TODO: Prevent this from being triggered
+                                            pass
                                         break
                             break
                     if constants.MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS:

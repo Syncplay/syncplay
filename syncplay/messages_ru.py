@@ -93,6 +93,7 @@ ru = {
     "language-changed-msgbox-label" : u"Язык переключится при следующем запуске Syncplay.",
     "promptforupdate-label" : u"Вы не против, если Syncplay будет автоматически изредка проверять наличие обновлений?",
 
+    "vlc-version-mismatch": u"Syncplay не поддерживает данную версию VLC. Syncplay поддерживает VLC {}+, но не VLC 3. Используйте другой проигрыватель.", # VLC min version
     "vlc-interface-version-mismatch" : u"Вы используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",  # VLC interface version, VLC interface min version
     "vlc-interface-oldversion-warning" : u"Внимание: Syncplay обнаружил, что старая версия модуля интерфейса Syncplay для VLC уже установлена в директорию VLC. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
     "vlc-interface-not-installed" : u"Внимание: Модуль интерфейса Syncplay для VLC не обнаружен в директории VLC. По существу, если Вы используете VLC 2.0, то VLC будет использовать модуль syncplay.lua из директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
@@ -109,7 +110,7 @@ ru = {
     "mpc-version-insufficient-error" : u"Версия MPC слишком старая, пожалуйста, используйте `mpc-hc` >= `{}`",
     "mpv-version-error" : u"Syncplay не совместим с данной версией mpv. Пожалуйста, используйте другую версию mpv (лучше свежайшую).",
     "player-file-open-error" : u"Проигрыватель не может открыть файл.",
-    "player-path-error" : u"Путь к проигрывателю задан неверно.",
+    "player-path-error" : u"Путь к проигрывателю задан неверно. Supported players are: mpv, VLC, MPC-HC and mplayer2.", # TODO: Translate last sentence
     "hostname-empty-error" : u"Имя пользователя не может быть пустым.",
     "empty-error" : u"{} не может быть пустым.",  # Configuration
     "media-player-error" : u"Ошибка проигрывателя: \"{}\"",  # Error line
@@ -119,7 +120,7 @@ ru = {
 
     "unable-to-start-client-error" : u"Невозможно запустить клиент",
 
-    "player-path-config-error": u"Путь к проигрывателю установлен неверно",
+    "player-path-config-error": u"Путь к проигрывателю установлен неверно. Supported players are: mpv, VLC, MPC-HC and mplayer2", # To do: Translate end
     "no-file-path-config-error" : u"Файл должен быть указан до включения проигрывателя",
     "no-hostname-config-error": u"Имя сервера не может быть пустым",
     "invalid-port-config-error" : u"Неверный номер порта",
@@ -131,6 +132,7 @@ ru = {
     "vlc-failed-connection" : u"Ошибка подключения к VLC. Если у Вас не установлен syncplay.lua, то обратитесь к http://syncplay.pl/LUA/ за инструкциями.",
     "vlc-failed-noscript" : u"VLC сообщает, что скрипт интерфейса syncplay.lua не установлен. Пожалуйста, обратитесь к http://syncplay.pl/LUA/ за инструкциями.",
     "vlc-failed-versioncheck" : u"Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
+    "vlc-failed-other" : u"Во время загрузки скрипта интерфейса syncplay.lua в VLC произошла следующая ошибка: {}",  # Syncplay Error
 
     "feature-sharedPlaylists": u"shared playlists",  # used for not-supported-by-server-error # TODO: Translate
     "feature-chat": u"chat",  # used for not-supported-by-server-error # TODO: Translate
@@ -185,7 +187,7 @@ ru = {
 
     "media-setting-title" : u"Воспроизведение",
     "executable-path-label" : u"Путь к проигрывателю:",
-    "media-path-label" : u"Путь к видеофайлу:",
+    "media-path-label" : u"Путь к видеофайлу:", # Todo: Translate to 'Path to video (optional)'
     "player-arguments-label" : u"Аргументы запуска проигрывателя:",
     "browse-label" : u"Выбрать",
     "update-server-list-label" : u"Обновить список",
@@ -265,7 +267,7 @@ ru = {
     "run-label" : u"Запустить",
     "storeandrun-label" : u"Сохранить и запустить",
 
-    "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">www.syncplay.pl</a> за инорфмацией, помощью и обновлениями!  NOTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.", # TODO: Translate end of message
+    "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">www.syncplay.pl</a> за инорфмацией, помощью и обновлениями! NOTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.", # TODO: Translate last sentence
 
     "joinroom-label" : u"Зайти в комнату",
     "joinroom-menu-label" : u"Зайти в комнату {}",
@@ -347,7 +349,7 @@ ru = {
     "room-tooltip" : u"Комната, в которую Вы попадете сразу после подключения. Синхронизация возможна только между людьми в одной и той же комнате.",
 
     "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, VLC, mplayer2 или mpv).",
-    "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mpv и mplayer2.",
+    "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mplayer2.", # TODO: Confirm translation
     "player-arguments-tooltip" : u"Передавать дополнительные аргументы командной строки этому проигрывателю.",
     "mediasearcdirectories-arguments-tooltip" : u"Папки, где Syncplay будет искать медиа файлы, включая подпапки.",
 
@@ -450,7 +452,8 @@ ru = {
     "cannot-add-unsafe-path-error" : u"Не удалось автоматически переключиться на {}, потому что ссылка не соответствует доверенным сайтам. Её можно включить вручную, дважны кливнув по ссылке в списке воспроизведения. Добавить доверенный сайт можно в выпадающем меню 'Дополнительно' или просто кликнув по ссылке правой кнопкой мыши.", # Filename
     "sharedplaylistenabled-label" : u"Включить общий список воспроизведения",
     "removefromplaylist-menu-label" : u"Удалить",
-    "shuffleplaylist-menuu-label" : u"Перемешать список",
+    "shufflepremaininglaylist-menuu-label" : u"Shuffle remaining playlist", # Was: Перемешать список # TODO: Translate
+    "shuffleentireplaylist-menuu-label" : u"Shuffle entire playlist", # TODO: Translate
     "undoplaylist-menu-label" : u"Отменить последнее действие",
     "addfilestoplaylist-menu-label" : u"Добавить файлы в очередь",
     "addurlstoplaylist-menu-label" : u"Добавить ссылку в очередь",
