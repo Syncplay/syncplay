@@ -2,11 +2,11 @@
     "package": {
         "name": "Syncplay",
         "repo": "Syncplay",
-        "subject": "alby128"
+        "subject": "syncplay"
     },
 
     "version": {
-        "name": "1.5.0"
+        "name": "test"
     },
 
     "files":
