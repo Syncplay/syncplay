@@ -17,23 +17,23 @@ ru = {
     "connected-successful-notification" : u"Соединение с сервером установлено",
     "retrying-notification" : u"%s, следующая попытка через %d секунд(ы)...",  # Seconds
 
-    "rewind-notification" : u"Перемотано из-за разницы во времени с <{}>",  # User
-    "fastforward-notification" : u"Ускорено из-за разницы во времени с <{}>",  # User
-    "slowdown-notification" : u"Воспроизведение замедлено из-за разницы во времени с <{}>",  # User
+    "rewind-notification" : u"Перемотано из-за разницы во времени с {}",  # User
+    "fastforward-notification" : u"Ускорено из-за разницы во времени с {}",  # User
+    "slowdown-notification" : u"Воспроизведение замедлено из-за разницы во времени с {}",  # User
     "revert-notification" : u"Возвращаемся к нормальной скорости воспроизведения",
 
-    "pause-notification" : u"<{}> приостановил воспроизведение",  # User
-    "unpause-notification" : u"<{}> возобновил воспроизведение",  # User
-    "seek-notification" : u"<{}> перемотал с {} на {}",  # User, from time, to time
+    "pause-notification" : u"{} приостановил воспроизведение",  # User
+    "unpause-notification" : u"{} возобновил воспроизведение",  # User
+    "seek-notification" : u"{} перемотал с {} на {}",  # User, from time, to time
 
     "current-offset-notification" : u"Текущее смещение: {} секунд(ы)",  # Offset
 
     "media-directory-list-updated-notification" : u"Папки воспроизведения обновлены.",
 
-    "room-join-notification" : u"<{}> зашел в комнату: '{}'",  # User
-    "left-notification" : u"<{}> покинул комнату",  # User
-    "left-paused-notification" : u"<{}> покинул комнату, <{}> приостановил воспроизведение",  # User who left, User who paused
-    "playing-notification" : u"<{}> включил '{}' ({})",  # User, file, duration
+    "room-join-notification" : u"{} зашел в комнату: '{}'",  # User
+    "left-notification" : u"{} покинул комнату",  # User
+    "left-paused-notification" : u"{} покинул комнату, {} приостановил воспроизведение",  # User who left, User who paused
+    "playing-notification" : u"{} включил '{}' ({})",  # User, file, duration
     "playing-notification/room-addendum" : u" в комнате: '{}'",  # Room
 
     "not-all-ready" : u"Не готовы: {}", # Usernames
@@ -44,11 +44,11 @@ ru = {
     "autoplaying-notification" : u"Автовоспроизведение через {}...",  # Number of seconds until playback will start
 
     "identifying-as-controller-notification" : u"Идентификация как оператора комнаты с паролем '{}'...",
-    "failed-to-identify-as-controller-notification" : u"<{}> не прошел идентификацию в качестве оператора комнаты.",
-    "authenticated-as-controller-notification" : u"<{}> вошел как оператор комнаты.",
+    "failed-to-identify-as-controller-notification" : u"{} не прошел идентификацию в качестве оператора комнаты.",
+    "authenticated-as-controller-notification" : u"{} вошел как оператор комнаты.",
     "created-controlled-room-notification" : u"Создана управляемая комната '{}' с паролем '{}'. Сохраните эти данные!", # RoomName, operatorPassword
 
-    "file-different-notification" : u"Вероятно, файл, который Вы смотрите, отличается от того, который смотрит <{}>.",  # User
+    "file-different-notification" : u"Вероятно, файл, который Вы смотрите, отличается от того, который смотрит {}.",  # User
     "file-differences-notification" : u"Ваш файл отличается: {}", # Differences
     "room-file-differences" : u"Несовпадения файла: {}", # File differences (filename, size, and/or duration)
     "file-difference-filename" : u"имя",

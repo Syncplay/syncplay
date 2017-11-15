@@ -17,23 +17,23 @@ en = {
     "connected-successful-notification" : "Successfully connected to server",
     "retrying-notification" : "%s, Retrying in %d seconds...",  # Seconds
 
-    "rewind-notification" : "Rewinded due to time difference with <{}>",  # User
-    "fastforward-notification" : "Fast-forwarded due to time difference with <{}>",  # User
-    "slowdown-notification" : "Slowing down due to time difference with <{}>",  # User
+    "rewind-notification" : "Rewinded due to time difference with {}",  # User
+    "fastforward-notification" : "Fast-forwarded due to time difference with {}",  # User
+    "slowdown-notification" : "Slowing down due to time difference with {}",  # User
     "revert-notification" : "Reverting speed back to normal",
 
-    "pause-notification" : u"<{}> paused",  # User
-    "unpause-notification" : u"<{}> unpaused",  # User
-    "seek-notification" : u"<{}> jumped from {} to {}",  # User, from time, to time
+    "pause-notification" : u"{} paused",  # User
+    "unpause-notification" : u"{} unpaused",  # User
+    "seek-notification" : u"{} jumped from {} to {}",  # User, from time, to time
 
     "current-offset-notification" : "Current offset: {} seconds",  # Offset
 
     "media-directory-list-updated-notification" : u"Syncplay media directories have been updated.",
 
-    "room-join-notification" : u"<{}> has joined the room: '{}'",  # User
-    "left-notification" : u"<{}> has left",  # User
-    "left-paused-notification" : u"<{}> left, <{}> paused",  # User who left, User who paused
-    "playing-notification" : u"<{}> is playing '{}' ({})",  # User, file, duration
+    "room-join-notification" : u"{} has joined the room: '{}'",  # User
+    "left-notification" : u"{} has left",  # User
+    "left-paused-notification" : u"{} left, {} paused",  # User who left, User who paused
+    "playing-notification" : u"{} is playing '{}' ({})",  # User, file, duration
     "playing-notification/room-addendum" :  u" in room: '{}'",  # Room
 
     "not-all-ready" : u"Not ready: {}", # Usernames
@@ -44,11 +44,11 @@ en = {
     "autoplaying-notification" : u"Auto-playing in {}...",  # Number of seconds until playback will start
 
     "identifying-as-controller-notification" : u"Identifying as room operator with password '{}'...",
-    "failed-to-identify-as-controller-notification" : u"<{}> failed to identify as a room operator.",
-    "authenticated-as-controller-notification" : u"<{}> authenticated as a room operator",
+    "failed-to-identify-as-controller-notification" : u"{} failed to identify as a room operator.",
+    "authenticated-as-controller-notification" : u"{} authenticated as a room operator",
     "created-controlled-room-notification" : u"Created managed room '{}' with password '{}'. Please save this information for future reference!", # RoomName, operatorPassword
 
-    "file-different-notification" : "File you are playing appears to be different from <{}>'s",  # User
+    "file-different-notification" : "File you are playing appears to be different from {}'s",  # User
     "file-differences-notification" : u"Your file differs in the following way(s): {}", # Differences
     "room-file-differences" : u"File differences: {}", # File differences (filename, size, and/or duration)
     "file-difference-filename" : u"name",

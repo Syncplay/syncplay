@@ -17,23 +17,23 @@ de = {
     "connected-successful-notification" : u"Erfolgreich mit Server verbunden",
     "retrying-notification" : u"%s, versuche erneut in %d Sekunden...",  # Seconds
 
-    "rewind-notification" : u"Zurückgespult wegen Zeitdifferenz mit <{}>",  # User
-    "fastforward-notification" : u"Vorgespult wegen Zeitdifferenz mit <{}>",  # User
-    "slowdown-notification" : u"Verlangsamt wegen Zeitdifferenz mit <{}>",  # User
+    "rewind-notification" : u"Zurückgespult wegen Zeitdifferenz mit {}",  # User
+    "fastforward-notification" : u"Vorgespult wegen Zeitdifferenz mit {}",  # User
+    "slowdown-notification" : u"Verlangsamt wegen Zeitdifferenz mit {}",  # User
     "revert-notification" : u"Normalgeschwindigkeit",
 
-    "pause-notification" : u"<{}> pausierte",  # User
-    "unpause-notification" : u"<{}> startete",  # User
-    "seek-notification" : u"<{}> sprang von {} nach {}",  # User, from time, to time
+    "pause-notification" : u"{} pausierte",  # User
+    "unpause-notification" : u"{} startete",  # User
+    "seek-notification" : u"{} sprang von {} nach {}",  # User, from time, to time
 
     "current-offset-notification" : u"Aktueller Offset: {} Sekunden",  # Offset
 
     "media-directory-list-updated-notification" : u"Syncplay media directories have been updated.", # TODO: Translate
 
-    "room-join-notification" : u"<{}> hat den Raum '{}' betreten",  # User
-    "left-notification" : u"<{}> ist gegangen",  # User
-    "left-paused-notification" : u"<{}> ist gegangen, <{}> pausierte",  # User who left, User who paused
-    "playing-notification" : u"<{}> spielt '{}' ({})",  # User, file, duration
+    "room-join-notification" : u"{} hat den Raum '{}' betreten",  # User
+    "left-notification" : u"{} ist gegangen",  # User
+    "left-paused-notification" : u"{} ist gegangen, {} pausierte",  # User who left, User who paused
+    "playing-notification" : u"{} spielt '{}' ({})",  # User, file, duration
     "playing-notification/room-addendum" :  u" in Raum: '{}'",  # Room
 
     "not-all-ready" : u"Noch nicht bereit: {}", # Usernames
@@ -44,11 +44,11 @@ de = {
     "autoplaying-notification" : u"Starte in {}...", # Number of seconds until playback will start
 
     "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room operator"
-    "failed-to-identify-as-controller-notification" : u"<{}> konnte sich nicht als Raumleiter identifizieren.",
-    "authenticated-as-controller-notification" : u"<{}> authentifizierte sich als Raumleiter",
+    "failed-to-identify-as-controller-notification" : u"{} konnte sich nicht als Raumleiter identifizieren.",
+    "authenticated-as-controller-notification" : u"{} authentifizierte sich als Raumleiter",
     "created-controlled-room-notification" : u"Gesteuerten Raum '{}' mit Passwort '{}' erstellt. Bitte diese Informationen für die Zukunft aufheben!", # RoomName, operatorPassword
 
-    "file-different-notification" : u"Deine Datei scheint sich von <{}>s zu unterscheiden",  # User
+    "file-different-notification" : u"Deine Datei scheint sich von {}s zu unterscheiden",  # User
     "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: {}",
     "room-file-differences" : u"Unterschiedlich in: {}", # File differences (filename, size, and/or duration)
     "file-difference-filename" : u"Name",
