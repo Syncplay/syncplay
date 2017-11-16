@@ -59,7 +59,7 @@ TAB_PADDING = 30
 
 # Maximum character lengths (for client and server)
 MAX_CHAT_MESSAGE_LENGTH = 50 # Number of displayed characters
-MAX_USERNAME_LENGTH = 12 # Number of displayed characters
+MAX_USERNAME_LENGTH = 16 # Number of displayed characters
 MAX_ROOM_NAME_LENGTH = 35 # Number of displayed characters
 MAX_FILENAME_LENGTH = 250 # Number of displayed characters
 
