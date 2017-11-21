@@ -6,7 +6,7 @@ branches:
   - master_local
 
 script:
-- python buildPy2app.py py2app
+- python buildPy2app.py py2app fix
 
 before_install:
 - brew install python
@@ -16,6 +16,7 @@ before_install:
 
 install:
 - export PATH=/usr/local/bin:$PATH
+- export QT_PREFERRED_BINDING="PySide"
 - pip install twisted appnope pyobjc py2app
 
 before_deploy:

@@ -1,3 +1,9 @@
+import os
+if "QT_PREFERRED_BINDING" not in os.environ:
+    os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(
+        ["PySide2", "PySide", "PyQt5", "PyQt4"]
+    )
+    
 try:
     from syncplay.ui.gui import MainWindow as GraphicalUI
 except ImportError:
