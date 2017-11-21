@@ -1050,6 +1050,7 @@ class ConfigDialog(QtWidgets.QDialog):
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
         settings.setValue("lastChecked", None)
+        settings.setValue("lastCheckedQt", None)
         settings.endGroup()
         settings.beginGroup("PublicServerList")
         settings.setValue("publicServers", None)
