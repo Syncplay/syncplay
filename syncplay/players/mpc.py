@@ -327,6 +327,10 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__versionUpdate = threading.Event()
         self.__fileUpdate = threading.RLock()
         self.__versionUpdate.clear()
+
+    @staticmethod
+    def getMinVersionErrorMessage():
+        return getMessage("mpc-version-insufficient-error").format(constants.MPC_MIN_VER)
         
     def drop(self):
         self.__preventAsking.set()
@@ -365,7 +369,7 @@ class MPCHCAPIPlayer(BasePlayer):
     def __dropIfNotSufficientVersion(self):
         self._mpcApi.askForVersion()
         if not self.__versionUpdate.wait(0.1) or not self._mpcApi.version:
-            self.reactor.callFromThread(self.__client.ui.showErrorMessage, getMessage("mpc-version-insufficient-error").format(constants.MPC_MIN_VER), True)
+            self.reactor.callFromThread(self.__client.ui.showErrorMessage, self.getMinVersionErrorMessage(), True)
             self.reactor.callFromThread(self.__client.stop, True)
             
     def __testMpcReady(self):
@@ -382,7 +386,7 @@ class MPCHCAPIPlayer(BasePlayer):
             self.reactor.callFromThread(self.__client.ui.showErrorMessage, err.message, True)
             self.reactor.callFromThread(self.__client.stop)
             
-    def initPlayer(self, filePath): 
+    def initPlayer(self, filePath):
         self.__dropIfNotSufficientVersion()
         if not self._mpcApi.version:
             return
