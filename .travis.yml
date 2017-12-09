@@ -16,6 +16,7 @@ before_install:
 
 install:
 - export PATH=/usr/local/bin:$PATH
+- export QT_PREFERRED_BINDING="PySide"
 - pip install twisted appnope pyobjc py2app
 
 before_deploy:
