@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb, Pilotat
  Project: http://syncplay.pl/
- Version: 0.3.3
+ Version: 0.3.4
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -243,7 +243,7 @@ function get_var( vartoget, fallbackvar )
         errormsg = noinput
     end
 
-    if vlcmajorversion == 3 and vartoget == "time" then
+    if vlcmajorversion > 2 and vartoget == "time" then
         response = response / 1000000
     end
 
@@ -257,7 +257,7 @@ function set_var(vartoset, varvalue)
     local errormsg
     local input = vlc.object.input()
 
-    if vlcmajorversion == 3 and vartoset == "time" then
+    if vlcmajorversion > 2 and vartoset == "time" then
         varvalue = varvalue * 1000000
     end
 
