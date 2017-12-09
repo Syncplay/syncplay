@@ -887,7 +887,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.inputFontLayout.setContentsMargins(0, 0, 0, 0)
         self.inputFontFrame = QtWidgets.QFrame()
         self.inputFontFrame.setLayout(self.inputFontLayout)
-        self.inputFontFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.inputFontFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.chatFontLabel = QLabel(getMessage("chatinputfont-label"), self)
         self.chatFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.chatFontLabel.setObjectName("font-label")
@@ -910,7 +910,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.chatInputPositionLayout = QtWidgets.QHBoxLayout()
         self.chatInputPositionLayout.setContentsMargins(0, 0, 0, 0)
         self.chatInputPositionFrame.setLayout(self.chatInputPositionLayout)
-        self.chatInputPositionFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.chatInputPositionFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.chatInputPositionLabel = QLabel(getMessage("chatinputposition-label"), self)
         self.chatInputPositionLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.chatInputPositionGroup = QButtonGroup()
@@ -937,28 +937,28 @@ class ConfigDialog(QtWidgets.QDialog):
                                              self.chatInputFontButton.objectName(), self.chatFontLabel.objectName(),
                                              self.chatInputColourButton.objectName()]
         # Output
-        self.chatOutputGroup = QtGui.QGroupBox(u"Chat message output")
-        self.chatOutputLayout = QtGui.QGridLayout()
+        self.chatOutputGroup = QtWidgets.QGroupBox(u"Chat message output")
+        self.chatOutputLayout = QtWidgets.QGridLayout()
         self.chatLayout.addWidget(self.chatOutputGroup)
         self.chatOutputGroup.setLayout(self.chatOutputLayout)
         self.chatOutputEnabledCheckbox = QCheckBox(getMessage("chatoutputenabled-label"))
         self.chatOutputEnabledCheckbox.setObjectName("chatOutputEnabled")
         self.chatOutputLayout.addWidget(self.chatOutputEnabledCheckbox, 1, 0, 1,1, Qt.AlignLeft)
 
-        self.outputFontLayout = QtGui.QHBoxLayout()
+        self.outputFontLayout = QtWidgets.QHBoxLayout()
         self.outputFontLayout.setContentsMargins(0, 0, 0, 0)
-        self.outputFontFrame = QtGui.QFrame()
+        self.outputFontFrame = QtWidgets.QFrame()
         self.outputFontFrame.setLayout(self.outputFontLayout)
-        self.outputFontFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.outputFontFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.chatOutputFontLabel = QLabel(getMessage("chatoutputfont-label"), self)
         self.chatOutputFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
         self.chatOutputFontLabel.setObjectName("font-output-label")
-        self.chatOutputFontButton = QtGui.QPushButton(getMessage("chatfont-label"))
+        self.chatOutputFontButton = QtWidgets.QPushButton(getMessage("chatfont-label"))
         self.chatOutputFontButton.setObjectName("set-output-font")
-        self.chatOutputFontButtonGroup = QtGui.QButtonGroup()
+        self.chatOutputFontButtonGroup = QtWidgets.QButtonGroup()
         self.chatOutputFontButtonGroup.addButton(self.chatOutputFontButton)
         self.chatOutputFontButton.released.connect(lambda: self.fontDialog("chatOutput"))
-        self.chatOutputColourButton = QtGui.QPushButton(getMessage("chatcolour-label"))
+        self.chatOutputColourButton = QtWidgets.QPushButton(getMessage("chatcolour-label"))
         self.outputFontLayout.addWidget(self.chatOutputFontLabel, Qt.AlignLeft)
         self.outputFontLayout.addWidget(self.chatOutputFontButton, Qt.AlignLeft)
         self.chatOutputLayout.addWidget(self.outputFontFrame, 2, 0, 1, 3, Qt.AlignLeft)
@@ -975,11 +975,11 @@ class ConfigDialog(QtWidgets.QDialog):
         self.chatOutputChatroomOption.setObjectName("chatoutputmode-chatroom" + constants.CONFIG_NAME_MARKER + "chatOutputMode" + constants.CONFIG_VALUE_MARKER + constants.CHATROOM_MODE)
         self.chatOutputScrollingOption.setObjectName("chatoutputmode-scrolling" + constants.CONFIG_NAME_MARKER + "chatOutputMode" + constants.CONFIG_VALUE_MARKER + constants.SCROLLING_MODE)
 
-        self.chatOutputModeFrame = QtGui.QFrame()
-        self.chatOutputModeLayout = QtGui.QHBoxLayout()
+        self.chatOutputModeFrame = QtWidgets.QFrame()
+        self.chatOutputModeLayout = QtWidgets.QHBoxLayout()
         self.chatOutputModeLayout.setContentsMargins(0, 0, 0, 0)
         self.chatOutputModeFrame.setLayout(self.chatOutputModeLayout)
-        self.chatOutputModeFrame.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.chatOutputModeFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.chatOutputModeLayout.addWidget(self.chatOutputModeLabel)
         self.chatOutputModeLayout.addWidget(self.chatOutputChatroomOption)
         self.chatOutputModeLayout.addWidget(self.chatOutputScrollingOption)
@@ -998,7 +998,7 @@ class ConfigDialog(QtWidgets.QDialog):
             font.setPointSize(self.config[configName + u"FontSize"])
             font.setWeight(self.config[configName + u"FontWeight"])
             font.setUnderline(self.config[configName + u"FontUnderline"])
-            value, ok = QtGui.QFontDialog.getFont(font)
+            value, ok = QtWidgets.QFontDialog.getFont(font)
             if ok:
                 self.config[configName + u"FontFamily"] = value.family()
                 self.config[configName + u"FontSize"] = value.pointSize()
@@ -1008,7 +1008,7 @@ class ConfigDialog(QtWidgets.QDialog):
     def colourDialog(self, configName):
             oldColour = QtGui.QColor()
             oldColour.setNamedColor(self.config[configName+ u"FontColor"])
-            colour = QtGui.QColorDialog.getColor(oldColour, self)
+            colour = QtWidgets.QColorDialog.getColor(oldColour, self)
             if colour.isValid():
                 self.config[configName + u"FontColor"] = colour.name()
 
@@ -1118,7 +1118,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.resetButton.setObjectName("reset")
         self.resetButton.released.connect(self.resetSettings)
 
-        self.runButton = QtGui.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
+        self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
         self.runButton.released.connect(self._runWithoutStoringConfig)
         self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
         self.runButton.pressed.connect(self._runWithoutStoringConfig)
@@ -1168,8 +1168,9 @@ class ConfigDialog(QtWidgets.QDialog):
         self.mainLayout.addWidget(self.tabListFrame, 0, 0, 1, 1)
 
     def ensureTabListIsVisible(self):
-        leftMargin, topMargin, rightMargin, bottomMargin = self.tabListLayout.getContentsMargins()
-        self.tabListFrame.setFixedWidth(self.tabListWidget.contentsSize().width()+leftMargin+rightMargin+5)
+        self.stackedFrame.setFixedWidth(self.stackedFrame.width())
+        while self.tabListWidget.horizontalScrollBar().isVisible() and self.tabListFrame.width() < constants.MAXIMUM_TAB_WIDTH:
+            self.tabListFrame.setFixedWidth(self.tabListFrame.width()+1)
 
     def tabChange(self):
         self.setFocus()
