@@ -12,6 +12,7 @@ import sys
 import threading
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
 from syncplay import constants
+from syncplay.utils import isBSD, isLinux, isWindows, isOSX
 
 class GuiConfiguration:
     def __init__(self, config, error=None, defaultConfig=None):
@@ -238,11 +239,11 @@ class ConfigDialog(QtWidgets.QDialog):
                 defaultdirectory = os.environ["ProgramFiles"]
             elif "PROGRAMW6432" in os.environ:
                 defaultdirectory = os.environ["ProgramW6432"]
-        elif sys.platform.startswith('linux'):
+        elif isLinux():
             defaultdirectory = "/usr/bin"
-        elif sys.platform.startswith('darwin'):
+        elif isOSX():
             defaultdirectory = "/Applications/"
-        elif "bsd" in sys.platform or sys.platform.startswith('dragonfly'):
+        elif isBSD():
             defaultdirectory = "/usr/local/bin"
 
         fileName, filtr = QtWidgets.QFileDialog.getOpenFileName(self,
@@ -250,7 +251,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 defaultdirectory,
                 browserfilter, "", options)
         if fileName:
-            if sys.platform.startswith('darwin') and fileName.endswith('.app'):  # see GitHub issue #91
+            if isOSX() and fileName.endswith('.app'):  # see GitHub issue #91
                 # Mac OS X application bundles contain a Info.plist in the Contents subdirectory of the .app.
                 # This plist file includes the 'CFBundleExecutable' key, which specifies the name of the
                 # executable.  I would have used plistlib here, but since the version of this library in
@@ -1109,7 +1110,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.QtWidgets = QtWidgets
         self.QtGui = QtGui
         self.error = error
-        if sys.platform.startswith('win'):
+        if isWindows():
             resourcespath = utils.findWorkingDir() + "\\resources\\"
         else:
             resourcespath = utils.findWorkingDir() + u"/resources/"

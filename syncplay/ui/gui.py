@@ -9,12 +9,13 @@ import sys
 import time
 import urllib
 from datetime import datetime
+from syncplay.utils import isLinux, isWindows, isOSX
 import re
 import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from functools import wraps
 from twisted.internet import task
-if sys.platform.startswith('darwin') and IsPySide: 
+if isOSX() and IsPySide: 
     from Foundation import NSURL
 lastCheckedForUpdates = None
 
@@ -34,7 +35,7 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
         if column == constants.USERLIST_GUI_USERNAME_COLUMN:
             currentQAbstractItemModel = indexQModelIndex.model()
             itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), constants.USERLIST_GUI_USERNAME_COLUMN, indexQModelIndex.parent())
-            if sys.platform.startswith('win'):
+            if isWindows():
                 resourcespath = utils.findWorkingDir() + u"\\resources\\"
             else:
                 resourcespath = utils.findWorkingDir() + u"/resources/"
@@ -65,7 +66,7 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
             if isUserRow:
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+constants.USERLIST_GUI_USERNAME_OFFSET)
         if column == constants.USERLIST_GUI_FILENAME_COLUMN:
-            if sys.platform.startswith('win'):
+            if isWindows():
                 resourcespath = utils.findWorkingDir() + u"\\resources\\"
             else:
                 resourcespath = utils.findWorkingDir() + u"/resources/"
@@ -90,18 +91,18 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
         QtWidgets.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
 class AboutDialog(QtWidgets.QDialog):
-    if sys.platform.startswith('win'):
+    if isWindows():
          resourcespath = utils.findWorkingDir() + u"\\resources\\"
     else:
          resourcespath = utils.findWorkingDir() + u"/resources/"      
  
     def __init__(self, parent=None):
          super(AboutDialog, self).__init__(parent)
-         if sys.platform.startswith('darwin'):
+         if isOSX():
              self.setWindowTitle("")
          else:
              self.setWindowTitle(getMessage("about-dialog-title"))
-             if sys.platform.startswith('win'):
+             if isWindows():
                 self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint) 			 
          nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
          nameLabel.setFont(QtGui.QFont("Helvetica", 20))
@@ -131,13 +132,13 @@ class AboutDialog(QtWidgets.QDialog):
          self.setLayout(aboutLayout)
 
     def openLicense(self):
-         if sys.platform.startswith('win'):
+         if isWindows():
              QtGui.QDesktopServices.openUrl(QUrl("file:///" + self.resourcespath + u"license.rtf"))
          else:
              QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"license.rtf"))
          
     def openDependencies(self):
-         if sys.platform.startswith('win'):
+         if isWindows():
              QtGui.QDesktopServices.openUrl(QUrl("file:///" + self.resourcespath + u"third-party-notices.rtf"))
          else:
              QtGui.QDesktopServices.openUrl(QUrl("file://" + self.resourcespath + u"third-party-notices.rtf"))
@@ -160,7 +161,7 @@ class MainWindow(QtWidgets.QMainWindow):
             itemQPainter.save()
             currentQAbstractItemModel = indexQModelIndex.model()
             currentlyPlayingFile = currentQAbstractItemModel.data(indexQModelIndex, Qt.UserRole + constants.PLAYLISTITEM_CURRENTLYPLAYING_ROLE)
-            if sys.platform.startswith('win'):
+            if isWindows():
                 resourcespath = utils.findWorkingDir() + u"\\resources\\"
             else:
                 resourcespath = utils.findWorkingDir() + u"/resources/"
@@ -219,7 +220,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 indexRow = window.playlist.count() if window.clearedPlaylistNote else 0
 
                 for url in urls[::-1]:
-                    if sys.platform.startswith('darwin') and IsPySide:
+                    if isOSX() and IsPySide:
                         dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
                     else:
                         dropfilepath = os.path.abspath(unicode(url.toLocalFile()))                    
@@ -324,7 +325,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if indexRow == -1:
                     indexRow = window.playlist.count()
                 for url in urls[::-1]:
-                    if sys.platform.startswith('darwin') and IsPySide:
+                    if isOSX() and IsPySide:
                         dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
                     else:
                         dropfilepath = os.path.abspath(unicode(url.toLocalFile())) 
@@ -567,7 +568,7 @@ class MainWindow(QtWidgets.QMainWindow):
     @needsClient
     def openPlaylistMenu(self, position):
         indexes = self.playlist.selectedIndexes()
-        if sys.platform.startswith('win'):
+        if isWindows():
             resourcespath = utils.findWorkingDir() + u"\\resources\\"
         else:
             resourcespath = utils.findWorkingDir() + u"/resources/"
@@ -609,7 +610,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def openRoomMenu(self, position):
         # TODO: Deselect items after right click
         indexes = self.listTreeView.selectedIndexes()
-        if sys.platform.startswith('win'):
+        if isWindows():
             resourcespath = utils.findWorkingDir() + u"\\resources\\"
         else:
             resourcespath = utils.findWorkingDir() + u"/resources/"
@@ -872,7 +873,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.loadMediaBrowseSettings()
-        if sys.platform.startswith('darwin') and IsPySide:
+        if isOSX() and IsPySide:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
             options = QtWidgets.QFileDialog.Options()
@@ -886,7 +887,7 @@ class MainWindow(QtWidgets.QMainWindow):
         fileName, filtr = QtWidgets.QFileDialog.getOpenFileName(self, getMessage("browseformedia-label"), defaultdirectory,
                                                             browserfilter, "", options)
         if fileName:
-            if sys.platform.startswith('win'):
+            if isWindows():
                 fileName = fileName.replace("/", "\\")
             self.mediadirectory = os.path.dirname(fileName)
             self._syncplayClient.fileSwitch.setCurrentDirectory(self.mediadirectory)
@@ -900,7 +901,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.loadMediaBrowseSettings()
-        if sys.platform.startswith('darwin') and IsPySide:
+        if isOSX() and IsPySide:
              options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
              options = QtWidgets.QFileDialog.Options()
@@ -916,7 +917,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.updatingPlaylist = True
         if fileNames:
             for fileName in fileNames:
-                if sys.platform.startswith('win'):
+                if isWindows():
                     fileName = fileName.replace("/", "\\")
                 self.mediadirectory = os.path.dirname(fileName)
                 self._syncplayClient.fileSwitch.setCurrentDirectory(self.mediadirectory)
@@ -1051,7 +1052,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def openAddMediaDirectoryDialog(self, MediaDirectoriesTextbox, MediaDirectoriesDialog):
-        if sys.platform.startswith('darwin') and IsPySide:
+        if isOSX() and IsPySide:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.ShowDirsOnly | QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.ShowDirsOnly)        
@@ -1121,9 +1122,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.showErrorMessage(getMessage("invalid-offset-value"))
 
     def openUserGuide(self):
-        if sys.platform.startswith('linux'):
+        if isLinux():
             self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/linux/"))
-        elif sys.platform.startswith('win'):
+        elif isWindows():
             self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/windows/"))
         else:
             self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/"))
@@ -1452,7 +1453,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                                            getMessage("update-menu-label"))
         window.updateAction.triggered.connect(self.userCheckForUpdates)
 		
-        if not sys.platform.startswith('darwin'):
+        if not isOSX():
      	    window.helpMenu.addSeparator()
             window.about = window.helpMenu.addAction(QtGui.QPixmap(self.resourcespath + 'syncplay.png'),
                                                            getMessage("about-menu-label"))
@@ -1461,7 +1462,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.about.triggered.connect(self.openAbout)
 
         window.menuBar.addMenu(window.helpMenu)
-        if not sys.platform.startswith('darwin'):
+        if not isOSX():
             window.mainLayout.setMenuBar(window.menuBar)
 
     def openAbout(self):
@@ -1597,7 +1598,7 @@ class MainWindow(QtWidgets.QMainWindow):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            if sys.platform.startswith('darwin') and IsPySide:
+            if isOSX() and IsPySide:
                 dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
             else:
                 dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
@@ -1732,11 +1733,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._syncplayClient = None
         self.folderSearchEnabled = True
         self.QtGui = QtGui
-        if sys.platform.startswith('win'):
+        if isWindows():
             self.resourcespath = utils.findWorkingDir() + u"\\resources\\"
         else:
             self.resourcespath = utils.findWorkingDir() + u"/resources/"
-        if sys.platform.startswith('darwin'):
+        if isOSX():
             self.setWindowFlags(self.windowFlags())
         else:
             self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)

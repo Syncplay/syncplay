@@ -17,6 +17,18 @@ import subprocess
 
 folderSearchEnabled = True
 
+def isWindows():
+    return sys.platform.startswith(constants.OS_WINDOWS)
+
+def isLinux():
+    return sys.platform.startswith(constants.OS_LINUX)
+
+def isOSX():
+    return sys.platform.startswith(constants.OS_OSX)
+
+def isBSD():
+    return constants.OS_BSD in sys.platform or sys.platform.startswith(constants.OS_DRAGONFLY)
+
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
 

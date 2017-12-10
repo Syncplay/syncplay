@@ -6,6 +6,7 @@ import ast
 from syncplay import constants, utils, version, milestone
 from syncplay.messages import getMessage, setLanguage, isValidLanguage
 from syncplay.players.playerFactory import PlayerFactory
+from syncplay.utils import isOSX
 import codecs
 
 class InvalidConfigValue(Exception):
@@ -411,7 +412,7 @@ class ConfigurationGetter(object):
 	            if QCoreApplication.instance() is None:
 	              self.app = QtWidgets.QApplication(sys.argv)
 	            qt5reactor.install()
-	            if sys.platform.startswith('darwin'):
+	            if isOSX():
 	                import appnope
 	                appnope.nope()
             except ImportError:

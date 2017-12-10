@@ -225,3 +225,9 @@ DEFAULT_TRUSTED_DOMAINS = [u"youtube.com",u"youtu.be"]
 TRUSTABLE_WEB_PROTOCOLS = [u"http://www.",u"https://www.",u"http://",u"https://"]
 
 PRIVATE_FILE_FIELDS = ["path"]
+
+OS_WINDOWS = "win"
+OS_LINUX = "linux"
+OS_OSX = "darwin"
+OS_BSD = "freebsd"
+OS_DRAGONFLY = "dragonfly"
