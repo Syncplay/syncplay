@@ -137,10 +137,20 @@ def findWorkingDir():
     elif frozen in ('dll', 'console_exe', 'windows_exe'):
         path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     elif frozen in ('macosx_app'):
-    	path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))        
+        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
     else:
         path = ""
     return path
+
+def getResourcesPath():
+
+    if isWindows():
+        return findWorkingDir() + u"\\resources\\"
+    else:
+        return findWorkingDir() + u"/resources/"
+
+resourcespath = getResourcesPath()
+posixresourcespath = findWorkingDir().replace(u"\\","/") + u"/resources/"
 
 def limitedPowerset(s, minLength):
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in xrange(len(s), minLength, -1))
