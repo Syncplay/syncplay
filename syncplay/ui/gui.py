@@ -10,13 +10,13 @@ import sys
 import time
 import urllib
 from datetime import datetime
-from syncplay.utils import isLinux, isWindows, isOSX
+from syncplay.utils import isLinux, isWindows, isMacOS
 import re
 import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from functools import wraps
 from twisted.internet import task
-if isOSX() and IsPySide: 
+if isMacOS() and IsPySide: 
     from Foundation import NSURL
 lastCheckedForUpdates = None
 
@@ -87,7 +87,7 @@ class AboutDialog(QtWidgets.QDialog):
  
     def __init__(self, parent=None):
          super(AboutDialog, self).__init__(parent)
-         if isOSX():
+         if isMacOS():
              self.setWindowTitle("")
          else:
              self.setWindowTitle(getMessage("about-dialog-title"))
@@ -205,7 +205,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 indexRow = window.playlist.count() if window.clearedPlaylistNote else 0
 
                 for url in urls[::-1]:
-                    if isOSX() and IsPySide:
+                    if isMacOS() and IsPySide:
                         dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
                     else:
                         dropfilepath = os.path.abspath(unicode(url.toLocalFile()))                    
@@ -310,7 +310,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if indexRow == -1:
                     indexRow = window.playlist.count()
                 for url in urls[::-1]:
-                    if isOSX() and IsPySide:
+                    if isMacOS() and IsPySide:
                         dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
                     else:
                         dropfilepath = os.path.abspath(unicode(url.toLocalFile())) 
@@ -850,7 +850,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.loadMediaBrowseSettings()
-        if isOSX() and IsPySide:
+        if isMacOS() and IsPySide:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
             options = QtWidgets.QFileDialog.Options()
@@ -878,7 +878,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.loadMediaBrowseSettings()
-        if isOSX() and IsPySide:
+        if isMacOS() and IsPySide:
              options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
              options = QtWidgets.QFileDialog.Options()
@@ -1029,7 +1029,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def openAddMediaDirectoryDialog(self, MediaDirectoriesTextbox, MediaDirectoriesDialog):
-        if isOSX() and IsPySide:
+        if isMacOS() and IsPySide:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.ShowDirsOnly | QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.ShowDirsOnly)        
@@ -1430,7 +1430,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                                            getMessage("update-menu-label"))
         window.updateAction.triggered.connect(self.userCheckForUpdates)
 		
-        if not isOSX():
+        if not isMacOS():
      	    window.helpMenu.addSeparator()
             window.about = window.helpMenu.addAction(QtGui.QPixmap(resourcespath + 'syncplay.png'),
                                                            getMessage("about-menu-label"))
@@ -1439,7 +1439,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.about.triggered.connect(self.openAbout)
 
         window.menuBar.addMenu(window.helpMenu)
-        if not isOSX():
+        if not isMacOS():
             window.mainLayout.setMenuBar(window.menuBar)
 
     def openAbout(self):
@@ -1575,7 +1575,7 @@ class MainWindow(QtWidgets.QMainWindow):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            if isOSX() and IsPySide:
+            if isMacOS() and IsPySide:
                 dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
             else:
                 dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
@@ -1710,7 +1710,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._syncplayClient = None
         self.folderSearchEnabled = True
         self.QtGui = QtGui
-        if isOSX():
+        if isMacOS():
             self.setWindowFlags(self.windowFlags())
         else:
             self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)

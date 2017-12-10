@@ -11,7 +11,7 @@ import asynchat, asyncore
 import urllib
 import time
 from syncplay.messages import getMessage
-from syncplay.utils import isBSD, isLinux, isWindows, isOSX
+from syncplay.utils import isBSD, isLinux, isWindows, isMacOS
 
 class VlcPlayer(BasePlayer):
     speedSupported = True
@@ -21,10 +21,10 @@ class VlcPlayer(BasePlayer):
 
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS
-    if isOSX():
-        SLAVE_ARGS.extend(constants.VLC_SLAVE_OSX_ARGS)        
+    if isMacOS():
+        SLAVE_ARGS.extend(constants.VLC_SLAVE_MACOS_ARGS)        
     else:     
-        SLAVE_ARGS.extend(constants.VLC_SLAVE_NONOSX_ARGS)
+        SLAVE_ARGS.extend(constants.VLC_SLAVE_NONMACOS_ARGS)
     vlcport = random.randrange(constants.VLC_MIN_PORT, constants.VLC_MAX_PORT) if (constants.VLC_MIN_PORT < constants.VLC_MAX_PORT) else constants.VLC_MIN_PORT
 
     def __init__(self, client, playerPath, filePath, args):
@@ -335,7 +335,7 @@ class VlcPlayer(BasePlayer):
             if isLinux():
                 playerController.vlcIntfPath = "/usr/lib/vlc/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), ".local/share/vlc/lua/intf/")
-            elif isOSX():
+            elif isMacOS():
                 playerController.vlcIntfPath = "/Applications/VLC.app/Contents/MacOS/share/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), "Library/Application Support/org.videolan.vlc/lua/intf/")
             elif isBSD():
@@ -388,7 +388,7 @@ class VlcPlayer(BasePlayer):
                                 playerController._client.ui.showErrorMessage(
                                     getMessage("media-player-error").format(line), True)
                                 break
-                if not isOSX():
+                if not isMacOS():
                     self.__process.stderr = None
                 else:
                     vlcoutputthread = threading.Thread(target = self.handle_vlcoutput, args=())

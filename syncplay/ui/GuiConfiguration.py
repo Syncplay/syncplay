@@ -12,7 +12,7 @@ import sys
 import threading
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
 from syncplay import constants
-from syncplay.utils import isBSD, isLinux, isWindows, isOSX
+from syncplay.utils import isBSD, isLinux, isMacOS
 from syncplay.utils import resourcespath, posixresourcespath
 class GuiConfiguration:
     def __init__(self, config, error=None, defaultConfig=None):
@@ -241,7 +241,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 defaultdirectory = os.environ["ProgramW6432"]
         elif isLinux():
             defaultdirectory = "/usr/bin"
-        elif isOSX():
+        elif isMacOS():
             defaultdirectory = "/Applications/"
         elif isBSD():
             defaultdirectory = "/usr/local/bin"
@@ -251,7 +251,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 defaultdirectory,
                 browserfilter, "", options)
         if fileName:
-            if isOSX() and fileName.endswith('.app'):  # see GitHub issue #91
+            if isMacOS() and fileName.endswith('.app'):  # see GitHub issue #91
                 # Mac OS X application bundles contain a Info.plist in the Contents subdirectory of the .app.
                 # This plist file includes the 'CFBundleExecutable' key, which specifies the name of the
                 # executable.  I would have used plistlib here, but since the version of this library in

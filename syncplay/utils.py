@@ -23,8 +23,8 @@ def isWindows():
 def isLinux():
     return sys.platform.startswith(constants.OS_LINUX)
 
-def isOSX():
-    return sys.platform.startswith(constants.OS_OSX)
+def isMacOS():
+    return sys.platform.startswith(constants.OS_MACOS)
 
 def isBSD():
     return constants.OS_BSD in sys.platform or sys.platform.startswith(constants.OS_DRAGONFLY)
