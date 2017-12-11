@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb, Pilotat
  Project: http://syncplay.pl/
- Version: 0.3.3
+ Version: 0.3.4
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -19,7 +19,7 @@
 
 Place the syncplay.lua file in the main (all user) VLC /lua/intf/ sub-directory:
 * Window: %ProgramFiles%\VideoLAN\VLC\lua\intf\
-* Linux: /usr/lib/vlc/lua/intf/ or on some systems /usr/lib64/vlc/lua/intf/ (use whichever one already has .luac files in it)
+* Linux: /usr/lib/vlc/lua/intf/ or /usr/lib64/vlc/lua/intf/ or /usr/lib/x86_64-linux-gnu/vlc/lua/intf on some systems (look for where the .luac files are)
 * Mac OS X: /Applications/VLC.app/Contents/MacOS/share/lua/intf/
 * FreeBSD, OpenBSD etc.: /usr/local/lib/vlc/lua/intf/
 
@@ -84,7 +84,7 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 --]==========================================================================]
 
-local connectorversion = "0.3.3"
+local connectorversion = "0.3.4"
 local vlcversion = vlc.misc.version()
 local vlcmajorversion = tonumber(vlcversion:sub(1,1)) -- get the major version of VLC
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
@@ -243,7 +243,7 @@ function get_var( vartoget, fallbackvar )
         errormsg = noinput
     end
 
-    if vlcmajorversion == 3 and vartoget == "time" then
+    if vlcmajorversion > 2 and vartoget == "time" then
         response = response / 1000000
     end
 
@@ -257,7 +257,7 @@ function set_var(vartoset, varvalue)
     local errormsg
     local input = vlc.object.input()
 
-    if vlcmajorversion == 3 and vartoset == "time" then
+    if vlcmajorversion > 2 and vartoset == "time" then
         varvalue = varvalue * 1000000
     end
 

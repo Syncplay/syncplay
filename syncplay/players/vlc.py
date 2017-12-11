@@ -11,6 +11,7 @@ import asynchat, asyncore
 import urllib
 import time
 from syncplay.messages import getMessage
+from syncplay.utils import isBSD, isLinux, isWindows, isMacOS
 
 class VlcPlayer(BasePlayer):
     speedSupported = True
@@ -20,10 +21,10 @@ class VlcPlayer(BasePlayer):
 
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS
-    if sys.platform.startswith('darwin'):
-        SLAVE_ARGS.extend(constants.VLC_SLAVE_OSX_ARGS)        
+    if isMacOS():
+        SLAVE_ARGS.extend(constants.VLC_SLAVE_MACOS_ARGS)        
     else:     
-        SLAVE_ARGS.extend(constants.VLC_SLAVE_NONOSX_ARGS)
+        SLAVE_ARGS.extend(constants.VLC_SLAVE_NONMACOS_ARGS)
     vlcport = random.randrange(constants.VLC_MIN_PORT, constants.VLC_MAX_PORT) if (constants.VLC_MIN_PORT < constants.VLC_MAX_PORT) else constants.VLC_MIN_PORT
 
     def __init__(self, client, playerPath, filePath, args):
@@ -146,7 +147,7 @@ class VlcPlayer(BasePlayer):
         fileURL = fileURL.replace(u'\\', u'/')
         fileURL = fileURL.encode('utf8')
         fileURL = urllib.quote_plus(fileURL)
-        if sys.platform.startswith('win'):
+        if isWindows():
             fileURL = "file:///" + fileURL
         else:
             fileURL = "file://" + fileURL
@@ -331,13 +332,13 @@ class VlcPlayer(BasePlayer):
                                     return False
                 playerController._client.ui.showErrorMessage(getMessage("vlc-interface-not-installed"))
                 return False
-            if sys.platform.startswith('linux'):
+            if isLinux():
                 playerController.vlcIntfPath = "/usr/lib/vlc/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), ".local/share/vlc/lua/intf/")
-            elif sys.platform.startswith('darwin'):
+            elif isMacOS():
                 playerController.vlcIntfPath = "/Applications/VLC.app/Contents/MacOS/share/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), "Library/Application Support/org.videolan.vlc/lua/intf/")
-            elif 'bsd' in sys.platform or sys.platform.startswith('dragonfly'):
+            elif isBSD():
                 # *BSD ports/pkgs install to /usr/local by default.
                 # This should also work for all the other BSDs, such as OpenBSD or DragonFly.
                 playerController.vlcIntfPath = "/usr/local/lib/vlc/lua/intf/"
@@ -349,7 +350,7 @@ class VlcPlayer(BasePlayer):
             if _usevlcintf(playerController.vlcIntfPath, playerController.vlcIntfUserPath):
                 playerController.SLAVE_ARGS.append('--lua-config=syncplay={{port=\"{}\"}}'.format(str(playerController.vlcport)))
             else:
-                if sys.platform.startswith('linux'):
+                if isLinux():
                     playerController.vlcDataPath = "/usr/lib/syncplay/resources"
                 else:
                     playerController.vlcDataPath = utils.findWorkingDir() + "\\resources"
@@ -387,7 +388,7 @@ class VlcPlayer(BasePlayer):
                                 playerController._client.ui.showErrorMessage(
                                     getMessage("media-player-error").format(line), True)
                                 break
-                if not sys.platform.startswith('darwin'):
+                if not isMacOS():
                     self.__process.stderr = None
                 else:
                     vlcoutputthread = threading.Thread(target = self.handle_vlcoutput, args=())
@@ -401,7 +402,7 @@ class VlcPlayer(BasePlayer):
                 self._sendingData = threading.Lock()
 
         def _shouldListenForSTDOUT(self):
-            if sys.platform.startswith('win'):
+            if isWindows():
                 return False # Due to VLC3 not using STDOUT/STDERR
             else:
                 return True

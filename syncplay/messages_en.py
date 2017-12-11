@@ -107,9 +107,10 @@ en = {
     "server-timeout-error" : "Connection with server timed out",
     "mpc-slave-error" : "Unable to start MPC in slave mode!",
     "mpc-version-insufficient-error" : "MPC version not sufficient, please use `mpc-hc` >= `{}`",
+    "mpc-be-version-insufficient-error" : "MPC version not sufficient, please use `mpc-be` >= `{}`",
     "mpv-version-error" : "Syncplay is not compatible with this version of mpv. Please use a different version of mpv (e.g. Git HEAD).",
     "player-file-open-error" : "Player failed opening file",
-    "player-path-error" : "Player path is not set properly. Supported players are: mpv, VLC, MPC-HC and mplayer2",
+    "player-path-error" : "Player path is not set properly. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2",
     "hostname-empty-error" : "Hostname can't be empty",
     "empty-error" : "{} can't be empty",  # Configuration
     "media-player-error": "Media player error: \"{}\"",  # Error line
@@ -119,7 +120,7 @@ en = {
 
     "unable-to-start-client-error" : "Unable to start client",
 
-    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, VLC, MPC-HC and mplayer2.",
+    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2.",
     "no-file-path-config-error" :"File must be selected before starting your player",
     "no-hostname-config-error": "Hostname can't be empty",
     "invalid-port-config-error" : "Port must be valid",
@@ -149,7 +150,7 @@ en = {
     "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.",
 
     # Client arguments
-    "argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network.',
+    "argument-description" : 'Solution to synchronize playback of multiple media player instances over the network.',
     "argument-epilog" : 'If no options supplied _config values will be used',
     "nogui-argument" : 'show no GUI',
     "host-argument" : 'server\'s address',
@@ -193,7 +194,7 @@ en = {
     "filename-privacy-label" : "Filename information:",
     "filesize-privacy-label" : "File size information:",
     "checkforupdatesautomatically-label" : "Check for Syncplay updates automatically",
-    "slowondesync-label" : "Slow down on minor desync (not supported on MPC-HC)",
+    "slowondesync-label" : "Slow down on minor desync (not supported on MPC-HC/BE)",
     "rewindondesync-label" : "Rewind on major desync (recommended)",
     "fastforwardondesync-label" : "Fast-forward if lagging behind (recommended)",
     "dontslowdownwithme-label" : "Never slow down or rewind others (experimental)",
@@ -320,7 +321,7 @@ en = {
     "password-tooltip" : "Passwords are only needed for connecting to private servers.",
     "room-tooltip" : "Room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
 
-    "executable-path-tooltip" : "Location of your chosen supported media player (mpv, VLC, MPC-HC or mplayer2).",
+    "executable-path-tooltip" : "Location of your chosen supported media player (mpv, VLC, MPC-HC/BE or mplayer2).",
     "media-path-tooltip" : "Location of video or stream to be opened. Necessary for mplayer2.",
     "player-arguments-tooltip" : "Additional command line arguments / switches to pass on to this media player.",
     "mediasearcdirectories-arguments-tooltip" : u"Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.",
@@ -332,7 +333,7 @@ en = {
     "privacy-sendhashed-tooltip" : "Send a hashed version of the information, making it less visible to other clients.",
     "privacy-dontsend-tooltip" : "Do not send this information to the server. This provides for maximum privacy.",
     "checkforupdatesautomatically-tooltip" : "Regularly check with the Syncplay website to see whether a new version of Syncplay is available.",
-    "slowondesync-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers. Not supported on MPC-HC.",
+    "slowondesync-tooltip" : "Reduce playback rate temporarily when needed to bring you back in sync with other viewers. Not supported on MPC-HC/BE.",
     "dontslowdownwithme-tooltip" : "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room operators.",
     "pauseonleave-tooltip" : "Pause playback if you get disconnected or someone leaves from your room.",
     "readyatstart-tooltip" : "Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)",
@@ -382,7 +383,7 @@ en = {
 
 
     # Server arguments
-    "server-argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC instances over the network. Server instance',
+    "server-argument-description" : 'Solution to synchronize playback of multiple MPlayer and MPC-HC/BE instances over the network. Server instance',
     "server-argument-epilog" : 'If no options supplied _config values will be used',
     "server-port-argument" : 'server TCP port',
     "server-password-argument" : 'server password',
