@@ -64,6 +64,7 @@ class ConfigurationGetter(object):
                         "showNonControllerOSD" : False,
                         "showContactInfo" : True,
                         "showDurationNotification" : True,
+                        "dropFileAddsToPlaylist": False,
                         "publicServers" : []
                         }
 
@@ -106,6 +107,7 @@ class ConfigurationGetter(object):
                          "sharedPlaylistEnabled",
                          "loopAtEndOfPlaylist",
                          "loopSingleFiles",
+                         "dropFileAddsToPlaylist",
                          "onlySwitchToTrustedDomains"
                         ]
         self._tristate = [
@@ -140,6 +142,7 @@ class ConfigurationGetter(object):
                             "autoplayInitialState", "mediaSearchDirectories",
                             "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
                             "loopSingleFiles",
+                            "dropFileAddsToPlaylist",
                             "onlySwitchToTrustedDomains", "trustedDomains","publicServers"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD",
                             "showDifferentRoomOSD", "showSameRoomOSD",
