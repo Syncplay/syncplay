@@ -46,8 +46,8 @@ deploy:
   api_key: 
     secure: TfwB161OlDOcAz5nnmjtNjDmJw2KyCz/uB1KzN4r5/9AL3uczWNuY+k6qVGaRvOP
   repo: Syncplay
-  package: Syncplay-win
-  subject: etoh
+  package: Syncplay
+  subject: syncplay
   version: v$(gittagversion)
   publish: true
   override: true
