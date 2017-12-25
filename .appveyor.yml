@@ -6,31 +6,33 @@ platform: x86
 configuration: Release
 
 init:
-  - set PATH=C:\Miniconda;C:\Miniconda\Scripts;%PATH%
+  - set PATH=C:\Miniconda;C:\Miniconda\Scripts;C:\Program Files (x86)\NSIS;%PATH%
   - conda create -n syncplay -y
   - activate syncplay
   - conda install python pywin32 pyside -y
-  - pip2 install twisted py2exe_py2 zope.interface
+  - pip install twisted py2exe_py2 zope.interface
   - type nul > C:\Miniconda\envs\syncplay\lib\site-packages\zope\__init__.py
-  - pip2 freeze
+  - pip freeze
   - conda list
-  - for /f %%a in ('git describe --tags --abbrev^=0 --match^=v*') do set gittagversion=%%a
   
 install:
   - cd %APPVEYOR_BUILD_FOLDER%
-  - py -2 buildPy2exe.py
-  - del syncplay_%gittagversion%\lib\DNSAPI.dll
-  - del syncplay_%gittagversion%\lib\MPR.dll
-  - mkdir syncplay_%gittagversion%\platforms
+  - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
+  - python buildPy2exe.py
+  - del syncplay_v%ver%\lib\MPR.dll
+  - mkdir syncplay_v%ver%\platforms
   #- copy C:\Miniconda\envs\syncplay\library\plugins\platforms\qwindows.dll C:\projects\syncplay\syncplay_v1.5.0\platforms\
 
 # Not a project with an msbuild file, build done at install.
 build: off 
 
 artifacts:
-  path: 'syncplay_$(gittagversion)'
-  type: zip
-  name: Syncplay_win
+  - path: 'syncplay_v$(ver)'
+    type: zip
+    name: Syncplay-$(ver)-win
+
+  - path: Syncplay-$(ver)-Setup.exe
+    name: Syncplay-$(ver)-win-setup
 
 # Push artefact to S3 bucket and list all
 before_deploy:
@@ -45,6 +47,6 @@ deploy:
     secure: TfwB161OlDOcAz5nnmjtNjDmJw2KyCz/uB1KzN4r5/9AL3uczWNuY+k6qVGaRvOP
   repo: Syncplay
   package: Syncplay-win
-  version: $(gittagversion)
+  version: v$(gittagversion)
   publish: true
   override: true
