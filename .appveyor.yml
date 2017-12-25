@@ -39,6 +39,7 @@ before_deploy:
   - dir
   #- python -c "from PySide2 import QtCore; print QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)"
 
+
 # Deploy build to BinTray
 deploy:
   provider: BinTray
@@ -48,6 +49,6 @@ deploy:
   repo: Syncplay
   package: Syncplay
   subject: syncplay
-  version: v$(gittagversion)
+  version: v$(ver)
   publish: true
   override: true
