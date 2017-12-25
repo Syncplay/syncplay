@@ -61,7 +61,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   Unicode true
 
   Name "Syncplay $version"
-  OutFile "Syncplay-$version-Setup.exe""
+  OutFile "Syncplay-$version-Setup.exe"
   InstallDir $$PROGRAMFILES\Syncplay
   RequestExecutionLevel admin
   XPStyle on
