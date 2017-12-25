@@ -33,11 +33,8 @@ if missingStrings is not None and missingStrings is not "":
 
 def get_nsis_path():
     bin_name = "makensis.exe"
-    try:
-        from winreg import HKEY_LOCAL_MACHINE as HKLM
-        from winreg import KEY_READ, KEY_WOW64_32KEY, OpenKey, QueryValueEx
-    except ImportError:
-        return bin_name
+    from _winreg import HKEY_LOCAL_MACHINE as HKLM
+    from _winreg import KEY_READ, KEY_WOW64_32KEY, OpenKey, QueryValueEx
 
     try:
         nsisreg = OpenKey(HKLM, "Software\\NSIS", 0, KEY_READ | KEY_WOW64_32KEY)
