@@ -117,9 +117,6 @@ class SyncplayClient(object):
         self.autoPlay = False
         self.autoPlayThreshold = None
 
-        self.ignorePath = None
-        self.ignorePathTime = None
-
         self.autoplayTimer = task.LoopingCall(self.autoplayCountdown)
         self.autoplayTimeLeft = constants.AUTOPLAY_DELAY
 
@@ -448,11 +445,6 @@ class SyncplayClient(object):
         return self._globalPaused
 
     def updateFile(self, filename, duration, path):
-        if self.ignorePath == path and self.ignorePathTime is not None and abs(time.time() - self.ignorePathTime) < 5.0:
-            self.ignorePath = None
-            self.ignorePathTime = None
-            return
-
         newPath = u""
         if utils.isURL(path):
             try:
@@ -469,28 +461,6 @@ class SyncplayClient(object):
                 size = os.path.getsize(path)
             except:
                 size = 0
-
-        def _fileOpenedFromPlayer():
-            return self.sharedPlaylistIsEnabled and self._config['dropFileAddsToPlaylist'] and not utils.isURL(path) and filename <> self.playlist.lastFileOpened and not filename in self.playlist._playlist
-
-        if _fileOpenedFromPlayer():
-            oldFilePath = self.userlist.currentUser.file['path'] if self.userlist.currentUser.file else None
-            self.ignorePath = deepcopy(oldFilePath)
-            self.ignorePathTime = time.time()
-            if not self.playlist._playlist and self.userlist.currentUser.file:
-                if utils.isURL(oldFilePath):
-                    self.playlist.addFileToPlaylist(oldFilePath)
-                else:
-                    self.playlist.addFileToPlaylist(os.path.basename(oldFilePath))
-            self.playlist.addFileToPlaylist(filename)
-            if self.userlist.currentUser.file:
-                self._player.openFile(oldFilePath)
-            return
-        else:
-            self.playlist.lastFileOpened = filename
-
-        # TODO: Cancel if new same as old?
-                
         if not utils.isURL(path) and os.path.exists(path):
             self.fileSwitch.notifyUserIfFileNotInMediaDirectory(filename, path)
         filename, size = self.__executePrivacySettings(filename, size)
@@ -532,7 +502,7 @@ class SyncplayClient(object):
         return False
 
     def openFile(self, filePath, resetPosition=False):
-        self.playlist.openedFile(filePath)
+        self.playlist.openedFile()
         self._player.openFile(filePath, resetPosition)
         if resetPosition:
             self.establishRewindDoubleCheck()
@@ -1454,7 +1424,6 @@ class SyncplayPlaylist():
         self._playlistIndex = None
         self.addedChangeListCallback = False
         self._lastPlaylistIndexChange = time.time()
-        self.lastFileOpened = os.path.basename(self._client._config['file']) if self._client._config['file'] and not utils.isURL(self._client._config['file']) else None
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
         @wraps(f)
@@ -1465,12 +1434,8 @@ class SyncplayPlaylist():
             return f(self, *args, **kwds)
         return wrapper
 
-    def openedFile(self, filePath):
+    def openedFile(self):
         self._lastPlaylistIndexChange = time.time()
-        if utils.isURL(filePath):
-            self.lastFileOpened = None
-            return
-        self.lastFileOpened = os.path.basename(filePath)
 
     def changeToPlaylistIndexFromFilename(self, filename):
         try:
@@ -1636,15 +1601,6 @@ class SyncplayPlaylist():
             random.shuffle(shuffledPlaylist)
             self.changePlaylist(shuffledPlaylist, username=None, resetIndex=True)
             self.switchToNewPlaylistIndex(0, resetPosition=True)
-
-    @needsSharedPlaylistsEnabled
-    def addFileToPlaylist(self, filename):
-        if filename in self._playlist:
-            return
-        newPlaylist = deepcopy(self._playlist)
-        newPlaylist.append(filename)
-        if newPlaylist <> self._playlist:
-            self.changePlaylist(newPlaylist, username=None, resetIndex=False)
 
     def canUndoPlaylist(self, currentPlaylist):
         return self._previousPlaylist is not None and currentPlaylist <> self._previousPlaylist
