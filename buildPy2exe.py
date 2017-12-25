@@ -651,6 +651,7 @@ guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock
      'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
      'resources/timeline_marker.png','resources/control_play_blue.png',
      'resources/mpc-hc.png','resources/mpc-hc64.png','resources/mplayer.png',
+     'resources/mpc-be.png',
      'resources/mpv.png','resources/vlc.png', 'resources/house.png', 'resources/film_link.png',
      'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/chevrons_right.png',
      'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',

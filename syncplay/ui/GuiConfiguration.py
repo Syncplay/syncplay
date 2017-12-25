@@ -12,7 +12,8 @@ import sys
 import threading
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
 from syncplay import constants
-
+from syncplay.utils import isBSD, isLinux, isMacOS
+from syncplay.utils import resourcespath, posixresourcespath
 class GuiConfiguration:
     def __init__(self, config, error=None, defaultConfig=None):
         self.defaultConfig = defaultConfig
@@ -185,12 +186,12 @@ class ConfigDialog(QtWidgets.QDialog):
     def _updateExecutableIcon(self, iconpath, playerpath):
         if iconpath is not None and iconpath != "":
             if iconpath.endswith('.mng'):
-                movie = QtGui.QMovie(self.resourcespath + iconpath)
+                movie = QtGui.QMovie(resourcespath + iconpath)
                 movie.setCacheMode(QtGui.QMovie.CacheMode.CacheAll)
                 self.executableiconLabel.setMovie(movie)
                 movie.start()
             else:
-                self.executableiconImage.load(self.resourcespath + iconpath)
+                self.executableiconImage.load(resourcespath + iconpath)
                 self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(self.executableiconImage))
         else:
             self.executableiconLabel.setPixmap(QtGui.QPixmap.fromImage(QtGui.QImage()))
@@ -238,11 +239,11 @@ class ConfigDialog(QtWidgets.QDialog):
                 defaultdirectory = os.environ["ProgramFiles"]
             elif "PROGRAMW6432" in os.environ:
                 defaultdirectory = os.environ["ProgramW6432"]
-        elif sys.platform.startswith('linux'):
+        elif isLinux():
             defaultdirectory = "/usr/bin"
-        elif sys.platform.startswith('darwin'):
+        elif isMacOS():
             defaultdirectory = "/Applications/"
-        elif "bsd" in sys.platform or sys.platform.startswith('dragonfly'):
+        elif isBSD():
             defaultdirectory = "/usr/local/bin"
 
         fileName, filtr = QtWidgets.QFileDialog.getOpenFileName(self,
@@ -250,7 +251,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 defaultdirectory,
                 browserfilter, "", options)
         if fileName:
-            if sys.platform.startswith('darwin') and fileName.endswith('.app'):  # see GitHub issue #91
+            if isMacOS() and fileName.endswith('.app'):  # see GitHub issue #91
                 # Mac OS X application bundles contain a Info.plist in the Contents subdirectory of the .app.
                 # This plist file includes the 'CFBundleExecutable' key, which specifies the name of the
                 # executable.  I would have used plistlib here, but since the version of this library in
@@ -375,7 +376,7 @@ class ConfigDialog(QtWidgets.QDialog):
             elif os.path.isdir(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]):
                 defaultdirectory = QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]
             else:
-                defaultdirectory = ""
+                defaultdirectory = ""        
         browserfilter = "All files (*)"
         fileName, filtr = QtWidgets.QFileDialog.getOpenFileName(self, "Browse for media files", defaultdirectory,
                 browserfilter, "", options)
@@ -530,7 +531,6 @@ class ConfigDialog(QtWidgets.QDialog):
     def addBasicTab(self):
         config = self.config
         playerpaths = self.playerpaths
-        resourcespath = self.resourcespath
         error = self.error
         if self.datacleared == True:
             error = constants.ERROR_MESSAGE_MARKER + "{}".format(getMessage("gui-data-cleared-notification"))
@@ -701,22 +701,22 @@ class ConfigDialog(QtWidgets.QDialog):
         self.readyUnpauseButtonGroup = QButtonGroup()
         self.unpauseIfAlreadyReadyOption = QRadioButton(getMessage("unpause-ifalreadyready-option"))
         self.readyUnpauseButtonGroup.addButton(self.unpauseIfAlreadyReadyOption)
-        self.unpauseIfAlreadyReadyOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.unpauseIfAlreadyReadyOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + "chevrons_right.png"))
         self.unpauseIfAlreadyReadyOption.setObjectName("unpause-ifalreadyready" + constants.CONFIG_NAME_MARKER + "unpauseAction" + constants.CONFIG_VALUE_MARKER + constants.UNPAUSE_IFALREADYREADY_MODE)
         self.readyUnpauseLayout.addWidget(self.unpauseIfAlreadyReadyOption)
         self.unpauseIfOthersReadyOption = QRadioButton(getMessage("unpause-ifothersready-option"))
         self.readyUnpauseButtonGroup.addButton(self.unpauseIfOthersReadyOption)
-        self.unpauseIfOthersReadyOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.unpauseIfOthersReadyOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + "chevrons_right.png"))
         self.unpauseIfOthersReadyOption.setObjectName("unpause-ifothersready" + constants.CONFIG_NAME_MARKER + "unpauseAction" + constants.CONFIG_VALUE_MARKER + constants.UNPAUSE_IFOTHERSREADY_MODE)
         self.readyUnpauseLayout.addWidget(self.unpauseIfOthersReadyOption)
         self.unpauseIfMinUsersReadyOption = QRadioButton(getMessage("unpause-ifminusersready-option"))
         self.readyUnpauseButtonGroup.addButton(self.unpauseIfMinUsersReadyOption)
-        self.unpauseIfMinUsersReadyOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.unpauseIfMinUsersReadyOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + "chevrons_right.png"))
         self.unpauseIfMinUsersReadyOption.setObjectName("unpause-ifminusersready" + constants.CONFIG_NAME_MARKER + "unpauseAction" + constants.CONFIG_VALUE_MARKER + constants.UNPAUSE_IFMINUSERSREADY_MODE)
         self.readyUnpauseLayout.addWidget(self.unpauseIfMinUsersReadyOption)
         self.unpauseAlwaysUnpauseOption = QRadioButton(getMessage("unpause-always"))
         self.readyUnpauseButtonGroup.addButton(self.unpauseAlwaysUnpauseOption)
-        self.unpauseAlwaysUnpauseOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
+        self.unpauseAlwaysUnpauseOption.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + "chevrons_right.png"))
         self.unpauseAlwaysUnpauseOption.setObjectName("unpause-always" + constants.CONFIG_NAME_MARKER + "unpauseAction" + constants.CONFIG_VALUE_MARKER + constants.UNPAUSE_ALWAYS_MODE)
         self.readyUnpauseLayout.addWidget(self.unpauseAlwaysUnpauseOption)
         self.readyLayout.addWidget(self.readyUnpauseGroup)
@@ -1028,27 +1028,27 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.showSameRoomOSDCheckbox = QCheckBox(getMessage("showsameroomosd-label"))
         self.showSameRoomOSDCheckbox.setObjectName("showSameRoomOSD")
-        self.showSameRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.showSameRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showSameRoomOSDCheckbox)
 
         self.showNonControllerOSDCheckbox = QCheckBox(getMessage("shownoncontrollerosd-label"))
         self.showNonControllerOSDCheckbox.setObjectName("showNonControllerOSD")
-        self.showNonControllerOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.showNonControllerOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showNonControllerOSDCheckbox)
 
         self.showDifferentRoomOSDCheckbox = QCheckBox(getMessage("showdifferentroomosd-label"))
         self.showDifferentRoomOSDCheckbox.setObjectName("showDifferentRoomOSD")
-        self.showDifferentRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.showDifferentRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showDifferentRoomOSDCheckbox)
 
         self.slowdownOSDCheckbox = QCheckBox(getMessage("showslowdownosd-label"))
         self.slowdownOSDCheckbox.setObjectName("showSlowdownOSD")
-        self.slowdownOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.slowdownOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.slowdownOSDCheckbox)
 
         self.showOSDWarningsCheckbox = QCheckBox(getMessage("showosdwarnings-label"))
         self.showOSDWarningsCheckbox.setObjectName("showOSDWarnings")
-        self.showOSDWarningsCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.showOSDWarningsCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + u"chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showOSDWarningsCheckbox)
 
         self.subitems['showOSD'] = ["showSameRoomOSD", "showDifferentRoomOSD", "showSlowdownOSD", "showOSDWarnings", "showNonControllerOSD"]
@@ -1104,11 +1104,10 @@ class ConfigDialog(QtWidgets.QDialog):
 
     def addBottomLayout(self):
         config = self.config
-        resourcespath = self.resourcespath
 
         self.bottomButtonFrame = QtWidgets.QFrame()
         self.bottomButtonLayout = QtWidgets.QHBoxLayout()
-        self.helpButton = QtWidgets.QPushButton(QtGui.QIcon(self.resourcespath + u'help.png'), getMessage("help-label"))
+        self.helpButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'help.png'), getMessage("help-label"))
         self.helpButton.setObjectName("help")
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.released.connect(self.openHelp)
@@ -1151,12 +1150,12 @@ class ConfigDialog(QtWidgets.QDialog):
         self.tabListLayout = QtWidgets.QHBoxLayout()
         self.tabListFrame = QtWidgets.QFrame()
         self.tabListWidget = QtWidgets.QListWidget()
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"house.png"),getMessage("basics-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"control_pause_blue.png"),getMessage("readiness-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"film_link.png"),getMessage("sync-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"user_comment.png"), getMessage("chat-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"error.png"),getMessage("messages-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(self.resourcespath + u"cog.png"),getMessage("misc-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"house.png"),getMessage("basics-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"control_pause_blue.png"),getMessage("readiness-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"film_link.png"),getMessage("sync-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"user_comment.png"), getMessage("chat-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"error.png"),getMessage("messages-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"cog.png"),getMessage("misc-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
         self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width() + constants.TAB_PADDING)
@@ -1255,12 +1254,6 @@ class ConfigDialog(QtWidgets.QDialog):
         self.QtWidgets = QtWidgets
         self.QtGui = QtGui
         self.error = error
-        if sys.platform.startswith('win'):
-            resourcespath = utils.findWorkingDir() + "\\resources\\"
-        else:
-            resourcespath = utils.findWorkingDir() + u"/resources/"
-        self.posixresourcespath = utils.findWorkingDir().replace(u"\\","/") + u"/resources/"
-        self.resourcespath = resourcespath
 
         super(ConfigDialog, self).__init__()
 

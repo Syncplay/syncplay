@@ -108,9 +108,10 @@ ru = {
     "server-timeout-error" : u"Подключение к серверу превысило лимит времени",
     "mpc-slave-error" : u"Невозможно запустить MPC в slave режиме!",
     "mpc-version-insufficient-error" : u"Версия MPC слишком старая, пожалуйста, используйте `mpc-hc` >= `{}`",
+    "mpc-be-version-insufficient-error" : u"Версия MPC слишком старая, пожалуйста, используйте `mpc-be` >= `{}`",
     "mpv-version-error" : u"Syncplay не совместим с данной версией mpv. Пожалуйста, используйте другую версию mpv (лучше свежайшую).",
     "player-file-open-error" : u"Проигрыватель не может открыть файл.",
-    "player-path-error" : u"Путь к проигрывателю задан неверно. Supported players are: mpv, VLC, MPC-HC and mplayer2.", # TODO: Translate last sentence
+    "player-path-error" : u"Путь к проигрывателю задан неверно. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2.", # TODO: Translate last sentence
     "hostname-empty-error" : u"Имя пользователя не может быть пустым.",
     "empty-error" : u"{} не может быть пустым.",  # Configuration
     "media-player-error" : u"Ошибка проигрывателя: \"{}\"",  # Error line
@@ -120,7 +121,7 @@ ru = {
 
     "unable-to-start-client-error" : u"Невозможно запустить клиент",
 
-    "player-path-config-error": u"Путь к проигрывателю установлен неверно. Supported players are: mpv, VLC, MPC-HC and mplayer2", # To do: Translate end
+    "player-path-config-error": u"Путь к проигрывателю установлен неверно. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2", # To do: Translate end
     "no-file-path-config-error" : u"Файл должен быть указан до включения проигрывателя",
     "no-hostname-config-error": u"Имя сервера не может быть пустым",
     "invalid-port-config-error" : u"Неверный номер порта",
@@ -157,7 +158,7 @@ ru = {
     "failed-to-load-server-list-error" : u"Не удалось загрузить список публичных серверов. Откройте http://www.syncplay.pl/ через браузер.",
 
     # Client arguments
-    "argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет.',
+    "argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC/BE через Интернет.',
     "argument-epilog" : u'Если параметр не будет передан, то будет использоваться значение, указанное в _config.',
     "nogui-argument" : u'не использовать GUI',
     "host-argument" : u'адрес сервера',
@@ -201,7 +202,7 @@ ru = {
     "filename-privacy-label" : u"Имя файла:",
     "filesize-privacy-label" : u"Размер файла:",
     "checkforupdatesautomatically-label" : u"Проверять обновления автоматически",
-    "slowondesync-label" : u"Замедлять при небольших рассинхронизациях (не поддерживаетя в MPC-HC)",
+    "slowondesync-label" : u"Замедлять при небольших рассинхронизациях (не поддерживаетя в MPC-HC/BE)",
     "rewindondesync-label" : u"Перемотка при больших рассинхронизациях (настоятельно рекомендуется)",
     "dontslowdownwithme-label" : u"Никогда не замедлять и не перематывать видео другим (функция тестируется)",
     "pausing-title" : u"Приостановка",
@@ -348,7 +349,7 @@ ru = {
     "password-tooltip" : u"Пароли нужны для подключения к приватным серверам.",
     "room-tooltip" : u"Комната, в которую Вы попадете сразу после подключения. Синхронизация возможна только между людьми в одной и той же комнате.",
 
-    "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, VLC, mplayer2 или mpv).",
+    "executable-path-tooltip" : u"Расположение Вашего видеопроигрывателя (MPC-HC, MPC-BE, VLC, mplayer2 или mpv).",
     "media-path-tooltip" : u"Расположение видеофайла или потока для просмотра. Обязательно для mplayer2.", # TODO: Confirm translation
     "player-arguments-tooltip" : u"Передавать дополнительные аргументы командной строки этому проигрывателю.",
     "mediasearcdirectories-arguments-tooltip" : u"Папки, где Syncplay будет искать медиа файлы, включая подпапки.",
@@ -360,7 +361,7 @@ ru = {
     "privacy-sendhashed-tooltip" : u"Отправляет хэш-сумму этой информации, делая ее невидимой для других пользователей.",
     "privacy-dontsend-tooltip" : u"Не отправлять эту информацию на сервер. Предоставляет наибольшую приватность.",
     "checkforupdatesautomatically-tooltip" : u"Syncplay будет регулярно заходить на сайт и проверять наличие новых версий.",
-    "slowondesync-tooltip" : u"Временно уменьшить скорость воспроизведения в целях синхронизации с другими зрителями. Не поддерживается в MPC-HC.",
+    "slowondesync-tooltip" : u"Временно уменьшить скорость воспроизведения в целях синхронизации с другими зрителями. Не поддерживается в MPC-HC/BE.",
     "dontslowdownwithme-tooltip" : u"Ваши лаги не будут влиять на других зрителей.",
     "pauseonleave-tooltip" : u"Приостановить воспроизведение, если Вы покинули комнату или кто-то из зрителей отключился от сервера.",
     "readyatstart-tooltip" : u"Отметить Вас готовым к просмотру сразу же (по умолчанию Вы отмечены не готовым)",
@@ -424,7 +425,7 @@ ru = {
     "no-salt-notification" : u"ВНИМАНИЕ: Чтобы сгенерированные сервером пароли операторов комнат работали после перезагрузки сервера, необходимо указать следующий аргумент командной строки при запуске сервера Syncplay: --salt {}", #Salt
 
     # Server arguments
-    "server-argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC через Интернет. Серверная часть',
+    "server-argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC/BE через Интернет. Серверная часть',
     "server-argument-epilog" : u'Если параметр не будет передан, то будет использоваться значение, указанное в _config.',
     "server-port-argument" : u'номер TCP порта сервера',
     "server-password-argument" : u'пароль к серверу',

@@ -9,7 +9,7 @@ UI_TIME_FORMAT = "[%X] "
 CONFIG_NAMES = [".syncplay", "syncplay.ini"]  #Syncplay searches first to last
 DEFAULT_CONFIG_NAME_WINDOWS = "syncplay.ini"
 DEFAULT_CONFIG_NAME_LINUX = ".syncplay"
-RECENT_CLIENT_THRESHOLD = "1.5.0"  #This and higher considered 'recent' clients (no warnings)
+RECENT_CLIENT_THRESHOLD = "1.5.1"  #This and higher considered 'recent' clients (no warnings)
 WARN_OLD_CLIENTS = True  #Use MOTD to inform old clients to upgrade
 LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
@@ -89,6 +89,7 @@ COMMANDS_CREATE = ['c','create']
 COMMANDS_AUTH = ['a','auth']
 COMMANDS_TOGGLE = ['t','toggle']
 MPC_MIN_VER = "1.6.4"
+MPC_BE_MIN_VER = "1.5.2.3123"
 VLC_MIN_VERSION = "2.2.1"
 VLC_INTERFACE_MIN_VERSION = "0.3.4"
 VLC_LATENCY_ERROR_THRESHOLD = 2.0
@@ -111,6 +112,12 @@ MPC_PATHS = [
     r"c:\program files\combined community codec pack\mpc\mpc-hc.exe",
     r"c:\program files\mpc homecinema (x64)\mpc-hc64.exe",
 ]
+MPC_BE_PATHS = [
+    r"c:\Program Files\MPC-BE x64\mpc-be64.exe",
+    r"c:\Program Files\MPC-BE x64\mpc-be.exe",
+    r"c:\Program Files\MPC-BE\mpc-be64.exe",
+    r"c:\Program Files\MPC-BE\mpc-be.exe"
+]
 MPLAYER_PATHS = ["mplayer2", "mplayer"]
 MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"c:\program files\mpv\mpv.exe", r"c:\program files\mpv-player\mpv.exe",
              r"c:\program Files (x86)\mpv\mpv.exe", r"c:\program Files (x86)\mpv-player\mpv.exe",
@@ -130,6 +137,7 @@ MPLAYER_ICONPATH = "mplayer.png"
 MPV_ICONPATH = "mpv.png"
 MPC_ICONPATH = "mpc-hc.png"
 MPC64_ICONPATH = "mpc-hc64.png"
+MPC_BE_ICONPATH = "mpc-be.png"
 
 MPV_ERROR_MESSAGES_TO_REPEAT = ['[ytdl_hook] Your version of youtube-dl is too old', '[ytdl_hook] youtube-dl failed', 'Failed to recognize file format.']
 
@@ -187,8 +195,8 @@ MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_
 MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
-VLC_SLAVE_OSX_ARGS = ['--verbose=2', '--no-file-logging']
-VLC_SLAVE_NONOSX_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
+VLC_SLAVE_MACOS_ARGS = ['--verbose=2', '--no-file-logging']
+VLC_SLAVE_NONMACOS_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
 MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS = ["no-osd set time-pos ", "loadfile "]
 MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS = ["cycle pause"]
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
@@ -245,3 +253,9 @@ DEFAULT_TRUSTED_DOMAINS = [u"youtube.com",u"youtu.be"]
 TRUSTABLE_WEB_PROTOCOLS = [u"http://www.",u"https://www.",u"http://",u"https://"]
 
 PRIVATE_FILE_FIELDS = ["path"]
+
+OS_WINDOWS = "win"
+OS_LINUX = "linux"
+OS_MACOS = "darwin"
+OS_BSD = "freebsd"
+OS_DRAGONFLY = "dragonfly"

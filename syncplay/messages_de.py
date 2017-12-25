@@ -108,9 +108,10 @@ de = {
     "server-timeout-error" : u"Timeout: Verbindung zum Server fehlgeschlagen",
     "mpc-slave-error" : u"Kann MPC nicht im Slave-Modus starten!",
     "mpc-version-insufficient-error" : u"MPC-Version nicht ausreichend, bitte nutze `mpc-hc` >= `{}`",
+    "mpc-be-version-insufficient-error" : u"MPC-Version nicht ausreichend, bitte nutze `mpc-be` >= `{}`",
     "mpv-version-error" : u"Syncplay ist nicht kompatibel mit dieser Version von mpv.  Bitte benutze eine andere Version (z.B. Git HEAD).",
     "player-file-open-error" : u"Fehler beim Öffnen der Datei durch den Player",
-    "player-path-error" : u"Ungültiger Player-Pfad",
+    "player-path-error" : u"Ungültiger Player-Pfad. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2", # To do: Translate end
     "hostname-empty-error" : u"Hostname darf nicht leer sein",
     "empty-error" : u"{} darf nicht leer sein",  # Configuration
     "media-player-error": u"Player-Fehler: \"{}\"",  # Error line
@@ -120,7 +121,7 @@ de = {
 
     "unable-to-start-client-error" : u"Client kann nicht gestartet werden",
 
-    "player-path-config-error": u"Player-Pfad ist nicht ordnungsgemäß gesetzt.",
+    "player-path-config-error": u"Player-Pfad ist nicht ordnungsgemäß gesetzt. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2.", # To do: Translate end
     "no-file-path-config-error": u"Es muss eine Datei ausgewählt werden, bevor der Player gestartet wird.",
     "no-hostname-config-error": u"Hostname darf nicht leer sein",
     "invalid-port-config-error" : u"Port muss gültig sein",
@@ -151,7 +152,7 @@ de = {
     "failed-to-load-server-list-error" : u"Konnte die Liste der öffentlichen Server nicht laden. Bitte besuche http://www.syncplay.pl/ [Englisch] mit deinem Browser.",
 
     # Client arguments
-    "argument-description" : u'Syncplay ist eine Anwendung um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren.',
+    "argument-description" : u'Syncplay ist eine Anwendung um mehrere MPlayer, MPC-HC, MPC-BE und VLC-Instanzen über das Internet zu synchronisieren.',
     "argument-epilog" : u'Wenn keine Optionen angegeben sind, werden die _config-Werte verwendet',
     "nogui-argument" : u'Keine GUI anzeigen',
     "host-argument" : u'Server-Adresse',
@@ -195,7 +196,7 @@ de = {
     "filename-privacy-label" : u"Dateiname:",
     "filesize-privacy-label" : u"Dateigröße:",
     "checkforupdatesautomatically-label" : u"Automatisch nach Updates suchen",
-    "slowondesync-label" : u"Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC)",
+    "slowondesync-label" : u"Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC/BE)",
     "dontslowdownwithme-label" : u"Nie verlangsamen oder andere zurückspulen (Experimentell)",
     "pausing-title" : u"Pausing", # TODO: Translate
     "pauseonleave-label" : u"Pausieren wenn ein Benutzer austritt",
@@ -340,7 +341,7 @@ de = {
     "password-tooltip" : u"Passwörter sind nur bei Verbindung zu privaten Servern nötig.",
     "room-tooltip" : u"Der Raum, der betreten werden soll, kann ein x-beliebiger sein. Allerdings werden nur Clients im selben Raum synchronisiert.",
 
-    "executable-path-tooltip" : u"Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, VLC, mplayer2 or mpv).",
+    "executable-path-tooltip" : u"Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, MPC-BE, VLC, mplayer2 or mpv).",
     "media-path-tooltip" : u"Pfad zum wiederzugebenden Video oder Stream. Notwendig für mplayer2.", # TODO: Confirm translation
     "player-arguments-tooltip" : u"Zusätzliche Kommandozeilenparameter / -schalter für diesen Mediaplayer.",
     "mediasearcdirectories-arguments-tooltip" : u"Verzeichnisse, in denen Syncplay nach Mediendateien suchen soll, z.B. wenn du das Click-to-switch-Feature verwendest. Syncplay wird rekursiv Unterordner durchsuchen.", # TODO: Translate Click-to-switch? (or use as name for feature)
@@ -418,7 +419,7 @@ de = {
     "no-salt-notification" : u"WICHTIGER HINWEIS: Damit von dem Server generierte Passwörter für geführte Räume auch nach einem Serverneustart funktionieren, starte den Server mit dem folgenden Parameter: --salt {}", #Salt
 
     # Server arguments
-    "server-argument-description" : u'Anwendung, um mehrere MPlayer, MPC-HC und VLC-Instanzen über das Internet zu synchronisieren. Server',
+    "server-argument-description" : u'Anwendung, um mehrere MPlayer, MPC-HC/BE und VLC-Instanzen über das Internet zu synchronisieren. Server',
     "server-argument-epilog" : u'Wenn keine Optionen angegeben sind, werden die _config-Werte verwendet',
     "server-port-argument" : u'Server TCP-Port',
     "server-password-argument" : u'Server Passwort',

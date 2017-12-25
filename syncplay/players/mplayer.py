@@ -6,6 +6,7 @@ from syncplay.players.basePlayer import BasePlayer
 from syncplay import constants, utils
 from syncplay.messages import getMessage
 import os, sys
+from syncplay.utils import isWindows
 
 class MplayerPlayer(BasePlayer):
     speedSupported = True
@@ -305,7 +306,7 @@ class MplayerPlayer(BasePlayer):
 
             call = [playerPath]
             if filePath:
-                if sys.platform.startswith('win') and not utils.isASCII(filePath):
+                if isWindows() and not utils.isASCII(filePath):
                     self.__playerController.delayedFilePath = filePath
                     filePath = None
                 else:
