@@ -108,7 +108,7 @@ class AboutDialog(QtWidgets.QDialog):
          else:
              self.setWindowTitle(getMessage("about-dialog-title"))
              if isWindows():
-                self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint) 			 
+                self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
          nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
          nameLabel.setFont(QtGui.QFont("Helvetica", 20))
          linkLabel = QtWidgets.QLabel("<center><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
@@ -117,7 +117,7 @@ class AboutDialog(QtWidgets.QDialog):
          licenseLabel = QtWidgets.QLabel("<center><p>Copyright &copy; 2017 Syncplay</p><p>" + getMessage("about-dialog-license-text") + "</p></center>")
          aboutIconPixmap = QtGui.QPixmap(resourcespath + u"syncplay.png")
          aboutIconLabel = QtWidgets.QLabel()
-         aboutIconLabel.setPixmap(aboutIconPixmap.scaled(120, 120, Qt.KeepAspectRatio))        
+         aboutIconLabel.setPixmap(aboutIconPixmap.scaled(120, 120, Qt.KeepAspectRatio))
          aboutLayout = QtWidgets.QGridLayout()
          aboutLayout.addWidget(aboutIconLabel, 0, 0, 4, 2)
          aboutLayout.addWidget(nameLabel, 0, 2, 1, 2)
@@ -131,22 +131,22 @@ class AboutDialog(QtWidgets.QDialog):
          dependenciesButton = QtWidgets.QPushButton(getMessage("about-dialog-dependencies"))
          dependenciesButton.setAutoDefault(False)
          dependenciesButton.clicked.connect(self.openDependencies)
-         aboutLayout.addWidget(dependenciesButton, 4, 3)         
+         aboutLayout.addWidget(dependenciesButton, 4, 3)
          aboutLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
-         self.setSizeGripEnabled(False)         
+         self.setSizeGripEnabled(False)
          self.setLayout(aboutLayout)
 
-    def openLicense(self):
-         if isWindows():
-             QtGui.QDesktopServices.openUrl(QUrl("file:///" + resourcespath + u"license.rtf"))
-         else:
-             QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + u"license.rtf"))
+     def openLicense(self):
+        if isWindows():
+              QtGui.QDesktopServices.openUrl(QUrl("file:///" + resourcespath + u"license.rtf"))
+        else:
+              QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + u"license.rtf"))
          
-    def openDependencies(self):
+     def openDependencies(self):
          if isWindows():
-             QtGui.QDesktopServices.openUrl(QUrl("file:///" + resourcespath + u"third-party-notices.rtf"))
+              QtGui.QDesktopServices.openUrl(QUrl("file:///" + resourcespath + u"third-party-notices.rtf"))
          else:
-             QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + u"third-party-notices.rtf"))
+              QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + u"third-party-notices.rtf"))
 
 class MainWindow(QtWidgets.QMainWindow):
     insertPosition = None
