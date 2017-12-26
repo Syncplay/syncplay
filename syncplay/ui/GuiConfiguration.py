@@ -12,7 +12,7 @@ import sys
 import threading
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
 from syncplay import constants
-from syncplay.utils import isBSD, isLinux, isMacOS
+from syncplay.utils import isBSD, isLinux, isMacOS, isWindows
 from syncplay.utils import resourcespath, posixresourcespath
 class GuiConfiguration:
     def __init__(self, config, error=None, defaultConfig=None):
@@ -1254,6 +1254,12 @@ class ConfigDialog(QtWidgets.QDialog):
         self.QtWidgets = QtWidgets
         self.QtGui = QtGui
         self.error = error
+        if isWindows():
+            resourcespath = utils.findWorkingDir() + "\\resources\\"
+        else:
+            resourcespath = utils.findWorkingDir() + u"/resources/"
+        self.posixresourcespath = utils.findWorkingDir().replace(u"\\","/") + u"/resources/"
+        self.resourcespath = resourcespath
 
         super(ConfigDialog, self).__init__()
 
