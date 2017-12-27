@@ -555,8 +555,13 @@ function wordwrapify_string(line)
 		nextChar = next_utf8(str, currentChar)
         if nextChar == currentChar then
             return newstr
-        end
-        newstr = newstr .. WORDWRAPIFY_MAGICWORD .. str:sub(currentChar,nextChar-1)
+		end
+		charToTest = str:sub(currentChar,nextChar-1)
+		if charToTest ~= "\\" and charToTest ~= "{"  and charToTest ~= "}" then
+			newstr = newstr .. WORDWRAPIFY_MAGICWORD .. str:sub(currentChar,nextChar-1)
+        else
+			newstr = newstr .. str:sub(currentChar,nextChar-1)
+		end
         currentChar = nextChar
 	until currentChar > maxChars
 	return newstr
