@@ -5,7 +5,7 @@
 local CANVAS_WIDTH = 1920
 local CANVAS_HEIGHT = 1080
 local ROW_HEIGHT = 100
-local chat_format = "{\\fs50}{\an1}{\\q2}"
+local chat_format = "{\\fs50}{\an1}"
 local max_scrolling_rows = 100
 local MOVEMENT_PER_SECOND = 200
 local TICK_INTERVAL = 0.01
@@ -17,6 +17,7 @@ local use_alpha_rows_for_chat = true
 local MOOD_NEUTRAL = 0
 local MOOD_BAD = 1
 local MOOD_GOOD = 2
+local WORDWRAPIFY_MAGICWORD = "{\\\\fscx0}  {\\\\fscx100}"
 
 local ALPHA_WARNING_TEXT_COLOUR = "FF00FF" -- RBG
 local HINT_TEXT_COLOUR = "00FFFF" -- RBG
@@ -34,8 +35,8 @@ function format_scrolling(xpos, ypos, text)
     return string.format(chat_message)
 end
 
-function format_chatroom(xpos,ypos,text)
-	local chat_message = chat_format ..  "{\\pos("..xpos..","..ypos..")}" .. text.."\n"
+function format_chatroom(text)
+    local chat_message = chat_format .. text.."\n"
     return string.format(chat_message)
 end
 
@@ -128,31 +129,24 @@ function process_alert_osd()
     local rowsCreated = 0
     local stringToAdd = ""
     if alert_osd ~= "" and mp.get_time() - last_alert_osd_time < opts['alertTimeout'] and last_alert_osd_time ~= nil then
-        local xpos = opts['chatLeftMargin']
-        local ypos
         local messageColour
         if alert_osd_mood == MOOD_NEUTRAL then
-
-
             messageColour = "{\\1c&H"..NEUTRAL_ALERT_TEXT_COLOUR.."}"
         elseif alert_osd_mood == MOOD_BAD then
             messageColour = "{\\1c&H"..BAD_ALERT_TEXT_COLOUR.."}"
         elseif alert_osd_mood == MOOD_GOOD then
             messageColour = "{\\1c&H"..GOOD_ALERT_TEXT_COLOUR.."}"
         end
-        local messageString
+        local messageString = wordwrapify_string(alert_osd)
         local startRow = 0
-        local stringLeftToProccess = alert_osd
-        while stringLeftToProccess ~= '' and stringLeftToProccess ~= nil do
+        if messageString ~= '' and messageString ~= nil then
             local toDisplay
-            ypos = opts['chatTopMargin'] + ((startRow+rowsCreated)*opts['chatOutputFontSize'])
-            toDisplay, stringLeftToProccess = trim_string(stringLeftToProccess,opts['chatSplitMessageAt'])
             rowsCreated = rowsCreated + 1
-            messageString = messageColour..toDisplay
+            messageString = messageColour..messageString
 			if stringToAdd ~= "" then
-            	stringToAdd = stringToAdd .. format_chatroom(xpos,ypos,messageString)
+            	stringToAdd = stringToAdd .. format_chatroom(messageString)
 			else
-				stringToAdd = format_chatroom(xpos,ypos,messageString)
+				stringToAdd = format_chatroom(messageString)
 			end
         end
     end
@@ -161,27 +155,18 @@ end
 
 function process_notification_osd(startRow)
     local rowsCreated = 0
+	local startRow = startRow
     local stringToAdd = ""
     if notification_osd ~= "" and mp.get_time() - last_notification_osd_time < opts['alertTimeout'] and last_notification_osd_time ~= nil then
-        local xpos = opts['chatLeftMargin']
         local messageColour
         messageColour = "{\\1c&H"..NOTIFICATION_TEXT_COLOUR.."}"
         local messageString
-        local startRow = startRow
-        local stringLeftToProccess = notification_osd
-        while  stringLeftToProccess ~= '' and  stringLeftToProccess ~= nil do
-            local toDisplay
-            local ypos = opts['chatTopMargin'] + ((startRow+rowsCreated)*opts['chatOutputFontSize'])
-            toDisplay, stringLeftToProccess = trim_string(stringLeftToProccess,opts['chatSplitMessageAt'])
-            rowsCreated = rowsCreated + 1
-            messageString = messageColour..toDisplay
-			if stringToAdd ~= "" then
-            	stringToAdd = stringToAdd .. format_chatroom(xpos,ypos,messageString)
-			else
-				stringToAdd =format_chatroom(xpos,ypos,messageString)
-            end
-        end
-    end
+		messageString = wordwrapify_string(notification_osd)
+		messageString = messageColour..messageString
+        messageString = format_chatroom(messageString)
+		stringToAdd = messageString
+		rowsCreated = 1
+	end
     return rowsCreated, stringToAdd
 end
 
@@ -214,18 +199,9 @@ end
 function process_chat_item_chatroom(i, startRow)
     local text = chat_log[i].text
 	if text ~= '' then
-        local xpos = opts['chatLeftMargin']
+        local text = wordwrapify_string(text)
         local rowNumber = i+startRow-1
-        local ypos = opts['chatTopMargin']+(rowNumber*opts['chatOutputFontSize'])
-
-        local timecreated = chat_log[i].timecreated
-        local timedelta = 200 * (mp.get_time() - timecreated)
-        -- xpos = timedelta*500-25
-        if timedelta < 10 then
-            ypos = 5+ypos-timedelta
-        end
-
-        return(format_chatroom(xpos,ypos,text))
+        return(format_chatroom(text))
 	end
 end
 
@@ -239,7 +215,7 @@ function process_chat_item_subtitle(i)
 		if xpos > (-1*roughlen) then
 			local row = chat_log[i].row
 			local ypos = row * opts['chatOutputFontSize']
-			return(format_scrolling(xpos,ypos,text))
+            return(format_scrolling(xpos,ypos,text))
 		else
 			chat_log[i].text = ''
 		end
@@ -334,14 +310,13 @@ opts = {
 	['chatInputFontColor'] = "#000000",
 	['chatInputPosition'] = "Top",
 	['MaxChatMessageLength'] = 50,
-    ['chatSplitMessageAt'] = 70,
 	['chatOutputFontFamily'] = "sans serif",
 	['chatOutputFontSize'] = 50,
 	['chatOutputFontWeight'] = 1,
 	['chatOutputFontUnderline'] = false,
 	['chatOutputFontColor'] = "#FFFFFF",
 	['chatOutputMode'] = "Chatroom",
-    ['scrollingFirstRowOffset'] = 3,
+    ['scrollingFirstRowOffset'] = 2,
 	-- Can be "Chatroom", "Subtitle" or "Scrolling" style
     ['chatMaxLines'] = 7,
     ['chatTopMargin'] = 25,
@@ -560,6 +535,31 @@ function trim_string(line,maxCharacters)
 		chars = chars + 1
 	until pos == oldPos or chars > maxCharacters
 	return str:sub(1,pos-1), str:sub(pos)
+end
+
+function wordwrapify_string(line)
+-- Naive helper function to find the next UTF-8 character in 'str' after 'pos'
+-- by skipping continuation bytes. Assumes 'str' contains valid UTF-8.
+
+	local str = line
+	if str == nil or str == "" then
+		return str, ""
+    end
+    newstr = ""
+	local currentChar = 0
+	local nextChar = 0
+	local chars = 0
+    local maxChars = str:len()
+
+	repeat
+		nextChar = next_utf8(str, currentChar)
+        if nextChar == currentChar then
+            return newstr
+        end
+        newstr = newstr .. WORDWRAPIFY_MAGICWORD .. str:sub(currentChar,nextChar-1)
+        currentChar = nextChar
+	until currentChar > maxChars
+	return newstr
 end
 
 
@@ -886,7 +886,7 @@ function set_syncplayintf_options(input)
 		--mp.command('print-text "<chat>'..option.."="..tostring(value).." - "..valueType..'</chat>"')
     end
     chat_format = get_output_style()
-    local vertical_output_area = CANVAS_HEIGHT-(opts['chatTopMargin']+opts['chatBottomMargin'])
+    local vertical_output_area = CANVAS_HEIGHT-(opts['chatTopMargin']+opts['chatBottomMargin']+(opts['chatOutputFontSize']+opts['scrollingFirstRowOffset']))
     max_scrolling_rows = math.floor(vertical_output_area/opts['chatOutputFontSize'])
         if opts['chatDirectInput'] == true then
         add_repl_alpharow_bindings(alpharowbindings)
