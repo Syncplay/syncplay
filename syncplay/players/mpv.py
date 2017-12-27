@@ -113,6 +113,23 @@ class NewMpvPlayer(OldMpvPlayer):
     alertOSDSupported = True
     chatOSDSupported = True
 
+    def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), OSDType=constants.OSD_NOTIFICATION,
+                       mood=constants.MESSAGE_NEUTRAL):
+        if not self._client._config["chatOutputEnabled"]:
+            super(self.__class__, self).displayMessage(message=message,duration=duration,OSDType=OSDType,mood=mood)
+            return
+        messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")
+        self._listener.sendLine(u'script-message-to syncplayintf {}-osd-{} "{}"'.format(OSDType, mood, messageString))
+
+    def displayChatMessage(self, username, message):
+        if not self._client._config["chatOutputEnabled"]:
+            super(self.__class__, self).displayChatMessage(username,message)
+            return
+        username = self._sanitizeText(username)
+        message = self._sanitizeText(message)
+        messageString = u"<{}> {}".format(username, message)
+        self._listener.sendLine(u'script-message-to syncplayintf chat "{}"'.format(messageString))
+
     def setPaused(self, value):
         if self._paused == value:
             self._client.ui.showDebugMessage("Not sending setPaused to mpv as state is already {}".format(value))
@@ -256,7 +273,7 @@ class NewMpvPlayer(OldMpvPlayer):
             self._listener.setReadyToSend(True)
 
     def _setOSDPosition(self):
-        if self._client._config['chatInputEnabled']:
+        if self._client._config['chatInputEnabled'] and self._client._config['chatOutputEnabled']:
             if self._client._config['chatInputPosition'] == constants.INPUT_POSITION_BOTTOM:
                 self._setProperty("osd-align-y", "center")
             else:

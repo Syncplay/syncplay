@@ -242,6 +242,7 @@ en = {
     
     "chat-title" : u"Chat message input",
     "chatinputenabled-label" : u"Enable chat input via mpv",
+    "chatdirectinput-label" : u"Enable instant chat input (bypass having to press enter key to chat)",
     "chatinputfont-label" : u"Chat input font",
     "chatfont-label" : u"Set font",
     "chatcolour-label" : u"Set colour",
@@ -381,6 +382,7 @@ en = {
     "trusteddomains-arguments-tooltip" : u"Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.",
 
     "chatinputenabled-tooltip" : u"Enable chat input in mpv (press enter to chat, enter to send, escape to cancel)",
+    "chatdirectinput-tooltip" : u"Skip having to press 'enter' to go into chat input mode in mpv.",
     "font-label-tooltip" : u"Font used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",
     "set-input-font-tooltip" : u"Font family used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",
     "set-input-colour-tooltip" : u"Font colour used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",

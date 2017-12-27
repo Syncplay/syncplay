@@ -296,12 +296,16 @@ end)
 local utils = require 'mp.utils'
 local options = require 'mp.options'
 opts = {
+
 	-- All drawing is scaled by this value, including the text borders and the
 	-- cursor. Change it if you have a high-DPI display.
 	scale = 1,
 	-- Set the font used for the REPL and the console. This probably doesn't
 	-- have to be a monospaced font.
 	['chatInputFontFamily'] = 'monospace',
+	-- Enable/Disable
+	['chatInputEnabled'] = true,
+	['chatOutputEnabled'] = true,
 	-- Set the font size used for the REPL and the console. This will be
 	-- multiplied by "scale."
 	['chatInputFontSize'] = 20,
@@ -870,8 +874,6 @@ mp.register_script_message('type', function(text)
 	show_and_type(text)
 end)
 
-mp.add_forced_key_binding('enter', handle_enter)
-mp.add_forced_key_binding('kp_enter', handle_enter)
 mp.command('print-text "<get_syncplayintf_options>"')
 
 function set_syncplayintf_options(input)
@@ -893,10 +895,13 @@ function set_syncplayintf_options(input)
     chat_format = get_output_style()
     local vertical_output_area = CANVAS_HEIGHT-(opts['chatTopMargin']+opts['chatBottomMargin']+(opts['chatOutputFontSize']+opts['scrollingFirstRowOffset']))
     max_scrolling_rows = math.floor(vertical_output_area/opts['chatOutputFontSize'])
+	if opts['chatInputEnabled'] == true then
+		mp.add_forced_key_binding('enter', handle_enter)
+		mp.add_forced_key_binding('kp_enter', handle_enter)
         if opts['chatDirectInput'] == true then
-        add_repl_alpharow_bindings(alpharowbindings)
-        mp.add_forced_key_binding('tab', handle_tab)
-        key_hints_enabled = true
-    else
+        	add_repl_alpharow_bindings(alpharowbindings)
+        	mp.add_forced_key_binding('tab', handle_tab)
+        	key_hints_enabled = true
+		end
     end
 end

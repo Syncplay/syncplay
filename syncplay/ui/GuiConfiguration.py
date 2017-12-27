@@ -883,6 +883,12 @@ class ConfigDialog(QtWidgets.QDialog):
         self.chatInputEnabledCheckbox.setObjectName("chatInputEnabled")
         self.chatInputLayout.addWidget(self.chatInputEnabledCheckbox, 1, 0, 1,1, Qt.AlignLeft)
 
+        self.chatDirectInputCheckbox = QCheckBox(getMessage("chatdirectinput-label"))
+        self.chatDirectInputCheckbox.setObjectName("chatDirectInput")
+        self.chatDirectInputCheckbox.setStyleSheet(
+            constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatInputLayout.addWidget(self.chatDirectInputCheckbox, 2, 0, 1,1, Qt.AlignLeft)
+
         self.inputFontLayout = QtWidgets.QHBoxLayout()
         self.inputFontLayout.setContentsMargins(0, 0, 0, 0)
         self.inputFontFrame = QtWidgets.QFrame()
@@ -904,7 +910,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.inputFontLayout.addWidget(self.chatFontLabel, Qt.AlignLeft)
         self.inputFontLayout.addWidget(self.chatInputFontButton, Qt.AlignLeft)
         self.inputFontLayout.addWidget(self.chatInputColourButton, Qt.AlignLeft)
-        self.chatInputLayout.addWidget(self.inputFontFrame, 2, 0, 1, 3, Qt.AlignLeft)
+        self.chatInputLayout.addWidget(self.inputFontFrame, 3, 0, 1, 3, Qt.AlignLeft)
 
         self.chatInputPositionFrame = QtWidgets.QFrame()
         self.chatInputPositionLayout = QtWidgets.QHBoxLayout()
@@ -935,7 +941,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.subitems['chatInputEnabled'] = [self.chatInputPositionLabel.objectName(), self.chatInputTopOption.objectName(),
                                              self.chatInputMiddleOption.objectName(), self.chatInputBottomOption.objectName(),
                                              self.chatInputFontButton.objectName(), self.chatFontLabel.objectName(),
-                                             self.chatInputColourButton.objectName()]
+                                             self.chatInputColourButton.objectName(), self.chatDirectInputCheckbox.objectName()]
         # Output
         self.chatOutputGroup = QtWidgets.QGroupBox(u"Chat message output")
         self.chatOutputLayout = QtWidgets.QGridLayout()

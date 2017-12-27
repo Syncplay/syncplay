@@ -92,20 +92,13 @@ class MplayerPlayer(BasePlayer):
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL):
         messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")
-        self._listener.sendLine(
-            u'script-message-to syncplayintf {}-osd-{} "{}"'.format(OSDType,mood, messageString))
-
-        return
-
-        # TODO: Support legacy displayMessage for versiosn that don't support syncplayintf.lua
-        message = self._sanitizeText(message.replace("\\n","<NEWLINE>")).replace("<NEWLINE>","\\n")
-        #self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, message, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
+        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, messageString, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
 
     def displayChatMessage(self, username, message):
-        username = self._sanitizeText(username)
-        message = self._sanitizeText(message)
         messageString = u"<{}> {}".format(username, message)
-        self._listener.sendLine(u'script-message-to syncplayintf chat "{}"'.format(messageString))
+        messageString = self._sanitizeText(messageString.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")
+        duration = int(constants.OSD_DURATION * 1000)
+        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, messageString, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
 
     def setSpeed(self, value):
         self._setProperty('speed', "{:.2f}".format(value))
