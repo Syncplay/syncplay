@@ -242,6 +242,7 @@ class NewMpvPlayer(OldMpvPlayer):
                 options.append(u"{}={}".format(option,getMessage(option)))
             options_string = ", ".join(options)
             self._listener.sendLine(u'script-message-to syncplayintf set_syncplayintf_options "{}"'.format(options_string))
+            self._setOSDPosition()
 
         if line == "<SyncplayUpdateFile>" or "Playing:" in line:
             self._listener.setReadyToSend(False)
@@ -253,6 +254,15 @@ class NewMpvPlayer(OldMpvPlayer):
 
         elif "Failed" in line or "failed" in line or "No video or audio streams selected" in line or "error" in line:
             self._listener.setReadyToSend(True)
+
+    def _setOSDPosition(self):
+        if self._client._config['chatInputEnabled']:
+            if self._client._config['chatInputPosition'] == constants.INPUT_POSITION_BOTTOM:
+                self._setProperty("osd-align-y", "center")
+            else:
+                self._setProperty("osd-align-y", "bottom")
+        elif self._client._config['chatOutputEnabled']:
+            self._setProperty("osd-align-y", "bottom")
 
     def _recentlyReset(self):
         if not self.lastResetTime:
