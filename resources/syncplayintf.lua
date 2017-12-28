@@ -18,6 +18,7 @@ local MOOD_NEUTRAL = 0
 local MOOD_BAD = 1
 local MOOD_GOOD = 2
 local WORDWRAPIFY_MAGICWORD = "{\\\\fscx0}  {\\\\fscx100}"
+local SCROLLING_ADDITIONAL_BOTTOM_MARGIN = 75
 local default_oscvisibility_state = "never"
 
 local ALPHA_WARNING_TEXT_COLOUR = "FF00FF" -- RBG
@@ -904,7 +905,7 @@ function set_syncplayintf_options(input)
 		--mp.command('print-text "<chat>'..option.."="..tostring(value).." - "..valueType..'</chat>"')
     end
     chat_format = get_output_style()
-    local vertical_output_area = CANVAS_HEIGHT-(opts['chatTopMargin']+opts['chatBottomMargin']+(opts['chatOutputFontSize']+opts['scrollingFirstRowOffset']))
+    local vertical_output_area = CANVAS_HEIGHT-(opts['chatTopMargin']+opts['chatBottomMargin']+(opts['chatOutputFontSize']*opts['scrollingFirstRowOffset'])+SCROLLING_ADDITIONAL_BOTTOM_MARGIN)
     max_scrolling_rows = math.floor(vertical_output_area/opts['chatOutputFontSize'])
     local user_opts = { visibility = "auto", }
     opt.read_options(user_opts, "osc")
