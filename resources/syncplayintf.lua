@@ -445,8 +445,9 @@ function input_ass()
 
 	local firststyle = "{\\an"..alignment.."}{\\pos("..position..")}"
 	if opts['chatOutputEnabled'] and opts['chatOutputMode'] == CHAT_MODE_CHATROOM and opts['chatInputPosition'] == "Top" then
-		cglyph = "_"
-		firststyle = get_output_style()
+		firststyle = get_output_style().."{'\\1c&H'"..fontColor.."}"
+        before_cur = before_cur .. firststyle
+        after_cur =  after_cur .. firststyle
 		help_prompt = '\n'..firststyle..'{\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message .. '\n'
 	end
 	if key_hints_enabled == false then help_prompt = "" end
