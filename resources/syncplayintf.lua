@@ -123,8 +123,9 @@ function chat_update()
         alphawarning_ass = "{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-first-line'].."\n{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-second-line']
         ass:append(alphawarning_ass)
     else
-        ass:append(chat_ass)
-	    ass:append(input_ass())
+
+		ass:append(chat_ass)
+		ass:append(input_ass())
     end
 	mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
 end
@@ -159,17 +160,17 @@ end
 
 function process_notification_osd(startRow)
     local rowsCreated = 0
-	local startRow = startRow
+    local startRow = startRow
     local stringToAdd = ""
     if notification_osd ~= "" and mp.get_time() - last_notification_osd_time < opts['alertTimeout'] and last_notification_osd_time ~= nil then
         local messageColour
         messageColour = "{\\1c&H"..NOTIFICATION_TEXT_COLOUR.."}"
         local messageString
-		messageString = wordwrapify_string(notification_osd)
-		messageString = messageColour..messageString
+        messageString = wordwrapify_string(notification_osd)
+        messageString = messageColour..messageString
         messageString = format_chatroom(messageString)
-		stringToAdd = messageString
-		rowsCreated = 1
+        stringToAdd = messageString
+        rowsCreated = 1
 	end
     return rowsCreated, stringToAdd
 end
@@ -441,8 +442,15 @@ function input_ass()
 
 	local osd_help_message = opts['mpv-key-hint']
 	local help_prompt = '\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatOutputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/1.25) .. '\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message
+
+	local firststyle = "{\\an"..alignment.."}{\\pos("..position..")}"
+	if opts['chatOutputEnabled'] and opts['chatOutputMode'] == CHAT_MODE_CHATROOM and opts['chatInputPosition'] == "Top" then
+		cglyph = "_"
+		firststyle = get_output_style()
+		help_prompt = '\n'..firststyle..'{\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message .. '\n'
+	end
 	if key_hints_enabled == false then help_prompt = "" end
-	return "{\\an"..alignment.."}{\\pos("..position..")}"..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker..help_prompt
+	return firststyle..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker..help_prompt
 
 end
 
