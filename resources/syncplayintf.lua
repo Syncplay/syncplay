@@ -18,6 +18,7 @@ local MOOD_NEUTRAL = 0
 local MOOD_BAD = 1
 local MOOD_GOOD = 2
 local WORDWRAPIFY_MAGICWORD = "{\\\\fscx0}  {\\\\fscx100}"
+local default_oscvisibility_state = "never"
 
 local ALPHA_WARNING_TEXT_COLOUR = "FF00FF" -- RBG
 local HINT_TEXT_COLOUR = "00FFFF" -- RBG
@@ -29,6 +30,8 @@ local NOTIFICATION_TEXT_COLOUR = "FFFF00" -- RBG
 local chat_log = {}
 
 local assdraw = require "mp.assdraw"
+
+local opt = require 'mp.options'
 
 function format_scrolling(xpos, ypos, text)
 	local chat_message = chat_format .. "{\\pos("..xpos..","..ypos..")}"..text.."\n"
@@ -306,6 +309,7 @@ opts = {
 	-- Enable/Disable
 	['chatInputEnabled'] = true,
 	['chatOutputEnabled'] = true,
+    ['OscVisibilityChangeCompatible'] = false,
 	-- Set the font size used for the REPL and the console. This will be
 	-- multiplied by "scale."
 	['chatInputFontSize'] = 20,
@@ -480,6 +484,13 @@ function set_active(active)
 	else
 		repl_active = false
 		mp.disable_key_bindings('repl-input')
+    end
+    if default_oscvisibility_state ~= "never" and opts['OscVisibilityChangeCompatible'] == true then
+        if active then
+            mp.commandv("script-message", "osc-visibility","never", "no-osd")
+        else
+            mp.commandv("script-message", "osc-visibility",default_oscvisibility_state, "no-osd")
+        end
     end
 end
 
@@ -877,7 +888,7 @@ end)
 mp.command('print-text "<get_syncplayintf_options>"')
 
 function set_syncplayintf_options(input)
-	---mp.command('print-text "<chat>...'..input..'</chat>"')
+	--mp.command('print-text "<chat>...'..input..'</chat>"')
 	for option, value in string.gmatch(input, "([^ ,=]+)=([^,]+)") do
 		local valueType = type(opts[option])
 		if valueType == "number" then
@@ -895,6 +906,9 @@ function set_syncplayintf_options(input)
     chat_format = get_output_style()
     local vertical_output_area = CANVAS_HEIGHT-(opts['chatTopMargin']+opts['chatBottomMargin']+(opts['chatOutputFontSize']+opts['scrollingFirstRowOffset']))
     max_scrolling_rows = math.floor(vertical_output_area/opts['chatOutputFontSize'])
+    local user_opts = { visibility = "auto", }
+    opt.read_options(user_opts, "osc")
+    default_oscvisibility_state = user_opts.visibility
 	if opts['chatInputEnabled'] == true then
 		mp.add_forced_key_binding('enter', handle_enter)
 		mp.add_forced_key_binding('kp_enter', handle_enter)

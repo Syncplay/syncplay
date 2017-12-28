@@ -185,6 +185,7 @@ MPV_ARGS = ['--force-window', '--idle', '--hr-seek=always', '--keep-open']
 MPV_SLAVE_ARGS = ['--msg-level=all=error,cplayer=info,term-msg=info', '--input-terminal=no', '--input-file=/dev/stdin']
 MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=length:${=duration:0}}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
 MPV_NEW_VERSION = False
+MPV_OSC_VISIBILITY_CHANGE_VERSION = False
 MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputEnabled","chatInputFontFamily", "chatInputFontSize", "chatInputFontWeight","chatInputFontUnderline",
                                     "chatInputFontColor", "chatInputPosition","chatOutputFontFamily","chatOutputFontSize",
                                     "chatOutputFontWeight","chatOutputFontUnderline","chatOutputMode","chatMaxLines",

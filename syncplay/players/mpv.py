@@ -18,6 +18,9 @@ class MpvPlayer(MplayerPlayer):
         except:
             ver = None
         constants.MPV_NEW_VERSION = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 6
+        constants.MPV_OSC_VISIBILITY_CHANGE_VERSION = False if ver is None else  int(ver.group(1)) > 0 or int(ver.group(2)) >= 28
+        if not constants.MPV_OSC_VISIBILITY_CHANGE_VERSION:
+            client.ui.showDebugMessage(u"This version of mpv is not known to be compatible with changing the OSC visibility. Please use mpv >=0.28.0.")
         if constants.MPV_NEW_VERSION:
             return NewMpvPlayer(client, MpvPlayer.getExpandedPath(playerPath), filePath, args)
         else:
@@ -257,6 +260,7 @@ class NewMpvPlayer(OldMpvPlayer):
                 options.append(option)
             for option in constants.MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND:
                 options.append(u"{}={}".format(option,getMessage(option)))
+            options.append(u"OscVisibilityChangeCompatible={}".format(constants.MPV_OSC_VISIBILITY_CHANGE_VERSION))
             options_string = ", ".join(options)
             self._listener.sendLine(u'script-message-to syncplayintf set_syncplayintf_options "{}"'.format(options_string))
             self._setOSDPosition()
