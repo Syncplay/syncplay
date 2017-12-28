@@ -21,7 +21,7 @@ local WORDWRAPIFY_MAGICWORD = "{\\\\fscx0}  {\\\\fscx100}"
 local default_oscvisibility_state = "never"
 
 local ALPHA_WARNING_TEXT_COLOUR = "FF00FF" -- RBG
-local HINT_TEXT_COLOUR = "00FFFF" -- RBG
+local HINT_TEXT_COLOUR = "AAFFFF" -- RBG
 local NEUTRAL_ALERT_TEXT_COLOUR = "FFFFFF" -- RBG
 local BAD_ALERT_TEXT_COLOUR = "0000FF"  -- RBG
 local GOOD_ALERT_TEXT_COLOUR = "00FF00" -- RBG
