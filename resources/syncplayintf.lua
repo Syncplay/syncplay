@@ -339,7 +339,8 @@ opts = {
 	--
 	['inputPromptCharacter'] = ">",
     --Lang:
-    ['mpv-key-hint'] = "[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode.",
+    ['mpv-key-tab-hint'] = "[TAB] to toggle access to alphabet row key shortcuts.",
+    ['mpv-key-hint'] = "[ENTER] to send message. [ESC] to escape chat mode.",
     ['alphakey-mode-warning-first-line'] = "You can temporarily use old mpv bindings with a-z keys.",
     ['alphakey-mode-warning-second-line'] = "Press [TAB] to return to Syncplay chat mode.",
 }
@@ -444,6 +445,9 @@ function input_ass()
     end
 
 	local osd_help_message = opts['mpv-key-hint']
+    if opts['chatDirectInput'] then
+        osd_help_message = opts['mpv-key-tab-hint'] .. " " .. osd_help_message
+    end
 	local help_prompt = '\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatOutputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/1.25) .. '\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message
 
 	local firststyle = "{\\an"..alignment.."}{\\pos("..position..")}"
@@ -623,7 +627,7 @@ end
 
 -- Insert a character at the current cursor position (' '-'~', Shift+Enter)
 function handle_char_input(c)
-	if key_hints_enabled and string.len(line) > 0 then
+	if key_hints_enabled and (string.len(line) > 0 or opts['chatDirectInput'] == false) then
         key_hints_enabled = false
     end
     set_active(true)
@@ -927,12 +931,12 @@ function set_syncplayintf_options(input)
     opt.read_options(user_opts, "osc")
     default_oscvisibility_state = user_opts.visibility
 	if opts['chatInputEnabled'] == true then
+        key_hints_enabled = true
 		mp.add_forced_key_binding('enter', handle_enter)
 		mp.add_forced_key_binding('kp_enter', handle_enter)
         if opts['chatDirectInput'] == true then
         	add_repl_alpharow_bindings(alpharowbindings)
         	mp.add_forced_key_binding('tab', handle_tab)
-        	key_hints_enabled = true
 		end
     end
 end

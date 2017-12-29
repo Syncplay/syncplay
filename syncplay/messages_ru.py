@@ -260,7 +260,8 @@ ru = {
     "chat-chatroom-option": u"Chatroom style", # TODO: Translate
     "chat-scrolling-option": u"Scrolling style", # TODO: Translate
 
-    "mpv-key-hint": u"[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode.", # TODO: Translate
+    "mpv-key-tab-hint": u"[TAB] to toggle access to alphabet row key shortcuts.", # TODO: Translate
+    "mpv-key-hint": u"[ENTER] to send message. [ESC] to escape chat mode.", # TODO: Translate
     "alphakey-mode-warning-first-line": u"You can temporarily use old mpv bindings with a-z keys.", # TODO: Translate
     "alphakey-mode-warning-second-line": u"Press [TAB] to return to Syncplay chat mode.", # TODO: Translate
 

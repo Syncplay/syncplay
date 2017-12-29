@@ -197,7 +197,7 @@ MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputEnabled","chatInputFontFamily", "c
                                     "notificationTimeout","alertTimeout","chatTimeout","chatOutputEnabled"]
 
 MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH),u"inputPromptStartCharacter={}".format(MPV_INPUT_PROMPT_START_CHARACTER),u"inputPromptEndCharacter={}".format(MPV_INPUT_PROMPT_END_CHARACTER)]
-MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
+MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-tab-hint","mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
 VLC_SLAVE_MACOS_ARGS = ['--verbose=2', '--no-file-logging']
