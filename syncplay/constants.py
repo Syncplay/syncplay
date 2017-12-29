@@ -1,3 +1,4 @@
+# coding:utf8
 # You might want to change these
 DEFAULT_PORT = 8999
 OSD_DURATION = 3.0
@@ -187,13 +188,15 @@ MPV_SLAVE_ARGS = ['--msg-level=all=error,cplayer=info,term-msg=info', '--input-t
 MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=length:${=duration:0}}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
 MPV_NEW_VERSION = False
 MPV_OSC_VISIBILITY_CHANGE_VERSION = False
+MPV_INPUT_PROMPT_START_CHARACTER = u"〉"
+MPV_INPUT_PROMPT_END_CHARACTER = u" 〈"
 MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputEnabled","chatInputFontFamily", "chatInputFontSize", "chatInputFontWeight","chatInputFontUnderline",
                                     "chatInputFontColor", "chatInputPosition","chatOutputFontFamily","chatOutputFontSize",
                                     "chatOutputFontWeight","chatOutputFontUnderline","chatOutputMode","chatMaxLines",
                                     "chatTopMargin","chatLeftMargin","chatBottomMargin","chatDirectInput",
                                     "notificationTimeout","alertTimeout","chatTimeout","chatOutputEnabled"]
 
-MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH)]
+MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH),u"inputPromptStartCharacter={}".format(MPV_INPUT_PROMPT_START_CHARACTER),u"inputPromptEndCharacter={}".format(MPV_INPUT_PROMPT_END_CHARACTER)]
 MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']

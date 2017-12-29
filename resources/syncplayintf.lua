@@ -336,6 +336,8 @@ opts = {
     ['notificationTimeout'] = 3,
     ['alertTimeout'] = 5,
     ['chatTimeout'] = 7,
+	--
+	['inputPromptCharacter'] = ">",
     --Lang:
     ['mpv-key-hint'] = "[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. This hint disappears after you send a message.",
     ['alphakey-mode-warning-first-line'] = "You can temporarily use old mpv bindings with a-z keys.",
@@ -428,12 +430,13 @@ function input_ass()
 
 	local alignment = 7
 	local position = "5,5"
+	local start_marker = opts['inputPromptStartCharacter']
 	local end_marker = ""
 	if opts['chatInputPosition'] == "Middle" then
 		alignment = 5
 		position = tostring(CANVAS_WIDTH/2)..","..tostring(CANVAS_HEIGHT/2)
-        secondary_pos = tostring(CANVAS_WIDTH/2)..","..tostring((CANVAS_HEIGHT/2)+10+opts['chatInputFontSize'])
-		end_marker = "{\\u0}".." <"
+        secondary_pos = tostring(CANVAS_WIDTH/2)..","..tostring((CANVAS_HEIGHT/2)+20+opts['chatInputFontSize'])
+		end_marker = "{\\u0}"..opts['inputPromptEndCharacter']
 	elseif opts['chatInputPosition'] == "Bottom" then
 		alignment = 1
 		position = tostring(5)..","..tostring(CANVAS_HEIGHT-5)
@@ -451,7 +454,8 @@ function input_ass()
 		help_prompt = '\n'..firststyle..'{\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message .. '\n'
 	end
 	if key_hints_enabled == false then help_prompt = "" end
-	return firststyle..style..'> '..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker..help_prompt
+
+	return firststyle..style..start_marker.." "..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker..help_prompt
 
 end
 
