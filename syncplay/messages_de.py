@@ -237,7 +237,7 @@ de = {
 
     "chat-title": u"Chat message input", # TODO: Translate
     "chatinputenabled-label": u"Enable chat input via mpv (using enter key)", # TODO: Translate
-    "chatdirectinput-label" : u"Enable instant chat input (bypass having to press enter key to chat)", # TODO: Translate
+    "chatdirectinput-label" : u"Allow instant chat input (bypass having to press enter key to chat)", # TODO: Translate
     "chatinputfont-label": u"Chat input font", # TODO: Translate
     "chatfont-label": u"Set font", # TODO: Translate
     "chatcolour-label": u"Set colour", # TODO: Translate
@@ -251,7 +251,7 @@ de = {
     "chat-chatroom-option": u"Chatroom style",  # TODO: Translate
     "chat-scrolling-option": u"Scrolling style",  # TODO: Translate
 
-    "mpv-key-hint": u"[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. This hint disappears after you send a message.",# TODO: Translate
+    "mpv-key-hint": u"[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode.",# TODO: Translate
     "alphakey-mode-warning-first-line": u"You can temporarily use old mpv bindings with a-z keys.",  # TODO: Translate
     "alphakey-mode-warning-second-line": u"Press [TAB] to return to Syncplay chat mode.",  # TODO: Translate
 
@@ -379,7 +379,7 @@ de = {
     "trusteddomains-arguments-tooltip" : u"Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.", # TODO: Translate into German
 
     "chatinputenabled-tooltip": u"Enable chat input in mpv (press enter to chat, enter to send, escape to cancel)", # TODO: Translate
-    "chatdirectinput-tooltip" : u"Skip having to press 'enter' to go into chat input mode in mpv.", # TODO: Translate
+    "chatdirectinput-tooltip" : u"Skip having to press 'enter' to go into chat input mode in mpv. Press TAB in mpv to temporarily disable this feature.", # TODO: Translate
     "font-label-tooltip": u"Font used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.", # TODO: Translate
     "set-input-font-tooltip": u"Font family used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.", # TODO: Translate
     "set-input-colour-tooltip": u"Font colour used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.", # TODO: Translate

@@ -339,7 +339,7 @@ opts = {
 	--
 	['inputPromptCharacter'] = ">",
     --Lang:
-    ['mpv-key-hint'] = "[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode. This hint disappears after you send a message.",
+    ['mpv-key-hint'] = "[TAB] to toggle access to alphabet row key shortcuts. [ENTER] to send message. [ESC] to escape chat mode.",
     ['alphakey-mode-warning-first-line'] = "You can temporarily use old mpv bindings with a-z keys.",
     ['alphakey-mode-warning-second-line'] = "Press [TAB] to return to Syncplay chat mode.",
 }
@@ -623,6 +623,9 @@ end
 
 -- Insert a character at the current cursor position (' '-'~', Shift+Enter)
 function handle_char_input(c)
+	if key_hints_enabled and string.len(line) > 0 then
+        key_hints_enabled = false
+    end
     set_active(true)
 	if insert_mode then
 		line = line:sub(1, cursor - 1) .. c .. line:sub(next_utf8(line, cursor))
