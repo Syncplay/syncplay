@@ -126,8 +126,11 @@ function chat_update()
         local alphawarning_ass = assdraw.ass_new()
         alphawarning_ass = "{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-first-line'].."\n{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-second-line']
         ass:append(alphawarning_ass)
+    elseif opts['chatOutputMode'] == CHAT_MODE_CHATROOM and opts['chatInputPosition'] == "Top" then
+        ass:append(chat_ass)
+        ass:append(input_ass())
     else
-		ass:append(input_ass())
+        ass:append(input_ass())
         ass:append(chat_ass)
     end
 	mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
