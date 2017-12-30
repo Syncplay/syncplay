@@ -35,12 +35,12 @@ local assdraw = require "mp.assdraw"
 local opt = require 'mp.options'
 
 function format_scrolling(xpos, ypos, text)
-	local chat_message = chat_format .. "{\\pos("..xpos..","..ypos..")}"..text.."\n"
+	local chat_message = "\n"..chat_format .. "{\\pos("..xpos..","..ypos..")}"..text.."\\N\\n"
     return string.format(chat_message)
 end
 
 function format_chatroom(text)
-    local chat_message = chat_format .. text.."\n"
+    local chat_message = chat_format .. text .."\\N\\n"
     return string.format(chat_message)
 end
 
@@ -116,16 +116,19 @@ function chat_update()
 				chat_ass = chat_ass .. to_add
 			end
 		end
-	end
+    end
+
+    local xpos = opts['chatLeftMargin']
+    local ypos = opts['chatTopMargin']
+    chat_ass = "\n".."{\\pos("..xpos..","..ypos..")}".. chat_ass
 
     if use_alpha_rows_for_chat == false and opts['chatDirectInput'] == true then
         local alphawarning_ass = assdraw.ass_new()
         alphawarning_ass = "{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-first-line'].."\n{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-second-line']
         ass:append(alphawarning_ass)
     else
-
-		ass:append(chat_ass)
 		ass:append(input_ass())
+        ass:append(chat_ass)
     end
 	mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
 end
@@ -377,7 +380,7 @@ function ass_escape(str)
 	str = str:gsub('}', '\\}')
 	-- Precede newlines with a ZWNBSP to prevent ASS's weird collapsing of
 	-- consecutive newlines
-	str = str:gsub('\n', '\239\187\191\\N')
+	str = str:gsub('\n', '\239\187\191\n')
 	return str
 end
 
@@ -438,14 +441,14 @@ function input_ass()
     if opts['chatDirectInput'] then
         osd_help_message = opts['mpv-key-tab-hint'] .. " " .. osd_help_message
     end
-	local help_prompt = '\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatOutputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/1.25) .. '\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message
+	local help_prompt = '\\N\\n{\\an'..alignment..'\\pos('..secondary_pos..')\\fn' .. opts['chatOutputFontFamily'] .. '\\fs' .. (opts['chatInputFontSize']/1.25) .. '\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message
 
 	local firststyle = "{\\an"..alignment.."}{\\pos("..position..")}"
 	if opts['chatOutputEnabled'] and opts['chatOutputMode'] == CHAT_MODE_CHATROOM and opts['chatInputPosition'] == "Top" then
 		firststyle = get_output_style().."{'\\1c&H'"..fontColor.."}"
         before_cur = before_cur .. firststyle
         after_cur =  after_cur .. firststyle
-		help_prompt = '\n'..firststyle..'{\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message .. '\n'
+		help_prompt = '\\N\\n'..firststyle..'{\\1c&H'..HINT_TEXT_COLOUR..'}' .. osd_help_message .. '\\N\\n'
 	end
 	if key_hints_enabled == false then help_prompt = "" end
 

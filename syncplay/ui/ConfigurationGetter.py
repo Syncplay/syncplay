@@ -83,6 +83,8 @@ class ConfigurationGetter(object):
                         "chatTopMargin": 25,
                         "chatLeftMargin": 20,
                         "chatBottomMargin": 30,
+                        "chatMoveOSD": True,
+                        "chatOSDMargin": 60,
                         "notificationTimeout": 3,
                         "alertTimeout": 5,
                         "chatTimeout": 7,
@@ -132,6 +134,7 @@ class ConfigurationGetter(object):
                          "chatInputEnabled",
                          "chatInputFontUnderline",
                          "chatDirectInput",
+                         "chatMoveOSD",
                         "chatOutputEnabled",
                         "chatOutputFontUnderline"
                         ]
@@ -160,6 +163,7 @@ class ConfigurationGetter(object):
             "chatTopMargin",
             "chatLeftMargin",
             "chatBottomMargin",
+            "chatOSDMargin",
             "notificationTimeout",
             "alertTimeout",
             "chatTimeout"
@@ -195,6 +199,7 @@ class ConfigurationGetter(object):
                             "chatOutputMode", "chatMaxLines",
                             "chatTopMargin", "chatLeftMargin",
                             "chatBottomMargin", "chatDirectInput",
+                            "chatMoveOSD", "chatOSDMargin",
                             "notificationTimeout", "alertTimeout",
                             "chatTimeout","chatOutputEnabled"],
                         "general": ["language", "checkForUpdatesAutomatically",

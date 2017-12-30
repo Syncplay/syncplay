@@ -277,13 +277,9 @@ class NewMpvPlayer(OldMpvPlayer):
             self._listener.setReadyToSend(True)
 
     def _setOSDPosition(self):
-        if self._client._config['chatInputEnabled'] and self._client._config['chatOutputEnabled']:
-            if self._client._config['chatInputPosition'] == constants.INPUT_POSITION_BOTTOM:
-                self._setProperty("osd-align-y", "center")
-            else:
-                self._setProperty("osd-align-y", "bottom")
-        elif self._client._config['chatOutputEnabled']:
+        if self._client._config['chatMoveOSD'] and (self._client._config['chatOutputEnabled'] or (self._client._config['chatInputEnabled'] and self._client._config['chatInputPosition'] == constants.INPUT_POSITION_TOP)):
             self._setProperty("osd-align-y", "bottom")
+            self._setProperty("osd-margin-y", int(self._client._config['chatOSDMargin']))
 
     def _recentlyReset(self):
         if not self.lastResetTime:
