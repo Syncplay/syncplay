@@ -413,18 +413,8 @@ function input_ass()
 	               '\\bord2\\xshad0\\yshad1\\fsp0\\q1}'
 
 	local after_style = '{\\u'  .. underline .. '}'
-	-- Create the cursor glyph as an ASS drawing. ASS will draw the cursor
-	-- inline with the surrounding text, but it sets the advance to the width
-	-- of the drawing. So the cursor doesn't affect layout too much, make it as
-	-- thin as possible and make it appear to be 1px wide by giving it 0.5px
-	-- horizontal borders.
 	local cheight = opts['chatInputFontSize'] * 8
-	local cglyph = '{\\r' ..
-	                '\\1a&H44&\\3a&H44&\\4a&H99&' ..
-	                '\\1c&H'..fontColor..'&\\3c&Heeeeee&\\4c&H000000&' ..
-	                '\\xbord0.5\\ybord0\\xshad0\\yshad1\\p4\\pbo24}' ..
-	               'm 0 0 l 1 0 l 1 ' .. cheight .. ' l 0 ' .. cheight ..
-	               '{\\p0}'
+	local cglyph = '_'
 	local before_cur = ass_escape(line:sub(1, cursor - 1))
 	local after_cur = ass_escape(line:sub(cursor))
     local secondary_pos = "10,"..tostring(10+opts['chatInputFontSize'])
@@ -459,7 +449,7 @@ function input_ass()
 	end
 	if key_hints_enabled == false then help_prompt = "" end
 
-	return firststyle..style..start_marker.." "..after_style..before_cur..cglyph..style..after_style..after_cur..end_marker..help_prompt
+	return firststyle..style..start_marker.." "..after_style..before_cur..style..cglyph..style..after_style..after_cur..end_marker..help_prompt
 
 end
 
