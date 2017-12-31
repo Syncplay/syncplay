@@ -1,3 +1,4 @@
+# coding:utf8
 import re
 import subprocess
 from syncplay.players.mplayer import MplayerPlayer
@@ -121,15 +122,15 @@ class NewMpvPlayer(OldMpvPlayer):
         if not self._client._config["chatOutputEnabled"]:
             super(self.__class__, self).displayMessage(message=message,duration=duration,OSDType=OSDType,mood=mood)
             return
-        messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")
+        messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace("\\\\",constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER).replace("<NEWLINE>", "\\n")
         self._listener.sendLine(u'script-message-to syncplayintf {}-osd-{} "{}"'.format(OSDType, mood, messageString))
 
     def displayChatMessage(self, username, message):
         if not self._client._config["chatOutputEnabled"]:
             super(self.__class__, self).displayChatMessage(username,message)
             return
-        username = self._sanitizeText(username)
-        message = self._sanitizeText(message)
+        username = self._sanitizeText(username.replace("\\",constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
+        message = self._sanitizeText(message.replace("\\",constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
         messageString = u"<{}> {}".format(username, message)
         self._listener.sendLine(u'script-message-to syncplayintf chat "{}"'.format(messageString))
 

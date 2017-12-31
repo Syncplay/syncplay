@@ -343,7 +343,9 @@ opts = {
     ['alertTimeout'] = 5,
     ['chatTimeout'] = 7,
 	--
-	['inputPromptCharacter'] = ">",
+	['inputPromptStartCharacter'] = ">",
+    ['inputPromptEndCharacter'] = "<",
+    ['backslashSubstituteCharacter'] = "|",
     --Lang:
     ['mpv-key-tab-hint'] = "[TAB] to toggle access to alphabet row key shortcuts.",
     ['mpv-key-hint'] = "[ENTER] to send message. [ESC] to escape chat mode.",
@@ -569,12 +571,11 @@ end
 function wordwrapify_string(line)
 -- Naive helper function to find the next UTF-8 character in 'str' after 'pos'
 -- by skipping continuation bytes. Assumes 'str' contains valid UTF-8.
-
 	local str = line
 	if str == nil or str == "" then
 		return str, ""
     end
-    newstr = ""
+    local newstr = ""
 	local currentChar = 0
 	local nextChar = 0
 	local chars = 0
@@ -593,6 +594,7 @@ function wordwrapify_string(line)
 		end
         currentChar = nextChar
 	until currentChar > maxChars
+    newstr = string.gsub(newstr,opts['backslashSubstituteCharacter'], '\\\239\187\191') -- Workaround for \ escape issues
 	return newstr
 end
 

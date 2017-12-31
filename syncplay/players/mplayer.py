@@ -1,3 +1,4 @@
+# coding:utf8
 import subprocess
 import re
 import threading
@@ -11,7 +12,6 @@ from syncplay.utils import isWindows
 class MplayerPlayer(BasePlayer):
     speedSupported = True
     customOpenDialog = False
-    #chatOSDSupported = False # TODO: Make conditional
     aletOSDSupported = True
     chatOSDSupported = False
     osdMessageSeparator = "; "
