@@ -183,7 +183,10 @@ class MplayerPlayer(BasePlayer):
             self._storePauseState(bool(value == 'yes'))
             self._pausedAsk.set()
         elif name == "length":
-            self._duration = float(value)
+            try:
+                self._duration = float(value)
+            except:
+                self._duration = 0
             self._durationAsk.set()
         elif name == "path":
             self._filepath = value
