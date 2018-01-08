@@ -24,14 +24,14 @@ before_install:
 - hg clone https://alby128@bitbucket.org/alby128/py2app
 - cd py2app
 - python setup.py install
+- cd ..
 - python -c "from py2app.recipes import pyside2" 
 
 install:
-
 - pip install twisted appnope pyobjc
-- git clone -b qtpy-pyside2 https://github.com/alby128/syncplay.git syncplay-qtpy-PySide2
-- cd syncplay-qtpy-PySide2
-- git checkout qtpy-pyside2
+#- git clone -b qtpy-pyside2 https://github.com/alby128/syncplay.git syncplay-qtpy-PySide2
+#- cd syncplay-qtpy-PySide2
+#- git checkout qtpy-pyside2
 
 before_deploy:
 - pip install dmgbuild
@@ -43,7 +43,7 @@ before_deploy:
 - dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS_pyside2.dmg
 
 deploy:
-  on: master_local
+  on: qtpy-pyside2
   provider: bintray
   file: "bintray.json"
   user: alby128
