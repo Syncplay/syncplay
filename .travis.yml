@@ -25,7 +25,8 @@ before_deploy:
 - mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
 - mv resources/lua/intf/syncplay.lua resources/lua/intf/.syncplay.lua
 - mv resources/macOS_readme.pdf resources/.macOS_readme.pdf
-- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_$(ver)_macOS.dmg
+- export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS.dmg
 
 deploy:
   on: master
