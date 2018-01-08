@@ -9,7 +9,7 @@ UI_TIME_FORMAT = "[%X] "
 CONFIG_NAMES = [".syncplay", "syncplay.ini"]  #Syncplay searches first to last
 DEFAULT_CONFIG_NAME_WINDOWS = "syncplay.ini"
 DEFAULT_CONFIG_NAME_LINUX = ".syncplay"
-RECENT_CLIENT_THRESHOLD = "1.5.0"  #This and higher considered 'recent' clients (no warnings)
+RECENT_CLIENT_THRESHOLD = "1.5.1"  #This and higher considered 'recent' clients (no warnings)
 WARN_OLD_CLIENTS = True  #Use MOTD to inform old clients to upgrade
 LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
@@ -177,7 +177,7 @@ USERLIST_GUI_FILENAME_COLUMN = 3
 MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4', '-af-add', 'scaletempo']
 MPV_ARGS = ['--force-window', '--idle', '--hr-seek=always', '--keep-open']
 MPV_SLAVE_ARGS = ['--msg-level=all=error,cplayer=info,term-msg=info', '--input-terminal=no', '--input-file=/dev/stdin']
-MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=length:${=duration:0}}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
+MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=duration:${=length:0}}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
 MPV_NEW_VERSION = False
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']

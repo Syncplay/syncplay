@@ -1,53 +1,59 @@
 environment:
   MINICONDA: "C:\\Miniconda"
-  clone_folder: c:\projects\syncplay
-
-image:
-  - Visual Studio 2013
 
 platform: x86
 
 configuration: Release
 
 init:
-  - set PATH=C:\Miniconda;C:\Miniconda\Scripts;%PATH%
-  - cmd: conda create -n syncplay -y  
-  - cmd: activate syncplay
-  - cmd: conda install python pywin32 -y
-  - cmd: conda install -c conda-forge pyside2 -y
-  - cmd: pip install twisted py2exe_py2 zope.interface
-  - cmd: type nul > C:\Miniconda\envs\syncplay\lib\site-packages\zope\__init__.py
-  - cmd: pip freeze
-  - cmd: conda list
+  - set PATH=C:\Miniconda;C:\Miniconda\Scripts;C:\Program Files (x86)\NSIS;%PATH%
+  - conda create -n syncplay -y
+  - activate syncplay
+  - conda install python pywin32 -y
+  - conda install -c conda-forge pyside2 -y
+  - pip install twisted py2exe_py2 zope.interface
+  - type nul > C:\Miniconda\envs\syncplay\lib\site-packages\zope\__init__.py
+  - pip freeze
+  - conda list
   
 install:
-  - cmd: cd c:\projects\syncplay
-  - cmd: python buildPy2exe.py
-  - cmd: del C:\projects\syncplay\syncplay_v1.5.0\lib\api-*
-  - cmd: del C:\projects\syncplay\syncplay_v1.5.0\lib\DNSAPI.dll
-  - cmd: del C:\projects\syncplay\syncplay_v1.5.0\lib\IPHLPAPI.dll
-  - cmd: del C:\projects\syncplay\syncplay_v1.5.0\lib\MPR.dll
-  - cmd: mkdir C:\projects\syncplay\syncplay_v1.5.0\platforms
-  - cmd: copy C:\Miniconda\envs\syncplay\library\plugins\platforms\qwindows.dll C:\projects\syncplay\syncplay_v1.5.0\platforms\
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
+  - python buildPy2exe.py
+  - del syncplay_v%ver%\lib\api-*
+  - del syncplay_v%ver%\lib\DNSAPI.dll
+  - del syncplay_v%ver%\lib\IPHLPAPI.dll
+  - del syncplay_v%ver%\lib\MPR.dll
+  - mkdir syncplay_v%ver%\platforms
+  #- copy C:\Miniconda\envs\syncplay\library\plugins\platforms\qwindows.dll C:\projects\syncplay\syncplay_v1.5.0\platforms\
 
 # Not a project with an msbuild file, build done at install.
 build: off 
 
 artifacts:
-  path: 'syncplay_v1.5.0'
-  type: zip
-  name: Syncplay_win_pyside2
+  - path: 'syncplay_v$(ver)'
+    type: zip
+    name: Syncplay-$(ver)-win-pyside2
+
+  - path: Syncplay-$(ver)-Setup.exe
+    name: Syncplay-$(ver)-win-setup-pyside2
 
 # Push artefact to S3 bucket and list all
 before_deploy:
-  - cmd: python -c "from PySide2 import QtCore; print QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)"
+  - dir
+  #- python -c "from PySide2 import QtCore; print QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)"
 
-# Deploy build to Amazon S3 bucket
+
+# Deploy build to BinTray
 deploy:
-  provider: S3
-  access_key_id: AKIAJS554GLAZJ5L6TUA
-  secret_access_key:
-    secure: ZPxgm95K1SIqcFlqwoMWmGpPfctamQhhAedoyCT4RDQM/+VbdFLfEfUtu3rZZeBm
-  bucket: syncplay
-  region: eu-central-1
-  set_public: true
+  provider: BinTray
+  username: alby128
+  api_key:
+    secure: lAocj5KA9Z9x4BefQBIgNlQJbeW4qPBfCgYVBHMyOP3NgyhnMLmvR57ZCqtCKBlQ
+  subject: alby128
+  repo: Syncplay
+  package: Syncplay
+  version: "test"
+  publish: true
+  override: true
+    

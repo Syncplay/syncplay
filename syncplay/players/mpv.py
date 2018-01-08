@@ -124,7 +124,7 @@ class NewMpvPlayer(OldMpvPlayer):
         if property_ in floatProperties:
             propertyID = u"={}".format(property_)
         elif property_ == 'length':
-            propertyID = u'=length:${=duration:0}'
+            propertyID = u'=duration:${=length:0}'
         else:
             propertyID = property_
         self._listener.sendLine(u"print_text ""ANS_{}=${{{}}}""".format(property_, propertyID))

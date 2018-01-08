@@ -39,16 +39,13 @@ before_deploy:
 - mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
 - mv resources/lua/intf/syncplay.lua resources/lua/intf/.syncplay.lua
 - mv resources/macOS_readme.pdf resources/.macOS_readme.pdf
-- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay-qtpy-pyside2.dmg
+- export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS_pyside2.dmg
 
 deploy:
-  provider: s3
-  access_key_id: AKIAJS554GLAZJ5L6TUA
-  secret_access_key:
-    secure: "iDuHZ6lgASU1O/9UKncgKfJZ96PpLzdKKvASDKCDPWBXXI5LyjGIIZJxbdjcE+WVoHYCCrN9Xn2XvhEjapqBzD2uKMH4QvN5mOG62FaPPOIPr+CCZxuEQuUQ8LUSIwQO3huu0K4eLn6q5b/ihmiWkTAssZFx1pccv15CJiwVPDwunULC2P55d/GxRohN2HcHDHGbHwlXasgvOx68xxbDEO4Ox7KRwcSIHnmx6vInQtzpqdnme8t1kmGG2vp6juyh39vCN0RzoJ5aH17qht/0nNvkbxnPcUg7jsDayOuWiwMgp4s+EYdyCh33IM3LQugxPqa3za5yjYQqC92SoaQg8FnsoU1sf7FHMCmb4mv8ZwgTD78+Ood/7lKHaOVGnxkoBtdrtXXf2tU/WyAGXTw4zc6eA+MIXC6FmNQFJaRUvGZPF+u+awHNJGAlmIhFOASBW4Ua6qahNzcasRE8e3cuzYuVzK4R24TRWqjYCadHd6SNh2FKVGYEKK1FcADUxn5GzldcovG3wsHRK6ONCS57s5xBlajVfEB4b78EqYkRgQQTAnCvNcUAbfsJOYywtSj/4keaGQeRydoY9qMl6MPpVXqn+r9bbglLBIOPzUr2EWXj/O6gq7bd9eSwCa1PvGplboDahkfWmVZKJ6rZpuvUfoQcKmuJiIpgowCczP9NNco="
-  bucket: syncplay
-  skip_cleanup: true
-  region: eu-central-1
-  local_dir: dist_dmg
-  on:
-    branch: qtpy-pyside2
+  on: master_local
+  provider: bintray
+  file: "bintray.json"
+  user: alby128
+  key:
+    secure: "N4XK9IxGEj+5aMskTEvUWwXSMXtHDFcjiLvnPRzVT3OOTSAA2AYjlH975MGiGEanap5gq5ftIo+M2TVNfiqflE9GSlFir+KfzabheoONZVegAq2sG6rDq9YElGJ8JefEb2O8vZykeyvow6TBxcsFdbV44RbGmf4obLALXKgK1cXG8MCKj8VOxVZpgaXFnNCxVlN1AlORx6MQ4ukaZMuO7fDnHjAgnkGlZOBq7/kMJfYGdZvLkKoe6qEoZHJQxVTcA3pkIwRQci5kx/AAxCuKcXYLpoHot5dytIumk0iwfzDqN4uUX5qOG8o2FrWy+7z/Yt7W97lA5c6hVltsoX5dqp0WB14EKgYq+wQwSNcI6tInjogDo4JnGSu1Tpmsy+Fc3Y5Z1cD29hWimxcC8h/wlm9C2hOjfEsdLOfkghevMjRdAW2RIIA8/KmR1Xi2EX78Q75wrPHvo4/4x0Cw0ZviN2wC9LY3GU8tmGjjC0P+WsF4M1Y9by2H2xLHuYPB7h7OnlD67d8pPQVq84Yl2jq9kT2PoYjlNwqWz1r/PsLBCGlXQtlTc7FQKXUAREFwBJY+b5mk2xMsiZZsNrtIfRQ2roDbHws+M0mAQPo1eqeDKLPH8fkDf/ZhWzE+swLadoGxuwKSux53ySAp7CQeObJYWJ3eHfO0cI21DZmd9uyjayA="
