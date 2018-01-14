@@ -1,14 +1,16 @@
+# coding:utf8
 import re
 import subprocess
 from syncplay.players.mplayer import MplayerPlayer
 from syncplay.messages import getMessage
 from syncplay import constants
-from syncplay.utils import isURL
+from syncplay.utils import isURL, findResourcePath
 import os, sys, time
 
 class MpvPlayer(MplayerPlayer):
     RE_VERSION = re.compile('.*mpv (\d+)\.(\d+)\.\d+.*')
     osdMessageSeparator = "\\n"
+    osdMessageSeparator = "; " # TODO: Make conditional
 
     @staticmethod
     def run(client, playerPath, filePath, args):
@@ -17,6 +19,9 @@ class MpvPlayer(MplayerPlayer):
         except:
             ver = None
         constants.MPV_NEW_VERSION = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 6
+        constants.MPV_OSC_VISIBILITY_CHANGE_VERSION = False if ver is None else  int(ver.group(1)) > 0 or int(ver.group(2)) >= 28
+        if not constants.MPV_OSC_VISIBILITY_CHANGE_VERSION:
+            client.ui.showDebugMessage(u"This version of mpv is not known to be compatible with changing the OSC visibility. Please use mpv >=0.28.0.")
         if constants.MPV_NEW_VERSION:
             return NewMpvPlayer(client, MpvPlayer.getExpandedPath(playerPath), filePath, args)
         else:
@@ -30,6 +35,7 @@ class MpvPlayer(MplayerPlayer):
         args.extend(constants.MPV_SLAVE_ARGS)
         if constants.MPV_NEW_VERSION:
             args.extend(constants.MPV_SLAVE_ARGS_NEW)
+            args.extend([u"--script={}".format(findResourcePath("syncplayintf.lua"))])
         return args
 
     @staticmethod
@@ -108,6 +114,25 @@ class OldMpvPlayer(MpvPlayer):
 class NewMpvPlayer(OldMpvPlayer):
     lastResetTime = None
     lastMPVPositionUpdate = None
+    alertOSDSupported = True
+    chatOSDSupported = True
+
+    def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), OSDType=constants.OSD_NOTIFICATION,
+                       mood=constants.MESSAGE_NEUTRAL):
+        if not self._client._config["chatOutputEnabled"]:
+            super(self.__class__, self).displayMessage(message=message,duration=duration,OSDType=OSDType,mood=mood)
+            return
+        messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace("\\\\",constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER).replace("<NEWLINE>", "\\n")
+        self._listener.sendLine(u'script-message-to syncplayintf {}-osd-{} "{}"'.format(OSDType, mood, messageString))
+
+    def displayChatMessage(self, username, message):
+        if not self._client._config["chatOutputEnabled"]:
+            super(self.__class__, self).displayChatMessage(username,message)
+            return
+        username = self._sanitizeText(username.replace("\\",constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
+        message = self._sanitizeText(message.replace("\\",constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
+        messageString = u"<{}> {}".format(username, message)
+        self._listener.sendLine(u'script-message-to syncplayintf chat "{}"'.format(messageString))
 
     def setPaused(self, value):
         if self._paused == value:
@@ -199,6 +224,9 @@ class NewMpvPlayer(OldMpvPlayer):
         self._clearFileLoaded()
         self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)), notReadyAfterThis=True)
 
+    def setFeatures(self, featureList):
+        self.sendMpvOptions()
+
     def setPosition(self, value):
         if value < constants.DO_NOT_RESET_POSITION_THRESHOLD and self._recentlyReset():
             self._client.ui.showDebugMessage("Did not seek as recently reset and {} below 'do not reset position' threshold".format(value))
@@ -222,8 +250,28 @@ class NewMpvPlayer(OldMpvPlayer):
         else:
             self._storePosition(0)
 
+    def sendMpvOptions(self):
+        options = []
+        for option in constants.MPV_SYNCPLAYINTF_OPTIONS_TO_SEND:
+            options.append(u"{}={}".format(option, self._client._config[option]))
+        for option in constants.MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND:
+            options.append(option)
+        for option in constants.MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND:
+            options.append(u"{}={}".format(option, getMessage(option)))
+        options.append(u"OscVisibilityChangeCompatible={}".format(constants.MPV_OSC_VISIBILITY_CHANGE_VERSION))
+        options_string = ", ".join(options)
+        self._listener.sendLine(u'script-message-to syncplayintf set_syncplayintf_options "{}"'.format(options_string))
+        self._setOSDPosition()
+
     def _handleUnknownLine(self, line):
         self.mpvErrorCheck(line)
+
+        if "<chat>" in line:
+            line = line.decode("utf-8").replace(constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER, "\\").encode("utf-8")
+            self._listener.sendChat(line[6:-7])
+
+        if "<get_syncplayintf_options>" in line:
+            self.sendMpvOptions()
 
         if line == "<SyncplayUpdateFile>" or "Playing:" in line:
             self._listener.setReadyToSend(False)
@@ -235,6 +283,11 @@ class NewMpvPlayer(OldMpvPlayer):
 
         elif "Failed" in line or "failed" in line or "No video or audio streams selected" in line or "error" in line:
             self._listener.setReadyToSend(True)
+
+    def _setOSDPosition(self):
+        if self._client._config['chatMoveOSD'] and (self._client._config['chatOutputEnabled'] or (self._client._config['chatInputEnabled'] and self._client._config['chatInputPosition'] == constants.INPUT_POSITION_TOP)):
+            self._setProperty("osd-align-y", "bottom")
+            self._setProperty("osd-margin-y", int(self._client._config['chatOSDMargin']))
 
     def _recentlyReset(self):
         if not self.lastResetTime:

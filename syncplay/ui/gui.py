@@ -16,9 +16,26 @@ import os
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from functools import wraps
 from twisted.internet import task
-if isMacOS() and IsPySide: 
+from syncplay.ui.consoleUI import ConsoleUI
+if isMacOS() and IsPySide:
     from Foundation import NSURL
 lastCheckedForUpdates = None
+
+class ConsoleInGUI(ConsoleUI):
+    def showMessage(self, message, noTimestamp=False):
+        self._syncplayClient.ui.showMessage(message, True)
+
+    def showDebugMessage(self, message):
+        self._syncplayClient.ui.showDebugMessage(message)
+
+    def showErrorMessage(self, message, criticalerror=False):
+        self._syncplayClient.ui.showErrorMessage(message, criticalerror)
+
+    def updateRoomName(self, room=""):
+        self._syncplayClient.ui.updateRoomName(room)
+
+    def getUserlist(self):
+        self._syncplayClient.showUserList(self)
 
 class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
     def __init__(self):
@@ -84,15 +101,14 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
         QtWidgets.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
 class AboutDialog(QtWidgets.QDialog):
- 
-    def __init__(self, parent=None):
+     def __init__(self, parent=None):
          super(AboutDialog, self).__init__(parent)
          if isMacOS():
              self.setWindowTitle("")
          else:
              self.setWindowTitle(getMessage("about-dialog-title"))
              if isWindows():
-                self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint) 			 
+                self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
          nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
          nameLabel.setFont(QtGui.QFont("Helvetica", 20))
          linkLabel = QtWidgets.QLabel("<center><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
@@ -101,7 +117,7 @@ class AboutDialog(QtWidgets.QDialog):
          licenseLabel = QtWidgets.QLabel("<center><p>Copyright &copy; 2017 Syncplay</p><p>" + getMessage("about-dialog-license-text") + "</p></center>")
          aboutIconPixmap = QtGui.QPixmap(resourcespath + u"syncplay.png")
          aboutIconLabel = QtWidgets.QLabel()
-         aboutIconLabel.setPixmap(aboutIconPixmap.scaled(120, 120, Qt.KeepAspectRatio))        
+         aboutIconLabel.setPixmap(aboutIconPixmap.scaled(120, 120, Qt.KeepAspectRatio))
          aboutLayout = QtWidgets.QGridLayout()
          aboutLayout.addWidget(aboutIconLabel, 0, 0, 4, 2)
          aboutLayout.addWidget(nameLabel, 0, 2, 1, 2)
@@ -115,22 +131,22 @@ class AboutDialog(QtWidgets.QDialog):
          dependenciesButton = QtWidgets.QPushButton(getMessage("about-dialog-dependencies"))
          dependenciesButton.setAutoDefault(False)
          dependenciesButton.clicked.connect(self.openDependencies)
-         aboutLayout.addWidget(dependenciesButton, 4, 3)         
+         aboutLayout.addWidget(dependenciesButton, 4, 3)
          aboutLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
-         self.setSizeGripEnabled(False)         
+         self.setSizeGripEnabled(False)
          self.setLayout(aboutLayout)
 
-    def openLicense(self):
-         if isWindows():
-             QtGui.QDesktopServices.openUrl(QUrl("file:///" + resourcespath + u"license.rtf"))
-         else:
-             QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + u"license.rtf"))
+     def openLicense(self):
+        if isWindows():
+              QtGui.QDesktopServices.openUrl(QUrl("file:///" + resourcespath + u"license.rtf"))
+        else:
+              QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + u"license.rtf"))
          
-    def openDependencies(self):
+     def openDependencies(self):
          if isWindows():
-             QtGui.QDesktopServices.openUrl(QUrl("file:///" + resourcespath + u"third-party-notices.rtf"))
+              QtGui.QDesktopServices.openUrl(QUrl("file:///" + resourcespath + u"third-party-notices.rtf"))
          else:
-             QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + u"third-party-notices.rtf"))
+              QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + u"third-party-notices.rtf"))
 
 class MainWindow(QtWidgets.QMainWindow):
     insertPosition = None
@@ -347,6 +363,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def addClient(self, client):
         self._syncplayClient = client
+        if self.console:
+            self.console.addClient(client)
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
         try:
@@ -385,6 +403,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.chatInput.setReadOnly(True)
         if not featureList["sharedPlaylists"]:
             self.playlistGroup.setEnabled(False)
+        self.chatInput.setMaxLength(constants.MAX_CHAT_MESSAGE_LENGTH)
+        self.roomInput.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
 
     def showMessage(self, message, noTimestamp=False):
         message = unicode(message)
@@ -1126,10 +1146,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self._syncplayClient.playlist.changePlaylist(newPlaylist)
             self._syncplayClient.fileSwitch.updateInfo()
 
+    def executeCommand(self, command):
+        self.showMessage(u"/{}".format(command))
+        self.console.executeCommand(command)
+
     def sendChatMessage(self):
-        if self.chatInput.text() <> "":
-            self._syncplayClient.sendChat(self.chatInput.text())
-            self.chatInput.setText("")
+        chatText = self.chatInput.text()
+        self.chatInput.setText("")
+        if chatText <> "":
+            if chatText[:1] == "/" and chatText <> "/":
+                command = chatText[1:]
+                if command and command[:1] == "/":
+                    chatText = chatText[1:]
+                else:
+                    self.executeCommand(command)
+                    return
+            self._syncplayClient.sendChat(chatText)
 
     def addTopLayout(self, window):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)
@@ -1705,6 +1737,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.console = ConsoleInGUI()
+        self.console.setDaemon(True)
         self.newWatchlist = []
         self.publicServerList = []
         self.lastCheckedForUpdates = None
