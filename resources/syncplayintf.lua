@@ -912,6 +912,7 @@ add_alpharowbinding('~','~')
 add_alpharowbinding('\'','\'')
 add_alpharowbinding('@','@')
 
+add_specialalphabindings({'ą','ć','ę','ł','ń','ś','ź','ż','Ą','Ć','Ę','Ł','Ń','Ś','Ź','Ż'})
 add_specialalphabindings({'à','è','ì','ò','ù','À','È','Ì','Ò','Ù'})
 add_specialalphabindings({'á', 'é', 'í', 'ó', 'ú', 'ý', 'Á', 'É', 'Í', 'Ó', 'Ú', 'Ý'})
 add_specialalphabindings({'â', 'ê', 'î', 'ô', 'û', 'Â', 'Ê', 'Î', 'Ô', 'Û'})
@@ -929,6 +930,7 @@ add_specialalphabindings({'Ш','ш','Щ','щ','Ъ','ъ','Ы','ы','Ь','ь','Э'
 add_specialalphabindings({'≥','≠'})
 
 add_repl_bindings(bindings)
+add_repl_alpharow_bindings(alpharowbindings)
 
 -- Add a script-message to show the REPL and fill it with the provided text
 mp.register_script_message('type', function(text)
