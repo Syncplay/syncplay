@@ -12,7 +12,7 @@ import sys
 import threading
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
 from syncplay import constants
-from syncplay.utils import isBSD, isLinux, isMacOS
+from syncplay.utils import isBSD, isLinux, isMacOS, isWindows
 from syncplay.utils import resourcespath, posixresourcespath
 class GuiConfiguration:
     def __init__(self, config, error=None, defaultConfig=None):
@@ -289,13 +289,16 @@ class ConfigDialog(QtWidgets.QDialog):
     def loadLastUpdateCheckDate(self):
         settings = QSettings("Syncplay", "Interface")
         settings.beginGroup("Update")
-        self.lastCheckedForUpdates = settings.value("lastCheckedQt", None)
-        if self.lastCheckedForUpdates:
-            if self.config["lastCheckedForUpdates"] is not None and self.config["lastCheckedForUpdates"] is not "":
-                if self.lastCheckedForUpdates.toPython() > datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f"):
+        try:
+            self.lastCheckedForUpdates = settings.value("lastCheckedQt", None)
+            if self.lastCheckedForUpdates:
+                if self.config["lastCheckedForUpdates"] is not None and self.config["lastCheckedForUpdates"] is not "":
+                    if self.lastCheckedForUpdates.toPython() > datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f"):
+                        self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
+                else:
                     self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
-            else:
-                self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
+        except:
+            self.lastCheckedForUpdates = None
 
     def loadSavedPublicServerList(self):
         settings = QSettings("Syncplay", "Interface")
@@ -515,7 +518,7 @@ class ConfigDialog(QtWidgets.QDialog):
 
     def connectChildren(self, widget):
         widgetName = str(widget.objectName())
-        if self.subitems.has_key(widgetName) and isinstance(widget, QCheckBox):
+        if self.subitems.has_key(widgetName):
             widget.stateChanged.connect(lambda: self.updateSubwidgets(self, widget))
             self.updateSubwidgets(self, widget)
 
@@ -869,6 +872,155 @@ class ConfigDialog(QtWidgets.QDialog):
         self.syncSettingsLayout.setAlignment(Qt.AlignTop)
         self.stackedLayout.addWidget(self.syncSettingsFrame)
 
+    def addChatTab(self):
+        self.chatFrame = QtWidgets.QFrame()
+        self.chatLayout = QtWidgets.QVBoxLayout()
+        self.chatLayout.setAlignment(Qt.AlignTop)
+
+        # Input
+        self.chatInputGroup = QtWidgets.QGroupBox(getMessage("chat-title"))
+        self.chatInputLayout = QtWidgets.QGridLayout()
+        self.chatLayout.addWidget(self.chatInputGroup)
+        self.chatInputGroup.setLayout(self.chatInputLayout)
+        self.chatInputEnabledCheckbox = QCheckBox(getMessage("chatinputenabled-label"))
+        self.chatInputEnabledCheckbox.setObjectName("chatInputEnabled")
+        self.chatInputLayout.addWidget(self.chatInputEnabledCheckbox, 1, 0, 1,1, Qt.AlignLeft)
+
+        self.chatDirectInputCheckbox = QCheckBox(getMessage("chatdirectinput-label"))
+        self.chatDirectInputCheckbox.setObjectName("chatDirectInput")
+        self.chatDirectInputCheckbox.setStyleSheet(
+            constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatInputLayout.addWidget(self.chatDirectInputCheckbox, 2, 0, 1,1, Qt.AlignLeft)
+
+        self.inputFontLayout = QtWidgets.QHBoxLayout()
+        self.inputFontLayout.setContentsMargins(0, 0, 0, 0)
+        self.inputFontFrame = QtWidgets.QFrame()
+        self.inputFontFrame.setLayout(self.inputFontLayout)
+        self.inputFontFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        self.chatFontLabel = QLabel(getMessage("chatinputfont-label"), self)
+        self.chatFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatFontLabel.setObjectName("font-label")
+        self.chatInputFontButton = QtWidgets.QPushButton(getMessage("chatfont-label"))
+        self.chatInputFontButton.setObjectName("set-input-font")
+        self.chatInputFontButtonGroup = QtWidgets.QButtonGroup()
+        self.chatInputFontButtonGroup.addButton(self.chatInputFontButton)
+        self.chatInputFontButton.released.connect(lambda: self.fontDialog("chatInput"))
+        self.chatInputColourButton = QtWidgets.QPushButton(getMessage("chatcolour-label"))
+        self.chatInputColourButton.setObjectName("set-input-colour")
+        self.chatInputColourButtonGroup = QtWidgets.QButtonGroup()
+        self.chatInputColourButtonGroup.addButton(self.chatInputColourButton)
+        self.chatInputColourButton.released.connect(lambda: self.colourDialog("chatInput"))
+        self.inputFontLayout.addWidget(self.chatFontLabel, Qt.AlignLeft)
+        self.inputFontLayout.addWidget(self.chatInputFontButton, Qt.AlignLeft)
+        self.inputFontLayout.addWidget(self.chatInputColourButton, Qt.AlignLeft)
+        self.chatInputLayout.addWidget(self.inputFontFrame, 3, 0, 1, 3, Qt.AlignLeft)
+
+        self.chatInputPositionFrame = QtWidgets.QFrame()
+        self.chatInputPositionLayout = QtWidgets.QHBoxLayout()
+        self.chatInputPositionLayout.setContentsMargins(0, 0, 0, 0)
+        self.chatInputPositionFrame.setLayout(self.chatInputPositionLayout)
+        self.chatInputPositionFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        self.chatInputPositionLabel = QLabel(getMessage("chatinputposition-label"), self)
+        self.chatInputPositionLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatInputPositionGroup = QButtonGroup()
+        self.chatInputTopOption = QRadioButton(getMessage("chat-top-option"))
+        self.chatInputMiddleOption = QRadioButton(getMessage("chat-middle-option"))
+        self.chatInputBottomOption = QRadioButton(getMessage("chat-bottom-option"))
+        self.chatInputPositionGroup.addButton(self.chatInputTopOption)
+        self.chatInputPositionGroup.addButton(self.chatInputMiddleOption)
+        self.chatInputPositionGroup.addButton(self.chatInputBottomOption)
+
+        self.chatInputPositionLabel.setObjectName("chatinputposition")
+        self.chatInputTopOption.setObjectName("chatinputposition-top" + constants.CONFIG_NAME_MARKER + "chatInputPosition" + constants.CONFIG_VALUE_MARKER + constants.INPUT_POSITION_TOP)
+        self.chatInputMiddleOption.setObjectName("chatinputposition-middle" + constants.CONFIG_NAME_MARKER + "chatInputPosition" + constants.CONFIG_VALUE_MARKER + constants.INPUT_POSITION_MIDDLE)
+        self.chatInputBottomOption.setObjectName("chatinputposition-bottom" + constants.CONFIG_NAME_MARKER + "chatInputPosition" + constants.CONFIG_VALUE_MARKER + constants.INPUT_POSITION_BOTTOM)
+
+        self.chatInputPositionLayout.addWidget(self.chatInputPositionLabel)
+        self.chatInputPositionLayout.addWidget(self.chatInputTopOption)
+        self.chatInputPositionLayout.addWidget(self.chatInputMiddleOption)
+        self.chatInputPositionLayout.addWidget(self.chatInputBottomOption)
+        self.chatInputLayout.addWidget(self.chatInputPositionFrame)
+
+        self.subitems['chatInputEnabled'] = [self.chatInputPositionLabel.objectName(), self.chatInputTopOption.objectName(),
+                                             self.chatInputMiddleOption.objectName(), self.chatInputBottomOption.objectName(),
+                                             self.chatInputFontButton.objectName(), self.chatFontLabel.objectName(),
+                                             self.chatInputColourButton.objectName(), self.chatDirectInputCheckbox.objectName()]
+        # Output
+        self.chatOutputGroup = QtWidgets.QGroupBox(u"Chat message output")
+        self.chatOutputLayout = QtWidgets.QGridLayout()
+        self.chatLayout.addWidget(self.chatOutputGroup)
+        self.chatOutputGroup.setLayout(self.chatOutputLayout)
+        self.chatOutputEnabledCheckbox = QCheckBox(getMessage("chatoutputenabled-label"))
+        self.chatOutputEnabledCheckbox.setObjectName("chatOutputEnabled")
+        self.chatOutputLayout.addWidget(self.chatOutputEnabledCheckbox, 1, 0, 1,1, Qt.AlignLeft)
+
+        self.outputFontLayout = QtWidgets.QHBoxLayout()
+        self.outputFontLayout.setContentsMargins(0, 0, 0, 0)
+        self.outputFontFrame = QtWidgets.QFrame()
+        self.outputFontFrame.setLayout(self.outputFontLayout)
+        self.outputFontFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        self.chatOutputFontLabel = QLabel(getMessage("chatoutputfont-label"), self)
+        self.chatOutputFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatOutputFontLabel.setObjectName("font-output-label")
+        self.chatOutputFontButton = QtWidgets.QPushButton(getMessage("chatfont-label"))
+        self.chatOutputFontButton.setObjectName("set-output-font")
+        self.chatOutputFontButtonGroup = QtWidgets.QButtonGroup()
+        self.chatOutputFontButtonGroup.addButton(self.chatOutputFontButton)
+        self.chatOutputFontButton.released.connect(lambda: self.fontDialog("chatOutput"))
+        self.chatOutputColourButton = QtWidgets.QPushButton(getMessage("chatcolour-label"))
+        self.outputFontLayout.addWidget(self.chatOutputFontLabel, Qt.AlignLeft)
+        self.outputFontLayout.addWidget(self.chatOutputFontButton, Qt.AlignLeft)
+        self.chatOutputLayout.addWidget(self.outputFontFrame, 2, 0, 1, 3, Qt.AlignLeft)
+
+        self.chatOutputModeLabel = QLabel(getMessage("chatoutputposition-label"), self)
+        self.chatOutputModeLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatOutputModeGroup = QButtonGroup()
+        self.chatOutputChatroomOption = QRadioButton(getMessage("chat-chatroom-option"))
+        self.chatOutputScrollingOption = QRadioButton(getMessage("chat-scrolling-option"))
+        self.chatOutputModeGroup.addButton(self.chatOutputChatroomOption)
+        self.chatOutputModeGroup.addButton(self.chatOutputScrollingOption)
+
+        self.chatOutputModeLabel.setObjectName("chatoutputmode")
+        self.chatOutputChatroomOption.setObjectName("chatoutputmode-chatroom" + constants.CONFIG_NAME_MARKER + "chatOutputMode" + constants.CONFIG_VALUE_MARKER + constants.CHATROOM_MODE)
+        self.chatOutputScrollingOption.setObjectName("chatoutputmode-scrolling" + constants.CONFIG_NAME_MARKER + "chatOutputMode" + constants.CONFIG_VALUE_MARKER + constants.SCROLLING_MODE)
+
+        self.chatOutputModeFrame = QtWidgets.QFrame()
+        self.chatOutputModeLayout = QtWidgets.QHBoxLayout()
+        self.chatOutputModeLayout.setContentsMargins(0, 0, 0, 0)
+        self.chatOutputModeFrame.setLayout(self.chatOutputModeLayout)
+        self.chatOutputModeFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        self.chatOutputModeLayout.addWidget(self.chatOutputModeLabel)
+        self.chatOutputModeLayout.addWidget(self.chatOutputChatroomOption)
+        self.chatOutputModeLayout.addWidget(self.chatOutputScrollingOption)
+        self.chatOutputLayout.addWidget(self.chatOutputModeFrame)
+
+        self.subitems['chatOutputEnabled'] = [self.chatOutputModeLabel.objectName(), self.chatOutputChatroomOption.objectName(),
+                                             self.chatOutputScrollingOption.objectName(),self.chatOutputFontButton.objectName(),
+                                              self.chatOutputFontLabel.objectName()]
+        # chatFrame
+        self.chatFrame.setLayout(self.chatLayout)
+        self.stackedLayout.addWidget(self.chatFrame)
+
+    def fontDialog(self, configName):
+            font = QtGui.QFont()
+            font.setFamily(self.config[configName+ u"FontFamily"])
+            font.setPointSize(self.config[configName + u"RelativeFontSize"])
+            font.setWeight(self.config[configName + u"FontWeight"])
+            font.setUnderline(self.config[configName + u"FontUnderline"])
+            value, ok = QtWidgets.QFontDialog.getFont(font)
+            if ok:
+                self.config[configName + u"FontFamily"] = value.family()
+                self.config[configName + u"RelativeFontSize"] = value.pointSize()
+                self.config[configName + u"FontWeight"] = value.weight()
+                self.config[configName + u"FontUnderline"] = value.underline()
+
+    def colourDialog(self, configName):
+            oldColour = QtGui.QColor()
+            oldColour.setNamedColor(self.config[configName+ u"FontColor"])
+            colour = QtWidgets.QColorDialog.getColor(oldColour, self)
+            if colour.isValid():
+                self.config[configName + u"FontColor"] = colour.name()
+
     def addMessageTab(self):
         self.messageFrame = QtWidgets.QFrame()
         self.messageLayout = QtWidgets.QVBoxLayout()
@@ -967,18 +1119,20 @@ class ConfigDialog(QtWidgets.QDialog):
         self.helpButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'help.png'), getMessage("help-label"))
         self.helpButton.setObjectName("help")
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
-        self.helpButton.pressed.connect(self.openHelp)
+        self.helpButton.released.connect(self.openHelp)
 
         self.resetButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'cog_delete.png'),getMessage("reset-label"))
         self.resetButton.setMaximumSize(self.resetButton.sizeHint())
         self.resetButton.setObjectName("reset")
-        self.resetButton.pressed.connect(self.resetSettings)
+        self.resetButton.released.connect(self.resetSettings)
 
+        self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
+        self.runButton.released.connect(self._runWithoutStoringConfig)
         self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
         self.runButton.pressed.connect(self._runWithoutStoringConfig)
         self.runButton.setToolTip(getMessage("nostore-tooltip"))
         self.storeAndRunButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("storeandrun-label"))
-        self.storeAndRunButton.pressed.connect(self._saveDataAndLeave)
+        self.storeAndRunButton.released.connect(self._saveDataAndLeave)
         self.bottomButtonLayout.addWidget(self.helpButton)
         self.bottomButtonLayout.addWidget(self.resetButton)
         self.bottomButtonLayout.addWidget(self.runButton)
@@ -1008,7 +1162,8 @@ class ConfigDialog(QtWidgets.QDialog):
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"house.png"),getMessage("basics-label")))
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"control_pause_blue.png"),getMessage("readiness-label")))
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"film_link.png"),getMessage("sync-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"comments.png"),getMessage("messages-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"user_comment.png"), getMessage("chat-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"error.png"),getMessage("messages-label")))
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"cog.png"),getMessage("misc-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
@@ -1108,6 +1263,12 @@ class ConfigDialog(QtWidgets.QDialog):
         self.QtWidgets = QtWidgets
         self.QtGui = QtGui
         self.error = error
+        if isWindows():
+            resourcespath = utils.findWorkingDir() + "\\resources\\"
+        else:
+            resourcespath = utils.findWorkingDir() + u"/resources/"
+        self.posixresourcespath = utils.findWorkingDir().replace(u"\\","/") + u"/resources/"
+        self.resourcespath = resourcespath
 
         super(ConfigDialog, self).__init__()
 
@@ -1127,6 +1288,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.addBasicTab()
         self.addReadinessTab()
         self.addSyncTab()
+        self.addChatTab()
         self.addMessageTab()
         self.addMiscTab()
         self.tabList()

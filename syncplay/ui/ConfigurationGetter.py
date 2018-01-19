@@ -8,6 +8,7 @@ from syncplay.messages import getMessage, setLanguage, isValidLanguage
 from syncplay.players.playerFactory import PlayerFactory
 from syncplay.utils import isMacOS
 import codecs
+import re
 
 class InvalidConfigValue(Exception):
     def __init__(self, message):
@@ -64,6 +65,29 @@ class ConfigurationGetter(object):
                         "showNonControllerOSD" : False,
                         "showContactInfo" : True,
                         "showDurationNotification" : True,
+                        "chatInputEnabled" : True,
+                        "chatInputFontFamily" : 'sans-serif',
+                        "chatInputRelativeFontSize" : constants.DEFAULT_CHAT_FONT_SIZE,
+                        "chatInputFontWeight" : constants.DEFAULT_CHAT_FONT_WEIGHT,
+                        "chatInputFontUnderline": False,
+                        "chatInputFontColor": constants.DEFAULT_CHAT_INPUT_FONT_COLOR,
+                        "chatInputPosition": constants.INPUT_POSITION_TOP,
+                        "chatDirectInput": False,
+                        "chatOutputEnabled": True,
+                        "chatOutputFontFamily": 'sans-serif',
+                        "chatOutputRelativeFontSize": constants.DEFAULT_CHAT_FONT_SIZE,
+                        "chatOutputFontWeight": constants.DEFAULT_CHAT_FONT_WEIGHT,
+                        "chatOutputFontUnderline": False,
+                        "chatOutputMode": constants.CHATROOM_MODE,
+                        "chatMaxLines": 7,
+                        "chatTopMargin": 25,
+                        "chatLeftMargin": 20,
+                        "chatBottomMargin": 30,
+                        "chatMoveOSD": True,
+                        "chatOSDMargin": 110,
+                        "notificationTimeout": 3,
+                        "alertTimeout": 5,
+                        "chatTimeout": 7,
                         "publicServers" : []
                         }
 
@@ -106,7 +130,13 @@ class ConfigurationGetter(object):
                          "sharedPlaylistEnabled",
                          "loopAtEndOfPlaylist",
                          "loopSingleFiles",
-                         "onlySwitchToTrustedDomains"
+                         "onlySwitchToTrustedDomains",
+                         "chatInputEnabled",
+                         "chatInputFontUnderline",
+                         "chatDirectInput",
+                         "chatMoveOSD",
+                        "chatOutputEnabled",
+                        "chatOutputFontUnderline"
                         ]
         self._tristate = [
             "checkForUpdatesAutomatically",
@@ -125,6 +155,22 @@ class ConfigurationGetter(object):
             "rewindThreshold",
             "fastforwardThreshold",
             "autoplayMinUsers",
+            "chatInputRelativeFontSize",
+            "chatInputFontWeight",
+            "chatOutputFontWeight",
+            "chatOutputRelativeFontSize",
+            "chatMaxLines",
+            "chatTopMargin",
+            "chatLeftMargin",
+            "chatBottomMargin",
+            "chatOSDMargin",
+            "notificationTimeout",
+            "alertTimeout",
+            "chatTimeout"
+        ]
+
+        self._hexadecimal = [
+            "chatInputFontColor"
         ]
 
         self._iniStructure = {
@@ -143,7 +189,19 @@ class ConfigurationGetter(object):
                             "onlySwitchToTrustedDomains", "trustedDomains","publicServers"],
                         "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD",
                             "showDifferentRoomOSD", "showSameRoomOSD",
-                            "showNonControllerOSD", "showDurationNotification"],
+                            "showNonControllerOSD", "showDurationNotification",
+                            "chatInputEnabled","chatInputFontUnderline",
+                            "chatInputFontFamily", "chatInputRelativeFontSize",
+                            "chatInputFontWeight", "chatInputFontColor",
+                            "chatInputPosition","chatDirectInput",
+                            "chatOutputFontFamily", "chatOutputRelativeFontSize",
+                            "chatOutputFontWeight", "chatOutputFontUnderline",
+                            "chatOutputMode", "chatMaxLines",
+                            "chatTopMargin", "chatLeftMargin",
+                            "chatBottomMargin", "chatDirectInput",
+                            "chatMoveOSD", "chatOSDMargin",
+                            "notificationTimeout", "alertTimeout",
+                            "chatTimeout","chatOutputEnabled"],
                         "general": ["language", "checkForUpdatesAutomatically",
                             "lastCheckedForUpdates"]
                         }
@@ -196,6 +254,11 @@ class ConfigurationGetter(object):
 
         for key in self._numeric:
             self._config[key] = float(self._config[key])
+
+        for key in self._hexadecimal:
+            match = re.search(r'^#(?:[0-9a-fA-F]){6}$', self._config[key])
+            if not match:
+                self._config[key] = u"#FFFFFF"
 
         for key in self._required:
             if key == "playerPath":

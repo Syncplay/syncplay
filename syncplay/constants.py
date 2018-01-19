@@ -1,8 +1,9 @@
+# coding:utf8
 # You might want to change these
 DEFAULT_PORT = 8999
 OSD_DURATION = 3.0
 OSD_WARNING_MESSAGE_DURATION = 5.0
-NO_SECONDARY_OSD_WARNING_DURATION = 13.0
+NO_ALERT_OSD_WARNING_DURATION = 13.0
 MPC_OSD_POSITION = 1  #Right corner, 1 for left
 MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "
@@ -56,12 +57,23 @@ PLAYLIST_MAX_CHARACTERS = 10000
 PLAYLIST_MAX_ITEMS = 250
 MAXIMUM_TAB_WIDTH = 350
 TAB_PADDING = 30
+DEFAULT_WINDOWS_MONOSPACE_FONT = "Consolas"
+DEFAULT_OSX_MONOSPACE_FONT = "Menlo"
+FALLBACK_MONOSPACE_FONT = "Monospace"
+DEFAULT_CHAT_FONT_SIZE = 24
+DEFAULT_CHAT_INPUT_FONT_COLOR = "#FFFF00"
+DEFAULT_CHAT_OUTPUT_FONT_COLOR = "#FFFF00"
+DEFAULT_CHAT_FONT_WEIGHT = 1
 
-# Maximum character lengths (for client and server)
-MAX_CHAT_MESSAGE_LENGTH = 50 # Number of displayed characters
-MAX_USERNAME_LENGTH = 16 # Number of displayed characters
+# Max numbers are used by server (and client pre-connection). Once connected client gets values from server featureList (or uses 'fallback' versions for old servers)
+MAX_CHAT_MESSAGE_LENGTH = 125 # Number of displayed characters
+MAX_USERNAME_LENGTH = 20 # Number of displayed characters
 MAX_ROOM_NAME_LENGTH = 35 # Number of displayed characters
 MAX_FILENAME_LENGTH = 250 # Number of displayed characters
+FALLBACK_MAX_CHAT_MESSAGE_LENGTH = 50 # Number of displayed characters
+FALLBACK_MAX_USERNAME_LENGTH = 16 # Number of displayed characters
+FALLBACK_MAX_ROOM_NAME_LENGTH = 35 # Number of displayed characters
+FALLBACK_MAX_FILENAME_LENGTH = 250 # Number of displayed characters
 
 # Options for the File Switch feature:
 FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 25.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
@@ -133,7 +145,7 @@ MPC_ICONPATH = "mpc-hc.png"
 MPC64_ICONPATH = "mpc-hc64.png"
 MPC_BE_ICONPATH = "mpc-be.png"
 
-MPV_ERROR_MESSAGES_TO_REPEAT = ['[ytdl_hook] Your version of youtube-dl is too old', '[ytdl_hook] youtube-dl failed', 'Failed to recognize file format.']
+MPV_ERROR_MESSAGES_TO_REPEAT = ['[ytdl_hook] Your version of youtube-dl is too old', '[ytdl_hook] youtube-dl failed', 'Failed to recognize file format.', '[syncplayintf] Lua error']
 
 #Changing these is usually not something you're looking for
 PLAYER_ASK_DELAY = 0.1
@@ -179,6 +191,19 @@ MPV_ARGS = ['--force-window', '--idle', '--hr-seek=always', '--keep-open']
 MPV_SLAVE_ARGS = ['--msg-level=all=error,cplayer=info,term-msg=info', '--input-terminal=no', '--input-file=/dev/stdin']
 MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=duration:${=length:0}}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
 MPV_NEW_VERSION = False
+MPV_OSC_VISIBILITY_CHANGE_VERSION = False
+MPV_INPUT_PROMPT_START_CHARACTER = u"〉"
+MPV_INPUT_PROMPT_END_CHARACTER = u" 〈"
+MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER = u"＼"
+MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputEnabled","chatInputFontFamily", "chatInputRelativeFontSize", "chatInputFontWeight","chatInputFontUnderline",
+                                    "chatInputFontColor", "chatInputPosition","chatOutputFontFamily","chatOutputRelativeFontSize",
+                                    "chatOutputFontWeight","chatOutputFontUnderline","chatOutputMode","chatMaxLines",
+                                    "chatTopMargin","chatLeftMargin","chatBottomMargin","chatDirectInput",
+                                    "notificationTimeout","alertTimeout","chatTimeout","chatOutputEnabled"]
+
+MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH),u"inputPromptStartCharacter={}".format(MPV_INPUT_PROMPT_START_CHARACTER),u"inputPromptEndCharacter={}".format(MPV_INPUT_PROMPT_END_CHARACTER),u"backslashSubstituteCharacter={}".format(MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER)]
+# Note: Constants updated in client.py->checkForFeatureSupport
+MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-tab-hint","mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
 VLC_SLAVE_MACOS_ARGS = ['--verbose=2', '--no-file-logging']
@@ -200,6 +225,9 @@ UNPAUSE_IFALREADYREADY_MODE = "IfAlreadyReady"
 UNPAUSE_IFOTHERSREADY_MODE = "IfOthersReady"
 UNPAUSE_IFMINUSERSREADY_MODE = "IfMinUsersReady"
 UNPAUSE_ALWAYS_MODE = "Always"
+INPUT_POSITION_TOP = "Top"
+INPUT_POSITION_MIDDLE = "Middle"
+INPUT_POSITION_BOTTOM = "Bottom"
 
 VLC_EOF_DURATION_THRESHOLD = 2.0
 
@@ -216,6 +244,17 @@ FILEITEM_SWITCH_NO_SWITCH = 0
 FILEITEM_SWITCH_FILE_SWITCH = 1
 FILEITEM_SWITCH_STREAM_SWITCH = 2
 PLAYLISTITEM_CURRENTLYPLAYING_ROLE = 3
+
+MESSAGE_NEUTRAL = "neutral"
+MESSAGE_BADNEWS = "bad"
+MESSAGE_GOODNEWS = "good"
+
+OSD_NOTIFICATION = "notification" # Also known as PrimaryOSD
+OSD_ALERT = "alert" # Also known as SecondaryOSD
+OSD_CHAT = "chat"
+
+CHATROOM_MODE = "Chatroom"
+SCROLLING_MODE = "Scrolling"
 
 SYNCPLAY_UPDATE_URL = u"http://syncplay.pl/checkforupdate?{}" # Params
 SYNCPLAY_DOWNLOAD_URL = "http://syncplay.pl/download/"

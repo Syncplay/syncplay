@@ -38,7 +38,7 @@ class ConsoleUI(threading.Thread):
                     self.PromptResult = data
                     self.promptMode.set()
                 elif self._syncplayClient:
-                    self._executeCommand(data)
+                    self.executeCommand(data)
         except EOFError:
             pass
 
@@ -136,7 +136,7 @@ class ConsoleUI(threading.Thread):
             return True
         return False 
      
-    def _executeCommand(self, data):
+    def executeCommand(self, data):
         command = re.match(constants.UI_COMMAND_REGEX, data)
         if not command:
             return
@@ -145,7 +145,7 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.setPosition(self._syncplayClient.playerPositionBeforeLastSeek)
             self._syncplayClient.playerPositionBeforeLastSeek = tmp_pos
         elif command.group('command') in constants.COMMANDS_LIST:
-            self._syncplayClient.getUserList()
+            self.getUserlist()
         elif command.group('command') in constants.COMMANDS_CHAT:
             message= command.group('parameter')            
             self._syncplayClient.sendChat(message)
@@ -158,8 +158,8 @@ class ConsoleUI(threading.Thread):
                     room = self._syncplayClient.userlist.currentUser.file["name"]
                 else:
                     room = self._syncplayClient.defaultRoom
-
             self._syncplayClient.setRoom(room, resetAutoplay=True)
+            self._syncplayClient.ui.updateRoomName(room)
             self._syncplayClient.sendRoom()
         elif command.group('command') in constants.COMMANDS_CREATE:
             roombasename = command.group('parameter')
@@ -190,4 +190,6 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/chat"), True)
             self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)
             self.showMessage(getMessage("more-info-notification").format(syncplay.projectURL), True)
-    
+
+    def getUserlist(self):
+        self._syncplayClient.getUserList()

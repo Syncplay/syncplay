@@ -48,6 +48,11 @@ class SyncFactory(Factory):
         features["readiness"] = not self.disableReady
         features["managedRooms"] = True
         features["chat"] = not self.disableChat
+        features["maxChatMessageLength"] = constants.MAX_CHAT_MESSAGE_LENGTH
+        features["maxUsernameLength"] = constants.MAX_USERNAME_LENGTH
+        features["maxRoomNameLength"] = constants.MAX_ROOM_NAME_LENGTH
+        features["maxFilenameLength"] = constants.MAX_FILENAME_LENGTH
+
         return features
 
     def getMotd(self, userIp, username, room, clientVersion):
@@ -108,7 +113,7 @@ class SyncFactory(Factory):
         self._roomManager.broadcast(watcher, l)
 
     def sendJoinMessage(self, watcher):
-        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True, "version": watcher.getVersion()}) if w != watcher else None
+        l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True, "version": watcher.getVersion(), "features": watcher.getFeatures()}) if w != watcher else None
         self._roomManager.broadcast(watcher, l)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
 
@@ -412,6 +417,10 @@ class Watcher(object):
 
     def setReady(self, ready):
         self._ready = ready
+
+    def getFeatures(self):
+        features = self._connector.getFeatures()
+        return features
 
     def isReady(self):
         if self._server.disableReady:
