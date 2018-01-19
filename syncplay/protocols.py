@@ -5,8 +5,8 @@ import syncplay
 from functools import wraps
 import time
 from syncplay.messages import getMessage
-from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT
-
+from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT, CONTROLLED_ROOMS_MIN_VERSION, USER_READY_MIN_VERSION, SHARED_PLAYLIST_MIN_VERSION, CHAT_MIN_VERSION
+from syncplay.utils import meetsMinVersion
 
 class JSONCommandProtocol(LineReceiver):
     def handleMessages(self, messages):
@@ -107,6 +107,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         if room: hello["room"] = {"name" :room}
         hello["version"] = "1.2.255" # Used so newer clients work on 1.2.X server
         hello["realversion"] = syncplay.version
+        hello["features"] = self._client.getFeatures()
         self.sendMessage({"Hello": hello})
 
     def _SetUser(self, users):
@@ -147,6 +148,11 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self._client.playlist.changeToPlaylistIndex(values['index'], values['user'])
             elif command == "playlistChange":
                 self._client.playlist.changePlaylist(values['files'], values['user'])
+            elif command == "features":
+                self._client.setUserFeatures(values["username"],values['features'])
+
+    def sendFeaturesUpdate(self, features):
+        self.sendSet({"features": features})
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -173,7 +179,8 @@ class SyncClientProtocol(JSONCommandProtocol):
                 file_ = user[1]['file'] if user[1]['file'] <> {} else None
                 isController = user[1]['controller'] if 'controller' in user[1] else False
                 isReady = user[1]['isReady'] if 'isReady' in user[1] else None
-                self._client.userlist.addUser(userName, roomName, file_, noMessage=True, isController=isController, isReady=isReady)
+                features = user[1]['features'] if 'features' in user[1] else None
+                self._client.userlist.addUser(userName, roomName, file_, noMessage=True, isController=isController, isReady=isReady, features=features)
         self._client.userlist.showUserList()
 
     def sendList(self):
@@ -249,9 +256,9 @@ class SyncClientProtocol(JSONCommandProtocol):
             }
         })
     def handleChat(self,message):
+        username = message['username']
         userMessage = message['message']
-        messageString = u"<{}> {}".format(message['username'], userMessage)
-        self._client.ui.showMessage(messageString)
+        self._client.ui.showChatMessage(username, userMessage)
 
     def setReady(self, isReady, manuallyInitiated=True):
         self.sendSet({
@@ -286,6 +293,7 @@ class SyncServerProtocol(JSONCommandProtocol):
     def __init__(self, factory):
         self._factory = factory
         self._version = None
+        self._features = None
         self._logged = False
         self.clientIgnoringOnTheFly = 0
         self.serverIgnoringOnTheFly = 0
@@ -319,6 +327,16 @@ class SyncServerProtocol(JSONCommandProtocol):
     def connectionLost(self, reason):
         self._factory.removeWatcher(self._watcher)
 
+    def getFeatures(self):
+        if not self._features:
+            self._features = {}
+            self._features["sharedPlaylists"] = meetsMinVersion(self._version, SHARED_PLAYLIST_MIN_VERSION)
+            self._features["chat"] = meetsMinVersion(self._version, CHAT_MIN_VERSION)
+            self._features["featureList"] = False
+            self._features["readiness"] = meetsMinVersion(self._version, USER_READY_MIN_VERSION)
+            self._features["managedRooms"] = meetsMinVersion(self._version, CONTROLLED_ROOMS_MIN_VERSION)
+        return self._features
+
     def isLogged(self):
         return self._logged
 
@@ -345,7 +363,8 @@ class SyncServerProtocol(JSONCommandProtocol):
                 roomName = None
         version = hello["version"] if hello.has_key("version") else None
         version = hello["realversion"] if hello.has_key("realversion") else version
-        return username, serverPassword, roomName, version
+        features = hello["features"] if hello.has_key("features") else None
+        return username, serverPassword, roomName, version, features
 
     def _checkPassword(self, serverPassword):
         if self._factory.password:
@@ -358,7 +377,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         return True
 
     def handleHello(self, hello):
-        username, serverPassword, roomName, version = self._extractHelloArguments(hello)
+        username, serverPassword, roomName, version, features = self._extractHelloArguments(hello)
         if not username or not roomName or not version:
             self.dropWithError(getMessage("hello-server-error"))
             return
@@ -366,13 +385,21 @@ class SyncServerProtocol(JSONCommandProtocol):
             if not self._checkPassword(serverPassword):
                 return
             self._version = version
+            self.setFeatures(features)
             self._factory.addWatcher(self, username, roomName)
             self._logged = True
             self.sendHello(version)
 
+    @requireLogged
     def handleChat(self,chatMessage):
         if not self._factory.disableChat:
             self._factory.sendChat(self._watcher,chatMessage)
+
+    def setFeatures(self, features):
+        self._features = features
+
+    def sendFeaturesUpdate(self):
+        self.sendSet({"features": self.getFeatures()})
 
     def setWatcher(self, watcher):
         self._watcher = watcher
@@ -410,6 +437,9 @@ class SyncServerProtocol(JSONCommandProtocol):
                 self._factory.setPlaylist(self._watcher, set_[1]['files'])
             elif command == "playlistIndex":
                 self._factory.setPlaylistIndex(self._watcher, set_[1]['index'])
+            elif command == "features":
+                #TODO: Check
+                self._watcher.setFeatures(set_[1])
 
     def sendSet(self, setting):
         self.sendMessage({"Set": setting})
@@ -476,7 +506,8 @@ class SyncServerProtocol(JSONCommandProtocol):
                 "position": 0,
                 "file": watcher.getFile() if watcher.getFile() else {},
                 "controller": watcher.isController(),
-                "isReady": watcher.isReady()
+                "isReady": watcher.isReady(),
+                "features": watcher.getFeatures()
             }
             userlist[room.getName()][watcher.getName()] = userFile
 

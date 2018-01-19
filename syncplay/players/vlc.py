@@ -16,7 +16,8 @@ from syncplay.utils import isBSD, isLinux, isWindows, isMacOS
 class VlcPlayer(BasePlayer):
     speedSupported = True
     customOpenDialog = False
-    secondaryOSDSupported = True
+    chatOSDSupported = False
+    alertOSDSupported = True
     osdMessageSeparator = "; "
 
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
@@ -118,15 +119,18 @@ class VlcPlayer(BasePlayer):
         else:
             return self._position
 
-    def displayMessage(self, message, duration=constants.OSD_DURATION * 1000, secondaryOSD=False):
+    def displayMessage(self, message, duration=constants.OSD_DURATION * 1000, OSDType=constants.OSD_DURATION, mood=constants.MESSAGE_NEUTRAL):
         duration /= 1000
-        if secondaryOSD == False:
+        if OSDType != constants.OSD_ALERT:
             self._listener.sendLine('display-osd: {}, {}, {}'.format('top-right', duration, message.encode('utf8')))
         else:
             self._listener.sendLine('display-secondary-osd: {}, {}, {}'.format('center', duration, message.encode('utf8')))
 
     def setSpeed(self, value):
         self._listener.sendLine("set-rate: {:.2n}".format(value))
+
+    def setFeatures(self, featureList):
+        pass
 
     def setPosition(self, value):
         self._lastVLCPositionUpdate = time.time()

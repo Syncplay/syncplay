@@ -17,23 +17,23 @@ de = {
     "connected-successful-notification" : u"Erfolgreich mit Server verbunden",
     "retrying-notification" : u"%s, versuche erneut in %d Sekunden...",  # Seconds
 
-    "rewind-notification" : u"Zurückgespult wegen Zeitdifferenz mit <{}>",  # User
-    "fastforward-notification" : u"Vorgespult wegen Zeitdifferenz mit <{}>",  # User
-    "slowdown-notification" : u"Verlangsamt wegen Zeitdifferenz mit <{}>",  # User
+    "rewind-notification" : u"Zurückgespult wegen Zeitdifferenz mit {}",  # User
+    "fastforward-notification" : u"Vorgespult wegen Zeitdifferenz mit {}",  # User
+    "slowdown-notification" : u"Verlangsamt wegen Zeitdifferenz mit {}",  # User
     "revert-notification" : u"Normalgeschwindigkeit",
 
-    "pause-notification" : u"<{}> pausierte",  # User
-    "unpause-notification" : u"<{}> startete",  # User
-    "seek-notification" : u"<{}> sprang von {} nach {}",  # User, from time, to time
+    "pause-notification" : u"{} pausierte",  # User
+    "unpause-notification" : u"{} startete",  # User
+    "seek-notification" : u"{} sprang von {} nach {}",  # User, from time, to time
 
     "current-offset-notification" : u"Aktueller Offset: {} Sekunden",  # Offset
 
     "media-directory-list-updated-notification" : u"Syncplay media directories have been updated.", # TODO: Translate
 
-    "room-join-notification" : u"<{}> hat den Raum '{}' betreten",  # User
-    "left-notification" : u"<{}> ist gegangen",  # User
-    "left-paused-notification" : u"<{}> ist gegangen, <{}> pausierte",  # User who left, User who paused
-    "playing-notification" : u"<{}> spielt '{}' ({})",  # User, file, duration
+    "room-join-notification" : u"{} hat den Raum '{}' betreten",  # User
+    "left-notification" : u"{} ist gegangen",  # User
+    "left-paused-notification" : u"{} ist gegangen, {} pausierte",  # User who left, User who paused
+    "playing-notification" : u"{} spielt '{}' ({})",  # User, file, duration
     "playing-notification/room-addendum" :  u" in Raum: '{}'",  # Room
 
     "not-all-ready" : u"Noch nicht bereit: {}", # Usernames
@@ -44,11 +44,11 @@ de = {
     "autoplaying-notification" : u"Starte in {}...", # Number of seconds until playback will start
 
     "identifying-as-controller-notification" : u"Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room operator"
-    "failed-to-identify-as-controller-notification" : u"<{}> konnte sich nicht als Raumleiter identifizieren.",
-    "authenticated-as-controller-notification" : u"<{}> authentifizierte sich als Raumleiter",
+    "failed-to-identify-as-controller-notification" : u"{} konnte sich nicht als Raumleiter identifizieren.",
+    "authenticated-as-controller-notification" : u"{} authentifizierte sich als Raumleiter",
     "created-controlled-room-notification" : u"Gesteuerten Raum '{}' mit Passwort '{}' erstellt. Bitte diese Informationen für die Zukunft aufheben!", # RoomName, operatorPassword
 
-    "file-different-notification" : u"Deine Datei scheint sich von <{}>s zu unterscheiden",  # User
+    "file-different-notification" : u"Deine Datei scheint sich von {}s zu unterscheiden",  # User
     "file-differences-notification" : u"Deine Datei unterscheidet sich auf folgende Art: {}",
     "room-file-differences" : u"Unterschiedlich in: {}", # File differences (filename, size, and/or duration)
     "file-difference-filename" : u"Name",
@@ -225,6 +225,7 @@ de = {
     "messages-label" : u"Nachrichten",
     "messages-osd-title" : u"OSD-(OnScreenDisplay)-Einstellungen",
     "messages-other-title" : u"Weitere Display-Einstellungen",
+    "chat-label" : u"Chat", # TODO: Translate
     "privacy-label" : u"Privatsphäre",
     "privacy-title" : u"Privatsphäreneinstellungen",
     "unpause-title" : u"Wenn du Play drückst, auf Bereit setzen und:",
@@ -233,6 +234,27 @@ de = {
     "unpause-ifminusersready-option" : u"Wiedergeben wenn bereits als Bereit gesetzt oder die minimale Anzahl anderer Nutzer bereit ist",
     "unpause-always" : u"Immer wiedergeben",
     "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)", # TODO: Translate into German
+
+    "chat-title": u"Chat message input", # TODO: Translate
+    "chatinputenabled-label": u"Enable chat input via mpv (using enter key)", # TODO: Translate
+    "chatdirectinput-label" : u"Allow instant chat input (bypass having to press enter key to chat)", # TODO: Translate
+    "chatinputfont-label": u"Chat input font", # TODO: Translate
+    "chatfont-label": u"Set font", # TODO: Translate
+    "chatcolour-label": u"Set colour", # TODO: Translate
+    "chatinputposition-label": u"Position of message input area in mpv", # TODO: Translate
+    "chat-top-option": u"Top", # TODO: Translate
+    "chat-middle-option": u"Middle", # TODO: Translate
+    "chat-bottom-option": u"Bottom", # TODO: Translate
+    "chatoutputfont-label": u"Chat output font",  # TODO: Translate
+    "chatoutputenabled-label": u"Enable chat output in media player (mpv only for now)",  # TODO: Translate
+    "chatoutputposition-label": u"Output mode",  # TODO: Translate
+    "chat-chatroom-option": u"Chatroom style",  # TODO: Translate
+    "chat-scrolling-option": u"Scrolling style",  # TODO: Translate
+
+    "mpv-key-tab-hint": u"[TAB] to toggle access to alphabet row key shortcuts.", # TODO: Translate
+    "mpv-key-hint": u"[ENTER] to send message. [ESC] to escape chat mode.", # TODO: Translate
+    "alphakey-mode-warning-first-line": u"You can temporarily use old mpv bindings with a-z keys.",  # TODO: Translate
+    "alphakey-mode-warning-second-line": u"Press [TAB] to return to Syncplay chat mode.",  # TODO: Translate
 
     "help-label" : u"Hilfe",
     "reset-label" : u"Standardwerte zurücksetzen",
@@ -357,6 +379,22 @@ de = {
     "unpause-ifminusersready-tooltip" : u"Wenn du Play drückst und nicht bereit bist, wird nur gestartet, wenn die minimale Anzahl anderer Benutzer bereit ist.",
     "trusteddomains-arguments-tooltip" : u"Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.", # TODO: Translate into German
 
+    "chatinputenabled-tooltip": u"Enable chat input in mpv (press enter to chat, enter to send, escape to cancel)", # TODO: Translate
+    "chatdirectinput-tooltip" : u"Skip having to press 'enter' to go into chat input mode in mpv. Press TAB in mpv to temporarily disable this feature.", # TODO: Translate
+    "font-label-tooltip": u"Font used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.", # TODO: Translate
+    "set-input-font-tooltip": u"Font family used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.", # TODO: Translate
+    "set-input-colour-tooltip": u"Font colour used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.", # TODO: Translate
+    "chatinputposition-tooltip": u"Location in mpv where chat input text will appear when you press enter and type.", # TODO: Translate
+    "chatinputposition-top-tooltip": u"Place chat input at top of mpv window.", # TODO: Translate
+    "chatinputposition-middle-tooltip": u"Place chat input in dead centre of mpv window.", # TODO: Translate
+    "chatinputposition-bottom-tooltip": u"Place chat input at bottom of mpv window.", # TODO: Translate
+    "chatoutputenabled-tooltip": u"Show chat messages in OSD (if supported by media player).", # TODO: Translate
+    "font-output-label-tooltip": u"Chat output font.", # TODO: Translate
+    "set-output-font-tooltip": u"Font used for when displaying chat messages.", # TODO: Translate
+    "chatoutputmode-tooltip": u"How chat messages are displayed.", # TODO: Translate
+    "chatoutputmode-chatroom-tooltip": u"Display new lines of chat directly below previous line.", # TODO: Translate
+    "chatoutputmode-scrolling-tooltip": u"Scroll chat text from right to left.", # TODO: Translate
+
     "help-tooltip" : u"Öffnet Hilfe auf syncplay.pl [Englisch]",
     "reset-tooltip" : u"Alle Einstellungen auf Standardwerte zurücksetzen.",
     "update-server-list-tooltip" : u"Mit syncplay.pl verbinden um die Liste öffentlicher Server zu aktualisieren.",
@@ -420,6 +458,7 @@ de = {
     "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",
     "editplaylist-menu-label": u"Edit playlist",
 
+    "open-containing-folder": u"Open folder containing this file",
     "addusersfiletoplaylist-menu-label" : u"Add {} file to playlist", # item owner indicator
     "addusersstreamstoplaylist-menu-label" : u"Add {} stream to playlist", # item owner indicator
     "openusersstream-menu-label" : u"Open {} stream", # [username]'s
