@@ -435,6 +435,7 @@ en = {
     "server-disable-ready-argument" : u"disable readiness feature",
     "server-motd-argument": "path to file from which motd will be fetched",
     "server-chat-argument" : "Should chat be disabled?",
+    "server-chat-maxchars-argument" : u"Maximum number of characters in a chat message (default is {})", # Default number of characters
     "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
     "server-messed-up-motd-too-long": u"Message of the Day is too long - maximum of {} chars, {} given.",
 
