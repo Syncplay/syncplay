@@ -60,6 +60,25 @@ local line = ''
 local cursor = 1
 local key_hints_enabled = false
 
+non_us_chars = {
+    'ą','ć','ę','ł','ń','ś','ź','ż','Ą','Ć','Ę','Ł','Ń','Ś','Ź','Ż',
+    'à','è','ì','ò','ù','À','È','Ì','Ò','Ù',
+    'á', 'é', 'í', 'ó', 'ú', 'ý', 'Á', 'É', 'Í', 'Ó', 'Ú', 'Ý',
+    'â', 'ê', 'î', 'ô', 'û', 'Â', 'Ê', 'Î', 'Ô', 'Û',
+    'ã', 'ñ', 'õ', 'Ã', 'Ñ', 'Õ',
+    'ä', 'ë', 'ï', 'ö', 'ü', 'ÿ', 'Ä', 'Ë', 'Ï', 'Ö', 'Ü', 'Ÿ',
+    'å', 'Å','æ','Æ','œ','Œ','ç','Ç','ð','Ð','ø','Ø','¿','¡','ß',
+    '¤','†','×','÷','‡','±','—','–','¶','§','ˆ','˜','«','»','¦','‰','©','®','™',
+    'ž','Ž',
+    'ª','Þ','þ','ƒ','µ','°','º','•','„','“','…','¬','¥','£','€','¢','¹','²','³','½','¼','¾',
+    '·','Ĉ','ĉ','Ĝ','ĝ','Ĥ','ĥ','Ĵ','ĵ','Ŝ','ŝ','Ŭ','ŭ',
+    'Б','б','В','в','Г','г','Д','д','Е','е','Ё','ё','Ж','ж','З','з',
+    'И','и','Й','й','К','к','Л','л','М','м','Н','н','О','о','П','п',
+    'Р','р','С','с','Т','т','У','у','Ф','ф','Х','х','Ц','ц','Ч','ч',
+    'Ш','ш','Щ','щ','Ъ','ъ','Ы','ы','Ь','ь','Э','э','Ю','ю','Я','я',
+    '≥','≠'
+}
+
 function format_scrolling(xpos, ypos, text)
 	local chat_message = "\n"..chat_format .. "{\\pos("..xpos..","..ypos..")\\q2}"..text.."\\N\\n"
     return string.format(chat_message)
@@ -891,6 +910,7 @@ function add_specialalphabindings(charinput)
     local alphabindingarray = charinput
 	for i, alphabinding in ipairs(alphabindingarray) do
     	alpharowbindings[#alpharowbindings + 1] = {alphabinding, function() handle_char_input(alphabinding) end }
+	    bindings[#bindings + 1] = {alphabinding, function() handle_char_input(alphabinding) end}
 	end
 end
 
@@ -912,22 +932,7 @@ add_alpharowbinding('~','~')
 add_alpharowbinding('\'','\'')
 add_alpharowbinding('@','@')
 
-add_specialalphabindings({'à','è','ì','ò','ù','À','È','Ì','Ò','Ù'})
-add_specialalphabindings({'á', 'é', 'í', 'ó', 'ú', 'ý', 'Á', 'É', 'Í', 'Ó', 'Ú', 'Ý'})
-add_specialalphabindings({'â', 'ê', 'î', 'ô', 'û', 'Â', 'Ê', 'Î', 'Ô', 'Û'})
-add_specialalphabindings({'ã', 'ñ', 'õ', 'Ã', 'Ñ', 'Õ'})
-add_specialalphabindings({'ä', 'ë', 'ï', 'ö', 'ü', 'ÿ', 'Ä', 'Ë', 'Ï', 'Ö', 'Ü', 'Ÿ'})
-add_specialalphabindings({'å', 'Å','æ','Æ','œ','Œ','ç','Ç','ð','Ð','ø','Ø','¿','¡','ß'})
-add_specialalphabindings({'¤','†','×','÷','‡','±','—','–','¶','§','ˆ','˜','«','»','¦','‰','©','®','™'})
-add_specialalphabindings({'ž','Ž'})
-add_specialalphabindings({'ª','Þ','þ','ƒ','µ','°','º','•','„','“','…','¬','¥','£','€','¢','¹','²','³','½','¼','¾'})
-add_specialalphabindings({'·','Ĉ','ĉ','Ĝ','ĝ','Ĥ','ĥ','Ĵ','ĵ','Ŝ','ŝ','Ŭ','ŭ'})
-add_specialalphabindings({'Б','б','В','в','Г','г','Д','д','Е','е','Ё','ё','Ж','ж','З','з'})
-add_specialalphabindings({'И','и','Й','й','К','к','Л','л','М','м','Н','н','О','о','П','п'})
-add_specialalphabindings({'Р','р','С','с','Т','т','У','у','Ф','ф','Х','х','Ц','ц','Ч','ч'})
-add_specialalphabindings({'Ш','ш','Щ','щ','Ъ','ъ','Ы','ы','Ь','ь','Э','э','Ю','ю','Я','я'})
-add_specialalphabindings({'≥','≠'})
-
+add_specialalphabindings(non_us_chars)
 add_repl_bindings(bindings)
 
 -- Add a script-message to show the REPL and fill it with the provided text
