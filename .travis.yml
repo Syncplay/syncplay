@@ -6,21 +6,22 @@ branches:
   - master_local
 
 script:
-- python buildPy2app.py py2app fix
+- python2 buildPy2app.py py2app fix
 
 before_install:
+- brew update
 - brew install python
 - brew tap cartr/qt4
 - brew tap-pin cartr/qt4
 - brew install pyside
 
 install:
-- export PATH=/usr/local/bin:$PATH
+#- export PATH=/usr/local/bin:$PATH
 - export QT_PREFERRED_BINDING="PySide"
-- pip install twisted appnope pyobjc py2app
+- pip2 install twisted appnope pyobjc py2app
 
 before_deploy:
-- pip install dmgbuild
+- pip2 install dmgbuild
 - mkdir dist_dmg
 - mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
 - mv resources/lua/intf/syncplay.lua resources/lua/intf/.syncplay.lua
