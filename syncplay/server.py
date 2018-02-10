@@ -27,7 +27,7 @@ class SyncFactory(Factory):
         self._motdFilePath = motdFilePath
         self.disableReady = disableReady
         self.disableChat = disableChat
-        self.maxChatMessageLength = maxChatMessageLength # if maxChatMessageLength is not None else constants.MAX_CHAT_MESSAGE_LENGTH
+        self.maxChatMessageLength = maxChatMessageLength if maxChatMessageLength is not None else constants.MAX_CHAT_MESSAGE_LENGTH
         if not isolateRooms:
             self._roomManager = RoomManager()
         else:
