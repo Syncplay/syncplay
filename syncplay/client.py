@@ -560,10 +560,14 @@ class SyncplayClient(object):
         elif not self.serverFeatures["sharedPlaylists"]:
             self.ui.showErrorMessage(getMessage("shared-playlists-disabled-by-server-error"))
         # TODO: Have messages for all unsupported & disabled features
-        constants.MAX_CHAT_MESSAGE_LENGTH = self.serverFeatures["maxChatMessageLength"]
-        constants.MAX_USERNAME_LENGTH = self.serverFeatures["maxUsernameLength"]
-        constants.MAX_ROOM_NAME_LENGTH = self.serverFeatures["maxRoomNameLength"]
-        constants.MAX_FILENAME_LENGTH = self.serverFeatures["maxFilenameLength"]
+        if self.serverFeatures["maxChatMessageLength"] is not None:
+            constants.MAX_CHAT_MESSAGE_LENGTH = self.serverFeatures["maxChatMessageLength"]
+        if self.serverFeatures["maxUsernameLength"] is not None:
+            constants.MAX_USERNAME_LENGTH = self.serverFeatures["maxUsernameLength"]
+        if self.serverFeatures["maxRoomNameLength"] is not None:
+            constants.MAX_ROOM_NAME_LENGTH = self.serverFeatures["maxRoomNameLength"]
+        if self.serverFeatures["maxFilenameLength"] is not None:
+            constants.MAX_FILENAME_LENGTH = self.serverFeatures["maxFilenameLength"]
         constants.MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(constants.MAX_CHAT_MESSAGE_LENGTH),
                                               u"inputPromptStartCharacter={}".format(constants.MPV_INPUT_PROMPT_START_CHARACTER),
                                               u"inputPromptEndCharacter={}".format(constants.MPV_INPUT_PROMPT_END_CHARACTER),
