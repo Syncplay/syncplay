@@ -27,7 +27,7 @@ class SyncFactory(Factory):
         self._motdFilePath = motdFilePath
         self.disableReady = disableReady
         self.disableChat = disableChat
-        self.maxChatMessageLength = maxChatMessageLength
+        self.maxChatMessageLength = maxChatMessageLength # if maxChatMessageLength is not None else constants.MAX_CHAT_MESSAGE_LENGTH
         if not isolateRooms:
             self._roomManager = RoomManager()
         else:
@@ -548,4 +548,4 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--disable-chat', action='store_true', help=getMessage("server-chat-argument"))
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
-        self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength', type=int, nargs='?',help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
+        self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength',type=int, nargs='?',help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
