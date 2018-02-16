@@ -127,7 +127,7 @@ en = {
     "empty-value-config-error" : "{} can't be empty", # Config option
 
     "not-json-error" : "Not a json encoded string\n",
-    "hello-arguments-error" : "Not enough Hello arguments\n",
+    "hello-arguments-error" : "Not enough Hello arguments\n", # DO NOT TRANSLATE
     "version-mismatch-error" : "Mismatch between versions of client and server\n",
     "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua and are using the latest verion of VLC then please refer to http://syncplay.pl/LUA/ for instructions.",
     "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to http://syncplay.pl/LUA/ for instructions.",
@@ -446,7 +446,7 @@ en = {
     "client-drop-server-error" : u"Client drop: {} -- {}",  # host, error
     "password-required-server-error" : "Password required",
     "wrong-password-server-error" : "Wrong password supplied",
-    "hello-server-error" : "Not enough Hello arguments",
+    "hello-server-error" : "Not enough Hello arguments", #DO NOT TRANSLATE
 
     # Playlists
     "playlist-selection-changed-notification" :  u"{} changed the playlist selection", # Username

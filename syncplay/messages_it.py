@@ -6,7 +6,7 @@ it = {
     "LANGUAGE" : u"Italiano",
 
     # Client notifications
-    "config-cleared-notification" : u"Impostazioni resettate. I cambiamenti saranno memorizzati quando salverai una configurazione valida.",
+    "config-cleared-notification" : u"Impostazioni iniziali ripristinate. I cambiamenti saranno memorizzati quando salverai una configurazione valida.",
 
     "relative-config-notification" : u"Caricato i file di configurazione relativi: {}",
 
@@ -20,7 +20,7 @@ it = {
     "rewind-notification" : u"Riavvolgo a causa della differenza temporale con {}",  # User
     "fastforward-notification" : u"Avanzamento rapido a causa della differenza temporale con {}",  # User
     "slowdown-notification" : u"Rallento a causa della differenza temporale con {}",  # User
-    "revert-notification" : u"Velocità di riproduzione normale ripristinata",
+    "revert-notification" : u"Ripristino la velocità di riproduzione normale",
 
     "pause-notification" : u"{} ha messo in pausa",  # User
     "unpause-notification" : u"{} ha ripreso la riproduzione",  # User
@@ -31,26 +31,26 @@ it = {
     "media-directory-list-updated-notification" : u"Le cartelle multimediali di Syncplay sono state aggiornate.",
 
     "room-join-notification" : u"{} è entranto nella stanza: '{}'",  # User
-    "left-notification" : u"{} ha abbandonato",  # User
-    "left-paused-notification" : u"{} ha abbandonato, {} ha messo in pausa",  # User who left, User who paused
+    "left-notification" : u"{} ha lasciato la stanza",  # User
+    "left-paused-notification" : u"{} ha lasciato la stanza, {} ha messo in pausa",  # User who left, User who paused
     "playing-notification" : u"{} sta riproducendo '{}' ({})",  # User, file, duration
     "playing-notification/room-addendum" :  u" nella stanza: '{}'",  # Room
 
     "not-all-ready" : u"Non pronti: {}", # Usernames
     "all-users-ready" : u"Tutti i partecipanti sono pronti ({} utenti)", #Number of ready users
-    "ready-to-unpause-notification" : u"Ora sei pronto - premi ancora una volta il tasto pausa per riprendere la riproduzione",
+    "ready-to-unpause-notification" : u"Ora sei pronto - premi ancora una volta per riprendere la riproduzione",
     "set-as-ready-notification" : u"Ora sei pronto",
     "set-as-not-ready-notification" : u"Non sei pronto",
     "autoplaying-notification" : u"Riproduzione automatica in {}...",  # Number of seconds until playback will start
 
-    "identifying-as-controller-notification" : u"Identificato come gestore della stanza con password '{}'...",
+    "identifying-as-controller-notification" : u"Ti sei identificato come gestore della stanza con password '{}'...",
     "failed-to-identify-as-controller-notification" : u"{} ha fallito l'identificazione come gestore della stanza.",
     "authenticated-as-controller-notification" : u"{} autenticato come gestore della stanza",
     "created-controlled-room-notification" : u"Stanza gestita '{}' creata con password '{}'. Per favore salva queste informazioni per una consultazione futura!", # RoomName, operatorPassword
 
     "file-different-notification" : u"Il file che stai riproducendo sembra essere diverso da quello di {}",  # User
     "file-differences-notification" : u"Il tuo file mostra le seguenti differenze: {}", # Differences
-    "room-file-differences" : u"Differenze nel tuo file: {}", # File differences (filename, size, and/or duration)
+    "room-file-differences" : u"Differenze: {} \n", # File differences (filename, size, and/or duration)
     "file-difference-filename" : u"nome",
     "file-difference-filesize" : u"dimensione",
     "file-difference-duration" : u"durata",
@@ -82,14 +82,14 @@ it = {
     "commandlist-notification/pause" : u"\tp - attiva o disattiva la pausa",
     "commandlist-notification/seek" : u"\t[s][+-]tempo - salta all'istante di tempo dato, se + o - non è specificato si considera il tempo assoluto in secondi o min:sec",
     "commandlist-notification/help" : u"\th - mostra questo help",
-    "commandlist-notification/toggle" : u"\tt - attiva o disattiva lo stato 'Pronto'",
+    "commandlist-notification/toggle" : u"\tt - attiva o disattiva la funzionalità \"pronto\"",
     "commandlist-notification/create" : u"\tc [nome] - crea una stanza gestita usando il nome della stanza attuale",
     "commandlist-notification/auth" : u"\ta [password] - autentica come gestore della stanza, utilizzando la password del gestore",
     "commandlist-notification/chat" : u"\tch [message] - invia un messaggio nella chat della stanza",
     "syncplay-version-notification" : u"Versione di Syncplay: {}",  # syncplay.version
     "more-info-notification" : u"Maggiori informazioni a: {}",  # projectURL
 
-    "gui-data-cleared-notification" : u"Syncplay ha resettato i dati dell'interfaccia relativi ai percorsi e allo stato delle finestre.",
+    "gui-data-cleared-notification" : u"Syncplay ha ripristinato i dati dell'interfaccia relativi ai percorsi e allo stato delle finestre.",
     "language-changed-msgbox-label" : u"La lingua sarà cambiata quando avvierai Syncplay.",
     "promptforupdate-label" : u"Ti piacerebbe che, di tanto in tanto, Syncplay controllasse automaticamente la presenza di aggiornamenti?",
 
@@ -127,7 +127,7 @@ it = {
     "empty-value-config-error" : u"Il campo {} non può essere vuoto", # Config option
 
     "not-json-error" : u"Non è una stringa con codifica JSON\n",
-    "hello-arguments-error" : u"Argomenti Hello non sufficienti\n",
+    "hello-arguments-error" : "Not enough Hello arguments\n", # DO NOT TRANSLATE
     "version-mismatch-error" : u"La versione del client è diversa da quella del server\n",
     "vlc-failed-connection": u"Impossibile collegarsi a VLC. Se non hai installato syncplay.lua e stai usando l'ultima versione di VLC, fai riferimento a http://syncplay.pl/LUA/ per istruzioni.",
     "vlc-failed-noscript": u"VLC ha segnalato che lo script di interfaccia syncplay.lua non è stato installato. Per favore, fai riferimento a http://syncplay.pl/LUA/ per istruzioni.",
@@ -135,7 +135,6 @@ it = {
 
     "feature-sharedPlaylists" : u"playlist condivise", # used for not-supported-by-server-error
     "feature-chat" : u"chat", # used for not-supported-by-server-error
-    "feature-readiness" : u"pronto", # used for not-supported-by-server-error
     "feature-readiness" : u"pronto", # used for not-supported-by-server-error
     "feature-managedRooms" : u"stanze gestite", # used for not-supported-by-server-error
 
@@ -169,7 +168,7 @@ it = {
     "player-path-argument" : u'percorso dell\'eseguibile del tuo player',
     "file-argument" : u'file da riprodurre',
     "args-argument" : u'opzioni del player, se hai bisogno di utilizzare opzioni che iniziano con - anteponi un singolo \'--\'',
-    "clear-gui-data-argument" : u'resetta il percorso e i dati impostati tramite interfaccia grafica e salvati come QSettings',
+    "clear-gui-data-argument" : u'ripristina il percorso e i dati impostati tramite interfaccia grafica e salvati come QSettings',
     "language-argument" : u'lingua per i messaggi di Syncplay (de/en/ru/it)',
 
     "version-argument" : u'mostra la tua versione',
@@ -205,10 +204,10 @@ it = {
     "fastforwardondesync-label" : u"Avanzamento rapido in caso di ritardo (consigliato)",
     "dontslowdownwithme-label" : u"Non rallentare o riavvolgere gli altri utenti (sperimentale)",
     "pausing-title" : u"Pausa",
-    "pauseonleave-label" : u"Metti in pausa quando gli altri utenti abbandonano (es. disconnessione)",
+    "pauseonleave-label" : u"Metti in pausa quando gli altri utenti lasciano la stanza (es. disconnessione)",
     "readiness-title" : u"Stato iniziale di 'pronto'",
-    "readyatstart-label" : u"Impostami sempre su 'pronto a guardare'",
-    "forceguiprompt-label" : u"Non mostrare la finestra di configurazione di Syncplay a ogni apertura", # (Inverted)
+    "readyatstart-label" : u"Imposta sempre il mio stato come \"pronto\" a guardare",
+    "forceguiprompt-label" : u"Non mostrare la finestra di configurazione di Syncplay a ogni avvio", # (Inverted)
     "showosd-label" : u"Abilita i messaggi OSD",
 
     "showosdwarnings-label" : u"Mostra gli avvisi (es. file differenti, utenti non pronti)",
@@ -230,12 +229,12 @@ it = {
     "sync-otherslagging-title" : u"Se gli altri partecipanti non sono sincronizzati...",
     "sync-youlaggging-title" : u"Se tu sei non sei sincronizzato...",
     "messages-label" : u"Messaggi",
-    "messages-osd-title" : u"Impostazioni On-screen Display",
+    "messages-osd-title" : u"Impostazioni On-Screen Display",
     "messages-other-title" : u"Altre impostazioni dello schermo",
     "chat-label" : u"Chat",
     "privacy-label" : u"Privacy", # Currently unused, but will be brought back if more space is needed in Misc tab
     "privacy-title" : u"Impostazioni privacy",
-    "unpause-title" : u"Premendo play, imposta il tuo stato su pronto e:",
+    "unpause-title" : u"Premendo play, imposta il tuo stato su \"pronto\" e:",
     "unpause-ifalreadyready-option" : u"Riprendi la riproduzione se eri già pronto",
     "unpause-ifothersready-option" : u"Riprendi la riproduzione se eri già pronto o se gli altri partecipanti sono pronti (default)",
     "unpause-ifminusersready-option" : u"Riprendi la riproduzione se eri già pronto o se un numero minimo di partecipanti è pronto",
@@ -259,13 +258,13 @@ it = {
     "chat-chatroom-option": u"Stile chatroom",
     "chat-scrolling-option": u"A scorrimento",
 
-    "mpv-key-tab-hint": u"[TAB] to toggle access to alphabet row key shortcuts.", # TODO needs to clarify this
+    "mpv-key-tab-hint": u"[TAB] per attivare le scorciatoie da tastiera e disattivare la chat.",
     "mpv-key-hint": u"[Invio] per inviare un messaggio. [Esc] per uscire dalla modalità chat.",
     "alphakey-mode-warning-first-line": u"Puoi utilizzare temporaneamente i vecchi comandi di mpv con i tasti a-z.",
     "alphakey-mode-warning-second-line": u"Premi [TAB] per ritornare alla modalità chat di Syncplay.",
 
     "help-label" : u"Aiuto",
-    "reset-label" : u"Impostazioni iniziali",
+    "reset-label" : u"Elimina configurazione",
     "run-label" : u"Avvia Syncplay",
     "storeandrun-label" : u"Salva la configurazione e avvia Syncplay",
 
@@ -366,23 +365,23 @@ it = {
     "slowondesync-tooltip" : u"Riduce temporaneamente la velocità di riproduzione quando c'è bisogno di sincronizzarti con gli altri utenti. Non supportato su MPC-HC/BE.",
     "dontslowdownwithme-tooltip" : u"Gli altri utenti non vengono rallentati se non sei sincronizzato. Utile per i gestori della stanza.",
     "pauseonleave-tooltip" : u"Mette in pausa la riproduzione se vieni disconnesso o se qualcuno lascia la stanza.",
-    "readyatstart-tooltip" : u"Imposta il tuo stato su 'pronto' all'avvio (in caso contrario, sarai su 'non pronto' finché non cambierai il tuo stato)",
+    "readyatstart-tooltip" : u"Imposta il tuo stato su \"pronto\" all'avvio (in caso contrario, sarai su \"non pronto\" finché non cambierai il tuo stato)",
     "forceguiprompt-tooltip" : u"La finestra di configurazione non viene mostrata quando apri Syncplay.",
     "nostore-tooltip" : u"Avvia Syncplay con la configurazione scelta, ma non salva le impostazioni.",
     "rewindondesync-tooltip" : u"Torna indietro quando necessario per ristabilire la sincronizzazione. Disabilitare quest'opzione può causare gravi problemi di sincronizzazione!",
-    "fastforwardondesync-tooltip" : u"Avanza rapidamente quando non sei sincronizzato col gestore della stanza (o la tua posizione supposta se 'Non rallentare o riavvolgere gli altri utenti' è abilitato).",
-    "showosd-tooltip" : u"Invia i messaggi di Syncplay all'OSD del media player.",
+    "fastforwardondesync-tooltip" : u"Avanza rapidamente quando non sei sincronizzato col gestore della stanza (usa una posizione fittizia se 'Non rallentare o riavvolgere gli altri utenti' è abilitato).",
+    "showosd-tooltip" : u"Invia i messaggi di Syncplay al media player tramite OSD.",
     "showosdwarnings-tooltip" : u"Mostra gli avvisi in caso di riproduzione di un file differente, se sei l'unico utente nella stanza, se ci sono utenti non pronti, ecc.",
     "showsameroomosd-tooltip" : u"Mostra le notifiche OSD per gli eventi relativi alla stanza in cui si trova l'utente.",
     "shownoncontrollerosd-tooltip" : u"Mostra le notifiche OSD per gli eventi relativi ai non operatori presenti nelle stanze gestite.",
     "showdifferentroomosd-tooltip" : u"Mostra le notifiche OSD per gli eventi relativi alle stanze in cui l'utente non si trova.",
     "showslowdownosd-tooltip" : u"Mostra le notifiche di rallentamento / riavvolgimento in caso di differenza temporale.",
-    "showdurationnotification-tooltip" : u"Utile quando manca un segmento di un file multiparte. Può causare dei falsi positivi.",
+    "showdurationnotification-tooltip" : u"Utile quando manca un segmento di un file con più parti. Può causare dei falsi positivi.",
     "language-tooltip" : u"Lingua da utilizzare in Syncplay.",
-    "unpause-always-tooltip" : u"Se riprendi la riproduzione, il tuo stato cambia in 'pronto' e la riproduzione viene avviata, piuttosto che impostarti solo su pronto.",
-    "unpause-ifalreadyready-tooltip" : u"Se riprendi la riproduzione quando non sei 'pronto', verrai impostato su pronto - ripeti il comando ancora una volta per avviare la riproduzione.",
-    "unpause-ifothersready-tooltip" : u"Se riprendi la riproduzione quando non sei 'pronto' la riproduzione verrà avviata solo se gli altri sono pronti.",
-    "unpause-ifminusersready-tooltip" : u"Se riprendi la riproduzione quando non sei 'pronto', la riproduzione verrà avviata solo se un numero minimo di utenti è 'pronto'.",
+    "unpause-always-tooltip" : u"Se riprendi la riproduzione, il tuo stato cambia in \"pronto\" e la riproduzione viene avviata, piuttosto che impostarti solo su pronto.",
+    "unpause-ifalreadyready-tooltip" : u"Se riprendi la riproduzione quando non sei \"pronto\", verrai impostato su pronto - ripeti il comando ancora una volta per avviare la riproduzione.",
+    "unpause-ifothersready-tooltip" : u"Se riprendi la riproduzione quando non sei \"pronto\" la riproduzione verrà avviata solo se gli altri sono pronti.",
+    "unpause-ifminusersready-tooltip" : u"Se riprendi la riproduzione quando non sei \"pronto\", la riproduzione verrà avviata solo se un numero minimo di utenti è \"pronto\".",
     "trusteddomains-arguments-tooltip" : u"Domini verso cui è possibile collegarsi automaticamente quando le playlist condivise sono abilitate.",
 
     "chatinputenabled-tooltip" : u"Abilita l'input della chat in mpv (premi Invio per chattare, per inviare ed Esc per cancellare)",
@@ -401,14 +400,14 @@ it = {
     "chatoutputmode-chatroom-tooltip": u"Mostra i nuovi messaggi di chat al di sotto di quelli precedenti.",
     "chatoutputmode-scrolling-tooltip": u"Scorri il testo della chat da destra a sinistra.",
 
-    "help-tooltip" : u"Apri la guida utente su Syncplay.pl.",
-    "reset-tooltip" : u"Ripristina tutte le impostazioni.",
+    "help-tooltip" : u"Apri la guida utente su syncplay.pl.",
+    "reset-tooltip" : u"Ripristina le impostazioni iniziali di Syncplay.",
     "update-server-list-tooltip" : u"Scarica la lista dei server pubblici da syncplay.pl.",
 
-    "joinroom-tooltip" : u"Abbandona la stanza attuale e entra in quella specificata.",
+    "joinroom-tooltip" : u"Lascia la stanza attuale e entra in quella specificata.",
     "seektime-msgbox-label" : u"Salta all'istante di tempo specificato (in secondi / min:sec). Usa +/- per una ricerca relativa.",
     "ready-tooltip" : u"Indica quando sei pronto a guardare.",
-    "autoplay-tooltip" : u"Riproduzione automatica quando il numero minimo di utenti è 'pronto'.",
+    "autoplay-tooltip" : u"Avvia la riproduzione automatica quando il numero minimo di utenti è pronto.",
     "switch-to-file-tooltip" : u"Doppio click per passare a {}", # Filename
     "sendmessage-tooltip" : u"Invia il messaggio alla stanza",
 
@@ -424,7 +423,7 @@ it = {
     # Server notifications
     "welcome-server-notification" : u"Benvenuto nel server Syncplay, ver. {0}",  # version
     "client-connected-room-server-notification" : u"{0}({2}) connesso alla stanza '{1}'",  # username, host, room
-    "client-left-server-notification" : u"{0} ha abbandonato il server",  # name
+    "client-left-server-notification" : u"{0} ha lasciato il server",  # name
     "no-salt-notification" : u"NOTA BENE: In futuro, per consentire il corretto funzionamento delle password generate da questo server (per le stanze gestite), aggiungi da linea di comando il seguente argomento prima di avviare il server Syncplay: --salt {}", #Salt
 
 
@@ -435,7 +434,7 @@ it = {
     "server-password-argument" : u'password del server',
     "server-isolate-room-argument" : u'Mantiene le stanze isolate',
     "server-salt-argument" : u"usare stringhe casuali per generare le password delle stanze gestite",
-    "server-disable-ready-argument" : u"disabilita la funzionalità 'pronto'",
+    "server-disable-ready-argument" : u"disabilita la funzionalità \"pronto\"",
     "server-motd-argument": u"percorso del file da cui verrà letto il messaggio del giorno",
     "server-chat-argument" : u"abilita o disabilita la chat",
     "server-chat-maxchars-argument" : u"Numero massimo di caratteri in un messaggio di chat (default è {})", # Default number of characters
@@ -445,12 +444,12 @@ it = {
     # Server errors
     "unknown-command-server-error" : u"Comando non riconosciuto {}",  # message
     "not-json-server-error" : u"Non è una stringa in codifica JSON {}",  # message
-    "not-known-server-error" : u"Devi essere riconosciuto dal server prima di poter inviare questo comando",
+    "not-known-server-error" : u"Devi essere autenticato dal server prima di poter inviare questo comando",
     "client-drop-server-error" : u"Il client è caduto: {} -- {}",  # host, error
     "password-required-server-error" : u"È richiesta una password",
     "wrong-password-server-error" : u"La password inserita è errata",
-    "hello-server-error" : u"Non ci sono abbastanza argomenti Hello",
-
+    "hello-server-error" : "Not enough Hello arguments", #DO NOT TRANSLATE
+    
     # Playlists
     "playlist-selection-changed-notification" : u"{} ha cambiato il file selezionato nella playlist", # Username
     "playlist-contents-changed-notification" : u"{} ha aggiornato la playlist", # Username
