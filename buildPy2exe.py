@@ -57,6 +57,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Polish.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Russian.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\German.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Italian.nlf"
 
   Unicode true
 
@@ -83,6 +84,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_RUSSIAN} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_RUSSIAN} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_RUSSIAN} "FileDescription" "Syncplay"
+  
+  VIAddVersionKey /LANG=$${LANG_ITALIAN} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_ITALIAN} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_ITALIAN} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_ITALIAN} "FileDescription" "Syncplay"
 
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
@@ -126,6 +132,17 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^QuickLaunchBar $${LANG_GERMAN} "Schnellstartleiste"
   LangString ^AutomaticUpdates $${LANG_GERMAN} "Automatisch nach Updates suchen";
   LangString ^UninstConfig $${LANG_GERMAN} "Konfigurationsdatei löschen."
+  
+  LangString ^SyncplayLanguage $${LANG_ITALIAN} "it"
+  LangString ^Associate $${LANG_ITALIAN} "Associa Syncplay con i file multimediali."
+  LangString ^VLC $${LANG_ITALIAN} "Installa l'interfaccia di Syncplay per VLC 2+"
+  LangString ^BrowseVLCBtn $${LANG_ITALIAN} "Cartella di VLC"
+  LangString ^Shortcut $${LANG_ITALIAN} "Crea i collegamenti nei percorsi seguenti:"
+  LangString ^StartMenu $${LANG_ITALIAN} "Menu Start"
+  LangString ^Desktop $${LANG_ITALIAN} "Desktop"
+  LangString ^QuickLaunchBar $${LANG_ITALIAN} "Barra di avvio rapido"
+  LangString ^AutomaticUpdates $${LANG_ITALIAN} "Controllo automatico degli aggiornamenti"
+  LangString ^UninstConfig $${LANG_ITALIAN} "Cancella i file di configurazione."
 
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "
@@ -233,6 +250,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push Русский
     Push $${LANG_GERMAN}
     Push Deutsch
+	Push $${LANG_ITALIAN}
+    Push Italiano
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE

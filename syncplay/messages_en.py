@@ -137,7 +137,7 @@ en = {
     "feature-chat" : u"chat", # used for not-supported-by-server-error
     "feature-readiness" : u"readiness", # used for not-supported-by-server-error
     "feature-managedRooms" : u"managed rooms", # used for not-supported-by-server-error
-    
+
     "not-supported-by-server-error" : u"The {} feature is not supported by this server..", #feature
     "shared-playlists-not-supported-by-server-error" : "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.", #minVersion, serverVersion
     "shared-playlists-disabled-by-server-error" : "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.",
@@ -239,7 +239,7 @@ en = {
     "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready",
     "unpause-always" : u"Always unpause",
     "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)",
-    
+
     "chat-title" : u"Chat message input",
     "chatinputenabled-label" : u"Enable chat input via mpv",
     "chatdirectinput-label" : u"Allow instant chat input (bypass having to press enter key to chat)",
@@ -250,6 +250,7 @@ en = {
     "chat-top-option" : u"Top",
     "chat-middle-option" : u"Middle",
     "chat-bottom-option" : u"Bottom",
+    "chatoutputheader-label" : u"Chat message output",
     "chatoutputfont-label": u"Chat output font",
     "chatoutputenabled-label": u"Enable chat output in media player (mpv only for now)",
     "chatoutputposition-label": u"Output mode",
@@ -310,7 +311,7 @@ en = {
     "help-menu-label" : "&Help",
     "userguide-menu-label" : "Open user &guide",
     "update-menu-label" : "Check for &update",
-    
+
     #About dialog
     "about-menu-label": u"&About Syncplay",
     "about-dialog-title": u"About Syncplay",
