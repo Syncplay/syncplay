@@ -257,7 +257,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 # executable.  I would have used plistlib here, but since the version of this library in
                 # py < 3.4 can't read from binary plist files it's pretty much useless.  Therefore, let's
                 # play a game of "Guess my executable!"
-                
+
                 # Step 1: get all the executable files.  In a Mac OS X Application bundle, executables are stored
                 # inside <bundle root>/Contents/MacOS.
                 execPath = os.path.join(os.path.normpath(fileName), 'Contents', 'MacOS')
@@ -266,7 +266,7 @@ class ConfigDialog(QtWidgets.QDialog):
                     fn = os.path.join(execPath, fn)
                     if os.path.isfile(fn) and os.access(fn, os.X_OK):
                         execFiles.append(fn)
-                
+
                 # Step 2: figure out which file name looks like the application name
                 baseAppName = os.path.basename(fileName).replace('.app', '').lower()
                 foundExe = False
@@ -276,14 +276,14 @@ class ConfigDialog(QtWidgets.QDialog):
                         fileName = fn
                         foundExe = True
                         break
-                
+
                 # Step 3: use the first executable in the list if no executable was found
                 try:
                     if not foundExe:
                       fileName = execFiles[0]
                 except IndexError:  # whoops, looks like this .app doesn't contain a executable file at all
                     pass
-                
+
             self.executablepathCombobox.setEditText(os.path.normpath(fileName))
 
     def loadLastUpdateCheckDate(self):
@@ -379,7 +379,7 @@ class ConfigDialog(QtWidgets.QDialog):
             elif os.path.isdir(QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]):
                 defaultdirectory = QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]
             else:
-                defaultdirectory = ""        
+                defaultdirectory = ""
         browserfilter = "All files (*)"
         fileName, filtr = QtWidgets.QFileDialog.getOpenFileName(self, "Browse for media files", defaultdirectory,
                 browserfilter, "", options)
@@ -387,10 +387,10 @@ class ConfigDialog(QtWidgets.QDialog):
             self.mediapathTextbox.setText(os.path.normpath(fileName))
             self.mediadirectory = os.path.dirname(fileName)
             self.saveMediaBrowseSettings()
-    
+
     def _runWithoutStoringConfig(self):
         self._saveDataAndLeave(False)
-    
+
     def _saveDataAndLeave(self, storeConfiguration=True):
         self.config['noStore'] = not storeConfiguration
         if storeConfiguration:
@@ -946,7 +946,7 @@ class ConfigDialog(QtWidgets.QDialog):
                                              self.chatInputFontButton.objectName(), self.chatFontLabel.objectName(),
                                              self.chatInputColourButton.objectName(), self.chatDirectInputCheckbox.objectName()]
         # Output
-        self.chatOutputGroup = QtWidgets.QGroupBox(u"Chat message output")
+        self.chatOutputGroup = QtWidgets.QGroupBox(getMessage("chatoutputheader-label"))
         self.chatOutputLayout = QtWidgets.QGridLayout()
         self.chatLayout.addWidget(self.chatOutputGroup)
         self.chatOutputGroup.setLayout(self.chatOutputLayout)
@@ -1213,7 +1213,7 @@ class ConfigDialog(QtWidgets.QDialog):
             settings = QSettings("Syncplay", "MoreSettings")
             settings.clear()
         self.datacleared = True
-    
+
     def populateEmptyServerList(self):
         if self.publicServers is None:
             if self.config["checkForUpdatesAutomatically"] == True:
@@ -1241,7 +1241,7 @@ class ConfigDialog(QtWidgets.QDialog):
             self.serverpassTextbox.setEnabled(True)
             self.serverpassTextbox.setReadOnly(False)
             self.serverpassTextbox.setText(self.storedPassword)
-        
+
     def __init__(self, config, playerpaths, error, defaultConfig):
         self.config = config
         self.defaultConfig = defaultConfig
