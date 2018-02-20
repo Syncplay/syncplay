@@ -26,16 +26,17 @@ install:
   - del syncplay_v%ver%\lib\MPR.dll
   - mkdir syncplay_v%ver%\platforms
   - copy C:\Miniconda\envs\syncplay\library\plugins\platforms\qwindows.dll syncplay_v%ver%\platforms\
+  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup-PySide2.exe
 
 # Not a project with an msbuild file, build done at install.
-build: off 
+build: off
 
 artifacts:
   - path: 'syncplay_v$(ver)'
     type: zip
     name: Syncplay-$(ver)-win-pyside2
 
-  - path: Syncplay-$(ver)-Setup.exe
+  - path: Syncplay-$(ver)-Setup-PySide2.exe
     name: Syncplay-$(ver)-win-setup-pyside2
 
 # Push artefact to S3 bucket and list all
