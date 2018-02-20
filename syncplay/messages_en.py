@@ -127,7 +127,7 @@ en = {
     "empty-value-config-error" : "{} can't be empty", # Config option
 
     "not-json-error" : "Not a json encoded string\n",
-    "hello-arguments-error" : "Not enough Hello arguments\n",
+    "hello-arguments-error" : "Not enough Hello arguments\n", # DO NOT TRANSLATE
     "version-mismatch-error" : "Mismatch between versions of client and server\n",
     "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua and are using the latest verion of VLC then please refer to http://syncplay.pl/LUA/ for instructions.",
     "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to http://syncplay.pl/LUA/ for instructions.",
@@ -137,7 +137,7 @@ en = {
     "feature-chat" : u"chat", # used for not-supported-by-server-error
     "feature-readiness" : u"readiness", # used for not-supported-by-server-error
     "feature-managedRooms" : u"managed rooms", # used for not-supported-by-server-error
-    
+
     "not-supported-by-server-error" : u"The {} feature is not supported by this server..", #feature
     "shared-playlists-not-supported-by-server-error" : "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.", #minVersion, serverVersion
     "shared-playlists-disabled-by-server-error" : "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.",
@@ -239,7 +239,7 @@ en = {
     "unpause-ifminusersready-option" : u"Unpause if already ready or if all others ready and min users ready",
     "unpause-always" : u"Always unpause",
     "syncplay-trusteddomains-title": u"Trusted domains (for streaming services and hosted content)",
-    
+
     "chat-title" : u"Chat message input",
     "chatinputenabled-label" : u"Enable chat input via mpv",
     "chatdirectinput-label" : u"Allow instant chat input (bypass having to press enter key to chat)",
@@ -250,6 +250,7 @@ en = {
     "chat-top-option" : u"Top",
     "chat-middle-option" : u"Middle",
     "chat-bottom-option" : u"Bottom",
+    "chatoutputheader-label" : u"Chat message output",
     "chatoutputfont-label": u"Chat output font",
     "chatoutputenabled-label": u"Enable chat output in media player (mpv only for now)",
     "chatoutputposition-label": u"Output mode",
@@ -310,7 +311,7 @@ en = {
     "help-menu-label" : "&Help",
     "userguide-menu-label" : "Open user &guide",
     "update-menu-label" : "Check for &update",
-    
+
     #About dialog
     "about-menu-label": u"&About Syncplay",
     "about-dialog-title": u"About Syncplay",
@@ -446,7 +447,7 @@ en = {
     "client-drop-server-error" : u"Client drop: {} -- {}",  # host, error
     "password-required-server-error" : "Password required",
     "wrong-password-server-error" : "Wrong password supplied",
-    "hello-server-error" : "Not enough Hello arguments",
+    "hello-server-error" : "Not enough Hello arguments", #DO NOT TRANSLATE
 
     # Playlists
     "playlist-selection-changed-notification" :  u"{} changed the playlist selection", # Username

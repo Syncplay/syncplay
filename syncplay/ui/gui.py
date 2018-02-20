@@ -993,7 +993,7 @@ class MainWindow(QtWidgets.QMainWindow):
         MediaDirectoriesDialog = QtWidgets.QDialog()
         MediaDirectoriesDialog.setWindowTitle(getMessage("syncplay-mediasearchdirectories-title")) # TODO: Move to messages_*.py
         MediaDirectoriesLayout = QtWidgets.QGridLayout()
-        MediaDirectoriesLabel = QtWidgets.QLabel(getMessage("syncplay-mediasearchdirectories-title"))
+        MediaDirectoriesLabel = QtWidgets.QLabel(getMessage("syncplay-mediasearchdirectories-label"))
         MediaDirectoriesLayout.addWidget(MediaDirectoriesLabel, 0, 0, 1, 2)
         MediaDirectoriesTextbox = QtWidgets.QPlainTextEdit()
         MediaDirectoriesTextbox.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
