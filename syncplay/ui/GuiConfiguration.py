@@ -1,5 +1,5 @@
 from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, IsPySide, IsPySide2
-from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine
+from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine, QEventLoop, Signal
 from syncplay.vendor.Qt.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
 from syncplay.vendor.Qt.QtGui import QCursor, QIcon, QImage, QDesktopServices
 if IsPySide2:
@@ -25,7 +25,10 @@ class GuiConfiguration:
         if QCoreApplication.instance() is None:
             self.app = QtWidgets.QApplication(sys.argv)
         dialog = ConfigDialog(self.config, self._availablePlayerPaths, self.error, self.defaultConfig)
-        dialog.exec_()
+        configLoop = QEventLoop()
+        dialog.show()
+        dialog.closed.connect(configLoop.quit)
+        configLoop.exec_()
 
     def setAvailablePaths(self, paths):
         self._availablePlayerPaths = paths
@@ -73,6 +76,8 @@ class ConfigDialog(QtWidgets.QDialog):
 
     pressedclosebutton = True
     moreToggling = False
+    
+    closed = Signal()
 
     def automaticUpdatePromptCheck(self):
         if self.automaticupdatesCheckbox.checkState() == Qt.PartiallyChecked:
@@ -421,11 +426,12 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.pressedclosebutton = False
         self.close()
-        return
+        self.closed.emit()
 
     def closeEvent(self, event):
         if self.pressedclosebutton:
             super(ConfigDialog, self).closeEvent(event)
+            self.closed.emit()
             sys.exit()
 
     def keyPressEvent(self, event):
@@ -1189,6 +1195,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.config['resetConfig'] = True
         self.pressedclosebutton = False
         self.close()
+        self.closed.emit()
 
     def showEvent(self, *args, **kwargs):
         self.ensureTabListIsVisible()
