@@ -596,7 +596,6 @@ class ConfigDialog(QtWidgets.QDialog):
         self.defaultroomLabel.setObjectName("room")
         self.defaultroomTextbox.setObjectName("room")
 
-        self.usernameTextbox.setMaxLength(constants.MAX_USERNAME_LENGTH)
         self.defaultroomTextbox.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
 
         self.connectionSettingsLayout = QtWidgets.QGridLayout()
