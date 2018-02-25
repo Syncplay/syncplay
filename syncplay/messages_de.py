@@ -245,6 +245,7 @@ de = {
     "chat-top-option": u"Top", # TODO: Translate
     "chat-middle-option": u"Middle", # TODO: Translate
     "chat-bottom-option": u"Bottom", # TODO: Translate
+    "chatoutputheader-label" : u"Chat message output", # TODO: Translate
     "chatoutputfont-label": u"Chat output font",  # TODO: Translate
     "chatoutputenabled-label": u"Enable chat output in media player (mpv only for now)",  # TODO: Translate
     "chatoutputposition-label": u"Output mode",  # TODO: Translate
@@ -305,7 +306,7 @@ de = {
     "help-menu-label" : u"&Hilfe",
     "userguide-menu-label" : u"&Benutzerhandbuch öffnen",
     "update-menu-label" : u"auf &Aktualisierung prüfen",
-    
+
     #About dialog - TODO: Translate
     "about-menu-label": u"&About Syncplay",
     "about-dialog-title": u"About Syncplay",
