@@ -460,7 +460,7 @@ it = {
     "sharedplaylistenabled-label" : u"Abilita le playlist condivise",
     "removefromplaylist-menu-label" : u"Rimuovi dalla playlist",
     "shuffleremainingplaylist-menu-label" : u"Mescola i file non ancora riprodotti",
-    "shuffleentireplaylist-menuu-label" : u"Mescola l'intera playlist",
+    "shuffleentireplaylist-menu-label" : u"Mescola l'intera playlist",
     "undoplaylist-menu-label" : u"Annulla l'ultima modifica alla playlist",
     "addfilestoplaylist-menu-label" : u"Aggiungi un file alla fine della playlist",
     "addurlstoplaylist-menu-label" : u"Aggiungi un indirizzo alla fine della playlist",

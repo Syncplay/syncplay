@@ -460,7 +460,7 @@ ru = {
     "sharedplaylistenabled-label" : u"Включить общий список воспроизведения",
     "removefromplaylist-menu-label" : u"Удалить",
     "shufflepremaininglaylist-menuu-label" : u"Shuffle remaining playlist", # Was: Перемешать список # TODO: Translate
-    "shuffleentireplaylist-menuu-label" : u"Shuffle entire playlist", # TODO: Translate
+    "shuffleentireplaylist-menu-label" : u"Shuffle entire playlist", # TODO: Translate
     "undoplaylist-menu-label" : u"Отменить последнее действие",
     "addfilestoplaylist-menu-label" : u"Добавить файлы в очередь",
     "addurlstoplaylist-menu-label" : u"Добавить ссылку в очередь",
