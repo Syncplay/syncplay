@@ -10,13 +10,14 @@ script:
 
 before_install:
 - brew update
-- brew install python
+- brew install python@2
 - brew tap cartr/qt4
 - brew tap-pin cartr/qt4
 - brew install pyside
 
 install:
 #- export PATH=/usr/local/bin:$PATH
+- export PATH="/usr/local/opt/python@2/bin:$PATH"
 - export QT_PREFERRED_BINDING="PySide"
 - pip2 install twisted appnope pyobjc py2app
 
