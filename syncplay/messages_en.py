@@ -459,7 +459,7 @@ en = {
     "sharedplaylistenabled-label" : u"Enable shared playlists",
     "removefromplaylist-menu-label" : u"Remove from playlist",
     "shuffleremainingplaylist-menu-label" : u"Shuffle remaining playlist",
-    "shuffleentireplaylist-menuu-label" : u"Shuffle entire playlist",
+    "shuffleentireplaylist-menu-label" : u"Shuffle entire playlist",
     "undoplaylist-menu-label" : u"Undo last change to playlist",
     "addfilestoplaylist-menu-label" : u"Add file(s) to bottom of playlist",
     "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",
