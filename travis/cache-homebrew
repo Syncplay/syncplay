@@ -1,0 +1,6 @@
+#!/bin/sh
+
+mkdir travis-cache
+if [ ! -f homebrew-cache.tar.gz ]; then
+  tar czf travis-cache/homebrew-cache.tar.gz --directory /usr/local/Cellar pkg-config readline sqlite gdbm makedepend openssl python@2
+fi

@@ -10,18 +10,19 @@ script:
 
 before_install:
 - brew update
-- brew install python@2
+- travis/download-homebrew
+- export PATH="/usr/local/opt/python@2/bin:$PATH"
+- travis/download-python
 - brew tap cartr/qt4
 - brew tap-pin cartr/qt4
 - brew install pyside
 
 install:
-#- export PATH=/usr/local/bin:$PATH
-- export PATH="/usr/local/opt/python@2/bin:$PATH"
 - export QT_PREFERRED_BINDING="PySide"
 - pip2 install twisted appnope pyobjc py2app
 
 before_deploy:
+#- travis/cache-homebrew
 - pip2 install dmgbuild
 - mkdir dist_dmg
 - mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
