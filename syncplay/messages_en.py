@@ -437,6 +437,7 @@ en = {
     "server-motd-argument": "path to file from which motd will be fetched",
     "server-chat-argument" : "Should chat be disabled?",
     "server-chat-maxchars-argument" : u"Maximum number of characters in a chat message (default is {})", # Default number of characters
+    "server-maxusernamelength-argument" : u"Maximum number of charactrs in a username (default is {})",
     "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
     "server-messed-up-motd-too-long": u"Message of the Day is too long - maximum of {} chars, {} given.",
 
@@ -458,7 +459,7 @@ en = {
     "sharedplaylistenabled-label" : u"Enable shared playlists",
     "removefromplaylist-menu-label" : u"Remove from playlist",
     "shuffleremainingplaylist-menu-label" : u"Shuffle remaining playlist",
-    "shuffleentireplaylist-menuu-label" : u"Shuffle entire playlist",
+    "shuffleentireplaylist-menu-label" : u"Shuffle entire playlist",
     "undoplaylist-menu-label" : u"Undo last change to playlist",
     "addfilestoplaylist-menu-label" : u"Add file(s) to bottom of playlist",
     "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",

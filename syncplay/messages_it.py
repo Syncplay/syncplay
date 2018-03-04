@@ -438,6 +438,7 @@ it = {
     "server-motd-argument": u"percorso del file da cui verrà letto il messaggio del giorno",
     "server-chat-argument" : u"abilita o disabilita la chat",
     "server-chat-maxchars-argument" : u"Numero massimo di caratteri in un messaggio di chat (default è {})", # Default number of characters
+    "server-maxusernamelength-argument": u"Maximum number of charactrs in a username (default is {})", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders": u"Il messaggio del giorno ha dei caratteri non 'escaped'. Tutti i simboli $ devono essere doppi ($$).",
     "server-messed-up-motd-too-long": u"Il messaggio del giorno è troppo lungo - numero massimo di caratteri è {}, {} trovati.",
 
@@ -459,7 +460,7 @@ it = {
     "sharedplaylistenabled-label" : u"Abilita le playlist condivise",
     "removefromplaylist-menu-label" : u"Rimuovi dalla playlist",
     "shuffleremainingplaylist-menu-label" : u"Mescola i file non ancora riprodotti",
-    "shuffleentireplaylist-menuu-label" : u"Mescola l'intera playlist",
+    "shuffleentireplaylist-menu-label" : u"Mescola l'intera playlist",
     "undoplaylist-menu-label" : u"Annulla l'ultima modifica alla playlist",
     "addfilestoplaylist-menu-label" : u"Aggiungi un file alla fine della playlist",
     "addurlstoplaylist-menu-label" : u"Aggiungi un indirizzo alla fine della playlist",

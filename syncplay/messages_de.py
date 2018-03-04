@@ -433,6 +433,7 @@ de = {
     "server-motd-argument": u"Pfad zur Datei, von der die Nachricht des Tages geladen wird",
     "server-chat-argument" : "Should chat be disabled?", # TODO: Translate
     "server-chat-maxchars-argument": u"Maximum number of characters in a chat message (default is {})",  # TODO: Translate
+    "server-maxusernamelength-argument" : u"Maximum number of charactrs in a username (default is {})", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders": u"Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
     "server-messed-up-motd-too-long": u"Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
 
@@ -454,7 +455,7 @@ de = {
     "sharedplaylistenabled-label" : u"Enable shared playlists",
     "removefromplaylist-menu-label" : u"Remove from playlist",
     "shuffleremainingplaylist-menu-label" : u"Shuffle remaining playlist",
-    "shuffleentireplaylist-menuu-label" : u"Shuffle entire playlist",
+    "shuffleentireplaylist-menu-label" : u"Shuffle entire playlist",
     "undoplaylist-menu-label" : u"Undo last change to playlist",
     "addfilestoplaylist-menu-label" : u"Add file(s) to bottom of playlist",
     "addurlstoplaylist-menu-label" : u"Add URL(s) to bottom of playlist",
