@@ -1,0 +1,5 @@
+#!/bin/sh
+
+if [ ! -f python-cache.tar.gz ]; then
+  tar czf travis-cache/python-cache.tar.gz --directory /usr/local/lib/python2.7 site-packages
+fi
