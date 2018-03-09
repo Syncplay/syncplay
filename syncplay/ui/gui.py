@@ -19,6 +19,7 @@ from twisted.internet import task
 from syncplay.ui.consoleUI import ConsoleUI
 if isMacOS() and IsPySide:
     from Foundation import NSURL
+    from Cocoa import NSString, NSUTF8StringEncoding
 lastCheckedForUpdates = None
 
 class ConsoleInGUI(ConsoleUI):
@@ -1609,7 +1610,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if urls and urls[0].scheme() == 'file':
             url = event.mimeData().urls()[0]
             if isMacOS() and IsPySide:
-                dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
+                macURL = NSString.alloc().initWithString_(unicode(url.toString()))
+                pathString = macURL.stringByAddingPercentEscapesUsingEncoding_(NSUTF8StringEncoding)
+                dropfilepath = os.path.abspath(NSURL.URLWithString_(pathString).filePathURL().path())
             else:
                 dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
             if rewindFile == False:
