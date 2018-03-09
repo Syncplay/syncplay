@@ -223,7 +223,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 for url in urls[::-1]:
                     if isMacOS() and IsPySide:
-                        dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
+                        macURL = NSString.alloc().initWithString_(unicode(url.toString()))
+                        pathString = macURL.stringByAddingPercentEscapesUsingEncoding_(NSUTF8StringEncoding)
+                        dropfilepath = os.path.abspath(NSURL.URLWithString_(pathString).filePathURL().path())
                     else:
                         dropfilepath = os.path.abspath(unicode(url.toLocalFile()))                    
                     if os.path.isfile(dropfilepath):
@@ -328,7 +330,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     indexRow = window.playlist.count()
                 for url in urls[::-1]:
                     if isMacOS() and IsPySide:
-                        dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
+                        macURL = NSString.alloc().initWithString_(unicode(url.toString()))
+                        pathString = macURL.stringByAddingPercentEscapesUsingEncoding_(NSUTF8StringEncoding)
+                        dropfilepath = os.path.abspath(NSURL.URLWithString_(pathString).filePathURL().path())
                     else:
                         dropfilepath = os.path.abspath(unicode(url.toLocalFile())) 
                     if os.path.isfile(dropfilepath):
