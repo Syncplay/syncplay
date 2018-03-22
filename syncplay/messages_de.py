@@ -66,7 +66,7 @@ de = {
     "controller-userlist-userflag" : u"Raumleiter",
     "ready-userlist-userflag" : u"Bereit",
 
-    "update-check-failed-notification" : u"Konnte nicht automatisch prüfen, ob Syncplay {} aktuell ist. Soll http://syncplay.pl/ geöffnet werden, um manuell nach Updates zu suchen?", #Syncplay version
+    "update-check-failed-notification" : u"Konnte nicht automatisch prüfen, ob Syncplay {} aktuell ist. Soll https://syncplay.pl/ geöffnet werden, um manuell nach Updates zu suchen?", #Syncplay version
     "syncplay-uptodate-notification" : u"Syncplay ist aktuell",
     "syncplay-updateavailable-notification" : u"Eine neuere Version von Syncplay ist verfügbar. Soll die Download-Seite geöffnet werden?",
 
@@ -94,9 +94,9 @@ de = {
     "promptforupdate-label" : u"Soll Syncplay regelmäßig nach Updates suchen?",
 
     "vlc-version-mismatch": u"This version of VLC does not support Syncplay. VLC {}+ supports Syncplay but VLC 3 does not. Please use an alternative media player.", # VLC min version # TODO: Translate
-    "vlc-interface-version-mismatch": u"Du nutzt Version {} des VLC-Syncplay Interface-Moduls, Syncplay benötigt aber mindestens Version {}. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du Details zur Installation des syncplay.lua-Skripts.",  # VLC interface version, VLC interface min version
-    "vlc-interface-oldversion-warning": u"Warnung: Es ist eine alte Version des Syncplay Interface-Moduls für VLC im VLC-Verzeichnis installiert. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du Details zur Installation des syncplay.lua-Skripts.",
-    "vlc-interface-not-installed": u"Warnung: Es wurde kein Syncplay Interface-Modul für VLC im VLC-Verzeichnis gefunden. Daher wird, wenn du VLC 2.0 nutzt, die syncplay.lua die mit Syncplay mitgeliefert wurde, verwendet. Dies bedeutet allerdings, dass keine anderen Interface-Skripts und Erweiterungen geladen werden. In der Syncplay-Anleitung unter http://syncplay.pl/guide/ [Englisch] findest du  Details zur Installation des syncplay.lua-Skripts.",
+    "vlc-interface-version-mismatch": u"Du nutzt Version {} des VLC-Syncplay Interface-Moduls, Syncplay benötigt aber mindestens Version {}. In der Syncplay-Anleitung unter https://syncplay.pl/guide/ [Englisch] findest du Details zur Installation des syncplay.lua-Skripts.",  # VLC interface version, VLC interface min version
+    "vlc-interface-oldversion-warning": u"Warnung: Es ist eine alte Version des Syncplay Interface-Moduls für VLC im VLC-Verzeichnis installiert. In der Syncplay-Anleitung unter https://syncplay.pl/guide/ [Englisch] findest du Details zur Installation des syncplay.lua-Skripts.",
+    "vlc-interface-not-installed": u"Warnung: Es wurde kein Syncplay Interface-Modul für VLC im VLC-Verzeichnis gefunden. Daher wird, wenn du VLC 2.0 nutzt, die syncplay.lua die mit Syncplay mitgeliefert wurde, verwendet. Dies bedeutet allerdings, dass keine anderen Interface-Skripts und Erweiterungen geladen werden. In der Syncplay-Anleitung unter https://syncplay.pl/guide/ [Englisch] findest du  Details zur Installation des syncplay.lua-Skripts.",
     "media-player-latency-warning": u"Warnung: Der Mediaplayer brauchte {} Sekunden zum Antworten. Wenn Probleme bei der Synchronisation auftreten, schließe bitte andere Anwendungen, um Ressourcen freizugeben. Sollte das nicht funktionieren, versuche es mit einem anderen Media-Player.", # Seconds to respond
     "mpv-unresponsive-error": u"MPV hat für {} Sekunden nicht geantwortet und scheint abgestürzt zu sein. Bitte starte Syncplay neu.", # Seconds to respond
 
@@ -130,8 +130,8 @@ de = {
     "not-json-error" : u"Kein JSON-String\n",
     "hello-arguments-error" : u"Zu wenige Hello-Argumente\n",
     "version-mismatch-error" : u"Verschiedene Versionen auf Client und Server\n",
-    "vlc-failed-connection": u"Kann nicht zu VLC verbinden. Wenn du syncplay.lua nicht installiert hast, findest du auf http://syncplay.pl/LUA/ [Englisch] eine Anleitung.",
-    "vlc-failed-noscript": u"Laut VLC ist das syncplay.lua Interface-Skript nicht installiert. Auf http://syncplay.pl/LUA/ [Englisch] findest du eine Anleitung.",
+    "vlc-failed-connection": u"Kann nicht zu VLC verbinden. Wenn du syncplay.lua nicht installiert hast, findest du auf https://syncplay.pl/LUA/ [Englisch] eine Anleitung.",
+    "vlc-failed-noscript": u"Laut VLC ist das syncplay.lua Interface-Skript nicht installiert. Auf https://syncplay.pl/LUA/ [Englisch] findest du eine Anleitung.",
     "vlc-failed-versioncheck": u"Diese VLC-Version wird von Syncplay nicht unterstützt. Bitte nutze VLC 2.0",
     "vlc-failed-other" : u"Beim Laden des syncplay.lua Interface-Skripts durch VLC trat folgender Fehler auf: {}",  # Syncplay Error
 
@@ -262,7 +262,7 @@ de = {
     "run-label" : u"Syncplay starten",
     "storeandrun-label" : u"Konfiguration speichern und Syncplay starten",
 
-    "contact-label" : u"Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"http://syncplay.pl/\">http://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates.  OTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.", # TODO: Translate  last sentence
+    "contact-label" : u"Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"https://syncplay.pl/\">https://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates.  OTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.", # TODO: Translate  last sentence
 
     "joinroom-label" : u"Raum beitreten",
     "joinroom-menu-label" : u"Raum beitreten {}", #TODO: Might want to fix this
@@ -316,7 +316,7 @@ de = {
     "about-dialog-dependencies": u"Dependencies",
 
     "setoffset-msgbox-label" : u"Offset einstellen",
-    "offsetinfo-msgbox-label" : u"Offset (siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
+    "offsetinfo-msgbox-label" : u"Offset (siehe https://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
     "promptforstreamurl-msgbox-label" : u"Stream URL öffnen",
     "promptforstreamurlinfo-msgbox-label" : u"Stream URL",
@@ -328,10 +328,10 @@ de = {
     "trusteddomains-msgbox-label" : u"Domains it is okay to automatically switch to (one per line)", # TODO: Translate
 
     "createcontrolledroom-msgbox-label" : u"Zentral gesteuerten Raum erstellen",
-    "controlledroominfo-msgbox-label" : u"Namen des zentral gesteuerten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
+    "controlledroominfo-msgbox-label" : u"Namen des zentral gesteuerten Raums eingeben\r\n(siehe https://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
     "identifyascontroller-msgbox-label" : u"Als Raumleiter identifizieren",
-    "identifyinfo-msgbox-label" : u"Passwort des zentral gesteuerten Raums eingeben\r\n(siehe http://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
+    "identifyinfo-msgbox-label" : u"Passwort des zentral gesteuerten Raums eingeben\r\n(siehe https://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
     "public-server-msgbox-label" : u"Einen öffentlichen Server für diese Sitzung auswählen",
 
@@ -414,7 +414,7 @@ de = {
     "nofile-note" : u"(keine Datei wird abgespielt)",
 
     # Server messages to client
-    "new-syncplay-available-motd-message" : u"<NOTICE> Du nutzt Syncplay Version {}, aber es gibt eine neuere Version auf http://syncplay.pl</NOTICE>",  # ClientVersion
+    "new-syncplay-available-motd-message" : u"<NOTICE> Du nutzt Syncplay Version {}, aber es gibt eine neuere Version auf https://syncplay.pl</NOTICE>",  # ClientVersion
 
     # Server notifications
     "welcome-server-notification" : u"Willkommen zum Syncplay-Server, v. {0}",  # version
