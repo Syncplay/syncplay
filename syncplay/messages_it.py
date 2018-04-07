@@ -50,7 +50,7 @@ it = {
 
     "file-different-notification" : u"Il file che stai riproducendo sembra essere diverso da quello di {}",  # User
     "file-differences-notification" : u"Il tuo file mostra le seguenti differenze: {}", # Differences
-    "room-file-differences" : u"Differenze: {} \n", # File differences (filename, size, and/or duration)
+    "room-file-differences" : u"Differenze: {}", # File differences (filename, size, and/or duration)
     "file-difference-filename" : u"nome",
     "file-difference-filesize" : u"dimensione",
     "file-difference-duration" : u"durata",
