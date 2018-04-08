@@ -303,7 +303,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 else:
                     self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
         except:
-            self.lastCheckedForUpdates = None
+            self.config["lastCheckedForUpdates"] = None
 
     def loadSavedPublicServerList(self):
         settings = QSettings("Syncplay", "Interface")
