@@ -14,7 +14,7 @@ cmdlist = {}
 
 APP = ['syncplayClient.py']
 DATA_FILES = [
-    ('resources', glob('resources/*.png') + glob('resources/*.rtf')),
+    ('resources', glob('resources/*.png') + glob('resources/*.rtf') + glob('resources/*.lua')),
 ]
 OPTIONS = {
 	'iconfile':'resources/icon.icns',
