@@ -32,6 +32,7 @@ before_deploy:
 - dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS.dmg
 
 deploy:
+  skip_cleanup: true
   on: master_local
   provider: bintray
   file: "bintray.json"

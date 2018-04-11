@@ -132,7 +132,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.setFixedWidth(self.minimumSizeHint().width())
 
     def openHelp(self):
-        self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/client/"))
+        self.QtGui.QDesktopServices.openUrl(QUrl("https://syncplay.pl/guide/client/"))
 
     def safenormcaseandpath(self, path):
         if utils.isURL(path):
@@ -303,7 +303,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 else:
                     self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
         except:
-            self.lastCheckedForUpdates = None
+            self.config["lastCheckedForUpdates"] = None
 
     def loadSavedPublicServerList(self):
         settings = QSettings("Syncplay", "Interface")

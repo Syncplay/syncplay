@@ -1929,6 +1929,10 @@ class FileSwitchManager(object):
             return False
 
     def notifyUserIfFileNotInMediaDirectory(self, filenameToFind, path):
+        try:
+            path = path.decode('utf-8')
+        except UnicodeEncodeError:
+            pass
         directoryToFind = os.path.dirname(path)
         if directoryToFind in self.mediaDirectoriesNotFound:
             return

@@ -66,7 +66,7 @@ ru = {
     "controller-userlist-userflag" : u"Оператор",
     "ready-userlist-userflag" : u"Готов",
 
-    "update-check-failed-notification" : u"Невозможно автоматически проверить, что версия Syncplay {} все еще актуальна. Хотите зайти на http://syncplay.pl/ и вручную проверить наличие обновлений?",
+    "update-check-failed-notification" : u"Невозможно автоматически проверить, что версия Syncplay {} все еще актуальна. Хотите зайти на https://syncplay.pl/ и вручную проверить наличие обновлений?",
     "syncplay-uptodate-notification" : u"У вас последняя версия Syncplay",
     "syncplay-updateavailable-notification" : u"Доступна новая версия Syncplay. Хотите открыть страницу релиза?",
 
@@ -94,9 +94,9 @@ ru = {
     "promptforupdate-label" : u"Вы не против, если Syncplay будет автоматически изредка проверять наличие обновлений?",
 
     "vlc-version-mismatch": u"Syncplay не поддерживает данную версию VLC. Syncplay поддерживает VLC {}+, но не VLC 3. Используйте другой проигрыватель.", # VLC min version
-    "vlc-interface-version-mismatch" : u"Вы используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",  # VLC interface version, VLC interface min version
-    "vlc-interface-oldversion-warning" : u"Внимание: Syncplay обнаружил, что старая версия модуля интерфейса Syncplay для VLC уже установлена в директорию VLC. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
-    "vlc-interface-not-installed" : u"Внимание: Модуль интерфейса Syncplay для VLC не обнаружен в директории VLC. По существу, если Вы используете VLC 2.0, то VLC будет использовать модуль syncplay.lua из директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (http://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
+    "vlc-interface-version-mismatch" : u"Вы используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (https://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",  # VLC interface version, VLC interface min version
+    "vlc-interface-oldversion-warning" : u"Внимание: Syncplay обнаружил, что старая версия модуля интерфейса Syncplay для VLC уже установлена в директорию VLC. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (https://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
+    "vlc-interface-not-installed" : u"Внимание: Модуль интерфейса Syncplay для VLC не обнаружен в директории VLC. По существу, если Вы используете VLC 2.0, то VLC будет использовать модуль syncplay.lua из директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (https://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
     "media-player-latency-warning": u"Внимание: У Вашего проигрывателя слишком большой отклик ({} секунд). Если Вы замечаете проблемы с синхронизацией, то закройте ресурсоемкие приложения. Если это не помогло - попробуйте другой проигрыватель.", # Seconds to respond
     "mpv-unresponsive-error": u"mpv не отвечает {} секунд, по-видимому, произошел сбой. Пожалуйста, перезапустите Syncplay.", # Seconds to respond
 
@@ -130,8 +130,8 @@ ru = {
     "not-json-error" : u"Не является закодированной json-строкой\n",
     "hello-arguments-error" : u"Не хватает аргументов Hello\n",
     "version-mismatch-error" : u"Конфликт версий между клиентом и сервером\n",
-    "vlc-failed-connection" : u"Ошибка подключения к VLC. Если у Вас не установлен syncplay.lua, то обратитесь к http://syncplay.pl/LUA/ за инструкциями.",
-    "vlc-failed-noscript" : u"VLC сообщает, что скрипт интерфейса syncplay.lua не установлен. Пожалуйста, обратитесь к http://syncplay.pl/LUA/ за инструкциями.",
+    "vlc-failed-connection" : u"Ошибка подключения к VLC. Если у Вас не установлен syncplay.lua, то обратитесь к https://syncplay.pl/LUA/ за инструкциями.",
+    "vlc-failed-noscript" : u"VLC сообщает, что скрипт интерфейса syncplay.lua не установлен. Пожалуйста, обратитесь к https://syncplay.pl/LUA/ за инструкциями.",
     "vlc-failed-versioncheck" : u"Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
     "vlc-failed-other" : u"Во время загрузки скрипта интерфейса syncplay.lua в VLC произошла следующая ошибка: {}",  # Syncplay Error
 
@@ -271,7 +271,7 @@ ru = {
     "run-label" : u"Запустить",
     "storeandrun-label" : u"Сохранить и запустить",
 
-    "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"http://syncplay.pl/\">www.syncplay.pl</a> за инорфмацией, помощью и обновлениями! NOTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.", # TODO: Translate last sentence
+    "contact-label" : u"Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"https://syncplay.pl/\">www.syncplay.pl</a> за инорфмацией, помощью и обновлениями! NOTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.", # TODO: Translate last sentence
 
     "joinroom-label" : u"Зайти в комнату",
     "joinroom-menu-label" : u"Зайти в комнату {}",
@@ -420,7 +420,7 @@ ru = {
     "nofile-note" : u"(ничего)",
 
     # Server messages to client
-    "new-syncplay-available-motd-message" : u"<NOTICE> Вы используете Syncplay версии {}. Доступна более новая версия на http://syncplay.pl/ . </NOTICE>",  # ClientVersion
+    "new-syncplay-available-motd-message" : u"<NOTICE> Вы используете Syncplay версии {}. Доступна более новая версия на https://syncplay.pl/ . </NOTICE>",  # ClientVersion
 
     # Server notifications
     "welcome-server-notification" : u"Добро пожаловать на сервер Syncplay версии {0}",  # version

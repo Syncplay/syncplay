@@ -439,7 +439,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
       CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
       CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay Server.lnk" "$$INSTDIR\syncplayServer.exe" ""
       CreateShortCut "$$SMPROGRAMS\Syncplay\Uninstall.lnk" "$$INSTDIR\Uninstall.exe" ""
-      WriteINIStr "$$SMPROGRAMS\Syncplay\SyncplayWebsite.url" "InternetShortcut" "URL" "http://syncplay.pl"
+      WriteINIStr "$$SMPROGRAMS\Syncplay\SyncplayWebsite.url" "InternetShortcut" "URL" "https://syncplay.pl"
     $${EndIf}
 
     $${If} $$CheckBox_DesktopShortcut_State == $${BST_CHECKED}
@@ -496,7 +496,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "DisplayIcon" "$$INSTDIR\resources\icon.ico"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "Publisher" "Syncplay"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "DisplayVersion" "$version"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "URLInfoAbout" "http://syncplay.pl/"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "URLInfoAbout" "https://syncplay.pl/"
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "NoModify" 1
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "NoRepair" 1
     WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syncplay" "EstimatedSize" "$$SizeHex"
@@ -722,7 +722,7 @@ info = dict(
                          'dist_dir': OUT_DIR,
                          'packages': 'PySide.QtUiTools',
                          'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide, liburl, ast, unicodedata',
-                         'excludes': 'venv, _ssl, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
+                         'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
                          'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
                          'optimize': 2,
                          'compressed': 1

@@ -66,7 +66,7 @@ en = {
     "controller-userlist-userflag" : "Operator",
     "ready-userlist-userflag" : "Ready",
 
-    "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit http://syncplay.pl/ to manually check for updates?", #Syncplay version
+    "update-check-failed-notification" : u"Could not automatically check whether Syncplay {} is up to date. Want to visit https://syncplay.pl/ to manually check for updates?", #Syncplay version
     "syncplay-uptodate-notification" : u"Syncplay is up to date",
     "syncplay-updateavailable-notification" : u"A new version of Syncplay is available. Do you want to visit the release page?",
 
@@ -93,9 +93,9 @@ en = {
     "language-changed-msgbox-label" : "Language will be changed when you run Syncplay.",
     "promptforupdate-label" : u"Is it okay for Syncplay to automatically check for updates from time to time?",
 
-    "vlc-interface-version-mismatch": "You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above.  Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",  # VLC interface version, VLC interface min version
-    "vlc-interface-oldversion-warning": "Warning: Syncplay detected that an old version version of the Syncplay interface module for VLC was installed in the VLC directory. Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
-    "vlc-interface-not-installed": "Warning: The Syncplay interface module for VLC was not found in the VLC directory. As such, if you are running VLC 2.0 then VLC will use the syncplay.lua module contained within the Syncplay directory, but this will mean that other custom interface scripts and extensions will not work. Please refer to the Syncplay User Guide at http://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
+    "vlc-interface-version-mismatch": "You are running version {} of the Syncplay interface module for VLC, but Syncplay is designed to run with version {} and above.  Please refer to the Syncplay User Guide at https://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",  # VLC interface version, VLC interface min version
+    "vlc-interface-oldversion-warning": "Warning: Syncplay detected that an old version version of the Syncplay interface module for VLC was installed in the VLC directory. Please refer to the Syncplay User Guide at https://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
+    "vlc-interface-not-installed": "Warning: The Syncplay interface module for VLC was not found in the VLC directory. As such, if you are running VLC 2.0 then VLC will use the syncplay.lua module contained within the Syncplay directory, but this will mean that other custom interface scripts and extensions will not work. Please refer to the Syncplay User Guide at https://syncplay.pl/guide/ for instructions on how to install syncplay.lua.",
     "media-player-latency-warning": u"Warning: The media player took {} seconds to respond. If you experience syncing issues then close applications to free up system resources, and if that doesn't work then try a different media player.", # Seconds to respond
     "mpv-unresponsive-error": u"mpv has not responded for {} seconds so appears to have malfunctioned. Please restart Syncplay.", # Seconds to respond
 
@@ -129,8 +129,8 @@ en = {
     "not-json-error" : "Not a json encoded string\n",
     "hello-arguments-error" : "Not enough Hello arguments\n", # DO NOT TRANSLATE
     "version-mismatch-error" : "Mismatch between versions of client and server\n",
-    "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua and are using the latest verion of VLC then please refer to http://syncplay.pl/LUA/ for instructions.",
-    "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to http://syncplay.pl/LUA/ for instructions.",
+    "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua and are using the latest verion of VLC then please refer to https://syncplay.pl/LUA/ for instructions.",
+    "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to https://syncplay.pl/LUA/ for instructions.",
     "vlc-failed-versioncheck": "This version of VLC is not supported by Syncplay.",
 
     "feature-sharedPlaylists" : u"shared playlists", # used for not-supported-by-server-error
@@ -267,7 +267,7 @@ en = {
     "run-label" : "Run Syncplay",
     "storeandrun-label" : "Store configuration and run Syncplay",
 
-    "contact-label" : "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>raise an issue</nobr></a> via GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>like us on Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>follow us on Twitter</nobr></a>, or visit <a href=\"http://syncplay.pl/\"><nobr>http://syncplay.pl/</nobr></a>. NOTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.",
+    "contact-label" : "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>raise an issue</nobr></a> via GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>like us on Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>follow us on Twitter</nobr></a>, or visit <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. NOTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.",
 
     "joinroom-label" : "Join room",
     "joinroom-menu-label" : u"Join room {}",
@@ -321,7 +321,7 @@ en = {
     "about-dialog-dependencies": u"Dependencies",
 
     "setoffset-msgbox-label" : "Set offset",
-    "offsetinfo-msgbox-label" : "Offset (see http://syncplay.pl/guide/ for usage instructions):",
+    "offsetinfo-msgbox-label" : "Offset (see https://syncplay.pl/guide/ for usage instructions):",
 
     "promptforstreamurl-msgbox-label" : "Open media stream URL",
     "promptforstreamurlinfo-msgbox-label" : "Stream URL",
@@ -333,10 +333,10 @@ en = {
     "trusteddomains-msgbox-label" : u"Domains it is okay to automatically switch to (one per line)",
 
     "createcontrolledroom-msgbox-label" : "Create managed room",
-    "controlledroominfo-msgbox-label" : "Enter name of managed room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
+    "controlledroominfo-msgbox-label" : "Enter name of managed room\r\n(see https://syncplay.pl/guide/ for usage instructions):",
 
     "identifyascontroller-msgbox-label" : "Identify as room operator",
-    "identifyinfo-msgbox-label" : "Enter operator password for this room\r\n(see http://syncplay.pl/guide/ for usage instructions):",
+    "identifyinfo-msgbox-label" : "Enter operator password for this room\r\n(see https://syncplay.pl/guide/ for usage instructions):",
 
     "public-server-msgbox-label" : u"Select the public server for this viewing session",
 
@@ -417,7 +417,7 @@ en = {
     "nofile-note" : "(No file being played)",
 
     # Server messages to client
-    "new-syncplay-available-motd-message" : "<NOTICE> You are using Syncplay {} but a newer version is available from http://syncplay.pl </NOTICE>",  # ClientVersion
+    "new-syncplay-available-motd-message" : "<NOTICE> You are using Syncplay {} but a newer version is available from https://syncplay.pl </NOTICE>",  # ClientVersion
 
     # Server notifications
     "welcome-server-notification" : "Welcome to Syncplay server, ver. {0}",  # version

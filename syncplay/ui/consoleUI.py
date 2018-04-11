@@ -91,6 +91,10 @@ class ConsoleUI(threading.Thread):
 
     def showMessage(self, message, noTimestamp=False):
         message = message.encode(sys.stdout.encoding, 'replace')
+        try:
+            message = message.decode('utf-8')
+        except UnicodeEncodeError:
+            pass
         if noTimestamp:
             print(message)
         else:

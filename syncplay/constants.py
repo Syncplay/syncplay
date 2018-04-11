@@ -10,7 +10,7 @@ UI_TIME_FORMAT = "[%X] "
 CONFIG_NAMES = [".syncplay", "syncplay.ini"]  #Syncplay searches first to last
 DEFAULT_CONFIG_NAME_WINDOWS = "syncplay.ini"
 DEFAULT_CONFIG_NAME_LINUX = ".syncplay"
-RECENT_CLIENT_THRESHOLD = "1.5.2"  #This and higher considered 'recent' clients (no warnings)
+RECENT_CLIENT_THRESHOLD = "1.5.3"  #This and higher considered 'recent' clients (no warnings)
 WARN_OLD_CLIENTS = True  #Use MOTD to inform old clients to upgrade
 LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
@@ -256,9 +256,9 @@ OSD_CHAT = "chat"
 CHATROOM_MODE = "Chatroom"
 SCROLLING_MODE = "Scrolling"
 
-SYNCPLAY_UPDATE_URL = u"http://syncplay.pl/checkforupdate?{}" # Params
-SYNCPLAY_DOWNLOAD_URL = "http://syncplay.pl/download/"
-SYNCPLAY_PUBLIC_SERVER_LIST_URL = u"http://syncplay.pl/listpublicservers?{}" # Params
+SYNCPLAY_UPDATE_URL = u"https://syncplay.pl/checkforupdate?{}" # Params
+SYNCPLAY_DOWNLOAD_URL = "https://syncplay.pl/download/"
+SYNCPLAY_PUBLIC_SERVER_LIST_URL = u"https://syncplay.pl/listpublicservers?{}" # Params
 
 DEFAULT_TRUSTED_DOMAINS = [u"youtube.com",u"youtu.be"]
 TRUSTABLE_WEB_PROTOCOLS = [u"http://www.",u"https://www.",u"http://",u"https://"]
