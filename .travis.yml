@@ -44,6 +44,7 @@ before_deploy:
 - dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS_pyside2.dmg
 
 deploy:
+  skip_cleanup: true
   on: qtpy-pyside2
   provider: bintray
   file: "bintray.json"
