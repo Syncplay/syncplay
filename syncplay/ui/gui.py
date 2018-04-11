@@ -19,6 +19,7 @@ from twisted.internet import task
 from syncplay.ui.consoleUI import ConsoleUI
 if isMacOS() and IsPySide:
     from Foundation import NSURL
+    from Cocoa import NSString, NSUTF8StringEncoding
 lastCheckedForUpdates = None
 
 class ConsoleInGUI(ConsoleUI):
@@ -111,7 +112,7 @@ class AboutDialog(QtWidgets.QDialog):
                 self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
          nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
          nameLabel.setFont(QtGui.QFont("Helvetica", 20))
-         linkLabel = QtWidgets.QLabel("<center><a href=\"http://syncplay.pl\">syncplay.pl</a></center>")
+         linkLabel = QtWidgets.QLabel("<center><a href=\"https://syncplay.pl\">syncplay.pl</a></center>")
          linkLabel.setOpenExternalLinks(True)
          versionLabel = QtWidgets.QLabel("<center>" + getMessage("about-dialog-release").format(version, release_number, __binding__) + "</center>")
          licenseLabel = QtWidgets.QLabel("<center><p>Copyright &copy; 2017 Syncplay</p><p>" + getMessage("about-dialog-license-text") + "</p></center>")
@@ -222,7 +223,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 for url in urls[::-1]:
                     if isMacOS() and IsPySide:
-                        dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
+                        macURL = NSString.alloc().initWithString_(unicode(url.toString()))
+                        pathString = macURL.stringByAddingPercentEscapesUsingEncoding_(NSUTF8StringEncoding)
+                        dropfilepath = os.path.abspath(NSURL.URLWithString_(pathString).filePathURL().path())
                     else:
                         dropfilepath = os.path.abspath(unicode(url.toLocalFile()))                    
                     if os.path.isfile(dropfilepath):
@@ -327,7 +330,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     indexRow = window.playlist.count()
                 for url in urls[::-1]:
                     if isMacOS() and IsPySide:
-                        dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
+                        macURL = NSString.alloc().initWithString_(unicode(url.toString()))
+                        pathString = macURL.stringByAddingPercentEscapesUsingEncoding_(NSUTF8StringEncoding)
+                        dropfilepath = os.path.abspath(NSURL.URLWithString_(pathString).filePathURL().path())
                     else:
                         dropfilepath = os.path.abspath(unicode(url.toLocalFile())) 
                     if os.path.isfile(dropfilepath):
@@ -597,7 +602,7 @@ class MainWindow(QtWidgets.QMainWindow):
             menu.addAction(QtGui.QPixmap(resourcespath + u"delete.png"), getMessage("removefromplaylist-menu-label"), lambda: self.deleteSelectedPlaylistItems())
             menu.addSeparator()
         menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_switch.png"), getMessage("shuffleremainingplaylist-menu-label"), lambda: self.shuffleRemainingPlaylist())
-        menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_switch.png"), getMessage("shuffleentireplaylist-menuu-label"), lambda: self.shuffleEntirePlaylist())
+        menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_switch.png"), getMessage("shuffleentireplaylist-menu-label"), lambda: self.shuffleEntirePlaylist())
         menu.addAction(QtGui.QPixmap(resourcespath + u"arrow_undo.png"), getMessage("undoplaylist-menu-label"), lambda: self.undoPlaylistChange())
         menu.addAction(QtGui.QPixmap(resourcespath + u"film_edit.png"), getMessage("editplaylist-menu-label"), lambda: self.openEditPlaylistDialog())
         menu.addAction(QtGui.QPixmap(resourcespath + u"film_add.png"),getMessage("addfilestoplaylist-menu-label"), lambda: self.OpenAddFilesToPlaylistDialog())
@@ -1120,11 +1125,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def openUserGuide(self):
         if isLinux():
-            self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/linux/"))
+            self.QtGui.QDesktopServices.openUrl(QUrl("https://syncplay.pl/guide/linux/"))
         elif isWindows():
-            self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/windows/"))
+            self.QtGui.QDesktopServices.openUrl(QUrl("https://syncplay.pl/guide/windows/"))
         else:
-            self.QtGui.QDesktopServices.openUrl(QUrl("http://syncplay.pl/guide/"))
+            self.QtGui.QDesktopServices.openUrl(QUrl("https://syncplay.pl/guide/"))
 
     def drop(self):
         self.close()
@@ -1609,7 +1614,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if urls and urls[0].scheme() == 'file':
             url = event.mimeData().urls()[0]
             if isMacOS() and IsPySide:
-                dropfilepath = os.path.abspath(NSURL.URLWithString_(str(url.toString())).filePathURL().path())
+                macURL = NSString.alloc().initWithString_(unicode(url.toString()))
+                pathString = macURL.stringByAddingPercentEscapesUsingEncoding_(NSUTF8StringEncoding)
+                dropfilepath = os.path.abspath(NSURL.URLWithString_(pathString).filePathURL().path())
             else:
                 dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
             if rewindFile == False:

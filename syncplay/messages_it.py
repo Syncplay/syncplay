@@ -50,7 +50,7 @@ it = {
 
     "file-different-notification" : u"Il file che stai riproducendo sembra essere diverso da quello di {}",  # User
     "file-differences-notification" : u"Il tuo file mostra le seguenti differenze: {}", # Differences
-    "room-file-differences" : u"Differenze: {} \n", # File differences (filename, size, and/or duration)
+    "room-file-differences" : u"Differenze: {}", # File differences (filename, size, and/or duration)
     "file-difference-filename" : u"nome",
     "file-difference-filesize" : u"dimensione",
     "file-difference-duration" : u"durata",
@@ -66,7 +66,7 @@ it = {
     "controller-userlist-userflag" : u"Gestore",
     "ready-userlist-userflag" : u"Pronto",
 
-    "update-check-failed-notification" : u"Controllo automatico degli aggiornamenti di Syncplay {} fallito. Vuoi visitare http://syncplay.pl/ per verificare manualmente la presenza di aggiornamenti?", #Syncplay version
+    "update-check-failed-notification" : u"Controllo automatico degli aggiornamenti di Syncplay {} fallito. Vuoi visitare https://syncplay.pl/ per verificare manualmente la presenza di aggiornamenti?", #Syncplay version
     "syncplay-uptodate-notification" : u"Syncplay è aggiornato",
     "syncplay-updateavailable-notification" : u"Una nuova versione di Syncplay è disponibile. Vuoi visitare la pagina delle release?",
 
@@ -93,10 +93,10 @@ it = {
     "language-changed-msgbox-label" : u"La lingua sarà cambiata quando avvierai Syncplay.",
     "promptforupdate-label" : u"Ti piacerebbe che, di tanto in tanto, Syncplay controllasse automaticamente la presenza di aggiornamenti?",
 
-    "vlc-interface-version-mismatch": u"Stai eseguendo la versione {} del modulo di interfaccia per VLC di Syncplay, ma Syncplay è progettato per essere utilizzato con la versione {} o superiore. Per favore, fai riferimento alla User Guide di Syncplay presso http://syncplay.pl/guide/ per istruzioni su come installare syncplay.lua.",  # VLC interface version, VLC interface min version
-    "vlc-interface-oldversion-warning": u"Attenzione: Syncplay ha rilevato una vecchia versione del modulo di interfaccia per VLC di Syncplay installata nella cartella di VLC. Per favore, fai riferimento alla User Guide di Syncplay presso http://syncplay.pl/guide/ per istruzioni su come installare syncplay.lua.",
+    "vlc-interface-version-mismatch": u"Stai eseguendo la versione {} del modulo di interfaccia per VLC di Syncplay, ma Syncplay è progettato per essere utilizzato con la versione {} o superiore. Per favore, fai riferimento alla User Guide di Syncplay presso https://syncplay.pl/guide/ per istruzioni su come installare syncplay.lua.",  # VLC interface version, VLC interface min version
+    "vlc-interface-oldversion-warning": u"Attenzione: Syncplay ha rilevato una vecchia versione del modulo di interfaccia per VLC di Syncplay installata nella cartella di VLC. Per favore, fai riferimento alla User Guide di Syncplay presso https://syncplay.pl/guide/ per istruzioni su come installare syncplay.lua.",
     "media-player-latency-warning": u"Attenzione: il media player ha impiegato {} secondi per rispondere. Se stai avendo problemi di sincronizzazione, chiudi delle applicazioni per liberare le risorse di sistema e, se ciò non dovesse avere alcun effetto, prova un altro media player.", # Seconds to respond
-    "vlc-interface-not-installed": u"Attenzione: il modulo di interfaccia per VLC di Syncplay non è stato trovato nella cartella di VLC. Se stai utilizzando VLC 2.0, VLC userà il modulo syncplay.lua contenuto nella cartella di Syncplay, ma ciò significa che altri custom script di interfaccia ed estensioni non funzioneranno. Per favore, fai riferimento alla User Guide di Syncplay presso http://syncplay.pl/guide/ per istruzioni su come installare syncplay.lua.",
+    "vlc-interface-not-installed": u"Attenzione: il modulo di interfaccia per VLC di Syncplay non è stato trovato nella cartella di VLC. Se stai utilizzando VLC 2.0, VLC userà il modulo syncplay.lua contenuto nella cartella di Syncplay, ma ciò significa che altri custom script di interfaccia ed estensioni non funzioneranno. Per favore, fai riferimento alla User Guide di Syncplay presso https://syncplay.pl/guide/ per istruzioni su come installare syncplay.lua.",
     "mpv-unresponsive-error": u"mpv non ha risposto per {} secondi, quindi sembra non funzionare correttamente. Per favore, riavvia Syncplay.", # Seconds to respond
 
     # Client prompts
@@ -129,8 +129,8 @@ it = {
     "not-json-error" : u"Non è una stringa con codifica JSON\n",
     "hello-arguments-error" : "Not enough Hello arguments\n", # DO NOT TRANSLATE
     "version-mismatch-error" : u"La versione del client è diversa da quella del server\n",
-    "vlc-failed-connection": u"Impossibile collegarsi a VLC. Se non hai installato syncplay.lua e stai usando l'ultima versione di VLC, fai riferimento a http://syncplay.pl/LUA/ per istruzioni.",
-    "vlc-failed-noscript": u"VLC ha segnalato che lo script di interfaccia syncplay.lua non è stato installato. Per favore, fai riferimento a http://syncplay.pl/LUA/ per istruzioni.",
+    "vlc-failed-connection": u"Impossibile collegarsi a VLC. Se non hai installato syncplay.lua e stai usando l'ultima versione di VLC, fai riferimento a https://syncplay.pl/LUA/ per istruzioni.",
+    "vlc-failed-noscript": u"VLC ha segnalato che lo script di interfaccia syncplay.lua non è stato installato. Per favore, fai riferimento a https://syncplay.pl/LUA/ per istruzioni.",
     "vlc-failed-versioncheck": u"Questa versione di VLC non è supportata da Syncplay.",
 
     "feature-sharedPlaylists" : u"playlist condivise", # used for not-supported-by-server-error
@@ -268,7 +268,7 @@ it = {
     "run-label" : u"Avvia Syncplay",
     "storeandrun-label" : u"Salva la configurazione e avvia Syncplay",
 
-    "contact-label" : u"Sentiti libero di inviare un'e-mail a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chattare tramite il <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canale IRC #Syncplay</nobr></a> su irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>segnalare un problema</nobr></a> su GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>lasciare un like sulla nostra pagina Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>seguirci su Twitter</nobr></a>, o visitare <a href=\"http://syncplay.pl/\"><nobr>http://syncplay.pl/</nobr></a>. NOTA: i messaggi di chat non sono cifrati, quindi non usare Syncplay per inviare dati sensibili.",
+    "contact-label" : u"Sentiti libero di inviare un'e-mail a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chattare tramite il <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canale IRC #Syncplay</nobr></a> su irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>segnalare un problema</nobr></a> su GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>lasciare un like sulla nostra pagina Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>seguirci su Twitter</nobr></a>, o visitare <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. NOTA: i messaggi di chat non sono cifrati, quindi non usare Syncplay per inviare dati sensibili.",
 
     "joinroom-label" : u"Entra nella stanza",
     "joinroom-menu-label" : u"Entra nella stanza {}",
@@ -322,7 +322,7 @@ it = {
     "about-dialog-dependencies": u"Dipendenze",
 
     "setoffset-msgbox-label" : u"Imposta offset",
-    "offsetinfo-msgbox-label" : u"Offset (vedi http://syncplay.pl/guide/ per istruzioni):",
+    "offsetinfo-msgbox-label" : u"Offset (vedi https://syncplay.pl/guide/ per istruzioni):",
 
     "promptforstreamurl-msgbox-label" : u"Apri URL",
     "promptforstreamurlinfo-msgbox-label" : u"Indirizzo di rete",
@@ -334,10 +334,10 @@ it = {
     "trusteddomains-msgbox-label" : u"Domini a cui è lecito passare automaticamente (uno per riga)",
 
     "createcontrolledroom-msgbox-label" : u"Crea stanza gestita",
-    "controlledroominfo-msgbox-label" : u"Inserisci il nome della stanza gestita\r\n(vedi http://syncplay.pl/guide/ per istruzioni):",
+    "controlledroominfo-msgbox-label" : u"Inserisci il nome della stanza gestita\r\n(vedi https://syncplay.pl/guide/ per istruzioni):",
 
     "identifyascontroller-msgbox-label" : u"Identificati come operatore della stanza",
-    "identifyinfo-msgbox-label" : u"Inserisci la password dell'operatore per questa stanza\r\n(vedi http://syncplay.pl/guide/ per istruzioni):",
+    "identifyinfo-msgbox-label" : u"Inserisci la password dell'operatore per questa stanza\r\n(vedi https://syncplay.pl/guide/ per istruzioni):",
 
     "public-server-msgbox-label" : u"Seleziona il server pubblico per questa sessione",
 
@@ -418,7 +418,7 @@ it = {
     "nofile-note" : u"(Nessun file in riproduzione)",
 
     # Server messages to client
-    "new-syncplay-available-motd-message" : u"<NOTICE> Stai usando Syncplay {} ma una nuova versione è disponibile presso http://syncplay.pl </NOTICE>",  # ClientVersion
+    "new-syncplay-available-motd-message" : u"<NOTICE> Stai usando Syncplay {} ma una nuova versione è disponibile presso https://syncplay.pl </NOTICE>",  # ClientVersion
 
     # Server notifications
     "welcome-server-notification" : u"Benvenuto nel server Syncplay, ver. {0}",  # version
@@ -438,6 +438,7 @@ it = {
     "server-motd-argument": u"percorso del file da cui verrà letto il messaggio del giorno",
     "server-chat-argument" : u"abilita o disabilita la chat",
     "server-chat-maxchars-argument" : u"Numero massimo di caratteri in un messaggio di chat (default è {})", # Default number of characters
+    "server-maxusernamelength-argument": u"Maximum number of charactrs in a username (default is {})", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders": u"Il messaggio del giorno ha dei caratteri non 'escaped'. Tutti i simboli $ devono essere doppi ($$).",
     "server-messed-up-motd-too-long": u"Il messaggio del giorno è troppo lungo - numero massimo di caratteri è {}, {} trovati.",
 
@@ -459,7 +460,7 @@ it = {
     "sharedplaylistenabled-label" : u"Abilita le playlist condivise",
     "removefromplaylist-menu-label" : u"Rimuovi dalla playlist",
     "shuffleremainingplaylist-menu-label" : u"Mescola i file non ancora riprodotti",
-    "shuffleentireplaylist-menuu-label" : u"Mescola l'intera playlist",
+    "shuffleentireplaylist-menu-label" : u"Mescola l'intera playlist",
     "undoplaylist-menu-label" : u"Annulla l'ultima modifica alla playlist",
     "addfilestoplaylist-menu-label" : u"Aggiungi un file alla fine della playlist",
     "addurlstoplaylist-menu-label" : u"Aggiungi un indirizzo alla fine della playlist",

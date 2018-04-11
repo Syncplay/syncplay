@@ -3,10 +3,10 @@
 Solution to synchronize video playback across multiple instances of mpv, VLC, MPC-HC, MPC-BE and mplayer2 over the Internet.
 
 ## Official website
-http://syncplay.pl
+https://syncplay.pl
 
 ## Download
-http://syncplay.pl/download/
+https://syncplay.pl/download/
 
 ## What does it do
 
