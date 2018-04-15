@@ -21,7 +21,7 @@ before_install:
 - ln -s /usr/local/lib/python2.7/site-packages/PySide2/libpyside2-python2.7v.2.0.dylib /usr/local/lib/
 - ln -s /usr/local/lib/python2.7/site-packages/PySide2/libpyside2-python2.7v.dylib /usr/local/lib/
 #- python -c "from PySide2 import QtCore"
-- python -c "from PySide2 import __build_commit_hash__; print __build_commit_hash__" 
+- python -c "from PySide2.QtCore import __version__; print __version__" 
 - hg clone https://alby128@bitbucket.org/alby128/py2app
 - cd py2app
 - python setup.py install
