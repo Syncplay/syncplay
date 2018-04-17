@@ -13,7 +13,8 @@ before_install:
 - brew install ./qt5.rb
 - which python
 - which pip
-- pip install http://syncplay.s3.amazonaws.com/PySide2-5.6-cp27-cp27m-macosx_10_11_x86_64.whl
+- curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.6.0a1-5.6.1-cp27-cp27m-macosx_10_11_x86_64.whl -o PySide2-5.6.0a1-5.6.1-cp27-cp27m-macosx_10_11_x86_64.whl
+- pip install PySide2-5.6.0a1-5.6.1-cp27-cp27m-macosx_10_11_x86_64.whl
 - ln -s /usr/local/lib/python2.7/site-packages/PySide2/libshiboken2-python2.7v.2.0.0.dylib /usr/local/lib/
 - ln -s /usr/local/lib/python2.7/site-packages/PySide2/libshiboken2-python2.7v.2.0.dylib /usr/local/lib/
 - ln -s /usr/local/lib/python2.7/site-packages/PySide2/libshiboken2-python2.7v.dylib /usr/local/lib/
