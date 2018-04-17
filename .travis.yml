@@ -9,14 +9,15 @@ script:
 - python buildPy2app.py py2app
 
 before_install:
-- curl -O https://raw.githubusercontent.com/Homebrew/homebrew-core/fdfc724dd532345f5c6cdf47dc43e99654e6a5fd/Formula/qt5.rb
-- brew install ./qt5.rb
+- brew update
+- curl -O http://syncplay.s3.amazonaws.com/qt.rb
+- brew install ./qt.rb
 - which python
 - which pip
-- curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.6.0a1-5.6.1-cp27-cp27m-macosx_10_11_x86_64.whl -o PySide2-5.6.0a1-5.6.1-cp27-cp27m-macosx_10_11_x86_64.whl
-- pip install PySide2-5.6.0a1-5.6.1-cp27-cp27m-macosx_10_11_x86_64.whl
-- ln -s /usr/local/lib/python2.7/site-packages/PySide2/libshiboken2-python2.7v.5.6.dylib /usr/local/lib/
-- ln -s /usr/local/lib/python2.7/site-packages/PySide2/libpyside2-python2.7v.5.6.dylib /usr/local/lib/
+- curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.9.0a1-5.9.3-cp27-cp27m-macosx_10_11_x86_64.whl -o PySide2-5.9.0a1-5.9.3-cp27-cp27m-macosx_10_11_x86_64.whl
+- pip install PySide2-5.9.0a1-5.9.3-cp27-cp27m-macosx_10_11_x86_64.whl
+- ln -s /usr/local/lib/python2.7/site-packages/PySide2/libshiboken2-python2.7v.5.9.dylib /usr/local/lib/
+- ln -s /usr/local/lib/python2.7/site-packages/PySide2/libpyside2-python2.7v.5.9.dylib /usr/local/lib/
 #- python -c "from PySide2 import QtCore"
 - python -c "from PySide2.QtCore import __version__; print __version__" 
 - hg clone https://alby128@bitbucket.org/alby128/py2app
