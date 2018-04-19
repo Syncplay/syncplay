@@ -10,12 +10,13 @@ script:
 
 before_install:
 - brew update
-- curl -O http://syncplay.s3.amazonaws.com/qt.rb
+- curl -O http://syncplay.s3.amazonaws.com/qt595.rb
+- mv qt595.rb qt.rb
 - brew install ./qt.rb
 - which python
 - which pip
-- curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.9.0a1-5.9.3-cp27-cp27m-macosx_10_11_x86_64.whl -o PySide2-5.9.0a1-5.9.3-cp27-cp27m-macosx_10_11_x86_64.whl
-- pip install PySide2-5.9.0a1-5.9.3-cp27-cp27m-macosx_10_11_x86_64.whl
+- curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.9.0a1-5.9.5-cp27-cp27m-macosx_10_11_x86_64.whl -o PySide2-5.9.0a1-5.9.5-cp27-cp27m-macosx_10_11_x86_64.whl
+- pip install PySide2-5.9.0a1-5.9.5-cp27-cp27m-macosx_10_11_x86_64.whl
 - ln -s /usr/local/lib/python2.7/site-packages/PySide2/libshiboken2-python2.7v.5.9.dylib /usr/local/lib/
 - ln -s /usr/local/lib/python2.7/site-packages/PySide2/libpyside2-python2.7v.5.9.dylib /usr/local/lib/
 #- python -c "from PySide2 import QtCore"
