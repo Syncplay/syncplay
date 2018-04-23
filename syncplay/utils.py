@@ -9,7 +9,7 @@ import itertools
 import hashlib
 import random
 import string
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import ast
 import unicodedata
 import platform
@@ -57,7 +57,7 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
                     #try_one_last_time = False
                     return f(*args, **kwargs)
                     break
-                except ExceptionToCheck, e:
+                except ExceptionToCheck as e:
                     if logger:
                         msg = getMessage("retrying-notification").format(str(e), mdelay)
                         logger.warning(msg)
@@ -77,7 +77,7 @@ def parseTime(timeStr):
         return
     parts = parts.groupdict()
     time_params = {}
-    for (name, param) in parts.iteritems():
+    for (name, param) in parts.items():
         if param:
             if name == "miliseconds":
                 time_params["microseconds"] = int(param) * 1000
@@ -152,12 +152,12 @@ def findWorkingDir():
 def getResourcesPath():
 
     if isWindows():
-        return findWorkingDir() + u"\\resources\\"
+        return findWorkingDir() + "\\resources\\"
     else:
-        return findWorkingDir() + u"/resources/"
+        return findWorkingDir() + "/resources/"
 
 resourcespath = getResourcesPath()
-posixresourcespath = findWorkingDir().replace(u"\\","/") + u"/resources/"
+posixresourcespath = findWorkingDir().replace("\\","/") + "/resources/"
 
 def getDefaultMonospaceFont():
     if platform.system() == "Windows":
@@ -168,7 +168,7 @@ def getDefaultMonospaceFont():
         return constants.FALLBACK_MONOSPACE_FONT
 
 def limitedPowerset(s, minLength):
-    return itertools.chain.from_iterable(itertools.combinations(s, r) for r in xrange(len(s), minLength, -1))
+    return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s), minLength, -1))
 
 def blackholeStdoutForFrozenWindow():
     if getattr(sys, 'frozen', '') == "windows_exe":
@@ -178,7 +178,7 @@ def blackholeStdoutForFrozenWindow():
             _error = None
             def write(self, text, fname='.syncplay.log'):
                 if self._file is None and self._error is None:
-                    if os.name <> 'nt':
+                    if os.name != 'nt':
                         path = os.path.join(os.getenv('HOME', '.'), fname)
                     else:
                         path = os.path.join(os.getenv('APPDATA', '.'), fname)
@@ -208,7 +208,7 @@ def truncateText(unicodeText, maxLength):
     except:
         pass
     try:
-        return(unicode(unicodeText.encode("utf-8"), "utf-8", errors="ignore")[:maxLength])
+        return(str(unicodeText.encode("utf-8"), "utf-8", errors="ignore")[:maxLength])
     except:
         pass
     return ""
@@ -219,7 +219,7 @@ def splitText(unicodeText, maxLength):
     except:
         pass
     try:
-        unicodeText = unicode(unicodeText.encode("utf-8"), "utf-8", errors="ignore")
+        unicodeText = str(unicodeText.encode("utf-8"), "utf-8", errors="ignore")
         unicodeArray = [unicodeText[i:i + maxLength] for i in range(0, len(unicodeText), maxLength)]
         return(unicodeArray)
     except:
@@ -231,15 +231,15 @@ def splitText(unicodeText, maxLength):
 def stripfilename(filename, stripURL):
     if filename:
         try:
-            filename = filename.encode('utf-8')
+            filename = filename
         except UnicodeDecodeError:
             pass
-        filename = urllib.unquote(filename)
+        filename = urllib.parse.unquote(filename)
         if stripURL:
             try:
-                filename = urllib.unquote(filename.split(u"/")[-1])
+                filename = urllib.parse.unquote(filename.split("/")[-1])
             except UnicodeDecodeError:
-                filename = urllib.unquote(filename.split("/")[-1])
+                filename = urllib.parse.unquote(filename.split("/")[-1])
         return re.sub(constants.FILENAME_STRIP_REGEX, "", filename)
     else:
         return ""
@@ -265,7 +265,7 @@ def hashFilename(filename, stripURL = False):
     return filenameHash
 
 def hashFilesize(size):
-    return hashlib.sha256(str(size)).hexdigest()[:12]
+    return hashlib.sha256(str(size).encode('utf-8')).hexdigest()[:12]
 
 def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
     try:
@@ -284,11 +284,11 @@ def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
 
 def sameFilename (filename1, filename2):
     try:
-        filename1 = filename1.encode('utf-8')
+        filename1 = filename1
     except UnicodeDecodeError:
         pass
     try:
-        filename2 = filename2.encode('utf-8')
+        filename2 = filename2
     except UnicodeDecodeError:
         pass
     stripURL = True if isURL(filename1) ^ isURL(filename2) else False
@@ -329,7 +329,7 @@ def isURL(path):
         return False
 
 def getPlayerArgumentsByPathAsArray(arguments, path):
-    if arguments and not isinstance(arguments, (str, unicode)) and arguments.has_key(path):
+    if arguments and not isinstance(arguments, str) and path in arguments:
         return arguments[path]
     else:
         return None
@@ -339,10 +339,10 @@ def getPlayerArgumentsByPathAsText(arguments, path):
     return " ".join(argsToReturn) if argsToReturn else ""
 
 def getListAsMultilineString(pathArray):
-    return u"\n".join(pathArray) if pathArray else ""
+    return "\n".join(pathArray) if pathArray else ""
 
 def convertMultilineStringToList(multilineString):
-    return unicode.split(multilineString,u"\n") if multilineString else ""
+    return str.split(multilineString,"\n") if multilineString else ""
 
 def playlistIsValid(files):
     if len(files) > constants.PLAYLIST_MAX_ITEMS:
@@ -373,10 +373,10 @@ def open_system_file_browser(path):
 
 def getListOfPublicServers():
     try:
-        import urllib, syncplay, sys, messages, json
-        params = urllib.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
+        import urllib.request, urllib.parse, urllib.error, syncplay, sys, messages, json
+        params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
                                    'language': messages.messages["CURRENT"]})
-        f = urllib.urlopen(constants.SYNCPLAY_PUBLIC_SERVER_LIST_URL.format(params))
+        f = urllib.request.urlopen(constants.SYNCPLAY_PUBLIC_SERVER_LIST_URL.format(params))
         response = f.read()
         response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","'").replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","") # Fix Wordpress
         response = ast.literal_eval(response)
@@ -440,11 +440,11 @@ class RandomStringGenerator(object):
 
     @staticmethod
     def _get_random_letters(quantity):
-        return ''.join(random.choice(string.ascii_uppercase) for _ in xrange(quantity))
+        return ''.join(random.choice(string.ascii_uppercase) for _ in range(quantity))
 
     @staticmethod
     def _get_random_numbers(quantity):
-        return ''.join(random.choice(string.digits) for _ in xrange(quantity))
+        return ''.join(random.choice(string.digits) for _ in range(quantity))
 
 class NotControlledRoom(Exception):
     pass

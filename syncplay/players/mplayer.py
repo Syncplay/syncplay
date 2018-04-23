@@ -92,19 +92,19 @@ class MplayerPlayer(BasePlayer):
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL):
         messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")
-        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, messageString, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
+        self._listener.sendLine('{} "{!s}" {} {}'.format(self.OSD_QUERY, messageString, duration, constants.MPLAYER_OSD_LEVEL))
 
     def displayChatMessage(self, username, message):
-        messageString = u"<{}> {}".format(username, message)
+        messageString = "<{}> {}".format(username, message)
         messageString = self._sanitizeText(messageString.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")
         duration = int(constants.OSD_DURATION * 1000)
-        self._listener.sendLine(u'{} "{!s}" {} {}'.format(self.OSD_QUERY, messageString, duration, constants.MPLAYER_OSD_LEVEL).encode('utf-8'))
+        self._listener.sendLine('{} "{!s}" {} {}'.format(self.OSD_QUERY, messageString, duration, constants.MPLAYER_OSD_LEVEL))
 
     def setSpeed(self, value):
         self._setProperty('speed', "{:.2f}".format(value))
 
     def _loadFile(self, filePath):
-        self._listener.sendLine(u'loadfile {}'.format(self._quoteArg(filePath)))
+        self._listener.sendLine('loadfile {}'.format(self._quoteArg(filePath)))
 
     def openFile(self, filePath, resetPosition=False):
         self._filepath = filePath
@@ -123,7 +123,7 @@ class MplayerPlayer(BasePlayer):
         time.sleep(0.03)
 
     def setPaused(self, value):
-        if self._paused <> value:
+        if self._paused != value:
             self._paused = not self._paused
             self._listener.sendLine('pause')
 
@@ -160,7 +160,7 @@ class MplayerPlayer(BasePlayer):
         arg = arg.replace('"', '\\"')
         arg = arg.replace("\r", "")
         arg = arg.replace("\n", "")
-        return u'"{}"'.format(arg)
+        return '"{}"'.format(arg)
 
     def _fileIsLoaded(self):
         return True
@@ -213,7 +213,7 @@ class MplayerPlayer(BasePlayer):
             self._filepath = value
             self._pathAsk.set()
         elif name == "filename":
-            self._filename = value.decode('utf-8')
+            self._filename = value
             self._filenameAsk.set()
         elif name == "exiting":
             if value != 'Quit':
@@ -262,11 +262,11 @@ class MplayerPlayer(BasePlayer):
     @staticmethod
     def getExpandedPath(playerPath):
         if not os.path.isfile(playerPath):
-            if os.path.isfile(playerPath + u"mplayer.exe"):
-                playerPath += u"mplayer.exe"
+            if os.path.isfile(playerPath + "mplayer.exe"):
+                playerPath += "mplayer.exe"
                 return playerPath
-            elif os.path.isfile(playerPath + u"\\mplayer.exe"):
-                playerPath += u"\\mplayer.exe"
+            elif os.path.isfile(playerPath + "\\mplayer.exe"):
+                playerPath += "\\mplayer.exe"
                 return playerPath
         if os.access(playerPath, os.X_OK):
             return playerPath
@@ -324,9 +324,9 @@ class MplayerPlayer(BasePlayer):
             if 'TERM' in env:
                 del env['TERM']
             if filePath:
-                self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.__getCwd(filePath, env), env=env)
+                self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.__getCwd(filePath, env), env=env, universal_newlines=True)
             else:
-                self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, env=env)
+                self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, env=env, universal_newlines=True)
             threading.Thread.__init__(self, name="MPlayer Listener")
 
 
@@ -358,7 +358,7 @@ class MplayerPlayer(BasePlayer):
 
         def sendChat(self, message):
             if message:
-                if message[:1] == "/" and message <> "/":
+                if message[:1] == "/" and message != "/":
                     command = message[1:]
                     if command and command[:1] == "/":
                         message = message[1:]
@@ -399,11 +399,11 @@ class MplayerPlayer(BasePlayer):
                             if line.startswith(command):
                                 for itemID, deletionCandidate in enumerate(self.sendQueue):
                                     if deletionCandidate.startswith(command):
-                                        self.__playerController._client.ui.showDebugMessage(u"<mpv> Remove duplicate (supersede): {}".format(self.sendQueue[itemID]))
+                                        self.__playerController._client.ui.showDebugMessage("<mpv> Remove duplicate (supersede): {}".format(self.sendQueue[itemID]))
                                         try:
                                             self.sendQueue.remove(self.sendQueue[itemID])
                                         except UnicodeWarning:
-                                            self.__playerController._client.ui.showDebugMessage(u"<mpv> Unicode mismatch occured when trying to remove duplicate")
+                                            self.__playerController._client.ui.showDebugMessage("<mpv> Unicode mismatch occured when trying to remove duplicate")
                                             # TODO: Prevent this from being triggered
                                             pass
                                         break
@@ -413,7 +413,7 @@ class MplayerPlayer(BasePlayer):
                             if line == command:
                                 for itemID, deletionCandidate in enumerate(self.sendQueue):
                                     if deletionCandidate == command:
-                                        self.__playerController._client.ui.showDebugMessage(u"<mpv> Remove duplicate (delete both): {}".format(self.sendQueue[itemID]))
+                                        self.__playerController._client.ui.showDebugMessage("<mpv> Remove duplicate (delete both): {}".format(self.sendQueue[itemID]))
                                         self.__playerController._client.ui.showDebugMessage(self.sendQueue[itemID])
                                         return
             except:
@@ -438,9 +438,9 @@ class MplayerPlayer(BasePlayer):
 
         def actuallySendLine(self, line):
             try:
-                if not isinstance(line, unicode):
-                    line = line.decode('utf8')
-                line = (line + u"\n").encode('utf8')
+                #if not isinstance(line, str):
+                    #line = line.decode('utf8')
+                line = line + "\n"
                 self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
                 self.__process.stdin.write(line)
             except IOError:

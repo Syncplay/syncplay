@@ -1,7 +1,7 @@
 #coding:utf8
 import time
 import threading
-import thread
+import _thread
 import win32con, win32api, win32gui, ctypes, ctypes.wintypes #@UnresolvedImport @UnusedImport
 from functools import wraps
 from syncplay.players.basePlayer import BasePlayer
@@ -49,7 +49,7 @@ class MpcHcApi:
         self.__listener.SendCommand(self.CMD_OPENFILE, filePath)
 
     def isPaused(self):
-        return self.playState <> self.__MPC_PLAYSTATE.PS_PLAY and self.playState <> None
+        return self.playState != self.__MPC_PLAYSTATE.PS_PLAY and self.playState != None
 
     def askForVersion(self):
         self.__listener.SendCommand(self.CMD_GETVERSION)
@@ -72,11 +72,11 @@ class MpcHcApi:
 
     @waitForFileStateReady
     def seek(self, position):
-        self.__listener.SendCommand(self.CMD_SETPOSITION, unicode(position))
+        self.__listener.SendCommand(self.CMD_SETPOSITION, str(position))
 
     @waitForFileStateReady
     def setSpeed(self, rate):
-        self.__listener.SendCommand(self.CMD_SETSPEED, unicode(rate))
+        self.__listener.SendCommand(self.CMD_SETSPEED, str(rate))
 
     def sendOsd(self, message, MsgPos=constants.MPC_OSD_POSITION, DurationMs=(constants.OSD_DURATION*1000)):
         class __OSDDATASTRUCT(ctypes.Structure):
@@ -99,7 +99,7 @@ class MpcHcApi:
             self.__listener.mpcHandle = int(value)
             self.__locks.mpcStart.set()
             if self.callbacks.onConnected:
-               thread.start_new_thread(self.callbacks.onConnected, ())
+               _thread.start_new_thread(self.callbacks.onConnected, ())
 
         elif cmd == self.CMD_STATE:
             self.loadState = int(value)
@@ -110,12 +110,12 @@ class MpcHcApi:
             else:
                 self.__locks.fileReady.set()
             if self.callbacks.onFileStateChange:
-               thread.start_new_thread(self.callbacks.onFileStateChange, (self.loadState,))
+               _thread.start_new_thread(self.callbacks.onFileStateChange, (self.loadState,))
 
         elif cmd == self.CMD_PLAYMODE:
             self.playState = int(value)
             if self.callbacks.onUpdatePlaystate:
-                thread.start_new_thread(self.callbacks.onUpdatePlaystate, (self.playState,))
+                _thread.start_new_thread(self.callbacks.onUpdatePlaystate, (self.playState,))
 
         elif cmd == self.CMD_NOWPLAYING:
             value = re.split(r'(?<!\\)\|', value)
@@ -125,31 +125,31 @@ class MpcHcApi:
             self.filePlaying = value[3].split('\\').pop()
             self.fileDuration = float(value[4])
             if self.callbacks.onUpdatePath:
-               thread.start_new_thread(self.callbacks.onUpdatePath, (self.onUpdatePath,))
+               _thread.start_new_thread(self.callbacks.onUpdatePath, (self.onUpdatePath,))
             if self.callbacks.onUpdateFilename:
-               thread.start_new_thread(self.callbacks.onUpdateFilename, (self.filePlaying,))
+               _thread.start_new_thread(self.callbacks.onUpdateFilename, (self.filePlaying,))
             if self.callbacks.onUpdateFileDuration:
-               thread.start_new_thread(self.callbacks.onUpdateFileDuration, (self.fileDuration,))
+               _thread.start_new_thread(self.callbacks.onUpdateFileDuration, (self.fileDuration,))
 
         elif cmd == self.CMD_CURRENTPOSITION:
             self.lastFilePosition = float(value)
             if self.callbacks.onGetCurrentPosition:
-               thread.start_new_thread(self.callbacks.onGetCurrentPosition, (self.lastFilePosition,))
+               _thread.start_new_thread(self.callbacks.onGetCurrentPosition, (self.lastFilePosition,))
 
         elif cmd == self.CMD_NOTIFYSEEK:
-            if self.lastFilePosition <> float(value): #Notify seek is sometimes sent twice
+            if self.lastFilePosition != float(value): #Notify seek is sometimes sent twice
                 self.lastFilePosition = float(value)
                 if self.callbacks.onSeek:
-                    thread.start_new_thread(self.callbacks.onSeek, (self.lastFilePosition,))
+                    _thread.start_new_thread(self.callbacks.onSeek, (self.lastFilePosition,))
 
         elif cmd == self.CMD_DISCONNECT:
             if self.callbacks.onMpcClosed:
-               thread.start_new_thread(self.callbacks.onMpcClosed, (None,))
+               _thread.start_new_thread(self.callbacks.onMpcClosed, (None,))
 
         elif cmd == self.CMD_VERSION:
             if self.callbacks.onVersion:
                self.version = value
-               thread.start_new_thread(self.callbacks.onVersion, (value,))
+               _thread.start_new_thread(self.callbacks.onVersion, (value,))
 
     class PlayerNotReadyException(Exception):
         pass
@@ -278,7 +278,7 @@ class MpcHcApi:
             #print "API:\tin>\t 0x%X\t" % int(pCDS.contents.dwData), ctypes.wstring_at(pCDS.contents.lpData)
             self.__mpcApi.handleCommand(pCDS.contents.dwData, ctypes.wstring_at(pCDS.contents.lpData))
 
-        def SendCommand(self, cmd, message=u''):
+        def SendCommand(self, cmd, message=''):
             #print "API:\t<out\t 0x%X\t" % int(cmd), message
             if not win32gui.IsWindow(self.mpcHandle):
                 if self.__mpcApi.callbacks.onMpcClosed:
@@ -286,7 +286,7 @@ class MpcHcApi:
             cs = self.__COPYDATASTRUCT()
             cs.dwData = cmd;
 
-            if isinstance(message, (unicode, str)):
+            if isinstance(message, str):
                 message = ctypes.create_unicode_buffer(message, len(message) + 1)
             elif isinstance(message, ctypes.Structure):
                 pass
@@ -383,7 +383,7 @@ class MPCHCAPIPlayer(BasePlayer):
             self._mpcApi.callbacks.onUpdateFilename = lambda _: self.__handleUpdatedFilename()
             self.__handleUpdatedFilename()
             self.askForStatus()
-        except Exception, err:
+        except Exception as err:
             self.reactor.callFromThread(self.__client.ui.showErrorMessage, err.message, True)
             self.reactor.callFromThread(self.__client.stop)
 
@@ -445,21 +445,21 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__client.updatePlayerStatus(self.__client.getGlobalPaused(), self.__client.getGlobalPosition())
 
     def __forcePause(self):
-        for _ in xrange(constants.MPC_MAX_RETRIES):
+        for _ in range(constants.MPC_MAX_RETRIES):
             self.setPaused(True)
             time.sleep(constants.MPC_RETRY_WAIT_TIME)
 
     def __refreshMpcPlayState(self):
-        for _ in xrange(2):
+        for _ in range(2):
             self._mpcApi.playPause()
             time.sleep(constants.MPC_PAUSE_TOGGLE_DELAY)
 
     def _setPausedAccordinglyToServer(self):
         self.__forcePause()
         self.setPaused(self.__client.getGlobalPaused())
-        if self._mpcApi.isPaused() <> self.__client.getGlobalPaused():
+        if self._mpcApi.isPaused() != self.__client.getGlobalPaused():
             self.__refreshMpcPlayState()
-            if self._mpcApi.isPaused() <> self.__client.getGlobalPaused():
+            if self._mpcApi.isPaused() != self.__client.getGlobalPaused():
                 self.__setUpStateForNewlyOpenedFile()
 
     @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
@@ -482,7 +482,7 @@ class MPCHCAPIPlayer(BasePlayer):
 
     @staticmethod
     def getIconPath(path):
-        if MPCHCAPIPlayer.getExpandedPath(path).lower().endswith(u'mpc-hc64.exe'.lower()) or MPCHCAPIPlayer.getExpandedPath(path).lower().endswith(u'mpc-hc64_nvo.exe'.lower()):
+        if MPCHCAPIPlayer.getExpandedPath(path).lower().endswith('mpc-hc64.exe'.lower()) or MPCHCAPIPlayer.getExpandedPath(path).lower().endswith('mpc-hc64_nvo.exe'.lower()):
             return constants.MPC64_ICONPATH
         else:
             return constants.MPC_ICONPATH
@@ -496,30 +496,30 @@ class MPCHCAPIPlayer(BasePlayer):
     @staticmethod
     def getExpandedPath(path):
         if os.path.isfile(path):
-            if path.lower().endswith(u'mpc-hc.exe'.lower()) or path.lower().endswith(u'mpc-hc64.exe'.lower()) or path.lower().endswith(u'mpc-hc64_nvo.exe'.lower()) or path.lower().endswith(u'mpc-hc_nvo.exe'.lower()):
+            if path.lower().endswith('mpc-hc.exe'.lower()) or path.lower().endswith('mpc-hc64.exe'.lower()) or path.lower().endswith('mpc-hc64_nvo.exe'.lower()) or path.lower().endswith('mpc-hc_nvo.exe'.lower()):
                 return path
-        if os.path.isfile(path + u"mpc-hc.exe"):
-            path += u"mpc-hc.exe"
+        if os.path.isfile(path + "mpc-hc.exe"):
+            path += "mpc-hc.exe"
             return path
-        if os.path.isfile(path + u"\\mpc-hc.exe"):
-            path += u"\\mpc-hc.exe"
+        if os.path.isfile(path + "\\mpc-hc.exe"):
+            path += "\\mpc-hc.exe"
             return path
-        if os.path.isfile(path + u"mpc-hc_nvo.exe"):
-            path += u"mpc-hc_nvo.exe"
+        if os.path.isfile(path + "mpc-hc_nvo.exe"):
+            path += "mpc-hc_nvo.exe"
             return path
-        if os.path.isfile(path + u"\\mpc-hc_nvo.exe"):
-            path += u"\\mpc-hc_nvo.exe"
+        if os.path.isfile(path + "\\mpc-hc_nvo.exe"):
+            path += "\\mpc-hc_nvo.exe"
             return path
-        if os.path.isfile(path + u"mpc-hc64.exe"):
-            path += u"mpc-hc64.exe"
+        if os.path.isfile(path + "mpc-hc64.exe"):
+            path += "mpc-hc64.exe"
             return path
-        if os.path.isfile(path + u"\\mpc-hc64.exe"):
-            path += u"\\mpc-hc64.exe"
+        if os.path.isfile(path + "\\mpc-hc64.exe"):
+            path += "\\mpc-hc64.exe"
             return path
-        if os.path.isfile(path + u"mpc-hc64_nvo.exe"):
-            path += u"mpc-hc64_nvo.exe"
+        if os.path.isfile(path + "mpc-hc64_nvo.exe"):
+            path += "mpc-hc64_nvo.exe"
             return path
-        if os.path.isfile(path + u"\\mpc-hc64_nvo.exe"):
-            path += u"\\mpc-hc64_nvo.exe"
+        if os.path.isfile(path + "\\mpc-hc64_nvo.exe"):
+            path += "\\mpc-hc64_nvo.exe"
             return path
         

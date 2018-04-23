@@ -17,7 +17,7 @@ SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
 SHOW_TOOLTIPS = True
 WARN_ABOUT_MISSING_STRINGS = False # (If debug mode is enabled)
 FALLBACK_INITIAL_LANGUAGE = "en"
-FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [[u'syncplay.pl:8995 (France)', u'syncplay.pl:8995'],[u'syncplay.pl:8996 (France)', u'syncplay.pl:8996'],[u'syncplay.pl:8997 (France)', u'syncplay.pl:8997'],[u'syncplay.pl:8998 (France)', u'syncplay.pl:8998'],[u'syncplay.pl:8999 (France)', u'syncplay.pl:8999']]
+FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [['syncplay.pl:8995 (France)', 'syncplay.pl:8995'],['syncplay.pl:8996 (France)', 'syncplay.pl:8996'],['syncplay.pl:8997 (France)', 'syncplay.pl:8997'],['syncplay.pl:8998 (France)', 'syncplay.pl:8998'],['syncplay.pl:8999 (France)', 'syncplay.pl:8999']]
 PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH = 10 # Seconds
 PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD = 5 # Seconds (only triggered if file is paused, e.g. due to EOF)
 
@@ -82,9 +82,9 @@ FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0 # Secs - Frequency of updating cache
 
 #Usually there's no need to adjust these
 LAST_PAUSED_DIFF_THRESHOLD = 2
-FILENAME_STRIP_REGEX = u"[-~_\.\[\](): ]"
-CONTROL_PASSWORD_STRIP_REGEX = u"[^a-zA-Z0-9\-]"
-ROOM_NAME_STRIP_REGEX = u"^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
+FILENAME_STRIP_REGEX = "[-~_\.\[\](): ]"
+CONTROL_PASSWORD_STRIP_REGEX = "[^a-zA-Z0-9\-]"
+ROOM_NAME_STRIP_REGEX = "^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
 COMMANDS_UNDO = ["u", "undo", "revert"]
 COMMANDS_CHAT = ["ch","chat"]
 COMMANDS_LIST = ["l", "list", "users"]
@@ -173,9 +173,9 @@ STYLE_SUCCESSLABEL = "QLabel { color : black; border-style: outset; border-width
 STYLE_READY_PUSHBUTTON = "QPushButton { text-align: left; padding: 10px 5px 10px 5px;}"
 STYLE_AUTO_PLAY_PUSHBUTTON = "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }"
 STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
-STYLE_CONTACT_INFO = u"<span style=\"color: grey\"><strong><small>{}</span><br /><br />" # Contact info message
-STYLE_USER_MESSAGE = u"<span style=\"{}\">&lt;{}&gt;</span> {}"
-STYLE_USERNAME = u"color: #367AA9; font-weight:bold;"
+STYLE_CONTACT_INFO = "<span style=\"color: grey\"><strong><small>{}</span><br /><br />" # Contact info message
+STYLE_USER_MESSAGE = "<span style=\"{}\">&lt;{}&gt;</span> {}"
+STYLE_USERNAME = "color: #367AA9; font-weight:bold;"
 STYLE_ERRORNOTIFICATION = "color: red;"
 STYLE_DIFFERENTITEM_COLOR = 'red'
 STYLE_NOFILEITEM_COLOR = 'blue'
@@ -192,16 +192,16 @@ MPV_SLAVE_ARGS = ['--msg-level=all=error,cplayer=info,term-msg=info', '--input-t
 MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=duration:${=length:0}}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
 MPV_NEW_VERSION = False
 MPV_OSC_VISIBILITY_CHANGE_VERSION = False
-MPV_INPUT_PROMPT_START_CHARACTER = u"〉"
-MPV_INPUT_PROMPT_END_CHARACTER = u" 〈"
-MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER = u"＼"
+MPV_INPUT_PROMPT_START_CHARACTER = "〉"
+MPV_INPUT_PROMPT_END_CHARACTER = " 〈"
+MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER = "＼"
 MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputEnabled","chatInputFontFamily", "chatInputRelativeFontSize", "chatInputFontWeight","chatInputFontUnderline",
                                     "chatInputFontColor", "chatInputPosition","chatOutputFontFamily","chatOutputRelativeFontSize",
                                     "chatOutputFontWeight","chatOutputFontUnderline","chatOutputMode","chatMaxLines",
                                     "chatTopMargin","chatLeftMargin","chatBottomMargin","chatDirectInput",
                                     "notificationTimeout","alertTimeout","chatTimeout","chatOutputEnabled"]
 
-MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH),u"inputPromptStartCharacter={}".format(MPV_INPUT_PROMPT_START_CHARACTER),u"inputPromptEndCharacter={}".format(MPV_INPUT_PROMPT_END_CHARACTER),u"backslashSubstituteCharacter={}".format(MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER)]
+MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH),"inputPromptStartCharacter={}".format(MPV_INPUT_PROMPT_START_CHARACTER),"inputPromptEndCharacter={}".format(MPV_INPUT_PROMPT_END_CHARACTER),"backslashSubstituteCharacter={}".format(MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER)]
 # Note: Constants updated in client.py->checkForFeatureSupport
 MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-tab-hint","mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
@@ -256,12 +256,12 @@ OSD_CHAT = "chat"
 CHATROOM_MODE = "Chatroom"
 SCROLLING_MODE = "Scrolling"
 
-SYNCPLAY_UPDATE_URL = u"https://syncplay.pl/checkforupdate?{}" # Params
+SYNCPLAY_UPDATE_URL = "https://syncplay.pl/checkforupdate?{}" # Params
 SYNCPLAY_DOWNLOAD_URL = "https://syncplay.pl/download/"
-SYNCPLAY_PUBLIC_SERVER_LIST_URL = u"https://syncplay.pl/listpublicservers?{}" # Params
+SYNCPLAY_PUBLIC_SERVER_LIST_URL = "https://syncplay.pl/listpublicservers?{}" # Params
 
-DEFAULT_TRUSTED_DOMAINS = [u"youtube.com",u"youtu.be"]
-TRUSTABLE_WEB_PROTOCOLS = [u"http://www.",u"https://www.",u"http://",u"https://"]
+DEFAULT_TRUSTED_DOMAINS = ["youtube.com","youtu.be"]
+TRUSTABLE_WEB_PROTOCOLS = ["http://www.","https://www.","http://","https://"]
 
 PRIVATE_FILE_FIELDS = ["path"]
 

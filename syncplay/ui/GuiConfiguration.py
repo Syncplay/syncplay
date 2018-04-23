@@ -211,7 +211,7 @@ class ConfigDialog(QtWidgets.QDialog):
         take a long time to perform their checks and hang the GUI while doing
         so.
         """
-        currentplayerpath = unicode(self.executablepathCombobox.currentText())
+        currentplayerpath = str(self.executablepathCombobox.currentText())
         self._playerProbeThread.setPlayerPath(currentplayerpath)
 
     def updatePlayerArguments(self, currentplayerpath):
@@ -224,11 +224,11 @@ class ConfigDialog(QtWidgets.QDialog):
         currentplayerpath = self.executablepathCombobox.currentText()
 
         if currentplayerpath:
-            NewPlayerArgs = self.playerargsTextbox.text().split(u" ") if self.playerargsTextbox.text() else ""
+            NewPlayerArgs = self.playerargsTextbox.text().split(" ") if self.playerargsTextbox.text() else ""
             self.perPlayerArgs[self.executablepathCombobox.currentText()]=NewPlayerArgs
 
     def languageChanged(self):
-        setLanguage(unicode(self.languageCombobox.itemData(self.languageCombobox.currentIndex())))
+        setLanguage(str(self.languageCombobox.itemData(self.languageCombobox.currentIndex())))
         QtWidgets.QMessageBox.information(self, "Syncplay", getMessage("language-changed-msgbox-label"))
 
     def browsePlayerpath(self):
@@ -325,7 +325,7 @@ class ConfigDialog(QtWidgets.QDialog):
     def getMoreState(self):
         settings = QSettings("Syncplay", "MoreSettings")
         settings.beginGroup("MoreSettings")
-        morestate = unicode.lower(unicode(settings.value("ShowMoreSettings", "false")))
+        morestate = str.lower(str(settings.value("ShowMoreSettings", "false")))
         settings.endGroup()
         if morestate == "true":
             return True
@@ -342,7 +342,7 @@ class ConfigDialog(QtWidgets.QDialog):
         try:
             servers = utils.getListOfPublicServers()
         except IOError as e:
-            self.showErrorMessage(unicode(e))
+            self.showErrorMessage(str(e))
             return
         currentServer = self.hostCombobox.currentText()
         self.hostCombobox.clear()
@@ -410,18 +410,18 @@ class ConfigDialog(QtWidgets.QDialog):
             self.config['password'] = self.serverpassTextbox.text()
         self.processWidget(self, lambda w: self.saveValues(w))
         if self.hostCombobox.currentText():
-            self.config['host'] = self.hostCombobox.currentText() if ":" in self.hostCombobox.currentText() else self.hostCombobox.currentText() + ":" + unicode(constants.DEFAULT_PORT)
+            self.config['host'] = self.hostCombobox.currentText() if ":" in self.hostCombobox.currentText() else self.hostCombobox.currentText() + ":" + str(constants.DEFAULT_PORT)
             self.config['host'] = self.config['host'].replace(" ","").replace("\t", "").replace("\n","").replace("\r","")
         else:
             self.config['host'] = None
-        self.config['playerPath'] = unicode(self.safenormcaseandpath(self.executablepathCombobox.currentText()))
-        self.config['language'] = unicode(self.languageCombobox.itemData(self.languageCombobox.currentIndex()))
+        self.config['playerPath'] = str(self.safenormcaseandpath(self.executablepathCombobox.currentText()))
+        self.config['language'] = str(self.languageCombobox.itemData(self.languageCombobox.currentIndex()))
         if self.mediapathTextbox.text() == "":
             self.config['file'] = None
         elif os.path.isfile(os.path.abspath(self.mediapathTextbox.text())):
             self.config['file'] = os.path.abspath(self.mediapathTextbox.text())
         else:
-            self.config['file'] = unicode(self.mediapathTextbox.text())
+            self.config['file'] = str(self.mediapathTextbox.text())
         self.config['publicServers'] = self.publicServerAddresses
 
         self.pressedclosebutton = False
@@ -448,7 +448,7 @@ class ConfigDialog(QtWidgets.QDialog):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            dropfilepath = os.path.abspath(unicode(event.mimeData().urls()[0].toLocalFile()))
+            dropfilepath = os.path.abspath(str(event.mimeData().urls()[0].toLocalFile()))
             if dropfilepath[-4:].lower() == ".exe":
                 self.executablepathCombobox.setEditText(dropfilepath)
             else:
@@ -524,7 +524,7 @@ class ConfigDialog(QtWidgets.QDialog):
 
     def connectChildren(self, widget):
         widgetName = str(widget.objectName())
-        if self.subitems.has_key(widgetName):
+        if widgetName in self.subitems:
             widget.stateChanged.connect(lambda: self.updateSubwidgets(self, widget))
             self.updateSubwidgets(self, widget)
 
@@ -894,7 +894,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.chatDirectInputCheckbox = QCheckBox(getMessage("chatdirectinput-label"))
         self.chatDirectInputCheckbox.setObjectName("chatDirectInput")
         self.chatDirectInputCheckbox.setStyleSheet(
-            constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+            constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
         self.chatInputLayout.addWidget(self.chatDirectInputCheckbox, 2, 0, 1,1, Qt.AlignLeft)
 
         self.inputFontLayout = QtWidgets.QHBoxLayout()
@@ -903,7 +903,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.inputFontFrame.setLayout(self.inputFontLayout)
         self.inputFontFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.chatFontLabel = QLabel(getMessage("chatinputfont-label"), self)
-        self.chatFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
         self.chatFontLabel.setObjectName("font-label")
         self.chatInputFontButton = QtWidgets.QPushButton(getMessage("chatfont-label"))
         self.chatInputFontButton.setObjectName("set-input-font")
@@ -926,7 +926,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.chatInputPositionFrame.setLayout(self.chatInputPositionLayout)
         self.chatInputPositionFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.chatInputPositionLabel = QLabel(getMessage("chatinputposition-label"), self)
-        self.chatInputPositionLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatInputPositionLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
         self.chatInputPositionGroup = QButtonGroup()
         self.chatInputTopOption = QRadioButton(getMessage("chat-top-option"))
         self.chatInputMiddleOption = QRadioButton(getMessage("chat-middle-option"))
@@ -965,7 +965,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.outputFontFrame.setLayout(self.outputFontLayout)
         self.outputFontFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.chatOutputFontLabel = QLabel(getMessage("chatoutputfont-label"), self)
-        self.chatOutputFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatOutputFontLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
         self.chatOutputFontLabel.setObjectName("font-output-label")
         self.chatOutputFontButton = QtWidgets.QPushButton(getMessage("chatfont-label"))
         self.chatOutputFontButton.setObjectName("set-output-font")
@@ -978,7 +978,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.chatOutputLayout.addWidget(self.outputFontFrame, 2, 0, 1, 3, Qt.AlignLeft)
 
         self.chatOutputModeLabel = QLabel(getMessage("chatoutputposition-label"), self)
-        self.chatOutputModeLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + u"chevrons_right.png"))
+        self.chatOutputModeLabel.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(self.posixresourcespath + "chevrons_right.png"))
         self.chatOutputModeGroup = QButtonGroup()
         self.chatOutputChatroomOption = QRadioButton(getMessage("chat-chatroom-option"))
         self.chatOutputScrollingOption = QRadioButton(getMessage("chat-scrolling-option"))
@@ -1008,23 +1008,23 @@ class ConfigDialog(QtWidgets.QDialog):
 
     def fontDialog(self, configName):
             font = QtGui.QFont()
-            font.setFamily(self.config[configName+ u"FontFamily"])
-            font.setPointSize(self.config[configName + u"RelativeFontSize"])
-            font.setWeight(self.config[configName + u"FontWeight"])
-            font.setUnderline(self.config[configName + u"FontUnderline"])
+            font.setFamily(self.config[configName+ "FontFamily"])
+            font.setPointSize(self.config[configName + "RelativeFontSize"])
+            font.setWeight(self.config[configName + "FontWeight"])
+            font.setUnderline(self.config[configName + "FontUnderline"])
             value, ok = QtWidgets.QFontDialog.getFont(font)
             if ok:
-                self.config[configName + u"FontFamily"] = value.family()
-                self.config[configName + u"RelativeFontSize"] = value.pointSize()
-                self.config[configName + u"FontWeight"] = value.weight()
-                self.config[configName + u"FontUnderline"] = value.underline()
+                self.config[configName + "FontFamily"] = value.family()
+                self.config[configName + "RelativeFontSize"] = value.pointSize()
+                self.config[configName + "FontWeight"] = value.weight()
+                self.config[configName + "FontUnderline"] = value.underline()
 
     def colourDialog(self, configName):
             oldColour = QtGui.QColor()
-            oldColour.setNamedColor(self.config[configName+ u"FontColor"])
+            oldColour.setNamedColor(self.config[configName+ "FontColor"])
             colour = QtWidgets.QColorDialog.getColor(oldColour, self)
             if colour.isValid():
-                self.config[configName + u"FontColor"] = colour.name()
+                self.config[configName + "FontColor"] = colour.name()
 
     def addMessageTab(self):
         self.messageFrame = QtWidgets.QFrame()
@@ -1042,27 +1042,27 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.showSameRoomOSDCheckbox = QCheckBox(getMessage("showsameroomosd-label"))
         self.showSameRoomOSDCheckbox.setObjectName("showSameRoomOSD")
-        self.showSameRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + u"chevrons_right.png"))
+        self.showSameRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + "chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showSameRoomOSDCheckbox)
 
         self.showNonControllerOSDCheckbox = QCheckBox(getMessage("shownoncontrollerosd-label"))
         self.showNonControllerOSDCheckbox.setObjectName("showNonControllerOSD")
-        self.showNonControllerOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + u"chevrons_right.png"))
+        self.showNonControllerOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + "chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showNonControllerOSDCheckbox)
 
         self.showDifferentRoomOSDCheckbox = QCheckBox(getMessage("showdifferentroomosd-label"))
         self.showDifferentRoomOSDCheckbox.setObjectName("showDifferentRoomOSD")
-        self.showDifferentRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + u"chevrons_right.png"))
+        self.showDifferentRoomOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + "chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showDifferentRoomOSDCheckbox)
 
         self.slowdownOSDCheckbox = QCheckBox(getMessage("showslowdownosd-label"))
         self.slowdownOSDCheckbox.setObjectName("showSlowdownOSD")
-        self.slowdownOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + u"chevrons_right.png"))
+        self.slowdownOSDCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + "chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.slowdownOSDCheckbox)
 
         self.showOSDWarningsCheckbox = QCheckBox(getMessage("showosdwarnings-label"))
         self.showOSDWarningsCheckbox.setObjectName("showOSDWarnings")
-        self.showOSDWarningsCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + u"chevrons_right.png"))
+        self.showOSDWarningsCheckbox.setStyleSheet(constants.STYLE_SUBCHECKBOX.format(posixresourcespath + "chevrons_right.png"))
         self.osdSettingsLayout.addWidget(self.showOSDWarningsCheckbox)
 
         self.subitems['showOSD'] = ["showSameRoomOSD", "showDifferentRoomOSD", "showSlowdownOSD", "showOSDWarnings", "showNonControllerOSD"]
@@ -1121,22 +1121,22 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.bottomButtonFrame = QtWidgets.QFrame()
         self.bottomButtonLayout = QtWidgets.QHBoxLayout()
-        self.helpButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'help.png'), getMessage("help-label"))
+        self.helpButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'help.png'), getMessage("help-label"))
         self.helpButton.setObjectName("help")
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.released.connect(self.openHelp)
 
-        self.resetButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'cog_delete.png'),getMessage("reset-label"))
+        self.resetButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'cog_delete.png'),getMessage("reset-label"))
         self.resetButton.setMaximumSize(self.resetButton.sizeHint())
         self.resetButton.setObjectName("reset")
         self.resetButton.released.connect(self.resetSettings)
 
-        self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
+        self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("run-label"))
         self.runButton.released.connect(self._runWithoutStoringConfig)
-        self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("run-label"))
+        self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("run-label"))
         self.runButton.pressed.connect(self._runWithoutStoringConfig)
         self.runButton.setToolTip(getMessage("nostore-tooltip"))
-        self.storeAndRunButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + u'accept.png'), getMessage("storeandrun-label"))
+        self.storeAndRunButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("storeandrun-label"))
         self.storeAndRunButton.released.connect(self._saveDataAndLeave)
         self.bottomButtonLayout.addWidget(self.helpButton)
         self.bottomButtonLayout.addWidget(self.resetButton)
@@ -1164,12 +1164,12 @@ class ConfigDialog(QtWidgets.QDialog):
         self.tabListLayout = QtWidgets.QHBoxLayout()
         self.tabListFrame = QtWidgets.QFrame()
         self.tabListWidget = QtWidgets.QListWidget()
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"house.png"),getMessage("basics-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"control_pause_blue.png"),getMessage("readiness-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"film_link.png"),getMessage("sync-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"user_comment.png"), getMessage("chat-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"error.png"),getMessage("messages-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + u"cog.png"),getMessage("misc-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "house.png"),getMessage("basics-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "control_pause_blue.png"),getMessage("readiness-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "film_link.png"),getMessage("sync-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "user_comment.png"), getMessage("chat-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "error.png"),getMessage("messages-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "cog.png"),getMessage("misc-label")))
         self.tabListLayout.addWidget(self.tabListWidget)
         self.tabListFrame.setLayout(self.tabListLayout)
         self.tabListFrame.setFixedWidth(self.tabListFrame.minimumSizeHint().width() + constants.TAB_PADDING)
@@ -1237,7 +1237,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.hostCombobox.setEditText(currentServer)
 
     def updatePasswordVisibilty(self):
-        if (self.hostCombobox.currentText() == "" and self.serverpassTextbox.text() == "") or unicode(self.hostCombobox.currentText()) in self.publicServerAddresses:
+        if (self.hostCombobox.currentText() == "" and self.serverpassTextbox.text() == "") or str(self.hostCombobox.currentText()) in self.publicServerAddresses:
             self.serverpassTextbox.setDisabled(True)
             self.serverpassTextbox.setReadOnly(True)
             if self.serverpassTextbox.text() != "":
@@ -1272,15 +1272,15 @@ class ConfigDialog(QtWidgets.QDialog):
         if isWindows():
             resourcespath = utils.findWorkingDir() + "\\resources\\"
         else:
-            resourcespath = utils.findWorkingDir() + u"/resources/"
-        self.posixresourcespath = utils.findWorkingDir().replace(u"\\","/") + u"/resources/"
+            resourcespath = utils.findWorkingDir() + "/resources/"
+        self.posixresourcespath = utils.findWorkingDir().replace("\\","/") + "/resources/"
         self.resourcespath = resourcespath
 
         super(ConfigDialog, self).__init__()
 
         self.setWindowTitle(getMessage("config-window-title"))
         self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & ~Qt.WindowContextHelpButtonHint)
-        self.setWindowIcon(QtGui.QIcon(resourcespath + u"syncplay.png"))
+        self.setWindowIcon(QtGui.QIcon(resourcespath + "syncplay.png"))
 
         self.stackedLayout = QtWidgets.QStackedLayout()
         self.stackedFrame = QtWidgets.QFrame()

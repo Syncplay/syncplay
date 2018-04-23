@@ -58,7 +58,7 @@ Qt = sys.modules[__name__]
 Qt.QtCompat = types.ModuleType("QtCompat")
 
 try:
-    long
+    int
 except NameError:
     # Python 3 compatibility
     long = int
@@ -869,12 +869,12 @@ def _wrapinstance(func, ptr, base=None):
 
     """
 
-    assert isinstance(ptr, long), "Argument 'ptr' must be of type <long>"
+    assert isinstance(ptr, int), "Argument 'ptr' must be of type <long>"
     assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
         "Argument 'base' must be of type <QObject>")
 
     if base is None:
-        q_object = func(long(ptr), Qt.QtCore.QObject)
+        q_object = func(int(ptr), Qt.QtCore.QObject)
         meta_object = q_object.metaObject()
         class_name = meta_object.className()
         super_class_name = meta_object.superClass().className()
@@ -888,7 +888,7 @@ def _wrapinstance(func, ptr, base=None):
         else:
             base = Qt.QtCore.QObject
 
-    return func(long(ptr), base)
+    return func(int(ptr), base)
 
 
 def _reassign_misplaced_members(binding):
@@ -899,7 +899,7 @@ def _reassign_misplaced_members(binding):
 
     """
 
-    for src, dst in _misplaced_members[binding].items():
+    for src, dst in list(_misplaced_members[binding].items()):
         src_module, src_member = src.split(".")
         dst_module, dst_member = dst.split(".")
 
@@ -948,9 +948,9 @@ def _build_compatibility_members(binding, decorators=None):
 
     _QtCompat = type("QtCompat", (object,), {})
 
-    for classname, bindings in _compatibility_members[binding].items():
+    for classname, bindings in list(_compatibility_members[binding].items()):
         attrs = {}
-        for target, binding in bindings.items():
+        for target, binding in list(bindings.items()):
             namespaces = binding.split('.')
             try:
                 src_object = getattr(Qt, "_" + namespaces[0])
@@ -1233,7 +1233,7 @@ def _none():
     Qt.QtCompat.loadUi = lambda uifile, baseinstance=None: None
     Qt.QtCompat.setSectionResizeMode = lambda *args, **kwargs: None
 
-    for submodule in _common_members.keys():
+    for submodule in list(_common_members.keys()):
         setattr(Qt, submodule, Mock())
         setattr(Qt, "_" + submodule, Mock())
 
@@ -1472,7 +1472,7 @@ def _install():
         raise ImportError("No Qt binding were found.")
 
     # Install individual members
-    for name, members in _common_members.items():
+    for name, members in list(_common_members.items()):
         try:
             their_submodule = getattr(Qt, "_%s" % name)
         except AttributeError:

@@ -33,8 +33,8 @@ if missingStrings is not None and missingStrings is not "":
 
 def get_nsis_path():
     bin_name = "makensis.exe"
-    from _winreg import HKEY_LOCAL_MACHINE as HKLM
-    from _winreg import KEY_READ, KEY_WOW64_32KEY, OpenKey, QueryValueEx
+    from winreg import HKEY_LOCAL_MACHINE as HKLM
+    from winreg import KEY_READ, KEY_WOW64_32KEY, OpenKey, QueryValueEx
 
     try:
         nsisreg = OpenKey(HKLM, "Software\\NSIS", 0, KEY_READ | KEY_WOW64_32KEY)
@@ -616,7 +616,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
 class NSISScript(object):
     def create(self):
         fileList, totalSize = self.getBuildDirContents(OUT_DIR)
-        print "Total size eq: {}".format(totalSize)
+        print("Total size eq: {}".format(totalSize))
         installFiles = self.prepareInstallListTemplate(fileList) 
         uninstallFiles = self.prepareDeleteListTemplate(fileList)
         
@@ -648,14 +648,14 @@ class NSISScript(object):
             totalSize += sum(os.path.getsize(os.path.join(root, file_)) for file_ in files)
             for file_ in files:
                 new_root = root.replace(OUT_DIR, "").strip("\\")
-                if not fileList.has_key(new_root):
+                if new_root not in fileList:
                     fileList[new_root] = []
                 fileList[new_root].append(file_)
         return fileList, totalSize          
     
     def prepareInstallListTemplate(self, fileList):
         create = []
-        for dir_ in fileList.iterkeys():
+        for dir_ in fileList.keys():
             create.append('SetOutPath "$INSTDIR\\{}"'.format(dir_))
             for file_ in fileList[dir_]:
                 create.append('FILE "{}\\{}\\{}"'.format(OUT_DIR, dir_, file_))
@@ -663,7 +663,7 @@ class NSISScript(object):
     
     def prepareDeleteListTemplate(self, fileList):
         delete = []
-        for dir_ in fileList.iterkeys():
+        for dir_ in fileList.keys():
             for file_ in fileList[dir_]:
                 delete.append('DELETE "$INSTDIR\\{}\\{}"'.format(dir_, file_))
             delete.append('RMdir "$INSTDIR\\{}"'.format(file_))    
@@ -674,9 +674,9 @@ class build_installer(py2exe):
         py2exe.run(self)
         script = NSISScript()
         script.create()
-        print "*** compiling the NSIS setup script***"
+        print("*** compiling the NSIS setup script***")
         script.compile()
-        print "*** DONE ***"
+        print("*** DONE ***")
 
 guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock_go.png',
      'resources/control_pause_blue.png', 'resources/cross.png', 'resources/door_in.png',
