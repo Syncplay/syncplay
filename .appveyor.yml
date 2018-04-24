@@ -9,10 +9,10 @@ init:
   - set PATH=C:\Miniconda;C:\Miniconda\Scripts;C:\Program Files (x86)\NSIS;%PATH%
   - conda create -n syncplay -y
   - activate syncplay
-  - conda install python=2.7.13 -y
+  - conda install python=3.6 -y
   - conda install pywin32 -y
   - conda install -c conda-forge pyside2 -y
-  - pip install twisted py2exe_py2 zope.interface
+  - pip install twisted py2exe zope.interface
   - type nul > C:\Miniconda\envs\syncplay\lib\site-packages\zope\__init__.py
   - pip freeze
   - conda list
@@ -27,7 +27,7 @@ install:
   - del syncplay_v%ver%\lib\MPR.dll
   - mkdir syncplay_v%ver%\platforms
   - copy C:\Miniconda\envs\syncplay\library\plugins\platforms\qwindows.dll syncplay_v%ver%\platforms\
-  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup-PySide2.exe
+  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup-Py3-PySide2.exe
 
 # Not a project with an msbuild file, build done at install.
 build: off
@@ -35,10 +35,10 @@ build: off
 artifacts:
   - path: 'syncplay_v$(ver)'
     type: zip
-    name: Syncplay-$(ver)-win-pyside2
+    name: Syncplay-$(ver)-win-py3-pyside2
 
-  - path: Syncplay-$(ver)-Setup-PySide2.exe
-    name: Syncplay-$(ver)-win-setup-pyside2
+  - path: Syncplay-$(ver)-Setup-Py3-PySide2.exe
+    name: Syncplay-$(ver)-win-setup-py3-pyside2
 
 # Push artefact to S3 bucket and list all
 before_deploy:
