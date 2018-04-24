@@ -144,7 +144,6 @@ class VlcPlayer(BasePlayer):
 
     def getMRL(self, fileURL):
         if utils.isURL(fileURL):
-            fileURL = fileURL.encode('utf8')
             fileURL = urllib.parse.quote(fileURL, safe="%/:=&?~#+!$,;'@()*[]")
             return fileURL
 
@@ -164,7 +163,7 @@ class VlcPlayer(BasePlayer):
             if os.path.isfile(normedPath):
                 filePath = normedPath
         if utils.isASCII(filePath) and not utils.isURL(filePath):
-            self._listener.sendLine('load-file: {}'.format(filePath.encode('ascii', 'ignore')))
+            self._listener.sendLine('load-file: {}'.format(filePath))
         else:
             fileURL = self.getMRL(filePath)
             self._listener.sendLine('load-file: {}'.format(fileURL))
