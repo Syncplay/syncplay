@@ -141,10 +141,8 @@ def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
     if not frozen:
         path = os.path.dirname(os.path.dirname(__file__))
-    elif frozen in ('dll', 'console_exe', 'windows_exe'):
+    elif frozen in ('dll', 'console_exe', 'windows_exe', 'macosx_app'):
         path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    elif frozen in ('macosx_app'):
-        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
     else:
         path = ""
     return path
