@@ -3,48 +3,48 @@ osx_image: xcode7.3
 
 branches:
   only:
-  - qtpy-pyside2
+  - py3-qtpy-pyside2
 
 script:
-- python buildPy2app.py py2app
+- python3 buildPy2app.py py2app
 
 before_install:
+- hg clone https://alby128@bitbucket.org/alby128/py2app
 - brew update
+- brew upgrade python
+- which python3
+- python3 --version
+- which pip3
+- pip3 --version
 - curl -O http://syncplay.s3.amazonaws.com/qt595.rb
 - mv qt595.rb qt.rb
 - brew install ./qt.rb
-- which python
-- which pip
-- curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.9.0a1-5.9.5-cp27-cp27m-macosx_10_11_x86_64.whl -o PySide2-5.9.0a1-5.9.5-cp27-cp27m-macosx_10_11_x86_64.whl
-- pip install PySide2-5.9.0a1-5.9.5-cp27-cp27m-macosx_10_11_x86_64.whl
+- curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.9.0a1-5.9.5-cp36-cp36m-macosx_10_11_x86_64.whl -o PySide2-5.9.0a1-5.9.5-cp36-cp36m-macosx_10_11_x86_64.whl
+- pip3 install PySide2-5.9.0a1-5.9.5-cp36-cp36m-macosx_10_11_x86_64.whl
 - ln -s /usr/local/lib/python2.7/site-packages/PySide2/libshiboken2-python2.7v.5.9.dylib /usr/local/lib/
 - ln -s /usr/local/lib/python2.7/site-packages/PySide2/libpyside2-python2.7v.5.9.dylib /usr/local/lib/
 #- python -c "from PySide2 import QtCore"
-- python -c "from PySide2.QtCore import __version__; print __version__" 
-- hg clone https://alby128@bitbucket.org/alby128/py2app
+- python3 -c "from PySide2.QtCore import __version__; print(__version__)" 
 - cd py2app
-- python setup.py install
+- python3 setup.py install
 - cd ..
-- python -c "from py2app.recipes import pyside2" 
+- python3 -c "from py2app.recipes import pyside2" 
 
 install:
-- pip install twisted appnope pyobjc
-#- git clone -b qtpy-pyside2 https://github.com/alby128/syncplay.git syncplay-qtpy-PySide2
-#- cd syncplay-qtpy-PySide2
-#- git checkout qtpy-pyside2
+- pip3 install twisted appnope
 
 before_deploy:
-- pip install dmgbuild
+- pip3 install dmgbuild
 - mkdir dist_dmg
 - mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
 - mv resources/lua/intf/syncplay.lua resources/lua/intf/.syncplay.lua
 - mv resources/macOS_readme.pdf resources/.macOS_readme.pdf
 - export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
-- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS_pyside2.dmg
+- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS_py3_pyside2.dmg
 
 deploy:
   skip_cleanup: true
-  on: qtpy-pyside2
+  on: py3-qtpy-pyside2
   provider: bintray
   file: "bintray.json"
   user: alby128
