@@ -7,12 +7,12 @@
 #2) It is expected that you will have NSIS 3 NSIS from http://nsis.sourceforge.net installed.
 
 import sys, codecs
-try:
-    if (sys.version_info.major != 2) or (sys.version_info.minor < 7):
-        raise Exception("You must build Syncplay with Python 2.7!")
-except AttributeError:
-    import warnings
-    warnings.warn("You must build Syncplay with Python 2.7!")
+# try:
+#     if (sys.version_info.major != 2) or (sys.version_info.minor < 7):
+#         raise Exception("You must build Syncplay with Python 2.7!")
+# except AttributeError:
+#     import warnings
+#     warnings.warn("You must build Syncplay with Python 2.7!")
 
 from distutils.core import setup
 from py2exe.build_exe import py2exe
