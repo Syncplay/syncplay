@@ -21,8 +21,8 @@ before_install:
 - brew install ./qt.rb
 - curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.9.0a1-5.9.5-cp36-cp36m-macosx_10_11_x86_64.whl -o PySide2-5.9.0a1-5.9.5-cp36-cp36m-macosx_10_11_x86_64.whl
 - pip3 install PySide2-5.9.0a1-5.9.5-cp36-cp36m-macosx_10_11_x86_64.whl
-- ln -s /usr/local/lib/python2.7/site-packages/PySide2/libshiboken2-python2.7v.5.9.dylib /usr/local/lib/
-- ln -s /usr/local/lib/python2.7/site-packages/PySide2/libpyside2-python2.7v.5.9.dylib /usr/local/lib/
+- ln -s /usr/local/lib/python3.6/site-packages/PySide2/libpyside2.cpython-36m-darwin.5.9.dylib /usr/local/lib/
+- ln -s /usr/local/lib/python3.6/site-packages/PySide2/libshiboken2.cpython-36m-darwin.5.9.dylib /usr/local/lib/
 #- python -c "from PySide2 import QtCore"
 - python3 -c "from PySide2.QtCore import __version__; print(__version__)" 
 - cd py2app
@@ -40,7 +40,7 @@ before_deploy:
 - mv resources/lua/intf/syncplay.lua resources/lua/intf/.syncplay.lua
 - mv resources/macOS_readme.pdf resources/.macOS_readme.pdf
 - export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
-- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS_py3_pyside2.dmg
+- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS_py36_pyside2.dmg
 
 deploy:
   skip_cleanup: true
