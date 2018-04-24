@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 #coding:utf8
 
-''' *** TROUBLESHOOTING ***
 
-) If you get the error "ImportError: No module named zope.interface" then add an empty __init__.py file to the PYTHONDIR/Lib/site-packages/zope directory
-
-2) It is expected that you will have NSIS 3 NSIS from http://nsis.sourceforge.net installed.
-
-'''
+#*** TROUBLESHOOTING ***
+#1) If you get the error "ImportError: No module named zope.interface" then add an empty __init__.py file to the PYTHONDIR/Lib/site-packages/zope directory
+#2) It is expected that you will have NSIS 3 NSIS from http://nsis.sourceforge.net installed.
 
 import sys, codecs
 try:
