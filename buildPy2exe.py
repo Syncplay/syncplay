@@ -15,7 +15,10 @@ import sys, codecs
 #     warnings.warn("You must build Syncplay with Python 2.7!")
 
 from distutils.core import setup
-from py2exe.build_exe import py2exe
+try:
+    from py2exe.build_exe import py2exe
+except ImportError:
+    from py2exe.distutils_build_exe import py2exe
 from string import Template
 
 import syncplay
