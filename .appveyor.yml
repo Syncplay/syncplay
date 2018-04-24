@@ -9,7 +9,7 @@ init:
   - set PATH=C:\Miniconda;C:\Miniconda\Scripts;C:\Program Files (x86)\NSIS;%PATH%
   - conda create -n syncplay -y
   - activate syncplay
-  - conda install python=3.6 -y
+  - conda install python=3.5 -y
   - conda install pywin32 -y
   - conda install -c conda-forge pyside2 -y
   - pip install twisted py2exe zope.interface
