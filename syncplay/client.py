@@ -910,12 +910,13 @@ class SyncplayClient(object):
 
     def checkForUpdate(self, userInitiated):
         try:
-            import urllib.request, urllib.parse, urllib.error, syncplay, sys, messages, json
+            import urllib.request, urllib.parse, urllib.error, syncplay, sys, json
             params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
-                                   'language': messages.messages["CURRENT"], 'platform': sys.platform, 'userInitiated': userInitiated})
+                                   'language': syncplay.messages.messages["CURRENT"], 'platform': sys.platform, 'userInitiated': userInitiated})
 
             f = urllib.request.urlopen(constants.SYNCPLAY_UPDATE_URL.format(params))
             response = f.read()
+            response = response.decode('utf-8')
             response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","\"").replace("&#8221;","\"") # Fix Wordpress
             response = json.loads(response)
             publicServers = None
