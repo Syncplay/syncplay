@@ -371,14 +371,15 @@ def open_system_file_browser(path):
 
 def getListOfPublicServers():
     try:
-        import urllib.request, urllib.parse, urllib.error, syncplay, sys, messages, json
+        import urllib.request, urllib.parse, urllib.error, syncplay, sys, json
         params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
-                                   'language': messages.messages["CURRENT"]})
+                                   'language': syncplay.messages.messages["CURRENT"]})
         f = urllib.request.urlopen(constants.SYNCPLAY_PUBLIC_SERVER_LIST_URL.format(params))
         response = f.read()
+        response = response.decode('utf-8')
         response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","'").replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","") # Fix Wordpress
         response = ast.literal_eval(response)
-
+        
         if response:
             return response
         else:
