@@ -345,6 +345,7 @@ class MplayerPlayer(BasePlayer):
 
         def run(self):
             line = self.__process.stdout.readline()
+            line = line.decode('utf-8')
             if "MPlayer 1" in line:
                 self.__playerController.notMplayer2()
             else:
@@ -352,6 +353,7 @@ class MplayerPlayer(BasePlayer):
                 self.__playerController.lineReceived(line)
             while self.__process.poll() is None:
                 line = self.__process.stdout.readline()
+                line = line.decode('utf-8')
                 line = line.rstrip("\r\n")
                 self.__playerController.lineReceived(line)
             self.__playerController.drop()
@@ -442,6 +444,7 @@ class MplayerPlayer(BasePlayer):
                     #line = line.decode('utf8')
                 line = line + "\n"
                 self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
+                line = line.encode('utf-8')
                 self.__process.stdin.write(line)
             except IOError:
                 pass

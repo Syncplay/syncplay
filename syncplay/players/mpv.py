@@ -15,7 +15,7 @@ class MpvPlayer(MplayerPlayer):
     @staticmethod
     def run(client, playerPath, filePath, args):
         try:
-            ver = MpvPlayer.RE_VERSION.search(subprocess.check_output([playerPath, '--version']))
+            ver = MpvPlayer.RE_VERSION.search(subprocess.check_output([playerPath, '--version']).decode('utf-8'))
         except:
             ver = None
         constants.MPV_NEW_VERSION = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 6
