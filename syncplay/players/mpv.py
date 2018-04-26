@@ -267,7 +267,7 @@ class NewMpvPlayer(OldMpvPlayer):
         self.mpvErrorCheck(line)
 
         if "<chat>" in line:
-            line = line.decode("utf-8").replace(constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER, "\\").encode("utf-8")
+            line = line.replace(constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER, "\\")
             self._listener.sendChat(line[6:-7])
 
         if "<get_syncplayintf_options>" in line:

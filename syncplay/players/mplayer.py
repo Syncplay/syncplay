@@ -324,9 +324,9 @@ class MplayerPlayer(BasePlayer):
             if 'TERM' in env:
                 del env['TERM']
             if filePath:
-                self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.__getCwd(filePath, env), env=env)
+                self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.__getCwd(filePath, env), env=env, bufsize=0)
             else:
-                self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, env=env)
+                self.__process = subprocess.Popen(call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, env=env, bufsize=0)
             threading.Thread.__init__(self, name="MPlayer Listener")
 
 
