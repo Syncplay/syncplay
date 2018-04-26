@@ -143,12 +143,16 @@ def findWorkingDir():
         path = os.path.dirname(os.path.dirname(__file__))
     elif frozen in ('dll', 'console_exe', 'windows_exe', 'macosx_app'):
         path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    elif frozen: #needed for PyInstaller
+        if getattr(sys, '_MEIPASS', '') is not None:
+            path = getattr(sys, '_MEIPASS', '') #--onefile
+        else:
+            path = os.path.dirname(sys.executable) #--onedir
     else:
         path = ""
     return path
 
 def getResourcesPath():
-
     if isWindows():
         return findWorkingDir() + "\\resources\\"
     else:

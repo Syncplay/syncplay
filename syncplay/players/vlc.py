@@ -373,7 +373,10 @@ class VlcPlayer(BasePlayer):
                 self.__playerController.drop(getMessage("vlc-interface-version-mismatch").format(self.oldIntfVersion,constants.VLC_INTERFACE_MIN_VERSION))
 
             else:
-                self.__process = subprocess.Popen(call, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                if isWindows() and getattr(sys, 'frozen', '') and getattr(sys, '_MEIPASS', '') is not None: #Needed for pyinstaller --onefile bundle
+                    self.__process = subprocess.Popen(call, stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=False, creationflags=0x08000000)
+                else:
+                    self.__process = subprocess.Popen(call, stderr=subprocess.PIPE, stdout=subprocess.PIPE)                
                 self.timeVLCLaunched = time.time()
                 if self._shouldListenForSTDOUT():
                     for line in iter(self.__process.stderr.readline, ''):

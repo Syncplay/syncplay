@@ -12,7 +12,7 @@ init:
   - conda install python=3.5 -y
   - conda install pywin32 -y
   - conda install -c conda-forge pyside2 -y
-  - pip install twisted py2exe zope.interface
+  - pip install twisted pyinstaller zope.interface
   - type nul > C:\Miniconda\envs\syncplay\lib\site-packages\zope\__init__.py
   - pip freeze
   - conda list
@@ -20,25 +20,22 @@ init:
 install:
   - cd %APPVEYOR_BUILD_FOLDER%
   - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
-  - python buildPy2exe.py
-  - del syncplay_v%ver%\lib\api-*
-  - del syncplay_v%ver%\lib\DNSAPI.dll
-  - del syncplay_v%ver%\lib\IPHLPAPI.dll
-  - del syncplay_v%ver%\lib\MPR.dll
-  - mkdir syncplay_v%ver%\platforms
-  - copy C:\Miniconda\envs\syncplay\library\plugins\platforms\qwindows.dll syncplay_v%ver%\platforms\
-  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup-Py3-PySide2.exe
+  - pyinstaller pyinstaller-onefile.spec
+  - move dist\Syncplay.exe Syncplay-%ver%-win-Py3-PySide2.exe
+  - del build /s /Q
+  - del dist /s /Q
+  - pyinstaller pyinstaller-onedir.spec
 
 # Not a project with an msbuild file, build done at install.
 build: off
 
 artifacts:
-  - path: 'syncplay_v$(ver)'
+  - path: 'dist'
     type: zip
     name: Syncplay-$(ver)-win-py3-pyside2
 
-  - path: Syncplay-$(ver)-Setup-Py3-PySide2.exe
-    name: Syncplay-$(ver)-win-setup-py3-pyside2
+  - path: Syncplay-$(ver)-win-Py3-PySide2.exe
+    name: Syncplay-$(ver)-win-py3-pyside2
 
 # Push artefact to S3 bucket and list all
 before_deploy:
