@@ -1,10 +1,13 @@
 # -*- mode: python -*-
 
+import os
+workdir = os.getcwd()
+
 block_cipher = None
 
 
 a = Analysis(['syncplayClient.py'],
-             pathex=['C:\\Users\\Alberto\\Documents\\syncplay-py3-qtpy-pyside2'],
+             pathex=[workdir],
              binaries=[],
              datas=[('resources/*', 'resources')],
              hiddenimports=['PySide2', 'PySide2.QtCore', 'PySide2.QtWidgets'],
