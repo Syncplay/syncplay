@@ -41,7 +41,7 @@ def get_nsis_path():
         return bin_name
 NSIS_COMPILE = get_nsis_path()
 
-OUT_DIR = "syncplay_v{}".format(syncplay.version)
+OUT_DIR = "Syncplay"
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
 NSIS_SCRIPT_TEMPLATE = r"""
   !include LogicLib.nsh
