@@ -27,6 +27,7 @@ install:
   #- del dist /s /Q
   - pyinstaller pyinstaller-onedir.spec
   - python buildInstaller.py
+  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup-Py35-PySide2.exe
 
 # Not a project with an msbuild file, build done at install.
 build: off
@@ -36,15 +37,12 @@ artifacts:
     type: zip
     name: Syncplay-$(ver)-win-py35-pyside2
 
-  - path: Syncplay-$(ver)-win-Py35-PySide2.exe
-    name: Syncplay-$(ver)-win-py35-pyside2
+  - path: Syncplay-$(ver)-Setup-Py35-PySide2.exe
+    name: Syncplay-$(ver)-Setup-Py35-PySide2
 
 # Push artefact to S3 bucket and list all
 before_deploy:
   - dir
-  - cd dist
-  - dir
-  - cd ..
   #- python -c "from PySide2 import QtCore; print QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)"
 
 
