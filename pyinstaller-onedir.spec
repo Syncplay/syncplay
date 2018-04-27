@@ -3,6 +3,8 @@
 import os
 workdir = os.getcwd()
 
+import syncplay
+
 block_cipher = None
 
 
@@ -34,4 +36,4 @@ coll = COLLECT(exe,
                a.datas,
                strip=False,
                upx=True,
-               name='Syncplay')
+               name="syncplay_v{}".format(syncplay.version))

@@ -22,10 +22,13 @@ install:
   - cd %APPVEYOR_BUILD_FOLDER%
   - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
   - pyinstaller pyinstaller-onefile.spec
-  - move dist\Syncplay.exe Syncplay-%ver%-win-Py3-PySide2.exe
+  - move dist\Syncplay.exe Syncplay-%ver%-win-Py35-PySide2.exe
   - del build /s /Q
   - del dist /s /Q
   - pyinstaller pyinstaller-onedir.spec
+  - cd dist
+  - python buildInstaller.py
+  - cd ..
 
 # Not a project with an msbuild file, build done at install.
 build: off
@@ -33,14 +36,17 @@ build: off
 artifacts:
   - path: 'dist'
     type: zip
-    name: Syncplay-$(ver)-win-py3-pyside2
+    name: Syncplay-$(ver)-win-py35-pyside2
 
-  - path: Syncplay-$(ver)-win-Py3-PySide2.exe
-    name: Syncplay-$(ver)-win-py3-pyside2
+  - path: Syncplay-$(ver)-win-Py35-PySide2.exe
+    name: Syncplay-$(ver)-win-py35-pyside2
 
 # Push artefact to S3 bucket and list all
 before_deploy:
   - dir
+  - cd dist
+  - dir
+  - cd ..
   #- python -c "from PySide2 import QtCore; print QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)"
 
 
