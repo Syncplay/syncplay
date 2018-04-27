@@ -357,7 +357,7 @@ class ConfigurationGetter(object):
             self._validateArguments()
         except InvalidConfigValue as e:
             try:
-                for key, value in list(self._promptForMissingArguments(e.message).items()):
+                for key, value in list(self._promptForMissingArguments(e).items()):
                     self._config[key] = value
                 self._checkConfig()
             except:

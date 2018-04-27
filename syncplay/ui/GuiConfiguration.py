@@ -660,6 +660,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.basicOptionsFrame = QtWidgets.QFrame()
         self.basicOptionsLayout = QtWidgets.QVBoxLayout()
         if error:
+            error = str(error)
             self.errorLabel = QLabel(self)
             if error[:1] != constants.ERROR_MESSAGE_MARKER:
                 self.errorLabel.setStyleSheet(constants.STYLE_ERRORLABEL)
