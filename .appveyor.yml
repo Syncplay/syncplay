@@ -26,9 +26,7 @@ install:
   #- del build /s /Q
   #- del dist /s /Q
   - pyinstaller pyinstaller-onedir.spec
-  - cd dist
   - python buildInstaller.py
-  - cd ..
 
 # Not a project with an msbuild file, build done at install.
 build: off
