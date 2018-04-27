@@ -624,7 +624,7 @@ class NSISScript(object):
                                                               totalSize = totalSize,
                                                               )
         with codecs.open(SETUP_SCRIPT_PATH, "w", "utf-8-sig") as outfile:
-            outfile.write(contents.decode('utf-8'))
+            outfile.write(contents)
         
     def compile(self):
         if not os.path.isfile(NSIS_COMPILE):
