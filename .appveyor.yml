@@ -14,6 +14,7 @@ init:
   - conda install -c conda-forge pyside2 -y
   - pip install twisted pyinstaller zope.interface
   - type nul > C:\Miniconda\envs\syncplay\lib\site-packages\zope\__init__.py
+  - type nul > C:\Miniconda\envs\syncplay\lib\site-packages\pyinstaller\loader\rthooks\pyi_rth_twisted.py  
   - pip freeze
   - conda list
   
