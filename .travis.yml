@@ -33,6 +33,7 @@ before_install:
 install:
 - pip3 install twisted appnope
 
+
 before_deploy:
 - pip3 install dmgbuild
 - mkdir dist_dmg
@@ -40,7 +41,7 @@ before_deploy:
 - mv resources/lua/intf/syncplay.lua resources/lua/intf/.syncplay.lua
 - mv resources/macOS_readme.pdf resources/.macOS_readme.pdf
 - export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
-- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS_py36_pyside2.dmg
+- dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}_macOS_py36.dmg
 
 deploy:
   skip_cleanup: true
