@@ -1,0 +1,6 @@
+You must follow the following instructions to use Syncplay with VLC:
+
+Place the syncplay.lua file from /resources/lua/intf/ into the main (all user) VLC /lua/intf/ sub-directory:
+* Window: %ProgramFiles%\VideoLAN\VLC\lua\intf\
+
+Note: A version of these instructions is also available from http://syncplay.pl/LUA
