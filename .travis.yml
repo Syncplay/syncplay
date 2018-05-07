@@ -28,7 +28,7 @@ before_install:
 - python -c "from py2app.recipes import pyside2" 
 
 install:
-- pip install twisted appnope pyobjc
+- pip install twisted appnope
 #- git clone -b qtpy-pyside2 https://github.com/alby128/syncplay.git syncplay-qtpy-PySide2
 #- cd syncplay-qtpy-PySide2
 #- git checkout qtpy-pyside2
