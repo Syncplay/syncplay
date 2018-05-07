@@ -27,7 +27,9 @@ install:
   - del syncplay_v%ver%\lib\MPR.dll
   - mkdir syncplay_v%ver%\platforms
   - copy C:\Miniconda\envs\syncplay\library\plugins\platforms\qwindows.dll syncplay_v%ver%\platforms\
-  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup-PySide2.exe
+  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup.exe
+  - type nul > syncplay_v%ver%\syncplay.ini
+  - copy resources\win_lua_note.txt syncplay_v%ver%\"VLC LUA Script installation.txt"
 
 # Not a project with an msbuild file, build done at install.
 build: off
@@ -35,14 +37,15 @@ build: off
 artifacts:
   - path: 'syncplay_v$(ver)'
     type: zip
-    name: Syncplay-$(ver)-win-pyside2
+    name: Syncplay_v$(ver)_Portable
 
-  - path: Syncplay-$(ver)-Setup-PySide2.exe
-    name: Syncplay-$(ver)-win-setup-pyside2
+  - path: Syncplay-$(ver)-Setup.exe
+    name: Syncplay-$(ver)-win-setup
 
 # Push artefact to S3 bucket and list all
 before_deploy:
   - dir
+  - dir syncplay_v%ver%
   #- python -c "from PySide2 import QtCore; print QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)"
 
 
