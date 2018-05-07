@@ -27,7 +27,6 @@ install:
   - del syncplay_v%ver%\lib\MPR.dll
   - mkdir syncplay_v%ver%\platforms
   - copy C:\Miniconda\envs\syncplay\library\plugins\platforms\qwindows.dll syncplay_v%ver%\platforms\
-  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup.exe
   - type nul > syncplay_v%ver%\syncplay.ini
   - copy resources\win_lua_note.txt syncplay_v%ver%\"VLC LUA Script installation.txt"
 
