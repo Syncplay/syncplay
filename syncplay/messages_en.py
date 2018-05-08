@@ -152,7 +152,7 @@ en = {
     "no-media-directories-error" : u"No media directories have been set. For shared playlist and file switching features to work properly please select File->Set Media Directories and specify where Syncplay should look to find media files.",
     "cannot-find-directory-error" : u"Could not find media directory '{}'. To update your list of media directories please select File->Set Media Directories from the menu bar and specify where Syncplay should look to find media files.",
 
-    "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.",
+    "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit https://www.syncplay.pl/ in your browser.",
 
     # Client arguments
     "argument-description" : 'Solution to synchronize playback of multiple media player instances over the network.',
