@@ -342,7 +342,7 @@ class ConfigDialog(QtWidgets.QDialog):
         try:
             servers = utils.getListOfPublicServers()
         except IOError as e:
-            self.showErrorMessage(unicode(e))
+            self.showErrorMessage(e.args[0])
             return
         currentServer = self.hostCombobox.currentText()
         self.hostCombobox.clear()
