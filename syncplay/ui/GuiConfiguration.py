@@ -20,6 +20,7 @@ class GuiConfiguration:
         self.config = config
         self._availablePlayerPaths = []
         self.error = error
+        constants.DEBUG_MODE = config['debug']
 
     def run(self):
         if QCoreApplication.instance() is None:
