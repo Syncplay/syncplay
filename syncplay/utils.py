@@ -14,6 +14,7 @@ import ast
 import unicodedata
 import platform
 import subprocess
+import traceback
 
 folderSearchEnabled = True
 
@@ -386,7 +387,11 @@ def getListOfPublicServers():
         else:
             raise IOError
     except:
-        raise IOError(getMessage("failed-to-load-server-list-error"))
+        if constants.DEBUG_MODE == True:
+            traceback.print_exc()
+            raise
+        else:
+            raise IOError(getMessage("failed-to-load-server-list-error"))
 
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
