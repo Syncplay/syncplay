@@ -11,7 +11,8 @@ from twisted.internet import reactor, task, defer, threads
 from functools import wraps
 from copy import deepcopy
 from syncplay.protocols import SyncClientProtocol
-from syncplay import utils, constants
+from syncplay import utils, constants, version
+from syncplay.utils import isMacOS
 from syncplay.messages import getMissingStrings, getMessage
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME
@@ -910,12 +911,15 @@ class SyncplayClient(object):
 
     def checkForUpdate(self, userInitiated):
         try:
-            import urllib, syncplay, sys, messages, json
-            params = urllib.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
-                                   'language': messages.messages["CURRENT"], 'platform': sys.platform, 'userInitiated': userInitiated})
-
-            f = urllib.urlopen(constants.SYNCPLAY_UPDATE_URL.format(params))
-            response = f.read()
+            import syncplay, sys, messages, urllib, json
+            params = urllib.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number, 'language': messages.messages["CURRENT"], 'platform': sys.platform, 'userInitiated': userInitiated})
+            if isMacOS():
+                import requests
+                response = requests.get(constants.SYNCPLAY_UPDATE_URL.format(params))
+                response = response.text
+            else:
+                f = urllib.urlopen(constants.SYNCPLAY_UPDATE_URL.format(params))
+                response = f.read()            
             response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","\"").replace("&#8221;","\"") # Fix Wordpress
             response = json.loads(response)
             publicServers = None
@@ -926,7 +930,7 @@ class SyncplayClient(object):
             return response["version-status"], response["version-message"] if response.has_key("version-message")\
                 else None, response["version-url"] if response.has_key("version-url") else None, publicServers
         except:
-            return "failed", getMessage("update-check-failed-notification").format(syncplay.version), constants.SYNCPLAY_DOWNLOAD_URL, None
+            return "failed", getMessage("update-check-failed-notification").format(version), constants.SYNCPLAY_DOWNLOAD_URL, None
 
     class _WarningManager(object):
         def __init__(self, player, userlist, ui, client):
