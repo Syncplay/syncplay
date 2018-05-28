@@ -29,6 +29,7 @@ before_install:
 
 install:
 - pip install twisted appnope
+- pip install -U https://github.com/requests/requests/zipball/master
 #- git clone -b qtpy-pyside2 https://github.com/alby128/syncplay.git syncplay-qtpy-PySide2
 #- cd syncplay-qtpy-PySide2
 #- git checkout qtpy-pyside2
