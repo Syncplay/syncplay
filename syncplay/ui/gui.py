@@ -506,10 +506,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     filename = user.file['name']
                     if isURL(filename):
                         filename = urllib.parse.unquote(filename)
-                        try:
-                            filename = filename.decode('utf-8')
-                        except UnicodeEncodeError:
-                            pass
                     filenameitem = QtGui.QStandardItem(filename)
                     fileSwitchState = self.getFileSwitchState(user.file['name']) if room == currentUser.room else None
                     if fileSwitchState != constants.FILEITEM_SWITCH_NO_SWITCH:
