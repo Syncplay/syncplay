@@ -20,6 +20,7 @@ class GuiConfiguration:
         self.config = config
         self._availablePlayerPaths = []
         self.error = error
+        constants.DEBUG_MODE = config['debug']
 
     def run(self):
         if QCoreApplication.instance() is None:
@@ -342,7 +343,7 @@ class ConfigDialog(QtWidgets.QDialog):
         try:
             servers = utils.getListOfPublicServers()
         except IOError as e:
-            self.showErrorMessage(str(e))
+            self.showErrorMessage(e.args[0])
             return
         currentServer = self.hostCombobox.currentText()
         self.hostCombobox.clear()

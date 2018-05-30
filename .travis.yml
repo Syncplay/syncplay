@@ -32,6 +32,7 @@ before_install:
 
 install:
 - pip3 install twisted appnope
+- pip3 install -U https://github.com/requests/requests/zipball/master
 
 
 before_deploy:

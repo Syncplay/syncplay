@@ -11,7 +11,8 @@ from twisted.internet import reactor, task, defer, threads
 from functools import wraps
 from copy import deepcopy
 from syncplay.protocols import SyncClientProtocol
-from syncplay import utils, constants
+from syncplay import utils, constants, version
+from syncplay.utils import isMacOS
 from syncplay.messages import getMissingStrings, getMessage
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME
@@ -908,12 +909,15 @@ class SyncplayClient(object):
     def checkForUpdate(self, userInitiated):
         try:
             import urllib.request, urllib.parse, urllib.error, syncplay, sys, json
-            params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
-                                   'language': syncplay.messages.messages["CURRENT"], 'platform': sys.platform, 'userInitiated': userInitiated})
-
-            f = urllib.request.urlopen(constants.SYNCPLAY_UPDATE_URL.format(params))
-            response = f.read()
-            response = response.decode('utf-8')
+            params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number, 'language': syncplay.messages.messages["CURRENT"], 'platform': sys.platform, 'userInitiated': userInitiated})
+            if isMacOS():
+                import requests
+                response = requests.get(constants.SYNCPLAY_UPDATE_URL.format(params))
+                response = response.text
+            else:
+                f = urllib.request.urlopen(constants.SYNCPLAY_UPDATE_URL.format(params))
+                response = f.read()
+                response = response.decode('utf-8')
             response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","\"").replace("&#8221;","\"") # Fix Wordpress
             response = json.loads(response)
             publicServers = None

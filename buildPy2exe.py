@@ -721,8 +721,8 @@ info = dict(
     options={'py2exe': {
                          'dist_dir': OUT_DIR,
                          'packages': 'PySide2.QtUiTools',
-                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide2, liburl, ast, unicodedata',
-                         'excludes': 'venv, _ssl, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
+                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide2, liburl, ast, unicodedata, _ssl',
+                         'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
                          'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
                          'optimize': 2,
                          'compressed': 1

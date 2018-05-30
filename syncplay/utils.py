@@ -14,6 +14,7 @@ import ast
 import unicodedata
 import platform
 import subprocess
+import traceback
 
 folderSearchEnabled = True
 
@@ -375,12 +376,16 @@ def open_system_file_browser(path):
 
 def getListOfPublicServers():
     try:
-        import urllib.request, urllib.parse, urllib.error, syncplay, sys, json
-        params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number,
-                                   'language': syncplay.messages.messages["CURRENT"]})
-        f = urllib.request.urlopen(constants.SYNCPLAY_PUBLIC_SERVER_LIST_URL.format(params))
-        response = f.read()
-        response = response.decode('utf-8')
+        import urllib.request, urllib.parse, urllib.error, syncplay, sys
+        params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number, 'language': syncplay.messages.messages["CURRENT"]})
+        if isMacOS():
+            import requests
+            response = requests.get(constants.SYNCPLAY_PUBLIC_SERVER_LIST_URL.format(params))
+            response = response.text
+        else:
+            f = urllib.request.urlopen(constants.SYNCPLAY_PUBLIC_SERVER_LIST_URL.format(params))
+            response = f.read()
+            response = response.decode('utf-8')
         response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","'").replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","") # Fix Wordpress
         response = ast.literal_eval(response)
         
@@ -389,7 +394,11 @@ def getListOfPublicServers():
         else:
             raise IOError
     except:
-        raise IOError(getMessage("failed-to-load-server-list-error"))
+        if constants.DEBUG_MODE == True:
+            traceback.print_exc()
+            raise
+        else:
+            raise IOError(getMessage("failed-to-load-server-list-error"))
 
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
