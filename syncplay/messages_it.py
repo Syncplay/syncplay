@@ -152,7 +152,7 @@ it = {
     "no-media-directories-error" : "Nessuna cartella multimediale è stata configurata. Per permettere il corretto funzionamento delle playlist condivise e la selezione automatica dei file, naviga in File->Imposta cartelle multimediali e specifica dove Syncplay deve ricercare i file multimediali.",
     "cannot-find-directory-error" : "Impossibile trovare la cartella multimediale '{}'. Per aggiornare la lista delle cartelle multimediali seleziona File->Imposta cartelle multimediali dalla barra dei menù e specifica dove Syncplay deve ricercare i file multimediali.",
 
-    "failed-to-load-server-list-error" : "Impossibile caricare la lista dei server pubblici. Per favore, visita http://www.syncplay.pl/ con il tuo browser.",
+    "failed-to-load-server-list-error" : "Impossibile caricare la lista dei server pubblici. Per favore, visita https://www.syncplay.pl/ con il tuo browser.",
 
     # Client arguments
     "argument-description" : 'Programma per sincronizzare la riproduzione di media player multipli attraverso la rete.',

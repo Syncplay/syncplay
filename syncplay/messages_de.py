@@ -149,7 +149,7 @@ de = {
     "no-media-directories-error" : "No media directories have been set. For shared playlist and file switching features to work properly please select File->Set Media Directories and specify where Syncplay should look to find media files.", # TODO: Translate
     "cannot-find-directory-error" : "Could not find media directory '{}'. To update your list of media directories please select File->Set Media Directories from the menu bar and specify where Syncplay should look to find media files.", # TODO: Translate
 
-    "failed-to-load-server-list-error" : "Konnte die Liste der öffentlichen Server nicht laden. Bitte besuche http://www.syncplay.pl/ [Englisch] mit deinem Browser.",
+    "failed-to-load-server-list-error" : "Konnte die Liste der öffentlichen Server nicht laden. Bitte besuche https://www.syncplay.pl/ [Englisch] mit deinem Browser.",
 
     # Client arguments
     "argument-description" : 'Syncplay ist eine Anwendung um mehrere MPlayer, MPC-HC, MPC-BE und VLC-Instanzen über das Internet zu synchronisieren.',
