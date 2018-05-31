@@ -21,7 +21,8 @@ init:
 install:
   - cd %APPVEYOR_BUILD_FOLDER%
   - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
-  - pyinstaller pyinstaller-onedir.spec
+  - pyinstaller pyinstaller-client.spec
+  - pyinstaller pyinstaller-server.spec
   - python buildInstaller.py
   - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup-Py35.exe
   - type nul > dist\syncplay.ini

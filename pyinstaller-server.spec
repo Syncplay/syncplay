@@ -6,11 +6,11 @@ workdir = os.getcwd()
 block_cipher = None
 
 
-a = Analysis(['syncplayClient.py'],
+a = Analysis(['syncplayServer.py'],
              pathex=[workdir],
              binaries=[],
              datas=[('resources/*', 'resources')],
-             hiddenimports=['PySide2', 'PySide2.QtCore', 'PySide2.QtWidgets'],
+             hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
@@ -29,5 +29,4 @@ exe = EXE(pyz,
           strip=False,
           upx=False,
           runtime_tmpdir=None,
-          console=False,
-          icon='resources/icon.ico')
+          console=True)
