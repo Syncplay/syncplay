@@ -123,8 +123,8 @@ class TwistedSocketNotifier(QObject):
         QObject.__init__(self, parent)
         self.reactor = reactor
         self.watcher = watcher
-        fd = watcher.fileno()
-        self.notifier = QSocketNotifier(fd, socketType, parent)
+        fd = self.watcher.fileno()
+        self.notifier = QSocketNotifier(watcher, socketType, parent)
         self.notifier.setEnabled(True)
         if socketType == QSocketNotifier.Read:
             self.fn = self.read
