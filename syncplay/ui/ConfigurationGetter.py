@@ -325,19 +325,26 @@ class ConfigurationGetter(object):
         if configFile:
             return configFile
         for name in constants.CONFIG_NAMES:
-            configFile = self._expandConfigPath(name)
+            configFile = self._expandConfigPath(name, xdg = False)
             if os.path.isfile(configFile):
                 return configFile
         return self._expandConfigPath()
 
-    def _expandConfigPath(self, name = None):
+    def _expandConfigPath(self, name = None, xdg = True):
         if os.name != 'nt':
-            prefix = os.getenv('HOME', '.')
-            default_name = constants.DEFAULT_CONFIG_NAME_LINUX
+            if xdg:
+                prefix = self._getXdgConfigHome()
+            else:
+                prefix = os.getenv('HOME', '.')
         else:
             prefix = os.getenv('APPDATA', '.')
-            default_name = constants.DEFAULT_CONFIG_NAME_WINDOWS
-        return os.path.join(prefix, name or default_name)
+        return os.path.join(prefix, name or constants.DEFAULT_CONFIG_NAME)
+
+    def _getXdgConfigHome(self):
+        path = os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
+        if not os.path.isdir(path):
+            os.mkdir(path, 0o755)
+        return path
 
     def _parseConfigFile(self, iniPath, createConfig=True):
         parser = SafeConfigParserUnicode()
