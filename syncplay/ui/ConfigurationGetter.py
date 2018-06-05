@@ -322,21 +322,22 @@ class ConfigurationGetter(object):
 
     def _getConfigurationFilePath(self):
         configFile = self._checkForPortableFile()
-        if not configFile:
-            for name in constants.CONFIG_NAMES:
-                if configFile and os.path.isfile(configFile):
-                    break
-                if os.name <> 'nt':
-                    configFile = os.path.join(os.getenv('HOME', '.'), name)
-                else:
-                    configFile = os.path.join(os.getenv('APPDATA', '.'), name)
-            if configFile and not os.path.isfile(configFile):
-                if os.name <> 'nt':
-                    configFile = os.path.join(os.getenv('HOME', '.'), constants.DEFAULT_CONFIG_NAME_LINUX)
-                else:
-                    configFile = os.path.join(os.getenv('APPDATA', '.'), constants.DEFAULT_CONFIG_NAME_WINDOWS)
+        if configFile:
+            return configFile
+        for name in constants.CONFIG_NAMES:
+            configFile = self._expandConfigPath(name)
+            if os.path.isfile(configFile):
+                return configFile
+        return self._expandConfigPath()
 
-        return configFile
+    def _expandConfigPath(self, name = None):
+        if os.name != 'nt':
+            prefix = os.getenv('HOME', '.')
+            default_name = constants.DEFAULT_CONFIG_NAME_LINUX
+        else:
+            prefix = os.getenv('APPDATA', '.')
+            default_name = constants.DEFAULT_CONFIG_NAME_WINDOWS
+        return os.path.join(prefix, name or default_name)
 
     def _parseConfigFile(self, iniPath, createConfig=True):
         parser = SafeConfigParserUnicode()
