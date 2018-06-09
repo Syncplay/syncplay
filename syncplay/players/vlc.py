@@ -145,7 +145,7 @@ class VlcPlayer(BasePlayer):
     def getMRL(self, fileURL):
         if utils.isURL(fileURL):
             fileURL = fileURL.encode('utf8')
-            fileURL = urllib.quote(fileURL, safe="%/:=&?~#+!$,;'@()*[]")
+            fileURL = urllib.quote(fileURL, safe="%/:=&?~#+!$,;'@()*")
             return fileURL
 
         fileURL = fileURL.replace(u'\\', u'/')
