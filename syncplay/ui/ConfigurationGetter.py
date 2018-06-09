@@ -322,21 +322,29 @@ class ConfigurationGetter(object):
 
     def _getConfigurationFilePath(self):
         configFile = self._checkForPortableFile()
-        if not configFile:
-            for name in constants.CONFIG_NAMES:
-                if configFile and os.path.isfile(configFile):
-                    break
-                if os.name != 'nt':
-                    configFile = os.path.join(os.getenv('HOME', '.'), name)
-                else:
-                    configFile = os.path.join(os.getenv('APPDATA', '.'), name)
-            if configFile and not os.path.isfile(configFile):
-                if os.name != 'nt':
-                    configFile = os.path.join(os.getenv('HOME', '.'), constants.DEFAULT_CONFIG_NAME_LINUX)
-                else:
-                    configFile = os.path.join(os.getenv('APPDATA', '.'), constants.DEFAULT_CONFIG_NAME_WINDOWS)
+        if configFile:
+            return configFile
+        for name in constants.CONFIG_NAMES:
+            configFile = self._expandConfigPath(name, xdg = False)
+            if os.path.isfile(configFile):
+                return configFile
+        return self._expandConfigPath()
 
-        return configFile
+    def _expandConfigPath(self, name = None, xdg = True):
+        if os.name != 'nt':
+            if xdg:
+                prefix = self._getXdgConfigHome()
+            else:
+                prefix = os.getenv('HOME', '.')
+        else:
+            prefix = os.getenv('APPDATA', '.')
+        return os.path.join(prefix, name or constants.DEFAULT_CONFIG_NAME)
+
+    def _getXdgConfigHome(self):
+        path = os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
+        if not os.path.isdir(path):
+            os.mkdir(path, 0o755)
+        return path
 
     def _parseConfigFile(self, iniPath, createConfig=True):
         parser = SafeConfigParserUnicode()
