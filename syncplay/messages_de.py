@@ -218,7 +218,8 @@ de = {
     "misc-label" : u"Diverse",
     "core-behaviour-title" : u"Verhalten des Raumes",
     "syncplay-internals-title" : u"Syncplay intern",
-    "syncplay-mediasearchdirectories-title" : u"In diesen Verzeichnissen nach Medien suchen (ein Pfad pro Zeile)",
+    "syncplay-mediasearchdirectories-title" : u"In diesen Verzeichnissen nach Medien suchen", #needs to be checked
+    "syncplay-mediasearchdirectories-label" : u"In diesen Verzeichnissen nach Medien suchen (ein Pfad pro Zeile)",
     "sync-label" : u"Synchronisation",
     "sync-otherslagging-title" : u"Wenn andere laggen...",
     "sync-youlaggging-title" : u"Wenn du laggst...",
