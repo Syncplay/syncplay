@@ -30,13 +30,19 @@ class MpcBePlayer(MPCHCAPIPlayer):
     @staticmethod
     def getExpandedPath(path):
         if os.path.isfile(path):
-            if path.lower().endswith(u'mpc-be.exe'.lower()) or path.lower().endswith(u'mpc-be64.exe'.lower()):
+            if path.lower().endswith(u'mpc-be.exe'.lower()) or path.lower().endswith(u'mpc-be64.exe'.lower() or path.lower().endswith(u'mpc-beportable.exe'.lower())):
                 return path
         if os.path.isfile(path + u"mpc-be.exe"):
             path += u"mpc-be.exe"
             return path
         if os.path.isfile(path + u"\\mpc-be.exe"):
             path += u"\\mpc-be.exe"
+            return path
+        if os.path.isfile(path + u"mpc-beportable.exe"):
+            path += u"mpc-beportable.exe"
+            return path
+        if os.path.isfile(path + u"\\mpc-beportable.exe"):
+            path += u"\\mpc-beportable.exe"
             return path
         if os.path.isfile(path + u"mpc-be64.exe"):
             path += u"mpc-be64.exe"
