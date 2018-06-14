@@ -9,9 +9,7 @@ init:
   - set PATH=C:\Miniconda;C:\Miniconda\Scripts;C:\Program Files (x86)\NSIS;%PATH%
   - conda create -n syncplay -y
   - activate syncplay
-  - conda install python=2.7.13 -y
-  - conda install pywin32 -y
-  - conda install -c conda-forge pyside2 -y
+  - conda install python pywin32 pyside -y
   - pip install twisted py2exe_py2 zope.interface
   - type nul > C:\Miniconda\envs\syncplay\lib\site-packages\zope\__init__.py
   - pip freeze
@@ -21,12 +19,7 @@ install:
   - cd %APPVEYOR_BUILD_FOLDER%
   - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
   - python buildPy2exe.py
-  - del syncplay_v%ver%\lib\api-*
-  - del syncplay_v%ver%\lib\DNSAPI.dll
-  - del syncplay_v%ver%\lib\IPHLPAPI.dll
   - del syncplay_v%ver%\lib\MPR.dll
-  - mkdir syncplay_v%ver%\platforms
-  - copy C:\Miniconda\envs\syncplay\library\plugins\platforms\qwindows.dll syncplay_v%ver%\platforms\
   - type nul > syncplay_v%ver%\syncplay.ini
   - copy resources\win_lua_note.txt syncplay_v%ver%\"VLC LUA Script installation.txt"
 
