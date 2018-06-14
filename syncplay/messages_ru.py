@@ -226,7 +226,8 @@ ru = {
     "misc-label" : "Прочее",
     "core-behaviour-title" : "Информация о файлах",
     "syncplay-internals-title" : "Системные настройки",
-    "syncplay-mediasearchdirectories-title" : "Папки воспроизведения (один путь на строку)",
+    "syncplay-mediasearchdirectories-title" : "Папки воспроизведения", #needs to be checked
+    "syncplay-mediasearchdirectories-label" : "Папки воспроизведения (один путь на строку)",
     "sync-label" : "Синхронизация",
     "sync-otherslagging-title" : "Опережение",
     "sync-youlaggging-title" : "Отставание",
