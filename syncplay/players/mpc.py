@@ -496,13 +496,19 @@ class MPCHCAPIPlayer(BasePlayer):
     @staticmethod
     def getExpandedPath(path):
         if os.path.isfile(path):
-            if path.lower().endswith('mpc-hc.exe'.lower()) or path.lower().endswith('mpc-hc64.exe'.lower()) or path.lower().endswith('mpc-hc64_nvo.exe'.lower()) or path.lower().endswith('mpc-hc_nvo.exe'.lower()):
+            if path.lower().endswith('mpc-hc.exe'.lower()) or path.lower().endswith('mpc-hcportable.exe'.lower()) or path.lower().endswith('mpc-hc64.exe'.lower()) or path.lower().endswith('mpc-hc64_nvo.exe'.lower()) or path.lower().endswith('mpc-hc_nvo.exe'.lower()):
                 return path
         if os.path.isfile(path + "mpc-hc.exe"):
             path += "mpc-hc.exe"
             return path
         if os.path.isfile(path + "\\mpc-hc.exe"):
             path += "\\mpc-hc.exe"
+            return path
+        if os.path.isfile(path + "mpc-hcportable.exe"):
+            path += "mpc-hcportable.exe"
+            return path
+        if os.path.isfile(path + "\\mpc-hcportable.exe"):
+            path += "\\mpc-hcportable.exe"
             return path
         if os.path.isfile(path + "mpc-hc_nvo.exe"):
             path += "mpc-hc_nvo.exe"

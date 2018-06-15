@@ -285,6 +285,12 @@ class VlcPlayer(BasePlayer):
             elif os.path.isfile(playerPath + "\\vlc.exe"):
                 playerPath += "\\vlc.exe"
                 return playerPath
+            elif os.path.isfile(playerPath + "VLCPortable.exe"):
+                playerPath += "VLCPortable.exe"
+                return playerPath
+            elif os.path.isfile(playerPath + "\\VLCPortable.exe"):
+                playerPath += "\\VLCPortable.exe"
+                return playerPath
         if os.access(playerPath, os.X_OK):
             return playerPath
         for path in os.environ['PATH'].split(':'):
