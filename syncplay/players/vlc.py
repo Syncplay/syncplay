@@ -287,6 +287,7 @@ class VlcPlayer(BasePlayer):
                 return playerPath
             elif os.path.isfile(playerPath + u"VLCPortable.exe"):
                 playerPath += u"VLCPortable.exe"
+                return playerPath
             elif os.path.isfile(playerPath + u"\\VLCPortable.exe"):
                 playerPath += u"\\VLCPortable.exe"
                 return playerPath
