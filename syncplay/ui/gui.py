@@ -1555,16 +1555,20 @@ class MainWindow(QtWidgets.QMainWindow):
         currentDateTimeValue = QDateTime.currentDateTime()
         if not self.config['checkForUpdatesAutomatically']:
             return
-        if self.config['lastCheckedForUpdates']:
-            configLastChecked = datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f")
-            if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates.toPython():
-                self.lastCheckedForUpdates = QDateTime.fromString(self.config["lastCheckedForUpdates"],'yyyy-MM-dd HH-mm-ss')
-        if self.lastCheckedForUpdates is None:
-            self.checkForUpdates()
-        else:
-            timeDelta = currentDateTimeValue.toPython() - self.lastCheckedForUpdates.toPython()
-            if timeDelta.total_seconds() > constants.AUTOMATIC_UPDATE_CHECK_FREQUENCY:
+        try:
+            if self.config['lastCheckedForUpdates']:
+                configLastChecked = datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f")
+                if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates.toPython():
+                    self.lastCheckedForUpdates = QDateTime.fromString(self.config["lastCheckedForUpdates"],'yyyy-MM-dd HH-mm-ss')
+            if self.lastCheckedForUpdates is None:
                 self.checkForUpdates()
+            else:
+                timeDelta = currentDateTimeValue.toPython() - self.lastCheckedForUpdates.toPython()
+                if timeDelta.total_seconds() > constants.AUTOMATIC_UPDATE_CHECK_FREQUENCY:
+                    self.checkForUpdates()
+        except:
+            self.showDebugMessage("Automatic check for updates failed. An update check was manually trigggered.")
+            self.checkForUpdates()
 
     def userCheckForUpdates(self):
         self.checkForUpdates(userInitiated=True)
