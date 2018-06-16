@@ -1,6 +1,7 @@
 from syncplay.vendor import Qt
-from syncplay.vendor.Qt import QtWidgets, QtGui, __binding__, __binding_version__, IsPySide, IsPySide2
+from syncplay.vendor.Qt import QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
+from platform import python_version
 if IsPySide2:
     from PySide2.QtCore import QStandardPaths
 from syncplay import utils, constants, version, release_number
@@ -106,33 +107,36 @@ class AboutDialog(QtWidgets.QDialog):
          super(AboutDialog, self).__init__(parent)
          if isMacOS():
              self.setWindowTitle("")
+             self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
          else:
              self.setWindowTitle(getMessage("about-dialog-title"))
              if isWindows():
                 self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
          nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
-         nameLabel.setFont(QtGui.QFont("Helvetica", 20))
+         nameLabel.setFont(QtGui.QFont("Helvetica", 18))
          linkLabel = QtWidgets.QLabel("<center><a href=\"https://syncplay.pl\">syncplay.pl</a></center>")
          linkLabel.setOpenExternalLinks(True)
-         versionLabel = QtWidgets.QLabel("<center>" + getMessage("about-dialog-release").format(version, release_number, __binding__) + "</center>")
-         licenseLabel = QtWidgets.QLabel("<center><p>Copyright &copy; 2017 Syncplay</p><p>" + getMessage("about-dialog-license-text") + "</p></center>")
+         versionLabel = QtWidgets.QLabel("<p><center>" + getMessage("about-dialog-release").format(version, release_number) + "<br />Python " + python_version() + " - " + __binding__ + " " + __binding_version__ + " - Qt " + __qt_version__ + "</center></p>")
+         #versionLabel = QtWidgets.QLabel("<p><center>Version 1.5.4 release 62<br />Python 3.4.5 - PySide 1.2.4 - Qt 4.8.7</center></p>")
+         licenseLabel = QtWidgets.QLabel("<center><p>Copyright &copy; 2012&ndash;2018 Syncplay</p><p>" + getMessage("about-dialog-license-text") + "</p></center>")
          aboutIconPixmap = QtGui.QPixmap(resourcespath + "syncplay.png")
          aboutIconLabel = QtWidgets.QLabel()
-         aboutIconLabel.setPixmap(aboutIconPixmap.scaled(120, 120, Qt.KeepAspectRatio))
+         aboutIconLabel.setPixmap(aboutIconPixmap.scaled(65, 65, Qt.KeepAspectRatio))
          aboutLayout = QtWidgets.QGridLayout()
-         aboutLayout.addWidget(aboutIconLabel, 0, 0, 4, 2)
-         aboutLayout.addWidget(nameLabel, 0, 2, 1, 2)
-         aboutLayout.addWidget(linkLabel, 1, 2, 1, 2)
-         aboutLayout.addWidget(versionLabel, 2, 2, 1, 2)
-         aboutLayout.addWidget(licenseLabel, 3, 2, 1, 2)
+         aboutLayout.addWidget(aboutIconLabel, 0, 0, 3, 4, Qt.AlignHCenter)
+         aboutLayout.addWidget(nameLabel, 3, 0, 1, 4)
+         aboutLayout.addWidget(linkLabel, 4, 0, 1, 4)
+         aboutLayout.addWidget(versionLabel, 5, 0, 1, 4)
+         aboutLayout.addWidget(licenseLabel, 6, 0, 1, 4)
          licenseButton = QtWidgets.QPushButton(getMessage("about-dialog-license-button"))
          licenseButton.setAutoDefault(False)
          licenseButton.clicked.connect(self.openLicense)
-         aboutLayout.addWidget(licenseButton, 4, 2)
+         aboutLayout.addWidget(licenseButton, 7, 0, 1, 2)
          dependenciesButton = QtWidgets.QPushButton(getMessage("about-dialog-dependencies"))
          dependenciesButton.setAutoDefault(False)
          dependenciesButton.clicked.connect(self.openDependencies)
-         aboutLayout.addWidget(dependenciesButton, 4, 3)
+         aboutLayout.addWidget(dependenciesButton, 7, 2, 1, 2)
+         aboutLayout.setVerticalSpacing(10)
          aboutLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
          self.setSizeGripEnabled(False)
          self.setLayout(aboutLayout)

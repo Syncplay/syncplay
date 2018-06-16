@@ -316,7 +316,7 @@ en = {
     #About dialog
     "about-menu-label": "&About Syncplay",
     "about-dialog-title": "About Syncplay",
-    "about-dialog-release": "Version {} release {} on {}",
+    "about-dialog-release": "Version {} release {}",
     "about-dialog-license-text" : "Licensed under the Apache&nbsp;License,&nbsp;Version 2.0",
     "about-dialog-license-button": "License",
     "about-dialog-dependencies": "Dependencies",
