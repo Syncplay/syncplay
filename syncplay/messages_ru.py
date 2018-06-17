@@ -155,7 +155,7 @@ ru = {
     "no-media-directories-error" : u"Вы не указали папки воспроизведения. Для корректной работы зайдите через выпадающее меню в Файл->Папки воспроизведения и укажите нужные каталоги.",
     "cannot-find-directory-error" : u"Не удалось найти папку воспроизведения '{}'. Для обновления списка папок, через выпадающее меню, перейдите в Файл->Папки воспроизведения и укажите нужные каталоги.",
 
-    "failed-to-load-server-list-error" : u"Не удалось загрузить список публичных серверов. Откройте http://www.syncplay.pl/ через браузер.",
+    "failed-to-load-server-list-error" : u"Не удалось загрузить список публичных серверов. Откройте https://www.syncplay.pl/ через браузер.",
 
     # Client arguments
     "argument-description" : u'Решение для синхронного воспроизведения в VLC, MPlayer или MPC-HC/BE через Интернет.',
@@ -226,7 +226,8 @@ ru = {
     "misc-label" : u"Прочее",
     "core-behaviour-title" : u"Информация о файлах",
     "syncplay-internals-title" : u"Системные настройки",
-    "syncplay-mediasearchdirectories-title" : u"Папки воспроизведения (один путь на строку)",
+    "syncplay-mediasearchdirectories-title" : u"Папки воспроизведения", #needs to be checked
+    "syncplay-mediasearchdirectories-label" : u"Папки воспроизведения (один путь на строку)",
     "sync-label" : u"Синхронизация",
     "sync-otherslagging-title" : u"Опережение",
     "sync-youlaggging-title" : u"Отставание",
@@ -318,7 +319,7 @@ ru = {
     #About dialog - TODO: Translate
     "about-menu-label": u"&About Syncplay",
     "about-dialog-title": u"About Syncplay",
-    "about-dialog-release": u"Version {} release {} on {}",
+    "about-dialog-release": u"Version {} release {}",
     "about-dialog-license-text" : u"Licensed under the Apache&nbsp;License,&nbsp;Version 2.0",
     "about-dialog-license-button": u"License",
     "about-dialog-dependencies": u"Dependencies",

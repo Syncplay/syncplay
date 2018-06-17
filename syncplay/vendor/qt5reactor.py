@@ -106,6 +106,8 @@ Subsequent port by therve
 
 import sys
 
+from syncplay.utils import isMacOS, isWindows
+from syncplay.vendor.Qt import IsPySide2
 from syncplay.vendor.Qt.QtCore import (
      QCoreApplication, QEventLoop, QObject, QSocketNotifier, QTimer, Signal)
 from twisted.internet import posixbase
@@ -124,7 +126,12 @@ class TwistedSocketNotifier(QObject):
         self.reactor = reactor
         self.watcher = watcher
         fd = self.watcher.fileno()
-        self.notifier = QSocketNotifier(watcher, socketType, parent)
+        if (isMacOS() and IsPySide2):
+            self.notifier = QSocketNotifier(watcher, socketType, parent)
+        elif (isWindows() and IsPySide2):
+            self.notifier = QSocketNotifier(watcher, socketType, parent)
+        else:
+            self.notifier = QSocketNotifier(fd, socketType, parent)
         self.notifier.setEnabled(True)
         if socketType == QSocketNotifier.Read:
             self.fn = self.read

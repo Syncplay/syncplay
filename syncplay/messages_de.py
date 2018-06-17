@@ -149,7 +149,7 @@ de = {
     "no-media-directories-error" : u"No media directories have been set. For shared playlist and file switching features to work properly please select File->Set Media Directories and specify where Syncplay should look to find media files.", # TODO: Translate
     "cannot-find-directory-error" : u"Could not find media directory '{}'. To update your list of media directories please select File->Set Media Directories from the menu bar and specify where Syncplay should look to find media files.", # TODO: Translate
 
-    "failed-to-load-server-list-error" : u"Konnte die Liste der öffentlichen Server nicht laden. Bitte besuche http://www.syncplay.pl/ [Englisch] mit deinem Browser.",
+    "failed-to-load-server-list-error" : u"Konnte die Liste der öffentlichen Server nicht laden. Bitte besuche https://www.syncplay.pl/ [Englisch] mit deinem Browser.",
 
     # Client arguments
     "argument-description" : u'Syncplay ist eine Anwendung um mehrere MPlayer, MPC-HC, MPC-BE und VLC-Instanzen über das Internet zu synchronisieren.',
@@ -218,7 +218,8 @@ de = {
     "misc-label" : u"Diverse",
     "core-behaviour-title" : u"Verhalten des Raumes",
     "syncplay-internals-title" : u"Syncplay intern",
-    "syncplay-mediasearchdirectories-title" : u"In diesen Verzeichnissen nach Medien suchen (ein Pfad pro Zeile)",
+    "syncplay-mediasearchdirectories-title" : u"In diesen Verzeichnissen nach Medien suchen", #needs to be checked
+    "syncplay-mediasearchdirectories-label" : u"In diesen Verzeichnissen nach Medien suchen (ein Pfad pro Zeile)",
     "sync-label" : u"Synchronisation",
     "sync-otherslagging-title" : u"Wenn andere laggen...",
     "sync-youlaggging-title" : u"Wenn du laggst...",
@@ -310,7 +311,7 @@ de = {
     #About dialog - TODO: Translate
     "about-menu-label": u"&About Syncplay",
     "about-dialog-title": u"About Syncplay",
-    "about-dialog-release": u"Version {} release {} on {}",
+    "about-dialog-release": u"Version {} release {}",
     "about-dialog-license-text" : u"Licensed under the Apache&nbsp;License,&nbsp;Version 2.0",
     "about-dialog-license-button": u"License",
     "about-dialog-dependencies": u"Dependencies",

@@ -152,7 +152,7 @@ it = {
     "no-media-directories-error" : u"Nessuna cartella multimediale è stata configurata. Per permettere il corretto funzionamento delle playlist condivise e la selezione automatica dei file, naviga in File->Imposta cartelle multimediali e specifica dove Syncplay deve ricercare i file multimediali.",
     "cannot-find-directory-error" : u"Impossibile trovare la cartella multimediale '{}'. Per aggiornare la lista delle cartelle multimediali seleziona File->Imposta cartelle multimediali dalla barra dei menù e specifica dove Syncplay deve ricercare i file multimediali.",
 
-    "failed-to-load-server-list-error" : u"Impossibile caricare la lista dei server pubblici. Per favore, visita http://www.syncplay.pl/ con il tuo browser.",
+    "failed-to-load-server-list-error" : u"Impossibile caricare la lista dei server pubblici. Per favore, visita https://www.syncplay.pl/ con il tuo browser.",
 
     # Client arguments
     "argument-description" : u'Programma per sincronizzare la riproduzione di media player multipli attraverso la rete.',
@@ -316,7 +316,7 @@ it = {
     #About dialog
     "about-menu-label": u"&Informazioni su Syncplay",
     "about-dialog-title": u"Informazioni su Syncplay",
-    "about-dialog-release": u"Versione {} release {} con {}",
+    "about-dialog-release": u"Versione {} release {}",
     "about-dialog-license-text" : u"Rilasciato sotto Apache&nbsp;License,&nbsp;Version 2.0",
     "about-dialog-license-button": u"Licenza",
     "about-dialog-dependencies": u"Dipendenze",

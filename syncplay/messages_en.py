@@ -152,7 +152,7 @@ en = {
     "no-media-directories-error" : u"No media directories have been set. For shared playlist and file switching features to work properly please select File->Set Media Directories and specify where Syncplay should look to find media files.",
     "cannot-find-directory-error" : u"Could not find media directory '{}'. To update your list of media directories please select File->Set Media Directories from the menu bar and specify where Syncplay should look to find media files.",
 
-    "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit http://www.syncplay.pl/ in your browser.",
+    "failed-to-load-server-list-error" : u"Failed to load public server list. Please visit https://www.syncplay.pl/ in your browser.",
 
     # Client arguments
     "argument-description" : 'Solution to synchronize playback of multiple media player instances over the network.',
@@ -223,7 +223,8 @@ en = {
     "misc-label" : u"Misc",
     "core-behaviour-title" : "Core room behaviour",
     "syncplay-internals-title" : u"Syncplay internals",
-    "syncplay-mediasearchdirectories-title" : u"Directories to search for media (one path per line)",
+    "syncplay-mediasearchdirectories-title" : u"Directories to search for media",
+    "syncplay-mediasearchdirectories-label" : u"Directories to search for media (one path per line)",
     "sync-label" : "Sync",
     "sync-otherslagging-title" : "If others are lagging behind...",
     "sync-youlaggging-title" : "If you are lagging behind...",
@@ -315,7 +316,7 @@ en = {
     #About dialog
     "about-menu-label": u"&About Syncplay",
     "about-dialog-title": u"About Syncplay",
-    "about-dialog-release": u"Version {} release {} on {}",
+    "about-dialog-release": u"Version {} release {}",
     "about-dialog-license-text" : u"Licensed under the Apache&nbsp;License,&nbsp;Version 2.0",
     "about-dialog-license-button": u"License",
     "about-dialog-dependencies": u"Dependencies",
