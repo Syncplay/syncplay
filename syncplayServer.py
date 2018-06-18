@@ -6,11 +6,11 @@ import site, sys
 # libpath
 
 try:
-    if (sys.version_info.major != 3) or (sys.version_info.minor < 5):
-        raise Exception("You must run Syncplay with Python 3.5 or newer!")
+    if (sys.version_info.major != 3) or (sys.version_info.minor < 4):
+        raise Exception("You must run Syncplay with Python 3.4 or newer!")
 except AttributeError:
     import warnings
-    warnings.warn("You must run Syncplay with Python 3.5 or newer!")
+    warnings.warn("You must run Syncplay with Python 3.4 or newer!")
 
 from twisted.internet import reactor
 

@@ -1,43 +1,44 @@
 environment:
   MINICONDA: "C:\\Miniconda"
+  PYTHON: "C:\\Python34"
+  PYTHON_VERSION: 3.4
+  PYTHON_ARCH: 32
 
 platform: x86
 
 configuration: Release
 
 init:
-  - set PATH=C:\Miniconda;C:\Miniconda\Scripts;C:\Program Files (x86)\NSIS;%PATH%
-  - conda create -n syncplay -y
-  - activate syncplay
-  - conda install python=3.5 -y
-  - conda install pywin32 -y
-  - conda install -c conda-forge pyside2 -y
-  - pip install twisted pyinstaller zope.interface
-  - type nul > C:\Miniconda\envs\syncplay\lib\site-packages\zope\__init__.py
-  - type nul > C:\Miniconda\envs\syncplay\lib\site-packages\pyinstaller\loader\rthooks\pyi_rth_twisted.py  
+  - set PATH=%PYTHON%;%PYTHON%\Scripts;C:\Program Files (x86)\NSIS;%PATH%
+  - python --version
+  - python -m site
+  - python -m pip install -U pip setuptools wheel
+  - pip install -U pypiwin32==219
+  - pip install pyside
+  - pip install twisted
+  - pip install py2exe
+  - pip install zope.interface
+  - type nul > C:\Python34\lib\site-packages\zope\__init__.py
   - pip freeze
-  - conda list
   
 install:
   - cd %APPVEYOR_BUILD_FOLDER%
   - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
-  - pyinstaller pyinstaller-client.spec
-  - pyinstaller pyinstaller-server.spec
-  - python buildInstaller.py
-  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup-Py35.exe
-  - type nul > dist\syncplay.ini
-  - copy resources\win_lua_note.txt dist\"VLC LUA Script installation.txt"
+  - python buildPy2exe.py
+  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup-Py34.exe
+  - type nul > syncplay_v%ver%\syncplay.ini
+  - copy resources\win_lua_note.txt syncplay_v%ver%\"VLC LUA Script installation.txt"
 
 # Not a project with an msbuild file, build done at install.
 build: off
 
 artifacts:
-  - path: 'dist'
+  - path: 'syncplay_v$(ver)'
     type: zip
-    name: Syncplay_$(ver)_Portable_py35
+    name: Syncplay_$(ver)_Portable_py34
 
-  - path: Syncplay-$(ver)-Setup-Py35.exe
-    name: Syncplay-$(ver)-Setup-Py35
+  - path: Syncplay-$(ver)-Setup-Py34.exe
+    name: Syncplay-$(ver)-Setup-Py34
 
 # Push artefact to S3 bucket and list all
 before_deploy:

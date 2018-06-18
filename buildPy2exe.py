@@ -18,7 +18,7 @@ from distutils.core import setup
 try:
     from py2exe.build_exe import py2exe
 except ImportError:
-    from py2exe.distutils_build_exe import py2exe
+    from py2exe.distutils_buildexe import py2exe
 from string import Template
 
 import syncplay
@@ -629,7 +629,7 @@ class NSISScript(object):
                                                               totalSize = totalSize,
                                                               )
         with codecs.open(SETUP_SCRIPT_PATH, "w", "utf-8-sig") as outfile:
-            outfile.write(contents.decode('utf-8'))
+            outfile.write(contents)
         
     def compile(self):
         if not os.path.isfile(NSIS_COMPILE):
@@ -720,8 +720,8 @@ info = dict(
     # console=['syncplayServer.py', {"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")], 'dest_base': "Syncplay"}],
     options={'py2exe': {
                          'dist_dir': OUT_DIR,
-                         'packages': 'PySide2.QtUiTools',
-                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide2, liburl, ast, unicodedata, _ssl',
+                         'packages': 'PySide.QtUiTools',
+                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide, liburl, ast, unicodedata, _ssl',
                          'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
                          'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
                          'optimize': 2,
@@ -733,5 +733,5 @@ info = dict(
     cmdclass = {"py2exe": build_installer},               
 )
 
-sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-i PySide2.QtCore', '-p PySide2.QtGui', '-i PySide2.QtWidgets'])
+sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-i PySide.QtCore', '-i PySide.QtGui'])
 setup(**info)
