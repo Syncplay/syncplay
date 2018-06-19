@@ -9,9 +9,10 @@ platform: x86
 configuration: Release
 
 init:
-  - set PATH=%PYTHON%;%PYTHON%\Scripts;C:\Program Files (x86)\NSIS;%PATH%
+  - set PYTHONPATH=%PYTHON%
+  - set PYTHONHOME=%PYTHON%
+  - set PATH=%PYTHON%\Scripts;%PYTHON%;C:\Program Files (x86)\NSIS;%PATH%
   - python --version
-  - python -m site
   - python -m pip install -U pip setuptools wheel
   - pip install -U pypiwin32==219
   - pip install pyside
