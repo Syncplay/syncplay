@@ -339,7 +339,14 @@ def getPlayerArgumentsByPathAsText(arguments, path):
     argsToReturn = getPlayerArgumentsByPathAsArray(arguments, path)
     return " ".join(argsToReturn) if argsToReturn else ""
 
+def unicodeReplaceFromFuture(s):
+    return ''.join(chr(ord(c)) for c in s).decode('utf-8')
+
 def getListAsMultilineString(pathArray):
+    try:
+        pathArray = map(unicodeReplaceFromFuture, pathArray)
+    except:
+        pass
     return u"\n".join(pathArray) if pathArray else ""
 
 def convertMultilineStringToList(multilineString):
