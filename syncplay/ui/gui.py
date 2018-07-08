@@ -4,7 +4,7 @@ from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine,
 from platform import python_version
 if IsPySide2:
     from PySide2.QtCore import QStandardPaths
-from syncplay import utils, constants, version, release_number
+from syncplay import utils, constants, version, revision, release_number
 from syncplay.messages import getMessage
 from syncplay.utils import resourcespath
 import sys
@@ -116,7 +116,8 @@ class AboutDialog(QtWidgets.QDialog):
          nameLabel.setFont(QtGui.QFont("Helvetica", 18))
          linkLabel = QtWidgets.QLabel("<center><a href=\"https://syncplay.pl\">syncplay.pl</a></center>")
          linkLabel.setOpenExternalLinks(True)
-         versionLabel = QtWidgets.QLabel("<p><center>" + getMessage("about-dialog-release").format(version, release_number) + "<br />Python " + python_version() + " - " + __binding__ + " " + __binding_version__ + " - Qt " + __qt_version__ + "</center></p>")
+         versionExtString = version + revision
+         versionLabel = QtWidgets.QLabel("<p><center>" + getMessage("about-dialog-release").format(versionExtString, release_number) + "<br />Python " + python_version() + " - " + __binding__ + " " + __binding_version__ + " - Qt " + __qt_version__ + "</center></p>")
          #versionLabel = QtWidgets.QLabel("<p><center>Version 1.5.4 release 62<br />Python 3.4.5 - PySide 1.2.4 - Qt 4.8.7</center></p>")
          licenseLabel = QtWidgets.QLabel("<center><p>Copyright &copy; 2012&ndash;2018 Syncplay</p><p>" + getMessage("about-dialog-license-text") + "</p></center>")
          aboutIconPixmap = QtGui.QPixmap(resourcespath + "syncplay.png")
