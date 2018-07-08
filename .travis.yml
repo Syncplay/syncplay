@@ -10,8 +10,10 @@ script:
 
 before_install:
 - hg clone https://alby128@bitbucket.org/alby128/py2app
+- brew uninstall python
 - brew update
-- brew upgrade python
+- curl -O https://raw.githubusercontent.com/Homebrew/homebrew-core/f2a764ef944b1080be64bd88dca9a1d80130c558/Formula/python.rb
+- brew install ./python.rb
 - which python3
 - python3 --version
 - which pip3
