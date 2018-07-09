@@ -3,7 +3,7 @@ osx_image: xcode7.3
 
 branches:
   only:
-  - py34
+  - master_local
 
 script:
 - python3 buildPy2app.py py2app
@@ -46,7 +46,7 @@ before_deploy:
 
 deploy:
   skip_cleanup: true
-  on: py34
+  on: master_local
   provider: bintray
   file: "bintray.json"
   user: alby128
