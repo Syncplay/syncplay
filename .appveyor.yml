@@ -26,7 +26,6 @@ install:
   - cd %APPVEYOR_BUILD_FOLDER%
   - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
   - python buildPy2exe.py
-  - copy Syncplay-%ver%-Setup.exe Syncplay-%ver%-Setup-Py34.exe
   - type nul > syncplay_v%ver%\syncplay.ini
   - copy resources\win_lua_note.txt syncplay_v%ver%\"VLC LUA Script installation.txt"
 
@@ -36,10 +35,10 @@ build: off
 artifacts:
   - path: 'syncplay_v$(ver)'
     type: zip
-    name: Syncplay_$(ver)_Portable_py34
+    name: Syncplay_$(ver)_Portable
 
-  - path: Syncplay-$(ver)-Setup-Py34.exe
-    name: Syncplay-$(ver)-Setup-Py34
+  - path: Syncplay-$(ver)-Setup.exe
+    name: Syncplay-$(ver)-Setup
 
 # Push artefact to S3 bucket and list all
 before_deploy:
