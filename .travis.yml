@@ -6,35 +6,37 @@ branches:
   - master
 
 script:
-- python buildPy2app.py py2app
+- python3 buildPy2app.py py2app
 
 before_install:
-- brew update
-- brew install qt
-- which python
-- which pip
-- curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.11.0-5.11.0-cp27-cp27m-macosx_10_11_x86_64.whl -o PySide2-5.11.0-5.11.0-cp27-cp27m-macosx_10_11_x86_64.whl
-- pip install PySide2-5.11.0-5.11.0-cp27-cp27m-macosx_10_11_x86_64.whl
-- ln -s /usr/local/lib/python2.7/site-packages/PySide2/libshiboken2-python2.7v.5.11.dylib /usr/local/lib/
-- ln -s /usr/local/lib/python2.7/site-packages/PySide2/libpyside2-python2.7v.5.11.dylib /usr/local/lib/
-#- python -c "from PySide2 import QtCore"
-- python -c "from PySide2.QtCore import __version__; print __version__" 
 - hg clone https://alby128@bitbucket.org/alby128/py2app
+- brew uninstall python
+- brew update
+- curl -O https://raw.githubusercontent.com/Homebrew/homebrew-core/f2a764ef944b1080be64bd88dca9a1d80130c558/Formula/python.rb
+- brew install ./python.rb
+- which python3
+- python3 --version
+- which pip3
+- pip3 --version
+- brew install qt
+- curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.11.0-5.11.0-cp36-cp36m-macosx_10_11_x86_64.whl -o PySide2-5.11.0-5.11.0-cp36-cp36m-macosx_10_11_x86_64.whl
+- pip3 install PySide2-5.11.0-5.11.0-cp36-cp36m-macosx_10_11_x86_64.whl
+- ln -s /usr/local/lib/python3.6/site-packages/PySide2/libpyside2.cpython-36m-darwin.5.11.dylib /usr/local/lib/
+- ln -s /usr/local/lib/python3.6/site-packages/PySide2/libshiboken2.cpython-36m-darwin.5.11.dylib /usr/local/lib/
+- python3 -c "from PySide2 import __version__; print(__version__)"
+- python3 -c "from PySide2.QtCore import __version__; print(__version__)" 
 - cd py2app
-- python setup.py install
+- python3 setup.py install
 - cd ..
-- python -c "from py2app.recipes import pyside2" 
+- python3 -c "from py2app.recipes import pyside2" 
 
 install:
-- pip install twisted appnope
-- pip install -U https://github.com/requests/requests/zipball/master
-#- git clone -b qtpy-pyside2 https://github.com/alby128/syncplay.git syncplay-qtpy-PySide2
-#- cd syncplay-qtpy-PySide2
-#- git checkout qtpy-pyside2
+- pip3 install twisted appnope
+- pip3 install -U https://github.com/requests/requests/zipball/master
+
 
 before_deploy:
-#- travis/cache-homebrew
-- pip install dmgbuild
+- pip3 install dmgbuild
 - mkdir dist_dmg
 - mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
 - mv resources/lua/intf/syncplay.lua resources/lua/intf/.syncplay.lua

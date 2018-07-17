@@ -106,8 +106,6 @@ Subsequent port by therve
 
 import sys
 
-from syncplay.utils import isMacOS, isWindows
-from syncplay.vendor.Qt import IsPySide2
 from syncplay.vendor.Qt.QtCore import (
      QCoreApplication, QEventLoop, QObject, QSocketNotifier, QTimer, Signal)
 from twisted.internet import posixbase
@@ -126,12 +124,7 @@ class TwistedSocketNotifier(QObject):
         self.reactor = reactor
         self.watcher = watcher
         fd = self.watcher.fileno()
-        if (isMacOS() and IsPySide2):
-            self.notifier = QSocketNotifier(watcher, socketType, parent)
-        elif (isWindows() and IsPySide2):
-            self.notifier = QSocketNotifier(watcher, socketType, parent)
-        else:
-            self.notifier = QSocketNotifier(fd, socketType, parent)
+        self.notifier = QSocketNotifier(fd, socketType, parent)
         self.notifier.setEnabled(True)
         if socketType == QSocketNotifier.Read:
             self.fn = self.read
@@ -258,10 +251,10 @@ class QtReactor(posixbase.PosixReactorBase):
         return self._removeAll(self._reads, self._writes)
 
     def getReaders(self):
-        return self._reads.keys()
+        return list(self._reads.keys())
 
     def getWriters(self):
-        return self._writes.keys()
+        return list(self._writes.keys())
 
     def callLater(self, howlong, *args, **kargs):
         rval = super(QtReactor, self).callLater(howlong, *args, **kargs)
@@ -344,7 +337,7 @@ class QtEventReactor(QtReactor):
             del self._events[event]
 
     def doEvents(self):
-        handles = self._events.keys()
+        handles = list(self._events.keys())
         if len(handles) > 0:
             val = None
             while val != WAIT_TIMEOUT:

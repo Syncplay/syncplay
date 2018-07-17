@@ -1,15 +1,15 @@
 #!/usr/bin/env python2
 
-import site, sys
+import sys
 
 # libpath
 
 try:
-    if (sys.version_info.major != 2) or (sys.version_info.minor < 7):
-        raise Exception("You must run Syncplay with Python 2.7!")
+    if (sys.version_info.major != 3) or (sys.version_info.minor < 4):
+        raise Exception("You must run Syncplay with Python 3.4 or newer!")
 except AttributeError:
     import warnings
-    warnings.warn("You must run Syncplay with Python 2.7!")
+    warnings.warn("You must run Syncplay with Python 3.4 or newer!")
 
 from syncplay.clientManager import SyncplayClientManager
 from syncplay.utils import blackholeStdoutForFrozenWindow

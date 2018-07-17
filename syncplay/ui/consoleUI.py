@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 import threading
 import time 
 import syncplay
@@ -32,7 +32,7 @@ class ConsoleUI(threading.Thread):
     def run(self):
         try:
             while True:
-                data = raw_input().decode(sys.stdin.encoding)
+                data = input()
                 data = data.rstrip('\n\r')
                 if not self.promptMode.isSet():
                     self.PromptResult = data
@@ -49,7 +49,7 @@ class ConsoleUI(threading.Thread):
         pass
 
     def promptFor(self, prompt=">", message=""):
-        if message <> "":
+        if message != "":
             print(message)
         self.promptMode.clear()
         print(prompt, end='')
@@ -58,20 +58,20 @@ class ConsoleUI(threading.Thread):
 
     def showUserList(self, currentUser, rooms):
         for room in rooms:
-            message = u"In room '{}':".format(room)
+            message = "In room '{}':".format(room)
             self.showMessage(message, True)
             for user in rooms[room]:
-                userflags = u""
+                userflags = ""
                 if user.isController():
-                    userflags += u"({}) ".format(getMessage("controller-userlist-userflag"))
+                    userflags += "({}) ".format(getMessage("controller-userlist-userflag"))
                 if user.isReady():
-                    userflags += u"({}) ".format(getMessage("ready-userlist-userflag"))
+                    userflags += "({}) ".format(getMessage("ready-userlist-userflag"))
 
-                username = userflags + u"*<{}>*".format(user.username) if user == currentUser else userflags + u"<{}>".format(user.username)
+                username = userflags + "*<{}>*".format(user.username) if user == currentUser else userflags + "<{}>".format(user.username)
                 if user.file:
                     message = getMessage("userlist-playing-notification").format(username)
                     self.showMessage(message, True)
-                    message = u"    {}: '{}' ({})".format(getMessage("userlist-file-notification"),user.file['name'], formatTime(user.file['duration']))
+                    message = "    {}: '{}' ({})".format(getMessage("userlist-file-notification"),user.file['name'], formatTime(user.file['duration']))
                     if currentUser.file:
                         if user.file['name'] == currentUser.file['name'] and user.file['size'] != currentUser.file['size']:
                             message += getMessage("different-filesize-notification")
@@ -98,7 +98,7 @@ class ConsoleUI(threading.Thread):
         if noTimestamp:
             print(message)
         else:
-            print(time.strftime(constants.UI_TIME_FORMAT, time.localtime()).decode('utf-8') + message)
+            print(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message)
 
     def showDebugMessage(self, message):
         print(message)
