@@ -2,11 +2,12 @@
 #coding:utf8
 
 
-#*** TROUBLESHOOTING ***
-#1) If you get the error "ImportError: No module named zope.interface" then add an empty __init__.py file to the PYTHONDIR/Lib/site-packages/zope directory
-#2) It is expected that you will have NSIS 3 NSIS from http://nsis.sourceforge.net installed.
+# *** TROUBLESHOOTING ***
+# 1) If you get the error "ImportError: No module named zope.interface" then add an empty __init__.py file to the PYTHONDIR/Lib/site-packages/zope directory
+# 2) It is expected that you will have NSIS 3 NSIS from http://nsis.sourceforge.net installed.
 
-import sys, codecs
+import codecs
+import sys
 # try:
 #     if (sys.version_info.major != 2) or (sys.version_info.minor < 7):
 #         raise Exception("You must build Syncplay with Python 2.7!")
@@ -14,22 +15,25 @@ import sys, codecs
 #     import warnings
 #     warnings.warn("You must build Syncplay with Python 2.7!")
 
+
+import os
+import subprocess
+from string import Template
+
 from distutils.core import setup
 try:
     from py2exe.build_exe import py2exe
 except ImportError:
     from py2exe.distutils_buildexe import py2exe
-from string import Template
 
 import syncplay
-import os
-import subprocess
-
 from syncplay.messages import getMissingStrings
+
 missingStrings = getMissingStrings()
 if missingStrings is not None and missingStrings is not "":
     import warnings
     warnings.warn("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
+
 
 def get_nsis_path():
     bin_name = "makensis.exe"
@@ -44,6 +48,8 @@ def get_nsis_path():
             raise Exception("You must install NSIS 3 or later.")
     except WindowsError:
         return bin_name
+
+
 NSIS_COMPILE = get_nsis_path()
 
 OUT_DIR = "syncplay_v{}".format(syncplay.version)
@@ -84,7 +90,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_RUSSIAN} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_RUSSIAN} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_RUSSIAN} "FileDescription" "Syncplay"
-  
+
   VIAddVersionKey /LANG=$${LANG_ITALIAN} "ProductName" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_ITALIAN} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_ITALIAN} "LegalCopyright" "Syncplay"
@@ -132,7 +138,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^QuickLaunchBar $${LANG_GERMAN} "Schnellstartleiste"
   LangString ^AutomaticUpdates $${LANG_GERMAN} "Automatisch nach Updates suchen";
   LangString ^UninstConfig $${LANG_GERMAN} "Konfigurationsdatei löschen."
-  
+
   LangString ^SyncplayLanguage $${LANG_ITALIAN} "it"
   LangString ^Associate $${LANG_ITALIAN} "Associa Syncplay con i file multimediali."
   LangString ^VLC $${LANG_ITALIAN} "Installa l'interfaccia di Syncplay per VLC 2+"
@@ -246,11 +252,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push English
     Push $${LANG_POLISH}
     Push Polski
-	Push $${LANG_RUSSIAN}
+    Push $${LANG_RUSSIAN}
     Push Русский
     Push $${LANG_GERMAN}
     Push Deutsch
-	Push $${LANG_ITALIAN}
+    Push $${LANG_ITALIAN}
     Push Italiano
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
@@ -322,25 +328,25 @@ NSIS_SCRIPT_TEMPLATE = r"""
     ;$${EndIf}
 
     $${If} $$CheckBox_VLC_State == $${BST_CHECKED}
-    	$${NSD_Check} $$CheckBox_VLC
+      $${NSD_Check} $$CheckBox_VLC
     $${EndIf}
 
     Call UpdateVLCCheckbox
 
     $${If} $$CheckBox_StartMenuShortcut_State == $${BST_CHECKED}
-    	$${NSD_Check} $$CheckBox_StartMenuShortcut
+      $${NSD_Check} $$CheckBox_StartMenuShortcut
     $${EndIf}
 
     $${If} $$CheckBox_DesktopShortcut_State == $${BST_CHECKED}
-    	$${NSD_Check} $$CheckBox_DesktopShortcut
+      $${NSD_Check} $$CheckBox_DesktopShortcut
     $${EndIf}
 
     $${If} $$CheckBox_QuickLaunchShortcut_State == $${BST_CHECKED}
-    	$${NSD_Check} $$CheckBox_QuickLaunchShortcut
+      $${NSD_Check} $$CheckBox_QuickLaunchShortcut
     $${EndIf}
 
     $${If} $$CheckBox_AutomaticUpdates_State == $${BST_CHECKED}
-    	$${NSD_Check} $$CheckBox_AutomaticUpdates
+      $${NSD_Check} $$CheckBox_AutomaticUpdates
     $${EndIf}
 
     nsDialogs::Show
@@ -613,24 +619,25 @@ NSIS_SCRIPT_TEMPLATE = r"""
   SectionEnd
 """
 
+
 class NSISScript(object):
     def create(self):
         fileList, totalSize = self.getBuildDirContents(OUT_DIR)
         print("Total size eq: {}".format(totalSize))
-        installFiles = self.prepareInstallListTemplate(fileList) 
+        installFiles = self.prepareInstallListTemplate(fileList)
         uninstallFiles = self.prepareDeleteListTemplate(fileList)
-        
+
         if os.path.isfile(SETUP_SCRIPT_PATH):
             raise RuntimeError("Cannot create setup script, file exists at {}".format(SETUP_SCRIPT_PATH))
-        contents =  Template(NSIS_SCRIPT_TEMPLATE).substitute(
-                                                              version = syncplay.version,
-                                                              uninstallFiles = uninstallFiles,
-                                                              installFiles = installFiles,
-                                                              totalSize = totalSize,
-                                                              )
+        contents = Template(NSIS_SCRIPT_TEMPLATE).substitute(
+            version=syncplay.version,
+            uninstallFiles=uninstallFiles,
+            installFiles=installFiles,
+            totalSize=totalSize,
+        )
         with codecs.open(SETUP_SCRIPT_PATH, "w", "utf-8-sig") as outfile:
             outfile.write(contents)
-        
+
     def compile(self):
         if not os.path.isfile(NSIS_COMPILE):
             return "makensis.exe not found, won't create the installer"
@@ -640,7 +647,7 @@ class NSISScript(object):
         os.remove(SETUP_SCRIPT_PATH)
         if retcode:
             raise RuntimeError("NSIS compilation return code: %d" % retcode)
-   
+
     def getBuildDirContents(self, path):
         fileList = {}
         totalSize = 0
@@ -651,8 +658,8 @@ class NSISScript(object):
                 if new_root not in fileList:
                     fileList[new_root] = []
                 fileList[new_root].append(file_)
-        return fileList, totalSize          
-    
+        return fileList, totalSize
+
     def prepareInstallListTemplate(self, fileList):
         create = []
         for dir_ in fileList.keys():
@@ -660,15 +667,16 @@ class NSISScript(object):
             for file_ in fileList[dir_]:
                 create.append('FILE "{}\\{}\\{}"'.format(OUT_DIR, dir_, file_))
         return "\n".join(create)
-    
+
     def prepareDeleteListTemplate(self, fileList):
         delete = []
         for dir_ in fileList.keys():
             for file_ in fileList[dir_]:
                 delete.append('DELETE "$INSTDIR\\{}\\{}"'.format(dir_, file_))
-            delete.append('RMdir "$INSTDIR\\{}"'.format(file_))    
+            delete.append('RMdir "$INSTDIR\\{}"'.format(file_))
         return "\n".join(delete)
-    
+
+
 class build_installer(py2exe):
     def run(self):
         py2exe.run(self)
@@ -678,29 +686,37 @@ class build_installer(py2exe):
         script.compile()
         print("*** DONE ***")
 
-guiIcons = ['resources/accept.png', 'resources/arrow_undo.png', 'resources/clock_go.png',
-     'resources/control_pause_blue.png', 'resources/cross.png', 'resources/door_in.png',
-     'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
-     'resources/timeline_marker.png','resources/control_play_blue.png',
-     'resources/mpc-hc.png','resources/mpc-hc64.png','resources/mplayer.png',
-     'resources/mpc-be.png',
-     'resources/mpv.png','resources/vlc.png', 'resources/house.png', 'resources/film_link.png',
-     'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/chevrons_right.png',
-     'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',
-     'resources/tick.png', 'resources/lock_open.png', 'resources/empty_checkbox.png', 'resources/tick_checkbox.png',
-     'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png', 'resources/arrow_switch.png',
-     'resources/film_go.png', 'resources/world_go.png', 'resources/arrow_refresh.png', 'resources/bullet_right_grey.png',
-     'resources/user_comment.png',
-     'resources/error.png',
-     'resources/film_folder_edit.png',
-     'resources/film_edit.png',
-     'resources/folder_film.png',
-     'resources/shield_edit.png',
-     'resources/shield_add.png',
-     'resources/email_go.png',
-     'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
-    ]
-resources = ["resources/icon.ico", "resources/syncplay.png", "resources/syncplayintf.lua", "resources/license.rtf", "resources/third-party-notices.rtf"]
+
+guiIcons = [
+    'resources/accept.png', 'resources/arrow_undo.png', 'resources/clock_go.png',
+    'resources/control_pause_blue.png', 'resources/cross.png', 'resources/door_in.png',
+    'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
+    'resources/timeline_marker.png', 'resources/control_play_blue.png',
+    'resources/mpc-hc.png', 'resources/mpc-hc64.png', 'resources/mplayer.png',
+    'resources/mpc-be.png',
+    'resources/mpv.png', 'resources/vlc.png', 'resources/house.png', 'resources/film_link.png',
+    'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/chevrons_right.png',
+    'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',
+    'resources/tick.png', 'resources/lock_open.png', 'resources/empty_checkbox.png', 'resources/tick_checkbox.png',
+    'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png', 'resources/arrow_switch.png',
+    'resources/film_go.png', 'resources/world_go.png', 'resources/arrow_refresh.png', 'resources/bullet_right_grey.png',
+    'resources/user_comment.png',
+    'resources/error.png',
+    'resources/film_folder_edit.png',
+    'resources/film_edit.png',
+    'resources/folder_film.png',
+    'resources/shield_edit.png',
+    'resources/shield_add.png',
+    'resources/email_go.png',
+    'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
+]
+resources = [
+    "resources/icon.ico",
+    "resources/syncplay.png",
+    "resources/syncplayintf.lua",
+    "resources/license.rtf",
+    "resources/third-party-notices.rtf"
+]
 resources.extend(guiIcons)
 intf_resources = ["resources/lua/intf/syncplay.lua"]
 
@@ -711,26 +727,31 @@ common_info = dict(
     author_email='dev@syncplay.pl',
     description='Syncplay',
 )
-    
+
 info = dict(
     common_info,
-    windows=[{"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")], 'dest_base': "Syncplay"},],
+    windows=[{
+      "script": "syncplayClient.py",
+      "icon_resources": [(1, "resources\\icon.ico")],
+      'dest_base': "Syncplay"},
+    ],
     console=['syncplayServer.py'],
     # *** If you wish to make the Syncplay client use console mode (for --no-gui to work) then comment out the above two lines and uncomment the following line:
     # console=['syncplayServer.py', {"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")], 'dest_base': "Syncplay"}],
-    options={'py2exe': {
-                         'dist_dir': OUT_DIR,
-                         'packages': 'PySide.QtUiTools',
-                         'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide, liburl, ast, unicodedata, _ssl',
-                         'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
-                         'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
-                         'optimize': 2,
-                         'compressed': 1
-                         }
-             },
-    data_files = [("resources", resources),("resources/lua/intf", intf_resources)],
-    zipfile = "lib/libsync",
-    cmdclass = {"py2exe": build_installer},               
+    options={
+        'py2exe': {
+            'dist_dir': OUT_DIR,
+            'packages': 'PySide.QtUiTools',
+            'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide, liburl, ast, unicodedata, _ssl',
+            'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
+            'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
+            'optimize': 2,
+            'compressed': 1
+        }
+    },
+    data_files=[("resources", resources), ("resources/lua/intf", intf_resources)],
+    zipfile="lib/libsync",
+    cmdclass={"py2exe": build_installer},
 )
 
 sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-i PySide.QtCore', '-i PySide.QtGui'])
