@@ -245,11 +245,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push English
     Push $${LANG_POLISH}
     Push Polski
-  Push $${LANG_RUSSIAN}
+    Push $${LANG_RUSSIAN}
     Push Русский
     Push $${LANG_GERMAN}
     Push Deutsch
-  Push $${LANG_ITALIAN}
+    Push $${LANG_ITALIAN}
     Push Italiano
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
