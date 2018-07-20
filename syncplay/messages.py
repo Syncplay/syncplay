@@ -7,12 +7,13 @@ from . import messages_de
 from . import messages_it
 
 messages = {
-           "en": messages_en.en,
-           "ru": messages_ru.ru,
-           "de": messages_de.de,
-           "it": messages_it.it,
-           "CURRENT": None
-           }
+    "en": messages_en.en,
+    "ru": messages_ru.ru,
+    "de": messages_de.de,
+    "it": messages_it.it,
+    "CURRENT": None
+}
+
 
 def getLanguages():
     langList = {}
@@ -21,8 +22,10 @@ def getLanguages():
             langList[lang] = getMessage("LANGUAGE", lang)
     return langList
 
+
 def setLanguage(lang):
     messages["CURRENT"] = lang
+
 
 def getMissingStrings():
     missingStrings = ""
@@ -37,6 +40,7 @@ def getMissingStrings():
 
     return missingStrings
 
+
 def getInitialLanguage():
     import locale
     try:
@@ -47,11 +51,13 @@ def getInitialLanguage():
         initialLanguage = constants.FALLBACK_INITIAL_LANGUAGE
     return initialLanguage
 
+
 def isValidLanguage(language):
     return language in messages
 
+
 def getMessage(type_, locale=None):
-    if constants.SHOW_TOOLTIPS == False:
+    if not constants.SHOW_TOOLTIPS:
         if "-tooltip" in type_:
             return ""
 
@@ -69,5 +75,5 @@ def getMessage(type_, locale=None):
         return str(messages["en"][type_])
     else:
         print("WARNING: Cannot find message '{}'!".format(type_))
-        return "!{}".format(type_) # TODO: Remove
-        #raise KeyError(type_)
+        return "!{}".format(type_)  # TODO: Remove
+        # raise KeyError(type_)

@@ -1,12 +1,15 @@
 # coding:utf8
-from twisted.protocols.basic import LineReceiver
 import json
-import syncplay
-from functools import wraps
 import time
-from syncplay.messages import getMessage
+from functools import wraps
+
+from twisted.protocols.basic import LineReceiver
+
+import syncplay
 from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT, CONTROLLED_ROOMS_MIN_VERSION, USER_READY_MIN_VERSION, SHARED_PLAYLIST_MIN_VERSION, CHAT_MIN_VERSION
+from syncplay.messages import getMessage
 from syncplay.utils import meetsMinVersion
+
 
 class JSONCommandProtocol(LineReceiver):
     def handleMessages(self, messages):
@@ -78,7 +81,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         username = hello["username"] if "username" in hello else None
         roomName = hello["room"]["name"] if "room" in hello else None
         version = hello["version"] if "version" in hello else None
-        version = hello["realversion"] if "realversion" in hello else version # Used for 1.2.X compatibility
+        version = hello["realversion"] if "realversion" in hello else version  # Used for 1.2.X compatibility
         motd = hello["motd"] if "motd" in hello else None
         features = hello["features"] if "features" in hello else None
         return username, roomName, version, motd, features
@@ -102,10 +105,12 @@ class SyncClientProtocol(JSONCommandProtocol):
         hello = {}
         hello["username"] = self._client.getUsername()
         password = self._client.getPassword()
-        if password: hello["password"] = password
+        if password:
+            hello["password"] = password
         room = self._client.getRoom()
-        if room: hello["room"] = {"name" :room}
-        hello["version"] = "1.2.255" # Used so newer clients work on 1.2.X server
+        if room:
+            hello["room"] = {"name": room}
+        hello["version"] = "1.2.255"  # Used so newer clients work on 1.2.X server
         hello["realversion"] = syncplay.version
         hello["features"] = self._client.getFeatures()
         self.sendMessage({"Hello": hello})
@@ -149,7 +154,7 @@ class SyncClientProtocol(JSONCommandProtocol):
             elif command == "playlistChange":
                 self._client.playlist.changePlaylist(values['files'], values['user'])
             elif command == "features":
-                self._client.setUserFeatures(values["username"],values['features'])
+                self._client.setUserFeatures(values["username"], values['features'])
 
     def sendFeaturesUpdate(self, features):
         self.sendSet({"features": features})
@@ -160,14 +165,15 @@ class SyncClientProtocol(JSONCommandProtocol):
     def sendRoomSetting(self, roomName, password=None):
         setting = {}
         setting["name"] = roomName
-        if password: setting["password"] = password
+        if password:
+            setting["password"] = password
         self.sendSet({"room": setting})
 
     def sendFileSetting(self, file_):
         self.sendSet({"file": file_})
         self.sendList()
 
-    def sendChatMessage(self,chatMessage):
+    def sendChatMessage(self, chatMessage):
         self.sendMessage({"Chat": chatMessage})
 
     def handleList(self, userList):
@@ -231,7 +237,8 @@ class SyncClientProtocol(JSONCommandProtocol):
             state["playstate"] = {}
             state["playstate"]["position"] = position
             state["playstate"]["paused"] = paused
-            if doSeek: state["playstate"]["doSeek"] = doSeek
+            if doSeek:
+                state["playstate"]["doSeek"] = doSeek
         state["ping"] = {}
         if latencyCalculation:
             state["ping"]["latencyCalculation"] = latencyCalculation
@@ -255,7 +262,8 @@ class SyncClientProtocol(JSONCommandProtocol):
                 "password": password
             }
         })
-    def handleChat(self,message):
+
+    def handleChat(self, message):
         username = message['username']
         userMessage = message['message']
         self._client.ui.showChatMessage(username, userMessage)
@@ -282,12 +290,12 @@ class SyncClientProtocol(JSONCommandProtocol):
             }
         })
 
-
     def handleError(self, error):
         self.dropWithError(error["message"])
 
     def sendError(self, message):
         self.sendMessage({"Error": {"message": message}})
+
 
 class SyncServerProtocol(JSONCommandProtocol):
     def __init__(self, factory):
@@ -391,9 +399,9 @@ class SyncServerProtocol(JSONCommandProtocol):
             self.sendHello(version)
 
     @requireLogged
-    def handleChat(self,chatMessage):
+    def handleChat(self, chatMessage):
         if not self._factory.disableChat:
-            self._factory.sendChat(self._watcher,chatMessage)
+            self._factory.sendChat(self._watcher, chatMessage)
 
     def setFeatures(self, features):
         self._features = features
@@ -410,8 +418,9 @@ class SyncServerProtocol(JSONCommandProtocol):
         hello["username"] = username
         userIp = self.transport.getPeer().host
         room = self._watcher.getRoom()
-        if room: hello["room"] = {"name": room.getName()}
-        hello["version"] = clientVersion # Used so 1.2.X client works on newer server
+        if room:
+            hello["room"] = {"name": room.getName()}
+        hello["version"] = clientVersion  # Used so 1.2.X client works on newer server
         hello["realversion"] = syncplay.version
         hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
         hello["features"] = self._factory.getFeatures()
@@ -433,12 +442,12 @@ class SyncServerProtocol(JSONCommandProtocol):
             elif command == "ready":
                 manuallyInitiated = set_[1]['manuallyInitiated'] if "manuallyInitiated" in set_[1] else False
                 self._factory.setReady(self._watcher, set_[1]['isReady'], manuallyInitiated=manuallyInitiated)
-            elif command ==  "playlistChange":
+            elif command == "playlistChange":
                 self._factory.setPlaylist(self._watcher, set_[1]['files'])
             elif command == "playlistIndex":
                 self._factory.setPlaylistIndex(self._watcher, set_[1]['index'])
             elif command == "features":
-                #TODO: Check
+                # TODO: Check
                 self._watcher.setFeatures(set_[1])
 
     def sendSet(self, setting):
@@ -460,7 +469,6 @@ class SyncServerProtocol(JSONCommandProtocol):
                 "success": success
             }
         })
-
 
     def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self.sendSet({
@@ -556,7 +564,6 @@ class SyncServerProtocol(JSONCommandProtocol):
         if self.serverIgnoringOnTheFly == 0 or forced:
             self.sendMessage({"State": state})
 
-
     def _extractStatePlaystateArguments(self, state):
         position = state["playstate"]["position"] if "position" in state["playstate"] else 0
         paused = state["playstate"]["paused"] if "paused" in state["playstate"] else None
@@ -589,6 +596,7 @@ class SyncServerProtocol(JSONCommandProtocol):
 
     def sendError(self, message):
         self.sendMessage({"Error": {"message": message}})
+
 
 class PingService(object):
 

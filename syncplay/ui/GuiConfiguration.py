@@ -1137,7 +1137,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.helpButton.setMaximumSize(self.helpButton.sizeHint())
         self.helpButton.released.connect(self.openHelp)
 
-        self.resetButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'cog_delete.png'),getMessage("reset-label"))
+        self.resetButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'cog_delete.png'), getMessage("reset-label"))
         self.resetButton.setMaximumSize(self.resetButton.sizeHint())
         self.resetButton.setObjectName("reset")
         self.resetButton.released.connect(self.resetSettings)
