@@ -38,9 +38,9 @@ LICENSE
 """
 
 import os
+import shutil
 import sys
 import types
-import shutil
 
 
 __version__ = "1.1.0"
@@ -1435,7 +1435,6 @@ def _qInstallMessageHandler(handler):
         return Qt._QtCore.qInstallMsgHandler(passObject)
     elif Qt.IsPySide2 or Qt.IsPyQt5:
         return Qt._QtCore.qInstallMessageHandler(passObject)
-
 
 
 def _convert(lines):
