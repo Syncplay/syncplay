@@ -43,7 +43,7 @@ import types
 import shutil
 
 
-__version__ = "1.1.0.b5"
+__version__ = "1.1.0"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -110,6 +110,7 @@ _common_members = {
         "QGenericArgument",
         "QGenericReturnArgument",
         "QHistoryState",
+        "QItemSelectionRange",
         "QIODevice",
         "QLibraryInfo",
         "QLine",
@@ -393,6 +394,16 @@ _common_members = {
         "QGLFormat",
         "QGLWidget"
     ],
+    "QtPrintSupport": [
+        "QAbstractPrintDialog",
+        "QPageSetupDialog",
+        "QPrintDialog",
+        "QPrintEngine",
+        "QPrintPreviewDialog",
+        "QPrintPreviewWidget",
+        "QPrinter",
+        "QPrinterInfo"
+    ],
     "QtSql": [
         "QSql",
         "QSqlDatabase",
@@ -611,6 +622,9 @@ _common_members = {
         "QWizard",
         "QWizardPage"
     ],
+    "QtX11Extras": [
+        "QX11Info"
+    ],
     "QtXml": [
         "QDomAttr",
         "QDomCDATASection",
@@ -671,7 +685,7 @@ These members from the original submodule are misplaced relative PySide2
 """
 _misplaced_members = {
     "PySide2": {
-        #"QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
@@ -679,6 +693,7 @@ _misplaced_members = {
         "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
     },
     "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
@@ -689,6 +704,7 @@ _misplaced_members = {
         "QtCore.QStringListModel": "QtCore.QStringListModel",
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
     },
     "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -699,7 +715,15 @@ _misplaced_members = {
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
-
+        "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtGui.QAbstractPrintDialog": "QtPrintSupport.QAbstractPrintDialog",
+        "QtGui.QPageSetupDialog": "QtPrintSupport.QPageSetupDialog",
+        "QtGui.QPrintDialog": "QtPrintSupport.QPrintDialog",
+        "QtGui.QPrintEngine": "QtPrintSupport.QPrintEngine",
+        "QtGui.QPrintPreviewDialog": "QtPrintSupport.QPrintPreviewDialog",
+        "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
+        "QtGui.QPrinter": "QtPrintSupport.QPrinter",
+        "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
     },
     "PyQt4": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -710,6 +734,15 @@ _misplaced_members = {
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
+        "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtGui.QAbstractPrintDialog": "QtPrintSupport.QAbstractPrintDialog",
+        "QtGui.QPageSetupDialog": "QtPrintSupport.QPageSetupDialog",
+        "QtGui.QPrintDialog": "QtPrintSupport.QPrintDialog",
+        "QtGui.QPrintEngine": "QtPrintSupport.QPrintEngine",
+        "QtGui.QPrintPreviewDialog": "QtPrintSupport.QPrintPreviewDialog",
+        "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
+        "QtGui.QPrinter": "QtPrintSupport.QPrinter",
+        "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
     }
 }
 
@@ -903,16 +936,34 @@ def _reassign_misplaced_members(binding):
         src_module, src_member = src.split(".")
         dst_module, dst_member = dst.split(".")
 
+        # Get the member we want to store in the namesapce.
+        try:
+            dst_value = getattr(getattr(Qt, "_" + src_module), src_member)
+        except AttributeError:
+            # If the member we want to store in the namespace does not exist,
+            # there is no need to continue. This can happen if a request was
+            # made to rename a member that didn't exist, for example
+            # if QtWidgets isn't available on the target platform.
+            _log("Misplaced member has no source: {}".format(src))
+            continue
+
         try:
             src_object = getattr(Qt, dst_module)
         except AttributeError:
-            # Skip reassignment of non-existing members.
-            # This can happen if a request was made to
-            # rename a member that didn't exist, for example
-            # if QtWidgets isn't available on the target platform.
-            continue
-        
-        dst_value = getattr(getattr(Qt, "_" + src_module), src_member)
+            if dst_module not in _common_members:
+                # Only create the Qt parent module if its listed in
+                # _common_members. Without this check, if you remove QtCore
+                # from _common_members, the default _misplaced_members will add
+                # Qt.QtCore so it can add Signal, Slot, etc.
+                msg = 'Not creating missing member module "{m}" for "{c}"'
+                _log(msg.format(m=dst_module, c=dst_member))
+                continue
+            # If the dst is valid but the Qt parent module does not exist
+            # then go ahead and create a new module to contain the member.
+            setattr(Qt, dst_module, _new_module(dst_module))
+            src_object = getattr(Qt, dst_module)
+            # Enable direct import of the new module
+            sys.modules[__name__ + "." + dst_module] = src_object
 
         setattr(
             src_object,
@@ -1020,6 +1071,7 @@ def _pyside2():
 
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
+        Qt.QtCompat.qInstallMessageHandler = _qInstallMessageHandler
         Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
     if hasattr(Qt, "_QtWidgets"):
@@ -1062,12 +1114,16 @@ def _pyside():
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
+        if hasattr(Qt._QtGui, "QX11Info"):
+            setattr(Qt, "QtX11Extras", _new_module("QtX11Extras"))
+            Qt.QtX11Extras.QX11Info = Qt._QtGui.QX11Info
 
         Qt.QtCompat.setSectionResizeMode = Qt._QtGui.QHeaderView.setResizeMode
 
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
         QCoreApplication = Qt._QtCore.QCoreApplication
+        Qt.QtCompat.qInstallMessageHandler = _qInstallMessageHandler
         Qt.QtCompat.translate = (
             lambda context, sourceText, disambiguation, n:
             QCoreApplication.translate(
@@ -1107,6 +1163,7 @@ def _pyqt5():
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
+        Qt.QtCompat.qInstallMessageHandler = _qInstallMessageHandler
         Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
     if hasattr(Qt, "_QtWidgets"):
@@ -1175,6 +1232,9 @@ def _pyqt4():
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
+        if hasattr(Qt._QtGui, "QX11Info"):
+            setattr(Qt, "QtX11Extras", _new_module("QtX11Extras"))
+            Qt.QtX11Extras.QX11Info = Qt._QtGui.QX11Info
 
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtGui.QHeaderView.setResizeMode
@@ -1182,8 +1242,8 @@ def _pyqt4():
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
-
         QCoreApplication = Qt._QtCore.QCoreApplication
+        Qt.QtCompat.qInstallMessageHandler = _qInstallMessageHandler
         Qt.QtCompat.translate = (
             lambda context, sourceText, disambiguation, n:
             QCoreApplication.translate(
@@ -1261,10 +1321,6 @@ def _loadUi(uifile, baseinstance=None):
         return the newly created instance of the user interface.
 
     """
-    if hasattr(baseinstance, "layout") and baseinstance.layout():
-        message = ("QLayout: Attempting to add Layout to %s which "
-                   "already has a layout")
-        raise RuntimeError(message % (baseinstance))
 
     if hasattr(Qt, "_uic"):
         return Qt._uic.loadUi(uifile, baseinstance)
@@ -1343,6 +1399,43 @@ def _loadUi(uifile, baseinstance=None):
 
     else:
         raise NotImplementedError("No implementation available for loadUi")
+
+
+def _qInstallMessageHandler(handler):
+    """Install a message handler that works in all bindings
+
+    Args:
+        handler: A function that takes 3 arguments, or None
+    """
+    def messageOutputHandler(*args):
+        # In Qt4 bindings, message handlers are passed 2 arguments
+        # In Qt5 bindings, message handlers are passed 3 arguments
+        # The first argument is a QtMsgType
+        # The last argument is the message to be printed
+        # The Middle argument (if passed) is a QMessageLogContext
+        if len(args) == 3:
+            msgType, logContext, msg = args
+        elif len(args) == 2:
+            msgType, msg = args
+            logContext = None
+        else:
+            raise TypeError(
+                "handler expected 2 or 3 arguments, got {0}".format(len(args)))
+
+        if isinstance(msg, bytes):
+            # In python 3, some bindings pass a bytestring, which cannot be
+            # used elsewhere. Decoding a python 2 or 3 bytestring object will
+            # consistently return a unicode object.
+            msg = msg.decode()
+
+        handler(msgType, logContext, msg)
+
+    passObject = messageOutputHandler if handler else handler
+    if Qt.IsPySide or Qt.IsPyQt4:
+        return Qt._QtCore.qInstallMsgHandler(passObject)
+    elif Qt.IsPySide2 or Qt.IsPyQt5:
+        return Qt._QtCore.qInstallMessageHandler(passObject)
+
 
 
 def _convert(lines):
@@ -1496,6 +1589,9 @@ def _install():
                 continue
 
             setattr(our_submodule, member, their_member)
+
+    # Enable direct import of QtCompat
+    sys.modules['Qt.QtCompat'] = Qt.QtCompat
 
     # Backwards compatibility
     if hasattr(Qt.QtCompat, 'loadUi'):

@@ -1,25 +1,31 @@
 environment:
   MINICONDA: "C:\\Miniconda"
+  PYTHON: "C:\\Python34"
+  PYTHON_VERSION: 3.4
+  PYTHON_ARCH: 32
 
 platform: x86
 
 configuration: Release
 
 init:
-  - set PATH=C:\Miniconda;C:\Miniconda\Scripts;C:\Program Files (x86)\NSIS;%PATH%
-  - conda create -n syncplay -y
-  - activate syncplay
-  - conda install python pywin32 pyside -y
-  - pip install twisted py2exe_py2 zope.interface
-  - type nul > C:\Miniconda\envs\syncplay\lib\site-packages\zope\__init__.py
+  - set PYTHONPATH=%PYTHON%
+  - set PYTHONHOME=%PYTHON%
+  - set PATH=%PYTHON%\Scripts;%PYTHON%;C:\Program Files (x86)\NSIS;%PATH%
+  - python --version
+  - python -m pip install -U pip setuptools wheel
+  - pip install -U pypiwin32==219
+  - pip install pyside
+  - pip install twisted
+  - pip install py2exe
+  - pip install zope.interface
+  - type nul > C:\Python34\lib\site-packages\zope\__init__.py
   - pip freeze
-  - conda list
   
 install:
   - cd %APPVEYOR_BUILD_FOLDER%
   - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
   - python buildPy2exe.py
-  - del syncplay_v%ver%\lib\MPR.dll
   - type nul > syncplay_v%ver%\syncplay.ini
   - copy resources\win_lua_note.txt syncplay_v%ver%\"VLC LUA Script installation.txt"
 
@@ -29,15 +35,14 @@ build: off
 artifacts:
   - path: 'syncplay_v$(ver)'
     type: zip
-    name: Syncplay_v$(ver)_Portable
+    name: Syncplay_$(ver)_Portable
 
   - path: Syncplay-$(ver)-Setup.exe
-    name: Syncplay-$(ver)-win-setup
+    name: Syncplay-$(ver)-Setup
 
 # Push artefact to S3 bucket and list all
 before_deploy:
   - dir
-  - dir syncplay_v%ver%
   #- python -c "from PySide2 import QtCore; print QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)"
 
 

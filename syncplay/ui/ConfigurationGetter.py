@@ -1,4 +1,4 @@
-from ConfigParser import SafeConfigParser, DEFAULTSECT
+from configparser import SafeConfigParser, DEFAULTSECT
 import argparse
 import os
 import sys
@@ -241,7 +241,7 @@ class ConfigurationGetter(object):
         for key in self._serialised:
             if self._config[key] is None or self._config[key] == "":
                 self._config[key] = {}
-            elif isinstance(self._config[key], (str, unicode)):
+            elif isinstance(self._config[key], str):
                 self._config[key] = ast.literal_eval(self._config[key])
 
         for key in self._tristate:
@@ -258,7 +258,7 @@ class ConfigurationGetter(object):
         for key in self._hexadecimal:
             match = re.search(r'^#(?:[0-9a-fA-F]){6}$', self._config[key])
             if not match:
-                self._config[key] = u"#FFFFFF"
+                self._config[key] = "#FFFFFF"
 
         for key in self._required:
             if key == "playerPath":
@@ -284,7 +284,7 @@ class ConfigurationGetter(object):
                 raise InvalidConfigValue(getMessage("empty-value-config-error").format(key.capitalize()))
 
     def _overrideConfigWithArgs(self, args):
-        for key, val in vars(args).items():
+        for key, val in list(vars(args).items()):
             if val:
                 if key == "force_gui_prompt":
                     key = "forceGuiPrompt"
@@ -347,14 +347,14 @@ class ConfigurationGetter(object):
         return path
 
     def _parseConfigFile(self, iniPath, createConfig=True):
-        parser = SafeConfigParserUnicode()
+        parser = SafeConfigParserUnicode(strict=False)
         if not os.path.isfile(iniPath):
             if createConfig:
                 open(iniPath, 'w').close()
             else:
                 return
         parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
-        for section, options in self._iniStructure.items():
+        for section, options in list(self._iniStructure.items()):
             if parser.has_section(section):
                 for option in options:
                     if parser.has_option(section, option):
@@ -365,7 +365,7 @@ class ConfigurationGetter(object):
             self._validateArguments()
         except InvalidConfigValue as e:
             try:
-                for key, value in self._promptForMissingArguments(e.message).items():
+                for key, value in list(self._promptForMissingArguments(e).items()):
                     self._config[key] = value
                 self._checkConfig()
             except:
@@ -374,8 +374,8 @@ class ConfigurationGetter(object):
     def _promptForMissingArguments(self, error=None):
         if self._config['noGui']:
             if error:
-                print "{}!".format(error)
-            print getMessage("missing-arguments-error")
+                print("{}!".format(error))
+            print(getMessage("missing-arguments-error"))
             sys.exit()
         else:
             from syncplay.ui.GuiConfiguration import GuiConfiguration
@@ -386,7 +386,7 @@ class ConfigurationGetter(object):
 
     def __wasOptionChanged(self, parser, section, option):
         if parser.has_option(section, option):
-            if parser.get(section, option) != unicode(self._config[option]):
+            if parser.get(section, option) != str(self._config[option]):
                 return True
         else:
             return True
@@ -395,16 +395,16 @@ class ConfigurationGetter(object):
         changed = False
         if self._config['noStore']:
             return
-        parser = SafeConfigParserUnicode()
+        parser = SafeConfigParserUnicode(strict=False)
         parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
-        for section, options in self._iniStructure.items():
+        for section, options in list(self._iniStructure.items()):
             if not parser.has_section(section):
                 parser.add_section(section)
                 changed = True
             for option in options:
                 if self.__wasOptionChanged(parser, section, option):
                     changed = True
-                parser.set(section, option, unicode(self._config[option]).replace('%', '%%'))
+                parser.set(section, option, str(self._config[option]).replace('%', '%%'))
         if changed:
             parser.write(codecs.open(iniPath, "wb", "utf_8_sig"))
 
@@ -417,7 +417,7 @@ class ConfigurationGetter(object):
             pass
 
         try:
-            for key, value in self._promptForMissingArguments().items():
+            for key, value in list(self._promptForMissingArguments().items()):
                 self._config[key] = value
         except GuiConfiguration.WindowClosed:
             sys.exit()
@@ -439,7 +439,7 @@ class ConfigurationGetter(object):
             for name in constants.CONFIG_NAMES:
                 path = location + os.path.sep + name
                 if os.path.isfile(path) and (os.name == 'nt' or path != os.path.join(os.getenv('HOME', '.'), name)):
-                    loadedPaths.append(u"'{}'".format(os.path.normpath(path)))
+                    loadedPaths.append("'{}'".format(os.path.normpath(path)))
                     self._parseConfigFile(path, createConfig=False)
                     self._checkConfig()
         return loadedPaths
@@ -464,13 +464,13 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help=getMessage("password-argument"))
         self._argparser.add_argument('--player-path', metavar='path', type=str, help=getMessage("player-path-argument"))
         self._argparser.add_argument('--language', metavar='language', type=str, help=getMessage("language-argument"))
-        self._argparser.add_argument('file', metavar='file', type=lambda s: unicode(s, 'utf8'), nargs='?', help=getMessage("file-argument"))
+        self._argparser.add_argument('file', metavar='file', type=lambda s: str(s, 'utf8'), nargs='?', help=getMessage("file-argument"))
         self._argparser.add_argument('--clear-gui-data', action='store_true', help=getMessage("clear-gui-data-argument"))
         self._argparser.add_argument('-v', '--version', action='store_true', help=getMessage("version-argument"))
         self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("args-argument"))
         args = self._argparser.parse_args()
         if args.version:
-            print getMessage("version-message").format(version, milestone)
+            print(getMessage("version-message").format(version, milestone))
             sys.exit()
         self._overrideConfigWithArgs(args)
         if not self._config['noGui']:
@@ -487,7 +487,7 @@ class ConfigurationGetter(object):
                     import appnope
                     appnope.nope()
             except ImportError:
-                print getMessage("unable-import-gui-error")
+                print(getMessage("unable-import-gui-error"))
                 self._config['noGui'] = True
         if self._config['file'] and self._config['file'][:2] == "--":
             self._config['playerArgs'].insert(0, self._config['file'])
@@ -519,15 +519,15 @@ class SafeConfigParserUnicode(SafeConfigParser):
         """Write an .ini-format representation of the configuration state."""
         if self._defaults:
             fp.write("[%s]\n" % DEFAULTSECT)
-            for (key, value) in self._defaults.items():
+            for (key, value) in list(self._defaults.items()):
                 fp.write("%s = %s\n" % (key, str(value).replace('\n', '\n\t')))
             fp.write("\n")
         for section in self._sections:
             fp.write("[%s]\n" % section)
-            for (key, value) in self._sections[section].items():
+            for (key, value) in list(self._sections[section].items()):
                 if key == "__name__":
                     continue
                 if (value is not None) or (self._optcre == self.OPTCRE):
-                    key = " = ".join((key, unicode(value).replace('\n', '\n\t')))
+                    key = " = ".join((key, str(value).replace('\n', '\n\t')))
                 fp.write("%s\n" % key)
             fp.write("\n")
