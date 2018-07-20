@@ -14,16 +14,21 @@ DATA_FILES = [
     ('resources', glob('resources/*.png') + glob('resources/*.rtf') + glob('resources/*.lua')),
 ]
 OPTIONS = {
-    'iconfile':'resources/icon.icns',
+    'iconfile': 'resources/icon.icns',
     'extra_scripts': 'syncplayServer.py',
-    'includes': {'PySide2.QtCore', 'PySide2.QtUiTools', 'PySide2.QtGui','PySide2.QtWidgets', 'certifi'},
+    'includes': {'PySide2.QtCore', 'PySide2.QtUiTools', 'PySide2.QtGui', 'PySide2.QtWidgets', 'certifi'},
     'excludes': {'PySide', 'PySide.QtCore', 'PySide.QtUiTools', 'PySide.QtGui'},
-    'qt_plugins': ['platforms/libqcocoa.dylib', 'platforms/libqminimal.dylib','platforms/libqoffscreen.dylib', 'styles/libqmacstyle.dylib'],
+    'qt_plugins': [
+        'platforms/libqcocoa.dylib',
+        'platforms/libqminimal.dylib',
+        'platforms/libqoffscreen.dylib',
+        'styles/libqmacstyle.dylib'
+    ],
     'plist': {
-        'CFBundleName':'Syncplay',
-        'CFBundleShortVersionString':syncplay.version,
-        'CFBundleIdentifier':'pl.syncplay.Syncplay',
-        'LSMinimumSystemVersion':'10.11.0',
+        'CFBundleName': 'Syncplay',
+        'CFBundleShortVersionString': syncplay.version,
+        'CFBundleIdentifier': 'pl.syncplay.Syncplay',
+        'LSMinimumSystemVersion': '10.11.0',
         'NSHumanReadableCopyright': '@ 2018 Syncplay All Rights Reserved'
     }
 }
