@@ -347,7 +347,7 @@ class ConfigurationGetter(object):
         return path
 
     def _parseConfigFile(self, iniPath, createConfig=True):
-        parser = SafeConfigParserUnicode()
+        parser = SafeConfigParserUnicode(strict=False)
         if not os.path.isfile(iniPath):
             if createConfig:
                 open(iniPath, 'w').close()
@@ -395,7 +395,7 @@ class ConfigurationGetter(object):
         changed = False
         if self._config['noStore']:
             return
-        parser = SafeConfigParserUnicode()
+        parser = SafeConfigParserUnicode(strict=False)
         parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in list(self._iniStructure.items()):
             if not parser.has_section(section):
