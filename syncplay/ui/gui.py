@@ -1499,7 +1499,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.userguideAction.triggered.connect(self.openUserGuide)
         window.updateAction = window.helpMenu.addAction(
             QtGui.QPixmap(resourcespath + 'application_get.png'),
-            etMessage("update-menu-label"))
+            getMessage("update-menu-label"))
         window.updateAction.triggered.connect(self.userCheckForUpdates)
 
         if not isMacOS():
