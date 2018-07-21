@@ -350,7 +350,7 @@ class QtEventReactor(QtReactor):
                 elif val == WAIT_TIMEOUT:
                     pass
                 else:
-                    # print 'Got an unexpected return of %r' % val
+                    #print 'Got an unexpected return of %r' % val
                     return
 
     def _runAction(self, action, fd):
