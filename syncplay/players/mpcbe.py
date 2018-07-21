@@ -1,7 +1,10 @@
-from syncplay import constants
+
 import os.path
+
+from syncplay import constants
 from syncplay.messages import getMessage
 from syncplay.players.mpc import MPCHCAPIPlayer
+
 
 class MpcBePlayer(MPCHCAPIPlayer):
     @staticmethod
@@ -30,7 +33,11 @@ class MpcBePlayer(MPCHCAPIPlayer):
     @staticmethod
     def getExpandedPath(path):
         if os.path.isfile(path):
-            if path.lower().endswith('mpc-be.exe'.lower()) or path.lower().endswith('mpc-be64.exe'.lower() or path.lower().endswith('mpc-beportable.exe'.lower())):
+            if (
+                path.lower().endswith('mpc-be.exe'.lower()) or
+                path.lower().endswith('mpc-be64.exe'.lower()) or
+                path.lower().endswith('mpc-beportable.exe'.lower())
+            ):
                 return path
         if os.path.isfile(path + "mpc-be.exe"):
             path += "mpc-be.exe"
