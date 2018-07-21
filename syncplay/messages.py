@@ -57,7 +57,7 @@ def isValidLanguage(language):
 
 
 def getMessage(type_, locale=None):
-    if not constants.SHOW_TOOLTIPS:
+    if constants.SHOW_TOOLTIPS == False:
         if "-tooltip" in type_:
             return ""
 

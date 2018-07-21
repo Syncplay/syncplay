@@ -150,7 +150,7 @@ class NewMpvPlayer(OldMpvPlayer):
         pauseValue = "yes" if value else "no"
         self._setProperty("pause", pauseValue)
         self._paused = value
-        if not value:
+        if value == False:
             self.lastMPVPositionUpdate = time.time()
 
     def _getProperty(self, property_):

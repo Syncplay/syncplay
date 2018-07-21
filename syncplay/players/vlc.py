@@ -238,7 +238,7 @@ class VlcPlayer(BasePlayer):
             self._pausedAsk.set()
         elif name == "position":
             newPosition = float(value.replace(",", ".")) if (value != "no-input" and not self._filechanged) else self._client.getGlobalPosition()
-            if newPosition == self._previousPosition and newPosition != self._duration and not self._paused:
+            if newPosition == self._previousPosition and newPosition != self._duration and self._paused is False:
                 self._client.ui.showDebugMessage(
                     "Not considering position {} duplicate as new time because of VLC time precision bug".format(
                         newPosition))
@@ -341,6 +341,7 @@ class VlcPlayer(BasePlayer):
                     call.append(filePath)
                 else:
                     call.append(self.__playerController.getMRL(filePath))
+
             def _usevlcintf(vlcIntfPath, vlcIntfUserPath):
                 vlcSyncplayInterfacePath = vlcIntfPath + "syncplay.lua"
                 if not os.path.isfile(vlcSyncplayInterfacePath):

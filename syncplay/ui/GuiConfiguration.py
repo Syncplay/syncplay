@@ -98,7 +98,7 @@ class ConfigDialog(QtWidgets.QDialog):
 
     def moreToggled(self):
         self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        if not self.moreToggling:
+        if self.moreToggling is False:
             self.moreToggling = True
 
             if self.showmoreCheckbox.isChecked():
@@ -1314,7 +1314,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.addBottomLayout()
         self.updatePasswordVisibilty()
 
-        if not self.getMoreState():
+        if self.getMoreState() is False:
             self.tabListFrame.hide()
             self.resetButton.hide()
             self.playerargsTextbox.hide()

@@ -80,7 +80,7 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
                     midY - 8,
                     tickIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
 
-            elif not userReady and not crossIconQPixmap.isNull():
+            elif userReady == False and not crossIconQPixmap.isNull():
                 itemQPainter.drawPixmap(
                     (optionQStyleOptionViewItem.rect.x()-10),
                     midY - 8,

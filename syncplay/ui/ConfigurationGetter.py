@@ -239,6 +239,7 @@ class ConfigurationGetter(object):
                 return True
             except:
                 return False
+
         for key in self._boolean:
             if self._config[key] == "True":
                 self._config[key] = True
