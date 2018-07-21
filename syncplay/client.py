@@ -382,7 +382,7 @@ class SyncplayClient(object):
             madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
         if not paused and pauseChanged:
             madeChangeOnPlayer = self._serverUnpaused(setBy)
-        elif not paused and pauseChanged:
+        elif paused and pauseChanged:
             madeChangeOnPlayer = self._serverPaused(setBy)
         return madeChangeOnPlayer
 
@@ -1158,7 +1158,7 @@ class SyncplayUserlist(object):
                 showOnOSD = constants.SHOW_OSD_WARNINGS
             else:
                 showOnOSD = constants.SHOW_DIFFERENT_ROOM_OSD
-            if not constants.SHOW_NONCONTROLLER_OSD and not self.canControl(username):
+            if constants.SHOW_NONCONTROLLER_OSD == False and not self.canControl(username):
                 showOnOSD = False
             hideFromOSD = not showOnOSD
             if not file_:
@@ -1275,7 +1275,7 @@ class SyncplayUserlist(object):
             return False
         for user in self._users.values():
             if user.room == self.currentUser.room:
-                if not user.isReadyWithFile():
+                if not user.isReadyWithFile() == False:
                     return False
                 elif (
                     requireSameFilenames and
@@ -1290,7 +1290,7 @@ class SyncplayUserlist(object):
 
     def areAllOtherUsersInRoomReady(self):
         for user in self._users.values():
-            if user.room == self.currentUser.room and not user.isReadyWithFile():
+            if user.room == self.currentUser.room and user.isReadyWithFile() == False:
                 return False
         return True
 
@@ -1315,7 +1315,7 @@ class SyncplayUserlist(object):
         if not self.currentUser.isReady():
             notReady.append(self.currentUser.username)
         for user in self._users.values():
-            if user.room == self.currentUser.room and not user.isReadyWithFile():
+            if user.room == self.currentUser.room and user.isReadyWithFile() == False:
                 notReady.append(user.username)
         return ", ".join(notReady)
 
