@@ -1436,6 +1436,8 @@ def _qInstallMessageHandler(handler):
     elif Qt.IsPySide2 or Qt.IsPyQt5:
         return Qt._QtCore.qInstallMessageHandler(passObject)
 
+
+
 def _convert(lines):
     """Convert compiled .ui file from PySide2 to Qt.py
 
