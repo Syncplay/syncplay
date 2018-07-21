@@ -226,11 +226,11 @@ class VlcPlayer(BasePlayer):
             self._paused = bool(value != 'playing') if (value != "no-input" and not self._filechanged) else self._client.getGlobalPaused()
             diff = time.time() - self._lastVLCPositionUpdate if self._lastVLCPositionUpdate else 0
             if (
-                not self._paused and
+                self._paused == False
                 self._position == self._previousPreviousPosition and
                 self._previousPosition == self._position and
                 self._duration > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
-                (self._duration - self._position) < constants.VLC_EOF_DURATION_THRandD and
+                (self._duration - self._position) < constants.VLC_EOF_DURATION_THRESHOLD and
                 diff > constants.VLC_LATENCY_ERROR_THRESHOLD
             ):
                 self._client.ui.showDebugMessage("Treating 'playing' response as 'paused' due to VLC EOF bug")

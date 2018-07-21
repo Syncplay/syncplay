@@ -8,6 +8,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime
 from functools import wraps
+from platform import python_version
 
 from twisted.internet import task
 
@@ -20,7 +21,6 @@ from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFiledurat
 from syncplay.vendor import Qt
 from syncplay.vendor.Qt import QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
-from platform import python_version
 if IsPySide2:
     from PySide2.QtCore import QStandardPaths
 if isMacOS() and IsPySide:
@@ -129,7 +129,6 @@ class AboutDialog(QtWidgets.QDialog):
             "<p><center>" + getMessage("about-dialog-release").format(versionExtString, release_number) +
             "<br />Python " + python_version() + " - " + __binding__ + " " + __binding_version__ +
             " - Qt " + __qt_version__ + "</center></p>")
-        # versionLabel = QtWidgets.QLabel("<p><center>Version 1.5.4 release 62<br />Python 3.4.5 - PySide 1.2.4 - Qt 4.8.7</center></p>")
         licenseLabel = QtWidgets.QLabel(
             "<center><p>Copyright &copy; 2012&ndash;2018 Syncplay</p><p>" +
             getMessage("about-dialog-license-text") + "</p></center>")

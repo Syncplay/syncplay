@@ -1440,7 +1440,7 @@ class UiManager(object):
 
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():
-            sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip()))
+            sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()), message.rstrip()))
 
     def showChatMessage(self, username, userMessage):
         messageString = "<{}> {}".format(username, userMessage)
