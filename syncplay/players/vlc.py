@@ -226,7 +226,7 @@ class VlcPlayer(BasePlayer):
             self._paused = bool(value != 'playing') if (value != "no-input" and not self._filechanged) else self._client.getGlobalPaused()
             diff = time.time() - self._lastVLCPositionUpdate if self._lastVLCPositionUpdate else 0
             if (
-                self._paused == False
+                self._paused == False and
                 self._position == self._previousPreviousPosition and
                 self._previousPosition == self._position and
                 self._duration > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
