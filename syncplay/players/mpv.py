@@ -138,7 +138,7 @@ class NewMpvPlayer(OldMpvPlayer):
         if not self._client._config["chatOutputEnabled"]:
             super(self.__class__, self).displayChatMessage(username, message)
             return
-        username = self._sanitizeText(username.replace("\\", sconstants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
+        username = self._sanitizeText(username.replace("\\", constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
         message = self._sanitizeText(message.replace("\\", constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
         messageString = "<{}> {}".format(username, message)
         self._listener.sendLine('script-message-to syncplayintf chat "{}"'.format(messageString))

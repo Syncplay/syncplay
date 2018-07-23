@@ -1314,7 +1314,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.addBottomLayout()
         self.updatePasswordVisibilty()
 
-        if self.getMoreState() is False:
+        if self.getMoreState() == False:
             self.tabListFrame.hide()
             self.resetButton.hide()
             self.playerargsTextbox.hide()
