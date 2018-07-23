@@ -551,7 +551,7 @@ class ConfigDialog(QtWidgets.QDialog):
         config = self.config
         playerpaths = self.playerpaths
         error = self.error
-        if self.datacleared:
+        if self.datacleared == True:
             error = constants.ERROR_MESSAGE_MARKER + "{}".format(getMessage("gui-data-cleared-notification"))
             self.error = error
         if config['host'] is None:
@@ -1233,7 +1233,7 @@ class ConfigDialog(QtWidgets.QDialog):
 
     def populateEmptyServerList(self):
         if self.publicServers is None:
-            if self.config["checkForUpdatesAutomatically"]:
+            if self.config["checkForUpdatesAutomatically"] == True:
                 self.updateServerList()
             else:
                 currentServer = self.hostCombobox.currentText()
@@ -1273,7 +1273,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self._playerProbeThread.done.connect(self._updateExecutableIcon)
         self._playerProbeThread.start()
 
-        if self.config['clearGUIData']:
+        if self.config['clearGUIData'] == True:
             self.config['clearGUIData'] = False
             self.clearGUIData()
 

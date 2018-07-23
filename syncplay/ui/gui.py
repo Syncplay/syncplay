@@ -1625,7 +1625,7 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 import syncplay
                 updateMessage = getMessage("update-check-failed-notification").format(syncplay.version)
-                if userInitiated:
+                if userInitiated == True:
                     updateURL = constants.SYNCPLAY_DOWNLOAD_URL
         if updateURL is not None:
             reply = QtWidgets.QMessageBox.question(
