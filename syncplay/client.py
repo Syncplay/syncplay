@@ -317,7 +317,7 @@ class SyncplayClient(object):
             self.setPosition(self.getGlobalPosition())
         self._player.setPaused(True)
         madeChangeOnPlayer = True
-        if (self.lastLeftTime < time.time() - constants.OSD_DURATION) or hideFromOSD:
+        if (self.lastLeftTime < time.time() - constants.OSD_DURATION) or hideFromOSD == True:
             self.ui.showMessage(getMessage("pause-notification").format(setBy), hideFromOSD)
         else:
             self.ui.showMessage(getMessage("left-paused-notification").format(self.lastLeftUser, setBy), hideFromOSD)
@@ -364,9 +364,9 @@ class SyncplayClient(object):
         self._lastGlobalUpdate = time.time()
         if doSeek:
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
-        if diff > self._config['rewindThreshold'] and not doSeek and self._config['rewindOnDesync']:
+        if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindOnDesync'] == False:
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
-        if self._config['fastforwardOnDesync'] and (not self.userlist.currentUser.canControl() or self._config['dontSlowDownWithMe']):
+        if self._config['fastforwardOnDesync'] and (self.userlist.currentUser.canControl() == False or self._config['dontSlowDownWithMe'] == True):
             if diff < (constants.FASTFORWARD_BEHIND_THRESHOLD * -1) and not doSeek:
                 if self.behindFirstDetected is None:
                     self.behindFirstDetected = time.time()
@@ -378,11 +378,11 @@ class SyncplayClient(object):
                         self.behindFirstDetected = time.time() + constants.FASTFORWARD_RESET_THRESHOLD
             else:
                 self.behindFirstDetected = None
-        if self._player.speedSupported and not doSeek and not paused and self._config['slowOnDesync']:
+        if self._player.speedSupported and not doSeek and not paused and  not self._config['slowOnDesync'] == False:
             madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
-        if not paused and pauseChanged:
+        if paused == False and pauseChanged:
             madeChangeOnPlayer = self._serverUnpaused(setBy)
-        elif paused and pauseChanged:
+        elif paused == True and pauseChanged:
             madeChangeOnPlayer = self._serverPaused(setBy)
         return madeChangeOnPlayer
 
@@ -774,7 +774,7 @@ class SyncplayClient(object):
         from syncplay.ui.ConfigurationGetter import ConfigurationGetter
         ConfigurationGetter().setConfigOption("sharedPlaylistEnabled", newState)
         self._config["sharedPlaylistEnabled"] = newState
-        if not oldState and newState:
+        if oldState == False and newState == True:
             self.playlist.loadCurrentPlaylistIndex()
 
     def changeAutoplayState(self, newState):
@@ -785,7 +785,7 @@ class SyncplayClient(object):
         oldAutoplayConditionsMet = self.autoplayConditionsMet()
         self.autoPlayThreshold = newThreshold
         newAutoplayConditionsMet = self.autoplayConditionsMet()
-        if not oldAutoplayConditionsMet and newAutoplayConditionsMet:
+        if oldAutoplayConditionsMet == False and newAutoplayConditionsMet == True:
             self.autoplayCheck()
 
     def autoplayCheck(self):
@@ -1158,7 +1158,7 @@ class SyncplayUserlist(object):
                 showOnOSD = constants.SHOW_OSD_WARNINGS
             else:
                 showOnOSD = constants.SHOW_DIFFERENT_ROOM_OSD
-            if constants.SHOW_NONCONTROLLER_OSD == False and not self.canControl(username):
+            if constants.SHOW_NONCONTROLLER_OSD == False and self.canControl(username) == False:
                 showOnOSD = False
             hideFromOSD = not showOnOSD
             if not file_:
@@ -1275,7 +1275,7 @@ class SyncplayUserlist(object):
             return False
         for user in self._users.values():
             if user.room == self.currentUser.room:
-                if not user.isReadyWithFile() == False:
+                if user.isReadyWithFile() == False:
                     return False
                 elif (
                     requireSameFilenames and

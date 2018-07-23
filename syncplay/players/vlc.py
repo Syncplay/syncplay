@@ -223,7 +223,7 @@ class VlcPlayer(BasePlayer):
                 self._duration = float(value.replace(",", "."))
             self._durationAsk.set()
         elif name == "playstate":
-            self._paused = bool(value != 'playing') if (value != "no-input" and not self._filechanged) else self._client.getGlobalPaused()
+            self._paused = bool(value != 'playing') if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPaused()
             diff = time.time() - self._lastVLCPositionUpdate if self._lastVLCPositionUpdate else 0
             if (
                 self._paused == False and

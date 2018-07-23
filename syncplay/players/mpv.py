@@ -164,7 +164,7 @@ class NewMpvPlayer(OldMpvPlayer):
         self._listener.sendLine("print_text ""ANS_{}=${{{}}}""".format(property_, propertyID))
 
     def getCalculatedPosition(self):
-        if not self.fileLoaded:
+        if self.fileLoaded == False:
             self._client.ui.showDebugMessage(
                 "File not loaded so using GlobalPosition for getCalculatedPosition({})".format(
                     self._client.getGlobalPosition()))
@@ -266,7 +266,7 @@ class NewMpvPlayer(OldMpvPlayer):
             self._client.ui.showDebugMessage("Want to set paused to {}".format(self._client.getGlobalPaused()))
         else:
             self._client.ui.showDebugMessage("Don't want to set paused to {}".format(self._client.getGlobalPaused()))
-        if not resetPosition:
+        if resetPosition == False:
             self.setPosition(self._client.getGlobalPosition())
         else:
             self._storePosition(0)

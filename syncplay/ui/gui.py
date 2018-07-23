@@ -887,7 +887,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def browseMediapath(self):
-        if self._syncplayClient._player.customOpenDialog:
+        if self._syncplayClient._player.customOpenDialog == True:
             self._syncplayClient._player.openCustomOpenDialog()
             return
 
@@ -916,7 +916,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def OpenAddFilesToPlaylistDialog(self):
-        if self._syncplayClient._player.customOpenDialog:
+        if self._syncplayClient._player.customOpenDialog == True:
             self._syncplayClient._player.openCustomOpenDialog()
             return
 
@@ -1659,7 +1659,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 dropfilepath = os.path.abspath(NSURL.URLWithString_(pathString).filePathURL().path())
             else:
                 dropfilepath = os.path.abspath(str(url.toLocalFile()))
-            if not rewindFile:
+            if rewindFile == False:
                 self._syncplayClient._player.openFile(dropfilepath)
             else:
                 self._syncplayClient.setPosition(0)

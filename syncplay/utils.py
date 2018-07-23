@@ -440,7 +440,7 @@ def getListOfPublicServers():
         else:
             raise IOError
     except:
-        if constants.DEBUG_MODE:
+        if constants.DEBUG_MODE == True:
             traceback.print_exc()
             raise
         else:

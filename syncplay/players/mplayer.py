@@ -396,11 +396,11 @@ class MplayerPlayer(BasePlayer):
             oldState = self.readyToSend
             self.readyToSend = newReadyState
             self.lastNotReadyTime = time.time() if newReadyState == False else None
-            if self.readyToSend:
+            if self.readyToSend == True:
                 self.__playerController._client.ui.showDebugMessage("<mpv> Ready to send: True")
             else:
                 self.__playerController._client.ui.showDebugMessage("<mpv> Ready to send: False")
-            if self.readyToSend and oldState == False:
+            if self.readyToSend == True and oldState == False:
                 self.processSendQueue()
 
         def checkForReadinessOverride(self):
@@ -409,7 +409,7 @@ class MplayerPlayer(BasePlayer):
 
         def sendLine(self, line, notReadyAfterThis=None):
             self.checkForReadinessOverride()
-            if not self.readyToSend and "print_text ANS_pause" in line:
+            if self.readyToSend == False and "print_text ANS_pause" in line:
                 self.__playerController._client.ui.showDebugMessage("<mpv> Not ready to get status update, so skipping")
                 return
             try:

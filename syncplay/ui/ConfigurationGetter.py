@@ -284,7 +284,7 @@ class ConfigurationGetter(object):
             elif key == "host":
                 self._config["host"], self._config["port"] = self._splitPortAndHost(self._config["host"])
                 hostNotValid = (self._config["host"] == "" or self._config["host"] is None)
-                portNotValid = (not _isPortValid(self._config["port"]))
+                portNotValid = (_isPortValid(self._config["port"]) == False)
                 if hostNotValid:
                     raise InvalidConfigValue(getMessage("no-hostname-config-error"))
                 elif portNotValid:
