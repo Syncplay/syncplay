@@ -7,17 +7,15 @@ import os.path
 application = defines.get('app', 'dist/Syncplay.app')
 appname = os.path.basename(application)
 
-
 def icon_from_app(app_path):
     plist_path = os.path.join(app_path, 'Contents', 'Info.plist')
     plist = biplist.readPlist(plist_path)
     icon_name = plist['CFBundleIconFile']
-    icon_root, icon_ext = os.path.splitext(icon_name)
+    icon_root,icon_ext = os.path.splitext(icon_name)
     if not icon_ext:
         icon_ext = '.icns'
     icon_name = icon_root + icon_ext
     return os.path.join(app_path, 'Contents', 'Resources', icon_name)
-
 
 # Volume format (see hdiutil create -help)
 format = defines.get('format', 'UDZO')
@@ -29,19 +27,10 @@ compression_level = 9
 size = defines.get('size', None)
 
 # Files to include
-files = [
-    application,
-    'resources/lua/intf/.syncplay.lua',
-    'resources/.macos_vlc_install.command',
-    'resources/.macOS_readme.pdf'
-]
+files = [ application, 'resources/lua/intf/.syncplay.lua', 'resources/.macos_vlc_install.command', 'resources/.macOS_readme.pdf' ]
 
 # Symlinks to create
-symlinks = {
-    'Applications': '/Applications',
-    'Install for VLC': '.macos_vlc_install.command',
-    'Read Me': '.macOS_readme.pdf'
-}
+symlinks = { 'Applications': '/Applications', 'Install for VLC': '.macos_vlc_install.command', 'Read Me': '.macOS_readme.pdf' }
 
 # Volume icon
 #
@@ -49,12 +38,12 @@ symlinks = {
 # image, *or* you can define badge_icon, in which case the icon file you specify
 # will be used to badge the system's Removable Disk icon
 #
-# icon = '/path/to/icon.icns'
+#icon = '/path/to/icon.icns'
 badge_icon = icon_from_app(application)
 
 # Where to put the icons
 icon_locations = {
-    appname: (150, 110),
+    appname:        (150, 110),
     'Applications': (450, 110),
     'Read Me': (100, 285),
     'Install for VLC': (500, 285)
@@ -117,7 +106,7 @@ arrange_by = None
 grid_offset = (0, 0)
 grid_spacing = 20
 scroll_position = (0, 0)
-label_pos = 'bottom'  # or 'right'
+label_pos = 'bottom' # or 'right'
 text_size = 12
 icon_size = 80
 

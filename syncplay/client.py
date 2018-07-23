@@ -1,27 +1,22 @@
-
-import ast
-import collections
 import hashlib
 import os.path
-import random
+import time
 import re
 import sys
+import ast
+import random
 import threading
-import time
-from copy import deepcopy
-from functools import wraps
-
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task, defer, threads
-
+from functools import wraps
+from copy import deepcopy
+from syncplay.protocols import SyncClientProtocol
 from syncplay import utils, constants, version
+from syncplay.utils import isMacOS
+from syncplay.messages import getMissingStrings, getMessage
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME
-from syncplay.messages import getMissingStrings, getMessage
-from syncplay.protocols import SyncClientProtocol
-from syncplay.utils import isMacOS
-
-
+import collections
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry=constants.RECONNECT_RETRIES):
         self._client = client
@@ -45,7 +40,7 @@ class SyncClientFactory(ClientFactory):
             self._timesTried += 1
             self._client.ui.showMessage(getMessage("reconnection-attempt-notification"))
             self.reconnecting = True
-            reactor.callLater(0.1 * (2 ** min(self._timesTried, 5)), connector.connect)
+            reactor.callLater(0.1 * (2 ** min(self._timesTried,5)), connector.connect)
         else:
             message = getMessage("disconnection-notification")
             self._client.ui.showErrorMessage(message)
@@ -62,7 +57,6 @@ class SyncClientFactory(ClientFactory):
 
     def stopRetrying(self):
         self._timesTried = self.retry
-
 
 class SyncplayClient(object):
     def __init__(self, playerClass, ui, config):
@@ -99,7 +93,7 @@ class SyncplayClient(object):
         if config['password']:
             config['password'] = hashlib.md5(config['password'].encode('utf-8')).hexdigest()
         self._serverPassword = config['password']
-        self._host = "{}:{}".format(config['host'], config['port'])
+        self._host = "{}:{}".format(config['host'],config['port'])
         self._publicServers = config["publicServers"]
         if not config['file']:
             self.__getUserlistOnLogon = True
@@ -209,19 +203,12 @@ class SyncplayClient(object):
         self._playerPosition = position
         self._playerPaused = paused
         currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
-        if (
-            pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH
-            and abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
-        ):
+        if pauseChange and paused and currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
+            and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD:
             self.playlist.advancePlaylistCheck()
         elif pauseChange and "readiness" in self.serverFeatures and self.serverFeatures["readiness"]:
-            if (
-                currentLength == 0 or currentLength == -1 or
-                not (
-                    not self.playlist.notJustChangedPlaylist() and
-                    abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
-                )
-            ):
+            if currentLength == 0 or currentLength == -1 or\
+                not (not self.playlist.notJustChangedPlaylist() and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD):
                 pauseChange = self._toggleReady(pauseChange, paused)
 
         if self._lastGlobalUpdate:
@@ -317,7 +304,7 @@ class SyncplayClient(object):
             self.setPosition(self.getGlobalPosition())
         self._player.setPaused(True)
         madeChangeOnPlayer = True
-        if (self.lastLeftTime < time.time() - constants.OSD_DURATION) or hideFromOSD:
+        if (self.lastLeftTime < time.time() - constants.OSD_DURATION) or (hideFromOSD == True):
             self.ui.showMessage(getMessage("pause-notification").format(setBy), hideFromOSD)
         else:
             self.ui.showMessage(getMessage("left-paused-notification").format(self.lastLeftUser, setBy), hideFromOSD)
@@ -338,7 +325,7 @@ class SyncplayClient(object):
     def _slowDownToCoverTimeDifference(self, diff, setBy):
         hideFromOSD = not constants.SHOW_SLOWDOWN_OSD
         madeChangeOnPlayer = False
-        if self._config['slowdownThreshold'] < diff and not self._speedChanged:
+        if self._config['slowdownThreshold']  < diff and not self._speedChanged:
             if self.getUsername() == setBy:
                 self.ui.showDebugMessage("Caught attempt to slow down due to time difference with self")
             else:
@@ -364,9 +351,9 @@ class SyncplayClient(object):
         self._lastGlobalUpdate = time.time()
         if doSeek:
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
-        if diff > self._config['rewindThreshold'] and not doSeek and self._config['rewindOnDesync']:
+        if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindOnDesync'] == False:
             madeChangeOnPlayer = self._rewindPlayerDueToTimeDifference(position, setBy)
-        if self._config['fastforwardOnDesync'] and (not self.userlist.currentUser.canControl() or self._config['dontSlowDownWithMe']):
+        if self._config['fastforwardOnDesync'] and (self.userlist.currentUser.canControl() == False or self._config['dontSlowDownWithMe'] == True):
             if diff < (constants.FASTFORWARD_BEHIND_THRESHOLD * -1) and not doSeek:
                 if self.behindFirstDetected is None:
                     self.behindFirstDetected = time.time()
@@ -378,11 +365,11 @@ class SyncplayClient(object):
                         self.behindFirstDetected = time.time() + constants.FASTFORWARD_RESET_THRESHOLD
             else:
                 self.behindFirstDetected = None
-        if self._player.speedSupported and not doSeek and not paused and self._config['slowOnDesync']:
+        if self._player.speedSupported and not doSeek and not paused and not self._config['slowOnDesync'] == False:
             madeChangeOnPlayer = self._slowDownToCoverTimeDifference(diff, setBy)
-        if not paused and pauseChanged:
+        if paused == False and pauseChanged:
             madeChangeOnPlayer = self._serverUnpaused(setBy)
-        elif paused and pauseChanged:
+        elif paused == True and pauseChanged:
             madeChangeOnPlayer = self._serverPaused(setBy)
         return madeChangeOnPlayer
 
@@ -504,7 +491,7 @@ class SyncplayClient(object):
                 if self._config['onlySwitchToTrustedDomains']:
                     if self._config['trustedDomains']:
                         for trustedDomain in self._config['trustedDomains']:
-                            trustableURI = ''.join([trustedProtocol, trustedDomain, "/"])
+                            trustableURI = ''.join([trustedProtocol,trustedDomain,"/"])
                             if URIToTest.startswith(trustableURI):
                                 return True
                     return False
@@ -579,11 +566,11 @@ class SyncplayClient(object):
             constants.MAX_ROOM_NAME_LENGTH = self.serverFeatures["maxRoomNameLength"]
         if self.serverFeatures["maxFilenameLength"] is not None:
             constants.MAX_FILENAME_LENGTH = self.serverFeatures["maxFilenameLength"]
-        constants.MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = [
-            "MaxChatMessageLength={}".format(constants.MAX_CHAT_MESSAGE_LENGTH),
-            "inputPromptStartCharacter={}".format(constants.MPV_INPUT_PROMPT_START_CHARACTER),
-            "inputPromptEndCharacter={}".format(constants.MPV_INPUT_PROMPT_END_CHARACTER),
-            "backslashSubstituteCharacter={}".format(constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER)]
+        constants.MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(constants.MAX_CHAT_MESSAGE_LENGTH),
+                                              "inputPromptStartCharacter={}".format(constants.MPV_INPUT_PROMPT_START_CHARACTER),
+                                              "inputPromptEndCharacter={}".format(constants.MPV_INPUT_PROMPT_END_CHARACTER),
+                                              "backslashSubstituteCharacter={}".format(
+                                                  constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER)]
         self.ui.setFeatures(self.serverFeatures)
         if self._player:
             self._player.setFeatures(self.serverFeatures)
@@ -599,6 +586,7 @@ class SyncplayClient(object):
         else:
             return None
 
+
     def sendFile(self):
         file_ = self.getSanitizedCurrentUserFile()
         if self._protocol and self._protocol.logged and file_:
@@ -609,7 +597,7 @@ class SyncplayClient(object):
             self.userlist.currentUser.username = username
         else:
             random_number = random.randrange(1000, 9999)
-            self.userlist.currentUser.username = "Anonymous" + str(random_number)  # Not localised as this would give away locale
+            self.userlist.currentUser.username = "Anonymous" + str(random_number) # Not localised as this would give away locale
 
     def getUsername(self):
         return self.userlist.currentUser.username
@@ -622,8 +610,8 @@ class SyncplayClient(object):
         features = dict()
 
         # Can change during runtime:
-        features["sharedPlaylists"] = self.sharedPlaylistIsEnabled()  # Can change during runtime
-        features["chat"] = self.chatIsEnabled()  # Can change during runtime
+        features["sharedPlaylists"] = self.sharedPlaylistIsEnabled() # Can change during runtime
+        features["chat"] = self.chatIsEnabled() # Can change during runtime
 
         # Static for this version/release of Syncplay:
         features["featureList"] = True
@@ -636,7 +624,7 @@ class SyncplayClient(object):
         self.userlist.currentUser.room = roomName
         if resetAutoplay:
             self.resetAutoPlayState()
-
+        
     def sendRoom(self):
         room = self.userlist.currentUser.room
         if self._protocol and self._protocol.logged and room:
@@ -719,7 +707,7 @@ class SyncplayClient(object):
             return
         self._running = True
         if self._playerClass:
-            perPlayerArguments = utils.getPlayerArgumentsByPathAsArray(self._config['perPlayerArguments'], self._config['playerPath'])
+            perPlayerArguments = utils.getPlayerArgumentsByPathAsArray(self._config['perPlayerArguments'],self._config['playerPath'])
             if perPlayerArguments:
                 self._config['playerArgs'].extend(perPlayerArguments)
             reactor.callLater(0.1, self._playerClass.run, self, self._config['playerPath'], self._config['file'], self._config['playerArgs'], )
@@ -761,9 +749,9 @@ class SyncplayClient(object):
         return requireServerFeatureDecorator
 
     @requireServerFeature("chat")
-    def sendChat(self, message):
+    def sendChat(self,message):
         if self._protocol and self._protocol.logged:
-            message = utils.truncateText(message, constants.MAX_CHAT_MESSAGE_LENGTH)
+            message = utils.truncateText(message,constants.MAX_CHAT_MESSAGE_LENGTH)
             self._protocol.sendChatMessage(message)
 
     def sendFeaturesUpdate(self, features):
@@ -774,7 +762,7 @@ class SyncplayClient(object):
         from syncplay.ui.ConfigurationGetter import ConfigurationGetter
         ConfigurationGetter().setConfigOption("sharedPlaylistEnabled", newState)
         self._config["sharedPlaylistEnabled"] = newState
-        if not oldState and newState:
+        if oldState == False and newState == True:
             self.playlist.loadCurrentPlaylistIndex()
 
     def changeAutoplayState(self, newState):
@@ -785,7 +773,7 @@ class SyncplayClient(object):
         oldAutoplayConditionsMet = self.autoplayConditionsMet()
         self.autoPlayThreshold = newThreshold
         newAutoplayConditionsMet = self.autoplayConditionsMet()
-        if not oldAutoplayConditionsMet and newAutoplayConditionsMet:
+        if oldAutoplayConditionsMet == False and newAutoplayConditionsMet == True:
             self.autoplayCheck()
 
     def autoplayCheck(self):
@@ -811,12 +799,9 @@ class SyncplayClient(object):
 
     def autoplayConditionsMet(self):
         recentlyReset = (self.lastRewindTime is not None and abs(time.time() - self.lastRewindTime) < 10) and self._playerPosition < 3
-        return (
-            self._playerPaused and (self.autoPlay or recentlyReset) and
-            self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported()
-            and self.userlist.areAllUsersInRoomReady(requireSameFilenames=self._config["autoplayRequireSameFilenames"])
-            and ((self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold) or recentlyReset)
-        )
+        return self._playerPaused and (self.autoPlay or recentlyReset) and self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported()\
+               and self.userlist.areAllUsersInRoomReady(requireSameFilenames=self._config["autoplayRequireSameFilenames"])\
+               and ((self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold) or recentlyReset)
 
     def autoplayTimerIsRunning(self):
         return self.autoplayTimer.running
@@ -837,7 +822,7 @@ class SyncplayClient(object):
             return
         allReadyMessage = getMessage("all-users-ready").format(self.userlist.readyUserCount())
         autoplayingMessage = getMessage("autoplaying-notification").format(int(self.autoplayTimeLeft))
-        countdownMessage = "{}{}{}".format(allReadyMessage, self._player.osdMessageSeparator, autoplayingMessage)
+        countdownMessage = "{}{}{}".format(allReadyMessage,self._player.osdMessageSeparator, autoplayingMessage)
         self.ui.showOSDMessage(countdownMessage, 1, OSDType=constants.OSD_ALERT, mood=constants.MESSAGE_GOODNEWS)
         if self.autoplayTimeLeft <= 0:
             self.setPaused(False)
@@ -933,12 +918,12 @@ class SyncplayClient(object):
                 f = urllib.request.urlopen(constants.SYNCPLAY_UPDATE_URL.format(params))
                 response = f.read()
                 response = response.decode('utf-8')
-            response = response.replace("<p>", "").replace("</p>", "").replace("<br />", "").replace("&#8220;", "\"").replace("&#8221;", "\"")  # Fix Wordpress
+            response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","\"").replace("&#8221;","\"") # Fix Wordpress
             response = json.loads(response)
             publicServers = None
             if response["public-servers"]:
                 publicServers = response["public-servers"].\
-                    replace("&#8221;", "'").replace(":&#8217;", "'").replace("&#8217;", "'").replace("&#8242;", "'").replace("\n", "").replace("\r", "")
+                    replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","")
                 publicServers = ast.literal_eval(publicServers)
             return response["version-status"], response["version-message"] if "version-message" in response\
                 else None, response["version-url"] if "version-url" in response else None, publicServers
@@ -1061,9 +1046,8 @@ class SyncplayClient(object):
             if self._client and self._client._player and self._client.getPlayerPaused():
                 self._checkRoomForSameFiles(OSDOnly=True)
                 self.checkReadyStates()
-            elif not self._userlist.currentUser.isReady():  # CurrentUser should always be reminded they are set to not ready
+            elif not self._userlist.currentUser.isReady(): # CurrentUser should always be reminded they are set to not ready
                 self.checkReadyStates()
-
 
 class SyncplayUser(object):
     def __init__(self, username=None, room=None, file_=None):
@@ -1085,7 +1069,7 @@ class SyncplayUser(object):
 
     def isFileSame(self, file_):
         if not self.file:
-            return False
+            return False   
         sameName = utils.sameFilename(self.file['name'], file_['name'])
         sameSize = utils.sameFilesize(self.file['size'], file_['size'])
         sameDuration = utils.sameFileduration(self.file['duration'], file_['duration'])
@@ -1129,7 +1113,6 @@ class SyncplayUser(object):
     def setFeatures(self, features):
         self._features = features
 
-
 class SyncplayUserlist(object):
     def __init__(self, ui, client):
         self.currentUser = SyncplayUser()
@@ -1139,7 +1122,7 @@ class SyncplayUserlist(object):
         self._roomUsersChanged = True
 
     def isReadinessSupported(self):
-        if not utils.meetsMinVersion(self._client.serverVersion, constants.USER_READY_MIN_VERSION):
+        if not utils.meetsMinVersion(self._client.serverVersion,constants.USER_READY_MIN_VERSION):
             return False
         elif self.onlyUserInRoomWhoSupportsReadiness():
             return False
@@ -1158,7 +1141,7 @@ class SyncplayUserlist(object):
                 showOnOSD = constants.SHOW_OSD_WARNINGS
             else:
                 showOnOSD = constants.SHOW_DIFFERENT_ROOM_OSD
-            if constants.SHOW_NONCONTROLLER_OSD == False and not self.canControl(username):
+            if constants.SHOW_NONCONTROLLER_OSD == False and self.canControl(username) == False:
                 showOnOSD = False
             hideFromOSD = not showOnOSD
             if not file_:
@@ -1175,13 +1158,13 @@ class SyncplayUserlist(object):
                     if fileDifferences is not None:
                         message = getMessage("file-differences-notification").format(fileDifferences)
                         self.ui.showMessage(message, True)
-
+                    
     def getFileDifferencesForUser(self, currentUserFile, otherUserFile):
         if not currentUserFile or not otherUserFile:
             return None
         differences = []
-        differentName = not utils.sameFilename(currentUserFile['name'], otherUserFile['name'])
-        differentSize = not utils.sameFilesize(currentUserFile['size'], otherUserFile['size'])
+        differentName     = not utils.sameFilename(currentUserFile['name'], otherUserFile['name'])
+        differentSize     = not utils.sameFilesize(currentUserFile['size'], otherUserFile['size'])                  
         differentDuration = not utils.sameFileduration(currentUserFile['duration'], otherUserFile['duration'])
         if differentName:     differences.append(getMessage("file-difference-filename"))
         if differentSize:     differences.append(getMessage("file-difference-filesize"))
@@ -1275,16 +1258,12 @@ class SyncplayUserlist(object):
             return False
         for user in self._users.values():
             if user.room == self.currentUser.room:
-                if not user.isReadyWithFile() == False:
+                if user.isReadyWithFile() == False:
                     return False
-                elif (
-                    requireSameFilenames and
-                    (
-                        self.currentUser.file is None
-                        or user.file is None
-                        or not utils.sameFilename(self.currentUser.file['name'], user.file['name'])
-                    )
-                ):
+                elif requireSameFilenames and\
+                        (self.currentUser.file is None
+                         or user.file is None
+                         or not utils.sameFilename(self.currentUser.file['name'], user.file['name'])):
                     return False
         return True
 
@@ -1302,7 +1281,7 @@ class SyncplayUserlist(object):
             if user.room == self.currentUser.room and user.isReadyWithFile():
                 readyCount += 1
         return readyCount
-
+    
     def usersInRoomCount(self):
         userCount = 1
         for user in self._users.values():
@@ -1332,7 +1311,7 @@ class SyncplayUserlist(object):
             if user.room == self.currentUser.room:
                 return False
         return True
-
+    
     def onlyUserInRoomWhoSupportsReadiness(self):
         for user in self._users.values():
             if user.room == self.currentUser.room and user.isReadyWithFile() is not None:
@@ -1379,7 +1358,7 @@ class SyncplayUserlist(object):
             self._users[username].setReady(isReady)
         self._client.autoplayCheck()
 
-    def userListChange(self, room=None):
+    def userListChange(self, room = None):
         if room is not None and self.isRoomSame(room):
             self._roomUsersChanged = True
         self.ui.userListChange()
@@ -1415,7 +1394,6 @@ class SyncplayUserlist(object):
         rooms = collections.OrderedDict(sorted(list(rooms.items()), key=lambda s: s[0].lower()))
         return rooms
 
-
 class UiManager(object):
     def __init__(self, client, ui):
         self._client = client
@@ -1440,19 +1418,18 @@ class UiManager(object):
 
     def showDebugMessage(self, message):
         if constants.DEBUG_MODE and message.rstrip():
-            sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()), message.rstrip()))
+            sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()),message.rstrip()))
 
     def showChatMessage(self, username, userMessage):
         messageString = "<{}> {}".format(username, userMessage)
         if self._client._player.chatOSDSupported and self._client._config["chatOutputEnabled"]:
-            self._client._player.displayChatMessage(username, userMessage)
+            self._client._player.displayChatMessage(username,userMessage)
         else:
             self.showOSDMessage(messageString, duration=constants.OSD_DURATION)
         self.__ui.showMessage(messageString)
 
-    def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL):
-        if not noPlayer:
-            self.showOSDMessage(message, duration=constants.OSD_DURATION, OSDType=OSDType, mood=mood)
+    def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION,mood=constants.MESSAGE_NEUTRAL):
+        if not noPlayer: self.showOSDMessage(message, duration=constants.OSD_DURATION, OSDType=OSDType, mood=mood)
         self.__ui.showMessage(message, noTimestamp)
 
     def updateAutoPlayState(self, newState):
@@ -1488,7 +1465,7 @@ class UiManager(object):
         self.__ui.setControllerStatus(username, isController)
 
     def showErrorMessage(self, message, criticalerror=False):
-        if message != self.lastError:  # Avoid double call bug
+        if message != self.lastError: # Avoid double call bug
             self.lastError = message
             self.__ui.showErrorMessage(message, criticalerror)
 
@@ -1509,7 +1486,6 @@ class UiManager(object):
 
     def drop(self):
         self.__ui.drop()
-
 
 class SyncplayPlaylist():
     def __init__(self, client):
@@ -1542,7 +1518,7 @@ class SyncplayPlaylist():
         except ValueError:
             pass
 
-    def changeToPlaylistIndex(self, index, username=None):
+    def changeToPlaylistIndex(self, index, username = None):
         if self._playlist is None or len(self._playlist) == 0:
             return
         if index is None:
@@ -1648,7 +1624,7 @@ class SyncplayPlaylist():
         filename = _playlist[_index] if len(_playlist) > _index else None
         return filename
 
-    def changePlaylist(self, files, username=None, resetIndex=False):
+    def changePlaylist(self, files, username = None, resetIndex=False):
         if self._playlist == files:
             if self._playlistIndex != 0 and resetIndex:
                 self.changeToPlaylistIndex(0)
@@ -1710,11 +1686,9 @@ class SyncplayPlaylist():
     def advancePlaylistCheck(self):
         position = self._client.getStoredPlayerPosition()
         currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
-        if (
-            currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
-            abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD and
-            self.notJustChangedPlaylist()
-        ):
+        if currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH\
+        and abs(position - currentLength ) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD\
+            and self.notJustChangedPlaylist():
                 self.loadNextFileInPlaylist()
 
     def notJustChangedPlaylist(self):
@@ -1784,7 +1758,6 @@ class SyncplayPlaylist():
 
     def _playlistBufferNeedsUpdating(self, newPlaylist):
         return self._previousPlaylist != self._playlist and self._playlist != newPlaylist
-
 
 class FileSwitchManager(object):
     def __init__(self, client):
@@ -1920,7 +1893,7 @@ class FileSwitchManager(object):
                 for directory in directoryList:
                     for root, dirs, files in os.walk(directory):
                         if filename in files:
-                            return os.path.join(root, filename)
+                            return os.path.join(root,filename)
                         if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
                             self.folderSearchEnabled = False
                             self.directorySearchError = getMessage("folder-search-timeout-error").format(directory)

@@ -1,99 +1,95 @@
-
+from configparser import SafeConfigParser, DEFAULTSECT
 import argparse
-import ast
-import codecs
-import re
 import os
 import sys
-from configparser import SafeConfigParser, DEFAULTSECT
-
+import ast
 from syncplay import constants, utils, version, milestone
 from syncplay.messages import getMessage, setLanguage, isValidLanguage
 from syncplay.players.playerFactory import PlayerFactory
 from syncplay.utils import isMacOS
-
+import codecs
+import re
 
 class InvalidConfigValue(Exception):
     def __init__(self, message):
         Exception.__init__(self, message)
 
-
 class ConfigurationGetter(object):
     def __init__(self):
         self._config = {
-            "host": None,
-            "port": constants.DEFAULT_PORT,
-            "name": None,
-            "debug": False,
-            "forceGuiPrompt": True,
-            "noGui": False,
-            "noStore": False,
-            "room": "",
-            "password": None,
-            "playerPath": None,
-            "perPlayerArguments": None,
-            "mediaSearchDirectories": None,
-            "sharedPlaylistEnabled": True,
-            "loopAtEndOfPlaylist": False,
-            "loopSingleFiles": False,
-            "onlySwitchToTrustedDomains": True,
-            "trustedDomains": constants.DEFAULT_TRUSTED_DOMAINS,
-            "file": None,
-            "playerArgs": [],
-            "playerClass": None,
-            "slowdownThreshold": constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD,
-            "rewindThreshold": constants.DEFAULT_REWIND_THRESHOLD,
-            "fastforwardThreshold": constants.DEFAULT_FASTFORWARD_THRESHOLD,
-            "rewindOnDesync": True,
-            "slowOnDesync": True,
-            "fastforwardOnDesync": True,
-            "dontSlowDownWithMe": False,
-            "filenamePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
-            "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
-            "pauseOnLeave": False,
-            "readyAtStart": False,
-            "unpauseAction": constants.UNPAUSE_IFOTHERSREADY_MODE,
-            "autoplayInitialState": None,
-            "autoplayMinUsers": -1,
-            "autoplayRequireSameFilenames": True,
-            "clearGUIData": False,
-            "language": "",
-            "checkForUpdatesAutomatically": None,
-            "lastCheckedForUpdates": "",
-            "resetConfig": False,
-            "showOSD": True,
-            "showOSDWarnings": True,
-            "showSlowdownOSD": True,
-            "showDifferentRoomOSD": False,
-            "showSameRoomOSD": True,
-            "showNonControllerOSD": False,
-            "showContactInfo": True,
-            "showDurationNotification": True,
-            "chatInputEnabled": True,
-            "chatInputFontFamily": 'sans-serif',
-            "chatInputRelativeFontSize": constants.DEFAULT_CHAT_FONT_SIZE,
-            "chatInputFontWeight": constants.DEFAULT_CHAT_FONT_WEIGHT,
-            "chatInputFontUnderline": False,
-            "chatInputFontColor": constants.DEFAULT_CHAT_INPUT_FONT_COLOR,
-            "chatInputPosition": constants.INPUT_POSITION_TOP,
-            "chatDirectInput": False,
-            "chatOutputEnabled": True,
-            "chatOutputFontFamily": 'sans-serif',
-            "chatOutputRelativeFontSize": constants.DEFAULT_CHAT_FONT_SIZE,
-            "chatOutputFontWeight": constants.DEFAULT_CHAT_FONT_WEIGHT,
-            "chatOutputFontUnderline": False,
-            "chatOutputMode": constants.CHATROOM_MODE,
-            "chatMaxLines": 7,
-            "chatTopMargin": 25,
-            "chatLeftMargin": 20,
-            "chatBottomMargin": 30,
-            "chatMoveOSD": True,
-            "chatOSDMargin": 110,
-            "notificationTimeout": 3,
-            "alertTimeout": 5,
-            "chatTimeout": 7,
-            "publicServers": []
-        }
+                        "host": None,
+                        "port": constants.DEFAULT_PORT,
+                        "name": None,
+                        "debug": False,
+                        "forceGuiPrompt": True,
+                        "noGui": False,
+                        "noStore": False,
+                        "room": "",
+                        "password": None,
+                        "playerPath": None,
+                        "perPlayerArguments": None,
+                        "mediaSearchDirectories": None,
+                        "sharedPlaylistEnabled": True,
+                        "loopAtEndOfPlaylist": False,
+                        "loopSingleFiles" : False,
+                        "onlySwitchToTrustedDomains": True,
+                        "trustedDomains": constants.DEFAULT_TRUSTED_DOMAINS,
+                        "file": None,
+                        "playerArgs": [],
+                        "playerClass": None,
+                        "slowdownThreshold": constants.DEFAULT_SLOWDOWN_KICKIN_THRESHOLD,
+                        "rewindThreshold": constants.DEFAULT_REWIND_THRESHOLD,
+                        "fastforwardThreshold": constants.DEFAULT_FASTFORWARD_THRESHOLD,
+                        "rewindOnDesync": True,
+                        "slowOnDesync": True,
+                        "fastforwardOnDesync": True,
+                        "dontSlowDownWithMe": False,
+                        "filenamePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
+                        "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
+                        "pauseOnLeave": False,
+                        "readyAtStart": False,
+                        "unpauseAction": constants.UNPAUSE_IFOTHERSREADY_MODE,
+                        "autoplayInitialState" : None,
+                        "autoplayMinUsers" : -1,
+                        "autoplayRequireSameFilenames": True,
+                        "clearGUIData": False,
+                        "language" : "",
+                        "checkForUpdatesAutomatically" : None,
+                        "lastCheckedForUpdates" : "",
+                        "resetConfig" : False,
+                        "showOSD" : True,
+                        "showOSDWarnings" : True,
+                        "showSlowdownOSD" : True,
+                        "showDifferentRoomOSD" : False,
+                        "showSameRoomOSD" : True,
+                        "showNonControllerOSD" : False,
+                        "showContactInfo" : True,
+                        "showDurationNotification" : True,
+                        "chatInputEnabled" : True,
+                        "chatInputFontFamily" : 'sans-serif',
+                        "chatInputRelativeFontSize" : constants.DEFAULT_CHAT_FONT_SIZE,
+                        "chatInputFontWeight" : constants.DEFAULT_CHAT_FONT_WEIGHT,
+                        "chatInputFontUnderline": False,
+                        "chatInputFontColor": constants.DEFAULT_CHAT_INPUT_FONT_COLOR,
+                        "chatInputPosition": constants.INPUT_POSITION_TOP,
+                        "chatDirectInput": False,
+                        "chatOutputEnabled": True,
+                        "chatOutputFontFamily": 'sans-serif',
+                        "chatOutputRelativeFontSize": constants.DEFAULT_CHAT_FONT_SIZE,
+                        "chatOutputFontWeight": constants.DEFAULT_CHAT_FONT_WEIGHT,
+                        "chatOutputFontUnderline": False,
+                        "chatOutputMode": constants.CHATROOM_MODE,
+                        "chatMaxLines": 7,
+                        "chatTopMargin": 25,
+                        "chatLeftMargin": 20,
+                        "chatBottomMargin": 30,
+                        "chatMoveOSD": True,
+                        "chatOSDMargin": 110,
+                        "notificationTimeout": 3,
+                        "alertTimeout": 5,
+                        "chatTimeout": 7,
+                        "publicServers" : []
+                        }
 
         self._defaultConfig = self._config.copy()
 
@@ -101,47 +97,47 @@ class ConfigurationGetter(object):
         # Custom validation in self._validateArguments
         #
         self._required = [
-            "host",
-            "port",
-            "room",
-            "playerPath",
-            "playerClass",
-        ]
+                          "host",
+                          "port",
+                          "room",
+                          "playerPath",
+                          "playerClass",
+                         ]
 
         self._boolean = [
-            "debug",
-            "forceGuiPrompt",
-            "noGui",
-            "noStore",
-            "dontSlowDownWithMe",
-            "pauseOnLeave",
-            "readyAtStart",
-            "autoplayRequireSameFilenames",
-            "clearGUIData",
-            "rewindOnDesync",
-            "slowOnDesync",
-            "fastforwardOnDesync",
-            "pauseOnLeave",
-            "clearGUIData",
-            "resetConfig",
-            "showOSD",
-            "showOSDWarnings",
-            "showSlowdownOSD",
-            "showDifferentRoomOSD",
-            "showSameRoomOSD",
-            "showNonControllerOSD",
-            "showDurationNotification",
-            "sharedPlaylistEnabled",
-            "loopAtEndOfPlaylist",
-            "loopSingleFiles",
-            "onlySwitchToTrustedDomains",
-            "chatInputEnabled",
-            "chatInputFontUnderline",
-            "chatDirectInput",
-            "chatMoveOSD",
-            "chatOutputEnabled",
-            "chatOutputFontUnderline"
-        ]
+                         "debug",
+                         "forceGuiPrompt",
+                         "noGui",
+                         "noStore",
+                         "dontSlowDownWithMe",
+                         "pauseOnLeave",
+                         "readyAtStart",
+                         "autoplayRequireSameFilenames",
+                         "clearGUIData",
+                         "rewindOnDesync",
+                         "slowOnDesync",
+                         "fastforwardOnDesync",
+                         "pauseOnLeave",
+                         "clearGUIData",
+                         "resetConfig",
+                         "showOSD",
+                         "showOSDWarnings",
+                         "showSlowdownOSD",
+                         "showDifferentRoomOSD",
+                         "showSameRoomOSD",
+                         "showNonControllerOSD",
+                         "showDurationNotification",
+                         "sharedPlaylistEnabled",
+                         "loopAtEndOfPlaylist",
+                         "loopSingleFiles",
+                         "onlySwitchToTrustedDomains",
+                         "chatInputEnabled",
+                         "chatInputFontUnderline",
+                         "chatDirectInput",
+                         "chatMoveOSD",
+                        "chatOutputEnabled",
+                        "chatOutputFontUnderline"
+                        ]
         self._tristate = [
             "checkForUpdatesAutomatically",
             "autoplayInitialState",
@@ -178,40 +174,37 @@ class ConfigurationGetter(object):
         ]
 
         self._iniStructure = {
-            "server_data": ["host", "port", "password"],
-            "client_settings": [
-                "name", "room", "playerPath",
-                "perPlayerArguments", "slowdownThreshold",
-                "rewindThreshold", "fastforwardThreshold",
-                "slowOnDesync", "rewindOnDesync",
-                "fastforwardOnDesync", "dontSlowDownWithMe",
-                "forceGuiPrompt", "filenamePrivacyMode",
-                "filesizePrivacyMode", "unpauseAction",
-                "pauseOnLeave", "readyAtStart", "autoplayMinUsers",
-                "autoplayInitialState", "mediaSearchDirectories",
-                "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
-                "loopSingleFiles",
-                "onlySwitchToTrustedDomains", "trustedDomains", "publicServers"],
-            "gui": [
-                "showOSD", "showOSDWarnings", "showSlowdownOSD",
-                "showDifferentRoomOSD", "showSameRoomOSD",
-                "showNonControllerOSD", "showDurationNotification",
-                "chatInputEnabled", "chatInputFontUnderline",
-                "chatInputFontFamily", "chatInputRelativeFontSize",
-                "chatInputFontWeight", "chatInputFontColor",
-                "chatInputPosition", "chatDirectInput",
-                "chatOutputFontFamily", "chatOutputRelativeFontSize",
-                "chatOutputFontWeight", "chatOutputFontUnderline",
-                "chatOutputMode", "chatMaxLines",
-                "chatTopMargin", "chatLeftMargin",
-                "chatBottomMargin", "chatDirectInput",
-                "chatMoveOSD", "chatOSDMargin",
-                "notificationTimeout", "alertTimeout",
-                "chatTimeout", "chatOutputEnabled"],
-            "general": [
-                "language", "checkForUpdatesAutomatically",
-                "lastCheckedForUpdates"]
-        }
+                        "server_data": ["host", "port", "password"],
+                        "client_settings": ["name", "room", "playerPath",
+                            "perPlayerArguments", "slowdownThreshold",
+                            "rewindThreshold", "fastforwardThreshold",
+                            "slowOnDesync", "rewindOnDesync",
+                            "fastforwardOnDesync", "dontSlowDownWithMe",
+                            "forceGuiPrompt", "filenamePrivacyMode",
+                            "filesizePrivacyMode", "unpauseAction",
+                            "pauseOnLeave", "readyAtStart", "autoplayMinUsers",
+                            "autoplayInitialState", "mediaSearchDirectories",
+                            "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
+                            "loopSingleFiles",
+                            "onlySwitchToTrustedDomains", "trustedDomains","publicServers"],
+                        "gui": ["showOSD", "showOSDWarnings", "showSlowdownOSD",
+                            "showDifferentRoomOSD", "showSameRoomOSD",
+                            "showNonControllerOSD", "showDurationNotification",
+                            "chatInputEnabled","chatInputFontUnderline",
+                            "chatInputFontFamily", "chatInputRelativeFontSize",
+                            "chatInputFontWeight", "chatInputFontColor",
+                            "chatInputPosition","chatDirectInput",
+                            "chatOutputFontFamily", "chatOutputRelativeFontSize",
+                            "chatOutputFontWeight", "chatOutputFontUnderline",
+                            "chatOutputMode", "chatMaxLines",
+                            "chatTopMargin", "chatLeftMargin",
+                            "chatBottomMargin", "chatDirectInput",
+                            "chatMoveOSD", "chatOSDMargin",
+                            "notificationTimeout", "alertTimeout",
+                            "chatTimeout","chatOutputEnabled"],
+                        "general": ["language", "checkForUpdatesAutomatically",
+                            "lastCheckedForUpdates"]
+                        }
 
         self._playerFactory = PlayerFactory()
 
@@ -222,7 +215,7 @@ class ConfigurationGetter(object):
             self._config = self._defaultConfig
             self._config['language'] = language
             self._config['checkForUpdatesAutomatically'] = checkForUpdatesAutomatically
-            raise InvalidConfigValue("*" + getMessage("config-cleared-notification"))
+            raise InvalidConfigValue("*"+getMessage("config-cleared-notification"))
 
         if not isValidLanguage(self._config['language']):
             self._config['language'] = ""
@@ -231,7 +224,7 @@ class ConfigurationGetter(object):
             try:
                 if varToTest == "" or varToTest is None:
                     return False
-                if not str(varToTest).isdigit():
+                if str(varToTest).isdigit() == False:
                     return False
                 varToTest = int(varToTest)
                 if varToTest > 65535 or varToTest < 1:
@@ -239,7 +232,6 @@ class ConfigurationGetter(object):
                 return True
             except:
                 return False
-
         for key in self._boolean:
             if self._config[key] == "True":
                 self._config[key] = True
@@ -277,14 +269,13 @@ class ConfigurationGetter(object):
                     self._config["playerClass"] = player
                 else:
                     raise InvalidConfigValue(getMessage("player-path-config-error"))
-                playerPathErrors = player.getPlayerPathErrors(
-                    self._config["playerPath"], self._config['file'] if self._config['file'] else None)
+                playerPathErrors = player.getPlayerPathErrors(self._config["playerPath"], self._config['file'] if self._config['file'] else None)
                 if playerPathErrors:
                     raise InvalidConfigValue(playerPathErrors)
             elif key == "host":
                 self._config["host"], self._config["port"] = self._splitPortAndHost(self._config["host"])
                 hostNotValid = (self._config["host"] == "" or self._config["host"] is None)
-                portNotValid = (not _isPortValid(self._config["port"]))
+                portNotValid = (_isPortValid(self._config["port"]) == False)
                 if hostNotValid:
                     raise InvalidConfigValue(getMessage("no-hostname-config-error"))
                 elif portNotValid:
@@ -334,12 +325,12 @@ class ConfigurationGetter(object):
         if configFile:
             return configFile
         for name in constants.CONFIG_NAMES:
-            configFile = self._expandConfigPath(name, xdg=False)
+            configFile = self._expandConfigPath(name, xdg = False)
             if os.path.isfile(configFile):
                 return configFile
         return self._expandConfigPath()
 
-    def _expandConfigPath(self, name=None, xdg=True):
+    def _expandConfigPath(self, name = None, xdg = True):
         if os.name != 'nt':
             if xdg:
                 prefix = self._getXdgConfigHome()
@@ -417,6 +408,7 @@ class ConfigurationGetter(object):
         if changed:
             parser.write(codecs.open(iniPath, "wb", "utf_8_sig"))
 
+
     def _forceGuiPrompt(self):
         from syncplay.ui.GuiConfiguration import GuiConfiguration
         try:
@@ -460,9 +452,8 @@ class ConfigurationGetter(object):
         #
         if self._config['language']:
             setLanguage(self._config['language'])
-        self._argparser = argparse.ArgumentParser(
-            description=getMessage("argument-description"),
-            epilog=getMessage("argument-epilog"))
+        self._argparser = argparse.ArgumentParser(description=getMessage("argument-description"),
+                                         epilog=getMessage("argument-epilog"))
         self._argparser.add_argument('--no-gui', action='store_true', help=getMessage("nogui-argument"))
         self._argparser.add_argument('-a', '--host', metavar='hostname', type=str, help=getMessage("host-argument"))
         self._argparser.add_argument('-n', '--name', metavar='username', type=str, help=getMessage("name-argument"))
@@ -490,7 +481,7 @@ class ConfigurationGetter(object):
                 if not (IsPySide2 or IsPySide):
                     raise ImportError
                 if QCoreApplication.instance() is None:
-                    self.app = QtWidgets.QApplication(sys.argv)
+                  self.app = QtWidgets.QApplication(sys.argv)
                 qt5reactor.install()
                 if isMacOS():
                     import appnope
@@ -522,7 +513,6 @@ class ConfigurationGetter(object):
         backup[option] = value
         self._saveConfig(path)
         self._config = backup
-
 
 class SafeConfigParserUnicode(SafeConfigParser):
     def write(self, fp):
