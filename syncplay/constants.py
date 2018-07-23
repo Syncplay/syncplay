@@ -4,34 +4,39 @@ DEFAULT_PORT = 8999
 OSD_DURATION = 3.0
 OSD_WARNING_MESSAGE_DURATION = 5.0
 NO_ALERT_OSD_WARNING_DURATION = 13.0
-MPC_OSD_POSITION = 1  #Right corner, 1 for left
+MPC_OSD_POSITION = 1  # Right corner, 1 for left
 MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "
-CONFIG_NAMES = [".syncplay", "syncplay.ini"]  #Syncplay searches first to last
+CONFIG_NAMES = [".syncplay", "syncplay.ini"]  # Syncplay searches first to last
 DEFAULT_CONFIG_NAME = "syncplay.ini"
-RECENT_CLIENT_THRESHOLD = "1.5.5"  #This and higher considered 'recent' clients (no warnings)
-WARN_OLD_CLIENTS = True  #Use MOTD to inform old clients to upgrade
+RECENT_CLIENT_THRESHOLD = "1.5.5"  # This and higher considered 'recent' clients (no warnings)
+WARN_OLD_CLIENTS = True  # Use MOTD to inform old clients to upgrade
 LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
 SHOW_TOOLTIPS = True
-WARN_ABOUT_MISSING_STRINGS = False # (If debug mode is enabled)
+WARN_ABOUT_MISSING_STRINGS = False  # (If debug mode is enabled)
 FALLBACK_INITIAL_LANGUAGE = "en"
-FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [['syncplay.pl:8995 (France)', 'syncplay.pl:8995'],['syncplay.pl:8996 (France)', 'syncplay.pl:8996'],['syncplay.pl:8997 (France)', 'syncplay.pl:8997'],['syncplay.pl:8998 (France)', 'syncplay.pl:8998'],['syncplay.pl:8999 (France)', 'syncplay.pl:8999']]
-PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH = 10 # Seconds
-PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD = 5 # Seconds (only triggered if file is paused, e.g. due to EOF)
+FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [
+    ['syncplay.pl:8995 (France)', 'syncplay.pl:8995'],
+    ['syncplay.pl:8996 (France)', 'syncplay.pl:8996'],
+    ['syncplay.pl:8997 (France)', 'syncplay.pl:8997'],
+    ['syncplay.pl:8998 (France)', 'syncplay.pl:8998'],
+    ['syncplay.pl:8999 (France)', 'syncplay.pl:8999']]
+PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH = 10  # Seconds
+PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD = 5  # Seconds (only triggered if file is paused, e.g. due to EOF)
 
-#Overriden by config
+# Overriden by config
 SHOW_OSD = True  # Sends Syncplay messages to media player OSD
 SHOW_OSD_WARNINGS = True  # Show warnings if playing different file, alone in room
 SHOW_SLOWDOWN_OSD = True  # Show notifications of slowing down / reverting on time difference
 SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room user is in
-SHOW_NONCONTROLLER_OSD = False # Show OSD notifications for non-controllers in controlled rooms
+SHOW_NONCONTROLLER_OSD = False  # Show OSD notifications for non-controllers in controlled rooms
 SHOW_DIFFERENT_ROOM_OSD = False  # Show OSD notifications for events relating to room user is not in
 SHOW_DURATION_NOTIFICATION = True
 DEBUG_MODE = False
 
-#Changing these might be ok
-AUTOMATIC_UPDATE_CHECK_FREQUENCY = 7 * 86400 # Days converted into seconds
+# Changing these might be ok
+AUTOMATIC_UPDATE_CHECK_FREQUENCY = 7 * 86400  # Days converted into seconds
 DEFAULT_REWIND_THRESHOLD = 4
 MINIMUM_REWIND_THRESHOLD = 3
 DEFAULT_FASTFORWARD_THRESHOLD = 5
@@ -65,34 +70,34 @@ DEFAULT_CHAT_OUTPUT_FONT_COLOR = "#FFFF00"
 DEFAULT_CHAT_FONT_WEIGHT = 1
 
 # Max numbers are used by server (and client pre-connection). Once connected client gets values from server featureList (or uses 'fallback' versions for old servers)
-MAX_CHAT_MESSAGE_LENGTH = 150 # Number of displayed characters
-MAX_USERNAME_LENGTH = 150 # Number of displayed characters
-MAX_ROOM_NAME_LENGTH = 35 # Number of displayed characters
-MAX_FILENAME_LENGTH = 250 # Number of displayed characters
-FALLBACK_MAX_CHAT_MESSAGE_LENGTH = 50 # Number of displayed characters
-FALLBACK_MAX_USERNAME_LENGTH = 16 # Number of displayed characters
-FALLBACK_MAX_ROOM_NAME_LENGTH = 35 # Number of displayed characters
-FALLBACK_MAX_FILENAME_LENGTH = 250 # Number of displayed characters
+MAX_CHAT_MESSAGE_LENGTH = 150  # Number of displayed characters
+MAX_USERNAME_LENGTH = 150  # Number of displayed characters
+MAX_ROOM_NAME_LENGTH = 35  # Number of displayed characters
+MAX_FILENAME_LENGTH = 250  # Number of displayed characters
+FALLBACK_MAX_CHAT_MESSAGE_LENGTH = 50  # Number of displayed characters
+FALLBACK_MAX_USERNAME_LENGTH = 16  # Number of displayed characters
+FALLBACK_MAX_ROOM_NAME_LENGTH = 35  # Number of displayed characters
+FALLBACK_MAX_FILENAME_LENGTH = 250  # Number of displayed characters
 
 # Options for the File Switch feature:
-FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 25.0 # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
-FOLDER_SEARCH_TIMEOUT = 20.0 # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)
-FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0 # Secs - Frequency of updating cache
+FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 25.0  # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
+FOLDER_SEARCH_TIMEOUT = 20.0  # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)
+FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0  # Secs - Frequency of updating cache
 
-#Usually there's no need to adjust these
+# Usually there's no need to adjust these
 LAST_PAUSED_DIFF_THRESHOLD = 2
 FILENAME_STRIP_REGEX = "[-~_\.\[\](): ]"
 CONTROL_PASSWORD_STRIP_REGEX = "[^a-zA-Z0-9\-]"
 ROOM_NAME_STRIP_REGEX = "^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
 COMMANDS_UNDO = ["u", "undo", "revert"]
-COMMANDS_CHAT = ["ch","chat"]
+COMMANDS_CHAT = ["ch", "chat"]
 COMMANDS_LIST = ["l", "list", "users"]
 COMMANDS_PAUSE = ["p", "play", "pause"]
 COMMANDS_ROOM = ["r", "room"]
 COMMANDS_HELP = ['help', 'h', '?', '/?', r'\?']
-COMMANDS_CREATE = ['c','create']
-COMMANDS_AUTH = ['a','auth']
-COMMANDS_TOGGLE = ['t','toggle']
+COMMANDS_CREATE = ['c', 'create']
+COMMANDS_AUTH = ['a', 'auth']
+COMMANDS_TOGGLE = ['t', 'toggle']
 MPC_MIN_VER = "1.6.4"
 MPC_BE_MIN_VER = "1.5.2.3123"
 VLC_MIN_VERSION = "2.2.1"
@@ -146,7 +151,7 @@ MPC_BE_ICONPATH = "mpc-be.png"
 
 MPV_ERROR_MESSAGES_TO_REPEAT = ['[ytdl_hook] Your version of youtube-dl is too old', '[ytdl_hook] youtube-dl failed', 'Failed to recognize file format.', '[syncplayintf] Lua error']
 
-#Changing these is usually not something you're looking for
+# Changing these is usually not something you're looking for
 PLAYER_ASK_DELAY = 0.1
 PING_MOVING_AVERAGE_WEIGHT = 0.85
 MPC_OPEN_MAX_WAIT_TIME = 10
@@ -163,16 +168,16 @@ VLC_OPEN_MAX_WAIT_TIME = 20
 VLC_MIN_PORT = 10000
 VLC_MAX_PORT = 55000
 
-#These are not changes you're looking for
+# These are not changes you're looking for
 STYLE_TABLIST = "QListWidget::item { border-style: solid; border-width: 1px; border-radius: 2px; } QListWidget::item:selected { color: black; background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(242, 248, 255, 255), stop:1 rgba(208, 229, 255, 255)); border-color: #84ACDD; } QListWidget::item:!selected { border-color: transparent; } QListWidget::item:!selected:hover { color: black; background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(248, 248, 248, 255), stop:1 rgba(229, 229, 229, 255)); border-color: silver; }"
-STYLE_SUBCHECKBOX  = "QCheckBox, QLabel, QRadioButton {{ margin-left: 6px; padding-left: 21px; background:url('{}') left no-repeat }}" #Graphic path
-STYLE_SUBLABEL  = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 16px; background:url('{}') left no-repeat }}" #Graphic path
+STYLE_SUBCHECKBOX = "QCheckBox, QLabel, QRadioButton {{ margin-left: 6px; padding-left: 21px; background:url('{}') left no-repeat }}"  # Graphic path
+STYLE_SUBLABEL = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 16px; background:url('{}') left no-repeat }}"  # Graphic path
 STYLE_ERRORLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: red; padding: 2px; background: #FFAAAA; }"
 STYLE_SUCCESSLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: green; padding: 2px; background: #AAFFAA; }"
 STYLE_READY_PUSHBUTTON = "QPushButton { text-align: left; padding: 10px 5px 10px 5px;}"
 STYLE_AUTO_PLAY_PUSHBUTTON = "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }"
 STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
-STYLE_CONTACT_INFO = "<span style=\"color: grey\"><strong><small>{}</span><br /><br />" # Contact info message
+STYLE_CONTACT_INFO = "<span style=\"color: grey\"><strong><small>{}</span><br /><br />"  # Contact info message
 STYLE_USER_MESSAGE = "<span style=\"{}\">&lt;{}&gt;</span> {}"
 STYLE_USERNAME = "color: #367AA9; font-weight:bold;"
 STYLE_ERRORNOTIFICATION = "color: red;"
@@ -181,7 +186,7 @@ STYLE_NOFILEITEM_COLOR = 'blue'
 STYLE_NOTCONTROLLER_COLOR = 'grey'
 STYLE_UNTRUSTEDITEM_COLOR = 'purple'
 
-USERLIST_GUI_USERNAME_OFFSET = 21 # Pixels
+USERLIST_GUI_USERNAME_OFFSET = 21  # Pixels
 USERLIST_GUI_USERNAME_COLUMN = 0
 USERLIST_GUI_FILENAME_COLUMN = 3
 
@@ -194,15 +199,19 @@ MPV_OSC_VISIBILITY_CHANGE_VERSION = False
 MPV_INPUT_PROMPT_START_CHARACTER = "〉"
 MPV_INPUT_PROMPT_END_CHARACTER = " 〈"
 MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER = "＼"
-MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputEnabled","chatInputFontFamily", "chatInputRelativeFontSize", "chatInputFontWeight","chatInputFontUnderline",
-                                    "chatInputFontColor", "chatInputPosition","chatOutputFontFamily","chatOutputRelativeFontSize",
-                                    "chatOutputFontWeight","chatOutputFontUnderline","chatOutputMode","chatMaxLines",
-                                    "chatTopMargin","chatLeftMargin","chatBottomMargin","chatDirectInput",
-                                    "notificationTimeout","alertTimeout","chatTimeout","chatOutputEnabled"]
+MPV_SYNCPLAYINTF_OPTIONS_TO_SEND = ["chatInputEnabled", "chatInputFontFamily", "chatInputRelativeFontSize", "chatInputFontWeight", "chatInputFontUnderline",
+                                    "chatInputFontColor", "chatInputPosition", "chatOutputFontFamily", "chatOutputRelativeFontSize",
+                                    "chatOutputFontWeight", "chatOutputFontUnderline", "chatOutputMode", "chatMaxLines",
+                                    "chatTopMargin", "chatLeftMargin", "chatBottomMargin", "chatDirectInput",
+                                    "notificationTimeout", "alertTimeout", "chatTimeout", "chatOutputEnabled"]
 
-MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = ["MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH),"inputPromptStartCharacter={}".format(MPV_INPUT_PROMPT_START_CHARACTER),"inputPromptEndCharacter={}".format(MPV_INPUT_PROMPT_END_CHARACTER),"backslashSubstituteCharacter={}".format(MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER)]
+MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = [
+    "MaxChatMessageLength={}".format(MAX_CHAT_MESSAGE_LENGTH),
+    "inputPromptStartCharacter={}".format(MPV_INPUT_PROMPT_START_CHARACTER),
+    "inputPromptEndCharacter={}".format(MPV_INPUT_PROMPT_END_CHARACTER),
+    "backslashSubstituteCharacter={}".format(MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER)]
 # Note: Constants updated in client.py->checkForFeatureSupport
-MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-tab-hint","mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
+MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-tab-hint", "mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
 VLC_SLAVE_MACOS_ARGS = ['--verbose=2', '--no-file-logging']
@@ -248,19 +257,19 @@ MESSAGE_NEUTRAL = "neutral"
 MESSAGE_BADNEWS = "bad"
 MESSAGE_GOODNEWS = "good"
 
-OSD_NOTIFICATION = "notification" # Also known as PrimaryOSD
-OSD_ALERT = "alert" # Also known as SecondaryOSD
+OSD_NOTIFICATION = "notification"  # Also known as PrimaryOSD
+OSD_ALERT = "alert"  # Also known as SecondaryOSD
 OSD_CHAT = "chat"
 
 CHATROOM_MODE = "Chatroom"
 SCROLLING_MODE = "Scrolling"
 
-SYNCPLAY_UPDATE_URL = "https://syncplay.pl/checkforupdate?{}" # Params
+SYNCPLAY_UPDATE_URL = "https://syncplay.pl/checkforupdate?{}"  # Params
 SYNCPLAY_DOWNLOAD_URL = "https://syncplay.pl/download/"
-SYNCPLAY_PUBLIC_SERVER_LIST_URL = "https://syncplay.pl/listpublicservers?{}" # Params
+SYNCPLAY_PUBLIC_SERVER_LIST_URL = "https://syncplay.pl/listpublicservers?{}"  # Params
 
-DEFAULT_TRUSTED_DOMAINS = ["youtube.com","youtu.be"]
-TRUSTABLE_WEB_PROTOCOLS = ["http://www.","https://www.","http://","https://"]
+DEFAULT_TRUSTED_DOMAINS = ["youtube.com", "youtu.be"]
+TRUSTABLE_WEB_PROTOCOLS = ["http://www.", "https://www.", "http://", "https://"]
 
 PRIVATE_FILE_FIELDS = ["path"]
 
