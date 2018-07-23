@@ -1,15 +1,13 @@
 
-import re
-import sys
 import threading
-import time
-
+import time 
 import syncplay
-from syncplay import constants
+import re
 from syncplay import utils
+from syncplay import constants
 from syncplay.messages import getMessage
+import sys
 from syncplay.utils import formatTime
-
 
 class ConsoleUI(threading.Thread):
     def __init__(self):
@@ -18,10 +16,10 @@ class ConsoleUI(threading.Thread):
         self.promptMode.set()
         self._syncplayClient = None
         threading.Thread.__init__(self, name="ConsoleUI")
-
+        
     def addClient(self, client):
         self._syncplayClient = client
-
+        
     def drop(self):
         pass
 
@@ -30,7 +28,7 @@ class ConsoleUI(threading.Thread):
 
     def setPlaylistIndexFilename(self, filename):
         pass
-
+    
     def run(self):
         try:
             while True:
@@ -73,7 +71,7 @@ class ConsoleUI(threading.Thread):
                 if user.file:
                     message = getMessage("userlist-playing-notification").format(username)
                     self.showMessage(message, True)
-                    message = "    {}: '{}' ({})".format(getMessage("userlist-file-notification"), user.file['name'], formatTime(user.file['duration']))
+                    message = "    {}: '{}' ({})".format(getMessage("userlist-file-notification"),user.file['name'], formatTime(user.file['duration']))
                     if currentUser.file:
                         if user.file['name'] == currentUser.file['name'] and user.file['size'] != currentUser.file['size']:
                             message += getMessage("different-filesize-notification")
@@ -105,8 +103,8 @@ class ConsoleUI(threading.Thread):
     def showDebugMessage(self, message):
         print(message)
 
-    def showErrorMessage(self, message, criticalerror=False):
-        print("ERROR:\t" + message)
+    def showErrorMessage(self, message, criticalerror = False):
+        print("ERROR:\t" + message)            
 
     def _extractSign(self, m):
         if m:
@@ -116,7 +114,7 @@ class ConsoleUI(threading.Thread):
                 return 1
         else:
             return None
-
+        
     def _tryAdvancedCommands(self, data):
         o = re.match(constants.UI_OFFSET_REGEX, data)
         s = re.match(constants.UI_SEEK_REGEX, data)
@@ -126,7 +124,7 @@ class ConsoleUI(threading.Thread):
             if t is None:
                 return
             if o.group('sign') == "/":
-                    t = self._syncplayClient.getPlayerPosition() - t
+                    t =  self._syncplayClient.getPlayerPosition() - t
             elif sign:
                     t = self._syncplayClient.getUserOffset() + sign * t
             self._syncplayClient.setUserOffset(t)
@@ -137,11 +135,11 @@ class ConsoleUI(threading.Thread):
             if t is None:
                 return
             if sign:
-                t = self._syncplayClient.getGlobalPosition() + sign * t
+                t = self._syncplayClient.getGlobalPosition() + sign * t 
             self._syncplayClient.setPosition(t)
             return True
-        return False
-
+        return False 
+     
     def executeCommand(self, data):
         command = re.match(constants.UI_COMMAND_REGEX, data)
         if not command:
@@ -153,14 +151,14 @@ class ConsoleUI(threading.Thread):
         elif command.group('command') in constants.COMMANDS_LIST:
             self.getUserlist()
         elif command.group('command') in constants.COMMANDS_CHAT:
-            message = command.group('parameter')
+            message= command.group('parameter')            
             self._syncplayClient.sendChat(message)
         elif command.group('command') in constants.COMMANDS_PAUSE:
             self._syncplayClient.setPaused(not self._syncplayClient.getPlayerPaused())
         elif command.group('command') in constants.COMMANDS_ROOM:
             room = command.group('parameter')
-            if room is None:
-                if self._syncplayClient.userlist.currentUser.file:
+            if room == None:
+                if  self._syncplayClient.userlist.currentUser.file:
                     room = self._syncplayClient.userlist.currentUser.file["name"]
                 else:
                     room = self._syncplayClient.defaultRoom
@@ -169,7 +167,7 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.sendRoom()
         elif command.group('command') in constants.COMMANDS_CREATE:
             roombasename = command.group('parameter')
-            if roombasename is None:
+            if roombasename == None:
                 roombasename = self._syncplayClient.getRoom()
             roombasename = utils.stripRoomName(roombasename)
             self._syncplayClient.createControlledRoom(roombasename)

@@ -1,26 +1,20 @@
-
-import argparse
-import codecs
 import hashlib
-import os
 import random
-import time
-from string import Template
-
 from twisted.internet import task, reactor
 from twisted.internet.protocol import Factory
-
 import syncplay
+from syncplay.protocols import SyncServerProtocol
+import time
 from syncplay import constants
 from syncplay.messages import getMessage
-from syncplay.protocols import SyncServerProtocol
+import codecs
+import os
+from string import Template
+import argparse
 from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid, truncateText
 
-
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None,
-                 disableReady=False, disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH,
-                 maxUsernameLength=constants.MAX_USERNAME_LENGTH):
+    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None, disableReady=False,disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH, maxUsernameLength=constants.MAX_USERNAME_LENGTH):
         self.isolateRooms = isolateRooms
         print(getMessage("welcome-server-notification").format(syncplay.version))
         if password:
@@ -139,7 +133,7 @@ class SyncFactory(Factory):
             room.setPosition(watcher.getPosition(), setBy)
             self._roomManager.broadcastRoom(watcher, l)
         else:
-            watcher.sendState(room.getPosition(), watcherPauseState, False, watcher, True)  # Fixes BC break with 1.2.x
+            watcher.sendState(room.getPosition(), watcherPauseState, False, watcher, True) # Fixes BC break with 1.2.x
             watcher.sendState(room.getPosition(), room.isPaused(), True, room.getSetBy(), True)
 
     def getAllWatchersForUser(self, forUser):
@@ -159,9 +153,9 @@ class SyncFactory(Factory):
         except ValueError:
             self._roomManager.broadcastRoom(watcher, lambda w: w.sendControlledRoomAuthStatus(False, watcher.getName(), room._name))
 
-    def sendChat(self, watcher, message):
+    def sendChat(self,watcher,message):
         message = truncateText(message, constants.MAX_CHAT_MESSAGE_LENGTH)
-        messageDict = {"message": message, "username": watcher.getName()}
+        messageDict={"message":message,"username" : watcher.getName()}
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(messageDict))
 
     def setReady(self, watcher, isReady, manuallyInitiated=True):
@@ -184,7 +178,6 @@ class SyncFactory(Factory):
             self._roomManager.broadcastRoom(watcher, lambda w: w.setPlaylistIndex(watcher.getName(), index))
         else:
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
-
 
 class RoomManager(object):
     def __init__(self):
@@ -236,7 +229,7 @@ class RoomManager(object):
             del self._rooms[room.getName()]
 
     def findFreeUsername(self, username):
-        username = truncateText(username, constants.MAX_USERNAME_LENGTH)
+        username = truncateText(username,constants.MAX_USERNAME_LENGTH)
         allnames = []
         for room in self._rooms.values():
             for watcher in room.getWatchers():
@@ -348,7 +341,6 @@ class Room(object):
     def getPlaylistIndex(self):
         return self._playlistIndex
 
-
 class ControlledRoom(Room):
     def __init__(self, name):
         Room.__init__(self, name)
@@ -397,7 +389,6 @@ class ControlledRoom(Room):
     def getControllers(self):
         return self._controllers
 
-
 class Watcher(object):
     def __init__(self, server, connector, name):
         self._ready = None
@@ -414,7 +405,7 @@ class Watcher(object):
 
     def setFile(self, file_):
         if file_ and "name" in file_:
-            file_["name"] = truncateText(file_["name"], constants.MAX_FILENAME_LENGTH)
+            file_["name"] = truncateText(file_["name"],constants.MAX_FILENAME_LENGTH)
         self._file = file_
         self._server.sendFileUpdate(self)
 
@@ -471,15 +462,15 @@ class Watcher(object):
     def sendControlledRoomAuthStatus(self, success, username, room):
         self._connector.sendControlledRoomAuthStatus(success, username, room)
 
-    def sendChatMessage(self, message):
+    def sendChatMessage(self,message):
         if self._connector.meetsMinVersion(constants.CHAT_MIN_VERSION):
-            self._connector.sendMessage({"Chat": message})
+            self._connector.sendMessage({"Chat" : message})
 
     def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self._connector.sendSetReady(username, isReady, manuallyInitiated)
 
     def setPlaylistIndex(self, username, index):
-        self._connector.setPlaylistIndex(username, index)
+         self._connector.setPlaylistIndex(username, index)
 
     def setPlaylist(self, username, files):
         self._connector.setPlaylist(username, files)
@@ -540,7 +531,6 @@ class Watcher(object):
         return RoomPasswordProvider.isControlledRoom(self._room.getName()) \
             and self._room.canControl(self)
 
-
 class ConfigurationGetter(object):
     def getConfiguration(self):
         self._prepareArgParser()
@@ -550,9 +540,8 @@ class ConfigurationGetter(object):
         return args
 
     def _prepareArgParser(self):
-        self._argparser = argparse.ArgumentParser(
-            description=getMessage("server-argument-description"),
-            epilog=getMessage("server-argument-epilog"))
+        self._argparser = argparse.ArgumentParser(description=getMessage("server-argument-description"),
+                                         epilog=getMessage("server-argument-epilog"))
         self._argparser.add_argument('--port', metavar='port', type=str, nargs='?', help=getMessage("server-port-argument"))
         self._argparser.add_argument('--password', metavar='password', type=str, nargs='?', help=getMessage("server-password-argument"))
         self._argparser.add_argument('--isolate-rooms', action='store_true', help=getMessage("server-isolate-room-argument"))
@@ -560,5 +549,5 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--disable-chat', action='store_true', help=getMessage("server-chat-argument"))
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
-        self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength', type=int, nargs='?', help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
-        self._argparser.add_argument('--max-username-length', metavar='maxUsernameLength', type=int, nargs='?', help=getMessage("server-maxusernamelength-argument").format(constants.MAX_USERNAME_LENGTH))
+        self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength',type=int, nargs='?',help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
+        self._argparser.add_argument('--max-username-length', metavar='maxUsernameLength', type=int, nargs='?',help=getMessage("server-maxusernamelength-argument").format(constants.MAX_USERNAME_LENGTH))

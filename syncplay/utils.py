@@ -1,43 +1,34 @@
-
-import ast
-import datetime
-import hashlib
-import itertools
-import random
-import os
-import platform
-import re
-import string
-import subprocess
-import sys
 import time
-import traceback
-import unicodedata
-import urllib.error
-import urllib.parse
-import urllib.request
-
+import re
+import datetime
 from syncplay import constants
 from syncplay.messages import getMessage
+import sys
+import os
+import itertools
+import hashlib
+import random
+import string
+import urllib.request, urllib.parse, urllib.error
+import ast
+import unicodedata
+import platform
+import subprocess
+import traceback
 
 folderSearchEnabled = True
-
 
 def isWindows():
     return sys.platform.startswith(constants.OS_WINDOWS)
 
-
 def isLinux():
     return sys.platform.startswith(constants.OS_LINUX)
-
 
 def isMacOS():
     return sys.platform.startswith(constants.OS_MACOS)
 
-
 def isBSD():
     return constants.OS_BSD in sys.platform or sys.platform.startswith(constants.OS_DRAGONFLY)
-
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -64,7 +55,7 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
             try_one_last_time = True
             while mtries > 1:
                 try:
-                    # try_one_last_time = False
+                    #try_one_last_time = False
                     return f(*args, **kwargs)
                     break
                 except ExceptionToCheck as e:
@@ -80,7 +71,6 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
         return f_retry  # true decorator
     return deco_retry
 
-
 def parseTime(timeStr):
     regex = re.compile(constants.PARSE_TIME_REGEX)
     parts = regex.match(timeStr)
@@ -95,7 +85,6 @@ def parseTime(timeStr):
             else:
                 time_params[name] = int(param)
     return datetime.timedelta(**time_params).total_seconds()
-
 
 def formatTime(timeInSeconds, weeksAsTitles=True):
     if timeInSeconds < 0:
@@ -126,32 +115,28 @@ def formatTime(timeInSeconds, weeksAsTitles=True):
         formattedTime = "{0:} (Title {1:.0f})".format(formattedTime, title)
     return formattedTime
 
-
-def formatSize(num_of_bytes, precise=False):
-    if bytes == 0:  # E.g. when file size privacy is enabled
+def formatSize (bytes, precise=False):
+    if bytes == 0: # E.g. when file size privacy is enabled
         return "???"
     try:
-        megabytes = int(bytes) / 1048576.0  # Technically this is a mebibyte, but whatever
+        megabytes = int(bytes) / 1048576.0 # Technically this is a mebibyte, but whatever
         if precise:
             megabytes = round(megabytes, 1)
         else:
             megabytes = int(megabytes)
         return str(megabytes) + getMessage("megabyte-suffix")
-    except:  # E.g. when filesize is hashed
+    except: # E.g. when filesize is hashed
         return "???"
-
 
 def isASCII(s):
     return all(ord(c) < 128 for c in s)
 
-
 def findResourcePath(resourceName):
     if resourceName == "syncplay.lua":
-        resourcePath = os.path.join(findWorkingDir(), "lua", "intf", "resources", resourceName)
+        resourcePath = os.path.join(findWorkingDir(), "lua", "intf" , "resources", resourceName)
     else:
-        resourcePath = os.path.join(findWorkingDir(), "resources", resourceName)
+        resourcePath = os.path.join(findWorkingDir(),"resources", resourceName)
     return resourcePath
-
 
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
@@ -159,15 +144,14 @@ def findWorkingDir():
         path = os.path.dirname(os.path.dirname(__file__))
     elif frozen in ('dll', 'console_exe', 'windows_exe', 'macosx_app'):
         path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    elif frozen:  # needed for PyInstaller
+    elif frozen: #needed for PyInstaller
         if getattr(sys, '_MEIPASS', '') is not None:
-            path = getattr(sys, '_MEIPASS', '')  # --onefile
+            path = getattr(sys, '_MEIPASS', '') #--onefile
         else:
-            path = os.path.dirname(sys.executable)  # --onedir
+            path = os.path.dirname(sys.executable) #--onedir
     else:
         path = ""
     return path
-
 
 def getResourcesPath():
     if isWindows():
@@ -175,10 +159,8 @@ def getResourcesPath():
     else:
         return findWorkingDir() + "/resources/"
 
-
 resourcespath = getResourcesPath()
-posixresourcespath = findWorkingDir().replace("\\", "/") + "/resources/"
-
+posixresourcespath = findWorkingDir().replace("\\","/") + "/resources/"
 
 def getDefaultMonospaceFont():
     if platform.system() == "Windows":
@@ -188,10 +170,8 @@ def getDefaultMonospaceFont():
     else:
         return constants.FALLBACK_MONOSPACE_FONT
 
-
 def limitedPowerset(s, minLength):
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s), minLength, -1))
-
 
 def blackholeStdoutForFrozenWindow():
     if getattr(sys, 'frozen', '') == "windows_exe":
@@ -199,7 +179,6 @@ def blackholeStdoutForFrozenWindow():
             softspace = 0
             _file = None
             _error = None
-
             def write(self, text, fname='.syncplay.log'):
                 if self._file is None and self._error is None:
                     if os.name != 'nt':
@@ -207,30 +186,24 @@ def blackholeStdoutForFrozenWindow():
                     else:
                         path = os.path.join(os.getenv('APPDATA', '.'), fname)
                     self._file = open(path, 'a')
-                    # TODO: Handle errors.
+                    #TODO: Handle errors.
                 if self._file is not None:
                     self._file.write(text)
                     self._file.flush()
-
             def flush(self):
                 if self._file is not None:
                     self._file.flush()
-
         sys.stderr = Stderr()
         del Stderr
 
         class Blackhole(object):
             softspace = 0
-
             def write(self, text):
                 pass
-
             def flush(self):
                 pass
-
         sys.stdout = Blackhole()
         del Blackhole
-
 
 def truncateText(unicodeText, maxLength):
     try:
@@ -242,7 +215,6 @@ def truncateText(unicodeText, maxLength):
     except:
         pass
     return ""
-
 
 def splitText(unicodeText, maxLength):
     try:
@@ -258,7 +230,6 @@ def splitText(unicodeText, maxLength):
     return [""]
 
 # Relate to file hashing / difference checking:
-
 
 def stripfilename(filename, stripURL):
     if filename:
@@ -276,7 +247,6 @@ def stripfilename(filename, stripURL):
     else:
         return ""
 
-
 def stripRoomName(RoomName):
     if RoomName:
         try:
@@ -286,8 +256,7 @@ def stripRoomName(RoomName):
     else:
         return ""
 
-
-def hashFilename(filename, stripURL=False):
+def hashFilename(filename, stripURL = False):
     if isURL(filename):
         stripURL = True
     strippedFilename = stripfilename(filename, stripURL)
@@ -298,10 +267,8 @@ def hashFilename(filename, stripURL=False):
     filenameHash = hashlib.sha256(strippedFilename).hexdigest()[:12]
     return filenameHash
 
-
 def hashFilesize(size):
     return hashlib.sha256(str(size).encode('utf-8')).hexdigest()[:12]
-
 
 def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
     try:
@@ -318,8 +285,7 @@ def sameHashed(string1raw, string1hashed, string2raw, string2hashed):
     elif string1hashed == string2hashed:
         return True
 
-
-def sameFilename(filename1, filename2):
+def sameFilename (filename1, filename2):
     try:
         filename1 = filename1
     except UnicodeDecodeError:
@@ -336,8 +302,7 @@ def sameFilename(filename1, filename2):
     else:
         return False
 
-
-def sameFilesize(filesize1, filesize2):
+def sameFilesize (filesize1, filesize2):
     if filesize1 == 0 or filesize2 == 0:
         return True
     elif sameHashed(filesize1, hashFilesize(filesize1), filesize2, hashFilesize(filesize2)):
@@ -345,8 +310,7 @@ def sameFilesize(filesize1, filesize2):
     else:
         return False
 
-
-def sameFileduration(duration1, duration2):
+def sameFileduration (duration1, duration2):
     if not constants.SHOW_DURATION_NOTIFICATION:
         return True
     elif abs(round(duration1) - round(duration2)) < constants.DIFFERENT_DURATION_THRESHOLD:
@@ -354,12 +318,10 @@ def sameFileduration(duration1, duration2):
     else:
         return False
 
-
 def meetsMinVersion(version, minVersion):
     def versiontotuple(ver):
         return tuple(map(int, ver.split(".")))
     return versiontotuple(version) >= versiontotuple(minVersion)
-
 
 def isURL(path):
     if path is None:
@@ -369,26 +331,21 @@ def isURL(path):
     else:
         return False
 
-
 def getPlayerArgumentsByPathAsArray(arguments, path):
     if arguments and not isinstance(arguments, str) and path in arguments:
         return arguments[path]
     else:
         return None
 
-
 def getPlayerArgumentsByPathAsText(arguments, path):
     argsToReturn = getPlayerArgumentsByPathAsArray(arguments, path)
     return " ".join(argsToReturn) if argsToReturn else ""
 
-
 def getListAsMultilineString(pathArray):
     return "\n".join(pathArray) if pathArray else ""
 
-
 def convertMultilineStringToList(multilineString):
-    return str.split(multilineString, "\n") if multilineString else ""
-
+    return str.split(multilineString,"\n") if multilineString else ""
 
 def playlistIsValid(files):
     if len(files) > constants.PLAYLIST_MAX_ITEMS:
@@ -396,7 +353,6 @@ def playlistIsValid(files):
     elif sum(map(len, files)) > constants.PLAYLIST_MAX_CHARACTERS:
         return False
     return True
-
 
 def getDomainFromURL(URL):
     try:
@@ -406,7 +362,6 @@ def getDomainFromURL(URL):
         return URL
     except:
         return None
-
 
 def open_system_file_browser(path):
     if isURL(path):
@@ -418,7 +373,6 @@ def open_system_file_browser(path):
         subprocess.Popen(["open", path])
     else:
         subprocess.Popen(["xdg-open", path])
-
 
 def getListOfPublicServers():
     try:
@@ -432,20 +386,19 @@ def getListOfPublicServers():
             f = urllib.request.urlopen(constants.SYNCPLAY_PUBLIC_SERVER_LIST_URL.format(params))
             response = f.read()
             response = response.decode('utf-8')
-        response = response.replace("<p>", "").replace("</p>", "").replace("<br />", "").replace("&#8220;", "'").replace("&#8221;", "'").replace(":&#8217;", "'").replace("&#8217;", "'").replace("&#8242;", "'").replace("\n", "").replace("\r", "")  # Fix Wordpress
+        response = response.replace("<p>","").replace("</p>","").replace("<br />","").replace("&#8220;","'").replace("&#8221;","'").replace(":&#8217;","'").replace("&#8217;","'").replace("&#8242;","'").replace("\n","").replace("\r","") # Fix Wordpress
         response = ast.literal_eval(response)
-
+        
         if response:
             return response
         else:
             raise IOError
     except:
-        if constants.DEBUG_MODE:
+        if constants.DEBUG_MODE == True:
             traceback.print_exc()
             raise
         else:
             raise IOError(getMessage("failed-to-load-server-list-error"))
-
 
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
@@ -480,7 +433,6 @@ class RoomPasswordProvider(object):
         provisionalHash = hashlib.sha256(roomName + salt).hexdigest()
         return hashlib.sha1(provisionalHash + salt + password).hexdigest()[:12].upper()
 
-
 class RandomStringGenerator(object):
     @staticmethod
     def generate_room_password():
@@ -506,6 +458,6 @@ class RandomStringGenerator(object):
     def _get_random_numbers(quantity):
         return ''.join(random.choice(string.digits) for _ in range(quantity))
 
-
 class NotControlledRoom(Exception):
     pass
+
