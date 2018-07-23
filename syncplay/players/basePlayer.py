@@ -1,10 +1,12 @@
 from syncplay import constants
+
+
 class BasePlayer(object):
-  
+
     '''
-    This method is supposed to 
+    This method is supposed to
     execute updatePlayerStatus(paused, position) on client
-    Given the arguments: boolean paused and float position in seconds 
+    Given the arguments: boolean paused and float position in seconds
     '''
     def askForStatus(self):
         raise NotImplementedError()
@@ -12,7 +14,9 @@ class BasePlayer(object):
     '''
     Display given message on player's OSD or similar means
     '''
-    def displayMessage(self, message, duration = (constants.OSD_DURATION*1000), secondaryOSD=False, mood=constants.MESSAGE_NEUTRAL):
+    def displayMessage(
+        self, message, duration=(constants.OSD_DURATION*1000), secondaryOSD=False, mood=constants.MESSAGE_NEUTRAL
+    ):
         raise NotImplementedError()
 
     '''
@@ -29,62 +33,61 @@ class BasePlayer(object):
         raise NotImplementedError()
 
     '''
-    @type value: boolean 
+    @type value: boolean
     '''
     def setPaused(self, value):
         raise NotImplementedError()
 
     '''
-        @type value: list 
+        @type value: list
         '''
     def setFeatures(self, featureList):
         raise NotImplementedError()
 
     '''
-    @type value: float 
+    @type value: float
     '''
     def setPosition(self, value):
         raise NotImplementedError()
 
     '''
-    @type value: float 
+    @type value: float
     '''
     def setSpeed(self, value):
         raise NotImplementedError()
-    
+
     '''
-    @type filePath: string 
+    @type filePath: string
     '''
     def openFile(self, filePath, resetPosition=False):
         raise NotImplementedError()
-    
-    
+
     '''
     @return: list of strings
     '''
     @staticmethod
     def getDefaultPlayerPathsList():
         raise NotImplementedError()
-    
+
     '''
     @type path: string
     '''
     @staticmethod
     def isValidPlayerPath(path):
         raise NotImplementedError()
-        
+
     '''
     @type path: string
     @return: string
-    '''    
+    '''
     @staticmethod
     def getIconPath(path):
         raise NotImplementedError()
-    
+
     '''
     @type path: string
     @return: string
-    '''    
+    '''
     @staticmethod
     def getExpandedPath(path):
         raise NotImplementedError()
@@ -107,20 +110,21 @@ class BasePlayer(object):
     def getPlayerPathErrors(playerPath, filePath):
         raise NotImplementedError()
 
+
 class DummyPlayer(BasePlayer):
 
     @staticmethod
     def getDefaultPlayerPathsList():
         return []
-    
+
     @staticmethod
     def isValidPlayerPath(path):
         return False
-    
+
     @staticmethod
     def getIconPath(path):
         return None
-    
+
     @staticmethod
     def getExpandedPath(path):
         return path
