@@ -865,7 +865,6 @@ class ConfigDialog(QtWidgets.QDialog):
         self.othersyncSettingsLayout.setAlignment(Qt.AlignLeft)
         self.othersyncSettingsLayout.addWidget(self.fastforwardCheckbox, 3, 0, 1, 2, Qt.AlignLeft)
 
-
         ## Trusted domains
 
         self.trusteddomainsSettingsGroup = QtWidgets.QGroupBox(getMessage("syncplay-trusteddomains-title"))

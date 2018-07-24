@@ -145,7 +145,7 @@ class VlcPlayer(BasePlayer):
 
     def setPosition(self, value):
         self._lastVLCPositionUpdate = time.time()
-        self._listener.sendLine("set-position: {}".format(value).replace(".",self.radixChar))
+        self._listener.sendLine("set-position: {}".format(value).replace(".", self.radixChar))
 
     def setPaused(self, value):
         self._paused = value
@@ -185,11 +185,11 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine("get-filename")
 
     def lineReceived(self, line):
-        #try:
+        # try:
         line = line.decode('utf-8')
         self._client.ui.showDebugMessage("player << {}".format(line))
-        #except:
-            #pass
+        # except:
+            # pass
         match, name, value = self.RE_ANSWER.match(line), "", ""
         if match:
             name, value = match.group('command'), match.group('argument')
@@ -210,7 +210,7 @@ class VlcPlayer(BasePlayer):
                         value = value.lstrip("/")
                 elif utils.isURL(value):
                     value = urllib.parse.unquote(value)
-                    #value = value.decode('utf-8')
+                    # value = value.decode('utf-8')
                 self._filepath = value
             self._pathAsk.set()
         elif name == "duration":
@@ -258,7 +258,7 @@ class VlcPlayer(BasePlayer):
             self._filename = value
             self._filenameAsk.set()
         elif line.startswith("vlc-version: "):
-            self._vlcVersion = line.split(': ')[1].replace(' ','-').split('-')[0]
+            self._vlcVersion = line.split(': ')[1].replace(' ', '-').split('-')[0]
             if not utils.meetsMinVersion(self._vlcVersion, constants.VLC_MIN_VERSION):
                 self._client.ui.showErrorMessage(getMessage("vlc-version-mismatch").format(constants.VLC_MIN_VERSION))
             self._vlcready.set()
@@ -493,18 +493,18 @@ class VlcPlayer(BasePlayer):
                 if not self.requestedVLCVersion:
                     self.requestedVLCVersion = True
                     self.sendLine("get-vlc-version")
-                #try:
+                # try:
                 lineToSend = line + "\n"
                 self.push(lineToSend.encode('utf-8'))
                 if self.__playerController._client and self.__playerController._client.ui:
                     self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
-                #except:
-                    #pass
+                # except:
+                    # pass
             if line == "close-vlc":
                 self._vlcclosed.set()
                 if not self.connected and not self.timeVLCLaunched:
                     # For circumstances where Syncplay is not connected to VLC and is not reconnecting
                     try:
                         self.__process.terminate()
-                    except: # When VLC is already closed
+                    except:  # When VLC is already closed
                         pass

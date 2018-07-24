@@ -243,7 +243,7 @@ ru = {
     "unpause-ifminusersready-option": "Снять паузу, если все в комнате готовы и присутствует минимум зрителей",
     "unpause-always": "Всегда снимать паузу",
     "syncplay-trusteddomains-title": "Доверенные сайты (стрим-сервисы, видеохостинги, файлы в сети)",
-"addtrusteddomain-menu-label": "Добавить {} как доверенный сайт",  # Domain
+    "addtrusteddomain-menu-label": "Добавить {} как доверенный сайт",  # Domain
 
     "chat-title": "Chat message input",  # TODO: Translate
     "chatinputenabled-label": "Enable chat input via mpv (using enter key)",  # TODO: Translate
@@ -387,12 +387,12 @@ ru = {
     "unpause-ifminusersready-tooltip": "Когда вы стартуете не готовым, воспроизведение начнется, если остальные готовы и присутствует достаточное число зрителей.",
     "trusteddomains-arguments-tooltip": "Сайты, которые разрешены для автоматического воспроизведения из общего списка воспроизведения.",
 
-    "chatinputenabled-tooltip": "Enable chat input in mpv (press enter to chat, enter to send, escape to cancel)",# TODO: Translate
+    "chatinputenabled-tooltip": "Enable chat input in mpv (press enter to chat, enter to send, escape to cancel)",  # TODO: Translate
     "chatdirectinput-tooltip": "Skip having to press 'enter' to go into chat input mode in mpv. Press TAB in mpv to temporarily disable this feature.",  # TODO: Translate
-    "font-label-tooltip": "Font used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",# TODO: Translate
-    "set-input-font-tooltip": "Font family used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",# TODO: Translate
-    "set-input-colour-tooltip": "Font colour used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",# TODO: Translate
-    "chatinputposition-tooltip": "Location in mpv where chat input text will appear when you press enter and type.",# TODO: Translate
+    "font-label-tooltip": "Font used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",  # TODO: Translate
+    "set-input-font-tooltip": "Font family used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",  # TODO: Translate
+    "set-input-colour-tooltip": "Font colour used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",  # TODO: Translate
+    "chatinputposition-tooltip": "Location in mpv where chat input text will appear when you press enter and type.",  # TODO: Translate
     "chatinputposition-top-tooltip": "Place chat input at top of mpv window.",  # TODO: Translate
     "chatinputposition-middle-tooltip": "Place chat input in dead centre of mpv window.",  # TODO: Translate
     "chatinputposition-bottom-tooltip": "Place chat input at bottom of mpv window.",  # TODO: Translate
