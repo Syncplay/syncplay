@@ -17,4 +17,3 @@ from syncplay.utils import blackholeStdoutForFrozenWindow
 if __name__ == '__main__':
     blackholeStdoutForFrozenWindow()
     SyncplayClientManager().run()
-    
