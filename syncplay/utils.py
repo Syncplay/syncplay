@@ -127,11 +127,11 @@ def formatTime(timeInSeconds, weeksAsTitles=True):
     return formattedTime
 
 
-def formatSize(num_of_bytes, precise=False):
-    if bytes == 0:  # E.g. when file size privacy is enabled
+def formatSize(numOfBytes, precise=False):
+    if numOfBytes == 0:  # E.g. when file size privacy is enabled
         return "???"
     try:
-        megabytes = int(bytes) / 1048576.0  # Technically this is a mebibyte, but whatever
+        megabytes = int(numOfBytes) / 1048576.0  # Technically this is a mebibyte, but whatever
         if precise:
             megabytes = round(megabytes, 1)
         else:
