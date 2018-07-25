@@ -31,5 +31,5 @@ if __name__ == '__main__':
             args.disable_chat,
             args.max_chat_message_length,
             args.max_username_length,
-            args.log_db_file))
+            args.stats_db_file))
     reactor.run()

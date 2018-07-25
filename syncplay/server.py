@@ -22,7 +22,7 @@ from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomString
 class SyncFactory(Factory):
     def __init__(self, port='', password='', motdFilePath=None, isolateRooms=False, salt=None,
                  disableReady=False, disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH,
-                 maxUsernameLength=constants.MAX_USERNAME_LENGTH, logDbFile=None):
+                 maxUsernameLength=constants.MAX_USERNAME_LENGTH, statsDbFile=None):
         self.isolateRooms = isolateRooms
         print(getMessage("welcome-server-notification").format(syncplay.version))
         self.port = port
@@ -42,12 +42,12 @@ class SyncFactory(Factory):
             self._roomManager = RoomManager()
         else:
             self._roomManager = PublicRoomManager()
-        if logDbFile is not None:
-            self.logDbHandle = self._connectToLogDb(logDbFile)
+        if statsDbFile is not None:
+            self.statsDbHandle = self._connectToStatsDb(statsDbFile)
             logDelay = 5*(int(self.port)%10 + 1)
-            reactor.callLater(logDelay, self._scheduleVersionSnapshot, self.logDbHandle, self.port)
+            reactor.callLater(logDelay, self._scheduleClientSnapshot, self.statsDbHandle, self.port)
         else:
-            self.logDbHandle = None
+            self.statsDbHandle = None
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
@@ -194,16 +194,16 @@ class SyncFactory(Factory):
         else:
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
 
-    def _connectToLogDb(self, dbPath):
+    def _connectToStatsDb(self, dbPath):
         conn = sqlite3.connect(dbPath)
         c = conn.cursor()
         c.execute('create table if not exists clients_snapshots (snapshot_time integer, port integer, version string, room_index integer, play_status integer)')
         conn.commit()
         return conn
 
-    def _scheduleVersionSnapshot(self, dbHandler, portNumber):
-        self._versionSnapshotTimer = task.LoopingCall(self._roomManager.runVersionSnapshot, dbHandler, portNumber)
-        self._versionSnapshotTimer.start(constants.SERVER_LOG_SNAPSHOT_INTERVAL)
+    def _scheduleClientSnapshot(self, dbHandler, portNumber):
+        self._clientSnapshotTimer = task.LoopingCall(self._roomManager.runClientSnapshot, dbHandler, portNumber)
+        self._clientSnapshotTimer.start(constants.SERVER_STATS_SNAPSHOT_INTERVAL)
 
 
 class RoomManager(object):
@@ -280,7 +280,7 @@ class PublicRoomManager(RoomManager):
         RoomManager.moveWatcher(self, watcher, room)
         watcher.setFile(watcher.getFile())
 
-    def runVersionSnapshot(self, dbHandler, portNumber):
+    def runClientSnapshot(self, dbHandler, portNumber):
         snapshotTime = str(int(time.time()))
         c = dbHandler.cursor()
         for idx, room in enumerate(self._rooms.values()):
@@ -597,4 +597,4 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
         self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength', type=int, nargs='?', help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
         self._argparser.add_argument('--max-username-length', metavar='maxUsernameLength', type=int, nargs='?', help=getMessage("server-maxusernamelength-argument").format(constants.MAX_USERNAME_LENGTH))
-        self._argparser.add_argument('--log-db-file', metavar='file', type=str, nargs='?', help=getMessage("server-log-db-file-argument"))
+        self._argparser.add_argument('--stats-db-file', metavar='file', type=str, nargs='?', help=getMessage("server-stats-db-file-argument"))
