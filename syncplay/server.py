@@ -197,7 +197,7 @@ class SyncFactory(Factory):
     def _connectToLogDb(self, dbPath):
         conn = sqlite3.connect(dbPath)
         c = conn.cursor()
-        c.execute('create table if not exists versionSnapshots (snapshotTime integer, port integer, version string, roomIndex integer, playStatus integer)')
+        c.execute('create table if not exists clients_snapshots (snapshot_time integer, port integer, version string, room_index integer, play_status integer)')
         conn.commit()
         return conn
 
@@ -286,8 +286,8 @@ class PublicRoomManager(RoomManager):
         for idx, room in enumerate(self._rooms.values()):
             playStatus = str(room.isPlaying())
             for watcher in room.getWatchers():
-                c.execute("INSERT INTO versionSnapshots VALUES (" + snapshotTime + ", " + str(portNumber) + 
-                          ", '" + watcher.getVersion() + "', " + str(idx) + ", " + playStatus + ")")
+                content = (snapshotTime, str(portNumber), watcher.getVersion(), str(idx), playStatus, )
+                c.execute("INSERT INTO clients_snapshots VALUES (?, ?, ?, ?, ?)", content)
         dbHandler.commit()
 
 
