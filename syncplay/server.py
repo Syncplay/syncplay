@@ -44,7 +44,8 @@ class SyncFactory(Factory):
             self._roomManager = PublicRoomManager()
         if logDbFile is not None:
             self.logDbHandle = self._connectToLogDb(logDbFile)
-            reactor.callLater(0.1, self._scheduleVersionSnapshot, self.logDbHandle, self.port)
+            logDelay = 5*(int(self.port)%10 + 1)
+            reactor.callLater(logDelay, self._scheduleVersionSnapshot, self.logDbHandle, self.port)
         else:
             self.logDbHandle = None
 
@@ -196,7 +197,7 @@ class SyncFactory(Factory):
     def _connectToLogDb(self, dbPath):
         conn = sqlite3.connect(dbPath)
         c = conn.cursor()
-        c.execute('create table if not exists versionSnapshots (snapshotTime integer, port integer, version string)')
+        c.execute('create table if not exists versionSnapshots (snapshotTime integer, port integer, version string, roomIndex integer, playStatus integer)')
         conn.commit()
         return conn
 
@@ -282,9 +283,11 @@ class PublicRoomManager(RoomManager):
     def runVersionSnapshot(self, dbHandler, portNumber):
         snapshotTime = str(int(time.time()))
         c = dbHandler.cursor()
-        for room in self._rooms.values():
+        for idx, room in enumerate(self._rooms.values()):
+            playStatus = str(room.isPlaying())
             for watcher in room.getWatchers():
-                c.execute("INSERT INTO versionSnapshots VALUES (" + snapshotTime + ", " + str(portNumber) + ", '" + watcher.getVersion() + "')")
+                c.execute("INSERT INTO versionSnapshots VALUES (" + snapshotTime + ", " + str(portNumber) + 
+                          ", '" + watcher.getVersion() + "', " + str(idx) + ", " + playStatus + ")")
         dbHandler.commit()
 
 
