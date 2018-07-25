@@ -22,6 +22,7 @@ if __name__ == '__main__':
     reactor.listenTCP(
         int(args.port),
         SyncFactory(
+            args.port,
             args.password,
             args.motd_file,
             args.isolate_rooms,
