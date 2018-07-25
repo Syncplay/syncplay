@@ -281,12 +281,12 @@ class PublicRoomManager(RoomManager):
         watcher.setFile(watcher.getFile())
 
     def runClientSnapshot(self, dbHandler, portNumber):
-        snapshotTime = str(int(time.time()))
+        snapshotTime = int(time.time())
         c = dbHandler.cursor()
         for idx, room in enumerate(self._rooms.values()):
-            playStatus = str(room.isPlaying())
+            playStatus = room.isPlaying()
             for watcher in room.getWatchers():
-                content = (snapshotTime, str(portNumber), watcher.getVersion(), str(idx), playStatus, )
+                content = (snapshotTime, int(portNumber), watcher.getVersion(), idx, playStatus, )
                 c.execute("INSERT INTO clients_snapshots VALUES (?, ?, ?, ?, ?)", content)
         dbHandler.commit()
 
