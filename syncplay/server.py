@@ -4,6 +4,7 @@ import codecs
 import hashlib
 import os
 import random
+import re
 import sqlite3
 import time
 from string import Template
@@ -43,7 +44,7 @@ class SyncFactory(Factory):
             self._roomManager = PublicRoomManager()
         if logDbFile is not None:
             self.logDbHandle = self._connectToLogDb(logDbFile)
-            reactor.callLater(random.randint(1,60), self._scheduleVersionSnapshot, self.logDbHandle, self.port)
+            reactor.callLater(0.1, self._scheduleVersionSnapshot, self.logDbHandle, self.port)
         else:
             self.logDbHandle = None
 
@@ -471,7 +472,12 @@ class Watcher(object):
         return self._name
 
     def getVersion(self):
-        return self._connector.getVersion()
+        pattern = r'\A[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}\Z'
+        versionString = self._connector.getVersion()
+        if re.match(pattern, versionString) is not None:
+            return versionString
+        else:
+            return None
 
     def getFile(self):
         return self._file
