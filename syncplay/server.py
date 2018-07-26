@@ -42,8 +42,8 @@ class SyncFactory(Factory):
             self._roomManager = PublicRoomManager()
         if statsDbFile is not None:
             statsDelay = 5*(int(self.port)%10 + 1)
-            self._statsDbHandle = StatsRecorder()
-            self._statsDbHandle.startRecorder(statsDbFile, self._roomManager, statsDelay)
+            self._statsDbHandle = StatsRecorder(statsDbFile, self._roomManager)
+            self._statsDbHandle.startRecorder(statsDelay)
         else:
             self._statsDbHandle = None
 
@@ -193,21 +193,21 @@ class SyncFactory(Factory):
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
 
 class StatsRecorder(object):
-    def __init__(self):
-        self._dbPool = None
-         
-    def __del__(self):
-        if self._dbPool is not None:
-            self._dbPool.close()
-        
-    def startRecorder(self, dbpath, roomManager, delay):
+    def __init__(self, dbpath, roomManager):
         self._dbPath = dbpath
         self._roomManagerHandle = roomManager
+        self._connection = None
+         
+    def __del__(self):
+        if self._connection is not None:
+            self._connection.close()
+        
+    def startRecorder(self, delay):
         try:
-            self._dbPool = self._initDatabase()
+            self._connection = self._initDatabase()
             reactor.callLater(delay, self._scheduleClientSnapshot)
         except:
-            self._dbPool = None
+            self._connection = None
             print("--- Error in initializing the stats database. Server Stats not enabled. ---")
     
     def _initDatabase(self):
@@ -227,7 +227,7 @@ class StatsRecorder(object):
             for room in rooms.values():
                 for watcher in room.getWatchers():
                     content = (snapshotTime, watcher.getVersion(), )
-                    self._dbPool.runQuery("INSERT INTO clients_snapshots VALUES (?, ?)", content)
+                    self._connection.runQuery("INSERT INTO clients_snapshots VALUES (?, ?)", content)
         except:
             pass
     
