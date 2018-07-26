@@ -41,9 +41,10 @@ class SyncFactory(Factory):
         else:
             self._roomManager = PublicRoomManager()
         if statsDbFile is not None:
+            self._statsDbHandle = DBManager(statsDbFile)
+            self._statsRecorder = StatsRecorder(self._statsDbHandle, self._roomManager)
             statsDelay = 5*(int(self.port)%10 + 1)
-            self._statsDbHandle = StatsRecorder(statsDbFile, self._roomManager)
-            self._statsDbHandle.startRecorder(statsDelay)
+            self._statsRecorder.startRecorder(statsDelay)
         else:
             self._statsDbHandle = None
 
@@ -192,29 +193,18 @@ class SyncFactory(Factory):
         else:
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
 
+
 class StatsRecorder(object):
-    def __init__(self, dbpath, roomManager):
-        self._dbPath = dbpath
+    def __init__(self, dbHandle, roomManager):
+        self._dbHandle = dbHandle
         self._roomManagerHandle = roomManager
-        self._connection = None
-         
-    def __del__(self):
-        if self._connection is not None:
-            self._connection.close()
         
     def startRecorder(self, delay):
         try:
-            self._connection = self._initDatabase()
+            self._dbHandle.connect()
             reactor.callLater(delay, self._scheduleClientSnapshot)
         except:
-            self._connection = None
             print("--- Error in initializing the stats database. Server Stats not enabled. ---")
-    
-    def _initDatabase(self):
-        dbpool = adbapi.ConnectionPool("sqlite3", self._dbPath, check_same_thread=False)
-        query = 'create table if not exists clients_snapshots (snapshot_time integer, version string)'
-        dbpool.runQuery(query)
-        return dbpool
     
     def _scheduleClientSnapshot(self):
         self._clientSnapshotTimer = task.LoopingCall(self._runClientSnapshot)
@@ -226,11 +216,32 @@ class StatsRecorder(object):
             rooms = self._roomManagerHandle.exportRooms()
             for room in rooms.values():
                 for watcher in room.getWatchers():
-                    content = (snapshotTime, watcher.getVersion(), )
-                    self._connection.runQuery("INSERT INTO clients_snapshots VALUES (?, ?)", content)
+                    self._dbHandle.addVersionLog(snapshotTime, watcher.getVersion())
         except:
             pass
-    
+
+
+class DBManager(object):
+    def __init__(self, dbpath):
+        self._dbPath = dbpath
+        self._connection = None
+
+    def __del__(self):
+        if self._connection is not None:
+            self._connection.close()
+
+    def connect(self):
+        self._connection = adbapi.ConnectionPool("sqlite3", self._dbPath, check_same_thread=False)
+        self._createSchema()
+
+    def _createSchema(self):
+        initQuery = 'create table if not exists clients_snapshots (snapshot_time integer, version string)'
+        self._connection.runQuery(initQuery)
+
+    def addVersionLog(self, timestamp, version):
+        content = (timestamp, version, )
+        self._connection.runQuery("INSERT INTO clients_snapshots VALUES (?, ?)", content)
+
 
 class RoomManager(object):
     def __init__(self):
