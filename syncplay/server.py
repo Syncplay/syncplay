@@ -1,10 +1,8 @@
-
 import argparse
 import codecs
 import hashlib
 import os
 import random
-import sqlite3
 import time
 from string import Template
 
@@ -42,11 +40,12 @@ class SyncFactory(Factory):
             self._roomManager = RoomManager()
         else:
             self._roomManager = PublicRoomManager()
-            if statsDbFile is not None:
-                statsDelay = 5*(int(self.port)%10 + 1)
-                StatsRecorder(statsDbFile, self._roomManager, statsDelay)
-            else:
-                self.statsDbHandle = None
+        if statsDbFile is not None:
+            statsDelay = 5*(int(self.port)%10 + 1)
+            self._statsDbHandle = StatsRecorder()
+            self._statsDbHandle.startRecorder(statsDbFile, self._roomManager, statsDelay)
+        else:
+            self._statsDbHandle = None
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
@@ -194,7 +193,14 @@ class SyncFactory(Factory):
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
 
 class StatsRecorder(object):
-    def __init__(self, dbpath, roomManager, delay):
+    def __init__(self):
+        self._dbPool = None
+         
+    def __del__(self):
+        if self._dbPool is not None:
+            self._dbPool.close()
+        
+    def startRecorder(self, dbpath, roomManager, delay):
         self._dbPath = dbpath
         self._roomManagerHandle = roomManager
         try:
@@ -203,11 +209,7 @@ class StatsRecorder(object):
         except:
             self._dbPool = None
             print("--- Error in initializing the stats database. Server Stats not enabled. ---")
-         
-    def __del__(self):
-        if self._dbPool is not None:
-            self._dbPool.close()
-        
+    
     def _initDatabase(self):
         dbpool = adbapi.ConnectionPool("sqlite3", self._dbPath, check_same_thread=False)
         query = 'create table if not exists clients_snapshots (snapshot_time integer, version string)'
