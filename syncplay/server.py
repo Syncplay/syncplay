@@ -4,7 +4,6 @@ import codecs
 import hashlib
 import os
 import random
-import re
 import sqlite3
 import time
 from string import Template
@@ -45,7 +44,7 @@ class SyncFactory(Factory):
         if statsDbFile is not None:
             self.statsDbHandle = self._connectToStatsDb(statsDbFile)
             logDelay = 5*(int(self.port)%10 + 1)
-            reactor.callLater(logDelay, self._scheduleClientSnapshot, self.statsDbHandle, self.port)
+            reactor.callLater(logDelay, self._scheduleClientSnapshot, self.statsDbHandle)
         else:
             self.statsDbHandle = None
 
@@ -197,12 +196,12 @@ class SyncFactory(Factory):
     def _connectToStatsDb(self, dbPath):
         conn = sqlite3.connect(dbPath)
         c = conn.cursor()
-        c.execute('create table if not exists clients_snapshots (snapshot_time integer, port integer, version string, room_index integer, play_status integer)')
+        c.execute('create table if not exists clients_snapshots (snapshot_time integer, version string)')
         conn.commit()
         return conn
 
-    def _scheduleClientSnapshot(self, dbHandler, portNumber):
-        self._clientSnapshotTimer = task.LoopingCall(self._roomManager.runClientSnapshot, dbHandler, portNumber)
+    def _scheduleClientSnapshot(self, dbHandler):
+        self._clientSnapshotTimer = task.LoopingCall(self._roomManager.runClientSnapshot, dbHandler)
         self._clientSnapshotTimer.start(constants.SERVER_STATS_SNAPSHOT_INTERVAL)
 
 
@@ -280,14 +279,14 @@ class PublicRoomManager(RoomManager):
         RoomManager.moveWatcher(self, watcher, room)
         watcher.setFile(watcher.getFile())
 
-    def runClientSnapshot(self, dbHandler, portNumber):
+    def runClientSnapshot(self, dbHandler):
         snapshotTime = int(time.time())
         c = dbHandler.cursor()
         for idx, room in enumerate(self._rooms.values()):
             playStatus = room.isPlaying()
             for watcher in room.getWatchers():
-                content = (snapshotTime, int(portNumber), watcher.getVersion(), idx, playStatus, )
-                c.execute("INSERT INTO clients_snapshots VALUES (?, ?, ?, ?, ?)", content)
+                content = (snapshotTime, watcher.getVersion(), )
+                c.execute("INSERT INTO clients_snapshots VALUES (?, ?)", content)
         dbHandler.commit()
 
 
@@ -475,12 +474,7 @@ class Watcher(object):
         return self._name
 
     def getVersion(self):
-        pattern = r'\A[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}\Z'
-        versionString = self._connector.getVersion()
-        if re.match(pattern, versionString) is not None:
-            return versionString
-        else:
-            return None
+        return self._connector.getVersion()
 
     def getFile(self):
         return self._file
