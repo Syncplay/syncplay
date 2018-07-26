@@ -195,15 +195,21 @@ class SyncFactory(Factory):
 
 class StatsRecorder(object):
     def __init__(self, dbpath, roomManager, delay):
+        self._dbPath = dbpath
         self._roomManagerHandle = roomManager
-        self._dbpool = self._initDatabase(dbpath)
-        reactor.callLater(delay, self._scheduleClientSnapshot)
+        try:
+            self._dbPool = self._initDatabase()
+            reactor.callLater(delay, self._scheduleClientSnapshot)
+        except:
+            self._dbPool = None
+            print("--- Error in initializing the stats database. Server Stats not enabled. ---")
          
     def __del__(self):
-        self._dbpool.close()
+        if self._dbPool is not None:
+            self._dbPool.close()
         
-    def _initDatabase(self, dbPath):
-        dbpool = adbapi.ConnectionPool("sqlite3", dbPath)
+    def _initDatabase(self):
+        dbpool = adbapi.ConnectionPool("sqlite3", self._dbPath, check_same_thread=False)
         query = 'create table if not exists clients_snapshots (snapshot_time integer, version string)'
         dbpool.runQuery(query)
         return dbpool
@@ -213,12 +219,15 @@ class StatsRecorder(object):
         self._clientSnapshotTimer.start(constants.SERVER_STATS_SNAPSHOT_INTERVAL)    
     
     def _runClientSnapshot(self):
-        snapshotTime = int(time.time())
-        rooms = self._roomManagerHandle.exportRooms()
-        for room in rooms.values():
-            for watcher in room.getWatchers():
-                content = (snapshotTime, watcher.getVersion(), )
-                self._dbpool.runQuery("INSERT INTO clients_snapshots VALUES (?, ?)", content)
+        try:
+            snapshotTime = int(time.time())
+            rooms = self._roomManagerHandle.exportRooms()
+            for room in rooms.values():
+                for watcher in room.getWatchers():
+                    content = (snapshotTime, watcher.getVersion(), )
+                    self._dbPool.runQuery("INSERT INTO clients_snapshots VALUES (?, ?)", content)
+        except:
+            pass
     
 
 class RoomManager(object):
