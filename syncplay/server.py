@@ -8,6 +8,7 @@ import sqlite3
 import time
 from string import Template
 
+from twisted.enterprise import adbapi
 from twisted.internet import task, reactor
 from twisted.internet.protocol import Factory
 
@@ -41,12 +42,11 @@ class SyncFactory(Factory):
             self._roomManager = RoomManager()
         else:
             self._roomManager = PublicRoomManager()
-        if statsDbFile is not None:
-            self.statsDbHandle = self._connectToStatsDb(statsDbFile)
-            logDelay = 5*(int(self.port)%10 + 1)
-            reactor.callLater(logDelay, self._scheduleClientSnapshot, self.statsDbHandle)
-        else:
-            self.statsDbHandle = None
+            if statsDbFile is not None:
+                statsDelay = 5*(int(self.port)%10 + 1)
+                StatsRecorder(statsDbFile, self._roomManager, statsDelay)
+            else:
+                self.statsDbHandle = None
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
@@ -193,17 +193,33 @@ class SyncFactory(Factory):
         else:
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
 
-    def _connectToStatsDb(self, dbPath):
-        conn = sqlite3.connect(dbPath)
-        c = conn.cursor()
-        c.execute('create table if not exists clients_snapshots (snapshot_time integer, version string)')
-        conn.commit()
-        return conn
-
-    def _scheduleClientSnapshot(self, dbHandler):
-        self._clientSnapshotTimer = task.LoopingCall(self._roomManager.runClientSnapshot, dbHandler)
-        self._clientSnapshotTimer.start(constants.SERVER_STATS_SNAPSHOT_INTERVAL)
-
+class StatsRecorder(object):
+    def __init__(self, dbpath, roomManager, delay):
+        self._roomManagerHandle = roomManager
+        self._dbpool = self._initDatabase(dbpath)
+        reactor.callLater(delay, self._scheduleClientSnapshot)
+         
+    def __del__(self):
+        self._dbpool.close()
+        
+    def _initDatabase(self, dbPath):
+        dbpool = adbapi.ConnectionPool("sqlite3", dbPath)
+        query = 'create table if not exists clients_snapshots (snapshot_time integer, version string)'
+        dbpool.runQuery(query)
+        return dbpool
+    
+    def _scheduleClientSnapshot(self):
+        self._clientSnapshotTimer = task.LoopingCall(self._runClientSnapshot)
+        self._clientSnapshotTimer.start(constants.SERVER_STATS_SNAPSHOT_INTERVAL)    
+    
+    def _runClientSnapshot(self):
+        snapshotTime = int(time.time())
+        rooms = self._roomManagerHandle.exportRooms()
+        for room in rooms.values():
+            for watcher in room.getWatchers():
+                content = (snapshotTime, watcher.getVersion(), )
+                self._dbpool.runQuery("INSERT INTO clients_snapshots VALUES (?, ?)", content)
+    
 
 class RoomManager(object):
     def __init__(self):
@@ -263,6 +279,9 @@ class RoomManager(object):
         while username.lower() in allnames:
             username += '_'
         return username
+    
+    def exportRooms(self):
+        return self._rooms
 
 
 class PublicRoomManager(RoomManager):
@@ -278,16 +297,6 @@ class PublicRoomManager(RoomManager):
         self.broadcast(watcher, l)
         RoomManager.moveWatcher(self, watcher, room)
         watcher.setFile(watcher.getFile())
-
-    def runClientSnapshot(self, dbHandler):
-        snapshotTime = int(time.time())
-        c = dbHandler.cursor()
-        for idx, room in enumerate(self._rooms.values()):
-            playStatus = room.isPlaying()
-            for watcher in room.getWatchers():
-                content = (snapshotTime, watcher.getVersion(), )
-                c.execute("INSERT INTO clients_snapshots VALUES (?, ?)", content)
-        dbHandler.commit()
 
 
 class Room(object):
