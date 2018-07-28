@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-from syncplay.utils import isWindows
-if not isWindows():
-    import site
 
 # libpath
 

@@ -61,7 +61,7 @@ u-common:
 client:
 	-mkdir -p $(BIN_PATH)
 	cp syncplayClient.py $(BIN_PATH)/syncplay
-	sed -i -e 's%# libpath%site.addsitedir\("${PREFIX}/lib/syncplay"\)%' $(BIN_PATH)/syncplay
+	sed -i -e '/# libpath/ a\import site\nsite.addsitedir\("${PREFIX}/lib/syncplay"\)' $(BIN_PATH)/syncplay
 	chmod 755 $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
@@ -87,7 +87,7 @@ u-client:
 server:
 	-mkdir -p $(BIN_PATH)
 	cp syncplayServer.py $(BIN_PATH)/syncplay-server
-	sed -i -e 's%# libpath%site.addsitedir\("${PREFIX}/lib/syncplay"\)%' $(BIN_PATH)/syncplay-server
+	sed -i -e '/# libpath/ a\import site\nsite.addsitedir\("${PREFIX}/lib/syncplay"\)' $(BIN_PATH)/syncplay-server
 	chmod 755 $(BIN_PATH)/syncplay-server
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
 	cp resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
