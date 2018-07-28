@@ -2,6 +2,9 @@
 #coding:utf8
 
 import sys
+from syncplay.utils import isWindows
+if not isWindows():
+    import site
 
 # libpath
 
