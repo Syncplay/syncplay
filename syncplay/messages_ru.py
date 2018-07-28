@@ -440,9 +440,10 @@ ru = {
     "server-motd-argument": "путь к файлу, из которого будет извлекаться MOTD-сообщение",
     "server-chat-argument": "Should chat be disabled?",  # TODO: Translate
     "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})",  # TODO: Translate
-    "server-maxusernamelength-argument": "Maximum number of charactrs in a username (default is {})",  # TODO: Translate
-    "server-messed-up-motd-unescaped-placeholders": "MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
-    "server-messed-up-motd-too-long": "MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
+    "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})", # TODO: Translate
+    "server-stats-db-file-argument": "Enable server stats using the SQLite db file provided", # TODO: Translate
+    "server-messed-up-motd-unescaped-placeholders" : "MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
+    "server-messed-up-motd-too-long" : "MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
 
     # Server errors
     "unknown-command-server-error": "Неизвестная команда: {}",  # message

@@ -1,4 +1,3 @@
-
 import argparse
 import codecs
 import hashlib
@@ -7,6 +6,7 @@ import random
 import time
 from string import Template
 
+from twisted.enterprise import adbapi
 from twisted.internet import task, reactor
 from twisted.internet.protocol import Factory
 
@@ -18,11 +18,12 @@ from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomString
 
 
 class SyncFactory(Factory):
-    def __init__(self, password='', motdFilePath=None, isolateRooms=False, salt=None,
+    def __init__(self, port='', password='', motdFilePath=None, isolateRooms=False, salt=None,
                  disableReady=False, disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH,
-                 maxUsernameLength=constants.MAX_USERNAME_LENGTH):
+                 maxUsernameLength=constants.MAX_USERNAME_LENGTH, statsDbFile=None):
         self.isolateRooms = isolateRooms
         print(getMessage("welcome-server-notification").format(syncplay.version))
+        self.port = port
         if password:
             password = hashlib.md5(password).hexdigest()
         self.password = password
@@ -39,6 +40,13 @@ class SyncFactory(Factory):
             self._roomManager = RoomManager()
         else:
             self._roomManager = PublicRoomManager()
+        if statsDbFile is not None:
+            self._statsDbHandle = DBManager(statsDbFile)
+            self._statsRecorder = StatsRecorder(self._statsDbHandle, self._roomManager)
+            statsDelay = 5*(int(self.port)%10 + 1)
+            self._statsRecorder.startRecorder(statsDelay)
+        else:
+            self._statsDbHandle = None
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
@@ -186,6 +194,55 @@ class SyncFactory(Factory):
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
 
 
+class StatsRecorder(object):
+    def __init__(self, dbHandle, roomManager):
+        self._dbHandle = dbHandle
+        self._roomManagerHandle = roomManager
+        
+    def startRecorder(self, delay):
+        try:
+            self._dbHandle.connect()
+            reactor.callLater(delay, self._scheduleClientSnapshot)
+        except:
+            print("--- Error in initializing the stats database. Server Stats not enabled. ---")
+    
+    def _scheduleClientSnapshot(self):
+        self._clientSnapshotTimer = task.LoopingCall(self._runClientSnapshot)
+        self._clientSnapshotTimer.start(constants.SERVER_STATS_SNAPSHOT_INTERVAL)    
+    
+    def _runClientSnapshot(self):
+        try:
+            snapshotTime = int(time.time())
+            rooms = self._roomManagerHandle.exportRooms()
+            for room in rooms.values():
+                for watcher in room.getWatchers():
+                    self._dbHandle.addVersionLog(snapshotTime, watcher.getVersion())
+        except:
+            pass
+
+
+class DBManager(object):
+    def __init__(self, dbpath):
+        self._dbPath = dbpath
+        self._connection = None
+
+    def __del__(self):
+        if self._connection is not None:
+            self._connection.close()
+
+    def connect(self):
+        self._connection = adbapi.ConnectionPool("sqlite3", self._dbPath, check_same_thread=False)
+        self._createSchema()
+
+    def _createSchema(self):
+        initQuery = 'create table if not exists clients_snapshots (snapshot_time integer, version string)'
+        self._connection.runQuery(initQuery)
+
+    def addVersionLog(self, timestamp, version):
+        content = (timestamp, version, )
+        self._connection.runQuery("INSERT INTO clients_snapshots VALUES (?, ?)", content)
+
+
 class RoomManager(object):
     def __init__(self):
         self._rooms = {}
@@ -244,6 +301,9 @@ class RoomManager(object):
         while username.lower() in allnames:
             username += '_'
         return username
+    
+    def exportRooms(self):
+        return self._rooms
 
 
 class PublicRoomManager(RoomManager):
@@ -562,3 +622,4 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
         self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength', type=int, nargs='?', help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
         self._argparser.add_argument('--max-username-length', metavar='maxUsernameLength', type=int, nargs='?', help=getMessage("server-maxusernamelength-argument").format(constants.MAX_USERNAME_LENGTH))
+        self._argparser.add_argument('--stats-db-file', metavar='file', type=str, nargs='?', help=getMessage("server-stats-db-file-argument"))
