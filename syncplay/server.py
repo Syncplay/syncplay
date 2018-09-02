@@ -25,6 +25,7 @@ class SyncFactory(Factory):
         print(getMessage("welcome-server-notification").format(syncplay.version))
         self.port = port
         if password:
+            password = password.encode('utf-8')
             password = hashlib.md5(password).hexdigest()
         self.password = password
         if salt is None:
