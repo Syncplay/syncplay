@@ -473,7 +473,7 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('-p', '--password', metavar='password', type=str, nargs='?', help=getMessage("password-argument"))
         self._argparser.add_argument('--player-path', metavar='path', type=str, help=getMessage("player-path-argument"))
         self._argparser.add_argument('--language', metavar='language', type=str, help=getMessage("language-argument"))
-        self._argparser.add_argument('file', metavar='file', type=lambda s: str(s, 'utf8'), nargs='?', help=getMessage("file-argument"))
+        self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("file-argument"))
         self._argparser.add_argument('--clear-gui-data', action='store_true', help=getMessage("clear-gui-data-argument"))
         self._argparser.add_argument('-v', '--version', action='store_true', help=getMessage("version-argument"))
         self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("args-argument"))
