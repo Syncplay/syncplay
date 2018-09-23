@@ -18,7 +18,8 @@ before_install:
 - python3 --version
 - which pip3
 - pip3 --version
-- brew install qt
+- curl -O https://raw.githubusercontent.com/Homebrew/homebrew-core/a57d0deab976cd8dee32404abe73f63cc5fbd60d/Formula/qt.rb
+- brew install ./qt.rb
 - curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.11.1-5.11.1-cp35.cp36.cp37-abi3-macosx_10_11_x86_64.whl -o PySide2-5.11.1-5.11.1-cp35.cp36.cp37-abi3-macosx_10_11_x86_64.whl
 - pip3 install PySide2-5.11.1-5.11.1-cp35.cp36.cp37-abi3-macosx_10_11_x86_64.whl
 - ln -s /usr/local/lib/python3.6/site-packages/PySide2/libpyside2.abi3.5.11.dylib /usr/local/lib/
