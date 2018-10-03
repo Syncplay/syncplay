@@ -476,8 +476,10 @@ class RoomPasswordProvider(object):
     @staticmethod
     def _computeRoomHash(roomName, password, salt):
         roomName = roomName.encode('utf8')
-        salt = hashlib.sha256(salt).hexdigest()
-        provisionalHash = hashlib.sha256(roomName + salt).hexdigest()
+        salt = salt.encode('utf8')
+        password = password.encode('utf8')
+        salt = hashlib.sha256(salt).hexdigest().encode('utf8')
+        provisionalHash = hashlib.sha256(roomName + salt).hexdigest().encode('utf8')
         return hashlib.sha1(provisionalHash + salt + password).hexdigest()[:12].upper()
 
 
