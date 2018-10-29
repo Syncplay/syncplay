@@ -496,6 +496,11 @@ class ConfigurationGetter(object):
                     import appnope
                     appnope.nope()
             except ImportError:
+                try:
+                    from twisted.trial import unittest
+                except:
+                    print(getMessage("unable-import-twisted-error"))
+                    sys.exit()
                 print(getMessage("unable-import-gui-error"))
                 self._config['noGui'] = True
         if self._config['file'] and self._config['file'][:2] == "--":

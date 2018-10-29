@@ -116,6 +116,7 @@ de = {
     "empty-error": "{} darf nicht leer sein",  # Configuration
     "media-player-error": "Player-Fehler: \"{}\"",  # Error line
     "unable-import-gui-error": "Konnte die GUI-Bibliotheken nicht importieren. PySide muss installiert sein, damit die grafische Oberfläche funktioniert.",
+    "unable-import-twisted-error": "Could not import Twisted. Please install Twisted v12.1.0 or later.", #To do: translate
 
     "arguments-missing-error": "Notwendige Argumente fehlen, siehe --help",
 

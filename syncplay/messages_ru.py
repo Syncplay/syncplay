@@ -116,6 +116,7 @@ ru = {
     "empty-error": "{} не может быть пустым.",  # Configuration
     "media-player-error": "Ошибка проигрывателя: \"{}\"",  # Error line
     "unable-import-gui-error": "Невозможно импортировать библиотеки GUI (графического интерфейса). Необходимо установить PySide, иначе графический интерфейс не будет работать.",
+    "unable-import-twisted-error": "Could not import Twisted. Please install Twisted v12.1.0 or later.", #To do: translate
 
     "arguments-missing-error": "Некоторые необходимые аргументы отсутствуют, обратитесь к --help",
 
