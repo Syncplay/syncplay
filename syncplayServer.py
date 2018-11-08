@@ -12,6 +12,7 @@ except AttributeError:
     import warnings
     warnings.warn("You must run Syncplay with Python 3.4 or newer!")
 
+from twisted.internet.endpoints import TCP6ServerEndpoint
 from twisted.internet import reactor
 
 from syncplay.server import SyncFactory, ConfigurationGetter
@@ -19,8 +20,8 @@ from syncplay.server import SyncFactory, ConfigurationGetter
 if __name__ == '__main__':
     argsGetter = ConfigurationGetter()
     args = argsGetter.getConfiguration()
-    reactor.listenTCP(
-        int(args.port),
+    endpoint = TCP6ServerEndpoint(reactor, int(args.port))
+    endpoint.listen(
         SyncFactory(
             args.port,
             args.password,
