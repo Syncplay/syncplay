@@ -313,7 +313,9 @@ class ConfigurationGetter(object):
         port = constants.DEFAULT_PORT if not self._config["port"] else self._config["port"]
         if host:
             if ':' in host:
-                host, port = host.split(':', 1)
+                host, port = host.rsplit(':', 1)
+                if '[' in host:
+                    host = host.strip('[]')
                 try:
                     port = int(port)
                 except ValueError:
