@@ -556,7 +556,7 @@ class ConfigDialog(QtWidgets.QDialog):
             self.error = error
         if config['host'] is None:
             host = ""
-        elif ":" in config['host']:
+        elif ":" in config['host'] and '[' not in config['host']:
             host = config['host']
         else:
             host = config['host'] + ":" + str(config['port'])
@@ -580,7 +580,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 i += 1
         self.hostCombobox.setEditable(True)
         self.hostCombobox.setEditText(host)
-        self.hostCombobox.setFixedWidth(165)
+        self.hostCombobox.setFixedWidth(250)
         self.hostLabel = QLabel(getMessage("host-label"), self)
         self.findServerButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'arrow_refresh.png'), getMessage("update-server-list-label"))
         self.findServerButton.clicked.connect(self.updateServerList)
@@ -634,7 +634,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.executablepathCombobox.setEditable(True)
         self.executablepathCombobox.currentIndexChanged.connect(self.updateExecutableIcon)
         self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'], playerpaths))
-        self.executablepathCombobox.setFixedWidth(250)
+        self.executablepathCombobox.setFixedWidth(330)
         self.executablepathCombobox.editTextChanged.connect(self.updateExecutableIcon)
 
         self.executablepathLabel = QLabel(getMessage("executable-path-label"), self)
