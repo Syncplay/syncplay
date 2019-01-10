@@ -116,6 +116,7 @@ ru = {
     "empty-error": "{} не может быть пустым.",  # Configuration
     "media-player-error": "Ошибка проигрывателя: \"{}\"",  # Error line
     "unable-import-gui-error": "Невозможно импортировать библиотеки GUI (графического интерфейса). Необходимо установить PySide, иначе графический интерфейс не будет работать.",
+    "unable-import-twisted-error": "Could not import Twisted. Please install Twisted v12.1.0 or later.", #To do: translate
 
     "arguments-missing-error": "Некоторые необходимые аргументы отсутствуют, обратитесь к --help",
 
@@ -440,9 +441,10 @@ ru = {
     "server-motd-argument": "путь к файлу, из которого будет извлекаться MOTD-сообщение",
     "server-chat-argument": "Should chat be disabled?",  # TODO: Translate
     "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})",  # TODO: Translate
-    "server-maxusernamelength-argument": "Maximum number of charactrs in a username (default is {})",  # TODO: Translate
-    "server-messed-up-motd-unescaped-placeholders": "MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
-    "server-messed-up-motd-too-long": "MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
+    "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})", # TODO: Translate
+    "server-stats-db-file-argument": "Enable server stats using the SQLite db file provided", # TODO: Translate
+    "server-messed-up-motd-unescaped-placeholders" : "MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
+    "server-messed-up-motd-too-long" : "MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
 
     # Server errors
     "unknown-command-server-error": "Неизвестная команда: {}",  # message
@@ -460,7 +462,7 @@ ru = {
     "cannot-add-unsafe-path-error": "Не удалось автоматически переключиться на {}, потому что ссылка не соответствует доверенным сайтам. Её можно включить вручную, дважны кливнув по ссылке в списке воспроизведения. Добавить доверенный сайт можно в выпадающем меню 'Дополнительно' или просто кликнув по ссылке правой кнопкой мыши.",  # Filename
     "sharedplaylistenabled-label": "Включить общий список воспроизведения",
     "removefromplaylist-menu-label": "Удалить",
-    "shufflepremaininglaylist-menuu-label": "Shuffle remaining playlist",  # Was: Перемешать список # TODO: Translate
+    "shufflepremaininglaylist-menu-label": "Shuffle remaining playlist",  # Was: Перемешать список # TODO: Translate
     "shuffleentireplaylist-menu-label": "Shuffle entire playlist",  # TODO: Translate
     "undoplaylist-menu-label": "Отменить последнее действие",
     "addfilestoplaylist-menu-label": "Добавить файлы в очередь",

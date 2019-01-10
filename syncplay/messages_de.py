@@ -116,6 +116,7 @@ de = {
     "empty-error": "{} darf nicht leer sein",  # Configuration
     "media-player-error": "Player-Fehler: \"{}\"",  # Error line
     "unable-import-gui-error": "Konnte die GUI-Bibliotheken nicht importieren. PySide muss installiert sein, damit die grafische Oberfläche funktioniert.",
+    "unable-import-twisted-error": "Could not import Twisted. Please install Twisted v12.1.0 or later.", #To do: translate
 
     "arguments-missing-error": "Notwendige Argumente fehlen, siehe --help",
 
@@ -434,7 +435,8 @@ de = {
     "server-motd-argument": "Pfad zur Datei, von der die Nachricht des Tages geladen wird",
     "server-chat-argument": "Should chat be disabled?",  # TODO: Translate
     "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})",  # TODO: Translate
-    "server-maxusernamelength-argument": "Maximum number of charactrs in a username (default is {})",  # TODO: Translate
+    "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})", # TODO: Translate
+    "server-stats-db-file-argument": "Enable server stats using the SQLite db file provided", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders": "Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
     "server-messed-up-motd-too-long": "Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
 

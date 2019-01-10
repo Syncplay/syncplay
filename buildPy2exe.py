@@ -15,7 +15,6 @@ import sys
 #     import warnings
 #     warnings.warn("You must build Syncplay with Python 2.7!")
 
-
 import os
 import subprocess
 from string import Template
@@ -34,7 +33,6 @@ if missingStrings is not None and missingStrings is not "":
     import warnings
     warnings.warn("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
 
-
 def get_nsis_path():
     bin_name = "makensis.exe"
     from winreg import HKEY_LOCAL_MACHINE as HKLM
@@ -48,7 +46,6 @@ def get_nsis_path():
             raise Exception("You must install NSIS 3 or later.")
     except WindowsError:
         return bin_name
-
 
 NSIS_COMPILE = get_nsis_path()
 
@@ -619,7 +616,6 @@ NSIS_SCRIPT_TEMPLATE = r"""
   SectionEnd
 """
 
-
 class NSISScript(object):
     def create(self):
         fileList, totalSize = self.getBuildDirContents(OUT_DIR)
@@ -676,16 +672,56 @@ class NSISScript(object):
             delete.append('RMdir "$INSTDIR\\{}"'.format(file_))
         return "\n".join(delete)
 
+def pruneUnneededLibraries():
+    from pathlib import Path
+    cwd = os.getcwd()
+    libDir = cwd + '\\' + OUT_DIR + '\\lib\\'
+    unneededModules = ['PySide2.Qt3D*', 'PySide2.QtAxContainer.pyd', 'PySide2.QtCharts.pyd', 'PySide2.QtConcurrent.pyd',
+                       'PySide2.QtDataVisualization.pyd', 'PySide2.QtHelp.pyd', 'PySide2.QtLocation.pyd',
+                       'PySide2.QtMultimedia.pyd', 'PySide2.QtMultimediaWidgets.pyd', 'PySide2.QtOpenGL.pyd',
+                       'PySide2.QtPositioning.pyd', 'PySide2.QtPrintSupport.pyd', 'PySide2.QtQml.pyd',
+                       'PySide2.QtQuick.pyd', 'PySide2.QtQuickWidgets.pyd', 'PySide2.QtScxml.pyd', 'PySide2.QtSensors.pyd',
+                       'PySide2.QtSql.pyd', 'PySide2.QtSvg.pyd', 'PySide2.QtTest.pyd', 'PySide2.QtTextToSpeech.pyd',
+                       'PySide2.QtUiTools.pyd', 'PySide2.QtWebChannel.pyd', 'PySide2.QtWebSockets.pyd',
+                       'PySide2.QtWinExtras.pyd', 'PySide2.QtXml.pyd', 'PySide2.QtXmlPatterns.pyd']
+    unneededLibs = ['Qt53D*', 'Qt5Charts.dll', 'Qt5Concurrent.dll', 'Qt5DataVisualization.dll', 'Qt5Gamepad.dll', 'Qt5Help.dll',
+                    'Qt5Location.dll', 'Qt5Multimedia.dll', 'Qt5MultimediaWidgets.dll', 'Qt5OpenGL.dll', 'Qt5Positioning.dll',
+                    'Qt5PrintSupport.dll', 'Qt5Quick.dll', 'Qt5QuickWidgets.dll', 'Qt5Scxml.dll', 'Qt5Sensors.dll', 'Qt5Sql.dll',
+                    'Qt5Svg.dll', 'Qt5Test.dll', 'Qt5TextToSpeech.dll', 'Qt5WebChannel.dll', 'Qt5WebSockets.dll', 'Qt5WinExtras.dll',
+                    'Qt5Xml.dll', 'Qt5XmlPatterns.dll']
+    windowsDLL = ['MSVCP140.dll', 'VCRUNTIME140.dll']
+    deleteList = unneededModules + unneededLibs + windowsDLL
+    deleteList.append('api-*')
+    for filename in deleteList:
+        for p in Path(libDir).glob(filename):
+            p.unlink()
+
+def copyQtPlugins(paths):
+    import shutil
+    from PySide2 import QtCore
+    basePath = QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)
+    basePath = basePath.replace('/', '\\')
+    destBase = os.getcwd() + '\\' + OUT_DIR
+    for elem in paths:
+        elemDir, elemName = os.path.split(elem)
+        source = basePath + '\\' + elem
+        dest = destBase + '\\' + elem
+        destDir = destBase + '\\' + elemDir
+        os.makedirs(destDir, exist_ok=True)
+        shutil.copy(source, dest)
 
 class build_installer(py2exe):
     def run(self):
         py2exe.run(self)
+        print('*** deleting unnecessary libraries and modules ***')
+        pruneUnneededLibraries()
+        print('*** copying qt plugins ***')
+        copyQtPlugins(qt_plugins)
         script = NSISScript()
         script.create()
-        print("*** compiling the NSIS setup script***")
+        print("*** compiling the NSIS setup script ***")
         script.compile()
         print("*** DONE ***")
-
 
 guiIcons = [
     'resources/accept.png', 'resources/arrow_undo.png', 'resources/clock_go.png',
@@ -720,6 +756,8 @@ resources = [
 resources.extend(guiIcons)
 intf_resources = ["resources/lua/intf/syncplay.lua"]
 
+qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
+
 common_info = dict(
     name='Syncplay',
     version=syncplay.version,
@@ -738,11 +776,12 @@ info = dict(
     console=['syncplayServer.py'],
     # *** If you wish to make the Syncplay client use console mode (for --no-gui to work) then comment out the above two lines and uncomment the following line:
     # console=['syncplayServer.py', {"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")], 'dest_base': "Syncplay"}],
+
     options={
         'py2exe': {
             'dist_dir': OUT_DIR,
-            'packages': 'PySide.QtUiTools',
-            'includes': 'twisted, sys, encodings, datetime, os, time, math, PySide, liburl, ast, unicodedata, _ssl',
+            'packages': 'PySide2',
+            'includes': 'twisted, sys, encodings, datetime, os, time, math, liburl, ast, unicodedata, _ssl',
             'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32pipe, win32process, Tkinter',
             'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
             'optimize': 2,
@@ -754,5 +793,5 @@ info = dict(
     cmdclass={"py2exe": build_installer},
 )
 
-sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-i PySide.QtCore', '-i PySide.QtGui'])
+sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-p PySide2'])
 setup(**info)

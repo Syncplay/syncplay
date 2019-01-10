@@ -972,12 +972,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.updatingPlaylist = True
             for URI in URIsToAdd:
                 URI = URI.rstrip()
-                try:
-                    URI = URI.encode('utf-8')
-                except UnicodeDecodeError:
-                    pass
                 URI = urllib.parse.unquote(URI)
-                URI = URI.decode('utf-8')
                 if URI != "":
                     self.addStreamToPlaylist(URI)
             self.updatingPlaylist = False

@@ -115,6 +115,7 @@ en = {
     "empty-error": "{} can't be empty",  # Configuration
     "media-player-error": "Media player error: \"{}\"",  # Error line
     "unable-import-gui-error": "Could not import GUI libraries. If you do not have PySide installed then you will need to install it for the GUI to work.",
+    "unable-import-twisted-error": "Could not import Twisted. Please install Twisted v12.1.0 or later.",
 
     "arguments-missing-error": "Some necessary arguments are missing, refer to --help",
 
@@ -437,8 +438,9 @@ en = {
     "server-disable-ready-argument": "disable readiness feature",
     "server-motd-argument": "path to file from which motd will be fetched",
     "server-chat-argument": "Should chat be disabled?",
-    "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})",  # Default number of characters
-    "server-maxusernamelength-argument": "Maximum number of charactrs in a username (default is {})",
+    "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})", # Default number of characters
+    "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})",
+    "server-stats-db-file-argument": "Enable server stats using the SQLite db file provided",
     "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
     "server-messed-up-motd-too-long": "Message of the Day is too long - maximum of {} chars, {} given.",
 

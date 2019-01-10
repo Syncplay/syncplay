@@ -22,11 +22,14 @@ if __name__ == '__main__':
     reactor.listenTCP(
         int(args.port),
         SyncFactory(
+            args.port,
             args.password,
             args.motd_file,
             args.isolate_rooms,
             args.salt,
             args.disable_ready,
             args.disable_chat,
-            args.max_chat_message_length))
+            args.max_chat_message_length,
+            args.max_username_length,
+            args.stats_db_file))
     reactor.run()

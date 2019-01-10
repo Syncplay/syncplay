@@ -115,6 +115,7 @@ it = {
     "empty-error": "Il campo {} non può esssere vuoto",  # Configuration
     "media-player-error": "Errore media player: \"{}\"",  # Error line
     "unable-import-gui-error": "Non è possibile importare le librerie di interfaccia grafica. Hai bisogno di PySide per poter utilizzare l'interfaccia grafica.",
+    "unable-import-twisted-error": "Non è possibile importare Twisted. Si prega di installare Twisted v12.1. o superiore.",
 
     "arguments-missing-error": "Alcuni argomenti obbligatori non sono stati trovati. Fai riferimento a --help",
 
@@ -437,8 +438,9 @@ it = {
     "server-disable-ready-argument": "disabilita la funzionalità \"pronto\"",
     "server-motd-argument": "percorso del file da cui verrà letto il messaggio del giorno",
     "server-chat-argument": "abilita o disabilita la chat",
-    "server-chat-maxchars-argument": "Numero massimo di caratteri in un messaggio di chat (default è {})",  # Default number of characters
-    "server-maxusernamelength-argument": "Maximum number of charactrs in a username (default is {})",  # TODO: Translate
+    "server-chat-maxchars-argument": "Numero massimo di caratteri in un messaggio di chat (default è {})", # Default number of characters
+    "server-maxusernamelength-argument": "Numero massimo di caratteri in un nome utente (default è {})",
+    "server-stats-db-file-argument": "Abilita la raccolta dei dati statistici nel file SQLite indicato",
     "server-messed-up-motd-unescaped-placeholders": "Il messaggio del giorno ha dei caratteri non 'escaped'. Tutti i simboli $ devono essere doppi ($$).",
     "server-messed-up-motd-too-long": "Il messaggio del giorno è troppo lungo - numero massimo di caratteri è {}, {} trovati.",
 
