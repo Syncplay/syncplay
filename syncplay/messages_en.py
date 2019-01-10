@@ -452,6 +452,7 @@ en = {
     "password-required-server-error": "Password required",
     "wrong-password-server-error": "Wrong password supplied",
     "hello-server-error": "Not enough Hello arguments",  # DO NOT TRANSLATE
+    "line-decode-server-error": "Not a utf-8 string",
 
     # Playlists
     "playlist-selection-changed-notification":  "{} changed the playlist selection",  # Username
