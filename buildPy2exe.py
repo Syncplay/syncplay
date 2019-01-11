@@ -682,13 +682,15 @@ def pruneUnneededLibraries():
                        'PySide2.QtPositioning.pyd', 'PySide2.QtPrintSupport.pyd', 'PySide2.QtQml.pyd',
                        'PySide2.QtQuick.pyd', 'PySide2.QtQuickWidgets.pyd', 'PySide2.QtScxml.pyd', 'PySide2.QtSensors.pyd',
                        'PySide2.QtSql.pyd', 'PySide2.QtSvg.pyd', 'PySide2.QtTest.pyd', 'PySide2.QtTextToSpeech.pyd',
-                       'PySide2.QtUiTools.pyd', 'PySide2.QtWebChannel.pyd', 'PySide2.QtWebSockets.pyd',
+                       'PySide2.QtUiTools.pyd', 'PySide2.QtWebChannel.pyd', 'PySide2.QtWebEngine.pyd',
+                       'PySide2.QtWebEngineCore.pyd', 'PySide2.QtWebEngineWidgets.pyd', 'PySide2.QtWebSockets.pyd',
                        'PySide2.QtWinExtras.pyd', 'PySide2.QtXml.pyd', 'PySide2.QtXmlPatterns.pyd']
     unneededLibs = ['Qt53D*', 'Qt5Charts.dll', 'Qt5Concurrent.dll', 'Qt5DataVisualization.dll', 'Qt5Gamepad.dll', 'Qt5Help.dll',
                     'Qt5Location.dll', 'Qt5Multimedia.dll', 'Qt5MultimediaWidgets.dll', 'Qt5OpenGL.dll', 'Qt5Positioning.dll',
                     'Qt5PrintSupport.dll', 'Qt5Quick.dll', 'Qt5QuickWidgets.dll', 'Qt5Scxml.dll', 'Qt5Sensors.dll', 'Qt5Sql.dll',
-                    'Qt5Svg.dll', 'Qt5Test.dll', 'Qt5TextToSpeech.dll', 'Qt5WebChannel.dll', 'Qt5WebSockets.dll', 'Qt5WinExtras.dll',
-                    'Qt5Xml.dll', 'Qt5XmlPatterns.dll']
+                    'Qt5Svg.dll', 'Qt5Test.dll', 'Qt5TextToSpeech.dll', 'Qt5WebChannel.dll', 'Qt5WebEngine.dll',
+                    'Qt5WebEngineCore.dll', 'Qt5WebEngineWidgets.dll', 'Qt5WebSockets.dll', 'Qt5WinExtras.dll', 'Qt5Xml.dll',
+                    'Qt5XmlPatterns.dll']
     windowsDLL = ['MSVCP140.dll', 'VCRUNTIME140.dll']
     deleteList = unneededModules + unneededLibs + windowsDLL
     deleteList.append('api-*')
