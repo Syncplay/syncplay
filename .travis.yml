@@ -9,26 +9,22 @@ script:
 - python3 buildPy2app.py py2app
 
 before_install:
-- hg clone https://alby128@bitbucket.org/alby128/py2app
-- brew uninstall python
 - brew update
-- curl -O https://raw.githubusercontent.com/Homebrew/homebrew-core/f2a764ef944b1080be64bd88dca9a1d80130c558/Formula/python.rb
-- brew install ./python.rb
+- cd $(brew --repo homebrew/core)
+#- git fetch --depth=20000
+- git checkout 80860911cd26d9df62f3cc30575ed2076019ed1a
+- cd $TRAVIS_BUILD_DIR
+- brew upgrade python
 - which python3
 - python3 --version
 - which pip3
 - pip3 --version
-- curl -O https://raw.githubusercontent.com/Homebrew/homebrew-core/a57d0deab976cd8dee32404abe73f63cc5fbd60d/Formula/qt.rb
-- brew install ./qt.rb
-- curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=PySide2-5.11.1-5.11.1-cp35.cp36.cp37-abi3-macosx_10_11_x86_64.whl -o PySide2-5.11.1-5.11.1-cp35.cp36.cp37-abi3-macosx_10_11_x86_64.whl
-- pip3 install PySide2-5.11.1-5.11.1-cp35.cp36.cp37-abi3-macosx_10_11_x86_64.whl
-- ln -s /usr/local/lib/python3.6/site-packages/PySide2/libpyside2.abi3.5.11.dylib /usr/local/lib/
-- ln -s /usr/local/lib/python3.6/site-packages/PySide2/libshiboken2.abi3.5.11.dylib /usr/local/lib/
+- brew install pyside
+- ln -s /usr/local/lib/python3.7/site-packages/PySide2/libpyside2.cpython-37m-darwin.5.11.dylib /usr/local/lib/
+- ln -s /usr/local/lib/python3.7/site-packages/PySide2/libshiboken2.cpython-37m-darwin.5.11.dylib /usr/local/lib/
 - python3 -c "from PySide2 import __version__; print(__version__)"
 - python3 -c "from PySide2.QtCore import __version__; print(__version__)" 
-- cd py2app
-- python3 setup.py install
-- cd ..
+- pip3 install py2app
 - python3 -c "from py2app.recipes import pyside2" 
 
 install:
