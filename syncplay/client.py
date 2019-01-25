@@ -11,6 +11,7 @@ import time
 from copy import deepcopy
 from functools import wraps
 
+from twisted.internet.endpoints import HostnameEndpoint
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task, defer, threads
 
@@ -728,7 +729,8 @@ class SyncplayClient(object):
         if '[' in host:
             host = host.strip('[]')
         port = int(port)
-        reactor.connectTCP(host, port, self.protocolFactory)
+        self._endpoint = HostnameEndpoint(reactor, host, port)
+        self._endpoint.connect(self.protocolFactory)
         reactor.run()
 
     def stop(self, promptForAction=False):
