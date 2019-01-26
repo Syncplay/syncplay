@@ -783,8 +783,8 @@ info = dict(
         'py2exe': {
             'dist_dir': OUT_DIR,
             'packages': 'PySide2',
-            'includes': 'twisted, sys, encodings, datetime, os, time, math, liburl, ast, unicodedata, _ssl, win32pipe',
-            'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32file, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, Tkinter',
+            'includes': 'twisted, sys, encodings, datetime, os, time, math, liburl, ast, unicodedata, _ssl, win32pipe, win32file',
+            'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, Tkinter',
             'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
             'optimize': 2,
             'compressed': 1
