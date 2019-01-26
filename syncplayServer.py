@@ -24,7 +24,10 @@ class DualStackPort(tcp.Port):
 
     def createInternetSocket(self):
         s = tcp.Port.createInternetSocket(self)
-        s.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+        try:
+            s.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+        except:
+            pass
         return s
 
 if __name__ == '__main__':
