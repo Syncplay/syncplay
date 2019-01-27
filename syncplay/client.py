@@ -34,6 +34,11 @@ class SyncClientFactory(ClientFactory):
         self._timesTried = 0
         return SyncClientProtocol(self._client)
 
+    def stopRetrying(self):
+        self._client._reconnectingService.stopService()
+        self._client.ui.showErrorMessage(getMessage("disconnection-notification"))
+
+
 class SyncplayClient(object):
     def __init__(self, playerClass, ui, config):
         constants.SHOW_OSD = config['showOSD']
