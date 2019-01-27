@@ -16,6 +16,7 @@ it = {
     "connection-failed-notification": "Connessione col server fallita",
     "connected-successful-notification": "Connessione al server effettuata con successo",
     "retrying-notification": "%s, Nuovo tentativo in %d secondi...",  # Seconds
+    "handshake-successful-notification": "Connessione stabilita con {} ({})",
 
     "rewind-notification": "Riavvolgo a causa della differenza temporale con {}",  # User
     "fastforward-notification": "Avanzamento rapido a causa della differenza temporale con {}",  # User

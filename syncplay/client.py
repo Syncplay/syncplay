@@ -719,13 +719,15 @@ class SyncplayClient(object):
         self._reconnectingService.startService()
 
         def connectedNow(f):
+            hostIP = connectionHandle.result.transport.addr[0]
+            self.ui.showMessage(getMessage("handshake-successful-notification").format(host, hostIP))
             return
 
         def failed(f):
             reactor.callLater(0.1, self.ui.showErrorMessage, getMessage("connection-failed-notification"), True)
             reactor.callLater(0.1, self.stop, True)
 
-        waitForConnection.addCallbacks(connectedNow, failed)
+        connectionHandle = waitForConnection.addCallbacks(connectedNow, failed)
         message = getMessage("connection-attempt-notification").format(host, port)
         self.ui.showMessage(message)
         reactor.run()
