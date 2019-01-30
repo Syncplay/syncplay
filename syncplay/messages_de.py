@@ -16,6 +16,7 @@ de = {
     "connection-failed-notification": "Verbindung zum Server fehlgeschlagen",
     "connected-successful-notification": "Erfolgreich mit Server verbunden",
     "retrying-notification": "%s, versuche erneut in %d Sekunden...",  # Seconds
+    "handshake-successful-notification": "Connection established with {} ({})", # TODO: Translate
 
     "rewind-notification": "Zurückgespult wegen Zeitdifferenz mit {}",  # User
     "fastforward-notification": "Vorgespult wegen Zeitdifferenz mit {}",  # User

@@ -11,8 +11,10 @@ import time
 from copy import deepcopy
 from functools import wraps
 
+from twisted.internet.endpoints import HostnameEndpoint
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task, defer, threads
+from twisted.application.internet import ClientService
 
 from syncplay import utils, constants, version
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
@@ -27,41 +29,14 @@ class SyncClientFactory(ClientFactory):
         self._client = client
         self.retry = retry
         self._timesTried = 0
-        self.reconnecting = False
 
     def buildProtocol(self, addr):
         self._timesTried = 0
         return SyncClientProtocol(self._client)
 
-    def startedConnecting(self, connector):
-        destination = connector.getDestination()
-        message = getMessage("connection-attempt-notification").format(destination.host, destination.port)
-        self._client.ui.showMessage(message)
-
-    def clientConnectionLost(self, connector, reason):
-        if self._timesTried == 0:
-            self._client.onDisconnect()
-        if self._timesTried < self.retry:
-            self._timesTried += 1
-            self._client.ui.showMessage(getMessage("reconnection-attempt-notification"))
-            self.reconnecting = True
-            reactor.callLater(0.1 * (2 ** min(self._timesTried, 5)), connector.connect)
-        else:
-            message = getMessage("disconnection-notification")
-            self._client.ui.showErrorMessage(message)
-
-    def clientConnectionFailed(self, connector, reason):
-        if not self.reconnecting:
-            reactor.callLater(0.1, self._client.ui.showErrorMessage, getMessage("connection-failed-notification"), True)
-            reactor.callLater(0.1, self._client.stop, True)
-        else:
-            self.clientConnectionLost(connector, reason)
-
-    def resetRetrying(self):
-        self._timesTried = 0
-
     def stopRetrying(self):
-        self._timesTried = self.retry
+        self._client._reconnectingService.stopService()
+        self._client.ui.showErrorMessage(getMessage("disconnection-notification"))
 
 
 class SyncplayClient(object):
@@ -725,16 +700,47 @@ class SyncplayClient(object):
             reactor.callLater(0.1, self._playerClass.run, self, self._config['playerPath'], self._config['file'], self._config['playerArgs'], )
             self._playerClass = None
         self.protocolFactory = SyncClientFactory(self)
+        if '[' in host:
+            host = host.strip('[]')
         port = int(port)
-        reactor.connectTCP(host, port, self.protocolFactory)
+        self._endpoint = HostnameEndpoint(reactor, host, port)
+
+        def retry(retries):
+            self._lastGlobalUpdate = None
+            if retries == 0:
+                self.onDisconnect()
+            if retries > constants.RECONNECT_RETRIES:
+                reactor.callLater(0.1, self.ui.showErrorMessage, getMessage("connection-failed-notification"),
+                                  True)
+                reactor.callLater(0.1, self.stop, True)
+                return None
+
+            self.ui.showMessage(getMessage("reconnection-attempt-notification"))
+            self.reconnecting = True
+            return(0.1 * (2 ** min(retries, 5)))
+
+        self._reconnectingService = ClientService(self._endpoint, self.protocolFactory , retryPolicy=retry)
+        waitForConnection = self._reconnectingService.whenConnected(failAfterFailures=1)
+        self._reconnectingService.startService()
+
+        def connectedNow(f):
+            hostIP = connectionHandle.result.transport.addr[0]
+            self.ui.showMessage(getMessage("handshake-successful-notification").format(host, hostIP))
+            return
+
+        def failed(f):
+            reactor.callLater(0.1, self.ui.showErrorMessage, getMessage("connection-failed-notification"), True)
+            reactor.callLater(0.1, self.stop, True)
+
+        connectionHandle = waitForConnection.addCallbacks(connectedNow, failed)
+        message = getMessage("connection-attempt-notification").format(host, port)
+        self.ui.showMessage(message)
         reactor.run()
 
     def stop(self, promptForAction=False):
         if not self._running:
             return
         self._running = False
-        if self.protocolFactory:
-            self.protocolFactory.stopRetrying()
         self.destroyProtocol()
         if self._player:
             self._player.drop()

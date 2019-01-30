@@ -313,14 +313,32 @@ class ConfigurationGetter(object):
         port = constants.DEFAULT_PORT if not self._config["port"] else self._config["port"]
         if host:
             if ':' in host:
-                host, port = host.split(':', 1)
-                try:
-                    port = int(port)
-                except ValueError:
+                if host.count(':') == 1:
+                    #IPv4 address or hostname, with port
+                    host, port = host.rsplit(':', 1)
                     try:
-                        port = port.encode('ascii', 'ignore')
-                    except:
-                        port = ""
+                        port = int(port)
+                    except ValueError:
+                        try:
+                            port = port.encode('ascii', 'ignore')
+                        except:
+                            port = ""
+                else:
+                    #IPv6 address
+                    if ']' in host:
+                        #IPv6 address in brackets
+                        endBracket = host.index(']')
+                        try:
+                            #port explicitely indicated
+                            port = int(host[endBracket+2:])
+                        except ValueError:
+                            #no port after the bracket
+                            pass
+                        host = host[:endBracket+1]
+                    else:
+                        #IPv6 address with no port and no brackets
+                        #add brackets to correctly store IPv6 addresses in configs
+                        host = '[' + host + ']'
         return host, port
 
     def _checkForPortableFile(self):

@@ -16,6 +16,7 @@ ru = {
     "connection-failed-notification": "Не удалось подключиться к серверу",
     "connected-successful-notification": "Соединение с сервером установлено",
     "retrying-notification": "%s, следующая попытка через %d секунд(ы)...",  # Seconds
+    "handshake-successful-notification": "Connection established with {} ({})", # TODO: Translate
 
     "rewind-notification": "Перемотано из-за разницы во времени с {}",  # User
     "fastforward-notification": "Ускорено из-за разницы во времени с {}",  # User
