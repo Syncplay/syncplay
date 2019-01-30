@@ -1,15 +1,25 @@
 #!/usr/bin/env python3
 
+import distutils.command.install_scripts
 import setuptools
+import shutil
 import sys
 
 from syncplay import version as syncplay_version
+
+class install_script_renamer(distutils.command.install_scripts.install_scripts):
+    def run(self):
+        distutils.command.install_scripts.install_scripts.run(self)
+        for script in self.get_outputs():
+            if script.endswith(".py"):
+                shutil.move(script, script[:-3])
+
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="syncplay-distutil-test-2",
+    name="syncplay-distutil-test-3",
     version=syncplay_version,
     author="Syncplay",
     author_email="dev@syncplay.pl",
@@ -41,4 +51,5 @@ setuptools.setup(
         "Topic :: Internet",
         "Topic :: Multimedia :: Video"
     ],
+    cmdclass = {"install_scripts": install_script_renamer},
 )
