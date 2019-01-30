@@ -1,0 +1,6 @@
+include LICENSE
+include resources/*.png
+include resources/*.mng
+include resources/*.lua
+include resources/*.rtf
+include resources/lua/intf/*.lua
