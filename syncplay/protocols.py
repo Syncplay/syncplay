@@ -31,16 +31,21 @@ class JSONCommandProtocol(LineReceiver):
                 self.dropWithError(getMessage("unknown-command-server-error").format(message[1]))  # TODO: log, not drop
 
     def lineReceived(self, line):
-        line = line.decode('utf-8').strip()
+        try:
+            line = line.decode('utf-8').strip()
+        except UnicodeDecodeError:
+            self.dropWithError(getMessage("line-decode-server-error"))
+            return
         if not line:
             return
+        self.showDebugMessage("client/server << {}".format(line))
         try:
-            self.showDebugMessage("client/server << {}".format(line))
             messages = json.loads(line)
-        except:
+        except json.decoder.JSONDecodeError:
             self.dropWithError(getMessage("not-json-server-error").format(line))
             return
-        self.handleMessages(messages)
+        else:
+            self.handleMessages(messages)
 
     def sendMessage(self, dict_):
         line = json.dumps(dict_)

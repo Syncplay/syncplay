@@ -448,6 +448,7 @@ it = {
     # Server errors
     "unknown-command-server-error": "Comando non riconosciuto {}",  # message
     "not-json-server-error": "Non è una stringa in codifica JSON {}",  # message
+    "line-decode-server-error": "Not a utf-8 string", # TODO: Translate
     "not-known-server-error": "Devi essere autenticato dal server prima di poter inviare questo comando",
     "client-drop-server-error": "Il client è caduto: {} -- {}",  # host, error
     "password-required-server-error": "È richiesta una password",

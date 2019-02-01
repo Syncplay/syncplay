@@ -448,6 +448,7 @@ en = {
     # Server errors
     "unknown-command-server-error": "Unknown command {}",  # message
     "not-json-server-error": "Not a json encoded string {}",  # message
+    "line-decode-server-error": "Not a utf-8 string",
     "not-known-server-error": "You must be known to server before sending this command",
     "client-drop-server-error": "Client drop: {} -- {}",  # host, error
     "password-required-server-error": "Password required",

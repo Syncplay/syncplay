@@ -444,6 +444,7 @@ de = {
     # Server errors
     "unknown-command-server-error": "Unbekannter Befehl {}",  # message
     "not-json-server-error": "Kein JSON-String {}",  # message
+    "line-decode-server-error": "Not a utf-8 string",  # TODO: Translate
     "not-known-server-error": "Der Server muss dich kennen, bevor du diesen Befehl nutzen kannst",
     "client-drop-server-error": "Client verloren: {} -- {}",  # host, error
     "password-required-server-error": "Passwort nötig",

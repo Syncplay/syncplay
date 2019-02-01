@@ -450,6 +450,7 @@ ru = {
     # Server errors
     "unknown-command-server-error": "Неизвестная команда: {}",  # message
     "not-json-server-error": "Не является закодированной json-строкой: {}",  # message
+    "line-decode-server-error": "Not a utf-8 string", # TODO: Translate
     "not-known-server-error": "Данную команду могут выполнять только авторизованные пользователи.",
     "client-drop-server-error": "Клиент отключен с ошибкой: {} -- {}",  # host, error
     "password-required-server-error": "Необходимо указать пароль.",
