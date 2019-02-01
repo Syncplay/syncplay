@@ -516,7 +516,8 @@ class ConfigurationGetter(object):
             except ImportError:
                 try:
                     from twisted.trial import unittest
-                except:
+                except Exception as e:
+                    print(e)
                     print(getMessage("unable-import-twisted-error"))
                     sys.exit()
                 print(getMessage("unable-import-gui-error"))
