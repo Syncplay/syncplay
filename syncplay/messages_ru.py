@@ -94,7 +94,6 @@ ru = {
     "language-changed-msgbox-label": "Язык переключится при следующем запуске Syncplay.",
     "promptforupdate-label": "Вы не против, если Syncplay будет автоматически изредка проверять наличие обновлений?",
 
-    "vlc-version-mismatch": "Syncplay не поддерживает данную версию VLC. Syncplay поддерживает VLC {}+, но не VLC 3. Используйте другой проигрыватель.",  # VLC min version
     "vlc-interface-version-mismatch": "Вы используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (https://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",  # VLC interface version, VLC interface min version
     "vlc-interface-oldversion-warning": "Внимание: Syncplay обнаружил, что старая версия модуля интерфейса Syncplay для VLC уже установлена в директорию VLC. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (https://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
     "vlc-interface-not-installed": "Внимание: Модуль интерфейса Syncplay для VLC не обнаружен в директории VLC. По существу, если Вы используете VLC 2.0, то VLC будет использовать модуль syncplay.lua из директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (https://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
@@ -135,7 +134,6 @@ ru = {
     "vlc-failed-connection": "Ошибка подключения к VLC. Если у Вас не установлен syncplay.lua, то обратитесь к https://syncplay.pl/LUA/ за инструкциями.",
     "vlc-failed-noscript": "VLC сообщает, что скрипт интерфейса syncplay.lua не установлен. Пожалуйста, обратитесь к https://syncplay.pl/LUA/ за инструкциями.",
     "vlc-failed-versioncheck": "Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
-    "vlc-failed-other": "Во время загрузки скрипта интерфейса syncplay.lua в VLC произошла следующая ошибка: {}",  # Syncplay Error
 
     "feature-sharedPlaylists": "shared playlists",  # used for not-supported-by-server-error # TODO: Translate
     "feature-chat": "chat",  # used for not-supported-by-server-error # TODO: Translate
@@ -464,7 +462,7 @@ ru = {
     "cannot-add-unsafe-path-error": "Не удалось автоматически переключиться на {}, потому что ссылка не соответствует доверенным сайтам. Её можно включить вручную, дважны кливнув по ссылке в списке воспроизведения. Добавить доверенный сайт можно в выпадающем меню 'Дополнительно' или просто кликнув по ссылке правой кнопкой мыши.",  # Filename
     "sharedplaylistenabled-label": "Включить общий список воспроизведения",
     "removefromplaylist-menu-label": "Удалить",
-    "shufflepremaininglaylist-menu-label": "Shuffle remaining playlist",  # Was: Перемешать список # TODO: Translate
+    "shuffleremainingplaylist-menu-label": "Shuffle remaining playlist",  # Was: Перемешать список # TODO: Translate
     "shuffleentireplaylist-menu-label": "Shuffle entire playlist",  # TODO: Translate
     "undoplaylist-menu-label": "Отменить последнее действие",
     "addfilestoplaylist-menu-label": "Добавить файлы в очередь",
