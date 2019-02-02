@@ -356,7 +356,6 @@ class VlcPlayer(BasePlayer):
                                 else:
                                     self.oldIntfVersion = line[26:31]
                                     return False
-                playerController._client.ui.showErrorMessage(getMessage("vlc-interface-not-installed"))
                 return False
             if isLinux():
                 playerController.vlcIntfPath = "/usr/lib/vlc/lua/intf/"
@@ -374,9 +373,14 @@ class VlcPlayer(BasePlayer):
                 playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('APPDATA', '.'), "VLC\\lua\\intf\\")
             playerController.vlcModulePath = playerController.vlcIntfPath + "modules/?.luac"
-            if _usevlcintf(playerController.vlcIntfPath, playerController.vlcIntfUserPath):
-                playerController.SLAVE_ARGS.append(
-                    '--lua-config=syncplay={{port=\"{}\"}}'.format(str(playerController.vlcport)))
+            try:
+                copyForm = utils.findResourcePath("syncplay.lua")
+                copyTo = os.path.join(playerController.vlcIntfUserPath, "syncplay.lua")
+                self.__playerController._client.ui.showDebugMessage("Copying VLC Lua Interface from '{}' to '{}'".format(copyForm, copyTo))
+                import shutil
+                shutil.copyfile(copyForm, copyTo)
+            except Exception as e:
+                playerController._client.ui.showErrorMessage(e)
             else:
                 if isLinux():
                     playerController.vlcDataPath = "/usr/lib/syncplay/resources"
@@ -395,49 +399,43 @@ class VlcPlayer(BasePlayer):
             self._vlcclosed = vlcClosed
             self._vlcVersion = None
 
-            if self.oldIntfVersion:
-                self.__playerController.drop(
-                    getMessage("vlc-interface-version-mismatch").format(
-                        self.oldIntfVersion, constants.VLC_INTERFACE_MIN_VERSION))
-
+            if isWindows() and getattr(sys, 'frozen', '') and getattr(sys, '_MEIPASS', '') is not None:  # Needed for pyinstaller --onefile bundle
+                self.__process = subprocess.Popen(
+                    call, stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
+                    shell=False, creationflags=0x08000000)
             else:
-                if isWindows() and getattr(sys, 'frozen', '') and getattr(sys, '_MEIPASS', '') is not None:  # Needed for pyinstaller --onefile bundle
-                    self.__process = subprocess.Popen(
-                        call, stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
-                        shell=False, creationflags=0x08000000)
-                else:
-                    self.__process = subprocess.Popen(call, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                self.timeVLCLaunched = time.time()
-                if self._shouldListenForSTDOUT():
-                    for line in iter(self.__process.stderr.readline, ''):
-                        line = line.decode('utf-8')
-                        self.vlcHasResponded = True
-                        self.timeVLCLaunched = None
-                        if "[syncplay]" in line:
-                            if "Listening on host" in line:
-                                break
-                            if "Hosting Syncplay" in line:
-                                break
-                            elif "Couldn't find lua interface" in line:
-                                playerController._client.ui.showErrorMessage(
-                                    getMessage("vlc-failed-noscript").format(line), True)
-                                break
-                            elif "lua interface error" in line:
-                                playerController._client.ui.showErrorMessage(
-                                    getMessage("media-player-error").format(line), True)
-                                break
-                if not isMacOS():
-                    self.__process.stderr = None
-                else:
-                    vlcoutputthread = threading.Thread(target=self.handle_vlcoutput, args=())
-                    vlcoutputthread.setDaemon(True)
-                    vlcoutputthread.start()
-                threading.Thread.__init__(self, name="VLC Listener")
-                asynchat.async_chat.__init__(self)
-                self.set_terminator(b'\n')
-                self._ibuffer = []
-                self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-                self._sendingData = threading.Lock()
+                self.__process = subprocess.Popen(call, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            self.timeVLCLaunched = time.time()
+            if self._shouldListenForSTDOUT():
+                for line in iter(self.__process.stderr.readline, ''):
+                    line = line.decode('utf-8')
+                    self.vlcHasResponded = True
+                    self.timeVLCLaunched = None
+                    if "[syncplay]" in line:
+                        if "Listening on host" in line:
+                            break
+                        if "Hosting Syncplay" in line:
+                            break
+                        elif "Couldn't find lua interface" in line:
+                            playerController._client.ui.showErrorMessage(
+                                getMessage("vlc-failed-noscript").format(line), True)
+                            break
+                        elif "lua interface error" in line:
+                            playerController._client.ui.showErrorMessage(
+                                getMessage("media-player-error").format(line), True)
+                            break
+            if not isMacOS():
+                self.__process.stderr = None
+            else:
+                vlcoutputthread = threading.Thread(target=self.handle_vlcoutput, args=())
+                vlcoutputthread.setDaemon(True)
+                vlcoutputthread.start()
+            threading.Thread.__init__(self, name="VLC Listener")
+            asynchat.async_chat.__init__(self)
+            self.set_terminator(b'\n')
+            self._ibuffer = []
+            self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
+            self._sendingData = threading.Lock()
 
         def _shouldListenForSTDOUT(self):
             return not isWindows()

@@ -39,7 +39,6 @@ files = [
 # Symlinks to create
 symlinks = {
     'Applications': '/Applications',
-    'Install for VLC': '.macos_vlc_install.command',
     'Read Me': '.macOS_readme.pdf'
 }
 

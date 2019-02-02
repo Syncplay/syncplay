@@ -17,13 +17,7 @@
 
  === Installation instructions ===
 
-Place the syncplay.lua file in the main (all user) VLC /lua/intf/ sub-directory:
-* Window: %ProgramFiles%\VideoLAN\VLC\lua\intf\
-* Linux: /usr/lib/vlc/lua/intf/ or /usr/lib64/vlc/lua/intf/ or /usr/lib/x86_64-linux-gnu/vlc/lua/intf on some systems (look for where the .luac files are)
-* Mac OS X: /Applications/VLC.app/Contents/MacOS/share/lua/intf/
-* FreeBSD, OpenBSD etc.: /usr/local/lib/vlc/lua/intf/
-
-You may also need to re-copy the syncplay.lua file when you update VLC.
+Syncplay should install this automatically to your user folder.
 
  === Commands and responses ===
  = Note: ? denotes optional responses; * denotes mandatory response; uses \n terminator.

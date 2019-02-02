@@ -1,9 +1,5 @@
 SINGLE_USER	= false
 
-ifndef VLC_SUPPORT
-	VLC_SUPPORT = true
-endif
-
 ifeq ($(shell uname)),FreeBSD)
 	BSD          = true
 endif
@@ -68,13 +64,6 @@ client:
 
 ifeq ($(SINGLE_USER),false)
 	chmod 755 $(APP_SHORTCUT_PATH)/syncplay.desktop
-endif
-	
-ifeq ($(VLC_SUPPORT),true)
-	-mkdir -p ${DESTDIR}$(VLC_LIB_PATH)/vlc/lua/intf/
-	cp resources/lua/intf/syncplay.lua ${DESTDIR}$(VLC_LIB_PATH)/vlc/lua/intf/
-	-mkdir -p ${DESTDIR}$(VLC_LIB_PATH64)/vlc/lua/intf/
-	cp resources/lua/intf/syncplay.lua ${DESTDIR}$(VLC_LIB_PATH64)/vlc/lua/intf/
 endif
 
 u-client:

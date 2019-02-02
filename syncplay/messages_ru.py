@@ -94,9 +94,6 @@ ru = {
     "language-changed-msgbox-label": "Язык переключится при следующем запуске Syncplay.",
     "promptforupdate-label": "Вы не против, если Syncplay будет автоматически изредка проверять наличие обновлений?",
 
-    "vlc-interface-version-mismatch": "Вы используете модуль интерфейса Syncplay устаревшей версии {} для VLC. К сожалению, Syncplay способен работать с версией {} и выше. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (https://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",  # VLC interface version, VLC interface min version
-    "vlc-interface-oldversion-warning": "Внимание: Syncplay обнаружил, что старая версия модуля интерфейса Syncplay для VLC уже установлена в директорию VLC. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (https://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
-    "vlc-interface-not-installed": "Внимание: Модуль интерфейса Syncplay для VLC не обнаружен в директории VLC. По существу, если Вы используете VLC 2.0, то VLC будет использовать модуль syncplay.lua из директории Syncplay, но в таком случае другие пользовательские скрипты и расширения интерфейса не будут работать. Пожалуйста, обратитесь к Руководству Пользователя Syncplay (https://syncplay.pl/guide/) за инструкциями о том, как установить syncplay.lua.",
     "media-player-latency-warning": "Внимание: У Вашего проигрывателя слишком большой отклик ({} секунд). Если Вы замечаете проблемы с синхронизацией, то закройте ресурсоемкие приложения. Если это не помогло - попробуйте другой проигрыватель.",  # Seconds to respond
     "mpv-unresponsive-error": "mpv не отвечает {} секунд, по-видимому, произошел сбой. Пожалуйста, перезапустите Syncplay.",  # Seconds to respond
 
