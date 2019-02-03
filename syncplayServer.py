@@ -31,8 +31,7 @@ if __name__ == '__main__':
         args.disable_chat,
         args.max_chat_message_length,
         args.max_username_length,
-        args.stats_db_file,
-        args.tls
+        args.stats_db_file
     )
     endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))
     endpoint4.listen(factory)
