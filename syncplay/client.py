@@ -14,6 +14,7 @@ from functools import wraps
 
 from twisted.internet.endpoints import HostnameEndpoint, wrapClientTLS
 from twisted.internet.protocol import ClientFactory
+from twisted.internet.ssl import Certificate, optionsForClientTLS
 from twisted.internet import reactor, task, defer, threads
 from twisted.application.internet import ClientService
 
@@ -713,13 +714,11 @@ class SyncplayClient(object):
         if '[' in host:
             host = host.strip('[]')
         port = int(port)
-        self._endpoint = HostnameEndpoint(reactor, host, port)
-        try:
-            self.protocolFactory.options = optionsForClientTLS(hostname=host)
-            self._clientSupportsTLS = True
-        except Exception as e:
-            self.protocolFactory.options = None
-            self._clientSupportsTLS = False
+        with open('server.crt') as cert_file:
+            trust_root = Certificate.loadPEM(cert_file.read())
+        self._wrapped = HostnameEndpoint(reactor, host, port)
+        self._contextFactory = optionsForClientTLS(hostname=host, trustRoot=trust_root)
+        self._endpoint = wrapClientTLS(self._contextFactory, self._wrapped)
 
         def retry(retries):
             self._lastGlobalUpdate = None
