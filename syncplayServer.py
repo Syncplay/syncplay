@@ -15,7 +15,7 @@ except AttributeError:
 
 from OpenSSL import crypto
 from twisted.internet import reactor, ssl
-from twisted.internet.endpoints import SSL4ServerEndpoint, TCP6ServerEndpoint
+from twisted.internet.endpoints import SSL4ServerEndpoint
 
 from syncplay.server import SyncFactory, ConfigurationGetter
 
@@ -39,8 +39,8 @@ if __name__ == '__main__':
         args.max_username_length,
         args.stats_db_file
     )
-    endpoint4 = SSL4ServerEndpoint(reactor, int(args.port), certificate)
+    endpoint4 = SSL4ServerEndpoint(reactor, int(args.port), certificate, interface='0.0.0.0')
     endpoint4.listen(factory)
-    #endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))
-    #endpoint6.listen(factory)
+    endpoint6 = SSL4ServerEndpoint(reactor, int(args.port), certificate, interface='::')
+    endpoint6.listen(factory)
     reactor.run()
