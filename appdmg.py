@@ -31,8 +31,6 @@ size = defines.get('size', None)
 # Files to include
 files = [
     application,
-    'resources/lua/intf/.syncplay.lua',
-    'resources/.macos_vlc_install.command',
     'resources/.macOS_readme.pdf'
 ]
 

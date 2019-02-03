@@ -33,8 +33,6 @@ install:
 before_deploy:
 - pip3 install dmgbuild
 - mkdir dist_dmg
-- mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
-- mv resources/lua/intf/syncplay.lua resources/lua/intf/.syncplay.lua
 - mv resources/macOS_readme.pdf resources/.macOS_readme.pdf
 - export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
 - dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}.dmg
