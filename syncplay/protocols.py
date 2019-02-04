@@ -316,10 +316,12 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def handleTLS(self, message):
         answer = message["startTLS"] if "startTLS" in message else None
-        if "true" in answer and not self.logged:
+        if "true" in answer and not self.logged and self._client.protocolFactory.options is not None:
             self.transport.startTLS(self._client.protocolFactory.options)
             self._client.ui.showMessage("Secure connection established")
-            self.sendHello()
+        elif "false" in answer:
+            self._client.ui.showErrorMessage("This server does not support TLS")
+        self.sendHello()
 
 class SyncServerProtocol(JSONCommandProtocol):
     def __init__(self, factory):
@@ -626,9 +628,12 @@ class SyncServerProtocol(JSONCommandProtocol):
 
     def handleTLS(self, message):
         inquiry = message["startTLS"] if "startTLS" in message else None
-        if "send" in inquiry and not self.isLogged():
-            self.sendTLS({"startTLS": "true"})
-            self.transport.startTLS(self._factory.options)
+        if "send" in inquiry:
+            if not self.isLogged() and self._factory.options is not None:
+                self.sendTLS({"startTLS": "true"})
+                self.transport.startTLS(self._factory.options)
+            else:
+                self.sendTLS({"startTLS": "false"})
 
 
 class PingService(object):
