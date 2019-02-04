@@ -27,7 +27,7 @@ from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomString
 class SyncFactory(Factory):
     def __init__(self, port='', password='', motdFilePath=None, isolateRooms=False, salt=None,
                  disableReady=False, disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH,
-                 maxUsernameLength=constants.MAX_USERNAME_LENGTH, statsDbFile=None, tlsCertPath=None):
+                 maxUsernameLength=constants.MAX_USERNAME_LENGTH, statsDbFile=None, tlsCert=None):
         self.isolateRooms = isolateRooms
         print(getMessage("welcome-server-notification").format(syncplay.version))
         self.port = port
@@ -56,8 +56,15 @@ class SyncFactory(Factory):
         else:
             self._statsDbHandle = None
         self.options = None
-        if tlsCertPath is not None:
-            self._allowTLSconnections(tlsCertPath)
+        if tlsCert is not None:
+            try:
+                with open(tlsCert) as f:
+                    certData = f.read()
+                cert = ssl.PrivateCertificate.loadPEM(certData).options()
+                self.options = cert
+            except Exception as e:
+	            print(e)
+	            print("Cannot import certificate. TLS support not enabled.")
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
@@ -655,4 +662,4 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength', type=int, nargs='?', help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
         self._argparser.add_argument('--max-username-length', metavar='maxUsernameLength', type=int, nargs='?', help=getMessage("server-maxusernamelength-argument").format(constants.MAX_USERNAME_LENGTH))
         self._argparser.add_argument('--stats-db-file', metavar='file', type=str, nargs='?', help=getMessage("server-stats-db-file-argument"))
-        self._argparser.add_argument('--tls', metavar='path', type=str, nargs='?', help=getMessage("server-startTLS-argument"))
+        self._argparser.add_argument('--tls', metavar='file', type=str, nargs='?', help=getMessage("server-tls-argument"))

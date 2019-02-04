@@ -14,15 +14,10 @@ except AttributeError:
     warnings.warn("You must run Syncplay with Python 3.4 or newer!")
 
 from OpenSSL import crypto
-from twisted.internet import reactor, ssl
+from twisted.internet import reactor
 from twisted.internet.endpoints import TCP4ServerEndpoint, TCP6ServerEndpoint
 
 from syncplay.server import SyncFactory, ConfigurationGetter
-
-with open('cert/server.pem') as f:
-    certData = f.read()
-
-cert = ssl.PrivateCertificate.loadPEM(certData).options()
 
 if __name__ == '__main__':
     argsGetter = ConfigurationGetter()
@@ -37,9 +32,9 @@ if __name__ == '__main__':
         args.disable_chat,
         args.max_chat_message_length,
         args.max_username_length,
-        args.stats_db_file
+        args.stats_db_file,
+        args.tls
     )
-    factory.options = cert
     endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))
     endpoint4.listen(factory)
     endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))

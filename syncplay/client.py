@@ -718,7 +718,6 @@ class SyncplayClient(object):
             trust_root = Certificate.loadPEM(cert_file.read())
         self._endpoint = HostnameEndpoint(reactor, host, port)
         self.protocolFactory.options = optionsForClientTLS(hostname=host, trustRoot = trust_root)
-        
 
         def retry(retries):
             self._lastGlobalUpdate = None
