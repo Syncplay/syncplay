@@ -77,15 +77,10 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def connectionMade(self):
         self._client.initProtocol(self)
-        if self._client._clientSupportsTLS:
-            if self._client._serverSupportsTLS:
-                self.sendTLS({"startTLS": "send"})
-                self._client.ui.showMessage(getMessage("startTLS-initiated"))
-            else:
-                self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-server"))
-                self.sendHello()
+        if self._client._serverSupportsTLS:
+            self.sendTLS({"startTLS": "send"})
+            self._client.ui.showMessage("Attempting secure connection")
         else:
-            self._client.ui.showMessage(getMessage("startTLS-not-supported-client"))
             self.sendHello()
 
     def connectionLost(self, reason):
@@ -320,6 +315,7 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def handleError(self, error):
         if "startTLS" in error["message"] and not self.logged:
+            self._client.ui.showErrorMessage("This server does not support TLS")
             self._client._serverSupportsTLS = False
         else:
             self.dropWithError(error["message"])
@@ -332,25 +328,10 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def handleTLS(self, message):
         answer = message["startTLS"] if "startTLS" in message else None
-        if "true" in answer and not self.logged and self._client.protocolFactory.options is not None:
+        if "true" in answer and not self.logged:
             self.transport.startTLS(self._client.protocolFactory.options)
-        elif "false" in answer:
-            self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-server"))
-        self.sendHello()
-
-    def handshakeCompleted(self):
-        self._serverCertificateTLS = self.transport.getPeerCertificate()
-        self._subjectTLS = self._serverCertificateTLS.get_subject().CN
-        self._issuerTLS = self._serverCertificateTLS.get_issuer().CN
-        self._expiredTLS =self._serverCertificateTLS.has_expired()
-        self._expireDateTLS = self._serverCertificateTLS.get_notAfter()
-
-        self._encryptedConnectionTLS = self.transport.protocol._tlsConnection
-        self._connVersionTLS = self._encryptedConnectionTLS.get_protocol_version_name()
-        self._cipherNameTLS = self._encryptedConnectionTLS.get_cipher_name()
-
-        self._client.ui.showMessage(getMessage("startTLS-secure-connection-ok").format(self._connVersionTLS))
-
+            self._client.ui.showMessage("Secure connection established")
+            self.sendHello()
 
 class SyncServerProtocol(JSONCommandProtocol):
     def __init__(self, factory):
@@ -657,12 +638,9 @@ class SyncServerProtocol(JSONCommandProtocol):
 
     def handleTLS(self, message):
         inquiry = message["startTLS"] if "startTLS" in message else None
-        if "send" in inquiry:
-            if not self.isLogged() and self._factory.options is not None:
-                self.sendTLS({"startTLS": "true"})
-                self.transport.startTLS(self._factory.options)
-            else:
-                self.sendTLS({"startTLS": "false"})
+        if "send" in inquiry and not self.isLogged():
+            self.sendTLS({"startTLS": "true"})
+            self.transport.startTLS(self._factory.options)
 
 
 class PingService(object):

@@ -714,11 +714,11 @@ class SyncplayClient(object):
         if '[' in host:
             host = host.strip('[]')
         port = int(port)
-        with open('server.crt') as cert_file:
+        with open('cert/server.crt') as cert_file:
             trust_root = Certificate.loadPEM(cert_file.read())
-        self._wrapped = HostnameEndpoint(reactor, host, port)
-        self._contextFactory = optionsForClientTLS(hostname=host, trustRoot=trust_root)
-        self._endpoint = wrapClientTLS(self._contextFactory, self._wrapped)
+        self._endpoint = HostnameEndpoint(reactor, host, port)
+        self.protocolFactory.options = optionsForClientTLS(hostname=host, trustRoot = trust_root)
+        
 
         def retry(retries):
             self._lastGlobalUpdate = None
