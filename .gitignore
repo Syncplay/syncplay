@@ -5,6 +5,7 @@ venv
 
 /SyncPlay.egg-info
 /build
+/cert
 /dist
 /syncplay v*
 /syncplay_v*

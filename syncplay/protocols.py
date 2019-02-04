@@ -27,6 +27,8 @@ class JSONCommandProtocol(LineReceiver):
                 self.handleError(message[1])
             elif command == "Chat":
                 self.handleChat(message[1])
+            elif command == "TLS":
+                self.handleTLS(message[1])
             else:
                 self.dropWithError(getMessage("unknown-command-server-error").format(message[1]))  # TODO: log, not drop
 
@@ -72,7 +74,11 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def connectionMade(self):
         self._client.initProtocol(self)
-        self.sendHello()
+        if self._client._serverSupportsTLS:
+            self.sendTLS({"startTLS": "send"})
+            self._client.ui.showMessage("Attempting secure connection")
+        else:
+            self.sendHello()
 
     def connectionLost(self, reason):
         self._client.destroyProtocol()
@@ -296,11 +302,24 @@ class SyncClientProtocol(JSONCommandProtocol):
         })
 
     def handleError(self, error):
-        self.dropWithError(error["message"])
+        if "startTLS" in error["message"] and not self.logged:
+            self._client.ui.showErrorMessage("This server does not support TLS")
+            self._client._serverSupportsTLS = False
+        else:
+            self.dropWithError(error["message"])
 
     def sendError(self, message):
         self.sendMessage({"Error": {"message": message}})
 
+    def sendTLS(self, message):
+        self.sendMessage({"TLS": message})
+
+    def handleTLS(self, message):
+        answer = message["startTLS"] if "startTLS" in message else None
+        if "true" in answer and not self.logged:
+            self.transport.startTLS(self._client.protocolFactory.options)
+            self._client.ui.showMessage("Secure connection established")
+            self.sendHello()
 
 class SyncServerProtocol(JSONCommandProtocol):
     def __init__(self, factory):
@@ -601,6 +620,15 @@ class SyncServerProtocol(JSONCommandProtocol):
 
     def sendError(self, message):
         self.sendMessage({"Error": {"message": message}})
+
+    def sendTLS(self, message):
+        self.sendMessage({"TLS": message})
+
+    def handleTLS(self, message):
+        inquiry = message["startTLS"] if "startTLS" in message else None
+        if "send" in inquiry and not self.isLogged():
+            self.sendTLS({"startTLS": "true"})
+            self.transport.startTLS(self._factory.options)
 
 
 class PingService(object):

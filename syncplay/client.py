@@ -108,6 +108,8 @@ class SyncplayClient(object):
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         self.fileSwitch = FileSwitchManager(self)
         self.playlist = SyncplayPlaylist(self)
+        
+        self._serverSupportsTLS = True
 
         if constants.LIST_RELATIVE_CONFIGS and 'loadedRelativePaths' in self._config and self._config['loadedRelativePaths']:
             paths = "; ".join(self._config['loadedRelativePaths'])
@@ -704,11 +706,11 @@ class SyncplayClient(object):
         if '[' in host:
             host = host.strip('[]')
         port = int(port)
-        with open('server.crt') as cert_file:
+        with open('cert/server.crt') as cert_file:
             trust_root = Certificate.loadPEM(cert_file.read())
-        self._wrapped = HostnameEndpoint(reactor, host, port)
-        self._contextFactory = optionsForClientTLS(hostname=host, trustRoot=trust_root)
-        self._endpoint = wrapClientTLS(self._contextFactory, self._wrapped)
+        self._endpoint = HostnameEndpoint(reactor, host, port)
+        self.protocolFactory.options = optionsForClientTLS(hostname=host, trustRoot = trust_root)
+        
 
         def retry(retries):
             self._lastGlobalUpdate = None
