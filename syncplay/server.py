@@ -5,6 +5,7 @@ import os
 import random
 import time
 from string import Template
+from OpenSSL import crypto
 
 from twisted.enterprise import adbapi
 from twisted.internet import task, reactor, ssl
@@ -27,7 +28,7 @@ from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomString
 class SyncFactory(Factory):
     def __init__(self, port='', password='', motdFilePath=None, isolateRooms=False, salt=None,
                  disableReady=False, disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH,
-                 maxUsernameLength=constants.MAX_USERNAME_LENGTH, statsDbFile=None, tlsCert=None):
+                 maxUsernameLength=constants.MAX_USERNAME_LENGTH, statsDbFile=None, tlsCertPath=None):
         self.isolateRooms = isolateRooms
         print(getMessage("welcome-server-notification").format(syncplay.version))
         self.port = port
@@ -56,12 +57,18 @@ class SyncFactory(Factory):
         else:
             self._statsDbHandle = None
         self.options = None
-        if tlsCert is not None:
+        if tlsCertPath is not None:
             try:
-                with open(tlsCert) as f:
-                    certData = f.read()
-                cert = ssl.PrivateCertificate.loadPEM(certData).options()
-                self.options = cert
+                privkey=open(tlsCertPath+'/privkey.pem', 'rt').read()
+                certif=open(tlsCertPath+'/cert.pem', 'rt').read()
+                chain=open(tlsCertPath+'/chain.pem', 'rt').read()
+
+                privkeypyssl=crypto.load_privatekey(crypto.FILETYPE_PEM,privkey)
+                certifpyssl=crypto.load_certificate(crypto.FILETYPE_PEM,certif)
+                chainpyssl=[crypto.load_certificate(crypto.FILETYPE_PEM,chain)]
+
+                contextFactory=ssl.CertificateOptions(privateKey=privkeypyssl,certificate=certifpyssl,extraCertChain=chainpyssl)
+                self.options = contextFactory
             except Exception as e:
 	            print(e)
 	            print("Cannot import certificate. TLS support not enabled.")
