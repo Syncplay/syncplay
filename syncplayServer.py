@@ -13,7 +13,6 @@ except AttributeError:
     import warnings
     warnings.warn("You must run Syncplay with Python 3.4 or newer!")
 
-from OpenSSL import crypto
 from twisted.internet import reactor
 from twisted.internet.endpoints import TCP4ServerEndpoint, TCP6ServerEndpoint
 
