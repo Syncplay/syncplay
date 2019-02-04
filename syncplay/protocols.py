@@ -88,6 +88,8 @@ class SyncClientProtocol(JSONCommandProtocol):
         try:
             if "Invalid DNS-ID" in str(reason.value):
                 self._client._serverSupportsTLS = False
+            elif "certificate verify failed" in str(reason.value):
+                self._client._serverSupportsTLS = False
         except:
             pass
         self._client.destroyProtocol()
