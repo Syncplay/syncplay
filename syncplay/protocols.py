@@ -76,9 +76,9 @@ class SyncClientProtocol(JSONCommandProtocol):
         self._client.initProtocol(self)
         if self._client._serverSupportsTLS:
             self.sendTLS({"startTLS": "send"})
-            self._client.ui.showMessage("Attempting secure connection")
+            self._client.ui.showMessage(getMessage("startTLS-initiated"))
         else:
-            self._client.ui.showErrorMessage("TLS is not supported")
+            self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-client"))
             self.sendHello()
 
     def connectionLost(self, reason):
@@ -325,9 +325,9 @@ class SyncClientProtocol(JSONCommandProtocol):
         answer = message["startTLS"] if "startTLS" in message else None
         if "true" in answer and not self.logged and self._client.protocolFactory.options is not None:
             self.transport.startTLS(self._client.protocolFactory.options)
-            self._client.ui.showMessage("Secure connection established")
+            self._client.ui.showMessage(getMessage("startTLS-secure-connection-ok"))
         elif "false" in answer:
-            self._client.ui.showErrorMessage("This server does not support TLS")
+            self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-server"))
         self.sendHello()
 
 class SyncServerProtocol(JSONCommandProtocol):

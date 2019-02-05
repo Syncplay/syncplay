@@ -312,6 +312,11 @@ it = {
     "userguide-menu-label": "Apri guida &utente",
     "update-menu-label": "Controlla la presenza di &aggiornamenti",
 
+    "startTLS-initiated": "Tentativo di connessione sicura in corso",
+    "startTLS-secure-connection-ok": "Connessione sicura stabilita",
+    "startTLS-not-supported-client": "TLS non è supportato",
+    "startTLS-not-supported-server": "Questo server non supporta TLS",
+
     # About dialog
     "about-menu-label": "&Informazioni su Syncplay",
     "about-dialog-title": "Informazioni su Syncplay",
@@ -439,6 +444,7 @@ it = {
     "server-chat-maxchars-argument": "Numero massimo di caratteri in un messaggio di chat (default è {})", # Default number of characters
     "server-maxusernamelength-argument": "Numero massimo di caratteri in un nome utente (default è {})",
     "server-stats-db-file-argument": "Abilita la raccolta dei dati statistici nel file SQLite indicato",
+    "server-startTLS-argument": "Abilita il protocollo TLS usando i certificati contenuti nel percorso indicato",
     "server-messed-up-motd-unescaped-placeholders": "Il messaggio del giorno ha dei caratteri non 'escaped'. Tutti i simboli $ devono essere doppi ($$).",
     "server-messed-up-motd-too-long": "Il messaggio del giorno è troppo lungo - numero massimo di caratteri è {}, {} trovati.",
 

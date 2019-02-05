@@ -312,6 +312,11 @@ en = {
     "userguide-menu-label": "Open user &guide",
     "update-menu-label": "Check for &update",
 
+    "startTLS-initiated": "Attempting secure connection",
+    "startTLS-secure-connection-ok": "Secure connection established",
+    "startTLS-not-supported-client": "TLS is not supported",
+    "startTLS-not-supported-server": "This server does not support TLS",
+
     # About dialog
     "about-menu-label": "&About Syncplay",
     "about-dialog-title": "About Syncplay",
@@ -439,7 +444,7 @@ en = {
     "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})", # Default number of characters
     "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})",
     "server-stats-db-file-argument": "Enable server stats using the SQLite db file provided",
-    "server-tls-argument": "Enable TLS connections using the certificate file provided",
+    "server-startTLS-argument": "Enable TLS connections using the certificate files in the path provided",
     "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
     "server-messed-up-motd-too-long": "Message of the Day is too long - maximum of {} chars, {} given.",
 

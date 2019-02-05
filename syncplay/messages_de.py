@@ -310,6 +310,12 @@ de = {
     "userguide-menu-label": "&Benutzerhandbuch öffnen",
     "update-menu-label": "auf &Aktualisierung prüfen",
 
+    # startTLS messages - TODO: Translate
+    "startTLS-initiated": "Attempting secure connection",
+    "startTLS-secure-connection-ok": "Secure connection established",
+    "startTLS-not-supported-client": "TLS is not supported",
+    "startTLS-not-supported-server": "This server does not support TLS",
+
     # About dialog - TODO: Translate
     "about-menu-label": "&About Syncplay",
     "about-dialog-title": "About Syncplay",
@@ -438,6 +444,7 @@ de = {
     "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})",  # TODO: Translate
     "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})", # TODO: Translate
     "server-stats-db-file-argument": "Enable server stats using the SQLite db file provided", # TODO: Translate
+    "server-startTLS-argument": "Enable TLS connections using the certificate files in the path provided", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders": "Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
     "server-messed-up-motd-too-long": "Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
 
