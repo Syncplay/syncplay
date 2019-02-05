@@ -716,9 +716,10 @@ class SyncplayClient(object):
         self._endpoint = HostnameEndpoint(reactor, host, port)
         try:
             self.protocolFactory.options = optionsForClientTLS(hostname=host)
+            self._clientSupportsTLS = True
         except Exception as e:
             self.protocolFactory.options = None
-            self._serverSupportsTLS = False
+            self._clientSupportsTLS = False
 
         def retry(retries):
             self._lastGlobalUpdate = None
