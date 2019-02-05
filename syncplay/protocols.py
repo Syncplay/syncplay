@@ -325,7 +325,8 @@ class SyncClientProtocol(JSONCommandProtocol):
         answer = message["startTLS"] if "startTLS" in message else None
         if "true" in answer and not self.logged and self._client.protocolFactory.options is not None:
             self.transport.startTLS(self._client.protocolFactory.options)
-            self._client.ui.showMessage(getMessage("startTLS-secure-connection-ok"))
+            TLSConnVersion = self.transport.protocol._tlsConnection.get_protocol_version_name()
+            self._client.ui.showMessage(getMessage("startTLS-secure-connection-ok").format(TLSConnVersion))
         elif "false" in answer:
             self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-server"))
         self.sendHello()
