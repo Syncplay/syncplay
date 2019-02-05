@@ -5,7 +5,6 @@ import os
 import random
 import time
 from string import Template
-from OpenSSL import crypto
 
 from twisted.enterprise import adbapi
 from twisted.internet import task, reactor, ssl
@@ -14,7 +13,6 @@ from twisted.internet.protocol import Factory
 try:
     from OpenSSL import crypto
     from twisted.internet import ssl
-    from twisted.python.filepath import FilePath
 except:
     pass
 
@@ -219,7 +217,7 @@ class SyncFactory(Factory):
             self.options = contextFactory
         except Exception as e:
             print(e)
-            print("Cannot import certificates. TLS support not enabled.")
+            print("TLS support is not enabled.")
 
 
 class StatsRecorder(object):
