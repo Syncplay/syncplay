@@ -1,7 +1,9 @@
 
 import ast
+import certifi
 import collections
 import hashlib
+import os
 import os.path
 import random
 import re
@@ -23,6 +25,8 @@ from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
 from syncplay.messages import getMissingStrings, getMessage
 from syncplay.protocols import SyncClientProtocol
 from syncplay.utils import isMacOS
+
+os.environ['SSL_CERT_FILE'] = certifi.where()
 
 
 class SyncClientFactory(ClientFactory):
@@ -708,9 +712,7 @@ class SyncplayClient(object):
         port = int(port)
         self._endpoint = HostnameEndpoint(reactor, host, port)
         try:
-            with open('cert/server.crt') as cert_file:
-                trust_root = Certificate.loadPEM(cert_file.read())
-            self.protocolFactory.options = optionsForClientTLS(hostname=host, trustRoot = trust_root)
+            self.protocolFactory.options = optionsForClientTLS(hostname=host)
         except Exception as e:
             self.protocolFactory.options = None
             self._serverSupportsTLS = False
