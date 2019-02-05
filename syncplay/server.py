@@ -58,20 +58,7 @@ class SyncFactory(Factory):
             self._statsDbHandle = None
         self.options = None
         if tlsCertPath is not None:
-            try:
-                privkey=open(tlsCertPath+'/privkey.pem', 'rt').read()
-                certif=open(tlsCertPath+'/cert.pem', 'rt').read()
-                chain=open(tlsCertPath+'/chain.pem', 'rt').read()
-
-                privkeypyssl=crypto.load_privatekey(crypto.FILETYPE_PEM,privkey)
-                certifpyssl=crypto.load_certificate(crypto.FILETYPE_PEM,certif)
-                chainpyssl=[crypto.load_certificate(crypto.FILETYPE_PEM,chain)]
-
-                contextFactory=ssl.CertificateOptions(privateKey=privkeypyssl,certificate=certifpyssl,extraCertChain=chainpyssl)
-                self.options = contextFactory
-            except Exception as e:
-	            print(e)
-	            print("Cannot import certificate. TLS support not enabled.")
+            self._allowTLSconnections(tlsCertPath)
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
@@ -218,7 +205,7 @@ class SyncFactory(Factory):
         else:
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
 
-    def _allowTLSconnections(self, path):
+    def _allowTLSconnections(path):
         try:
             privkey = open(path+'/privkey.pem', 'rt').read()
             certif = open(path+'/cert.pem', 'rt').read()
@@ -228,16 +215,11 @@ class SyncFactory(Factory):
             certifpyssl = crypto.load_certificate(crypto.FILETYPE_PEM, certif)
             chainpyssl = [crypto.load_certificate(crypto.FILETYPE_PEM, chain)]
 
-            dhFilePath = FilePath(path+'/dh_param.pem')
-            dhParams = ssl.DiffieHellmanParameters.fromFile(dhFilePath)
-
-            contextFactory = ssl.CertificateOptions(privateKey=privkeypyssl, certificate=certifpyssl,
-                                                    extraCertChain=chainpyssl, dhParameters=dhParams,
-                                                    raiseMinimumTo=ssl.TLSVersion.TLSv1_2)
+            contextFactory = ssl.CertificateOptions(privateKey=privkeypyssl, certificate=certifpyssl, extraCertChain=chainpyssl)
             self.options = contextFactory
         except Exception as e:
             print(e)
-            print("TLS support is not enabled.")
+            print("Cannot import certificates. TLS support not enabled.")
 
 
 class StatsRecorder(object):
