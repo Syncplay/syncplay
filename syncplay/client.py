@@ -1,6 +1,5 @@
 
 import ast
-import certifi
 import collections
 import hashlib
 import os
@@ -15,9 +14,15 @@ from functools import wraps
 
 from twisted.internet.endpoints import HostnameEndpoint, wrapClientTLS
 from twisted.internet.protocol import ClientFactory
-from twisted.internet.ssl import Certificate, optionsForClientTLS
 from twisted.internet import reactor, task, defer, threads
 from twisted.application.internet import ClientService
+
+try:
+    import certifi
+    from twisted.internet.ssl import optionsForClientTLS
+    os.environ['SSL_CERT_FILE'] = certifi.where()
+except:
+    pass
 
 from syncplay import utils, constants, version
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
@@ -25,8 +30,6 @@ from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
 from syncplay.messages import getMissingStrings, getMessage
 from syncplay.protocols import SyncClientProtocol
 from syncplay.utils import isMacOS
-
-os.environ['SSL_CERT_FILE'] = certifi.where()
 
 
 class SyncClientFactory(ClientFactory):

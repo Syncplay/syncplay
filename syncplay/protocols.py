@@ -78,7 +78,7 @@ class SyncClientProtocol(JSONCommandProtocol):
             self.sendTLS({"startTLS": "send"})
             self._client.ui.showMessage("Attempting secure connection")
         else:
-            self._client.ui.showErrorMessage("This server does not support TLS")
+            self._client.ui.showErrorMessage("TLS is not supported")
             self.sendHello()
 
     def connectionLost(self, reason):
