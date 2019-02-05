@@ -315,7 +315,7 @@ ru = {
 
     # startTLS messages - TODO: Translate
     "startTLS-initiated": "Attempting secure connection",
-    "startTLS-secure-connection-ok": "Secure connection established",
+    "startTLS-secure-connection-ok": "Secure connection established ({})",
     "startTLS-not-supported-client": "TLS is not supported",
     "startTLS-not-supported-server": "This server does not support TLS",
 
