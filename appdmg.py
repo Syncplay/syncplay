@@ -51,10 +51,9 @@ badge_icon = icon_from_app(application)
 
 # Where to put the icons
 icon_locations = {
-    appname: (150, 110),
-    'Applications': (450, 110),
-    'Read Me': (100, 285),
-    'Install for VLC': (500, 285)
+    appname: (90, 110),
+    'Applications': (410, 110),
+    'Read Me': (250, 240),
 }
 
 # .. Window configuration ......................................................
@@ -89,7 +88,7 @@ show_sidebar = False
 sidebar_width = 180
 
 # Window position in ((x, y), (w, h)) format
-window_rect = ((100, 100), (600, 460))
+window_rect = ((100, 100), (500, 400))
 
 # Select the default view; must be one of
 #
