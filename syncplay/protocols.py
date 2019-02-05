@@ -74,11 +74,15 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def connectionMade(self):
         self._client.initProtocol(self)
-        if self._client._serverSupportsTLS:
-            self.sendTLS({"startTLS": "send"})
-            self._client.ui.showMessage(getMessage("startTLS-initiated"))
+        if self._client._clientSupportsTLS:
+            if self._client._serverSupportsTLS:
+                self.sendTLS({"startTLS": "send"})
+                self._client.ui.showMessage(getMessage("startTLS-initiated"))
+            else:
+                self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-server"))
+                self.sendHello()
         else:
-            self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-client"))
+            self._client.ui.showMessage(getMessage("startTLS-not-supported-client"))
             self.sendHello()
 
     def connectionLost(self, reason):
