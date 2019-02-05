@@ -313,8 +313,8 @@ it = {
     "update-menu-label": "Controlla la presenza di &aggiornamenti",
 
     "startTLS-initiated": "Tentativo di connessione sicura in corso",
-    "startTLS-secure-connection-ok": "Connessione sicura stabilita ({})",
-    "startTLS-not-supported-client": "Questo client non supporta TLS",
+    "startTLS-secure-connection-ok": "Connessione sicura stabilita",
+    "startTLS-not-supported-client": "TLS non è supportato",
     "startTLS-not-supported-server": "Questo server non supporta TLS",
 
     # About dialog
