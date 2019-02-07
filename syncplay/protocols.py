@@ -344,7 +344,11 @@ class SyncClientProtocol(JSONCommandProtocol):
         self._issuerTLS = self._serverCertificateTLS.get_issuer().CN
         self._expiredTLS =self._serverCertificateTLS.has_expired()
         self._expireDateTLS = self._serverCertificateTLS.get_notAfter()
-        self._connVersionTLS = self.transport.protocol._tlsConnection.get_protocol_version_name()
+
+        self._encryptedConnectionTLS = self.transport.protocol._tlsConnection
+        self._connVersionTLS = self._encryptedConnectionTLS.get_protocol_version_name()
+        self._cipherNameTLS = self._encryptedConnectionTLS.get_cipher_name()
+
         self._client.ui.showMessage(getMessage("startTLS-secure-connection-ok").format(self._connVersionTLS))
 
 
