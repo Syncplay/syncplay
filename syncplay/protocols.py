@@ -94,6 +94,8 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self._client._serverSupportsTLS = False
             elif "certificate verify failed" in str(reason.value):
                 self._client._serverSupportsTLS = False
+            elif "tlsv1 alert protocol version" in str(reason.value):
+                self._client._clientSupportsTLS = False
         except:
             pass
         self._client.destroyProtocol()
@@ -332,11 +334,19 @@ class SyncClientProtocol(JSONCommandProtocol):
         answer = message["startTLS"] if "startTLS" in message else None
         if "true" in answer and not self.logged and self._client.protocolFactory.options is not None:
             self.transport.startTLS(self._client.protocolFactory.options)
-            TLSConnVersion = self.transport.protocol._tlsConnection.get_protocol_version_name()
-            self._client.ui.showMessage(getMessage("startTLS-secure-connection-ok").format(TLSConnVersion))
         elif "false" in answer:
             self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-server"))
         self.sendHello()
+
+    def handshakeCompleted(self):
+        self._serverCertificateTLS = self.transport.getPeerCertificate()
+        self._subjectTLS = self._serverCertificateTLS.get_subject().CN
+        self._issuerTLS = self._serverCertificateTLS.get_issuer().CN
+        self._expiredTLS =self._serverCertificateTLS.has_expired()
+        self._expireDateTLS = self._serverCertificateTLS.get_notAfter()
+        self._connVersionTLS = self.transport.protocol._tlsConnection.get_protocol_version_name()
+        self._client.ui.showMessage(getMessage("startTLS-secure-connection-ok").format(self._connVersionTLS))
+
 
 class SyncServerProtocol(JSONCommandProtocol):
     def __init__(self, factory):
