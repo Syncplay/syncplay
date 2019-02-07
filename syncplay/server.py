@@ -214,7 +214,7 @@ class SyncFactory(Factory):
             certifpyssl = crypto.load_certificate(crypto.FILETYPE_PEM, certif)
             chainpyssl = [crypto.load_certificate(crypto.FILETYPE_PEM, chain)]
 
-            dhFilePath = FilePath(path+'/dh_param_1024.pem')
+            dhFilePath = FilePath(path+'/dh_param.pem')
             dhParams = ssl.DiffieHellmanParameters.fromFile(dhFilePath)
 
             contextFactory = ssl.CertificateOptions(privateKey=privkeypyssl, certificate=certifpyssl,
