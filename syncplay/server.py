@@ -13,6 +13,7 @@ from twisted.internet.protocol import Factory
 try:
     from OpenSSL import crypto
     from twisted.internet import ssl
+    from twisted.python.filepath import FilePath
 except:
     pass
 
@@ -213,8 +214,12 @@ class SyncFactory(Factory):
             certifpyssl = crypto.load_certificate(crypto.FILETYPE_PEM, certif)
             chainpyssl = [crypto.load_certificate(crypto.FILETYPE_PEM, chain)]
 
+            dhFilePath = FilePath(path+'/dh_param_1024.pem')
+            dhParams = ssl.DiffieHellmanParameters.fromFile(dhFilePath)
+
             contextFactory = ssl.CertificateOptions(privateKey=privkeypyssl, certificate=certifpyssl,
-                                                    extraCertChain=chainpyssl, raiseMinimumTo=ssl.TLSVersion.TLSv1_2)
+                                                    extraCertChain=chainpyssl, dhParameters=dhParams,
+                                                    raiseMinimumTo=ssl.TLSVersion.TLSv1_2)
             self.options = contextFactory
         except Exception as e:
             print(e)
