@@ -213,7 +213,8 @@ class SyncFactory(Factory):
             certifpyssl = crypto.load_certificate(crypto.FILETYPE_PEM, certif)
             chainpyssl = [crypto.load_certificate(crypto.FILETYPE_PEM, chain)]
 
-            contextFactory = ssl.CertificateOptions(privateKey=privkeypyssl, certificate=certifpyssl, extraCertChain=chainpyssl)
+            contextFactory = ssl.CertificateOptions(privateKey=privkeypyssl, certificate=certifpyssl,
+                                                    extraCertChain=chainpyssl, raiseMinimumTo=ssl.TLSVersion.TLSv1_2)
             self.options = contextFactory
         except Exception as e:
             print(e)
