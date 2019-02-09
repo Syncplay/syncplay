@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb, Pilotat
  Project: https://syncplay.pl/
- Version: 0.3.4
+ Version: 0.3.5
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -78,7 +78,7 @@ Syncplay should install this automatically to your user folder.
 
 --]==========================================================================]
 
-local connectorversion = "0.3.4"
+local connectorversion = "0.3.5"
 local vlcversion = vlc.misc.version()
 local vlcmajorversion = tonumber(vlcversion:sub(1,1)) -- get the major version of VLC
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
