@@ -29,7 +29,6 @@ install:
   - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
   - python buildPy2exe.py
   - type nul > syncplay_v%ver%\syncplay.ini
-  - copy resources\win_lua_note.txt syncplay_v%ver%\"VLC LUA Script installation.txt"
 
 # Not a project with an msbuild file, build done at install.
 build: off

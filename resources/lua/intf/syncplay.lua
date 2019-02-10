@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb, Pilotat
  Project: https://syncplay.pl/
- Version: 0.3.4
+ Version: 0.3.5
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -17,13 +17,7 @@
 
  === Installation instructions ===
 
-Place the syncplay.lua file in the main (all user) VLC /lua/intf/ sub-directory:
-* Window: %ProgramFiles%\VideoLAN\VLC\lua\intf\
-* Linux: /usr/lib/vlc/lua/intf/ or /usr/lib64/vlc/lua/intf/ or /usr/lib/x86_64-linux-gnu/vlc/lua/intf on some systems (look for where the .luac files are)
-* Mac OS X: /Applications/VLC.app/Contents/MacOS/share/lua/intf/
-* FreeBSD, OpenBSD etc.: /usr/local/lib/vlc/lua/intf/
-
-You may also need to re-copy the syncplay.lua file when you update VLC.
+Syncplay should install this automatically to your user folder.
 
  === Commands and responses ===
  = Note: ? denotes optional responses; * denotes mandatory response; uses \n terminator.
@@ -84,7 +78,7 @@ You may also need to re-copy the syncplay.lua file when you update VLC.
 
 --]==========================================================================]
 
-local connectorversion = "0.3.4"
+local connectorversion = "0.3.5"
 local vlcversion = vlc.misc.version()
 local vlcmajorversion = tonumber(vlcversion:sub(1,1)) -- get the major version of VLC
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)

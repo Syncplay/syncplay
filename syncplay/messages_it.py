@@ -94,10 +94,7 @@ it = {
     "language-changed-msgbox-label": "La lingua sarà cambiata quando avvierai Syncplay.",
     "promptforupdate-label": "Ti piacerebbe che, di tanto in tanto, Syncplay controllasse automaticamente la presenza di aggiornamenti?",
 
-    "vlc-interface-version-mismatch": "Stai eseguendo la versione {} del modulo di interfaccia per VLC di Syncplay, ma Syncplay è progettato per essere utilizzato con la versione {} o superiore. Per favore, fai riferimento alla User Guide di Syncplay presso https://syncplay.pl/guide/ per istruzioni su come installare syncplay.lua.",  # VLC interface version, VLC interface min version
-    "vlc-interface-oldversion-warning": "Attenzione: Syncplay ha rilevato una vecchia versione del modulo di interfaccia per VLC di Syncplay installata nella cartella di VLC. Per favore, fai riferimento alla User Guide di Syncplay presso https://syncplay.pl/guide/ per istruzioni su come installare syncplay.lua.",
     "media-player-latency-warning": "Attenzione: il media player ha impiegato {} secondi per rispondere. Se stai avendo problemi di sincronizzazione, chiudi delle applicazioni per liberare le risorse di sistema e, se ciò non dovesse avere alcun effetto, prova un altro media player.",  # Seconds to respond
-    "vlc-interface-not-installed": "Attenzione: il modulo di interfaccia per VLC di Syncplay non è stato trovato nella cartella di VLC. Se stai utilizzando VLC 2.0, VLC userà il modulo syncplay.lua contenuto nella cartella di Syncplay, ma ciò significa che altri custom script di interfaccia ed estensioni non funzioneranno. Per favore, fai riferimento alla User Guide di Syncplay presso https://syncplay.pl/guide/ per istruzioni su come installare syncplay.lua.",
     "mpv-unresponsive-error": "mpv non ha risposto per {} secondi, quindi sembra non funzionare correttamente. Per favore, riavvia Syncplay.",  # Seconds to respond
 
     # Client prompts

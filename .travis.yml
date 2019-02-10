@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode7.3
+osx_image: xcode8.3
 
 branches:
   only:
@@ -10,18 +10,12 @@ script:
 
 before_install:
 - brew update
-- cd $(brew --repo homebrew/core)
-#- git fetch --depth=20000
-- git checkout 80860911cd26d9df62f3cc30575ed2076019ed1a
-- cd $TRAVIS_BUILD_DIR
 - brew upgrade python
 - which python3
 - python3 --version
 - which pip3
 - pip3 --version
 - brew install pyside
-- ln -s /usr/local/lib/python3.7/site-packages/PySide2/libpyside2.cpython-37m-darwin.5.11.dylib /usr/local/lib/
-- ln -s /usr/local/lib/python3.7/site-packages/PySide2/libshiboken2.cpython-37m-darwin.5.11.dylib /usr/local/lib/
 - python3 -c "from PySide2 import __version__; print(__version__)"
 - python3 -c "from PySide2.QtCore import __version__; print(__version__)" 
 - pip3 install py2app
@@ -33,8 +27,6 @@ install:
 before_deploy:
 - pip3 install dmgbuild
 - mkdir dist_dmg
-- mv resources/macos_vlc_install.command resources/.macos_vlc_install.command
-- mv resources/lua/intf/syncplay.lua resources/lua/intf/.syncplay.lua
 - mv resources/macOS_readme.pdf resources/.macOS_readme.pdf
 - export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
 - dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}.dmg

@@ -147,7 +147,7 @@ def isASCII(s):
 
 def findResourcePath(resourceName):
     if resourceName == "syncplay.lua":
-        resourcePath = os.path.join(findWorkingDir(), "lua", "intf", "resources", resourceName)
+        resourcePath = os.path.join(findWorkingDir(),"resources", "lua", "intf", resourceName)
     else:
         resourcePath = os.path.join(findWorkingDir(), "resources", resourceName)
     return resourcePath
