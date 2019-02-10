@@ -391,7 +391,10 @@ class VlcPlayer(BasePlayer):
                     copyTo = os.path.join(playerController.vlcIntfUserPath, "syncplay.lua")
                     self.__playerController._client.ui.showDebugMessage("Copying VLC Lua Interface from '{}' to '{}'".format(copyForm, copyTo))
                     import shutil
+                    if os.path.exists(copyTo):
+                        os.chmod(copyTo, 0o755)
                     shutil.copyfile(copyForm, copyTo)
+                    os.chmod(copyTo, 0o755)
                 except Exception as e:
                     playerController._client.ui.showErrorMessage(e)
                     return
