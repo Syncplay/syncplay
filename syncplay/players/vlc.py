@@ -357,8 +357,16 @@ class VlcPlayer(BasePlayer):
                 playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('APPDATA', '.'), "VLC\\lua\\intf\\")
             playerController.vlcModulePath = playerController.vlcIntfPath + "modules/?.luac"
+            def _createIntfFolder(vlcSyncplayInterfaceDir):
+                self.__playerController._client.ui.showDebugMessage("Checking if syncplay.lua intf directory exists")
+                from pathlib import Path
+                if os.path.exists(vlcSyncplayInterfaceDir):
+                    self.__playerController._client.ui.showDebugMessage("Found syncplay.lua intf directory:'{}'".format(vlcSyncplayInterfaceDir))
+                else:
+                    self.__playerController._client.ui.showDebugMessage("syncplay.lua intf directory not found, so creating directory '{}'".format(vlcSyncplayInterfaceDir))
+                    Path(vlcSyncplayInterfaceDir).mkdir(mode=0o755, parents=True, exist_ok=True)
             def _intfNeedsUpdating(vlcSyncplayInterfacePath):
-                self.__playerController._client.ui.showDebugMessage("Checking if '{}' exists and if it is  the expected version".format(vlcSyncplayInterfacePath))
+                self.__playerController._client.ui.showDebugMessage("Checking if '{}' exists and if it is the expected version".format(vlcSyncplayInterfacePath))
                 if not os.path.isfile(vlcSyncplayInterfacePath):
                     self.__playerController._client.ui.showDebugMessage("syncplay.lua not found, so file needs copying")
                     return True
@@ -378,6 +386,7 @@ class VlcPlayer(BasePlayer):
                 return True
             if _intfNeedsUpdating(os.path.join(playerController.vlcIntfUserPath, "syncplay.lua")):
                 try:
+                    _createIntfFolder(playerController.vlcIntfUserPath)
                     copyForm = utils.findResourcePath("syncplay.lua")
                     copyTo = os.path.join(playerController.vlcIntfUserPath, "syncplay.lua")
                     self.__playerController._client.ui.showDebugMessage("Copying VLC Lua Interface from '{}' to '{}'".format(copyForm, copyTo))
