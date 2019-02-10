@@ -229,6 +229,7 @@ class VlcPlayer(BasePlayer):
                 self._paused == False and
                 self._position == self._previousPreviousPosition and
                 self._previousPosition == self._position and
+                self._duration and
                 self._duration > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
                 (self._duration - self._position) < constants.VLC_EOF_DURATION_THRESHOLD and
                 diff > constants.VLC_LATENCY_ERROR_THRESHOLD
