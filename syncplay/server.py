@@ -13,7 +13,6 @@ from twisted.internet.protocol import Factory
 try:
     from OpenSSL import crypto
     from twisted.internet import ssl
-    from twisted.python.filepath import FilePath
 except:
     pass
 
@@ -206,19 +205,21 @@ class SyncFactory(Factory):
 
     def _allowTLSconnections(self, path):
         try:
-            privkey = open(path+'/privkey.pem', 'rt').read()
+            privKey = open(path+'/privkey.pem', 'rt').read()
             certif = open(path+'/cert.pem', 'rt').read()
             chain = open(path+'/chain.pem', 'rt').read()
 
-            privkeypyssl = crypto.load_privatekey(crypto.FILETYPE_PEM, privkey)
-            certifpyssl = crypto.load_certificate(crypto.FILETYPE_PEM, certif)
-            chainpyssl = [crypto.load_certificate(crypto.FILETYPE_PEM, chain)]
+            privKeyPySSL = crypto.load_privatekey(crypto.FILETYPE_PEM, privKey)
+            certifPySSL = crypto.load_certificate(crypto.FILETYPE_PEM, certif)
+            chainPySSL = [crypto.load_certificate(crypto.FILETYPE_PEM, chain)]
 
-            dhFilePath = FilePath(path+'/dh_param.pem')
-            dhParams = ssl.DiffieHellmanParameters.fromFile(dhFilePath)
+            cipherListString = "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:"\
+	                           "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:"\
+	                           "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384"
+            accCiphers = ssl.AcceptableCiphers.fromOpenSSLCipherString(cipherListString)
 
-            contextFactory = ssl.CertificateOptions(privateKey=privkeypyssl, certificate=certifpyssl,
-                                                    extraCertChain=chainpyssl, dhParameters=dhParams,
+            contextFactory = ssl.CertificateOptions(privateKey=privKeyPySSL, certificate=certifPySSL,
+                                                    extraCertChain=chainPySSL, acceptableCiphers=accCiphers,
                                                     raiseMinimumTo=ssl.TLSVersion.TLSv1_2)
             self.options = contextFactory
         except Exception as e:
