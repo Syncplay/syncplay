@@ -115,7 +115,7 @@ class SyncplayClient(object):
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         self.fileSwitch = FileSwitchManager(self)
         self.playlist = SyncplayPlaylist(self)
-        
+
         self._serverSupportsTLS = True
 
         if constants.LIST_RELATIVE_CONFIGS and 'loadedRelativePaths' in self._config and self._config['loadedRelativePaths']:

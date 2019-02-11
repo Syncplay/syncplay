@@ -7,7 +7,7 @@ import time
 from string import Template
 
 from twisted.enterprise import adbapi
-from twisted.internet import task, reactor, ssl
+from twisted.internet import task, reactor
 from twisted.internet.protocol import Factory
 
 try:
