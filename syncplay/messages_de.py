@@ -313,7 +313,7 @@ de = {
     # startTLS messages - TODO: Translate
     "startTLS-initiated": "Attempting secure connection",
     "startTLS-secure-connection-ok": "Secure connection established ({})",
-    "startTLS-server-certificate-invalid": "Secure connection failed. The server uses an invalid security certificate. This communication could be intercepted by a third party.",
+    "startTLS-server-certificate-invalid": 'Secure connection failed. The server uses an invalid security certificate. This communication could be intercepted by a third party. For further details and troubleshooting see <a href="https://syncplay.pl/trouble">here</a>.',
     "startTLS-not-supported-client": "This client does not support TLS",
     "startTLS-not-supported-server": "This server does not support TLS",
 
