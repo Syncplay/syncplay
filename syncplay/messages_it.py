@@ -314,6 +314,7 @@ it = {
 
     "startTLS-initiated": "Tentativo di connessione sicura in corso",
     "startTLS-secure-connection-ok": "Connessione sicura stabilita ({})",
+    "startTLS-server-certificate-invalid": "Connessione sicura non riuscita. Il certificato di sicurezza di questo server non è valido. La comunicazione potrebbe essere intercettata da una terza parte.",
     "startTLS-not-supported-client": "Questo client non supporta TLS",
     "startTLS-not-supported-server": "Questo server non supporta TLS",
 
