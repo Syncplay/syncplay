@@ -15,6 +15,7 @@ except AttributeError:
 
 from twisted.internet import reactor
 from twisted.internet.endpoints import TCP4ServerEndpoint, TCP6ServerEndpoint
+from twisted.internet.error import CannotListenError
 
 from syncplay.server import SyncFactory, ConfigurationGetter
 
@@ -33,7 +34,7 @@ def failed6(f):
 
 def failed4(f):
     ServerStatus.listening4 = False
-    if ServerStatus.listening6 and "Address already in use" in str(f.value):
+    if f.type is CannotListenError and ServerStatus.listening6:
         pass
     else:
         print(f.value)
