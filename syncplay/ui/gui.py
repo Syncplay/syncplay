@@ -120,6 +120,7 @@ class AboutDialog(QtWidgets.QDialog):
             self.setWindowTitle(getMessage("about-dialog-title"))
             if isWindows():
                 self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowIcon(QtGui.QPixmap(resourcespath + 'syncplay.png'))
         nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
         nameLabel.setFont(QtGui.QFont("Helvetica", 18))
         linkLabel = QtWidgets.QLabel("<center><a href=\"https://syncplay.pl\">syncplay.pl</a></center>")
@@ -172,6 +173,8 @@ class MainWindow(QtWidgets.QMainWindow):
     playlistState = []
     updatingPlaylist = False
     playlistIndex = None
+    sslInformation = "N/A"
+    sslMode = False
 
     def setPlaylistInsertPosition(self, newPosition):
         if not self.playlist.isEnabled():
@@ -426,6 +429,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.playlistGroup.setEnabled(False)
         self.chatInput.setMaxLength(constants.MAX_CHAT_MESSAGE_LENGTH)
         self.roomInput.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
+
+    def setSSLMode(self, sslMode, sslInformation):
+        self.sslMode = sslMode
+        self.sslInformation = sslInformation
+        self.sslButton.setVisible(sslMode)
+
+    def getSSLInformation(self):
+        return self.sslInformation
 
     def showMessage(self, message, noTimestamp=False):
         message = str(message)
@@ -1201,6 +1212,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.outputbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
         window.outputlabel = QtWidgets.QLabel(getMessage("notifications-heading-label"))
+        window.outputlabel.setMinimumHeight(27)
         window.chatInput = QtWidgets.QLineEdit()
         window.chatInput.setMaxLength(constants.MAX_CHAT_MESSAGE_LENGTH)
         window.chatInput.returnPressed.connect(self.sendChatMessage)
@@ -1237,21 +1249,29 @@ class MainWindow(QtWidgets.QMainWindow):
         self.listTreeView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.listTreeView.customContextMenuRequested.connect(self.openRoomMenu)
         window.listlabel = QtWidgets.QLabel(getMessage("userlist-heading-label"))
+        window.listlabel.setMinimumHeight(27)
+        window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'green_lock.png'),"")
+        window.sslButton.setVisible(False)
+        window.sslButton.setFixedHeight(27)
+        window.sslButton.setFixedWidth(27)
+        window.sslButton.pressed.connect(self.openSSLDetails)
+        window.sslButton.setToolTip(getMessage("sslconnection-tooltip"))
         window.listFrame = QtWidgets.QFrame()
         window.listFrame.setLineWidth(0)
         window.listFrame.setMidLineWidth(0)
         window.listFrame.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         window.listLayout.setContentsMargins(0, 0, 0, 0)
 
-        window.userlistLayout = QtWidgets.QVBoxLayout()
+        window.userlistLayout = QtWidgets.QGridLayout()
         window.userlistFrame = QtWidgets.QFrame()
         window.userlistFrame.setLineWidth(0)
         window.userlistFrame.setMidLineWidth(0)
         window.userlistFrame.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         window.userlistLayout.setContentsMargins(0, 0, 0, 0)
         window.userlistFrame.setLayout(window.userlistLayout)
-        window.userlistLayout.addWidget(window.listlabel)
-        window.userlistLayout.addWidget(window.listTreeView)
+        window.userlistLayout.addWidget(window.listlabel, 0, 0, Qt.AlignLeft)
+        window.userlistLayout.addWidget(window.sslButton, 0, 2,  Qt.AlignRight)
+        window.userlistLayout.addWidget(window.listTreeView, 1, 0, 1, 3)
 
         window.listSplit = QtWidgets.QSplitter(Qt.Vertical, self)
         window.listSplit.addWidget(window.userlistFrame)
@@ -1509,6 +1529,15 @@ class MainWindow(QtWidgets.QMainWindow):
         window.menuBar.addMenu(window.helpMenu)
         if not isMacOS():
             window.mainLayout.setMenuBar(window.menuBar)
+
+    @needsClient
+    def openSSLDetails(self):
+        QtWidgets.QMessageBox.information(
+                                        self,
+                                        getMessage("ssl-information-title"),
+                                        "[{}]\n{}".format(getMessage("ssl-information-title"),self.getSSLInformation())
+                                        )
+
 
     def openAbout(self):
         aboutMsgBox = AboutDialog()

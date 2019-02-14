@@ -398,6 +398,7 @@ class SyncplayClient(object):
         self.ui.showMessage(getMessage("current-offset-notification").format(self._userOffset))
 
     def onDisconnect(self):
+        self.ui.setSSLMode(False)
         if self._config['pauseOnLeave']:
             self.setPaused(True)
             self.lastPausedOnLeaveTime = time.time()
@@ -727,6 +728,7 @@ class SyncplayClient(object):
 
         def retry(retries):
             self._lastGlobalUpdate = None
+            self.ui.setSSLMode(False)
             if retries == 0:
                 self.onDisconnect()
             if retries > constants.RECONNECT_RETRIES:
@@ -1475,6 +1477,9 @@ class UiManager(object):
         else:
             self.showOSDMessage(messageString, duration=constants.OSD_DURATION)
         self.__ui.showMessage(messageString)
+
+    def setSSLMode(self, sslMode, sslInformation=""):
+        self.__ui.setSSLMode(sslMode, sslInformation)
 
     def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL):
         if not noPlayer:

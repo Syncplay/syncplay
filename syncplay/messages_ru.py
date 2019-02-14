@@ -71,6 +71,9 @@ ru = {
     "syncplay-uptodate-notification": "У вас последняя версия Syncplay",
     "syncplay-updateavailable-notification": "Доступна новая версия Syncplay. Хотите открыть страницу релиза?",
 
+    "ssl-information-title": "SSL Certificate Details",  # TODO: Translate
+    "ssl-information-message": "Subject: {}\nIssuer: {}\nExpiration Date: {}\nConnection Version: {}\nCipher: {}", # TODO: Translate
+
     "mplayer-file-required-notification": "Для использования Syncplay с mplayer необходимо передать файл в качестве параметра",
     "mplayer-file-required-notification/example": "Пример использования: syncplay [options] [url|path/]filename",
     "mplayer2-required": "Syncplay не совместим с MPlayer 1.x, пожалуйста, используйте mplayer2 или mpv",
@@ -269,7 +272,7 @@ ru = {
     "run-label": "Запустить",
     "storeandrun-label": "Сохранить и запустить",
 
-    "contact-label": "Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"https://syncplay.pl/\">www.syncplay.pl</a> за инорфмацией, помощью и обновлениями! NOTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.",  # TODO: Translate last sentence
+    "contact-label": "Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"https://syncplay.pl/\">www.syncplay.pl</a> за инорфмацией, помощью и обновлениями! Do not use Syncplay to send sensitive information.",  # TODO: Translate last sentence
 
     "joinroom-label": "Зайти в комнату",
     "joinroom-menu-label": "Зайти в комнату {}",
@@ -410,6 +413,8 @@ ru = {
     "help-tooltip": "Открыть Руководство Пользователя на Syncplay.pl.",
     "reset-tooltip": "Сбрасывает все настройки Syncplay в начальное состояние.",
     "update-server-list-tooltip": "Обновить список публичных серверов от syncplay.pl.",
+
+    "sslconnection-tooltip": "Securely connected to server. Press button for certificate details", # TODO: Translate
 
     "joinroom-tooltip": "Покинуть комнату и зайти в другую, указанную комнату.",
     "seektime-msgbox-label": "Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",

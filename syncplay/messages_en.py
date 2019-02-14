@@ -71,6 +71,9 @@ en = {
     "syncplay-uptodate-notification": "Syncplay is up to date",
     "syncplay-updateavailable-notification": "A new version of Syncplay is available. Do you want to visit the release page?",
 
+    "ssl-information-title": "SSL Certificate Details",
+    "ssl-information-message": "Subject: {}\nIssuer: {}\nExpiration Date: {}\nConnection Version: {}\nCipher: {}",
+
     "mplayer-file-required-notification": "Syncplay using mplayer requires you to provide file when starting",
     "mplayer-file-required-notification/example": "Usage example: syncplay [options] [url|path/]filename",
     "mplayer2-required": "Syncplay is incompatible with MPlayer 1.x, please use mplayer2 or mpv",
@@ -267,7 +270,7 @@ en = {
     "run-label": "Run Syncplay",
     "storeandrun-label": "Store configuration and run Syncplay",
 
-    "contact-label": "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>raise an issue</nobr></a> via GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>like us on Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>follow us on Twitter</nobr></a>, or visit <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. NOTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.",
+    "contact-label": "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>raise an issue</nobr></a> via GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>like us on Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>follow us on Twitter</nobr></a>, or visit <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Do not use Syncplay to send sensitive information.",
 
     "joinroom-label": "Join room",
     "joinroom-menu-label": "Join room {}",
@@ -408,6 +411,8 @@ en = {
     "help-tooltip": "Opens the Syncplay.pl user guide.",
     "reset-tooltip": "Reset all settings to the default configuration.",
     "update-server-list-tooltip": "Connect to syncplay.pl to update list of public servers.",
+
+    "sslconnection-tooltip": "Securely connected to server. Press button for certificate details",
 
     "joinroom-tooltip": "Leave current room and joins specified room.",
     "seektime-msgbox-label": "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",

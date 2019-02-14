@@ -339,17 +339,22 @@ class SyncClientProtocol(JSONCommandProtocol):
         self.sendHello()
 
     def handshakeCompleted(self):
+        from datetime import datetime
         self._serverCertificateTLS = self.transport.getPeerCertificate()
         self._subjectTLS = self._serverCertificateTLS.get_subject().CN
         self._issuerTLS = self._serverCertificateTLS.get_issuer().CN
         self._expiredTLS =self._serverCertificateTLS.has_expired()
-        self._expireDateTLS = self._serverCertificateTLS.get_notAfter()
+        self._expireDateTLS = datetime.strptime(self._serverCertificateTLS.get_notAfter().decode('ascii'), '%Y%m%d%H%M%SZ')
 
         self._encryptedConnectionTLS = self.transport.protocol._tlsConnection
         self._connVersionTLS = self._encryptedConnectionTLS.get_protocol_version_name()
         self._cipherNameTLS = self._encryptedConnectionTLS.get_cipher_name()
 
         self._client.ui.showMessage(getMessage("startTLS-secure-connection-ok").format(self._connVersionTLS))
+        self._client.ui.setSSLMode(
+                                    True,
+                                    getMessage("ssl-information-message")
+                                    .format(self._subjectTLS,self._issuerTLS, self._expireDateTLS, self._connVersionTLS, self._cipherNameTLS))
 
 
 class SyncServerProtocol(JSONCommandProtocol):

@@ -71,6 +71,9 @@ it = {
     "syncplay-uptodate-notification": "Syncplay è aggiornato",
     "syncplay-updateavailable-notification": "Una nuova versione di Syncplay è disponibile. Vuoi visitare la pagina delle release?",
 
+    "ssl-information-title": "SSL Certificate Details", # TODO: Translate
+    "ssl-information-message": "Subject: {}\nIssuer: {}\nExpiration Date: {}\nConnection Version: {}\nCipher: {}", # TODO: Translate
+
     "mplayer-file-required-notification": "Utilizzare Syncplay con mplayer di selezionare il file all'avvio",
     "mplayer-file-required-notification/example": "Esempio di utilizzo: syncplay [opzioni] [url|percorso/]nomefile",
     "mplayer2-required": "Syncplay non è compatibile con MPlayer 1.x, per favore utilizza mplayer2 or mpv",
@@ -267,7 +270,7 @@ it = {
     "run-label": "Avvia Syncplay",
     "storeandrun-label": "Salva la configurazione e avvia Syncplay",
 
-    "contact-label": "Sentiti libero di inviare un'e-mail a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chattare tramite il <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canale IRC #Syncplay</nobr></a> su irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>segnalare un problema</nobr></a> su GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>lasciare un like sulla nostra pagina Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>seguirci su Twitter</nobr></a>, o visitare <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. NOTA: i messaggi di chat non sono cifrati, quindi non usare Syncplay per inviare dati sensibili.",
+    "contact-label": "Sentiti libero di inviare un'e-mail a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chattare tramite il <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canale IRC #Syncplay</nobr></a> su irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>segnalare un problema</nobr></a> su GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>lasciare un like sulla nostra pagina Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>seguirci su Twitter</nobr></a>, o visitare <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Non usare Syncplay per inviare dati sensibili.", # TODO: Check translation
 
     "joinroom-label": "Entra nella stanza",
     "joinroom-menu-label": "Entra nella stanza {}",
@@ -408,6 +411,8 @@ it = {
     "help-tooltip": "Apri la guida utente su syncplay.pl.",
     "reset-tooltip": "Ripristina le impostazioni iniziali di Syncplay.",
     "update-server-list-tooltip": "Scarica la lista dei server pubblici da syncplay.pl.",
+
+    "sslconnection-tooltip": "Securely connected to server. Press button for certificate details",  # TODO: Translate
 
     "joinroom-tooltip": "Lascia la stanza attuale e entra in quella specificata.",
     "seektime-msgbox-label": "Salta all'istante di tempo specificato (in secondi / min:sec). Usa +/- per una ricerca relativa.",

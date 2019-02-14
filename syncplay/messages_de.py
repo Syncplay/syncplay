@@ -71,6 +71,9 @@ de = {
     "syncplay-uptodate-notification": "Syncplay ist aktuell",
     "syncplay-updateavailable-notification": "Eine neuere Version von Syncplay ist verfügbar. Soll die Download-Seite geöffnet werden?",
 
+    "ssl-information-title": "SSL Certificate Details",  # TODO: Translate
+    "ssl-information-message": "Subject: {}\nIssuer: {}\nExpiration Date: {}\nConnection Version: {}\nCipher: {}", # TODO: Translate
+
     "mplayer-file-required-notification": "Syncplay für mplayer benötigt eine Dateiangabe beim Start",
     "mplayer-file-required-notification/example": "Anwendungsbeispiel: syncplay [optionen] [url|pfad/]Dateiname",
     "mplayer2-required": "Syncplay ist inkompatibel zu MPlayer 1.x, bitte nutze MPlayer2 oder mpv",
@@ -409,6 +412,8 @@ de = {
     "help-tooltip": "Öffnet Hilfe auf syncplay.pl [Englisch]",
     "reset-tooltip": "Alle Einstellungen auf Standardwerte zurücksetzen.",
     "update-server-list-tooltip": "Mit syncplay.pl verbinden um die Liste öffentlicher Server zu aktualisieren.",
+
+    "sslconnection-tooltip": "Securely connected to server. Press button for certificate details",  # TODO: Translate
 
     "joinroom-tooltip": "Den aktuellen Raum verlassen und stattdessen den angegebenen betreten.",
     "seektime-msgbox-label": "Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
