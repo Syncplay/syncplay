@@ -20,7 +20,18 @@ from twisted.application.internet import ClientService
 try:
     import certifi
     from twisted.internet.ssl import Certificate, optionsForClientTLS
-    os.environ['SSL_CERT_FILE'] = certifi.where()
+    certPath = certifi.where()
+    if os.path.exists(certPath):
+        os.environ['SSL_CERT_FILE'] = certPath
+    elif 'zip' in certPath:
+        import tempfile
+        import zipfile
+        zipPath, memberPath = certPath.split('.zip/')
+        zipPath += '.zip'
+        archive = zipfile.ZipFile(zipPath, 'r')
+        tmpDir = tempfile.gettempdir()
+        extractedPath = archive.extract(memberPath, tmpDir)
+        os.environ['SSL_CERT_FILE'] = extractedPath
 except:
     pass
 
@@ -716,7 +727,7 @@ class SyncplayClient(object):
         port = int(port)
         self._endpoint = HostnameEndpoint(reactor, host, port)
         try:
-            caCertFP = open(certifi.where())
+            caCertFP = open(os.environ['SSL_CERT_FILE'])
             caCertTwisted = Certificate.loadPEM(caCertFP.read())
             caCertFP.close()
             self.protocolFactory.options = optionsForClientTLS(hostname=host)
