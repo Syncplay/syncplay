@@ -71,9 +71,6 @@ en = {
     "syncplay-uptodate-notification": "Syncplay is up to date",
     "syncplay-updateavailable-notification": "A new version of Syncplay is available. Do you want to visit the release page?",
 
-    "ssl-information-title": "SSL Certificate Details",
-    "ssl-information-message": "Subject: {}\nIssuer: {}\nExpiration Date: {}\nConnection Version: {}\nCipher: {}",
-
     "mplayer-file-required-notification": "Syncplay using mplayer requires you to provide file when starting",
     "mplayer-file-required-notification/example": "Usage example: syncplay [options] [url|path/]filename",
     "mplayer2-required": "Syncplay is incompatible with MPlayer 1.x, please use mplayer2 or mpv",
@@ -321,6 +318,13 @@ en = {
     "startTLS-not-supported-client": "This client does not support TLS",
     "startTLS-not-supported-server": "This server does not support TLS",
 
+    # TLS certificate dialog
+    "tls-information-title": "Certificate Details",
+    "tls-dialog-status-label": "<strong>Syncplay is using an encrypted connection to {}.</strong>",
+    "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it's sent to or from the<br/>server {}.",
+    "tls-dialog-connection-label": "Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite:{}.",
+    "tls-dialog-certificate-label": "Certificate issued by {} valid until {}.",
+
     # About dialog
     "about-menu-label": "&About Syncplay",
     "about-dialog-title": "About Syncplay",
@@ -412,7 +416,7 @@ en = {
     "reset-tooltip": "Reset all settings to the default configuration.",
     "update-server-list-tooltip": "Connect to syncplay.pl to update list of public servers.",
 
-    "sslconnection-tooltip": "Securely connected to server. Press button for certificate details",
+    "sslconnection-tooltip": "Securely connected to server. Click for certificate details",
 
     "joinroom-tooltip": "Leave current room and joins specified room.",
     "seektime-msgbox-label": "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",

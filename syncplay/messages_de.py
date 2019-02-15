@@ -71,9 +71,6 @@ de = {
     "syncplay-uptodate-notification": "Syncplay ist aktuell",
     "syncplay-updateavailable-notification": "Eine neuere Version von Syncplay ist verfügbar. Soll die Download-Seite geöffnet werden?",
 
-    "ssl-information-title": "SSL Certificate Details",  # TODO: Translate
-    "ssl-information-message": "Subject: {}\nIssuer: {}\nExpiration Date: {}\nConnection Version: {}\nCipher: {}", # TODO: Translate
-
     "mplayer-file-required-notification": "Syncplay für mplayer benötigt eine Dateiangabe beim Start",
     "mplayer-file-required-notification/example": "Anwendungsbeispiel: syncplay [optionen] [url|pfad/]Dateiname",
     "mplayer2-required": "Syncplay ist inkompatibel zu MPlayer 1.x, bitte nutze MPlayer2 oder mpv",
@@ -320,6 +317,13 @@ de = {
     "startTLS-not-supported-client": "This client does not support TLS",
     "startTLS-not-supported-server": "This server does not support TLS",
 
+    # TLS certificate dialog - TODO: Translate
+    "tls-information-title": "Certificate Details",
+    "tls-dialog-status-label": "<strong>Syncplay is using an encrypted connection to {}.</strong>",
+    "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it's sent to or from the<br/>server {}.",
+    "tls-dialog-connection-label": "Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite:{}.",
+    "tls-dialog-certificate-label": "Certificate issued by {} valid until {}.",
+
     # About dialog - TODO: Translate
     "about-menu-label": "&About Syncplay",
     "about-dialog-title": "About Syncplay",
@@ -413,7 +417,7 @@ de = {
     "reset-tooltip": "Alle Einstellungen auf Standardwerte zurücksetzen.",
     "update-server-list-tooltip": "Mit syncplay.pl verbinden um die Liste öffentlicher Server zu aktualisieren.",
 
-    "sslconnection-tooltip": "Securely connected to server. Press button for certificate details",  # TODO: Translate
+    "sslconnection-tooltip": "Securely connected to server. Click for certificate details",  # TODO: Translate
 
     "joinroom-tooltip": "Den aktuellen Raum verlassen und stattdessen den angegebenen betreten.",
     "seektime-msgbox-label": "Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
