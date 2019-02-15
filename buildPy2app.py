@@ -12,6 +12,7 @@ import syncplay
 APP = ['syncplayClient.py']
 DATA_FILES = [
     ('resources', glob('resources/*.png') + glob('resources/*.rtf') + glob('resources/*.lua')),
+    ('resources/lua/intf', glob('resources/lua/intf/*.lua'))
 ]
 OPTIONS = {
     'iconfile': 'resources/icon.icns',
