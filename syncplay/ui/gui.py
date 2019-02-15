@@ -1250,10 +1250,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.listTreeView.customContextMenuRequested.connect(self.openRoomMenu)
         window.listlabel = QtWidgets.QLabel(getMessage("userlist-heading-label"))
         window.listlabel.setMinimumHeight(27)
-        window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'green_lock.png'),"")
-        window.sslButton.setVisible(False)
-        window.sslButton.setFixedHeight(27)
-        window.sslButton.setFixedWidth(27)
+        if isMacOS:
+            window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'green_lock.png').scaled(14, 14),"")
+            window.sslButton.setVisible(False)
+            window.sslButton.setFixedHeight(21)
+            window.sslButton.setFixedWidth(21)
+            window.sslButton.setMinimumSize(21, 21)
+            window.sslButton.setStyleSheet("QPushButton:!hover{border: 1px solid gray;} QPushButton:hover{border:2px solid black;}")
+        else:
+            window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'green_lock.png'),"")
+            window.sslButton.setVisible(False)
+            window.sslButton.setFixedHeight(27)
+            window.sslButton.setFixedWidth(27)
         window.sslButton.pressed.connect(self.openSSLDetails)
         window.sslButton.setToolTip(getMessage("sslconnection-tooltip"))
         window.listFrame = QtWidgets.QFrame()
@@ -1532,11 +1540,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def openSSLDetails(self):
-        QtWidgets.QMessageBox.information(
-                                        self,
-                                        getMessage("ssl-information-title"),
-                                        "[{}]\n{}".format(getMessage("ssl-information-title"),self.getSSLInformation())
-                                        )
+        boxReturn = QtWidgets.QMessageBox.information(
+                                                    self,
+                                                    getMessage("ssl-information-title"),
+                                                    "[{}]\n{}".format(getMessage("ssl-information-title"),self.getSSLInformation())
+                                                    )
+        if(boxReturn): self.sslButton.setDown(False)
 
 
     def openAbout(self):
