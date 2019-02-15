@@ -12,7 +12,7 @@ import time
 from copy import deepcopy
 from functools import wraps
 
-from twisted.internet.endpoints import HostnameEndpoint, wrapClientTLS
+from twisted.internet.endpoints import HostnameEndpoint
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task, defer, threads
 from twisted.application.internet import ClientService
