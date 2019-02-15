@@ -321,7 +321,7 @@ en = {
     # TLS certificate dialog
     "tls-information-title": "Certificate Details",
     "tls-dialog-status-label": "<strong>Syncplay is using an encrypted connection to {}.</strong>",
-    "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it's sent to or from the<br/>server {}.",
+    "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it is sent to or from the<br/>server {}.",
     "tls-dialog-connection-label": "Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite:{}.",
     "tls-dialog-certificate-label": "Certificate issued by {} valid until {}.",
 
@@ -416,7 +416,7 @@ en = {
     "reset-tooltip": "Reset all settings to the default configuration.",
     "update-server-list-tooltip": "Connect to syncplay.pl to update list of public servers.",
 
-    "sslconnection-tooltip": "Securely connected to server. Click for certificate details",
+    "sslconnection-tooltip": "Securely connected to server. Click for certificate details.",
 
     "joinroom-tooltip": "Leave current room and joins specified room.",
     "seektime-msgbox-label": "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",

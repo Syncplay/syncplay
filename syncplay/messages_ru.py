@@ -323,7 +323,7 @@ ru = {
     # TLS certificate dialog - TODO: Translate
     "tls-information-title": "Certificate Details",
     "tls-dialog-status-label": "<strong>Syncplay is using an encrypted connection to {}.</strong>",
-    "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it's sent to or from the<br/>server {}.",
+    "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it is sent to or from the<br/>server {}.",
     "tls-dialog-connection-label": "Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite:{}.",
     "tls-dialog-certificate-label": "Certificate issued by {} valid until {}.",
 
@@ -418,7 +418,7 @@ ru = {
     "reset-tooltip": "Сбрасывает все настройки Syncplay в начальное состояние.",
     "update-server-list-tooltip": "Обновить список публичных серверов от syncplay.pl.",
 
-    "sslconnection-tooltip": "Securely connected to server. Click for certificate details", # TODO: Translate
+    "sslconnection-tooltip": "Securely connected to server. Click for certificate details.", # TODO: Translate
 
     "joinroom-tooltip": "Покинуть комнату и зайти в другую, указанную комнату.",
     "seektime-msgbox-label": "Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",

@@ -416,7 +416,7 @@ it = {
     "reset-tooltip": "Ripristina le impostazioni iniziali di Syncplay.",
     "update-server-list-tooltip": "Scarica la lista dei server pubblici da syncplay.pl.",
 
-    "sslconnection-tooltip": "Securely connected to server. Click for certificate details",  # TODO: Translate
+    "sslconnection-tooltip": "Connessione sicura al server. Clicca per informazioni sul certificato.",
 
     "joinroom-tooltip": "Lascia la stanza attuale e entra in quella specificata.",
     "seektime-msgbox-label": "Salta all'istante di tempo specificato (in secondi / min:sec). Usa +/- per una ricerca relativa.",
