@@ -168,6 +168,48 @@ class AboutDialog(QtWidgets.QDialog):
             QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + "third-party-notices.rtf"))
 
 
+class CertificateDialog(QtWidgets.QDialog):
+    def __init__(self, tlsData, parent=None):
+        super(CertificateDialog, self).__init__(parent)
+        if isMacOS():
+            self.setWindowTitle("")
+            self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            self.setWindowTitle(getMessage("about-dialog-title"))
+            if isWindows():
+                self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowIcon(QtGui.QPixmap(resourcespath + 'lock_green.png'))
+        statusLabel = QtWidgets.QLabel("<strong>Syncplay is using an encrypted connection to {}.</strong>".format(tlsData["subject"]))
+        descLabel = QtWidgets.QLabel("Encryption with a digital certificate keeps information private as it's sent to or from the<br/>server {}.".format(tlsData["subject"]))
+        connDataLabel = QtWidgets.QLabel("Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite:{}.".format(tlsData["protocolVersion"], tlsData["cipher"]))
+        certDataLabel = QtWidgets.QLabel("Certificate issued by {} valid until {}.".format(tlsData["issuer"], tlsData["expires"]))
+        statusLabel.setFont(QtGui.QFont("Helvetica", 12))
+        descLabel.setFont(QtGui.QFont("Helvetica", 12))
+        connDataLabel.setFont(QtGui.QFont("Helvetica", 12))
+        certDataLabel.setFont(QtGui.QFont("Helvetica", 12))
+        lockIconPixmap = QtGui.QPixmap(resourcespath + "lock_green_dialog.png")
+        lockIconLabel = QtWidgets.QLabel()
+        lockIconLabel.setPixmap(lockIconPixmap.scaled(64, 64, Qt.KeepAspectRatio))
+        certLayout = QtWidgets.QGridLayout()
+        certLayout.addWidget(lockIconLabel, 1, 0, 3, 1, Qt.AlignLeft | Qt.AlignTop)
+        certLayout.addWidget(statusLabel, 0, 1, 1, 3)
+        certLayout.addWidget(descLabel, 1, 1, 1, 3)
+        certLayout.addWidget(connDataLabel, 2, 1, 1, 3)
+        certLayout.addWidget(certDataLabel, 3, 1, 1, 3)
+        closeButton = QtWidgets.QPushButton("Close")
+        closeButton.setFixedWidth(100)
+        closeButton.setAutoDefault(False)
+        closeButton.clicked.connect(self.closeDialog)
+        certLayout.addWidget(closeButton, 4, 3, 1, 1)
+        certLayout.setVerticalSpacing(10)
+        certLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+        self.setSizeGripEnabled(False)
+        self.setLayout(certLayout)
+
+    def closeDialog(self):
+        self.close()
+
+
 class MainWindow(QtWidgets.QMainWindow):
     insertPosition = None
     playlistState = []
@@ -1251,14 +1293,14 @@ class MainWindow(QtWidgets.QMainWindow):
         window.listlabel = QtWidgets.QLabel(getMessage("userlist-heading-label"))
         window.listlabel.setMinimumHeight(27)
         if isMacOS:
-            window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'green_lock.png').scaled(14, 14),"")
+            window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'lock_green.png').scaled(14, 14),"")
             window.sslButton.setVisible(False)
             window.sslButton.setFixedHeight(21)
             window.sslButton.setFixedWidth(21)
             window.sslButton.setMinimumSize(21, 21)
             window.sslButton.setStyleSheet("QPushButton:!hover{border: 1px solid gray;} QPushButton:hover{border:2px solid black;}")
         else:
-            window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'green_lock.png'),"")
+            window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'lock_green.png'),"")
             window.sslButton.setVisible(False)
             window.sslButton.setFixedHeight(27)
             window.sslButton.setFixedWidth(27)
@@ -1540,13 +1582,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def openSSLDetails(self):
-        boxReturn = QtWidgets.QMessageBox.information(
-                                                    self,
-                                                    getMessage("ssl-information-title"),
-                                                    "[{}]\n{}".format(getMessage("ssl-information-title"),self.getSSLInformation())
-                                                    )
-        if(boxReturn): self.sslButton.setDown(False)
-
+        sslDetailsBox = CertificateDialog(self.getSSLInformation())
+        sslDetailsBox.exec_()
+        self.sslButton.setDown(False)
 
     def openAbout(self):
         aboutMsgBox = AboutDialog()

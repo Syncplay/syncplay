@@ -347,14 +347,20 @@ class SyncClientProtocol(JSONCommandProtocol):
         self._expireDateTLS = datetime.strptime(self._serverCertificateTLS.get_notAfter().decode('ascii'), '%Y%m%d%H%M%SZ')
 
         self._encryptedConnectionTLS = self.transport.protocol._tlsConnection
-        self._connVersionTLS = self._encryptedConnectionTLS.get_protocol_version_name()
+        self._connVersionNumberTLS = self._encryptedConnectionTLS.get_protocol_version()
+        self._connVersionStringTLS = self._encryptedConnectionTLS.get_protocol_version_name()
         self._cipherNameTLS = self._encryptedConnectionTLS.get_cipher_name()
+    
+        if self._connVersionNumberTLS == 771:
+            self._connVersionNumberTLS = '1.2'
+        elif self._connVersionNumberTLS == 772:
+            self._connVersionNumberTLS = '1.3'
 
-        self._client.ui.showMessage(getMessage("startTLS-secure-connection-ok").format(self._connVersionTLS))
-        self._client.ui.setSSLMode(
-                                    True,
-                                    getMessage("ssl-information-message")
-                                    .format(self._subjectTLS,self._issuerTLS, self._expireDateTLS, self._connVersionTLS, self._cipherNameTLS))
+        self._client.ui.showMessage(getMessage("startTLS-secure-connection-ok").format(self._connVersionStringTLS))
+        self._client.ui.setSSLMode( True,
+                                    {'subject': self._subjectTLS, 'issuer': self._issuerTLS, 'expires': self._expireDateTLS,
+                                    'protocolString': self._connVersionStringTLS, 'protocolVersion': self._connVersionNumberTLS,
+                                    'cipher': self._cipherNameTLS})
 
 
 class SyncServerProtocol(JSONCommandProtocol):
