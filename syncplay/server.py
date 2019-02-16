@@ -223,6 +223,7 @@ class SyncFactory(Factory):
                                                     raiseMinimumTo=ssl.TLSVersion.TLSv1_2)
             self.options = contextFactory
         except Exception as e:
+            self.options = None
             print(e)
             print("TLS support is not enabled.")
 
