@@ -324,7 +324,7 @@ ru = {
     "tls-information-title": "Certificate Details",
     "tls-dialog-status-label": "<strong>Syncplay is using an encrypted connection to {}.</strong>",
     "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it is sent to or from the<br/>server {}.",
-    "tls-dialog-connection-label": "Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite:{}.",
+    "tls-dialog-connection-label": "Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite: {}.",
     "tls-dialog-certificate-label": "Certificate issued by {} valid until {}.",
 
     # About dialog - TODO: Translate

@@ -322,7 +322,7 @@ it = {
     "tls-information-title": "Informazioni sul certificato",
     "tls-dialog-status-label": "<strong>Syncplay è connesso a {} tramite una connessione codificata.</strong>",
     "tls-dialog-desc-label": "La codifica con un certificato digitale mantiene private le informazioni quando vengono<br/>inviate dal/al server {}.",
-    "tls-dialog-connection-label": "Informazioni codificate usando Transport Layer Security (TLS), versione {} usando gli<br/>algoritmi di cifratura:{}.",
+    "tls-dialog-connection-label": "Informazioni codificate usando Transport Layer Security (TLS), versione {} usando gli<br/>algoritmi di cifratura: {}.",
     "tls-dialog-certificate-label": "Certificato rilasciato da {} valido fino al {}.",
 
     # About dialog
