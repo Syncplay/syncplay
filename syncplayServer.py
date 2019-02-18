@@ -13,38 +13,56 @@ except AttributeError:
     import warnings
     warnings.warn("You must run Syncplay with Python 3.4 or newer!")
 
-from twisted.internet import reactor, tcp
+from twisted.internet import reactor
+from twisted.internet.endpoints import TCP4ServerEndpoint, TCP6ServerEndpoint
+from twisted.internet.error import CannotListenError
 
 from syncplay.server import SyncFactory, ConfigurationGetter
 
-class DualStackPort(tcp.Port):
+class ServerStatus: pass
 
-    def __init__(self, port, factory, backlog=50, interface='', reactor=None):
-        tcp.Port.__init__(self, port, factory, backlog, interface, reactor)
+def isListening6(f):
+    ServerStatus.listening6 = True
 
-    def createInternetSocket(self):
-        s = tcp.Port.createInternetSocket(self)
-        try:
-            s.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
-        except:
-            pass
-        return s
+def isListening4(f):
+    ServerStatus.listening4 = True
+
+def failed6(f):
+    ServerStatus.listening6 = False
+    print(f.value)
+    print("IPv6 listening failed.")
+
+def failed4(f):
+    ServerStatus.listening4 = False
+    if f.type is CannotListenError and ServerStatus.listening6:
+        pass
+    else:
+        print(f.value)
+        print("IPv4 listening failed.")
+
 
 if __name__ == '__main__':
     argsGetter = ConfigurationGetter()
     args = argsGetter.getConfiguration()
-    dsp = DualStackPort(int(args.port),
-        SyncFactory(
-            args.port,
-            args.password,
-            args.motd_file,
-            args.isolate_rooms,
-            args.salt,
-            args.disable_ready,
-            args.disable_chat,
-            args.max_chat_message_length,
-            args.max_username_length,
-            args.stats_db_file),
-        interface='::')
-    dsp.startListening()
-    reactor.run()
+    factory = SyncFactory(
+        args.port,
+        args.password,
+        args.motd_file,
+        args.isolate_rooms,
+        args.salt,
+        args.disable_ready,
+        args.disable_chat,
+        args.max_chat_message_length,
+        args.max_username_length,
+        args.stats_db_file,
+        args.tls
+    )
+    endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))
+    endpoint6.listen(factory).addCallbacks(isListening6, failed6)
+    endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))
+    endpoint4.listen(factory).addCallbacks(isListening4, failed4)
+    if ServerStatus.listening6 or ServerStatus.listening4:
+        reactor.run()
+    else:
+        print("Unable to listen using either IPv4 and IPv6 protocols. Quitting the server now.")
+        sys.exit()

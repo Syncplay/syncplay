@@ -310,6 +310,20 @@ de = {
     "userguide-menu-label": "&Benutzerhandbuch öffnen",
     "update-menu-label": "auf &Aktualisierung prüfen",
 
+    # startTLS messages - TODO: Translate
+    "startTLS-initiated": "Attempting secure connection",
+    "startTLS-secure-connection-ok": "Secure connection established ({})",
+    "startTLS-server-certificate-invalid": 'Secure connection failed. The server uses an invalid security certificate. This communication could be intercepted by a third party. For further details and troubleshooting see <a href="https://syncplay.pl/trouble">here</a>.',
+    "startTLS-not-supported-client": "This client does not support TLS",
+    "startTLS-not-supported-server": "This server does not support TLS",
+
+    # TLS certificate dialog - TODO: Translate
+    "tls-information-title": "Certificate Details",
+    "tls-dialog-status-label": "<strong>Syncplay is using an encrypted connection to {}.</strong>",
+    "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it is sent to or from the<br/>server {}.",
+    "tls-dialog-connection-label": "Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite: {}.",
+    "tls-dialog-certificate-label": "Certificate issued by {} valid until {}.",
+
     # About dialog - TODO: Translate
     "about-menu-label": "&About Syncplay",
     "about-dialog-title": "About Syncplay",
@@ -403,6 +417,8 @@ de = {
     "reset-tooltip": "Alle Einstellungen auf Standardwerte zurücksetzen.",
     "update-server-list-tooltip": "Mit syncplay.pl verbinden um die Liste öffentlicher Server zu aktualisieren.",
 
+    "sslconnection-tooltip": "Securely connected to server. Click for certificate details.",  # TODO: Translate
+
     "joinroom-tooltip": "Den aktuellen Raum verlassen und stattdessen den angegebenen betreten.",
     "seektime-msgbox-label": "Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
     "ready-tooltip": "Zeigt an, ob du bereit zum anschauen bist",
@@ -438,6 +454,7 @@ de = {
     "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})",  # TODO: Translate
     "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})", # TODO: Translate
     "server-stats-db-file-argument": "Enable server stats using the SQLite db file provided", # TODO: Translate
+    "server-startTLS-argument": "Enable TLS connections using the certificate files in the path provided", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders": "Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
     "server-messed-up-motd-too-long": "Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
 

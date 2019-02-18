@@ -124,6 +124,7 @@ class AboutDialog(QtWidgets.QDialog):
             self.setWindowTitle(getMessage("about-dialog-title"))
             if isWindows():
                 self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowIcon(QtGui.QPixmap(resourcespath + 'syncplay.png'))
         nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
         nameLabel.setFont(QtGui.QFont("Helvetica", 18))
         linkLabel = QtWidgets.QLabel("<center><a href=\"https://syncplay.pl\">syncplay.pl</a></center>")
@@ -171,11 +172,56 @@ class AboutDialog(QtWidgets.QDialog):
             QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + "third-party-notices.rtf"))
 
 
+class CertificateDialog(QtWidgets.QDialog):
+    def __init__(self, tlsData, parent=None):
+        super(CertificateDialog, self).__init__(parent)
+        if isMacOS():
+            self.setWindowTitle("")
+            self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            self.setWindowTitle(getMessage("tls-information-title"))
+            if isWindows():
+                self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowIcon(QtGui.QPixmap(resourcespath + 'syncplay.png'))
+        statusLabel = QtWidgets.QLabel(getMessage("tls-dialog-status-label").format(tlsData["subject"]))
+        descLabel = QtWidgets.QLabel(getMessage("tls-dialog-desc-label").format(tlsData["subject"]))
+        connDataLabel = QtWidgets.QLabel(getMessage("tls-dialog-connection-label").format(tlsData["protocolVersion"], tlsData["cipher"]))
+        certDataLabel = QtWidgets.QLabel(getMessage("tls-dialog-certificate-label").format(tlsData["issuer"], tlsData["expires"]))
+        if isMacOS():
+            statusLabel.setFont(QtGui.QFont("Helvetica", 12))
+            descLabel.setFont(QtGui.QFont("Helvetica", 12))
+            connDataLabel.setFont(QtGui.QFont("Helvetica", 12))
+            certDataLabel.setFont(QtGui.QFont("Helvetica", 12))
+        lockIconPixmap = QtGui.QPixmap(resourcespath + "lock_green_dialog.png")
+        lockIconLabel = QtWidgets.QLabel()
+        lockIconLabel.setPixmap(lockIconPixmap.scaled(64, 64, Qt.KeepAspectRatio))
+        certLayout = QtWidgets.QGridLayout()
+        certLayout.addWidget(lockIconLabel, 1, 0, 3, 1, Qt.AlignLeft | Qt.AlignTop)
+        certLayout.addWidget(statusLabel, 0, 1, 1, 3)
+        certLayout.addWidget(descLabel, 1, 1, 1, 3)
+        certLayout.addWidget(connDataLabel, 2, 1, 1, 3)
+        certLayout.addWidget(certDataLabel, 3, 1, 1, 3)
+        closeButton = QtWidgets.QPushButton("Close")
+        closeButton.setFixedWidth(100)
+        closeButton.setAutoDefault(False)
+        closeButton.clicked.connect(self.closeDialog)
+        certLayout.addWidget(closeButton, 4, 3, 1, 1)
+        certLayout.setVerticalSpacing(10)
+        certLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+        self.setSizeGripEnabled(False)
+        self.setLayout(certLayout)
+
+    def closeDialog(self):
+        self.close()
+
+
 class MainWindow(QtWidgets.QMainWindow):
     insertPosition = None
     playlistState = []
     updatingPlaylist = False
     playlistIndex = None
+    sslInformation = "N/A"
+    sslMode = False
 
     def setPlaylistInsertPosition(self, newPosition):
         if not self.playlist.isEnabled():
@@ -430,6 +476,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.playlistGroup.setEnabled(False)
         self.chatInput.setMaxLength(constants.MAX_CHAT_MESSAGE_LENGTH)
         self.roomInput.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
+
+    def setSSLMode(self, sslMode, sslInformation):
+        self.sslMode = sslMode
+        self.sslInformation = sslInformation
+        self.sslButton.setVisible(sslMode)
+
+    def getSSLInformation(self):
+        return self.sslInformation
 
     def showMessage(self, message, noTimestamp=False):
         message = str(message)
@@ -783,6 +837,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if criticalerror:
             QtWidgets.QMessageBox.critical(self, "Syncplay", message)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+        message = message.replace("&lt;a href=&quot;https://syncplay.pl/trouble&quot;&gt;", '<a href="https://syncplay.pl/trouble">').replace("&lt;/a&gt;", "</a>")
         message = message.replace("\n", "<br />")
         message = "<span style=\"{}\">".format(constants.STYLE_ERRORNOTIFICATION) + message + "</span>"
         self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
@@ -1204,6 +1259,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.outputbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
         window.outputlabel = QtWidgets.QLabel(getMessage("notifications-heading-label"))
+        window.outputlabel.setMinimumHeight(27)
         window.chatInput = QtWidgets.QLineEdit()
         window.chatInput.setMaxLength(constants.MAX_CHAT_MESSAGE_LENGTH)
         window.chatInput.returnPressed.connect(self.sendChatMessage)
@@ -1240,21 +1296,37 @@ class MainWindow(QtWidgets.QMainWindow):
         self.listTreeView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.listTreeView.customContextMenuRequested.connect(self.openRoomMenu)
         window.listlabel = QtWidgets.QLabel(getMessage("userlist-heading-label"))
+        window.listlabel.setMinimumHeight(27)
+        if isMacOS:
+            window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'lock_green.png').scaled(14, 14),"")
+            window.sslButton.setVisible(False)
+            window.sslButton.setFixedHeight(21)
+            window.sslButton.setFixedWidth(21)
+            window.sslButton.setMinimumSize(21, 21)
+            window.sslButton.setStyleSheet("QPushButton:!hover{border: 1px solid gray;} QPushButton:hover{border:2px solid black;}")
+        else:
+            window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'lock_green.png'),"")
+            window.sslButton.setVisible(False)
+            window.sslButton.setFixedHeight(27)
+            window.sslButton.setFixedWidth(27)
+        window.sslButton.pressed.connect(self.openSSLDetails)
+        window.sslButton.setToolTip(getMessage("sslconnection-tooltip"))
         window.listFrame = QtWidgets.QFrame()
         window.listFrame.setLineWidth(0)
         window.listFrame.setMidLineWidth(0)
         window.listFrame.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         window.listLayout.setContentsMargins(0, 0, 0, 0)
 
-        window.userlistLayout = QtWidgets.QVBoxLayout()
+        window.userlistLayout = QtWidgets.QGridLayout()
         window.userlistFrame = QtWidgets.QFrame()
         window.userlistFrame.setLineWidth(0)
         window.userlistFrame.setMidLineWidth(0)
         window.userlistFrame.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         window.userlistLayout.setContentsMargins(0, 0, 0, 0)
         window.userlistFrame.setLayout(window.userlistLayout)
-        window.userlistLayout.addWidget(window.listlabel)
-        window.userlistLayout.addWidget(window.listTreeView)
+        window.userlistLayout.addWidget(window.listlabel, 0, 0, Qt.AlignLeft)
+        window.userlistLayout.addWidget(window.sslButton, 0, 2,  Qt.AlignRight)
+        window.userlistLayout.addWidget(window.listTreeView, 1, 0, 1, 3)
 
         window.listSplit = QtWidgets.QSplitter(Qt.Vertical, self)
         window.listSplit.addWidget(window.userlistFrame)
@@ -1512,6 +1584,12 @@ class MainWindow(QtWidgets.QMainWindow):
         window.menuBar.addMenu(window.helpMenu)
         if not isMacOS():
             window.mainLayout.setMenuBar(window.menuBar)
+
+    @needsClient
+    def openSSLDetails(self):
+        sslDetailsBox = CertificateDialog(self.getSSLInformation())
+        sslDetailsBox.exec_()
+        self.sslButton.setDown(False)
 
     def openAbout(self):
         aboutMsgBox = AboutDialog()

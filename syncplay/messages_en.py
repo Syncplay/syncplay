@@ -267,7 +267,7 @@ en = {
     "run-label": "Run Syncplay",
     "storeandrun-label": "Store configuration and run Syncplay",
 
-    "contact-label": "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>raise an issue</nobr></a> via GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>like us on Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>follow us on Twitter</nobr></a>, or visit <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. NOTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.",
+    "contact-label": "Feel free to e-mail <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chat via the <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> on irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>raise an issue</nobr></a> via GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>like us on Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>follow us on Twitter</nobr></a>, or visit <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Do not use Syncplay to send sensitive information.",
 
     "joinroom-label": "Join room",
     "joinroom-menu-label": "Join room {}",
@@ -311,6 +311,19 @@ en = {
     "help-menu-label": "&Help",
     "userguide-menu-label": "Open user &guide",
     "update-menu-label": "Check for &update",
+
+    "startTLS-initiated": "Attempting secure connection",
+    "startTLS-secure-connection-ok": "Secure connection established ({})",
+    "startTLS-server-certificate-invalid": 'Secure connection failed. The server uses an invalid security certificate. This communication could be intercepted by a third party. For further details and troubleshooting see <a href="https://syncplay.pl/trouble">here</a>.',
+    "startTLS-not-supported-client": "This client does not support TLS",
+    "startTLS-not-supported-server": "This server does not support TLS",
+
+    # TLS certificate dialog
+    "tls-information-title": "Certificate Details",
+    "tls-dialog-status-label": "<strong>Syncplay is using an encrypted connection to {}.</strong>",
+    "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it is sent to or from the<br/>server {}.",
+    "tls-dialog-connection-label": "Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite: {}.",
+    "tls-dialog-certificate-label": "Certificate issued by {} valid until {}.",
 
     # About dialog
     "about-menu-label": "&About Syncplay",
@@ -403,6 +416,8 @@ en = {
     "reset-tooltip": "Reset all settings to the default configuration.",
     "update-server-list-tooltip": "Connect to syncplay.pl to update list of public servers.",
 
+    "sslconnection-tooltip": "Securely connected to server. Click for certificate details.",
+
     "joinroom-tooltip": "Leave current room and joins specified room.",
     "seektime-msgbox-label": "Jump to specified time (in seconds / min:sec). Use +/- for relative seek.",
     "ready-tooltip": "Indicates whether you are ready to watch.",
@@ -439,6 +454,7 @@ en = {
     "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})", # Default number of characters
     "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})",
     "server-stats-db-file-argument": "Enable server stats using the SQLite db file provided",
+    "server-startTLS-argument": "Enable TLS connections using the certificate files in the path provided",
     "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
     "server-messed-up-motd-too-long": "Message of the Day is too long - maximum of {} chars, {} given.",
 

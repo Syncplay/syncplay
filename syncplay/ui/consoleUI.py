@@ -108,6 +108,9 @@ class ConsoleUI(threading.Thread):
     def showErrorMessage(self, message, criticalerror=False):
         print("ERROR:\t" + message)
 
+    def setSSLMode(self, sslMode, sslInformation):
+        pass
+
     def _extractSign(self, m):
         if m:
             if m == "-":

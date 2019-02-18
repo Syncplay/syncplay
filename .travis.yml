@@ -23,7 +23,7 @@ before_install:
 - python3 -c "from py2app.recipes import pyside2" 
 
 install:
-- pip3 install twisted appnope requests
+- pip3 install twisted[tls] appnope requests certifi
 
 before_deploy:
 - pip3 install dmgbuild

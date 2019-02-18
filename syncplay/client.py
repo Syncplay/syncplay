@@ -2,6 +2,7 @@
 import ast
 import collections
 import hashlib
+import os
 import os.path
 import random
 import re
@@ -15,6 +16,24 @@ from twisted.internet.endpoints import HostnameEndpoint
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task, defer, threads
 from twisted.application.internet import ClientService
+
+try:
+    import certifi
+    from twisted.internet.ssl import Certificate, optionsForClientTLS
+    certPath = certifi.where()
+    if os.path.exists(certPath):
+        os.environ['SSL_CERT_FILE'] = certPath
+    elif 'zip' in certPath:
+        import tempfile
+        import zipfile
+        zipPath, memberPath = certPath.split('.zip/')
+        zipPath += '.zip'
+        archive = zipfile.ZipFile(zipPath, 'r')
+        tmpDir = tempfile.gettempdir()
+        extractedPath = archive.extract(memberPath, tmpDir)
+        os.environ['SSL_CERT_FILE'] = extractedPath
+except:
+    pass
 
 from syncplay import utils, constants, version
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
@@ -107,6 +126,8 @@ class SyncplayClient(object):
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         self.fileSwitch = FileSwitchManager(self)
         self.playlist = SyncplayPlaylist(self)
+
+        self._serverSupportsTLS = True
 
         if constants.LIST_RELATIVE_CONFIGS and 'loadedRelativePaths' in self._config and self._config['loadedRelativePaths']:
             paths = "; ".join(self._config['loadedRelativePaths'])
@@ -388,6 +409,7 @@ class SyncplayClient(object):
         self.ui.showMessage(getMessage("current-offset-notification").format(self._userOffset))
 
     def onDisconnect(self):
+        self.ui.setSSLMode(False)
         if self._config['pauseOnLeave']:
             self.setPaused(True)
             self.lastPausedOnLeaveTime = time.time()
@@ -704,9 +726,20 @@ class SyncplayClient(object):
             host = host.strip('[]')
         port = int(port)
         self._endpoint = HostnameEndpoint(reactor, host, port)
+        try:
+            caCertFP = open(os.environ['SSL_CERT_FILE'])
+            caCertTwisted = Certificate.loadPEM(caCertFP.read())
+            caCertFP.close()
+            self.protocolFactory.options = optionsForClientTLS(hostname=host)
+            self._clientSupportsTLS = True
+        except Exception as e:
+            self.ui.showDebugMessage(str(e))
+            self.protocolFactory.options = None
+            self._clientSupportsTLS = False
 
         def retry(retries):
             self._lastGlobalUpdate = None
+            self.ui.setSSLMode(False)
             if retries == 0:
                 self.onDisconnect()
             if retries > constants.RECONNECT_RETRIES:
@@ -719,7 +752,7 @@ class SyncplayClient(object):
             self.reconnecting = True
             return(0.1 * (2 ** min(retries, 5)))
 
-        self._reconnectingService = ClientService(self._endpoint, self.protocolFactory , retryPolicy=retry)
+        self._reconnectingService = ClientService(self._endpoint, self.protocolFactory, retryPolicy=retry)
         waitForConnection = self._reconnectingService.whenConnected(failAfterFailures=1)
         self._reconnectingService.startService()
 
@@ -1455,6 +1488,9 @@ class UiManager(object):
         else:
             self.showOSDMessage(messageString, duration=constants.OSD_DURATION)
         self.__ui.showMessage(messageString)
+
+    def setSSLMode(self, sslMode, sslInformation=""):
+        self.__ui.setSSLMode(sslMode, sslInformation)
 
     def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL):
         if not noPlayer:

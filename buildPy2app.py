@@ -12,11 +12,12 @@ import syncplay
 APP = ['syncplayClient.py']
 DATA_FILES = [
     ('resources', glob('resources/*.png') + glob('resources/*.rtf') + glob('resources/*.lua')),
+    ('resources/lua/intf', glob('resources/lua/intf/*.lua'))
 ]
 OPTIONS = {
     'iconfile': 'resources/icon.icns',
     'extra_scripts': 'syncplayServer.py',
-    'includes': {'PySide2.QtCore', 'PySide2.QtUiTools', 'PySide2.QtGui', 'PySide2.QtWidgets', 'certifi'},
+    'includes': {'PySide2.QtCore', 'PySide2.QtUiTools', 'PySide2.QtGui', 'PySide2.QtWidgets', 'certifi', 'cffi'},
     'excludes': {'PySide', 'PySide.QtCore', 'PySide.QtUiTools', 'PySide.QtGui'},
     'qt_plugins': [
         'platforms/libqcocoa.dylib',

@@ -269,7 +269,7 @@ ru = {
     "run-label": "Запустить",
     "storeandrun-label": "Сохранить и запустить",
 
-    "contact-label": "Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"https://syncplay.pl/\">www.syncplay.pl</a> за инорфмацией, помощью и обновлениями! NOTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.",  # TODO: Translate last sentence
+    "contact-label": "Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"https://syncplay.pl/\">www.syncplay.pl</a> за инорфмацией, помощью и обновлениями! Do not use Syncplay to send sensitive information.",  # TODO: Translate last sentence
 
     "joinroom-label": "Зайти в комнату",
     "joinroom-menu-label": "Зайти в комнату {}",
@@ -312,6 +312,20 @@ ru = {
     "help-menu-label": "&Помощь",
     "userguide-menu-label": "&Руководство пользователя",
     "update-menu-label": "Проверить &обновления",
+
+    # startTLS messages - TODO: Translate
+    "startTLS-initiated": "Attempting secure connection",
+    "startTLS-secure-connection-ok": "Secure connection established ({})",
+    "startTLS-server-certificate-invalid": 'Secure connection failed. The server uses an invalid security certificate. This communication could be intercepted by a third party. For further details and troubleshooting see <a href="https://syncplay.pl/trouble">here</a>.',
+    "startTLS-not-supported-client": "This client does not support TLS",
+    "startTLS-not-supported-server": "This server does not support TLS",
+
+    # TLS certificate dialog - TODO: Translate
+    "tls-information-title": "Certificate Details",
+    "tls-dialog-status-label": "<strong>Syncplay is using an encrypted connection to {}.</strong>",
+    "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it is sent to or from the<br/>server {}.",
+    "tls-dialog-connection-label": "Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite: {}.",
+    "tls-dialog-certificate-label": "Certificate issued by {} valid until {}.",
 
     # About dialog - TODO: Translate
     "about-menu-label": "&About Syncplay",
@@ -404,6 +418,8 @@ ru = {
     "reset-tooltip": "Сбрасывает все настройки Syncplay в начальное состояние.",
     "update-server-list-tooltip": "Обновить список публичных серверов от syncplay.pl.",
 
+    "sslconnection-tooltip": "Securely connected to server. Click for certificate details.", # TODO: Translate
+
     "joinroom-tooltip": "Покинуть комнату и зайти в другую, указанную комнату.",
     "seektime-msgbox-label": "Перемотать к определенному моменту времени (указывать в секундах или мин:сек). Используйте +/-, чтобы перемотать вперед/назад относительно настоящего момента.",
     "ready-tooltip": "Показывает, готовы ли Вы к просмотру или нет.",
@@ -439,6 +455,7 @@ ru = {
     "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})",  # TODO: Translate
     "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})", # TODO: Translate
     "server-stats-db-file-argument": "Enable server stats using the SQLite db file provided", # TODO: Translate
+    "server-startTLS-argument": "Enable TLS connections using the certificate files in the path provided", # TODO: Translate
     "server-messed-up-motd-unescaped-placeholders" : "MOTD-сообщение содержит неэкранированные спец.символы. Все знаки $ должны быть продублированы ($$).",
     "server-messed-up-motd-too-long" : "MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
 

@@ -267,7 +267,7 @@ it = {
     "run-label": "Avvia Syncplay",
     "storeandrun-label": "Salva la configurazione e avvia Syncplay",
 
-    "contact-label": "Sentiti libero di inviare un'e-mail a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chattare tramite il <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canale IRC #Syncplay</nobr></a> su irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>segnalare un problema</nobr></a> su GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>lasciare un like sulla nostra pagina Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>seguirci su Twitter</nobr></a>, o visitare <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. NOTA: i messaggi di chat non sono cifrati, quindi non usare Syncplay per inviare dati sensibili.",
+    "contact-label": "Sentiti libero di inviare un'e-mail a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chattare tramite il <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canale IRC #Syncplay</nobr></a> su irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>segnalare un problema</nobr></a> su GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>lasciare un like sulla nostra pagina Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>seguirci su Twitter</nobr></a>, o visitare <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Non usare Syncplay per inviare dati sensibili.", # TODO: Check translation
 
     "joinroom-label": "Entra nella stanza",
     "joinroom-menu-label": "Entra nella stanza {}",
@@ -311,6 +311,19 @@ it = {
     "help-menu-label": "&Aiuto",
     "userguide-menu-label": "Apri guida &utente",
     "update-menu-label": "Controlla la presenza di &aggiornamenti",
+
+    "startTLS-initiated": "Tentativo di connessione sicura in corso",
+    "startTLS-secure-connection-ok": "Connessione sicura stabilita ({})",
+    "startTLS-server-certificate-invalid": 'Connessione sicura non riuscita. Il certificato di sicurezza di questo server non è valido. La comunicazione potrebbe essere intercettata da una terza parte. Per ulteriori dettagli e informazioni sulla risoluzione del problema, clicca <a href="https://syncplay.pl/trouble">qui</a>.',
+    "startTLS-not-supported-client": "Questo client non supporta TLS",
+    "startTLS-not-supported-server": "Questo server non supporta TLS",
+
+    # TLS certificate dialog
+    "tls-information-title": "Informazioni sul certificato",
+    "tls-dialog-status-label": "<strong>Syncplay è connesso a {} tramite una connessione codificata.</strong>",
+    "tls-dialog-desc-label": "La codifica con un certificato digitale mantiene private le informazioni quando vengono<br/>inviate dal/al server {}.",
+    "tls-dialog-connection-label": "Informazioni codificate usando Transport Layer Security (TLS), versione {} usando gli<br/>algoritmi di cifratura: {}.",
+    "tls-dialog-certificate-label": "Certificato rilasciato da {} valido fino al {}.",
 
     # About dialog
     "about-menu-label": "&Informazioni su Syncplay",
@@ -403,6 +416,8 @@ it = {
     "reset-tooltip": "Ripristina le impostazioni iniziali di Syncplay.",
     "update-server-list-tooltip": "Scarica la lista dei server pubblici da syncplay.pl.",
 
+    "sslconnection-tooltip": "Connessione sicura al server. Clicca per informazioni sul certificato.",
+
     "joinroom-tooltip": "Lascia la stanza attuale e entra in quella specificata.",
     "seektime-msgbox-label": "Salta all'istante di tempo specificato (in secondi / min:sec). Usa +/- per una ricerca relativa.",
     "ready-tooltip": "Indica quando sei pronto a guardare.",
@@ -439,6 +454,7 @@ it = {
     "server-chat-maxchars-argument": "Numero massimo di caratteri in un messaggio di chat (default è {})", # Default number of characters
     "server-maxusernamelength-argument": "Numero massimo di caratteri in un nome utente (default è {})",
     "server-stats-db-file-argument": "Abilita la raccolta dei dati statistici nel file SQLite indicato",
+    "server-startTLS-argument": "Abilita il protocollo TLS usando i certificati contenuti nel percorso indicato",
     "server-messed-up-motd-unescaped-placeholders": "Il messaggio del giorno ha dei caratteri non 'escaped'. Tutti i simboli $ devono essere doppi ($$).",
     "server-messed-up-motd-too-long": "Il messaggio del giorno è troppo lungo - numero massimo di caratteri è {}, {} trovati.",
 
