@@ -54,9 +54,13 @@ class SyncFactory(Factory):
             self._statsRecorder.startRecorder(statsDelay)
         else:
             self._statsDbHandle = None
-        self.options = None
         if tlsCertPath is not None:
-            self._allowTLSconnections(tlsCertPath)
+            self.certPath = tlsCertPath
+            self._allowTLSconnections(self.certPath)
+        else:
+            self.certPath = None
+            self.options = None
+            self.serverAcceptsTLS = False
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
