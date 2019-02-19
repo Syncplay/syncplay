@@ -231,6 +231,7 @@ class SyncFactory(Factory):
 
             self.options = contextFactory
             self.serverAcceptsTLS = True
+            self._TLSattempts = 0
             print("TLS support is enabled.")
         except Exception as e:
             self.options = None
