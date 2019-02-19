@@ -243,7 +243,12 @@ class SyncFactory(Factory):
         return contextFactory
 
     def checkLastEditCertTime(self):
-        return os.path.getmtime(self.certPath+'/cert.pem')
+        try:
+            outTime = os.path.getmtime(self.certPath+'/cert.pem')
+        except:
+            outTime = None
+
+        return outTime
 
     def updateTLSContextFactory(self):
         self.options = self._createTLSContextFactory(self.certPath)
