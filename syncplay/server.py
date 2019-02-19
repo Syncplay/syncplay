@@ -208,15 +208,6 @@ class SyncFactory(Factory):
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
 
     def _allowTLSconnections(self, path):
-        self.options = self._createTLSContextFactory(path)
-        if self.options is not None:
-            self.serverAcceptsTLS = True
-        else:
-            self.serverAcceptsTLS = False
-            self.lastEditCertTime = None
-            print("TLS support is not enabled.")
-
-    def _createTLSContextFactory(self, path):
         try:
             privKey = open(path+'/privkey.pem', 'rt').read()
             certif = open(path+'/cert.pem', 'rt').read()
@@ -236,22 +227,26 @@ class SyncFactory(Factory):
             contextFactory = ssl.CertificateOptions(privateKey=privKeyPySSL, certificate=certifPySSL,
                                                     extraCertChain=chainPySSL, acceptableCiphers=accCiphers,
                                                     raiseMinimumTo=ssl.TLSVersion.TLSv1_2)
-        except Exception as e:
-            print(e)
-            contextFactory = None
 
-        return contextFactory
+            self.options = contextFactory
+            self.serverAcceptsTLS = True
+        except Exception as e:
+            self.options = None
+            self.serverAcceptsTLS = False
+            self.lastEditCertTime = None
+            print("Error while loading the TLS certificates.")
+            print(e)
+            print("TLS support is not enabled.")
 
     def checkLastEditCertTime(self):
         try:
             outTime = os.path.getmtime(self.certPath+'/cert.pem')
         except:
             outTime = None
-
         return outTime
 
     def updateTLSContextFactory(self):
-        self.options = self._createTLSContextFactory(self.certPath)
+        self._allowTLSconnections(self.certPath)
 
 
 
