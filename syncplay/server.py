@@ -56,6 +56,7 @@ class SyncFactory(Factory):
             self._statsDbHandle = None
         if tlsCertPath is not None:
             self.certPath = tlsCertPath
+            self._TLSattempts = 0
             self._allowTLSconnections(self.certPath)
         else:
             self.certPath = None
@@ -230,6 +231,7 @@ class SyncFactory(Factory):
 
             self.options = contextFactory
             self.serverAcceptsTLS = True
+            print("TLS support is enabled.")
         except Exception as e:
             self.options = None
             self.serverAcceptsTLS = False
@@ -247,7 +249,9 @@ class SyncFactory(Factory):
 
     def updateTLSContextFactory(self):
         self._allowTLSconnections(self.certPath)
-
+        self._TLSattempts += 1
+        if self._TLSattempts < constants.TLS_CERT_ROTATION_MAX_RETRIES:
+            self.serverAcceptsTLS = True
 
 
 class StatsRecorder(object):

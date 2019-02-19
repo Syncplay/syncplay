@@ -669,7 +669,7 @@ class SyncServerProtocol(JSONCommandProtocol):
     def handleTLS(self, message):
         inquiry = message["startTLS"] if "startTLS" in message else None
         if "send" in inquiry:
-            if not self.isLogged() and self._factory.serverAcceptsTLS and self._factory.options is not None:
+            if not self.isLogged() and self._factory.serverAcceptsTLS:
                 lastEditCertTime = self._factory.checkLastEditCertTime()
                 if lastEditCertTime is not None and lastEditCertTime != self._factory.lastEditCertTime:
                     self._factory.updateTLSContextFactory()
