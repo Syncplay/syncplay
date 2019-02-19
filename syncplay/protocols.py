@@ -2,7 +2,6 @@
 import json
 import time
 from functools import wraps
-from os.path import getmtime
 
 from twisted.protocols.basic import LineReceiver
 from twisted.internet.interfaces import IHandshakeListener
@@ -671,7 +670,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         inquiry = message["startTLS"] if "startTLS" in message else None
         if "send" in inquiry:
             if not self.isLogged() and self._factory.serverAcceptsTLS and self._factory.options is not None:
-                if self._factory.checkLastEditCertTime() > self.lastEditCertTime:
+                if self._factory.checkLastEditCertTime() > self._factory.lastEditCertTime:
                     self._factory.updateTLSContextFactory()
                 self.sendTLS({"startTLS": "true"})
                 self.transport.startTLS(self._factory.options)
