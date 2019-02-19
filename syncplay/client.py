@@ -409,7 +409,6 @@ class SyncplayClient(object):
         self.ui.showMessage(getMessage("current-offset-notification").format(self._userOffset))
 
     def onDisconnect(self):
-        self.ui.setSSLMode(False)
         if self._config['pauseOnLeave']:
             self.setPaused(True)
             self.lastPausedOnLeaveTime = time.time()
