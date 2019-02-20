@@ -1,7 +1,4 @@
-certifi>=2018.11.29
-pyside2>=5.12.0
-twisted[tls]>=18.4.0
+twisted>=18.4.0
 appnope>=0.1.0; sys_platform == 'darwin'
-requests>=2.20.0; sys_platform == 'darwin'
 pypiwin32>=223; sys_platform == 'win32'
 zope.inteface>=4.4.0; sys_platform == 'win32'
