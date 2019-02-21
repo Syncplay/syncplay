@@ -434,7 +434,7 @@ ru = {
     "nofile-note": "(ничего)",
 
     # Server messages to client
-    "new-syncplay-available-motd-message": "<NOTICE> Вы используете Syncplay версии {}. Доступна более новая версия на https://syncplay.pl/ . </NOTICE>",  # ClientVersion
+    "new-syncplay-available-motd-message": "Вы используете Syncplay версии {}. Доступна более новая версия на https://syncplay.pl/",  # ClientVersion
 
     # Server notifications
     "welcome-server-notification": "Добро пожаловать на сервер Syncplay версии {0}",  # version
