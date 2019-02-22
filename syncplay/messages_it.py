@@ -432,7 +432,7 @@ it = {
     "nofile-note": "(Nessun file in riproduzione)",
 
     # Server messages to client
-    "new-syncplay-available-motd-message": "<NOTICE> Stai usando Syncplay {} ma una nuova versione è disponibile presso https://syncplay.pl </NOTICE>",  # ClientVersion
+    "new-syncplay-available-motd-message": "Stai usando Syncplay {} ma una nuova versione è disponibile presso https://syncplay.pl",  # ClientVersion
 
     # Server notifications
     "welcome-server-notification": "Benvenuto nel server Syncplay, ver. {0}",  # version

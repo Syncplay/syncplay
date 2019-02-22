@@ -433,7 +433,7 @@ de = {
     "nofile-note": "(keine Datei wird abgespielt)",
 
     # Server messages to client
-    "new-syncplay-available-motd-message": "<NOTICE> Du nutzt Syncplay Version {}, aber es gibt eine neuere Version auf https://syncplay.pl</NOTICE>",  # ClientVersion
+    "new-syncplay-available-motd-message": "Du nutzt Syncplay Version {}, aber es gibt eine neuere Version auf https://syncplay.pl",  # ClientVersion
 
     # Server notifications
     "welcome-server-notification": "Willkommen zum Syncplay-Server, v. {0}",  # version
