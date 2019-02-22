@@ -1,2 +1,2 @@
 certifi>=2018.11.29
-twisted[tls]>=18.4.0
+twisted[tls]>=16.4.0
