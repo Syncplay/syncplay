@@ -392,7 +392,7 @@ en = {
     "language-tooltip": "Language to be used by Syncplay.",
     "unpause-always-tooltip": "If you press unpause it always sets you as ready and unpause, rather than just setting you as ready.",
     "unpause-ifalreadyready-tooltip": "If you press unpause when not ready it will set you as ready - press unpause again to unpause.",
-    "unpause-ifothersready-tooltip": "If you press unpause when not ready, it will only upause if others are ready.",
+    "unpause-ifothersready-tooltip": "If you press unpause when not ready, it will only unpause if others are ready.",
     "unpause-ifminusersready-tooltip": "If you press unpause when not ready, it will only unpause if others are ready and minimum users threshold is met.",
     "trusteddomains-arguments-tooltip": "Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.",
 
