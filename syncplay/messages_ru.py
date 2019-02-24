@@ -169,7 +169,7 @@ ru = {
     "file-argument": 'воспроизводимый файл',
     "args-argument": 'параметры проигрывателя; если нужно передать параметры, начинающиеся с - , то сначала пишите \'--\'',
     "clear-gui-data-argument": 'сбрасывает путь и данные о состоянии окна GUI, хранимые как QSettings',
-    "language-argument": 'язык сообщений Syncplay (de/en/ru)',
+    "language-argument": 'язык сообщений Syncplay (de/en/ru/it/es)',
 
     "version-argument": 'выводит номер версии',
     "version-message": "Вы используете Syncplay версии {} ({})",
