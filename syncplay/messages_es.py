@@ -3,7 +3,7 @@
 """Spanish dictionary"""
 
 es = {
-    "LANGUAGE": "Spanish",
+    "LANGUAGE": "Español",
 
     # Client notifications
     "config-cleared-notification": "Ajustes limpiados. Los cambios serán guardados cuando almacenes una configuración válida.",
