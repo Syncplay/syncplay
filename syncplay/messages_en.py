@@ -16,7 +16,7 @@ en = {
     "connection-failed-notification": "Connection with server failed",
     "connected-successful-notification": "Successfully connected to server",
     "retrying-notification": "%s, Retrying in %d seconds...",  # Seconds
-    "handshake-successful-notification": "Connection established with {} ({})",
+    "reachout-successful-notification": "Successfully reached {} ({})",
 
     "rewind-notification": "Rewinded due to time difference with {}",  # User
     "fastforward-notification": "Fast-forwarded due to time difference with {}",  # User

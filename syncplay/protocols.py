@@ -1,6 +1,7 @@
 # coding:utf8
 import json
 import time
+from datetime import datetime
 from functools import wraps
 
 from twisted.protocols.basic import LineReceiver
@@ -336,10 +337,9 @@ class SyncClientProtocol(JSONCommandProtocol):
             self.transport.startTLS(self._client.protocolFactory.options)
         elif "false" in answer:
             self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-server"))
-        self.sendHello()
+            self.sendHello()
 
     def handshakeCompleted(self):
-        from datetime import datetime
         self._serverCertificateTLS = self.transport.getPeerCertificate()
         self._subjectTLS = self._serverCertificateTLS.get_subject().CN
         self._issuerTLS = self._serverCertificateTLS.get_issuer().CN
@@ -361,6 +361,8 @@ class SyncClientProtocol(JSONCommandProtocol):
                                     {'subject': self._subjectTLS, 'issuer': self._issuerTLS, 'expires': self._expireDateTLS,
                                     'protocolString': self._connVersionStringTLS, 'protocolVersion': self._connVersionNumberTLS,
                                     'cipher': self._cipherNameTLS})
+
+        self.sendHello()
 
 
 class SyncServerProtocol(JSONCommandProtocol):

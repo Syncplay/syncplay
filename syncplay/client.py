@@ -757,7 +757,7 @@ class SyncplayClient(object):
 
         def connectedNow(f):
             hostIP = connectionHandle.result.transport.addr[0]
-            self.ui.showMessage(getMessage("handshake-successful-notification").format(host, hostIP))
+            self.ui.showMessage(getMessage("reachout-successful-notification").format(host, hostIP))
             return
 
         def failed(f):
