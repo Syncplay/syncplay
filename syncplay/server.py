@@ -230,7 +230,7 @@ class SyncFactory(Factory):
                 contextFactory = ssl.CertificateOptions(privateKey=privKeyPySSL, certificate=certifPySSL,
                                                         extraCertChain=chainPySSL, acceptableCiphers=accCiphers,
                                                         raiseMinimumTo=ssl.TLSVersion.TLSv1_2)
-            except:
+            except AttributeError:
                 contextFactory = ssl.CertificateOptions(privateKey=privKeyPySSL, certificate=certifPySSL,
                                                         extraCertChain=chainPySSL, acceptableCiphers=accCiphers,
                                                         method=TLSv1_2_METHOD)
