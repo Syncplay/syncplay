@@ -491,6 +491,6 @@ es = {
     "item-is-yours-indicator": "tu",  # Goes with addusersfiletoplaylist/addusersstreamstoplaylist
     "item-is-others-indicator": "{}",  # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist
 
-    "playlist-instruction-item-message": "Despalazar aquí el archivo para agregarlo a la lista de reproducción compartida.",
+    "playlist-instruction-item-message": "Desplazar aquí el archivo para agregarlo a la lista de reproducción compartida.",
     "sharedplaylistenabled-tooltip": "Los operadores de la sala pueden agregar archivos a una lista de reproducción sincronizada, para que visualizar la misma cosa sea más sencillo para todos. Configurar directorios multimedia en 'Misc'.",
 }
