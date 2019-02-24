@@ -12,8 +12,8 @@ from twisted.internet.protocol import Factory
 
 try:
     from OpenSSL import crypto
-    from twisted.internet import ssl
     from OpenSSL.SSL import TLSv1_2_METHOD
+    from twisted.internet import ssl
 except:
     pass
 
