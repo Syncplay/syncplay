@@ -61,6 +61,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Russian.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\German.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Italian.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Spanish.nlf"
 
   Unicode true
 
@@ -92,6 +93,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_ITALIAN} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_ITALIAN} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_ITALIAN} "FileDescription" "Syncplay"
+
+  VIAddVersionKey /LANG=$${LANG_SPANISH} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_SPANISH} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_SPANISH} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_SPANISH} "FileDescription" "Syncplay"
 
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
@@ -136,6 +142,15 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^QuickLaunchBar $${LANG_ITALIAN} "Barra di avvio rapido"
   LangString ^AutomaticUpdates $${LANG_ITALIAN} "Controllo automatico degli aggiornamenti"
   LangString ^UninstConfig $${LANG_ITALIAN} "Cancella i file di configurazione."
+
+  LangString ^SyncplayLanguage $${LANG_SPANISH} "es"
+  LangString ^Associate $${LANG_SPANISH} "Asociar Syncplay con archivos multimedia."
+  LangString ^Shortcut $${LANG_SPANISH} "Crear accesos directos en las siguientes ubicaciones:"
+  LangString ^StartMenu $${LANG_SPANISH} "Menú de inicio"
+  LangString ^Desktop $${LANG_SPANISH} "Escritorio"
+  LangString ^QuickLaunchBar $${LANG_SPANISH} "Barra de acceso rápido"
+  LangString ^AutomaticUpdates $${LANG_SPANISH} "Buscar actualizaciones automáticamente"
+  LangString ^UninstConfig $${LANG_SPANISH} "Borrar archivo de configuración."
 
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "
@@ -240,6 +255,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push Deutsch
     Push $${LANG_ITALIAN}
     Push Italiano
+    Push $${LANG_SPANISH}
+    Push Español
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE

@@ -5,12 +5,14 @@ from . import messages_en
 from . import messages_ru
 from . import messages_de
 from . import messages_it
+from . import messages_es
 
 messages = {
     "en": messages_en.en,
     "ru": messages_ru.ru,
     "de": messages_de.de,
     "it": messages_it.it,
+    "es": messages_es.es,
     "CURRENT": None
 }
 
