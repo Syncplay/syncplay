@@ -12,6 +12,7 @@ from twisted.internet.protocol import Factory
 
 try:
     from OpenSSL import crypto
+    from OpenSSL.SSL import TLSv1_2_METHOD
     from twisted.internet import ssl
 except:
     pass
@@ -225,9 +226,14 @@ class SyncFactory(Factory):
                                "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384"
             accCiphers = ssl.AcceptableCiphers.fromOpenSSLCipherString(cipherListString)
 
-            contextFactory = ssl.CertificateOptions(privateKey=privKeyPySSL, certificate=certifPySSL,
-                                                    extraCertChain=chainPySSL, acceptableCiphers=accCiphers,
-                                                    raiseMinimumTo=ssl.TLSVersion.TLSv1_2)
+            try:
+                contextFactory = ssl.CertificateOptions(privateKey=privKeyPySSL, certificate=certifPySSL,
+                                                        extraCertChain=chainPySSL, acceptableCiphers=accCiphers,
+                                                        raiseMinimumTo=ssl.TLSVersion.TLSv1_2)
+            except AttributeError:
+                contextFactory = ssl.CertificateOptions(privateKey=privKeyPySSL, certificate=certifPySSL,
+                                                        extraCertChain=chainPySSL, acceptableCiphers=accCiphers,
+                                                        method=TLSv1_2_METHOD)
 
             self.options = contextFactory
             self.serverAcceptsTLS = True
