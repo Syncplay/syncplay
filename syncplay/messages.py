@@ -75,5 +75,5 @@ def getMessage(type_, locale=None):
         return str(messages["en"][type_])
     else:
         print("WARNING: Cannot find message '{}'!".format(type_))
-        return "!{}".format(type_)  # TODO: Remove
-        # raise KeyError(type_)
+        #return "!{}".format(type_)  # TODO: Remove
+        raise KeyError(type_)

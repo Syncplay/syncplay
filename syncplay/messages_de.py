@@ -484,12 +484,12 @@ de = {
     "editplaylist-menu-label": "Edit playlist",
 
     "open-containing-folder": "Open folder containing this file",
-    "addusersfiletoplaylist-menu-label": "Add {} file to playlist",  # item owner indicator
-    "addusersstreamstoplaylist-menu-label": "Add {} stream to playlist",  # item owner indicator
-    "openusersstream-menu-label": "Open {} stream",  # [username]'s
-    "openusersfile-menu-label": "Open {} file",  # [username]'s
-    "item-is-yours-indicator": "your",  # Goes with addusersfiletoplaylist/addusersstreamstoplaylist
-    "item-is-others-indicator": "{}'s",  # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist
+    "addyourfiletoplaylist-menu-label": "Add your file to playlist",
+    "addotherusersfiletoplaylist-menu-label": "Add {}'s file to playlist",  # [Username]
+    "addyourstreamstoplaylist-menu-label": "Add your stream to playlist",
+    "addotherusersstreamstoplaylist-menu-label": "Add {}' stream to playlist",  # [Username]
+    "openusersstream-menu-label": "Open {}'s stream",  # [username]'s
+    "openusersfile-menu-label": "Open {}'s file",  # [username]'s
 
     "playlist-instruction-item-message": "Drag file here to add it to the shared playlist.",
     "sharedplaylistenabled-tooltip": "Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.",

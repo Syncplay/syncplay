@@ -484,12 +484,12 @@ ru = {
     "editplaylist-menu-label": "Редактировать список",
 
     "open-containing-folder": "Open folder containing this file",  # TODO: Traslate
-    "addusersfiletoplaylist-menu-label": "Добавить файл {} в список воспроизведения",  # item owner indicator
-    "addusersstreamstoplaylist-menu-label": "Добавить поток {} в список воспроизведения",  # item owner indicator
+    "addyourfiletoplaylist-menu-label": "Добавить файл от вас в список воспроизведения", # TODO: Check
+    "addotherusersfiletoplaylist-menu-label": "Добавить файл {} в список воспроизведения",  # Username # TODO: Check
+    "addyourstreamstoplaylist-menu-label": "Добавить поток от вас в список воспроизведения", # TODO: Check
+    "addotherusersstreamstoplaylist-menu-label": "Добавить поток {} в список воспроизведения",  # Username # TODO: Check
     "openusersstream-menu-label": "Открыть поток от {}",  # [username]'s
     "openusersfile-menu-label": "Открыть файл от {}",  # [username]'s
-    "item-is-yours-indicator": "от вас",  # Goes with addusersfiletoplaylist/addusersstreamstoplaylist
-    "item-is-others-indicator": "{}",  # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist
 
     "playlist-instruction-item-message": "Перетащите сюда файлы, чтобы добавить их в общий список.",
     "sharedplaylistenabled-tooltip": "Оператор комнаты может добавлять файлы в список общего воспроизведения для удобного совместного просмотра. Папки воспроизведения настраиваются во вкладке 'Файл'.",

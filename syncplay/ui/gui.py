@@ -699,12 +699,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
         menu = QtWidgets.QMenu()
         username = item.sibling(item.row(), 0).data()
-        if username == self._syncplayClient.userlist.currentUser.username:
-            shortUsername = getMessage("item-is-yours-indicator")
-        elif len(username) < 15:
-            shortUsername = getMessage("item-is-others-indicator").format(username)
+
+        if len(username) < 15:
+            shortUsername = username
         else:
-            shortUsername = "{}...".format(getMessage("item-is-others-indicator").format(username[0:12]))  # TODO: Enforce username limits in client and server
+            shortUsername = "{}...".format(username[0:12])
+
+        if username == self._syncplayClient.userlist.currentUser.username:
+            addUsersFileToPlaylistLabelText = getMessage("addyourfiletoplaylist-menu-label")
+            addUsersStreamToPlaylistLabelText = getMessage("addyourstreamstoplaylist-menu-label")
+        else:
+            addUsersFileToPlaylistLabelText = getMessage("addotherusersfiletoplaylist-menu-label").format(shortUsername)
+            addUsersStreamToPlaylistLabelText = getMessage("addotherusersstreamstoplaylist-menu-label").format(shortUsername)
 
         filename = item.sibling(item.row(), 3).data()
         while item.parent().row() != -1:
@@ -715,9 +721,9 @@ class MainWindow(QtWidgets.QMainWindow):
         elif username and filename and filename != getMessage("nofile-note"):
             if self.config['sharedPlaylistEnabled'] and not self.isItemInPlaylist(filename):
                 if isURL(filename):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), getMessage("addusersstreamstoplaylist-menu-label").format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), addUsersStreamToPlaylistLabelText, lambda: self.addStreamToPlaylist(filename))
                 else:
-                    menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), getMessage("addusersfiletoplaylist-menu-label").format(shortUsername), lambda: self.addStreamToPlaylist(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), addUsersFileToPlaylistLabelText, lambda: self.addStreamToPlaylist(filename))
 
             if self._syncplayClient.userlist.currentUser.file is None or filename != self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(filename):
