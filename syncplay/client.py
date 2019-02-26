@@ -12,10 +12,10 @@ import time
 from copy import deepcopy
 from functools import wraps
 
+from twisted.application.internet import ClientService
 from twisted.internet.endpoints import HostnameEndpoint
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task, defer, threads
-from twisted.application.internet import ClientService
 
 try:
     import certifi
@@ -752,7 +752,10 @@ class SyncplayClient(object):
             return(0.1 * (2 ** min(retries, 5)))
 
         self._reconnectingService = ClientService(self._endpoint, self.protocolFactory, retryPolicy=retry)
-        waitForConnection = self._reconnectingService.whenConnected(failAfterFailures=1)
+        try:
+            waitForConnection = self._reconnectingService.whenConnected(failAfterFailures=1)
+        except TypeError:
+            waitForConnection = self._reconnectingService.whenConnected()
         self._reconnectingService.startService()
 
         def connectedNow(f):
