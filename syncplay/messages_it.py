@@ -16,7 +16,7 @@ it = {
     "connection-failed-notification": "Connessione col server fallita",
     "connected-successful-notification": "Connessione al server effettuata con successo",
     "retrying-notification": "%s, Nuovo tentativo in %d secondi...",  # Seconds
-    "handshake-successful-notification": "Connessione stabilita con {} ({})",
+    "reachout-successful-notification": "Collegamento stabilito con {} ({})",
 
     "rewind-notification": "Riavvolgo a causa della differenza temporale con {}",  # User
     "fastforward-notification": "Avanzamento rapido a causa della differenza temporale con {}",  # User
@@ -484,12 +484,12 @@ it = {
     "editplaylist-menu-label": "Modifica la playlist",
 
     "open-containing-folder": "Apri la cartella contenente questo file",
-    "addusersfiletoplaylist-menu-label": "Aggiungi il file {} alla playlist",  # item owner indicator # TODO needs testing
-    "addusersstreamstoplaylist-menu-label": "Aggiungi l'indirizzo {} alla playlist",  # item owner indicator # TODO needs testing
-    "openusersstream-menu-label": "Apri l'indirizzo di {}",  # [username]'s
-    "openusersfile-menu-label": "Apri il file di {}",  # [username]'s
-    "item-is-yours-indicator": "tuo",  # Goes with addusersfiletoplaylist/addusersstreamstoplaylist # TODO needs testing
-    "item-is-others-indicator": "di {}",  # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist # TODO needs testing
+    "addyourfiletoplaylist-menu-label": "Aggiungi il file tuo alla playlist", # TODO needs testing
+    "addotherusersfiletoplaylist-menu-label": "Aggiungi il file di {} alla playlist", # Username # TODO needs testing
+    "addyourstreamstoplaylist-menu-label": "Aggiungi l'indirizzo tuo alla playlist", # TODO needs testing
+    "addotherusersstreamstoplaylist-menu-label": "Aggiungi l'indirizzo di {} alla playlist", # Username  # item owner indicator # TODO needs testing
+    "openusersstream-menu-label": "Apri l'indirizzo di {}",  # [username] # TODO needs testing
+    "openusersfile-menu-label": "Apri il file di {}",  # [username]'s # TODO needs testing
 
     "playlist-instruction-item-message": "Trascina qui i file per aggiungerli alla playlist condivisa.",
     "sharedplaylistenabled-tooltip": "Gli operatori della stanza possono aggiungere i file a una playlist sincronizzata per garantire che tutti i partecipanti stiano guardando la stessa cosa. Configura le cartelle multimediali alla voce 'Miscellanea'.",

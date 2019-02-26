@@ -16,7 +16,7 @@ es = {
     "connection-failed-notification": "La conexión con el servidor falló",
     "connected-successful-notification": "Conectado al servidor exitosamente",
     "retrying-notification": "%s, Reintentando en %d segundos...",  # Seconds
-    "handshake-successful-notification": "Conexión establecida con {} ({})",
+    "reachout-successful-notification": "Conexión establecida con {} ({})",
 
     "rewind-notification": "Rebobinado debido a diferencia de tiempo con {}",  # User
     "fastforward-notification": "Adelantado debido a diferencia de tiempo con {}",  # User
@@ -484,12 +484,12 @@ es = {
     "editplaylist-menu-label": "Editar lista de reproducción",
 
     "open-containing-folder": "Abrir directorio que contiene este archivo",
-    "addusersfiletoplaylist-menu-label": "Agregar archivo {} a la lista de reproducción",  # item owner indicator
-    "addusersstreamstoplaylist-menu-label": "Agregar flujo de datos {} a la lista de reproducción",  # item owner indicator
-    "openusersstream-menu-label": "Abrir flujo de datos {}",  # [username]'s
-    "openusersfile-menu-label": "Abrir archivo {}",  # [username]'s
-    "item-is-yours-indicator": "tu",  # Goes with addusersfiletoplaylist/addusersstreamstoplaylist
-    "item-is-others-indicator": "{}",  # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist
+    "addyourfiletoplaylist-menu-label": "Agregar tu archivo a la lista de reproducción",
+    "addotherusersfiletoplaylist-menu-label": "Agregar el archivo de {} a la lista de reproducción",  # [Username]
+    "addyourstreamstoplaylist-menu-label": "Agregar tu flujo a la lista de reproducción",
+    "addotherusersstreamstoplaylist-menu-label": "Agregar el flujo de {} a la lista de reproducción",  # [Username]
+    "openusersstream-menu-label": "Abrir el flujo de {}",  # [username]'s
+    "openusersfile-menu-label": "Abrir el archivo de {}",  # [username]'s
 
     "playlist-instruction-item-message": "Desplazar aquí el archivo para agregarlo a la lista de reproducción compartida.",
     "sharedplaylistenabled-tooltip": "Los operadores de la sala pueden agregar archivos a una lista de reproducción sincronizada, para que visualizar la misma cosa sea más sencillo para todos. Configurar directorios multimedia en 'Misc'.",
