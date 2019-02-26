@@ -16,7 +16,7 @@ es = {
     "connection-failed-notification": "La conexión con el servidor falló",
     "connected-successful-notification": "Conectado al servidor exitosamente",
     "retrying-notification": "%s, Reintentando en %d segundos...",  # Seconds
-    "reachout-successful-notification": "Conexión establecida con {} ({})",
+    "reachout-successful-notification": "Se alcanzó {} ({}) satisfactoriamente",
 
     "rewind-notification": "Rebobinado debido a diferencia de tiempo con {}",  # User
     "fastforward-notification": "Adelantado debido a diferencia de tiempo con {}",  # User
