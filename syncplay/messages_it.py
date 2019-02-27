@@ -267,7 +267,7 @@ it = {
     "run-label": "Avvia Syncplay",
     "storeandrun-label": "Salva la configurazione e avvia Syncplay",
 
-    "contact-label": "Sentiti libero di inviare un'e-mail a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chattare tramite il <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canale IRC #Syncplay</nobr></a> su irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>segnalare un problema</nobr></a> su GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>lasciare un like sulla nostra pagina Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>seguirci su Twitter</nobr></a>, o visitare <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Non usare Syncplay per inviare dati sensibili.", # TODO: Check translation
+    "contact-label": "Sentiti libero di inviare un'e-mail a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chattare tramite il <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canale IRC #Syncplay</nobr></a> su irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>segnalare un problema</nobr></a> su GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>lasciare un like sulla nostra pagina Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>seguirci su Twitter</nobr></a>, o visitare <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Non usare Syncplay per inviare dati sensibili.",
 
     "joinroom-label": "Entra nella stanza",
     "joinroom-menu-label": "Entra nella stanza {}",
@@ -461,7 +461,7 @@ it = {
     # Server errors
     "unknown-command-server-error": "Comando non riconosciuto {}",  # message
     "not-json-server-error": "Non è una stringa in codifica JSON {}",  # message
-    "line-decode-server-error": "Not a utf-8 string", # TODO: Translate
+    "line-decode-server-error": "Non è una stringa utf-8",
     "not-known-server-error": "Devi essere autenticato dal server prima di poter inviare questo comando",
     "client-drop-server-error": "Il client è caduto: {} -- {}",  # host, error
     "password-required-server-error": "È richiesta una password",
@@ -484,12 +484,12 @@ it = {
     "editplaylist-menu-label": "Modifica la playlist",
 
     "open-containing-folder": "Apri la cartella contenente questo file",
-    "addyourfiletoplaylist-menu-label": "Aggiungi il file tuo alla playlist", # TODO needs testing
-    "addotherusersfiletoplaylist-menu-label": "Aggiungi il file di {} alla playlist", # Username # TODO needs testing
-    "addyourstreamstoplaylist-menu-label": "Aggiungi l'indirizzo tuo alla playlist", # TODO needs testing
-    "addotherusersstreamstoplaylist-menu-label": "Aggiungi l'indirizzo di {} alla playlist", # Username  # item owner indicator # TODO needs testing
-    "openusersstream-menu-label": "Apri l'indirizzo di {}",  # [username] # TODO needs testing
-    "openusersfile-menu-label": "Apri il file di {}",  # [username]'s # TODO needs testing
+    "addyourfiletoplaylist-menu-label": "Aggiungi il tuo file alla playlist",
+    "addotherusersfiletoplaylist-menu-label": "Aggiungi il file di {} alla playlist", # Username
+    "addyourstreamstoplaylist-menu-label": "Aggiungi il tuo indirizzo alla playlist",
+    "addotherusersstreamstoplaylist-menu-label": "Aggiungi l'indirizzo di {} alla playlist", # Username  # item owner indicator
+    "openusersstream-menu-label": "Apri l'indirizzo di {}",  # [username]
+    "openusersfile-menu-label": "Apri il file di {}",  # [username]'s
 
     "playlist-instruction-item-message": "Trascina qui i file per aggiungerli alla playlist condivisa.",
     "sharedplaylistenabled-tooltip": "Gli operatori della stanza possono aggiungere i file a una playlist sincronizzata per garantire che tutti i partecipanti stiano guardando la stessa cosa. Configura le cartelle multimediali alla voce 'Miscellanea'.",
