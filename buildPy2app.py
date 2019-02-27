@@ -17,19 +17,13 @@ DATA_FILES = [
 OPTIONS = {
     'iconfile': 'resources/icon.icns',
     'extra_scripts': 'syncplayServer.py',
-    'includes': {'PySide2.QtCore', 'PySide2.QtUiTools', 'PySide2.QtGui', 'PySide2.QtWidgets', 'certifi', 'cffi'},
-    'excludes': {'PySide', 'PySide.QtCore', 'PySide.QtUiTools', 'PySide.QtGui'},
-    'qt_plugins': [
-        'platforms/libqcocoa.dylib',
-        'platforms/libqminimal.dylib',
-        'platforms/libqoffscreen.dylib',
-        'styles/libqmacstyle.dylib'
-    ],
+    'includes': {'PySide.QtCore', 'PySide.QtUiTools', 'PySide.QtGui', 'PySide.QtWidgets', 'certifi', 'cffi'},
     'plist': {
         'CFBundleName': 'Syncplay',
         'CFBundleShortVersionString': syncplay.version,
         'CFBundleIdentifier': 'pl.syncplay.Syncplay',
-        'LSMinimumSystemVersion': '10.12.0',
+        'LSMinimumSystemVersion': '10.6.8',
+        'LSMaximumSystemVersion': '10.11.6',
         'NSHumanReadableCopyright': 'Copyright © 2019 Syncplay All Rights Reserved'
     }
 }

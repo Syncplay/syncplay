@@ -78,7 +78,7 @@ icon_locations = {
 #
 # Other color components may be expressed either in the range 0 to 1, or
 # as percentages (e.g. 60% is equivalent to 0.6).
-background = 'resources/macOS_dmg_bkg.tiff'
+background = 'resources/macOS_legacy_dmg_bkg.png'
 
 show_status_bar = False
 show_tab_view = False
