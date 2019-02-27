@@ -1,3 +1,7 @@
+branches:
+  only:
+    - master
+
 environment:
   MINICONDA: "C:\\Miniconda"
   PYTHON: "C:\\Python35"
