@@ -113,7 +113,7 @@ it = {
     "empty-error": "Il campo {} non può esssere vuoto",  # Configuration
     "media-player-error": "Errore media player: \"{}\"",  # Error line
     "unable-import-gui-error": "Non è possibile importare le librerie di interfaccia grafica. Hai bisogno di PySide per poter utilizzare l'interfaccia grafica.",
-    "unable-import-twisted-error": "Non è possibile importare Twisted. Si prega di installare Twisted v12.1. o superiore.",
+    "unable-import-twisted-error": "Non è possibile importare Twisted. Si prega di installare Twisted v16.4.0 o superiore.",
 
     "arguments-missing-error": "Alcuni argomenti obbligatori non sono stati trovati. Fai riferimento a --help",
 

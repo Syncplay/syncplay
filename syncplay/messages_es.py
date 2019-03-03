@@ -113,7 +113,7 @@ es = {
     "empty-error": "{} no puede ser vacío",  # Configuration
     "media-player-error": "Error del reproductor multimedia: \"{}\"",  # Error line
     "unable-import-gui-error": "No se lograron importar las librerías GUI. Si no tienes instalado PySide, entonces tendrás que instalarlo para que funcione el GUI.",
-    "unable-import-twisted-error": "No se logró importar Twisted. Por favor instala Twisted v12.1.0 o posterior.",
+    "unable-import-twisted-error": "No se logró importar Twisted. Por favor instala Twisted v16.4.0 o posterior.",
 
     "arguments-missing-error": "Están faltando algunos argumentos necesarios. Por favor revisa --help",
 
