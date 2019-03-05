@@ -28,11 +28,19 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://www.syncplay.pl",
     packages=setuptools.find_packages(),
-    install_requires=["twisted", "pyside2", "requests", 'zope.inteface; platform_system=="Windows"',
-        'pypiwin32; platform_system=="Windows"', 'appnope; platform_system=="Darwin"'
+    install_requires=["twisted", "pyside2", 'zope.inteface; platform_system=="Windows"',
+        'pypiwin32; platform_system=="Windows"', 'appnope; platform_system=="Darwin"',
+        'requests; platform_system=="Darwin"'
         ],
     python_requires=">=3.4",
-    scripts=['syncplayClient.py', 'syncplayServer.py'],
+    entry_points={
+        'console_scripts': [
+            'syncplay-server = syncplay.ep_server:main',
+        ],
+        'gui_scripts': [
+            'syncplay = syncplay.ep_client:main',
+        ]
+    },
     include_package_data=True,
     classifiers=[
         "Development Status :: 5 - Production/Stable",
