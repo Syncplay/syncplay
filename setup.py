@@ -7,14 +7,6 @@ import sys
 
 from syncplay import version as syncplay_version
 
-class install_script_renamer(distutils.command.install_scripts.install_scripts):
-    def run(self):
-        distutils.command.install_scripts.install_scripts.run(self)
-        for script in self.get_outputs():
-            if script.endswith(".py"):
-                shutil.move(script, script[:-3])
-
-
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
@@ -28,9 +20,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://www.syncplay.pl",
     packages=setuptools.find_packages(),
-    install_requires=["twisted", "pyside2", 'zope.inteface; platform_system=="Windows"',
-        'pypiwin32; platform_system=="Windows"', 'appnope; platform_system=="Darwin"',
-        'requests; platform_system=="Darwin"'
+    install_requires=["pyasn1", "twisted[tls]", "certifi", "pyside2",
+        'zope.inteface; platform_system=="Windows"', 'pypiwin32; platform_system=="Windows"',
+        'appnope; platform_system=="Darwin"', 'requests; platform_system=="Darwin"'
         ],
     python_requires=">=3.4",
     entry_points={
@@ -59,5 +51,4 @@ setuptools.setup(
         "Topic :: Internet",
         "Topic :: Multimedia :: Video"
     ],
-    cmdclass = {"install_scripts": install_script_renamer},
 )
