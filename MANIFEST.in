@@ -1,6 +1,6 @@
 include LICENSE
-include resources/*.png
-include resources/*.mng
-include resources/*.lua
-include resources/*.rtf
-include resources/lua/intf/*.lua
+include syncplay/resources/*.png
+include syncplay/resources/*.mng
+include syncplay/resources/*.lua
+include syncplay/resources/*.rtf
+include syncplay/resources/lua/intf/*.lua

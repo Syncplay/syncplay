@@ -691,14 +691,14 @@ guiIcons = [
     'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
 ]
 resources = [
-    "resources/icon.ico",
-    "resources/syncplay.png",
-    "resources/syncplayintf.lua",
-    "resources/license.rtf",
-    "resources/third-party-notices.rtf"
+    "syncplay/resources/icon.ico",
+    "syncplay/resources/syncplay.png",
+    "syncplay/resources/syncplayintf.lua",
+    "syncplay/resources/license.rtf",
+    "syncplay/resources/third-party-notices.rtf"
 ]
 resources.extend(guiIcons)
-intf_resources = ["resources/lua/intf/syncplay.lua"]
+intf_resources = ["syncplay/resources/lua/intf/syncplay.lua"]
 
 qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
 
@@ -714,7 +714,7 @@ info = dict(
     common_info,
     windows=[{
       "script": "syncplayClient.py",
-      "icon_resources": [(1, "resources\\icon.ico")],
+      "icon_resources": [(1, "syncplay\\resources\\icon.ico")],
       'dest_base': "Syncplay"},
     ],
     console=['syncplayServer.py'],

@@ -11,7 +11,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="syncplay-distutil-test-3",
+    name="syncplay-setuptools-test-3",
     version=syncplay_version,
     author="Syncplay",
     author_email="dev@syncplay.pl",

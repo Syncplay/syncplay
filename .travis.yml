@@ -28,7 +28,7 @@ install:
 before_deploy:
 - pip3 install dmgbuild
 - mkdir dist_dmg
-- mv resources/macOS_readme.pdf resources/.macOS_readme.pdf
+- mv syncplay/resources/macOS_readme.pdf syncplay/resources/.macOS_readme.pdf
 - export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
 - dmgbuild -s appdmg.py "Syncplay" dist_dmg/Syncplay_${VER}.dmg
 - python3 bintray_version.py
