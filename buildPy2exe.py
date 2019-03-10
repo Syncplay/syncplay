@@ -69,7 +69,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   OutFile "Syncplay-$version-Setup.exe"
   InstallDir $$PROGRAMFILES\Syncplay
   RequestExecutionLevel admin
-  ManifestDPIAware true
+  ManifestDPIAware false
   XPStyle on
   Icon resources\icon.ico ;Change DIR
   SetCompressor /SOLID lzma
