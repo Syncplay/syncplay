@@ -690,6 +690,9 @@ guiIcons = [
     'resources/email_go.png',
     'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
 ]
+
+guiIcons = ['syncplay/' + s for s in guiIcons]
+
 resources = [
     "syncplay/resources/icon.ico",
     "syncplay/resources/syncplay.png",
@@ -724,8 +727,8 @@ info = dict(
     options={
         'py2exe': {
             'dist_dir': OUT_DIR,
-            'packages': 'PySide2',
-            'includes': 'twisted, sys, encodings, datetime, os, time, math, liburl, ast, unicodedata, _ssl, win32pipe, win32file',
+            'packages': 'PySide2, cffi, OpenSSL, certifi',
+            'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file',
             'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, Tkinter',
             'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
             'optimize': 2,
@@ -737,5 +740,5 @@ info = dict(
     cmdclass={"py2exe": build_installer},
 )
 
-sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-p PySide2'])
+sys.argv.extend(['py2exe'])
 setup(**info)

@@ -1,11 +1,11 @@
 branches:
   only:
-    - master
+    - setuptools
 
 environment:
   MINICONDA: "C:\\Miniconda"
-  PYTHON: "C:\\Python35"
-  PYTHON_VERSION: 3.5
+  PYTHON: "C:\\Python36"
+  PYTHON_VERSION: 3.6
   PYTHON_ARCH: 32
 
 platform: x86
@@ -19,12 +19,12 @@ init:
   - python --version
   - python -m pip install -U pip setuptools wheel
   - pip install -U pypiwin32==223
-  - pip install twisted
+  - pip install twisted[tls] certifi
   - pip install zope.interface
   - type nul > %PYTHON%\lib\site-packages\zope\__init__.py
-  - curl -L https://bintray.com/alby128/Syncplay/download_file?file_path=py2exe-0.9.2.2-py33.py34.py35-none-any.whl -o py2exe-0.9.2.2-py33.py34.py35-none-any.whl
-  - pip install py2exe-0.9.2.2-py33.py34.py35-none-any.whl
-  - del py2exe-0.9.2.2-py33.py34.py35-none-any.whl
+  - curl -L https://bintray.com/alby128/py2exe/download_file?file_path=py2exe-0.9.2.9-py36-none-any.whl -o py2exe-0.9.2.9-py36-none-any.whl
+  - pip install py2exe-0.9.2.9-py36-none-any.whl
+  - del py2exe-0.9.2.9-py36-none-any.whl
   - pip install shiboken2==5.12.0 PySide2==5.12.0
   - pip freeze
   
@@ -40,10 +40,10 @@ build: off
 artifacts:
   - path: 'syncplay_v$(ver)'
     type: zip
-    name: Syncplay_$(ver)_Portable
+    name: Syncplay_$(ver)_setuptools_Portable
 
   - path: Syncplay-$(ver)-Setup.exe
-    name: Syncplay-$(ver)-Setup
+    name: Syncplay-$(ver)-setuptools-Setup
 
 # Push artefact to S3 bucket and list all
 before_deploy:
