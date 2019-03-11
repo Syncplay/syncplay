@@ -71,7 +71,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   RequestExecutionLevel admin
   ManifestDPIAware false
   XPStyle on
-  Icon resources\icon.ico ;Change DIR
+  Icon syncplay\resources\icon.ico ;Change DIR
   SetCompressor /SOLID lzma
 
   VIProductVersion "$version.0"
@@ -157,7 +157,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^ClickInstall $${LANG_GERMAN} " "
 
   PageEx license
-    LicenseData resources\license.rtf
+    LicenseData syncplay\resources\license.rtf
   PageExEnd
   Page custom DirectoryCustom DirectoryCustomLeave
   Page instFiles

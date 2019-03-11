@@ -33,6 +33,7 @@ install:
   - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
   - python buildPy2exe.py
   - type nul > syncplay_v%ver%\syncplay.ini
+  - move Syncplay-%ver%-Setup.exe Syncplay-%ver%-setuptools-Setup.exe
 
 # Not a project with an msbuild file, build done at install.
 build: off
@@ -42,7 +43,7 @@ artifacts:
     type: zip
     name: Syncplay_$(ver)_setuptools_Portable
 
-  - path: Syncplay-$(ver)-Setup.exe
+  - path: Syncplay-$(ver)-setuptools-Setup.exe
     name: Syncplay-$(ver)-setuptools-Setup
 
 # Push artefact to S3 bucket and list all
