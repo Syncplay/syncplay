@@ -155,17 +155,16 @@ def findResourcePath(resourceName):
 
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
-    if not frozen:
-        path = os.path.dirname(os.path.dirname(__file__))
-    elif frozen in ('dll', 'console_exe', 'windows_exe', 'macosx_app'):
-        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    path = os.path.dirname(__file__)
+    if frozen in ('dll', 'console_exe', 'windows_exe', 'macosx_app'):
+        path = os.path.dirname(os.path.dirname(os.path.dirname(path)))
     elif frozen:  # needed for PyInstaller
         if getattr(sys, '_MEIPASS', '') is not None:
             path = getattr(sys, '_MEIPASS', '')  # --onefile
         else:
             path = os.path.dirname(sys.executable)  # --onedir
-    else:
-        path = ""
+    elif not os.path.isdir(os.path.join(path, 'resources')):  # not frozen
+        path = os.path.dirname(path)
     return path
 
 
