@@ -10,8 +10,7 @@ def read(fname):
         return f.read()
 
 installRequirements = read('requirements.txt').splitlines() +\
-                          read('requirements_tls.txt').splitlines() +\
-                          read('requirements_gui.txt').splitlines()
+                      read('requirements_gui.txt').splitlines()
 
 setuptools.setup(
     name="syncplay",
