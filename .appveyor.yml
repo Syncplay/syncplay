@@ -1,6 +1,6 @@
 branches:
   only:
-    - master_local
+    - master
 
 environment:
   MINICONDA: "C:\\Miniconda"
@@ -40,7 +40,7 @@ build: off
 artifacts:
   - path: 'syncplay_v$(ver)'
     type: zip
-    name: Syncplay_$(ver)__Portable
+    name: Syncplay_$(ver)_Portable
 
   - path: Syncplay-$(ver)-Setup.exe
     name: Syncplay-$(ver)-Setup
