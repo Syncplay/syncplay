@@ -2,28 +2,32 @@
 
 import distutils.command.install_scripts
 import setuptools
-import shutil
-import sys
 
-from syncplay import version as syncplay_version
+from syncplay import projectURL, version as syncplay_version
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+def read(fname):
+    with open(fname, 'r') as f:
+        return f.read()
+
+installRequirements = read('requirements.txt').splitlines() +\
+                          read('requirements_tls.txt').splitlines() +\
+                          read('requirements_gui.txt').splitlines()
 
 setuptools.setup(
-    name="syncplay-setuptools-test-3",
+    name="syncplay",
     version=syncplay_version,
     author="Syncplay",
     author_email="dev@syncplay.pl",
-    description="Client/server to synchronize media playback on mpv/MPC-HC/MPC-BE/VLC on many computers",
-    long_description=long_description,
+    description=' '.join([
+        'Client/server to synchronize media playback',
+        'on mpv/VLC/MPC-HC/MPC-BE on many computers'
+    ]),
+    long_description=read('README.md'),
     long_description_content_type="text/markdown",
-    url="https://www.syncplay.pl",
+    url=projectURL,
+    download_url=projectURL + 'download/',
     packages=setuptools.find_packages(),
-    install_requires=["pyasn1", "twisted[tls]", "certifi", "pyside2",
-        'zope.inteface; platform_system=="Windows"', 'pypiwin32; platform_system=="Windows"',
-        'appnope; platform_system=="Darwin"', 'requests; platform_system=="Darwin"'
-        ],
+    install_requires=installRequirements,
     python_requires=">=3.4",
     entry_points={
         'console_scripts': [
@@ -39,11 +43,18 @@ setuptools.setup(
         "Environment :: MacOS X :: Cocoa",
         "Environment :: Win32 (MS Windows)",
         "Environment :: X11 Applications :: Qt",
+        "Framework :: Twisted",
         "Intended Audience :: End Users/Desktop",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX :: Linux",
+        "Natural Language :: English",
+        "Natural Language :: German",
+        "Natural Language :: Italian",
+        "Natural Language :: Russian",
+        "Natural Language :: Spanish",        
+        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
