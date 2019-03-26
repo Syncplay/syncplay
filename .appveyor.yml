@@ -1,6 +1,6 @@
 branches:
   only:
-    - setuptools
+    - master_local
 
 environment:
   MINICONDA: "C:\\Miniconda"
@@ -22,10 +22,10 @@ init:
   - pip install twisted[tls] certifi
   - pip install zope.interface
   - type nul > %PYTHON%\lib\site-packages\zope\__init__.py
-  - curl -L https://bintray.com/alby128/py2exe/download_file?file_path=py2exe-0.9.2.9-py36-none-any.whl -o py2exe-0.9.2.9-py36-none-any.whl
-  - pip install py2exe-0.9.2.9-py36-none-any.whl
-  - del py2exe-0.9.2.9-py36-none-any.whl
-  - pip install shiboken2==5.12.0 PySide2==5.12.0
+  - curl -L https://bintray.com/alby128/py2exe/download_file?file_path=py2exe-0.9.3.0-cp36-none-win32.whl -o py2exe-0.9.3.0-cp36-none-win32.whl
+  - pip install py2exe-0.9.3.0-cp36-none-win32.whl
+  - del py2exe-0.9.3.0-cp36-none-win32.whl
+  - pip install PySide2
   - pip freeze
   
 install:
@@ -33,7 +33,6 @@ install:
   - for /F "tokens=2 delims='" %%a in ('findstr version syncplay\__init__.py') do @set ver=%%a
   - python buildPy2exe.py
   - type nul > syncplay_v%ver%\syncplay.ini
-  - move Syncplay-%ver%-Setup.exe Syncplay-%ver%-setuptools-Setup.exe
 
 # Not a project with an msbuild file, build done at install.
 build: off
@@ -41,10 +40,10 @@ build: off
 artifacts:
   - path: 'syncplay_v$(ver)'
     type: zip
-    name: Syncplay_$(ver)_setuptools_Portable
+    name: Syncplay_$(ver)__Portable
 
-  - path: Syncplay-$(ver)-setuptools-Setup.exe
-    name: Syncplay-$(ver)-setuptools-Setup
+  - path: Syncplay-$(ver)-Setup.exe
+    name: Syncplay-$(ver)-Setup
 
 # Push artefact to S3 bucket and list all
 before_deploy:
