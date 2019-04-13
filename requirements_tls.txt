@@ -1,2 +1,0 @@
-certifi>=2018.11.29
-twisted[tls]>=16.4.0

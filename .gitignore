@@ -3,7 +3,7 @@
 *.exe
 venv
 
-/SyncPlay.egg-info
+/*.egg-info
 /build
 /cert
 /dist

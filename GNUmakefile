@@ -35,18 +35,18 @@ endif
 	SHARE_PATH        = ${DESTDIR}${PREFIX}/share
 
 common:
-	-mkdir -p $(LIB_PATH)/syncplay/resources/lua/intf
+	-mkdir -p $(LIB_PATH)/syncplay/syncplay/resources/lua/intf
 	-mkdir -p $(APP_SHORTCUT_PATH)
 	-mkdir -p $(SHARE_PATH)/app-install/icons
 	-mkdir -p $(SHARE_PATH)/pixmaps/
 	cp -r syncplay $(LIB_PATH)/syncplay/
 	chmod 755 $(LIB_PATH)/syncplay/
-	cp -r resources/hicolor $(SHARE_PATH)/icons/
-	cp -r resources/*.png $(LIB_PATH)/syncplay/resources/
-	cp -r resources/*.lua $(LIB_PATH)/syncplay/resources/
-	cp -r resources/lua/intf/*.lua $(LIB_PATH)/syncplay/resources/lua/intf/
-	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/app-install/icons/
-	cp resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/pixmaps/
+	cp -r syncplay/resources/hicolor $(SHARE_PATH)/icons/
+	cp -r syncplay/resources/*.png $(LIB_PATH)/syncplay/syncplay/resources/
+	cp -r syncplay/resources/*.lua $(LIB_PATH)/syncplay/syncplay/resources/
+	cp -r syncplay/resources/lua/intf/*.lua $(LIB_PATH)/syncplay/syncplay/resources/lua/intf/
+	cp syncplay/resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/app-install/icons/
+	cp syncplay/resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/pixmaps/
 
 u-common:
 	-rm -rf $(LIB_PATH)/syncplay
@@ -60,7 +60,7 @@ client:
 	sed -i -e '/# libpath/ a\import site\nsite.addsitedir\("${PREFIX}/lib/syncplay"\)' $(BIN_PATH)/syncplay
 	chmod 755 $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
-	cp resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
+	cp syncplay/resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
 
 ifeq ($(SINGLE_USER),false)
 	chmod 755 $(APP_SHORTCUT_PATH)/syncplay.desktop
@@ -79,7 +79,7 @@ server:
 	sed -i -e '/# libpath/ a\import site\nsite.addsitedir\("${PREFIX}/lib/syncplay"\)' $(BIN_PATH)/syncplay-server
 	chmod 755 $(BIN_PATH)/syncplay-server
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
-	cp resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
+	cp syncplay/resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
 
 ifeq ($(SINGLE_USER),false)
 	chmod 755 $(APP_SHORTCUT_PATH)/syncplay-server.desktop

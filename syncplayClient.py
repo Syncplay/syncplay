@@ -11,9 +11,7 @@ except AttributeError:
     import warnings
     warnings.warn("You must run Syncplay with Python 3.4 or newer!")
 
-from syncplay.clientManager import SyncplayClientManager
-from syncplay.utils import blackholeStdoutForFrozenWindow
+from syncplay import ep_client
 
 if __name__ == '__main__':
-    blackholeStdoutForFrozenWindow()
-    SyncplayClientManager().run()
+    ep_client.main()

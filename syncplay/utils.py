@@ -147,7 +147,7 @@ def isASCII(s):
 
 def findResourcePath(resourceName):
     if resourceName == "syncplay.lua":
-        resourcePath = os.path.join(findWorkingDir(),"resources", "lua", "intf", resourceName)
+        resourcePath = os.path.join(findWorkingDir(), "resources", "lua", "intf", resourceName)
     else:
         resourcePath = os.path.join(findWorkingDir(), "resources", resourceName)
     return resourcePath
@@ -156,7 +156,7 @@ def findResourcePath(resourceName):
 def findWorkingDir():
     frozen = getattr(sys, 'frozen', '')
     if not frozen:
-        path = os.path.dirname(os.path.dirname(__file__))
+        path = os.path.dirname(__file__)
     elif frozen in ('dll', 'console_exe', 'windows_exe', 'macosx_app'):
         path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     elif frozen:  # needed for PyInstaller

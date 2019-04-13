@@ -71,7 +71,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   RequestExecutionLevel admin
   ManifestDPIAware false
   XPStyle on
-  Icon resources\icon.ico ;Change DIR
+  Icon syncplay\resources\icon.ico ;Change DIR
   SetCompressor /SOLID lzma
 
   VIProductVersion "$version.0"
@@ -157,7 +157,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^ClickInstall $${LANG_GERMAN} " "
 
   PageEx license
-    LicenseData resources\license.rtf
+    LicenseData syncplay\resources\license.rtf
   PageExEnd
   Page custom DirectoryCustom DirectoryCustomLeave
   Page instFiles
@@ -690,15 +690,18 @@ guiIcons = [
     'resources/email_go.png',
     'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
 ]
+
+guiIcons = ['syncplay/' + s for s in guiIcons]
+
 resources = [
-    "resources/icon.ico",
-    "resources/syncplay.png",
-    "resources/syncplayintf.lua",
-    "resources/license.rtf",
-    "resources/third-party-notices.rtf"
+    "syncplay/resources/icon.ico",
+    "syncplay/resources/syncplay.png",
+    "syncplay/resources/syncplayintf.lua",
+    "syncplay/resources/license.rtf",
+    "syncplay/resources/third-party-notices.rtf"
 ]
 resources.extend(guiIcons)
-intf_resources = ["resources/lua/intf/syncplay.lua"]
+intf_resources = ["syncplay/resources/lua/intf/syncplay.lua"]
 
 qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
 
@@ -714,7 +717,7 @@ info = dict(
     common_info,
     windows=[{
       "script": "syncplayClient.py",
-      "icon_resources": [(1, "resources\\icon.ico")],
+      "icon_resources": [(1, "syncplay\\resources\\icon.ico")],
       'dest_base': "Syncplay"},
     ],
     console=['syncplayServer.py'],
@@ -724,8 +727,8 @@ info = dict(
     options={
         'py2exe': {
             'dist_dir': OUT_DIR,
-            'packages': 'PySide2',
-            'includes': 'twisted, sys, encodings, datetime, os, time, math, liburl, ast, unicodedata, _ssl, win32pipe, win32file',
+            'packages': 'PySide2, cffi, OpenSSL, certifi',
+            'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file',
             'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, Tkinter',
             'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
             'optimize': 2,
@@ -737,5 +740,5 @@ info = dict(
     cmdclass={"py2exe": build_installer},
 )
 
-sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-p PySide2'])
+sys.argv.extend(['py2exe'])
 setup(**info)
