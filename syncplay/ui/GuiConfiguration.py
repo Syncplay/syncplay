@@ -661,7 +661,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.mediaplayerSettingsLayout.addWidget(self.playerargsTextbox, 2, 2, 1, 2)
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
 
-        iconWidth = self.executableiconLabel.minimumSizeHint().width()
+        iconWidth = self.executableiconLabel.minimumSizeHint().width()+self.stackedLayout.spacing()
         maxWidth = max(
             self.hostLabel.minimumSizeHint().width(),
             self.usernameLabel.minimumSizeHint().width(),
