@@ -14,4 +14,4 @@ except ImportError:
 
 
 def getAvailablePlayers():
-    return [MPCHCAPIPlayer, MplayerPlayer, MpvPlayer, VlcPlayer, MpcBePlayer]
+    return [MPCHCAPIPlayer, MpvPlayer, VlcPlayer, MpcBePlayer, MplayerPlayer]
