@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import distutils.command.install_scripts
+import os
 import setuptools
 
 from syncplay import projectURL, version as syncplay_version
@@ -9,8 +9,11 @@ def read(fname):
     with open(fname, 'r') as f:
         return f.read()
 
-installRequirements = read('requirements.txt').splitlines() +\
-                      read('requirements_gui.txt').splitlines()
+if os.getenv('SNAPCRAFT_PART_BUILD', None) is not None:
+    installRequirements = ["pyasn1"] + read('requirements.txt').splitlines()
+else:
+    installRequirements = read('requirements.txt').splitlines() +\
+                          read('requirements_gui.txt').splitlines()
 
 setuptools.setup(
     name="syncplay",
