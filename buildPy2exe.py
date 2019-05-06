@@ -15,6 +15,7 @@ import sys
 #     import warnings
 #     warnings.warn("You must build Syncplay with Python 2.7!")
 
+from glob import glob
 import os
 import subprocess
 from string import Template
@@ -666,37 +667,10 @@ class build_installer(py2exe):
         script.compile()
         print("*** DONE ***")
 
-guiIcons = [
-    'resources/accept.png', 'resources/arrow_undo.png', 'resources/clock_go.png',
-    'resources/control_pause_blue.png', 'resources/cross.png', 'resources/door_in.png',
-    'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
-    'resources/timeline_marker.png', 'resources/control_play_blue.png',
-    'resources/mpc-hc.png', 'resources/mpc-hc64.png', 'resources/mplayer.png',
-    'resources/mpc-be.png',
-    'resources/mpv.png', 'resources/vlc.png', 'resources/house.png', 'resources/film_link.png',
-    'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/chevrons_right.png',
-    'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',
-    'resources/lock_green.png', 'resources/lock_green_dialog.png',
-    'resources/tick.png', 'resources/lock_open.png', 'resources/empty_checkbox.png', 'resources/tick_checkbox.png',
-    'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png', 'resources/arrow_switch.png',
-    'resources/film_go.png', 'resources/world_go.png', 'resources/arrow_refresh.png', 'resources/bullet_right_grey.png',
-    'resources/user_comment.png',
-    'resources/error.png',
-    'resources/film_folder_edit.png',
-    'resources/film_edit.png',
-    'resources/folder_film.png',
-    'resources/shield_edit.png',
-    'resources/shield_add.png',
-    'resources/email_go.png',
-    'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng',
-    'resources/syncplayAbout.png', 'resources/syncplayAbout@2x.png'
-]
-
-guiIcons = ['syncplay/' + s for s in guiIcons]
+guiIcons = glob('syncplay/resources/*.png') +  ['syncplay/resources/spinner.mng']
 
 resources = [
     "syncplay/resources/icon.ico",
-    "syncplay/resources/syncplay.png",
     "syncplay/resources/syncplayintf.lua",
     "syncplay/resources/license.rtf",
     "syncplay/resources/third-party-notices.rtf"
