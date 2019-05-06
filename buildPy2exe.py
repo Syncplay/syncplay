@@ -688,7 +688,8 @@ guiIcons = [
     'resources/shield_edit.png',
     'resources/shield_add.png',
     'resources/email_go.png',
-    'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
+    'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng',
+    'resources/syncplayAbout.png', 'resources/syncplayAbout@2x.png'
 ]
 
 guiIcons = ['syncplay/' + s for s in guiIcons]

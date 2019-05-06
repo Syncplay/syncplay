@@ -137,9 +137,10 @@ class AboutDialog(QtWidgets.QDialog):
         licenseLabel = QtWidgets.QLabel(
             "<center><p>Copyright &copy; 2012&ndash;2019 Syncplay</p><p>" +
             getMessage("about-dialog-license-text") + "</p></center>")
-        aboutIconPixmap = QtGui.QPixmap(resourcespath + "syncplay.png")
+        aboutIcon = QtGui.QIcon()
+        aboutIcon.addFile(resourcespath + "syncplayAbout.png")
         aboutIconLabel = QtWidgets.QLabel()
-        aboutIconLabel.setPixmap(aboutIconPixmap.scaled(65, 65, Qt.KeepAspectRatio))
+        aboutIconLabel.setPixmap(aboutIcon.pixmap(64, 64))
         aboutLayout = QtWidgets.QGridLayout()
         aboutLayout.addWidget(aboutIconLabel, 0, 0, 3, 4, Qt.AlignHCenter)
         aboutLayout.addWidget(nameLabel, 3, 0, 1, 4)
