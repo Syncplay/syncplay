@@ -1287,6 +1287,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.outputFrame = QtWidgets.QFrame()
         window.outputFrame.setLineWidth(0)
         window.outputFrame.setMidLineWidth(0)
+        if isMacOS(): window.outputLayout.setSpacing(8)
         window.outputLayout.setContentsMargins(0, 0, 0, 0)
         window.outputLayout.addWidget(window.outputlabel)
         window.outputLayout.addWidget(window.outputbox)
@@ -1303,8 +1304,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.listTreeView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.listTreeView.customContextMenuRequested.connect(self.openRoomMenu)
         window.listlabel = QtWidgets.QLabel(getMessage("userlist-heading-label"))
-        window.listlabel.setMinimumHeight(27)
         if isMacOS:
+            window.listlabel.setMinimumHeight(21)
             window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'lock_green.png').scaled(14, 14),"")
             window.sslButton.setVisible(False)
             window.sslButton.setFixedHeight(21)
@@ -1312,6 +1313,7 @@ class MainWindow(QtWidgets.QMainWindow):
             window.sslButton.setMinimumSize(21, 21)
             window.sslButton.setStyleSheet("QPushButton:!hover{border: 1px solid gray;} QPushButton:hover{border:2px solid black;}")
         else:
+            window.listlabel.setMinimumHeight(27)
             window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'lock_green.png'),"")
             window.sslButton.setVisible(False)
             window.sslButton.setFixedHeight(27)
@@ -1323,6 +1325,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.listFrame.setMidLineWidth(0)
         window.listFrame.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         window.listLayout.setContentsMargins(0, 0, 0, 0)
+        if isMacOS(): window.listLayout.setSpacing(8)
 
         window.userlistLayout = QtWidgets.QGridLayout()
         window.userlistFrame = QtWidgets.QFrame()
@@ -1334,6 +1337,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.userlistLayout.addWidget(window.listlabel, 0, 0, Qt.AlignLeft)
         window.userlistLayout.addWidget(window.sslButton, 0, 2,  Qt.AlignRight)
         window.userlistLayout.addWidget(window.listTreeView, 1, 0, 1, 3)
+        if isMacOS(): window.userlistLayout.setContentsMargins(3, 0, 3, 0)
 
         window.listSplit = QtWidgets.QSplitter(Qt.Vertical, self)
         window.listSplit.addWidget(window.userlistFrame)
@@ -1349,9 +1353,13 @@ class MainWindow(QtWidgets.QMainWindow):
         window.roomLayout = QtWidgets.QHBoxLayout()
         window.roomFrame = QtWidgets.QFrame()
         window.roomFrame.setLayout(self.roomLayout)
-        window.roomFrame.setContentsMargins(0, 0, 0, 0)
         window.roomFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        window.roomLayout.setContentsMargins(0, 0, 0, 0)
+        if isMacOS():
+            window.roomLayout.setSpacing(8)
+            window.roomLayout.setContentsMargins(3, 0, 0, 0)
+        else:
+            window.roomFrame.setContentsMargins(0, 0, 0, 0)
+            window.roomLayout.setContentsMargins(0, 0, 0, 0)
         self.roomButton.setToolTip(getMessage("joinroom-tooltip"))
         window.roomLayout.addWidget(window.roomInput)
         window.roomLayout.addWidget(window.roomButton)
@@ -1359,6 +1367,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.listLayout.addWidget(window.roomFrame, Qt.AlignRight)
 
         window.listFrame.setLayout(window.listLayout)
+        if isMacOS(): window.listFrame.setMinimumHeight(window.outputFrame.height())
 
         window.topSplit.addWidget(window.outputFrame)
         window.topSplit.addWidget(window.listFrame)
@@ -1372,6 +1381,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.bottomFrame = QtWidgets.QFrame()
         window.bottomFrame.setLayout(window.bottomLayout)
         window.bottomLayout.setContentsMargins(0, 0, 0, 0)
+        if isMacOS(): window.bottomLayout.setSpacing(0)
 
         self.addPlaybackLayout(window)
 
@@ -1416,14 +1426,18 @@ class MainWindow(QtWidgets.QMainWindow):
         window.readyPushButton.setAutoExclusive(False)
         window.readyPushButton.toggled.connect(self.changeReadyState)
         window.readyPushButton.setFont(readyFont)
-        window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON)
+        if isMacOS():
+            window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON_MACOS)
+        else:
+            window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON)
         window.readyPushButton.setToolTip(getMessage("ready-tooltip"))
         window.listLayout.addWidget(window.readyPushButton, Qt.AlignRight)
+        if isMacOS(): window.listLayout.setContentsMargins(0, 0, 0, 10)
 
         window.autoplayLayout = QtWidgets.QHBoxLayout()
         window.autoplayFrame = QtWidgets.QFrame()
         window.autoplayFrame.setVisible(False)
-        window.autoplayLayout.setContentsMargins(0, 0, 0, 0)
+
         window.autoplayFrame.setLayout(window.autoplayLayout)
         window.autoplayPushButton = QtWidgets.QPushButton()
         autoPlayFont = QtGui.QFont()
@@ -1433,8 +1447,16 @@ class MainWindow(QtWidgets.QMainWindow):
         window.autoplayPushButton.setAutoExclusive(False)
         window.autoplayPushButton.toggled.connect(self.changeAutoplayState)
         window.autoplayPushButton.setFont(autoPlayFont)
-        window.autoplayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON)
-        window.autoplayPushButton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        if isMacOS():
+            window.autoplayFrame.setMinimumWidth(window.listFrame.sizeHint().width())
+            window.autoplayLayout.setSpacing(15)
+            window.autoplayLayout.setContentsMargins(0, 8, 3, 3)
+            window.autoplayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON_MACOS)
+            window.autoplayPushButton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        else:
+            window.autoplayLayout.setContentsMargins(0, 0, 0, 0)
+            window.autoplayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON)
+            window.autoplayPushButton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         window.autoplayPushButton.setToolTip(getMessage("autoplay-tooltip"))
         window.autoplayLabel = QtWidgets.QLabel(getMessage("autoplay-minimum-label"))
         window.autoplayLabel.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)

@@ -187,6 +187,10 @@ STYLE_NOFILEITEM_COLOR = 'blue'
 STYLE_NOTCONTROLLER_COLOR = 'grey'
 STYLE_UNTRUSTEDITEM_COLOR = 'purple'
 
+# Style constants for macOS
+STYLE_READY_PUSHBUTTON_MACOS = "QPushButton { text-align: left; padding: 10px 5px 10px 15px; margin: 0px 3px 0px 2px}"
+STYLE_AUTO_PLAY_PUSHBUTTON_MACOS = "QPushButton { text-align: left; padding: 10px 5px 10px 15px; margin: 0px 0px 0px -4px}"
+
 TLS_CERT_ROTATION_MAX_RETRIES = 10
 
 USERLIST_GUI_USERNAME_OFFSET = 21  # Pixels
