@@ -1,4 +1,24 @@
 # coding:utf8
+# code needed to get customized constants for different OS
+import sys
+
+OS_WINDOWS = "win"
+OS_LINUX = "linux"
+OS_MACOS = "darwin"
+OS_BSD = "freebsd"
+OS_DRAGONFLY = "dragonfly"
+OS_DEFAULT = "default"
+
+def getValueForOS(constantDict):
+    if sys.platform.startswith(OS_WINDOWS):
+        return constantDict[OS_WINDOWS] if OS_WINDOWS in constantDict else constantDict[OS_DEFAULT]
+    if sys.platform.startswith(OS_LINUX):
+        return constantDict[OS_LINUX] if OS_LINUX in constantDict else constantDict[OS_DEFAULT]
+    if sys.platform.startswith(OS_MACOS):
+        return constantDict[OS_MACOS] if OS_MACOS in constantDict else constantDict[OS_DEFAULT]
+    if OS_BSD in sys.platform or sys.platform.startswith(OS_DRAGONFLY):
+        return constantDict[OS_BSD] if OS_BSD in constantDict else constantDict[OS_DEFAULT]
+
 # You might want to change these
 DEFAULT_PORT = 8999
 OSD_DURATION = 3.0
@@ -62,9 +82,10 @@ PLAYLIST_MAX_CHARACTERS = 10000
 PLAYLIST_MAX_ITEMS = 250
 MAXIMUM_TAB_WIDTH = 350
 TAB_PADDING = 30
-DEFAULT_WINDOWS_MONOSPACE_FONT = "Consolas"
-DEFAULT_OSX_MONOSPACE_FONT = "Menlo"
-FALLBACK_MONOSPACE_FONT = "Monospace"
+MONOSPACE_FONT = getValueForOS({
+    OS_DEFAULT: "Monospace",
+    OS_MACOS: "Menlo",
+    OS_WINDOWS: "Consolas"})
 DEFAULT_CHAT_FONT_SIZE = 24
 DEFAULT_CHAT_INPUT_FONT_COLOR = "#FFFF00"
 DEFAULT_CHAT_OUTPUT_FONT_COLOR = "#FFFF00"
@@ -175,8 +196,12 @@ STYLE_SUBCHECKBOX = "QCheckBox, QLabel, QRadioButton {{ margin-left: 6px; paddin
 STYLE_SUBLABEL = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 16px; background:url('{}') left no-repeat }}"  # Graphic path
 STYLE_ERRORLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: red; padding: 2px; background: #FFAAAA; }"
 STYLE_SUCCESSLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: green; padding: 2px; background: #AAFFAA; }"
-STYLE_READY_PUSHBUTTON = "QPushButton { text-align: left; padding: 10px 5px 10px 5px;}"
-STYLE_AUTO_PLAY_PUSHBUTTON = "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }"
+STYLE_READY_PUSHBUTTON = getValueForOS({
+    OS_DEFAULT: "QPushButton { text-align: left; padding: 10px 5px 10px 5px;}",
+    OS_MACOS: "QPushButton { text-align: left; padding: 10px 5px 10px 15px; margin: 0px 3px 0px 2px}"})
+STYLE_AUTO_PLAY_PUSHBUTTON = getValueForOS({
+    OS_DEFAULT: "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }",
+    OS_MACOS: "QPushButton { text-align: left; padding: 10px 5px 10px 15px; margin: 0px 0px 0px -4px}"})
 STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
 STYLE_CONTACT_INFO = "<span style=\"color: grey\"><strong><small>{}</span><br /><br />"  # Contact info message
 STYLE_USER_MESSAGE = "<span style=\"{}\">&lt;{}&gt;</span> {}"
@@ -186,10 +211,6 @@ STYLE_DIFFERENTITEM_COLOR = 'red'
 STYLE_NOFILEITEM_COLOR = 'blue'
 STYLE_NOTCONTROLLER_COLOR = 'grey'
 STYLE_UNTRUSTEDITEM_COLOR = 'purple'
-
-# Style constants for macOS
-STYLE_READY_PUSHBUTTON_MACOS = "QPushButton { text-align: left; padding: 10px 5px 10px 15px; margin: 0px 3px 0px 2px}"
-STYLE_AUTO_PLAY_PUSHBUTTON_MACOS = "QPushButton { text-align: left; padding: 10px 5px 10px 15px; margin: 0px 0px 0px -4px}"
 
 TLS_CERT_ROTATION_MAX_RETRIES = 10
 
@@ -221,8 +242,9 @@ MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = [
 MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-tab-hint", "mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
-VLC_SLAVE_MACOS_ARGS = ['--verbose=2', '--no-file-logging']
-VLC_SLAVE_NONMACOS_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
+VLC_SLAVE_EXTRA_ARGS = getValueForOS({
+     OS_DEFAULT: ['--no-one-instance', '--no-one-instance-when-started-from-file'],
+     OS_MACOS: ['--verbose=2', '--no-file-logging']})
 MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS = ["no-osd set time-pos ", "loadfile "]
 MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS = ["cycle pause"]
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
@@ -279,9 +301,3 @@ DEFAULT_TRUSTED_DOMAINS = ["youtube.com", "youtu.be"]
 TRUSTABLE_WEB_PROTOCOLS = ["http://www.", "https://www.", "http://", "https://"]
 
 PRIVATE_FILE_FIELDS = ["path"]
-
-OS_WINDOWS = "win"
-OS_LINUX = "linux"
-OS_MACOS = "darwin"
-OS_BSD = "freebsd"
-OS_DRAGONFLY = "dragonfly"

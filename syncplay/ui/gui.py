@@ -1426,10 +1426,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.readyPushButton.setAutoExclusive(False)
         window.readyPushButton.toggled.connect(self.changeReadyState)
         window.readyPushButton.setFont(readyFont)
-        if isMacOS():
-            window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON_MACOS)
-        else:
-            window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON)
+        window.readyPushButton.setStyleSheet(constants.STYLE_READY_PUSHBUTTON)
         window.readyPushButton.setToolTip(getMessage("ready-tooltip"))
         window.listLayout.addWidget(window.readyPushButton, Qt.AlignRight)
         if isMacOS(): window.listLayout.setContentsMargins(0, 0, 0, 10)
@@ -1451,12 +1448,11 @@ class MainWindow(QtWidgets.QMainWindow):
             window.autoplayFrame.setMinimumWidth(window.listFrame.sizeHint().width())
             window.autoplayLayout.setSpacing(15)
             window.autoplayLayout.setContentsMargins(0, 8, 3, 3)
-            window.autoplayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON_MACOS)
             window.autoplayPushButton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         else:
             window.autoplayLayout.setContentsMargins(0, 0, 0, 0)
-            window.autoplayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON)
             window.autoplayPushButton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        window.autoplayPushButton.setStyleSheet(constants.STYLE_AUTO_PLAY_PUSHBUTTON)
         window.autoplayPushButton.setToolTip(getMessage("autoplay-tooltip"))
         window.autoplayLabel = QtWidgets.QLabel(getMessage("autoplay-minimum-label"))
         window.autoplayLabel.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)

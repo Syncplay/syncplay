@@ -28,10 +28,7 @@ class VlcPlayer(BasePlayer):
 
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS
-    if isMacOS():
-        SLAVE_ARGS.extend(constants.VLC_SLAVE_MACOS_ARGS)
-    else:
-        SLAVE_ARGS.extend(constants.VLC_SLAVE_NONMACOS_ARGS)
+    SLAVE_ARGS.extend(constants.VLC_SLAVE_EXTRA_ARGS)
     vlcport = random.randrange(constants.VLC_MIN_PORT, constants.VLC_MAX_PORT) if (constants.VLC_MIN_PORT < constants.VLC_MAX_PORT) else constants.VLC_MIN_PORT
 
     def __init__(self, client, playerPath, filePath, args):
