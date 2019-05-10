@@ -71,6 +71,10 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
             crossIconQPixmap = QtGui.QPixmap(resourcespath + "cross.png")
             roomController = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
             userReady = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.USERITEM_READY_ROLE)
+            isUserRow = indexQModelIndex.parent() != indexQModelIndex.parent().parent()
+            if isUserRow and isMacOS():
+                whiteRect = QtCore.QRect(0, optionQStyleOptionViewItem.rect.y(), optionQStyleOptionViewItem.rect.width(), optionQStyleOptionViewItem.rect.height())
+                itemQPainter.fillRect(whiteRect, QtGui.QColor(Qt.white))
 
             if roomController and not controlIconQPixmap.isNull():
                 itemQPainter.drawPixmap(
@@ -89,7 +93,6 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
                     (optionQStyleOptionViewItem.rect.x()-10),
                     midY - 8,
                     crossIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
-            isUserRow = indexQModelIndex.parent() != indexQModelIndex.parent().parent()
             if isUserRow:
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+constants.USERLIST_GUI_USERNAME_OFFSET)
         if column == constants.USERLIST_GUI_FILENAME_COLUMN:
