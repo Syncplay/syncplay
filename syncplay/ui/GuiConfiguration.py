@@ -117,6 +117,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.saveMoreState(True)
                 self.tabListWidget.setCurrentRow(0)
                 self.ensureTabListIsVisible()
+                if isMacOS(): self.mediaplayerSettingsGroup.setFixedHeight(self.mediaplayerSettingsGroup.minimumSizeHint().height())
                 self.stackedFrame.setFixedHeight(self.stackedFrame.minimumSizeHint().height())
             else:
                 self.tabListFrame.hide()
@@ -134,12 +135,21 @@ class ConfigDialog(QtWidgets.QDialog):
                     self.mediabrowseButton.show()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
-                newHeight = self.connectionSettingsGroup.minimumSizeHint().height() + self.mediaplayerSettingsGroup.minimumSizeHint().height() + self.bottomButtonFrame.minimumSizeHint().height() + 13
+                if isMacOS():
+                    self.mediaplayerSettingsGroup.setFixedHeight(self.mediaplayerSettingsGroup.minimumSizeHint().height())
+                    newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50
+                else:
+                    newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+13
                 if self.error:
                     newHeight += self.errorLabel.height()+3
                 self.stackedFrame.setFixedHeight(newHeight)
             self.adjustSize()
-            self.setFixedSize(self.sizeHint())
+            if isMacOS():
+                newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50+16
+                self.setFixedWidth(self.sizeHint().width())
+                self.setFixedHeight(newHeight)
+            else:
+                self.setFixedSize(self.sizeHint())
         self.moreToggling = False
         self.setFixedWidth(self.minimumSizeHint().width())
 
@@ -617,7 +627,10 @@ class ConfigDialog(QtWidgets.QDialog):
         self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
         self.connectionSettingsLayout.setSpacing(10)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
-        self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
+        if isMacOS():
+            self.connectionSettingsGroup.setFixedHeight(self.connectionSettingsGroup.minimumSizeHint().height())
+        else:
+            self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
 
         self.playerargsTextbox = QLineEdit("", self)
         self.playerargsTextbox.textEdited.connect(self.changedPlayerArgs)
@@ -1170,11 +1183,17 @@ class ConfigDialog(QtWidgets.QDialog):
         self.bottomButtonLayout.addWidget(self.runButton)
         self.bottomButtonLayout.addWidget(self.storeAndRunButton)
         self.bottomButtonFrame.setLayout(self.bottomButtonLayout)
-        self.bottomButtonLayout.setContentsMargins(5, 0, 5, 0)
+        if isMacOS():
+            self.bottomButtonLayout.setContentsMargins(15, 0, 15, 0)
+        else:
+            self.bottomButtonLayout.setContentsMargins(5, 0, 5, 0)
         self.mainLayout.addWidget(self.bottomButtonFrame, 1, 0, 1, 2)
 
         self.bottomCheckboxFrame = QtWidgets.QFrame()
-        self.bottomCheckboxFrame.setContentsMargins(0, 0, 0, 0)
+        if isMacOS():
+            self.bottomCheckboxFrame.setContentsMargins(3, 0, 6, 0)
+        else:
+            self.bottomCheckboxFrame.setContentsMargins(0, 0, 0, 0)
         self.bottomCheckboxLayout = QtWidgets.QGridLayout()
         self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
 
@@ -1344,7 +1363,10 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.mediapathTextbox.show()
                 self.mediapathLabel.show()
                 self.mediabrowseButton.show()
-            newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+13
+            if isMacOS():
+                newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50
+            else:
+                newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+13
             if self.error:
                 newHeight += self.errorLabel.height() + 3
             self.stackedFrame.setFixedHeight(newHeight)
@@ -1361,7 +1383,12 @@ class ConfigDialog(QtWidgets.QDialog):
             self.runButton.setFocus()
         else:
             self.storeAndRunButton.setFocus()
-        self.setFixedSize(self.sizeHint())
+        if isMacOS():
+            initialHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50
+            self.setFixedWidth(self.sizeHint().width())
+            self.setFixedHeight(initialHeight)
+        else:
+            self.setFixedSize(self.sizeHint())
         self.setAcceptDrops(True)
 
         if constants.SHOW_TOOLTIPS:
