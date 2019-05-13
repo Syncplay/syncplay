@@ -304,6 +304,12 @@ de = {
     "settrusteddomains-menu-label": "Set &trusted domains",  # TODO: Translate
     "addtrusteddomain-menu-label": "Add {} as trusted domain",  # Domain # TODO: Translate
 
+    "edit-menu-label": "&Bearbeiten",
+    "cut-menu-label": "Aus&schneiden",
+    "copy-menu-label": "&Kopieren",
+    "paste-menu-label": "&Einsetzen",
+    "selectall-menu-label": "&Alles auswälhen",
+
     "playback-menu-label": "&Wiedergabe",
 
     "help-menu-label": "&Hilfe",

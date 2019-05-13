@@ -306,6 +306,12 @@ en = {
     "settrusteddomains-menu-label": "Set &trusted domains",
     "addtrusteddomain-menu-label": "Add {} as trusted domain",  # Domain
 
+    "edit-menu-label": "&Edit",
+    "cut-menu-label": "Cu&t",
+    "copy-menu-label": "&Copy",
+    "paste-menu-label": "&Paste",
+    "selectall-menu-label": "&Select All",
+
     "playback-menu-label": "&Playback",
 
     "help-menu-label": "&Help",

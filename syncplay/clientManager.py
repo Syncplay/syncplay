@@ -8,7 +8,7 @@ class SyncplayClientManager(object):
     def run(self):
         config = ConfigurationGetter().getConfiguration()
         from syncplay.client import SyncplayClient  # Imported later, so the proper reactor is installed
-        interface = ui.getUi(graphical=not config["noGui"])
+        interface = ui.getUi(graphical=not config["noGui"], passedBar=config['menuBar'])
         syncplayClient = SyncplayClient(config["playerClass"], interface, config)
         if syncplayClient:
             interface.addClient(syncplayClient)

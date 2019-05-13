@@ -307,6 +307,13 @@ ru = {
     "identifyascontroller-menu-label": "&Войти как оператор комнаты",
     "settrusteddomains-menu-label": "Доверенные &сайты",
 
+    # Edit menu - TODO: check - these should match the values of macOS menubar
+    "edit-menu-label": "&Правка",
+    "cut-menu-label": "Bы&резать",
+    "copy-menu-label": "&Скопировать",
+    "paste-menu-label": "&Bставить",
+    "selectall-menu-label": "Bыбра&ть все",
+
     "playback-menu-label": "&Управление",
 
     "help-menu-label": "&Помощь",

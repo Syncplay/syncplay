@@ -1511,9 +1511,15 @@ class MainWindow(QtWidgets.QMainWindow):
         window.playbackFrame.setMaximumWidth(window.playbackFrame.sizeHint().width())
         window.outputLayout.addWidget(window.playbackFrame)
 
-    def addMenubar(self, window):
-        window.menuBar = QtWidgets.QMenuBar()
+    def loadMenubar(self, window, passedBar):
+        if passedBar is not None:
+            window.menuBar = passedBar['bar']
+            window.editMenu = passedBar['editMenu']
+        else:
+            window.menuBar = QtWidgets.QMenuBar()
+            window.editMenu = None
 
+    def populateMenubar(self, window):
         # File menu
 
         window.fileMenu = QtWidgets.QMenu(getMessage("file-menu-label"), self)
@@ -1527,10 +1533,17 @@ class MainWindow(QtWidgets.QMainWindow):
                                                       getMessage("setmediadirectories-menu-label"))
         window.openAction.triggered.connect(self.openSetMediaDirectoriesDialog)
 
-        window.exitAction = window.fileMenu.addAction(QtGui.QPixmap(resourcespath + 'cross.png'),
-                                                      getMessage("exit-menu-label"))
+        window.exitAction = window.fileMenu.addAction(getMessage("exit-menu-label"))
+        if isMacOS():
+            window.exitAction.setMenuRole(QtWidgets.QAction.QuitRole)
+        else:
+            window.exitAction.setIcon(QtGui.QPixmap(resourcespath + 'cross.png'))
         window.exitAction.triggered.connect(self.exitSyncplay)
-        window.menuBar.addMenu(window.fileMenu)
+
+        if(window.editMenu is not None):
+            window.menuBar.insertMenu(window.editMenu.menuAction(), window.fileMenu)
+        else:
+            window.menuBar.addMenu(window.fileMenu)
 
         # Playback menu
 
@@ -1607,11 +1620,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 getMessage("about-menu-label"))
         else:
             window.about = window.helpMenu.addAction("&About")
+            window.about.setMenuRole(QtWidgets.QAction.AboutRole)
         window.about.triggered.connect(self.openAbout)
 
         window.menuBar.addMenu(window.helpMenu)
-        if not isMacOS():
-            window.mainLayout.setMenuBar(window.menuBar)
+        window.mainLayout.setMenuBar(window.menuBar)
 
     @needsClient
     def openSSLDetails(self):
@@ -1887,7 +1900,7 @@ class MainWindow(QtWidgets.QMainWindow):
         settings.beginGroup("PublicServerList")
         self.publicServerList = settings.value("publicServers", None)
 
-    def __init__(self):
+    def __init__(self, passedBar=None):
         super(MainWindow, self).__init__()
         self.console = ConsoleInGUI()
         self.console.setDaemon(True)
@@ -1905,11 +1918,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mainLayout = QtWidgets.QVBoxLayout()
         self.addTopLayout(self)
         self.addBottomLayout(self)
-        self.addMenubar(self)
+        self.loadMenubar(self, passedBar)
+        self.populateMenubar(self)
         self.addMainFrame(self)
         self.loadSettings()
         self.setWindowIcon(QtGui.QPixmap(resourcespath + "syncplay.png"))
-        self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.AA_DontUseNativeMenuBar & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.show()
         self.setAcceptDrops(True)
         self.clearedPlaylistNote = False

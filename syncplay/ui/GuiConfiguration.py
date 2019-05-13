@@ -1294,6 +1294,30 @@ class ConfigDialog(QtWidgets.QDialog):
             self.serverpassTextbox.setReadOnly(False)
             self.serverpassTextbox.setText(self.storedPassword)
 
+    def createMenubar(self):
+        self.menuBar = QtWidgets.QMenuBar()
+
+        # Edit menu
+        self.editMenu = QtWidgets.QMenu(getMessage("edit-menu-label"), self)
+
+        self.cutAction = self.editMenu.addAction(getMessage("cut-menu-label"))
+        self.cutAction.setShortcuts(QtGui.QKeySequence.Cut)
+
+        self.copyAction = self.editMenu.addAction(getMessage("copy-menu-label"))
+        self.copyAction.setShortcuts(QtGui.QKeySequence.Copy)
+
+        self.pasteAction = self.editMenu.addAction(getMessage("paste-menu-label"))
+        self.pasteAction.setShortcuts(QtGui.QKeySequence.Paste)
+
+        self.selectAction = self.editMenu.addAction(getMessage("selectall-menu-label"))
+        self.selectAction.setShortcuts(QtGui.QKeySequence.SelectAll)
+
+        self.editMenu.addSeparator()
+
+        self.menuBar.addMenu(self.editMenu)
+
+        self.mainLayout.setMenuBar(self.menuBar)
+
     def __init__(self, config, playerpaths, error, defaultConfig):
         self.config = config
         self.defaultConfig = defaultConfig
@@ -1344,6 +1368,14 @@ class ConfigDialog(QtWidgets.QDialog):
         self.addMessageTab()
         self.addMiscTab()
         self.tabList()
+
+        if isMacOS():
+            self.createMenubar()
+            self.config['menuBar'] = dict()
+            self.config['menuBar']['bar'] = self.menuBar
+            self.config['menuBar']['editMenu'] = self.editMenu
+        else:
+            self.config['menuBar'] = None
 
         self.mainLayout.addWidget(self.stackedFrame, 0, 1)
         self.addBottomLayout()

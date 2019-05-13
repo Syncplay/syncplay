@@ -306,6 +306,12 @@ es = {
     "settrusteddomains-menu-label": "Es&tablecer dominios de confianza",
     "addtrusteddomain-menu-label": "Agregar {} como dominio de confianza",  # Domain
 
+    "edit-menu-label": "&Edición",
+    "cut-menu-label": "Cor&tar",
+    "copy-menu-label": "&Copiar",
+    "paste-menu-label": "&Pegar",
+    "selectall-menu-label": "&Seleccionar todo",
+
     "playback-menu-label": "Re&producción",
 
     "help-menu-label": "A&yuda",

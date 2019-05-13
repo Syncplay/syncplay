@@ -306,6 +306,12 @@ it = {
     "settrusteddomains-menu-label": "Imposta &domini fidati",
     "addtrusteddomain-menu-label": "Aggiungi {} come dominio fidato",  # Domain
 
+    "edit-menu-label": "&Modifica",
+    "cut-menu-label": "&Taglia",
+    "copy-menu-label": "&Copia",
+    "paste-menu-label": "&Incolla",
+    "selectall-menu-label": "&Seleziona tutto",
+
     "playback-menu-label": "&Riproduzione",
 
     "help-menu-label": "&Aiuto",
