@@ -79,7 +79,7 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
             userReady = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.USERITEM_READY_ROLE)
             isUserRow = indexQModelIndex.parent() != indexQModelIndex.parent().parent()
             bkgColor = self.view.palette().color(QtGui.QPalette.Base)
-            if isUserRow and isMacOS():
+            if isUserRow and (isMacOS() or isLinux()):
                 blankRect = QtCore.QRect(0, optionQStyleOptionViewItem.rect.y(), optionQStyleOptionViewItem.rect.width(), optionQStyleOptionViewItem.rect.height())
                 itemQPainter.fillRect(blankRect, bkgColor)
 
