@@ -31,6 +31,11 @@ if isMacOS() and IsPySide:
     from Foundation import NSURL
     from Cocoa import NSString, NSUTF8StringEncoding
 lastCheckedForUpdates = None
+from syncplay.vendor import darkdetect
+if isMacOS():
+	isDarkMode = darkdetect.isDark()
+else:
+	isDarkMode = None
 
 
 class ConsoleInGUI(ConsoleUI):
@@ -51,7 +56,8 @@ class ConsoleInGUI(ConsoleUI):
 
 
 class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
-    def __init__(self):
+    def __init__(self, view=None):
+        self.view = view
         QtWidgets.QStyledItemDelegate.__init__(self)
 
     def sizeHint(self, option, index):
@@ -72,9 +78,10 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
             roomController = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.USERITEM_CONTROLLER_ROLE)
             userReady = currentQAbstractItemModel.data(itemQModelIndex, Qt.UserRole + constants.USERITEM_READY_ROLE)
             isUserRow = indexQModelIndex.parent() != indexQModelIndex.parent().parent()
+            bkgColor = self.view.palette().color(QtGui.QPalette.Base)
             if isUserRow and isMacOS():
-                whiteRect = QtCore.QRect(0, optionQStyleOptionViewItem.rect.y(), optionQStyleOptionViewItem.rect.width(), optionQStyleOptionViewItem.rect.height())
-                itemQPainter.fillRect(whiteRect, QtGui.QColor(Qt.white))
+                blankRect = QtCore.QRect(0, optionQStyleOptionViewItem.rect.y(), optionQStyleOptionViewItem.rect.width(), optionQStyleOptionViewItem.rect.height())
+                itemQPainter.fillRect(blankRect, bkgColor)
 
             if roomController and not controlIconQPixmap.isNull():
                 itemQPainter.drawPixmap(
@@ -130,7 +137,11 @@ class AboutDialog(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QPixmap(resourcespath + 'syncplay.png'))
         nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
         nameLabel.setFont(QtGui.QFont("Helvetica", 18))
-        linkLabel = QtWidgets.QLabel("<center><a href=\"https://syncplay.pl\">syncplay.pl</a></center>")
+        linkLabel = QtWidgets.QLabel()
+        if isDarkMode:
+            linkLabel.setText(("<center><a href=\"https://syncplay.pl\" style=\"{}\">syncplay.pl</a></center>").format(constants.STYLE_DARK_ABOUT_LINK_COLOR))
+        else:
+            linkLabel.setText("<center><a href=\"https://syncplay.pl\">syncplay.pl</a></center>")
         linkLabel.setOpenExternalLinks(True)
         versionExtString = version + revision
         versionLabel = QtWidgets.QLabel(
@@ -324,11 +335,17 @@ class MainWindow(QtWidgets.QMainWindow):
                 fileIsAvailable = self.selfWindow.isFileAvailable(itemFilename)
                 fileIsUntrusted = self.selfWindow.isItemUntrusted(itemFilename)
                 if fileIsUntrusted:
-                    self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_UNTRUSTEDITEM_COLOR)))
+                    if isDarkMode:
+                        self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DARK_UNTRUSTEDITEM_COLOR)))
+                    else:
+                        self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_UNTRUSTEDITEM_COLOR)))
                 elif fileIsAvailable:
-                    self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(QtGui.QPalette.ColorRole(QtGui.QPalette.Text))))
+                    self.item(item).setForeground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Text)))
                 else:
-                    self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                    if isDarkMode:
+                        self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DARK_DIFFERENTITEM_COLOR)))
+                    else:
+                        self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
             self.selfWindow._syncplayClient.fileSwitch.setFilenameWatchlist(self.selfWindow.newWatchlist)
             self.forceUpdate()
 
@@ -605,24 +622,28 @@ class MainWindow(QtWidgets.QMainWindow):
                         sameDuration = sameFileduration(user.file['duration'], currentUser.file['duration'])
                         underlinefont = QtGui.QFont()
                         underlinefont.setUnderline(True)
+                        differentItemColor = constants.STYLE_DARK_DIFFERENTITEM_COLOR if isDarkMode else constants.STYLE_DIFFERENTITEM_COLOR
                         if sameRoom:
                             if not sameName:
-                                filenameitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                                filenameitem.setForeground(QtGui.QBrush(QtGui.QColor(differentItemColor)))
                                 filenameitem.setFont(underlinefont)
                             if not sameSize:
                                 if formatSize(user.file['size']) == formatSize(currentUser.file['size']):
                                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size'], precise=True))
                                 filesizeitem.setFont(underlinefont)
-                                filesizeitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                                filesizeitem.setForeground(QtGui.QBrush(QtGui.QColor(differentItemColor)))
                             if not sameDuration:
-                                filedurationitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                                filedurationitem.setForeground(QtGui.QBrush(QtGui.QColor(differentItemColor)))
                                 filedurationitem.setFont(underlinefont)
                 else:
                     filenameitem = QtGui.QStandardItem(getMessage("nofile-note"))
                     filedurationitem = QtGui.QStandardItem("")
                     filesizeitem = QtGui.QStandardItem("")
                     if room == currentUser.room:
-                        filenameitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOFILEITEM_COLOR)))
+                        if isDarkMode:
+                            filenameitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DARK_NOFILEITEM_COLOR)))
+                        else:
+                            filenameitem.setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_NOFILEITEM_COLOR)))
                 font = QtGui.QFont()
                 if currentUser.username == user.username:
                     font.setWeight(QtGui.QFont.Bold)
@@ -637,7 +658,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 roomitem.appendRow((useritem, filesizeitem, filedurationitem, filenameitem))
         self.listTreeModel = self._usertreebuffer
         self.listTreeView.setModel(self.listTreeModel)
-        self.listTreeView.setItemDelegate(UserlistItemDelegate())
+        self.listTreeView.setItemDelegate(UserlistItemDelegate(view=self.listTreeView))
         self.listTreeView.setItemsExpandable(False)
         self.listTreeView.setRootIsDecorated(False)
         self.listTreeView.expandAll()
@@ -849,7 +870,10 @@ class MainWindow(QtWidgets.QMainWindow):
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         message = message.replace("&lt;a href=&quot;https://syncplay.pl/trouble&quot;&gt;", '<a href="https://syncplay.pl/trouble">').replace("&lt;/a&gt;", "</a>")
         message = message.replace("\n", "<br />")
-        message = "<span style=\"{}\">".format(constants.STYLE_ERRORNOTIFICATION) + message + "</span>"
+        if isDarkMode:
+            message = "<span style=\"{}\">".format(constants.STYLE_DARK_ERRORNOTIFICATION) + message + "</span>"
+        else:
+            message = "<span style=\"{}\">".format(constants.STYLE_ERRORNOTIFICATION) + message + "</span>"
         self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
 
     @needsClient
@@ -1259,6 +1283,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         window.outputLayout = QtWidgets.QVBoxLayout()
         window.outputbox = QtWidgets.QTextBrowser()
+        if isDarkMode: window.outputbox.document().setDefaultStyleSheet(constants.STYLE_DARK_LINKS_COLOR);
         window.outputbox.setReadOnly(True)
         window.outputbox.setTextInteractionFlags(window.outputbox.textInteractionFlags() | Qt.TextSelectableByKeyboard)
         window.outputbox.setOpenExternalLinks(True)
@@ -1266,7 +1291,8 @@ class MainWindow(QtWidgets.QMainWindow):
         window.outputbox.moveCursor(QtGui.QTextCursor.End)
         window.outputbox.insertHtml(constants.STYLE_CONTACT_INFO.format(getMessage("contact-label")))
         window.outputbox.moveCursor(QtGui.QTextCursor.End)
-        window.outputbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        window.outputbox.setCursorWidth(0)
+        if not isMacOS(): window.outputbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
         window.outputlabel = QtWidgets.QLabel(getMessage("notifications-heading-label"))
         window.outputlabel.setMinimumHeight(27)
@@ -1412,8 +1438,6 @@ class MainWindow(QtWidgets.QMainWindow):
         noteFont = QtGui.QFont()
         noteFont.setItalic(True)
         playlistItem = QtWidgets.QListWidgetItem(getMessage("playlist-instruction-item-message"))
-        playlistItem.setFont(noteFont)
-        window.playlist.addItem(playlistItem)
         playlistItem.setFont(noteFont)
         window.playlist.addItem(playlistItem)
         window.playlistLayout.addWidget(window.playlist)
