@@ -351,6 +351,9 @@ class VlcPlayer(BasePlayer):
                 # This should also work for all the other BSDs, such as OpenBSD or DragonFly.
                 playerController.vlcIntfPath = "/usr/local/lib/vlc/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), ".local/share/vlc/lua/intf/")
+            elif "vlcportable.exe" in playerPath.lower():
+                playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/App/vlc/lua/intf/"
+                playerController.vlcIntfUserPath = playerController.vlcIntfPath
             else:
                 playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('APPDATA', '.'), "VLC\\lua\\intf\\")
