@@ -44,6 +44,7 @@ FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [
     ['syncplay.pl:8999 (France)', 'syncplay.pl:8999']]
 PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH = 10  # Seconds
 PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD = 5  # Seconds (only triggered if file is paused, e.g. due to EOF)
+EXECUTABLE_COMBOBOX_MINIMUM_LENGTH = 30 # Minimum number of characters that the combobox will make visible
 
 # Overriden by config
 SHOW_OSD = True  # Sends Syncplay messages to media player OSD

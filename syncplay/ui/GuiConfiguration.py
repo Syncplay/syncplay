@@ -657,6 +657,8 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.executablepathLabel.setObjectName("executable-path")
         self.executablepathCombobox.setObjectName("executable-path")
+        self.executablepathCombobox.setMinimumContentsLength(constants.EXECUTABLE_COMBOBOX_MINIMUM_LENGTH)
+        self.executablepathCombobox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
         self.mediapathLabel.setObjectName("media-path")
         self.mediapathTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "media-path")
         self.playerargsLabel.setObjectName("player-arguments")
