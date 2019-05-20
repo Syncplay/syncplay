@@ -5,6 +5,12 @@ matrix:
     - language: bash
       sudo: required
       dist: xenial
+      env: BUILD_DESTINATION=snapcraft
+    - language: python
+      sudo: required
+      dist: xenial
+      python: 3.6
+      env: BUILD_DESTINATION=appimage
 
 branches:
   only:
@@ -12,11 +18,13 @@ branches:
 
 script:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then python3 buildPy2app.py py2app ; fi
-- if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo snapcraft cleanbuild ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then sudo snapcraft cleanbuild ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then travis/appimage-script.sh ; fi
 
 install:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis/macos-install.sh ; fi
-- if [ "$TRAVIS_OS_NAME" == "linux" ]; then travis/linux-install.sh ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then travis/snapcraft-install.sh ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then ls -al ; fi
 
 before_deploy:
 - ls -al
@@ -24,7 +32,8 @@ before_deploy:
 - python3 bintray_version.py
 - mkdir dist_bintray
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis/macos-deploy.sh ; fi
-- if [ "$TRAVIS_OS_NAME" == "linux" ]; then mv syncplay_build_amd64.snap dist_bintray/syncplay_${VER}_amd64.snap ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then mv syncplay_build_amd64.snap dist_bintray/syncplay_${VER}_amd64.snap ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then mv Syncplay*.AppImage dist_bintray/ ; fi
 
 deploy:
   skip_cleanup: true
