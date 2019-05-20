@@ -340,8 +340,12 @@ class VlcPlayer(BasePlayer):
                 else:
                     call.append(self.__playerController.getMRL(filePath))
             if isLinux():
-                playerController.vlcIntfPath = "/usr/lib/vlc/lua/intf/"
-                playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), ".local/share/vlc/lua/intf/")
+                if 'snap' in playerPath:
+                    playerController.vlcIntfPath = '/snap/vlc/current/usr/lib/vlc/lua/intf/'
+                    playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), "snap/vlc/current/.local/share/vlc/lua/intf/")
+                else:
+                    playerController.vlcIntfPath = "/usr/lib/vlc/lua/intf/"
+                    playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), ".local/share/vlc/lua/intf/")
             elif isMacOS():
                 playerController.vlcIntfPath = "/Applications/VLC.app/Contents/MacOS/share/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(
