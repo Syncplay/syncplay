@@ -4,15 +4,19 @@
 #  Distributed under the terms of the 3-clause BSD License.
 #-----------------------------------------------------------------------------
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 import sys
 import platform
-from distutils.version import LooseVersion as V
 
-if sys.platform != "darwin" or V(platform.mac_ver()[0]) < V("10.14"):
+if sys.platform != "darwin":
     from ._dummy import *
 else:
-    from ._detect import *
+    from distutils.version import LooseVersion as V
+    if V(platform.mac_ver()[0]) < V("10.14"):
+        from ._dummy import *
+    else:
+        from ._detect import *
+    del V
 
-del sys, platform, V
+del sys, platform
