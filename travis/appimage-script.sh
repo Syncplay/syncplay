@@ -38,13 +38,17 @@ chmod +x linuxdeploy*.sh
 
 # set up custom AppRun script
 cat > AppRun.sh <<\EAT
-#! /bin/sh
+#! /bin/bash
 # make sure to set APPDIR when run directly from the AppDir
 if [ -z $APPDIR ]; then APPDIR=$(readlink -f $(dirname "$0")); fi
 export LD_LIBRARY_PATH="$APPDIR"/usr/lib
 export PATH="$PATH":"$APPDIR"/usr/bin
 
-exec "$APPDIR"/usr/bin/python "$APPDIR"/usr/bin/syncplay "$@"
+if [ "$1" == "--server" ]; then
+	exec "$APPDIR"/usr/bin/python "$APPDIR"/usr/bin/syncplay-server "${@:2}"
+else
+	exec "$APPDIR"/usr/bin/python "$APPDIR"/usr/bin/syncplay "$@"
+fi
 EAT
 chmod +x AppRun.sh
 
