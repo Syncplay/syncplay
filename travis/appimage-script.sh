@@ -87,7 +87,7 @@ cat > pl.syncplay.syncplay.appdata.xml <<\EAT
 	<url type="homepage">https://syncplay.pl/</url>
 	<screenshots>
 		<screenshot type="default">
-			<image>https://syncplay.pl/wp-content/themes/big-city-child/SyncplayExplained.png</image>
+			<image>https://syncplay.pl/2019-05-26.png</image>
 		</screenshot>
 	</screenshots>
 	<provides>
