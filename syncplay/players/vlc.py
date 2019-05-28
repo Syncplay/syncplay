@@ -39,14 +39,6 @@ class VLCProtocol(LineReceiver):
                 self.factory._playerController._client.ui.showDebugMessage("player >> {}".format(line))
             # except:
                 # pass
-        if line == "close-vlc":
-            self.factory._playerController._vlcclosed.set()
-            if not self.factory.connected and not self.factory.timeVLCLaunched:
-                # For circumstances where Syncplay is not connected to VLC and is not reconnecting
-                #try:
-                self.factory._process.terminate()
-                #except:  # When VLC is already closed
-                #    pass
 
     def connectionMade(self):
         self.factory.connected = True
@@ -85,6 +77,15 @@ class VLCClientFactory(ClientFactory):
         else:
             self.vlcHasResponded = True
             self._playerController.drop(getMessage("vlc-failed-connection").format(constants.VLC_MIN_VERSION))
+
+    def closeVLC(self):
+        self._playerController._vlcclosed.set()
+        if not self.connected and not self.timeVLCLaunched:
+            # For circumstances where Syncplay is not connected to VLC and is not reconnecting
+            #try:
+            self._process.terminate()
+            #except:  # When VLC is already closed
+            #    pass
 
 
 class VlcPlayer(BasePlayer):
@@ -379,7 +380,7 @@ class VlcPlayer(BasePlayer):
     def drop(self, dropErrorMessage=None):
         if self._listener:
             self._vlcclosed.clear()
-            self._listener.sendLine('close-vlc')
+            self._listener._factory.closeVLC()
             self._vlcclosed.wait()
         self._durationAsk.set()
         self._filenameAsk.set()
@@ -533,4 +534,4 @@ class VlcPlayer(BasePlayer):
             out.close()
 
         def sendLine(self, line):
-            self._factory.protocol.sendLine(line)
+            self.reactor.callFromThread(self._factory.protocol.sendLine, line)
