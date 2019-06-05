@@ -11,9 +11,6 @@ matrix:
       dist: xenial
       python: 3.6
       env: BUILD_DESTINATION=appimage
-      apt:
-        packages:
-        - libxkbcommon-x11-0
 
 branches:
   only:
@@ -27,7 +24,7 @@ script:
 install:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis/macos-install.sh ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then travis/snapcraft-install.sh ; fi
-- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then ls -al ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then sudo apt-get install libxkbcommon-x11-0 ; fi
 
 before_deploy:
 - ls -al
