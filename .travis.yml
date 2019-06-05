@@ -11,6 +11,9 @@ matrix:
       dist: xenial
       python: 3.6
       env: BUILD_DESTINATION=appimage
+      apt:
+        packages:
+        - libxkbcommon-x11-0
 
 branches:
   only:
