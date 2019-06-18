@@ -305,7 +305,7 @@ class MplayerPlayer(BasePlayer):
     def drop(self):
         self._listener.sendLine('quit')
         self._takeLocksDown()
-        self.reactor.callFromThread(self._client.stop, True)
+        self.reactor.callFromThread(self._client.stop, False)
 
     class __Listener(threading.Thread):
         def __init__(self, playerController, playerPath, filePath, args):
