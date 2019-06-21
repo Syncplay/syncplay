@@ -711,7 +711,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.errorLabel.setStyleSheet(constants.STYLE_SUCCESSLABEL)
             self.errorLabel.setText(error)
             self.errorLabel.setAlignment(Qt.AlignCenter)
-            self.basicOptionsLayout.addWidget(self.errorLabel, 0, 0)
+            self.basicOptionsLayout.addWidget(self.errorLabel)
         self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.setAlignment(Qt.AlignTop)
         self.basicOptionsLayout.addWidget(self.connectionSettingsGroup)
