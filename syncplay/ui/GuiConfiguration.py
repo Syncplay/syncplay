@@ -1419,6 +1419,8 @@ class ConfigDialog(QtWidgets.QDialog):
             self.storeAndRunButton.setFocus()
         if isMacOS():
             initialHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50
+            if self.error:
+                initialHeight += 40            
             self.setFixedWidth(self.sizeHint().width())
             self.setFixedHeight(initialHeight)
         else:
