@@ -389,6 +389,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
     $${If} $$CheckBox_StartMenuShortcut_State == $${BST_CHECKED}
       CreateDirectory $$SMPROGRAMS\Syncplay
+      SetOutPath "$$INSTDIR"
       CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
       CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay Server.lnk" "$$INSTDIR\syncplayServer.exe" ""
       CreateShortCut "$$SMPROGRAMS\Syncplay\Uninstall.lnk" "$$INSTDIR\Uninstall.exe" ""
@@ -396,10 +397,12 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${EndIf}
 
     $${If} $$CheckBox_DesktopShortcut_State == $${BST_CHECKED}
+      SetOutPath "$$INSTDIR"
       CreateShortCut "$$DESKTOP\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
     $${EndIf}
 
     $${If} $$CheckBox_QuickLaunchShortcut_State == $${BST_CHECKED}
+      SetOutPath "$$INSTDIR"
       CreateShortCut "$$QUICKLAUNCH\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
     $${EndIf}
   FunctionEnd
