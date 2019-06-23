@@ -1939,7 +1939,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setWindowFlags(self.windowFlags())
         else:
             self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
-        self.setWindowTitle("Syncplay v" + version)
+        self.setWindowTitle("Syncplay v" + version + revision)
         self.mainLayout = QtWidgets.QVBoxLayout()
         self.addTopLayout(self)
         self.addBottomLayout(self)
