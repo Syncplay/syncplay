@@ -235,15 +235,30 @@ class SyncFactory(Factory):
 
     def _allowTLSconnections(self, path):
         try:
-            privKey = open(path+'/privkey.pem', 'rt').read()
-            certif = open(path+'/cert.pem', 'rt').read()
-            chain = open(path+'/chain.pem', 'rt').read()
+            # load private key
+            with open(os.path.join(path, 'privkey.pem'), 'rt') as f:
+                print("TLS: Loading privkey.pem ...")
+                privKeyPySSL = crypto.load_privatekey(crypto.FILETYPE_PEM, f.read())
 
-            self.lastEditCertTime = os.path.getmtime(path+'/cert.pem')
+            # fullchain.pem is expected to contain the server cert as the first
+            # followed by any required intermediate certs
+            # if fullchain.pem doesn't exist, we expect cert.pem to contain the server cert
+            # and chain.pem to contain any additional required intermediate certs
 
-            privKeyPySSL = crypto.load_privatekey(crypto.FILETYPE_PEM, privKey)
-            certifPySSL = crypto.load_certificate(crypto.FILETYPE_PEM, certif)
-            chainPySSL = [crypto.load_certificate(crypto.FILETYPE_PEM, cert) for cert in self._splitPEMCerts(chain)]
+            fullchainExists = os.path.isfile(os.path.join(path, 'fullchain.pem'))
+            chainFile = 'fullchain.pem' if fullchainExists else 'chain.pem'
+            with open(os.path.join(path, chainFile), 'rt') as f:
+                print("TLS: Loading %s ..." % chainFile)
+                chainPySSL = [crypto.load_certificate(crypto.FILETYPE_PEM, cert) for cert in self._splitPEMCerts(f.read())]
+
+            if fullchainExists:
+                certifPySSL = chainPySSL.pop(0)
+            else:
+                with open(os.path.join(path, 'cert.pem'), 'rt') as f:
+                    print("TLS: Loading cert.pem ...")
+                    certifPySSL = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
+
+            self.lastEditCertTime = self.checkLastEditCertTime()
 
             cipherListString = "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:"\
                                "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:"\
@@ -272,10 +287,14 @@ class SyncFactory(Factory):
             print("TLS support is not enabled.")
 
     def checkLastEditCertTime(self):
+        outTime = 0
         try:
-            outTime = os.path.getmtime(self.certPath+'/cert.pem')
+            for f in ['privkey.pem', 'cert.pem', 'chain.pem', 'fullchain.pem']:
+                path = os.path.join(self.certPath, f)
+                if os.path.isfile(path):
+                    outTime = max(outTime, os.path.getmtime(path))
         except:
-            outTime = None
+            pass
         return outTime
 
     def updateTLSContextFactory(self):

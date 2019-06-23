@@ -688,7 +688,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         if "send" in inquiry:
             if not self.isLogged() and self._factory.serverAcceptsTLS:
                 lastEditCertTime = self._factory.checkLastEditCertTime()
-                if lastEditCertTime is not None and lastEditCertTime != self._factory.lastEditCertTime:
+                if lastEditCertTime and lastEditCertTime != self._factory.lastEditCertTime:
                     self._factory.updateTLSContextFactory()
                 if self._factory.options is not None:
                     self.sendTLS({"startTLS": "true"})
