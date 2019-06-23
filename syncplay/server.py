@@ -209,6 +209,30 @@ class SyncFactory(Factory):
         else:
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
 
+    def _splitPEMCerts(self, pem):
+        begin = '-----BEGIN CERTIFICATE-----'
+        end = '-----END CERTIFICATE-----'
+        certs = []
+        while True:
+            # skip until next begin line if exists
+            parts = pem.split(begin, 1)
+            if len(parts) > 1:
+                pem = begin + parts[1]
+                # skip until next end line if exists
+                parts = pem.split('-----END CERTIFICATE-----', 1)
+                if len(parts) > 1:
+                    # found a cert, add it
+                    certs.append(parts[0] + end) 
+                    # remainder of file
+                    pem = parts[1] 
+                else:
+                    # missing end line ... invalid file
+                    break
+            else:
+                # no more certs, done
+                break
+        return certs
+
     def _allowTLSconnections(self, path):
         try:
             privKey = open(path+'/privkey.pem', 'rt').read()
@@ -219,7 +243,7 @@ class SyncFactory(Factory):
 
             privKeyPySSL = crypto.load_privatekey(crypto.FILETYPE_PEM, privKey)
             certifPySSL = crypto.load_certificate(crypto.FILETYPE_PEM, certif)
-            chainPySSL = [crypto.load_certificate(crypto.FILETYPE_PEM, chain)]
+            chainPySSL = [crypto.load_certificate(crypto.FILETYPE_PEM, cert) for cert in self._splitPEMCerts(chain)]
 
             cipherListString = "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:"\
                                "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:"\
