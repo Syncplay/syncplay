@@ -55,7 +55,7 @@ class MpvPlayer(MplayerPlayer):
 
     @staticmethod
     def isValidPlayerPath(path):
-        if "mpv" in path and MpvPlayer.getExpandedPath(path):
+        if "mpv" in path and "mpvnet" not in path and MpvPlayer.getExpandedPath(path):
             return True
         return False
 

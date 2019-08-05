@@ -108,7 +108,7 @@ en = {
     "mpc-be-version-insufficient-error": "MPC version not sufficient, please use `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay is not compatible with this version of mpv. Please use a different version of mpv (e.g. Git HEAD).",
     "player-file-open-error": "Player failed opening file",
-    "player-path-error": "Player path is not set properly. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2",
+    "player-path-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2",
     "hostname-empty-error": "Hostname can't be empty",
     "empty-error": "{} can't be empty",  # Configuration
     "media-player-error": "Media player error: \"{}\"",  # Error line
@@ -119,7 +119,7 @@ en = {
 
     "unable-to-start-client-error": "Unable to start client",
 
-    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2.",
+    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2.",
     "no-file-path-config-error": "File must be selected before starting your player",
     "no-hostname-config-error": "Hostname can't be empty",
     "invalid-port-config-error": "Port must be valid",

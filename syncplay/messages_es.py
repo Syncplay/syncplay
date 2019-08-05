@@ -108,7 +108,7 @@ es = {
     "mpc-be-version-insufficient-error": "La versión de MPC no es suficiente, por favor utiliza `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay no es compatible con esta versión de mpv. Por favor utiliza una versión diferente de mpv (p.ej. Git HEAD).",
     "player-file-open-error": "El reproductor falló al abrir el archivo",
-    "player-path-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, VLC, MPC-HC, MPC-BE y mplayer2",
+    "player-path-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE y mplayer2",
     "hostname-empty-error": "El nombre del host no puede ser vacío",
     "empty-error": "{} no puede ser vacío",  # Configuration
     "media-player-error": "Error del reproductor multimedia: \"{}\"",  # Error line
@@ -119,7 +119,7 @@ es = {
 
     "unable-to-start-client-error": "No se logró iniciar el cliente",
 
-    "player-path-config-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, VLC, MPC-HC, MPC-BE y mplayer2.",
+    "player-path-config-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE y mplayer2.",
     "no-file-path-config-error": "El archivo debe ser seleccionado antes de iniciar el reproductor",
     "no-hostname-config-error": "El nombre del host no puede ser vacío",
     "invalid-port-config-error": "El puerto debe ser válido",

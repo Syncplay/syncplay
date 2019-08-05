@@ -108,7 +108,7 @@ de = {
     "mpc-be-version-insufficient-error": "MPC-Version nicht ausreichend, bitte nutze `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay ist nicht kompatibel mit dieser Version von mpv.  Bitte benutze eine andere Version (z.B. Git HEAD).",
     "player-file-open-error": "Fehler beim Öffnen der Datei durch den Player",
-    "player-path-error": "Ungültiger Player-Pfad. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2",  # To do: Translate end
+    "player-path-error": "Ungültiger Player-Pfad. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2",  # To do: Translate end
     "hostname-empty-error": "Hostname darf nicht leer sein",
     "empty-error": "{} darf nicht leer sein",  # Configuration
     "media-player-error": "Player-Fehler: \"{}\"",  # Error line
@@ -119,7 +119,7 @@ de = {
 
     "unable-to-start-client-error": "Client kann nicht gestartet werden",
 
-    "player-path-config-error": "Player-Pfad ist nicht ordnungsgemäß gesetzt. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2.",  # To do: Translate end
+    "player-path-config-error": "Player-Pfad ist nicht ordnungsgemäß gesetzt. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2.",  # To do: Translate end
     "no-file-path-config-error": "Es muss eine Datei ausgewählt werden, bevor der Player gestartet wird.",
     "no-hostname-config-error": "Hostname darf nicht leer sein",
     "invalid-port-config-error": "Port muss gültig sein",
