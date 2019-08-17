@@ -93,6 +93,7 @@ class ConfigurationGetter(object):
             "alertTimeout": 5,
             "chatTimeout": 7,
             "publicServers": [],
+            "loadPlaylistFromFile": None,
             "ca": None
         }
 
@@ -308,6 +309,8 @@ class ConfigurationGetter(object):
                     key = "noGui"
                 if key == "clear_gui_data":
                     key = "clearGUIData"
+                if key == "load_playlist_from_file":
+                    key = "loadPlaylistFromFile"
                 self._config[key] = val
 
     def _splitPortAndHost(self, host):
@@ -496,6 +499,8 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("file-argument"))
         self._argparser.add_argument('--clear-gui-data', action='store_true', help=getMessage("clear-gui-data-argument"))
         self._argparser.add_argument('-v', '--version', action='store_true', help=getMessage("version-argument"))
+        self._argparser.add_argument('--load-playlist-from-file', metavar="loadPlaylistFromFile", type=str, help=getMessage("load-playlist-from-file-argument"))
+
         self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("args-argument"))
         args = self._argparser.parse_args()
         if args.version:
