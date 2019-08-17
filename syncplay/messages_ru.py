@@ -174,6 +174,8 @@ ru = {
     "version-argument": 'выводит номер версии',
     "version-message": "Вы используете Syncplay версии {} ({})",
 
+    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)", # TODO: Translate
+
     # Client labels
     "config-window-title": "Настройка Syncplay",
 

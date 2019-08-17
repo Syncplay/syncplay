@@ -520,7 +520,11 @@ class SyncplayClient(object):
                     return True
         return False
 
-    def openFile(self, filePath, resetPosition=False):
+    def openFile(self, filePath, resetPosition=False, fromUser=False):
+        if fromUser and filePath.endswith(".txt") or filePath.endswith(".m3u") or filePath.endswith(".m3u8"):
+            self.playlist.loadPlaylistFromFile(filePath, resetPosition)
+            return
+
         self.playlist.openedFile()
         self._player.openFile(filePath, resetPosition)
         if resetPosition:
@@ -673,6 +677,9 @@ class SyncplayClient(object):
         readyState = self._config['readyAtStart'] if self.userlist.currentUser.isReady() is None else self.userlist.currentUser.isReady()
         self._protocol.setReady(readyState, manuallyInitiated=False)
         self.reIdentifyAsController()
+        if self._config["loadPlaylistFromFile"]:
+            self.playlist.loadPlaylistFromFile(self._config["loadPlaylistFromFile"])
+            self._config["loadPlaylistFromFile"] = None
 
     def getRoom(self):
         return self.userlist.currentUser.room
@@ -1707,6 +1714,15 @@ class SyncplayPlaylist():
             return None
         filename = _playlist[_index] if len(_playlist) > _index else None
         return filename
+
+    def loadPlaylistFromFile(self, path, shuffle=False):
+        with open(path) as f:
+            newPlaylist = f.read().splitlines()
+            if shuffle:
+                random.shuffle(newPlaylist)
+            if newPlaylist:
+                self.changePlaylist(newPlaylist, username=None, resetIndex=True)
+
 
     def changePlaylist(self, files, username=None, resetIndex=False):
         if self._playlist == files:

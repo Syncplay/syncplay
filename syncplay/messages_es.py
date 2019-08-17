@@ -173,6 +173,8 @@ es = {
     "version-argument": 'imprime tu versión',
     "version-message": "Estás usando la versión de Syncplay {} ({})",
 
+    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)", # TODO: Translate
+
     # Client labels
     "config-window-title": "Configuración de Syncplay",
 
