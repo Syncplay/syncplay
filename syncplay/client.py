@@ -199,9 +199,16 @@ class SyncplayClient(object):
             self.setPosition(-1)
             self.ui.showDebugMessage("Rewinded after double-check")
 
+    def isPlayingMusic(self):
+        if self.userlist.currentUser.file:
+            for musicFormat in constants.MUSIC_FORMATS:
+                if self.userlist.currentUser.file['name'].lower().endswith(musicFormat):
+                    return True
+
     def updatePlayerStatus(self, paused, position):
         position -= self.getUserOffset()
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
+        positionBeforeSeek = self._playerPosition
         self._playerPosition = position
         self._playerPaused = paused
         currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
@@ -222,7 +229,9 @@ class SyncplayClient(object):
 
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
-            if (pauseChange or seeked) and self._protocol:
+            if seeked and not pauseChange and self.isPlayingMusic() and abs(positionBeforeSeek - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD and self.playlist.notJustChangedPlaylist():
+                self.playlist.loadNextFileInPlaylist()
+            elif (pauseChange or seeked) and self._protocol:
                 if seeked:
                     self.playerPositionBeforeLastSeek = self.getGlobalPosition()
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)
@@ -230,7 +239,10 @@ class SyncplayClient(object):
     def prepareToAdvancePlaylist(self):
         if self.playlist.canSwitchToNextPlaylistIndex():
             self.ui.showDebugMessage("Preparing to advance playlist...")
-            self._protocol.sendState(0, True, True, None, True)
+            if self.isPlayingMusic():
+                self._protocol.sendState(0, False, True, None, True)
+            else:
+                self._protocol.sendState(0, True, True, None, True)
         else:
             self.ui.showDebugMessage("Not preparing to advance playlist because the next file cannot be switched to")
 
@@ -527,10 +539,10 @@ class SyncplayClient(object):
         self.playlist.changeToPlaylistIndex(*args, **kwargs)
 
     def loopSingleFiles(self):
-        return self._config["loopSingleFiles"]
+        return self._config["loopSingleFiles"] or self.isPlayingMusic()
 
     def isPlaylistLoopingEnabled(self):
-        return self._config["loopAtEndOfPlaylist"]
+        return self._config["loopAtEndOfPlaylist"] or self.isPlayingMusic()
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
@@ -830,12 +842,16 @@ class SyncplayClient(object):
             self.autoplayCheck()
 
     def autoplayCheck(self):
+        if self.isPlayingMusic():
+            return True
         if self.autoplayConditionsMet():
             self.startAutoplayCountdown()
         else:
             self.stopAutoplayCountdown()
 
     def instaplayConditionsMet(self):
+        if self.isPlayingMusic():
+            return True
         if not self.userlist.currentUser.canControl():
             return False
 
