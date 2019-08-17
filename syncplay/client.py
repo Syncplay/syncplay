@@ -129,6 +129,11 @@ class SyncplayClient(object):
 
         self._serverSupportsTLS = True
 
+        """Override certPath if defined in the configuration"""
+        if config['ca']:
+            certPath = config['ca']
+            os.environ['SSL_CERT_FILE'] = certPath
+
         if constants.LIST_RELATIVE_CONFIGS and 'loadedRelativePaths' in self._config and self._config['loadedRelativePaths']:
             paths = "; ".join(self._config['loadedRelativePaths'])
             self.ui.showMessage(getMessage("relative-config-notification").format(paths), noPlayer=True, noTimestamp=True)
