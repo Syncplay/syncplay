@@ -645,6 +645,12 @@ class SyncplayClient(object):
         return features
 
     def setRoom(self, roomName, resetAutoplay=False):
+        roomSplit = roomName.split(":")
+        if roomName.startswith("+") and len(roomSplit) > 2:
+            roomName = roomSplit[0] + ":" + roomSplit[1]
+            password = roomSplit[2]
+            self.storeControlPassword(roomName, password)
+            self.ui.updateRoomName(roomName)
         self.userlist.currentUser.room = roomName
         if resetAutoplay:
             self.resetAutoPlayState()
@@ -657,6 +663,7 @@ class SyncplayClient(object):
         self.reIdentifyAsController()
 
     def reIdentifyAsController(self):
+        self.setRoom(self.userlist.currentUser.room)
         room = self.userlist.currentUser.room
         if utils.RoomPasswordProvider.isControlledRoom(room):
             storedRoomPassword = self.getControlledRoomPassword(room)
