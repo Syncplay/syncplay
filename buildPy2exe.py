@@ -670,10 +670,9 @@ class build_installer(py2exe):
         script.compile()
         print("*** DONE ***")
 
-guiIcons = glob('syncplay/resources/*.png') +  ['syncplay/resources/spinner.mng']
+guiIcons = glob('syncplay/resources/*.ico') + glob('syncplay/resources/*.png') +  ['syncplay/resources/spinner.mng']
 
 resources = [
-    "syncplay/resources/icon.ico",
     "syncplay/resources/syncplayintf.lua",
     "syncplay/resources/license.rtf",
     "syncplay/resources/third-party-notices.rtf"
