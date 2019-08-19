@@ -1723,6 +1723,10 @@ class SyncplayPlaylist():
         return filename
 
     def loadPlaylistFromFile(self, path, shuffle=False):
+        if not os.path.isfile(path):
+            self._ui.showDebugMessage("Not loading {} as file could not be found".format(path))
+            return
+
         with open(path) as f:
             newPlaylist = f.read().splitlines()
             if shuffle:
