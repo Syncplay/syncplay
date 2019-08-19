@@ -711,6 +711,10 @@ class MainWindow(QtWidgets.QMainWindow):
         menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), getMessage("addfilestoplaylist-menu-label"), lambda: self.OpenAddFilesToPlaylistDialog())
         menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), getMessage("addurlstoplaylist-menu-label"), lambda: self.OpenAddURIsToPlaylistDialog())
         menu.addSeparator()
+        menu.addAction(getMessage("loadplaylistfromfile-menu-label"),lambda: self.OpenLoadPlaylistFromFileDialog()) # TODO: Add icon
+        menu.addAction("Load and shuffle playlist from file",lambda: self.OpenLoadPlaylistFromFileDialog(shuffle=True))  # TODO: Add icon and messages_en
+        menu.addAction(getMessage("saveplaylisttofile-menu-label"),lambda: self.OpenSavePlaylistToFileDialog()) # TODO: Add icon
+        menu.addSeparator()
         menu.addAction(QtGui.QPixmap(resourcespath + "film_folder_edit.png"), getMessage("setmediadirectories-menu-label"), lambda: self.openSetMediaDirectoriesDialog())
         menu.addAction(QtGui.QPixmap(resourcespath + "shield_edit.png"), getMessage("settrusteddomains-menu-label"), lambda: self.openSetTrustedDomainsDialog())
         menu.exec_(self.playlist.viewport().mapToGlobal(position))
@@ -1040,6 +1044,47 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.addFileToPlaylist(fileName)
         self.updatingPlaylist = False
         self.playlist.updatePlaylist(self.getPlaylistState())
+
+    @needsClient
+    def OpenLoadPlaylistFromFileDialog(self, shuffle=False):
+        self.loadMediaBrowseSettings()
+        if isMacOS() and IsPySide:
+            options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
+        else:
+            options = QtWidgets.QFileDialog.Options()
+        self.mediadirectory = ""
+        currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
+        if currentdirectory and os.path.isdir(currentdirectory):
+            defaultdirectory = currentdirectory
+        else:
+            defaultdirectory = self.getInitialMediaDirectory()
+        browserfilter = "Playlists (*.m3u *.m3u8 *.txt)"
+        filepath, filtr = QtWidgets.QFileDialog.getOpenFileName(
+            self, "Load playlist from file", defaultdirectory,
+            browserfilter, "", options) # TODO: Note Shuffle and move to messages_en
+        if os.path.isfile(filepath):
+            self._syncplayClient.playlist.loadPlaylistFromFile(filepath, shuffle=shuffle)
+            self.playlist.updatePlaylist(self.getPlaylistState())
+
+    @needsClient
+    def OpenSavePlaylistToFileDialog(self):
+        self.loadMediaBrowseSettings()
+        if isMacOS() and IsPySide:
+            options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
+        else:
+            options = QtWidgets.QFileDialog.Options()
+        self.mediadirectory = ""
+        currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
+        if currentdirectory and os.path.isdir(currentdirectory):
+            defaultdirectory = currentdirectory
+        else:
+            defaultdirectory = self.getInitialMediaDirectory()
+        browserfilter = "Playlist (*.m3u8 *.m3u *.txt)"
+        filepath, filtr = QtWidgets.QFileDialog.getSaveFileName(
+            self, "Save playlist to file", defaultdirectory,
+            browserfilter, "", options) # TODO: Move to messages_en
+        if filepath:
+            self._syncplayClient.playlist.savePlaylistToFile(filepath)
 
     @needsClient
     def OpenAddURIsToPlaylistDialog(self):

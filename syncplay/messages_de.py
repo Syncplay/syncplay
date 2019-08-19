@@ -297,6 +297,8 @@ de = {
     "openmedia-menu-label": "&Mediendatei öffnen...",
     "openstreamurl-menu-label": "&Stream URL öffnen",
     "setmediadirectories-menu-label": "Set media &directories",  # TODO: Translate
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
+    "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
     "exit-menu-label": "&Beenden",
     "advanced-menu-label": "&Erweitert",
     "window-menu-label": "&Fenster",

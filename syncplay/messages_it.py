@@ -299,6 +299,8 @@ it = {
     "openmedia-menu-label": "&Apri file multimediali",
     "openstreamurl-menu-label": "Apri indirizzo di &rete",
     "setmediadirectories-menu-label": "Imposta &cartelle multimediali",
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
+    "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
     "exit-menu-label": "&Esci",
     "advanced-menu-label": "&Avanzate",
     "window-menu-label": "&Finestra",

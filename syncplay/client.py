@@ -1730,6 +1730,12 @@ class SyncplayPlaylist():
             if newPlaylist:
                 self.changePlaylist(newPlaylist, username=None, resetIndex=True)
 
+    def savePlaylistToFile(self, path):
+        with open(path, 'w') as playlistFile:
+            playlistToSave = utils.getListAsMultilineString(self._playlist)
+            playlistFile.write(playlistToSave)
+            self._ui.showMessage("Playlist saved as {}".format(path)) # TODO: Move to messages_en
+
 
     def changePlaylist(self, files, username=None, resetIndex=False):
         if self._playlist == files:

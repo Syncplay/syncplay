@@ -301,6 +301,8 @@ ru = {
     "openmedia-menu-label": "&Открыть файл",
     "openstreamurl-menu-label": "Открыть &ссылку",
     "setmediadirectories-menu-label": "&Папки воспроизведения",
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
+    "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
     "exit-menu-label": "&Выход",
     "advanced-menu-label": "&Дополнительно",
     "window-menu-label": "&Вид",

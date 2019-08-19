@@ -299,6 +299,8 @@ en = {
     "openmedia-menu-label": "&Open media file",
     "openstreamurl-menu-label": "Open &media stream URL",
     "setmediadirectories-menu-label": "Set media &directories",
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",
+    "saveplaylisttofile-menu-label": "&Save playlist to file",
     "exit-menu-label": "E&xit",
     "advanced-menu-label": "&Advanced",
     "window-menu-label": "&Window",
