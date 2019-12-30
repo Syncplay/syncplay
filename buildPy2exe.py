@@ -30,7 +30,7 @@ import syncplay
 from syncplay.messages import getMissingStrings
 
 missingStrings = getMissingStrings()
-if missingStrings is not None and missingStrings is not "":
+if missingStrings is not None and missingStrings != "":
     import warnings
     warnings.warn("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
 
