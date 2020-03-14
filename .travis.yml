@@ -1,20 +1,21 @@
-matrix:
+# These two are defaults, which get overriden by the jobs matrix
+language: minimal
+os: linux
+
+jobs:
   include:
     - language: objective-c
+      os: osx
       osx_image: xcode8.3
     - language: bash
-      sudo: required
       dist: xenial
+      os: linux
       env: BUILD_DESTINATION=snapcraft
     - language: python
-      sudo: required
+      os: linux
       dist: xenial
       python: 3.6
       env: BUILD_DESTINATION=appimage
-
-branches:
-  only:
-  - master
 
 script:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then python3 buildPy2app.py py2app ; fi
