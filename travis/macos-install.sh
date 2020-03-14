@@ -2,9 +2,6 @@
 
 set -ex
 
-export HOMEBREW_NO_INSTALL_CLEANUP=1
-brew update
-brew upgrade python
 which python3
 python3 --version
 which pip3
