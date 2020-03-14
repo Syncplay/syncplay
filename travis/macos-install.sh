@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 brew install python3
 which python3
 python3 --version
 which pip3
 pip3 --version
-brew install albertosottile/syncplay/pyside
+brew install pyside
 python3 -c "from PySide2 import __version__; print(__version__)"
 python3 -c "from PySide2.QtCore import __version__; print(__version__)" 
 pip3 install py2app
