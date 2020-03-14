@@ -7,7 +7,7 @@ jobs:
     - language: objective-c
       os: osx
       osx_image: xcode8.3
-    - language: bash
+    - language: minimal
       dist: xenial
       os: linux
       env: BUILD_DESTINATION=snapcraft
