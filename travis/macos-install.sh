@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 brew install python3
 which python3
 python3 --version
