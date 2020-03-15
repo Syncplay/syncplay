@@ -4,11 +4,11 @@ set -ex
 
 export HOMEBREW_NO_INSTALL_CLEANUP=1
 
-# Python 3.7.4 with 10.12 bottle
-brew upgrade https://raw.githubusercontent.com/Homebrew/homebrew-core/e9004bd764c9436750a50e0b428548f68fe6a38a/Formula/python.rb
-
 # Reinstall openssl to fix Python pip install issues
 brew reinstall openssl@1.1
+
+# Python 3.7.4 with 10.12 bottle
+brew upgrade https://raw.githubusercontent.com/Homebrew/homebrew-core/e9004bd764c9436750a50e0b428548f68fe6a38a/Formula/python.rb
 
 which python3
 python3 --version
