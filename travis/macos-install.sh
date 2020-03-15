@@ -15,6 +15,10 @@ which python3
 python3 --version
 which pip3
 pip3 --version
+
+# Explicitly install Qt 5.13.1 as that has both 10.12 compatibility, and a pre-built bottle 
+brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/dcc34dd3cb24cb4f7cfa0047ccdb712d7cc4c6e4/Formula/qt.rb
+
 brew install albertosottile/syncplay/pyside
 python3 -c "from PySide2 import __version__; print(__version__)"
 python3 -c "from PySide2.QtCore import __version__; print(__version__)" 
