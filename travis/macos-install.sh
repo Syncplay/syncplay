@@ -2,6 +2,15 @@
 
 set -ex
 
+export HOMEBREW_NO_INSTALL_CLEANUP=1
+brew update
+
+# An error occurs when upgrading Python, but appears to be benign, hence the "|| true"
+#
+# Error: undefined method `any?' for nil:NilClass
+# /usr/local/Homebrew/Library/Homebrew/cmd/upgrade.rb:227:in `depends_on'
+brew upgrade python || true
+
 which python3
 python3 --version
 which pip3

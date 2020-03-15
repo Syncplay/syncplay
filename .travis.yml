@@ -7,11 +7,6 @@ jobs:
     - language: objective-c
       os: osx
       osx_image: xcode9.2
-      addons:
-        homebrew:
-          packages:
-          - python
-          update: true
     - language: minimal
       dist: xenial
       os: linux
