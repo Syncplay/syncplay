@@ -3,20 +3,16 @@
 set -ex
 
 export HOMEBREW_NO_INSTALL_CLEANUP=1
-brew update
 
-# An error occurs when upgrading Python, but appears to be benign, hence the "|| true"
-#
-# Error: undefined method `any?' for nil:NilClass
-# /usr/local/Homebrew/Library/Homebrew/cmd/upgrade.rb:227:in `depends_on'
-brew upgrade python || true
+# Python 3.7.4 with 10.12 bottle
+brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/e9004bd764c9436750a50e0b428548f68fe6a38a/Formula/python.rb
 
 which python3
 python3 --version
 which pip3
 pip3 --version
 
-# Explicitly install Qt 5.13.1 as that has both 10.12 compatibility, and a pre-built bottle 
+# Explicitly install Qt 5.13.1 as that has both 10.12 compatibility, and a pre-built bottle
 brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/dcc34dd3cb24cb4f7cfa0047ccdb712d7cc4c6e4/Formula/qt.rb
 
 brew install albertosottile/syncplay/pyside
