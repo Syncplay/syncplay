@@ -506,3 +506,27 @@ class RandomStringGenerator(object):
 
 class NotControlledRoom(Exception):
     pass
+
+def fixMacEnvironmentVars():
+    if getattr(sys, 'frozen', None) != 'macosx_app':
+        return
+    # py2app, used on macOS, sets a number of environment variables
+    # which are meant for our own Python interpreter but will leak
+    # into youtube-dl invoked by mpv.
+    # The best we can do is unset them, though it would be better
+    # if we could restore the values they originally had before
+    # py2app changed them.
+    keys_to_remove = [key for key in os.environ if key.startswith('PYTHON')]
+    for key in keys_to_remove:
+        del os.environ[key]
+
+    # Also, add Homebrew to PATH even if it's not in the PATH used
+    # for apps.
+    paths = os.environ.get('PATH', '').split(':')
+    if paths == ['']:
+        paths = []
+    local = '/usr/local/bin'
+    if local not in paths:
+        paths.append(local)
+    os.environ['PATH'] = ':'.join(paths)
+

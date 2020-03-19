@@ -339,20 +339,7 @@ class MplayerPlayer(BasePlayer):
             env = os.environ.copy()
             if 'TERM' in env:
                 del env['TERM']
-            # On macOS, youtube-dl requires system python to run. Set the environment
-            # to allow that version of python to be executed in the mpv subprocess.
-            if isMacOS():
-                try:
-                    pythonLibs = subprocess.check_output(['/usr/bin/python', '-E', '-c',
-                                                          'import sys; print(sys.path)'],
-                                                          text=True, env=dict())
-                    pythonLibs = ast.literal_eval(pythonLibs)
-                    pythonPath = ':'.join(pythonLibs[1:])
-                except:
-                    pythonPath = None
-                if pythonPath is not None:
-                    env['PATH'] = '/usr/bin:/usr/local/bin'
-                    env['PYTHONPATH'] = pythonPath
+
             if filePath:
                 self.__process = subprocess.Popen(
                     call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT,

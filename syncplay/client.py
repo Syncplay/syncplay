@@ -40,8 +40,9 @@ from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME
 from syncplay.messages import getMissingStrings, getMessage
 from syncplay.protocols import SyncClientProtocol
-from syncplay.utils import isMacOS
+from syncplay.utils import isMacOS, fixMacEnvironmentVars
 
+fixMacEnvironmentVars()
 
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry=constants.RECONNECT_RETRIES):
