@@ -132,10 +132,10 @@ de = {
     "vlc-failed-noscript": "Laut VLC ist das syncplay.lua Interface-Skript nicht installiert. Auf https://syncplay.pl/LUA/ [Englisch] findest du eine Anleitung.",
 
     "vlc-failed-versioncheck": "Diese VLC-Version wird von Syncplay nicht unterstützt. Bitte nutze VLC 2.0",
-    "feature-sharedPlaylists": "Geteilte Playlists",  # used for not-supported-by-server-error # TODO: Translate
-    "feature-chat": "Chat",  # used for not-supported-by-server-error # TODO: Translate
-    "feature-readiness": "Bereitschaftsstatus",  # used for not-supported-by-server-error # TODO: Translate
-    "feature-managedRooms": "Zentral gesteuerte Räume",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-sharedPlaylists": "Geteilte Playlists",  # used for not-supported-by-server-error
+    "feature-chat": "Chat",  # used for not-supported-by-server-error
+    "feature-readiness": "Bereitschaftsstatus",  # used for not-supported-by-server-error
+    "feature-managedRooms": "Zentral gesteuerte Räume",  # used for not-supported-by-server-error
 
     "not-supported-by-server-error": "Diese Funktion wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
     "shared-playlists-not-supported-by-server-error": "Die Geteilte-Playlists-Funktion wird von diesem Server eventuell nicht unterstützt. Um ein korrektes Funktionieren sicherzustellen wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
