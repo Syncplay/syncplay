@@ -6,6 +6,7 @@ from . import messages_ru
 from . import messages_de
 from . import messages_it
 from . import messages_es
+from . import messages_pt_BR
 
 messages = {
     "en": messages_en.en,
@@ -13,6 +14,7 @@ messages = {
     "de": messages_de.de,
     "it": messages_it.it,
     "es": messages_es.es,
+    "es": messages_pt_BR.pt_BR,
     "CURRENT": None
 }
 
