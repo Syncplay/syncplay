@@ -139,12 +139,12 @@ de = {
 
     "not-supported-by-server-error": "Diese Funktion wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
     "shared-playlists-not-supported-by-server-error": "Die Geteilte-Playlists-Funktion wird von diesem Server eventuell nicht unterstützt. Um ein korrektes Funktionieren sicherzustellen wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
-    "shared-playlists-disabled-by-server-error": "Die Geteilte-Playlists-Funktion wurde in der Serverkonfiguration deaktiviert. Um diese Funktion zu verwenden, musst du dich mit einem anderen Server verbinden.", 
+    "shared-playlists-disabled-by-server-error": "Die Geteilte-Playlists-Funktion wurde in der Serverkonfiguration deaktiviert. Um diese Funktion zu verwenden, musst du dich mit einem anderen Server verbinden.",
 
     "invalid-seek-value": "Ungültige Zeitangabe",
     "invalid-offset-value": "Ungültiger Offset-Wert",
 
-    "switch-file-not-found-error": "Konnte nicht zur Datei „{0}“ wechseln. Syncplay sucht im Verzeichnis der aktuellen Datei und angegebenen Medienverzeichnissen.",  # File not found, folder it was not found in 
+    "switch-file-not-found-error": "Konnte nicht zur Datei „{0}“ wechseln. Syncplay sucht im Verzeichnis der aktuellen Datei und angegebenen Medienverzeichnissen.",  # File not found, folder it was not found in
     "folder-search-timeout-error": "Die Suche nach Medien in den Medienverzeichnissen wurde abgebrochen, weil es zu lange gedauert hat, „{}“ zu durchsuchen. Das kann passieren, wenn du in deiner Liste der Medienverzeichnisse ein Verzeichnis mit zu vielen Unterverzeichnissen auswhälst. Damit der automatische Dateiwechsel wieder funktioniert, wähle Datei->Medienverzeichnisse auswählen in der Menüleiste und entferne dieses Verzeichnis oder ersetze es mit einem geeigneten Unterverzeichnis. Wenn das Verzeichnis in Ordnung ist, kannst du es reaktivieren, indem du Datei->Medienverzeichnisse auswählen wählst und „OK“ drückst.",  # Folder
     "folder-search-first-file-timeout-error": "Die Suche nach Medien in den Medienverzeichnissen wurde abgebrochen, weil es zu lange gedauert hat, auf „{}“ zuzugreifen. Das kann passieren, wenn es sich dabei um ein Netzwerkgerät handelt und du eingestellt hast, dass es sich nach Inaktivität ausschaltet. Damit der automatische Dateiwechsel wieder funktioniert, wähle Datei->Medienverzeichnisse auswählen in der Menüleiste und entferne dieses Verzeichnis oder löse das Problem (z.B. indem du die Energiespareinstellungen anpasst).",  # Folder
     "added-file-not-in-media-directory-error": "Du hast eine Datei in im Verzeichnis „{}“ geladeden, welches kein bekanntes Medienverzeichnis ist. Du kannst es als Medienverzeichnis hinzufügen, indem du  Datei->Medienverzeichnisse auswählen in der Menüleiste wählst.",  # Folder
@@ -168,7 +168,7 @@ de = {
     "file-argument": 'Abzuspielende Datei',
     "args-argument": 'Player-Einstellungen; Wenn du Einstellungen, die mit - beginnen, nutzen willst, stelle ein einzelnes \'--\'-Argument davor',
     "clear-gui-data-argument": 'Setzt die Pfad- und GUI-Fenster-Daten die in den QSettings gespeichert sind zurück',
-    "language-argument": 'Sprache für Syncplay-Nachrichten (de/en/ru/it/es)',
+    "language-argument": 'Sprache für Syncplay-Nachrichten (de/en/ru/it/es/pt_BR)',
 
     "version-argument": 'gibt die aktuelle Version aus',
     "version-message": "Du verwendest Syncplay v. {} ({})",
