@@ -91,7 +91,7 @@ pt_BR = {
     "more-info-notification": "Mais informações disponíveis em: {}",  # projectURL
 
     "gui-data-cleared-notification": "O Syncplay limpou o caminho e o estado de dados da janela usados pela GUI.",
-    "language-changed-msgbox-label": "O idioma será alterado quando você abrir o Syncplay novamente.",
+    "language-changed-msgbox-label": "O idioma será alterado quando você salvar as mudanças e abrir o Syncplay novamente.",
     "promptforupdate-label": "O Syncplay pode verificar automaticamente por atualizações de tempos em tempos?",
 
     "media-player-latency-warning": "Aviso: O reprodutor de mídia demorou {} para responder. Se você tiver problemas de sincronização, feche outros programas para liberar recursos do sistema e, se isso não funcionar, tente outro reprodutor de mídia.",  # Seconds to respond
@@ -109,7 +109,7 @@ pt_BR = {
     "mpv-version-error": "O Syncplay não é compatível com esta versão do mpv. Por favor, use uma versão diferente do mpv (por exemplo, Git HEAD).",
     "player-file-open-error": "O reprodutor falhou ao abrir o arquivo",
     "player-path-error": "O caminho até o arquivo executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2",
-    "hostname-empty-error": "O hostname não pode ser vazio",
+    "hostname-empty-error": "O endereço do servidor não pode ser vazio",
     "empty-error": "{} não pode ser vazio",  # Configuration
     "media-player-error": "Erro do reprodutor de mídia: \"{}\"",  # Error line
     "unable-import-gui-error": "Não foi possível importar bibliotecas da GUI. Se você não possuir o PySide instalado, instale-o para que a GUI funcione.",
@@ -121,7 +121,7 @@ pt_BR = {
 
     "player-path-config-error": "O caminho até o arquivo executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2.",
     "no-file-path-config-error": "O arquivo deve ser selecionado antes de iniciar seu reprodutor",
-    "no-hostname-config-error": "O hostname não pode ser vazio",
+    "no-hostname-config-error": "O endereço do servidor não pode ser vazio",
     "invalid-port-config-error": "A porta deve ser válida",
     "empty-value-config-error": "{} não pode ser vazio",  # Config option
 
@@ -145,11 +145,11 @@ pt_BR = {
     "invalid-offset-value": "Valor de deslocamento inválido",
 
     "switch-file-not-found-error": "Não foi possível mudar para o arquivo '{0}'. O Syncplay procura nos diretórios de mídia especificados.",  # File not found
-    "folder-search-timeout-error": "A busca por mídias no diretório de mídias foi cancelada pois demorou muito tempo para procurar em '{}'. Isso ocorre quando você seleciona uma pasta com muitas subpastas em sua lista de pastas de mídias a serem pesquisadas.  Para que a troca automática de arquivos funcione novamente, selecione 'Arquivo -> Definir diretórios de mídia' na barra de menus e remova esse diretório ou substitua-o por uma subpasta apropriada. Se a pasta não tiver problemas, é possível reativá-la selecionando 'Arquivo -> Definir diretórios de mídia' e pressionando 'OK'.",  # Folder
-    "folder-search-first-file-timeout-error": "A busca por mídias em '{}' foi interrompida, pois demorou muito para acessar o diretório. Isso pode acontecer se for uma unidade de rede ou se você configurar sua unidade para hibernar depois de um período de inatividade. Para que a troca automática de arquivos funcione novamente, vá para 'Arquivo -> Definir diretórios de mídia' e remova o diretório ou resolva o problema (por exemplo, alterando as configurações de economia de energia da unidade).",  # Folder
-    "added-file-not-in-media-directory-error": "Você carregou um arquivo em '{}', que não é um diretório de mídias conhecido. Você pode adicioná-lo isso como um diretório de mídia selecionando 'Arquivo -> Definir diretórios de mídia' na barra de menus.",  # Folder
-    "no-media-directories-error": "Nenhum diretório de mídias foi definido. Para que os recursos de playlists compartilhadas e troca automática de arquivos funcionem corretamente, selecione 'Arquivo -> Definir diretórios de mídia' e especifique onde o Syncplay deve procurar para encontrar arquivos de mídia.",
-    "cannot-find-directory-error": "Não foi possível encontrar o diretório de mídia '{}'. Para atualizar sua lista de diretórios de mídia, selecione 'Arquivo -> Definir diretórios de mídia' na barra de menus e especifique onde o Syncplay deve procurar para encontrar arquivos de mídia.",
+    "folder-search-timeout-error": "A busca por mídias no diretório de mídias foi cancelada pois demorou muito tempo para procurar em '{}'. Isso ocorre quando você seleciona uma pasta com muitas subpastas em sua lista de pastas de mídias a serem pesquisadas.  Para que a troca automática de arquivos funcione novamente, selecione 'Arquivo -> Definir diretórios de mídias' na barra de menus e remova esse diretório ou substitua-o por uma subpasta apropriada. Se a pasta não tiver problemas, é possível reativá-la selecionando 'Arquivo -> Definir diretórios de mídias' e pressionando 'OK'.",  # Folder
+    "folder-search-first-file-timeout-error": "A busca por mídias em '{}' foi interrompida, pois demorou muito para acessar o diretório. Isso pode acontecer se for uma unidade de rede ou se você configurar sua unidade para hibernar depois de um período de inatividade. Para que a troca automática de arquivos funcione novamente, vá para 'Arquivo -> Definir diretórios de mídias' e remova o diretório ou resolva o problema (por exemplo, alterando as configurações de economia de energia da unidade).",  # Folder
+    "added-file-not-in-media-directory-error": "Você carregou um arquivo em '{}', que não é um diretório de mídias conhecido. Você pode adicioná-lo isso como um diretório de mídia selecionando 'Arquivo -> Definir diretórios de mídias' na barra de menus.",  # Folder
+    "no-media-directories-error": "Nenhum diretório de mídias foi definido. Para que os recursos de playlists compartilhadas e troca automática de arquivos funcionem corretamente, selecione 'Arquivo -> Definir diretórios de mídias' e especifique onde o Syncplay deve procurar para encontrar arquivos de mídia.",
+    "cannot-find-directory-error": "Não foi possível encontrar o diretório de mídia '{}'. Para atualizar sua lista de diretórios de mídias, selecione 'Arquivo -> Definir diretórios de mídias' na barra de menus e especifique onde o Syncplay deve procurar para encontrar arquivos de mídia.",
 
     "failed-to-load-server-list-error": "Não foi possível carregar a lista de servidores públicos. Por favor, visite https://www.syncplay.pl/ em seu navegador.",
 
@@ -185,9 +185,9 @@ pt_BR = {
     "room-label": "Sala padrão: ",
 
     "media-setting-title": "Configurações do reprodutor de mídia",
-    "executable-path-label": "Executável do reprodutor de mídia:",
-    "media-path-label": "Arquivo de vídeo (opcional):",
-    "player-arguments-label": "Argumentos para o reprodutor (se necessário):",
+    "executable-path-label": "Executável do reprodutor:",
+    "media-path-label": "Arquivo de vídeo ou URL (opcional):",
+    "player-arguments-label": "Argumentos para o reprodutor (opcional):",
     "browse-label": "Navegar",
     "update-server-list-label": "Atualizar lista",
 
@@ -212,7 +212,7 @@ pt_BR = {
     "showosd-label": "Ativar mensagens na tela (OSD)",
 
     "showosdwarnings-label": "Incluir avisos (por exemplo, quando arquivos são diferentes, usuários não estão prontos, etc)",
-    "showsameroomosd-label": "Incluir eventos na sua sala",
+    "showsameroomosd-label": "Incluir eventos da sua sala",
     "shownoncontrollerosd-label": "Incluir eventos de não operadores em salas gerenciadas",
     "showdifferentroomosd-label": "Incluir eventos de outras salas",
     "showslowdownosd-label": "Incluir notificações de desaceleramento ou retrocedimento",
@@ -267,7 +267,7 @@ pt_BR = {
     "help-label": "Ajuda",
     "reset-label": "Restaurar padrões",
     "run-label": "Começar Syncplay",
-    "storeandrun-label": "Guardar configurações e começar Syncplay",
+    "storeandrun-label": "Salvar mudanças e começar Syncplay",
 
     "contact-label": "Sinta-se livre para mandar um e-mail para <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, conversar via chat pelo <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canal do IRC #Syncplay</nobr></a> no irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>abrir uma issue</nobr></a> pelo GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>curtir nossa página no Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>nos seguir no Twitter</nobr></a> ou visitar <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Não use o Syncplay para mandar informações sensíveis/confidenciais.",
 
@@ -280,7 +280,7 @@ pt_BR = {
     "playbackbuttons-menu-label": "Mostrar botões de reprodução",
     "autoplay-menu-label": "Mostrar botão de reprodução automática",
     "autoplay-guipushbuttonlabel": "Tocar quando todos estiverem prontos",
-    "autoplay-minimum-label": "Nº mínimo de usuários:",
+    "autoplay-minimum-label": "Mín. de usuários:",
 
     "sendmessage-label": "Enviar",
 
@@ -301,13 +301,13 @@ pt_BR = {
     "setmediadirectories-menu-label": "Definir &diretórios de mídias",
     "loadplaylistfromfile-menu-label": "&Carregar playlist de arquivo",
     "saveplaylisttofile-menu-label": "&Salvar playlist em arquivo",
-    "exit-menu-label": "Sa&ir",
+    "exit-menu-label": "&Sair",
     "advanced-menu-label": "A&vançado",
     "window-menu-label": "&Janela",
-    "setoffset-menu-label": "Define d&eslocamento",
-    "createcontrolledroom-menu-label": "C&ria sala gerenciada",
-    "identifyascontroller-menu-label": "Id&entificar-se como operador da sala",
-    "settrusteddomains-menu-label": "Definir d&omínios confiáveis",
+    "setoffset-menu-label": "Definir &deslocamento",
+    "createcontrolledroom-menu-label": "&Criar sala gerenciada",
+    "identifyascontroller-menu-label": "&Identificar-se como operador da sala",
+    "settrusteddomains-menu-label": "D&efinir domínios confiáveis",
     "addtrusteddomain-menu-label": "Adicionar {} como domínio confiável",  # Domain
 
     "edit-menu-label": "&Editar",
@@ -339,7 +339,7 @@ pt_BR = {
     "about-menu-label": "&Sobre o Syncplay",
     "about-dialog-title": "Sobre o Syncplay",
     "about-dialog-release": "Versão {}, lançamento {}",
-    "about-dialog-license-text": "Licenciado sob a Licensa&nbsp;Apache,&nbsp;Versão 2.0",
+    "about-dialog-license-text": "Licenciado sob a Licença&nbsp;Apache,&nbsp;Versão 2.0",
     "about-dialog-license-button": "Licença",
     "about-dialog-dependencies": "Dependências",
 
