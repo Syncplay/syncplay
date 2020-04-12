@@ -228,7 +228,7 @@ pt_BR = {
     "syncplay-mediasearchdirectories-label": "Diretórios a buscar por mídias (um caminho por linha)",
     "sync-label": "Sincronizar",
     "sync-otherslagging-title": "Se outros estiverem ficando pra trás...",
-    "sync-youlaggging-title": "Se você ficando pra trás...",
+    "sync-youlaggging-title": "Se você estiver ficando pra trás...",
     "messages-label": "Mensagens",
     "messages-osd-title": "Configurações das mensagens na tela (OSD)",
     "messages-other-title": "Outras configurações de tela",
