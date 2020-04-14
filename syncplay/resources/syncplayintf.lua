@@ -204,7 +204,6 @@ function process_alert_osd()
         local messageString = wordwrapify_string(alert_osd)
         local startRow = 0
         if messageString ~= '' and messageString ~= nil then
-            local toDisplay
             rowsCreated = rowsCreated + 1
             messageString = messageColour..messageString
 			if stringToAdd ~= "" then
@@ -222,10 +221,8 @@ function process_notification_osd(startRow)
     local startRow = startRow
     local stringToAdd = ""
     if notification_osd ~= "" and mp.get_time() - last_notification_osd_time < opts['alertTimeout'] and last_notification_osd_time ~= nil then
-        local messageColour
-        messageColour = "{\\1c&H"..NOTIFICATION_TEXT_COLOUR.."}"
-        local messageString
-        messageString = wordwrapify_string(notification_osd)
+        local messageColour = "{\\1c&H"..NOTIFICATION_TEXT_COLOUR.."}"
+        local messageString = wordwrapify_string(notification_osd)
         messageString = messageColour..messageString
         messageString = format_chatroom(messageString)
         stringToAdd = messageString
