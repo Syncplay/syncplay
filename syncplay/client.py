@@ -830,6 +830,10 @@ class SyncplayClient(object):
     @requireServerFeature("chat")
     def sendChat(self, message):
         if self._protocol and self._protocol.logged:
+            try:
+                message = message.replace("\n", "").replace("\r", "")
+            except:
+                pass
             message = utils.truncateText(message, constants.MAX_CHAT_MESSAGE_LENGTH)
             self._protocol.sendChatMessage(message)
 
