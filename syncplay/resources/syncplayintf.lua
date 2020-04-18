@@ -133,6 +133,7 @@ function add_chat(chat_message, mood)
 	chat_log[entry] = { xpos=CANVAS_WIDTH, timecreated=mp.get_time(), text=tostring(chat_message), row=row }
 end
 
+local old_ass_text = ''
 function chat_update()
     local ass = assdraw.ass_new()
 	local chat_ass = ''
@@ -179,7 +180,14 @@ function chat_update()
         ass:append(input_ass())
         ass:append(chat_ass)
     end
-	mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
+
+    -- The commit that introduced the new API removed the internal heuristics on whether a refresh is required,
+    -- so we check for changed text manually to not cause excessive GPU load
+    -- https://github.com/mpv-player/mpv/commit/07287262513c0d1ea46b7beaf100e73f2008295f#diff-d88d582039dea993b6229da9f61ba76cL530
+    if ass.text ~= old_ass_text then
+		mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
+		old_ass_text = ass.text
+	end
 end
 
 function process_alert_osd()
