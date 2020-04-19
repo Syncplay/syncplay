@@ -168,7 +168,7 @@ en = {
     "file-argument": 'file to play',
     "args-argument": 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
     "clear-gui-data-argument": 'resets path and window state GUI data stored as QSettings',
-    "language-argument": 'language for Syncplay messages (de/en/ru/it/es)',
+    "language-argument": 'language for Syncplay messages (de/en/ru/it/es/pt_BR)',
 
     "version-argument": 'prints your version',
     "version-message": "You're using Syncplay version {} ({})",
