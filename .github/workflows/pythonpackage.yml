@@ -37,6 +37,6 @@ jobs:
 #        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test client
       run: |
-        apt-get install mpv
+        sudo apt-get install mpv
         python syncplayServer.py &
-        python syncplayClient.py --no-gui -a localhost -r test -n test
+        python syncplayClient.py --no-gui -a localhost -r test -n test --player-path mpv
