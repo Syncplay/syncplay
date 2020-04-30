@@ -15,6 +15,7 @@ import sys
 #     import warnings
 #     warnings.warn("You must build Syncplay with Python 2.7!")
 
+from glob import glob
 import os
 import subprocess
 from string import Template
@@ -29,7 +30,7 @@ import syncplay
 from syncplay.messages import getMissingStrings
 
 missingStrings = getMissingStrings()
-if missingStrings is not None and missingStrings is not "":
+if missingStrings is not None and missingStrings != "":
     import warnings
     warnings.warn("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
 
@@ -61,6 +62,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Russian.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\German.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Italian.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Spanish.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\PortugueseBR.nlf"
 
   Unicode true
 
@@ -68,8 +71,9 @@ NSIS_SCRIPT_TEMPLATE = r"""
   OutFile "Syncplay-$version-Setup.exe"
   InstallDir $$PROGRAMFILES\Syncplay
   RequestExecutionLevel admin
+  ManifestDPIAware false
   XPStyle on
-  Icon resources\icon.ico ;Change DIR
+  Icon syncplay\resources\icon.ico ;Change DIR
   SetCompressor /SOLID lzma
 
   VIProductVersion "$version.0"
@@ -92,6 +96,16 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_ITALIAN} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_ITALIAN} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_ITALIAN} "FileDescription" "Syncplay"
+
+  VIAddVersionKey /LANG=$${LANG_SPANISH} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_SPANISH} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_SPANISH} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_SPANISH} "FileDescription" "Syncplay"
+
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "FileDescription" "Syncplay"
 
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
@@ -137,11 +151,29 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^AutomaticUpdates $${LANG_ITALIAN} "Controllo automatico degli aggiornamenti"
   LangString ^UninstConfig $${LANG_ITALIAN} "Cancella i file di configurazione."
 
+  LangString ^SyncplayLanguage $${LANG_SPANISH} "es"
+  LangString ^Associate $${LANG_SPANISH} "Asociar Syncplay con archivos multimedia."
+  LangString ^Shortcut $${LANG_SPANISH} "Crear accesos directos en las siguientes ubicaciones:"
+  LangString ^StartMenu $${LANG_SPANISH} "Menú de inicio"
+  LangString ^Desktop $${LANG_SPANISH} "Escritorio"
+  LangString ^QuickLaunchBar $${LANG_SPANISH} "Barra de acceso rápido"
+  LangString ^AutomaticUpdates $${LANG_SPANISH} "Buscar actualizaciones automáticamente"
+  LangString ^UninstConfig $${LANG_SPANISH} "Borrar archivo de configuración."
+
+  LangString ^SyncplayLanguage $${LANG_PORTUGUESEBR} "pt_BR"
+  LangString ^Associate $${LANG_PORTUGUESEBR} "Associar Syncplay aos arquivos multimídia."
+  LangString ^Shortcut $${LANG_PORTUGUESEBR} "Criar atalhos nos seguintes locais:"
+  LangString ^StartMenu $${LANG_PORTUGUESEBR} "Menu Iniciar"
+  LangString ^Desktop $${LANG_PORTUGUESEBR} "Área de trabalho"
+  LangString ^QuickLaunchBar $${LANG_PORTUGUESEBR} "Barra de acesso rápido"
+  LangString ^AutomaticUpdates $${LANG_PORTUGUESEBR} "Verificar atualizações automaticamente"
+  LangString ^UninstConfig $${LANG_PORTUGUESEBR} "Deletar arquivo de configuração."
+
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "
 
   PageEx license
-    LicenseData resources\license.rtf
+    LicenseData syncplay\resources\license.rtf
   PageExEnd
   Page custom DirectoryCustom DirectoryCustomLeave
   Page instFiles
@@ -240,6 +272,10 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push Deutsch
     Push $${LANG_ITALIAN}
     Push Italiano
+    Push $${LANG_SPANISH}
+    Push Español
+    Push $${LANG_PORTUGUESEBR}
+    Push 'Português do Brasil'
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE
@@ -370,6 +406,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
     $${If} $$CheckBox_StartMenuShortcut_State == $${BST_CHECKED}
       CreateDirectory $$SMPROGRAMS\Syncplay
+      SetOutPath "$$INSTDIR"
       CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
       CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay Server.lnk" "$$INSTDIR\syncplayServer.exe" ""
       CreateShortCut "$$SMPROGRAMS\Syncplay\Uninstall.lnk" "$$INSTDIR\Uninstall.exe" ""
@@ -377,10 +414,12 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${EndIf}
 
     $${If} $$CheckBox_DesktopShortcut_State == $${BST_CHECKED}
+      SetOutPath "$$INSTDIR"
       CreateShortCut "$$DESKTOP\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
     $${EndIf}
 
     $${If} $$CheckBox_QuickLaunchShortcut_State == $${BST_CHECKED}
+      SetOutPath "$$INSTDIR"
       CreateShortCut "$$QUICKLAUNCH\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
     $${EndIf}
   FunctionEnd
@@ -648,39 +687,15 @@ class build_installer(py2exe):
         script.compile()
         print("*** DONE ***")
 
-guiIcons = [
-    'resources/accept.png', 'resources/arrow_undo.png', 'resources/clock_go.png',
-    'resources/control_pause_blue.png', 'resources/cross.png', 'resources/door_in.png',
-    'resources/folder_explore.png', 'resources/help.png', 'resources/table_refresh.png',
-    'resources/timeline_marker.png', 'resources/control_play_blue.png',
-    'resources/mpc-hc.png', 'resources/mpc-hc64.png', 'resources/mplayer.png',
-    'resources/mpc-be.png',
-    'resources/mpv.png', 'resources/vlc.png', 'resources/house.png', 'resources/film_link.png',
-    'resources/eye.png', 'resources/comments.png', 'resources/cog_delete.png', 'resources/chevrons_right.png',
-    'resources/user_key.png', 'resources/lock.png', 'resources/key_go.png', 'resources/page_white_key.png',
-    'resources/lock_green.png', 'resources/lock_green_dialog.png',
-    'resources/tick.png', 'resources/lock_open.png', 'resources/empty_checkbox.png', 'resources/tick_checkbox.png',
-    'resources/world_explore.png', 'resources/application_get.png', 'resources/cog.png', 'resources/arrow_switch.png',
-    'resources/film_go.png', 'resources/world_go.png', 'resources/arrow_refresh.png', 'resources/bullet_right_grey.png',
-    'resources/user_comment.png',
-    'resources/error.png',
-    'resources/film_folder_edit.png',
-    'resources/film_edit.png',
-    'resources/folder_film.png',
-    'resources/shield_edit.png',
-    'resources/shield_add.png',
-    'resources/email_go.png',
-    'resources/world_add.png', 'resources/film_add.png', 'resources/delete.png', 'resources/spinner.mng'
-]
+guiIcons = glob('syncplay/resources/*.ico') + glob('syncplay/resources/*.png') +  ['syncplay/resources/spinner.mng']
+
 resources = [
-    "resources/icon.ico",
-    "resources/syncplay.png",
-    "resources/syncplayintf.lua",
-    "resources/license.rtf",
-    "resources/third-party-notices.rtf"
+    "syncplay/resources/syncplayintf.lua",
+    "syncplay/resources/license.rtf",
+    "syncplay/resources/third-party-notices.rtf"
 ]
 resources.extend(guiIcons)
-intf_resources = ["resources/lua/intf/syncplay.lua"]
+intf_resources = ["syncplay/resources/lua/intf/syncplay.lua"]
 
 qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
 
@@ -696,7 +711,7 @@ info = dict(
     common_info,
     windows=[{
       "script": "syncplayClient.py",
-      "icon_resources": [(1, "resources\\icon.ico")],
+      "icon_resources": [(1, "syncplay\\resources\\icon.ico")],
       'dest_base': "Syncplay"},
     ],
     console=['syncplayServer.py'],
@@ -706,8 +721,8 @@ info = dict(
     options={
         'py2exe': {
             'dist_dir': OUT_DIR,
-            'packages': 'PySide2',
-            'includes': 'twisted, sys, encodings, datetime, os, time, math, liburl, ast, unicodedata, _ssl, win32pipe, win32file',
+            'packages': 'PySide2, cffi, OpenSSL, certifi',
+            'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file',
             'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, Tkinter',
             'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
             'optimize': 2,
@@ -719,5 +734,5 @@ info = dict(
     cmdclass={"py2exe": build_installer},
 )
 
-sys.argv.extend(['py2exe', '-p win32com ', '-i twisted.web.resource', '-p PySide2'])
+sys.argv.extend(['py2exe'])
 setup(**info)

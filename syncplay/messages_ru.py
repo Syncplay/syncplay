@@ -16,7 +16,7 @@ ru = {
     "connection-failed-notification": "Не удалось подключиться к серверу",
     "connected-successful-notification": "Соединение с сервером установлено",
     "retrying-notification": "%s, следующая попытка через %d секунд(ы)...",  # Seconds
-    "handshake-successful-notification": "Connection established with {} ({})", # TODO: Translate
+    "reachout-successful-notification": "Successfully reached {} ({})", # TODO: Translate
 
     "rewind-notification": "Перемотано из-за разницы во времени с {}",  # User
     "fastforward-notification": "Ускорено из-за разницы во времени с {}",  # User
@@ -108,18 +108,18 @@ ru = {
     "mpc-be-version-insufficient-error": "Версия MPC слишком старая, пожалуйста, используйте `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay не совместим с данной версией mpv. Пожалуйста, используйте другую версию mpv (лучше свежайшую).",
     "player-file-open-error": "Проигрыватель не может открыть файл.",
-    "player-path-error": "Путь к проигрывателю задан неверно. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2.",  # TODO: Translate last sentence
+    "player-path-error": "Путь к проигрывателю задан неверно. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2.",  # TODO: Translate last sentence
     "hostname-empty-error": "Имя пользователя не может быть пустым.",
     "empty-error": "{} не может быть пустым.",  # Configuration
     "media-player-error": "Ошибка проигрывателя: \"{}\"",  # Error line
     "unable-import-gui-error": "Невозможно импортировать библиотеки GUI (графического интерфейса). Необходимо установить PySide, иначе графический интерфейс не будет работать.",
-    "unable-import-twisted-error": "Could not import Twisted. Please install Twisted v12.1.0 or later.", #To do: translate
+    "unable-import-twisted-error": "Could not import Twisted. Please install Twisted v16.4.0 or later.", #To do: translate
 
     "arguments-missing-error": "Некоторые необходимые аргументы отсутствуют, обратитесь к --help",
 
     "unable-to-start-client-error": "Невозможно запустить клиент",
 
-    "player-path-config-error": "Путь к проигрывателю установлен неверно. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2",  # To do: Translate end
+    "player-path-config-error": "Путь к проигрывателю установлен неверно. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2",  # To do: Translate end
     "no-file-path-config-error": "Файл должен быть указан до включения проигрывателя",
     "no-hostname-config-error": "Имя сервера не может быть пустым",
     "invalid-port-config-error": "Неверный номер порта",
@@ -169,10 +169,12 @@ ru = {
     "file-argument": 'воспроизводимый файл',
     "args-argument": 'параметры проигрывателя; если нужно передать параметры, начинающиеся с - , то сначала пишите \'--\'',
     "clear-gui-data-argument": 'сбрасывает путь и данные о состоянии окна GUI, хранимые как QSettings',
-    "language-argument": 'язык сообщений Syncplay (de/en/ru)',
+    "language-argument": 'язык сообщений Syncplay (de/en/ru/it/es/pt_BR)',
 
     "version-argument": 'выводит номер версии',
     "version-message": "Вы используете Syncplay версии {} ({})",
+
+    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)", # TODO: Translate
 
     # Client labels
     "config-window-title": "Настройка Syncplay",
@@ -299,6 +301,8 @@ ru = {
     "openmedia-menu-label": "&Открыть файл",
     "openstreamurl-menu-label": "Открыть &ссылку",
     "setmediadirectories-menu-label": "&Папки воспроизведения",
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
+    "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
     "exit-menu-label": "&Выход",
     "advanced-menu-label": "&Дополнительно",
     "window-menu-label": "&Вид",
@@ -306,6 +310,13 @@ ru = {
     "createcontrolledroom-menu-label": "Создать управляемую &комнату",
     "identifyascontroller-menu-label": "&Войти как оператор комнаты",
     "settrusteddomains-menu-label": "Доверенные &сайты",
+
+    # Edit menu - TODO: check - these should match the values of macOS menubar
+    "edit-menu-label": "&Правка",
+    "cut-menu-label": "Bы&резать",
+    "copy-menu-label": "&Скопировать",
+    "paste-menu-label": "&Bставить",
+    "selectall-menu-label": "Bыбра&ть все",
 
     "playback-menu-label": "&Управление",
 
@@ -484,12 +495,12 @@ ru = {
     "editplaylist-menu-label": "Редактировать список",
 
     "open-containing-folder": "Open folder containing this file",  # TODO: Traslate
-    "addusersfiletoplaylist-menu-label": "Добавить файл {} в список воспроизведения",  # item owner indicator
-    "addusersstreamstoplaylist-menu-label": "Добавить поток {} в список воспроизведения",  # item owner indicator
+    "addyourfiletoplaylist-menu-label": "Добавить файл от вас в список воспроизведения", # TODO: Check
+    "addotherusersfiletoplaylist-menu-label": "Добавить файл {} в список воспроизведения",  # Username # TODO: Check
+    "addyourstreamstoplaylist-menu-label": "Добавить поток от вас в список воспроизведения", # TODO: Check
+    "addotherusersstreamstoplaylist-menu-label": "Добавить поток {} в список воспроизведения",  # Username # TODO: Check
     "openusersstream-menu-label": "Открыть поток от {}",  # [username]'s
     "openusersfile-menu-label": "Открыть файл от {}",  # [username]'s
-    "item-is-yours-indicator": "от вас",  # Goes with addusersfiletoplaylist/addusersstreamstoplaylist
-    "item-is-others-indicator": "{}",  # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist
 
     "playlist-instruction-item-message": "Перетащите сюда файлы, чтобы добавить их в общий список.",
     "sharedplaylistenabled-tooltip": "Оператор комнаты может добавлять файлы в список общего воспроизведения для удобного совместного просмотра. Папки воспроизведения настраиваются во вкладке 'Файл'.",

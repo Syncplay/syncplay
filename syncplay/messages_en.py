@@ -16,7 +16,7 @@ en = {
     "connection-failed-notification": "Connection with server failed",
     "connected-successful-notification": "Successfully connected to server",
     "retrying-notification": "%s, Retrying in %d seconds...",  # Seconds
-    "handshake-successful-notification": "Connection established with {} ({})",
+    "reachout-successful-notification": "Successfully reached {} ({})",
 
     "rewind-notification": "Rewinded due to time difference with {}",  # User
     "fastforward-notification": "Fast-forwarded due to time difference with {}",  # User
@@ -108,18 +108,18 @@ en = {
     "mpc-be-version-insufficient-error": "MPC version not sufficient, please use `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay is not compatible with this version of mpv. Please use a different version of mpv (e.g. Git HEAD).",
     "player-file-open-error": "Player failed opening file",
-    "player-path-error": "Player path is not set properly. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2",
+    "player-path-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2",
     "hostname-empty-error": "Hostname can't be empty",
     "empty-error": "{} can't be empty",  # Configuration
     "media-player-error": "Media player error: \"{}\"",  # Error line
     "unable-import-gui-error": "Could not import GUI libraries. If you do not have PySide installed then you will need to install it for the GUI to work.",
-    "unable-import-twisted-error": "Could not import Twisted. Please install Twisted v12.1.0 or later.",
+    "unable-import-twisted-error": "Could not import Twisted. Please install Twisted v16.4.0 or later.",
 
     "arguments-missing-error": "Some necessary arguments are missing, refer to --help",
 
     "unable-to-start-client-error": "Unable to start client",
 
-    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2.",
+    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2.",
     "no-file-path-config-error": "File must be selected before starting your player",
     "no-hostname-config-error": "Hostname can't be empty",
     "invalid-port-config-error": "Port must be valid",
@@ -168,10 +168,12 @@ en = {
     "file-argument": 'file to play',
     "args-argument": 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
     "clear-gui-data-argument": 'resets path and window state GUI data stored as QSettings',
-    "language-argument": 'language for Syncplay messages (de/en/ru)',
+    "language-argument": 'language for Syncplay messages (de/en/ru/it/es/pt_BR)',
 
     "version-argument": 'prints your version',
     "version-message": "You're using Syncplay version {} ({})",
+
+    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)",
 
     # Client labels
     "config-window-title": "Syncplay configuration",
@@ -297,6 +299,8 @@ en = {
     "openmedia-menu-label": "&Open media file",
     "openstreamurl-menu-label": "Open &media stream URL",
     "setmediadirectories-menu-label": "Set media &directories",
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",
+    "saveplaylisttofile-menu-label": "&Save playlist to file",
     "exit-menu-label": "E&xit",
     "advanced-menu-label": "&Advanced",
     "window-menu-label": "&Window",
@@ -305,6 +309,12 @@ en = {
     "identifyascontroller-menu-label": "&Identify as room operator",
     "settrusteddomains-menu-label": "Set &trusted domains",
     "addtrusteddomain-menu-label": "Add {} as trusted domain",  # Domain
+
+    "edit-menu-label": "&Edit",
+    "cut-menu-label": "Cu&t",
+    "copy-menu-label": "&Copy",
+    "paste-menu-label": "&Paste",
+    "selectall-menu-label": "&Select All",
 
     "playback-menu-label": "&Playback",
 
@@ -392,7 +402,7 @@ en = {
     "language-tooltip": "Language to be used by Syncplay.",
     "unpause-always-tooltip": "If you press unpause it always sets you as ready and unpause, rather than just setting you as ready.",
     "unpause-ifalreadyready-tooltip": "If you press unpause when not ready it will set you as ready - press unpause again to unpause.",
-    "unpause-ifothersready-tooltip": "If you press unpause when not ready, it will only upause if others are ready.",
+    "unpause-ifothersready-tooltip": "If you press unpause when not ready, it will only unpause if others are ready.",
     "unpause-ifminusersready-tooltip": "If you press unpause when not ready, it will only unpause if others are ready and minimum users threshold is met.",
     "trusteddomains-arguments-tooltip": "Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.",
 
@@ -484,12 +494,12 @@ en = {
     "editplaylist-menu-label": "Edit playlist",
 
     "open-containing-folder": "Open folder containing this file",
-    "addusersfiletoplaylist-menu-label": "Add {} file to playlist",  # item owner indicator
-    "addusersstreamstoplaylist-menu-label": "Add {} stream to playlist",  # item owner indicator
-    "openusersstream-menu-label": "Open {} stream",  # [username]'s
-    "openusersfile-menu-label": "Open {} file",  # [username]'s
-    "item-is-yours-indicator": "your",  # Goes with addusersfiletoplaylist/addusersstreamstoplaylist
-    "item-is-others-indicator": "{}'s",  # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist
+    "addyourfiletoplaylist-menu-label": "Add your file to playlist",
+    "addotherusersfiletoplaylist-menu-label": "Add {}'s file to playlist",  # [Username]
+    "addyourstreamstoplaylist-menu-label": "Add your stream to playlist",
+    "addotherusersstreamstoplaylist-menu-label": "Add {}' stream to playlist",  # [Username]
+    "openusersstream-menu-label": "Open {}'s stream",  # [username]'s
+    "openusersfile-menu-label": "Open {}'s file",  # [username]'s
 
     "playlist-instruction-item-message": "Drag file here to add it to the shared playlist.",
     "sharedplaylistenabled-tooltip": "Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.",

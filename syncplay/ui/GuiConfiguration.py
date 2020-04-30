@@ -117,6 +117,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.saveMoreState(True)
                 self.tabListWidget.setCurrentRow(0)
                 self.ensureTabListIsVisible()
+                if isMacOS(): self.mediaplayerSettingsGroup.setFixedHeight(self.mediaplayerSettingsGroup.minimumSizeHint().height())
                 self.stackedFrame.setFixedHeight(self.stackedFrame.minimumSizeHint().height())
             else:
                 self.tabListFrame.hide()
@@ -134,12 +135,21 @@ class ConfigDialog(QtWidgets.QDialog):
                     self.mediabrowseButton.show()
                 self.saveMoreState(False)
                 self.stackedLayout.setCurrentIndex(0)
-                newHeight = self.connectionSettingsGroup.minimumSizeHint().height() + self.mediaplayerSettingsGroup.minimumSizeHint().height() + self.bottomButtonFrame.minimumSizeHint().height() + 3
+                if isMacOS():
+                    self.mediaplayerSettingsGroup.setFixedHeight(self.mediaplayerSettingsGroup.minimumSizeHint().height())
+                    newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50
+                else:
+                    newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+13
                 if self.error:
                     newHeight += self.errorLabel.height()+3
                 self.stackedFrame.setFixedHeight(newHeight)
             self.adjustSize()
-            self.setFixedSize(self.sizeHint())
+            if isMacOS():
+                newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50+16
+                self.setFixedWidth(self.sizeHint().width())
+                self.setFixedHeight(newHeight)
+            else:
+                self.setFixedSize(self.sizeHint())
         self.moreToggling = False
         self.setFixedWidth(self.minimumSizeHint().width())
 
@@ -310,7 +320,7 @@ class ConfigDialog(QtWidgets.QDialog):
         try:
             self.lastCheckedForUpdates = settings.value("lastCheckedQt", None)
             if self.lastCheckedForUpdates:
-                if self.config["lastCheckedForUpdates"] is not None and self.config["lastCheckedForUpdates"] is not "":
+                if self.config["lastCheckedForUpdates"] != None and self.config["lastCheckedForUpdates"] != "":
                     if self.lastCheckedForUpdates.toPython() > datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f"):
                         self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
                 else:
@@ -584,11 +594,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 i += 1
         self.hostCombobox.setEditable(True)
         self.hostCombobox.setEditText(host)
-        self.hostCombobox.setFixedWidth(250)
         self.hostLabel = QLabel(getMessage("host-label"), self)
-        self.findServerButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'arrow_refresh.png'), getMessage("update-server-list-label"))
-        self.findServerButton.clicked.connect(self.updateServerList)
-        self.findServerButton.setToolTip(getMessage("update-server-list-tooltip"))
         self.usernameTextbox = QLineEdit(self)
 
         self.usernameTextbox.setObjectName("name")
@@ -610,20 +616,21 @@ class ConfigDialog(QtWidgets.QDialog):
         self.defaultroomLabel.setObjectName("room")
         self.defaultroomTextbox.setObjectName("room")
 
-        self.defaultroomTextbox.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
-
         self.connectionSettingsLayout = QtWidgets.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
         self.connectionSettingsLayout.addWidget(self.hostCombobox, 0, 1)
-        self.connectionSettingsLayout.addWidget(self.findServerButton, 0, 2)
         self.connectionSettingsLayout.addWidget(self.serverpassLabel, 1, 0)
-        self.connectionSettingsLayout.addWidget(self.serverpassTextbox, 1, 1, 1, 2)
+        self.connectionSettingsLayout.addWidget(self.serverpassTextbox, 1, 1)
         self.connectionSettingsLayout.addWidget(self.usernameLabel, 2, 0)
-        self.connectionSettingsLayout.addWidget(self.usernameTextbox, 2, 1, 1, 2)
+        self.connectionSettingsLayout.addWidget(self.usernameTextbox, 2, 1)
         self.connectionSettingsLayout.addWidget(self.defaultroomLabel, 3, 0)
-        self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1, 1, 2)
+        self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
+        self.connectionSettingsLayout.setSpacing(10)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
-        self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
+        if isMacOS():
+            self.connectionSettingsGroup.setFixedHeight(self.connectionSettingsGroup.minimumSizeHint().height())
+        else:
+            self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
 
         self.playerargsTextbox = QLineEdit("", self)
         self.playerargsTextbox.textEdited.connect(self.changedPlayerArgs)
@@ -632,13 +639,12 @@ class ConfigDialog(QtWidgets.QDialog):
         self.mediaplayerSettingsGroup = QtWidgets.QGroupBox(getMessage("media-setting-title"))
         self.executableiconImage = QtGui.QImage()
         self.executableiconLabel = QLabel(self)
-        self.executableiconLabel.setMinimumWidth(16)
+        self.executableiconLabel.setFixedWidth(16)
         self.executableiconLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.executablepathCombobox = QtWidgets.QComboBox(self)
         self.executablepathCombobox.setEditable(True)
         self.executablepathCombobox.currentIndexChanged.connect(self.updateExecutableIcon)
         self.executablepathCombobox.setEditText(self._tryToFillPlayerPath(config['playerPath'], playerpaths))
-        self.executablepathCombobox.setFixedWidth(330)
         self.executablepathCombobox.editTextChanged.connect(self.updateExecutableIcon)
 
         self.executablepathLabel = QLabel(getMessage("executable-path-label"), self)
@@ -651,22 +657,44 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.executablepathLabel.setObjectName("executable-path")
         self.executablepathCombobox.setObjectName("executable-path")
+        self.executablepathCombobox.setMinimumContentsLength(constants.EXECUTABLE_COMBOBOX_MINIMUM_LENGTH)
+        self.executablepathCombobox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLength)
         self.mediapathLabel.setObjectName("media-path")
         self.mediapathTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "media-path")
         self.playerargsLabel.setObjectName("player-arguments")
         self.playerargsTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "player-arguments")
 
         self.mediaplayerSettingsLayout = QtWidgets.QGridLayout()
-        self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0)
-        self.mediaplayerSettingsLayout.addWidget(self.executableiconLabel, 0, 1)
-        self.mediaplayerSettingsLayout.addWidget(self.executablepathCombobox, 0, 2)
-        self.mediaplayerSettingsLayout.addWidget(self.executablebrowseButton, 0, 3)
-        self.mediaplayerSettingsLayout.addWidget(self.mediapathLabel, 1, 0)
-        self.mediaplayerSettingsLayout.addWidget(self.mediapathTextbox, 1, 2)
-        self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton, 1, 3)
+        self.mediaplayerSettingsLayout.addWidget(self.executablepathLabel, 0, 0, 1, 1)
+        self.mediaplayerSettingsLayout.addWidget(self.executableiconLabel, 0, 1, 1, 1)
+        self.mediaplayerSettingsLayout.addWidget(self.executablepathCombobox, 0, 2, 1, 1)
+        self.mediaplayerSettingsLayout.addWidget(self.executablebrowseButton, 0, 3, 1, 1)
+        self.mediaplayerSettingsLayout.addWidget(self.mediapathLabel, 1, 0, 1, 2)
+        self.mediaplayerSettingsLayout.addWidget(self.mediapathTextbox, 1, 2, 1, 1)
+        self.mediaplayerSettingsLayout.addWidget(self.mediabrowseButton, 1, 3, 1, 1)
         self.mediaplayerSettingsLayout.addWidget(self.playerargsLabel, 2, 0, 1, 2)
         self.mediaplayerSettingsLayout.addWidget(self.playerargsTextbox, 2, 2, 1, 2)
+        self.mediaplayerSettingsLayout.setSpacing(10)
         self.mediaplayerSettingsGroup.setLayout(self.mediaplayerSettingsLayout)
+
+        iconWidth = self.executableiconLabel.minimumSize().width()+self.mediaplayerSettingsLayout.spacing()
+        maxWidth = max(
+            self.hostLabel.minimumSizeHint().width(),
+            self.usernameLabel.minimumSizeHint().width(),
+            self.serverpassLabel.minimumSizeHint().width(),
+            self.defaultroomLabel.minimumSizeHint().width(),
+            self.executablepathLabel.minimumSizeHint().width(),
+            self.mediapathLabel.minimumSizeHint().width(),
+            self.playerargsLabel.minimumSizeHint().width()
+        )
+
+        self.hostLabel.setMinimumWidth(maxWidth+iconWidth)
+        self.usernameLabel.setMinimumWidth(maxWidth+iconWidth)
+        self.serverpassLabel.setMinimumWidth(maxWidth+iconWidth)
+        self.defaultroomLabel.setMinimumWidth(maxWidth+iconWidth)
+        self.executablepathLabel.setMinimumWidth(maxWidth)
+        self.mediapathLabel.setMinimumWidth(maxWidth+iconWidth)
+        self.playerargsLabel.setMinimumWidth(maxWidth+iconWidth)
 
         self.showmoreCheckbox = QCheckBox(getMessage("more-title"))
         self.showmoreCheckbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "more")
@@ -683,7 +711,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.errorLabel.setStyleSheet(constants.STYLE_SUCCESSLABEL)
             self.errorLabel.setText(error)
             self.errorLabel.setAlignment(Qt.AlignCenter)
-            self.basicOptionsLayout.addWidget(self.errorLabel, 0, 0)
+            self.basicOptionsLayout.addWidget(self.errorLabel)
         self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.setAlignment(Qt.AlignTop)
         self.basicOptionsLayout.addWidget(self.connectionSettingsGroup)
@@ -1157,11 +1185,17 @@ class ConfigDialog(QtWidgets.QDialog):
         self.bottomButtonLayout.addWidget(self.runButton)
         self.bottomButtonLayout.addWidget(self.storeAndRunButton)
         self.bottomButtonFrame.setLayout(self.bottomButtonLayout)
-        self.bottomButtonLayout.setContentsMargins(5, 0, 5, 0)
+        if isMacOS():
+            self.bottomButtonLayout.setContentsMargins(15, 0, 15, 0)
+        else:
+            self.bottomButtonLayout.setContentsMargins(5, 0, 5, 0)
         self.mainLayout.addWidget(self.bottomButtonFrame, 1, 0, 1, 2)
 
         self.bottomCheckboxFrame = QtWidgets.QFrame()
-        self.bottomCheckboxFrame.setContentsMargins(0, 0, 0, 0)
+        if isMacOS():
+            self.bottomCheckboxFrame.setContentsMargins(3, 0, 6, 0)
+        else:
+            self.bottomCheckboxFrame.setContentsMargins(0, 0, 0, 0)
         self.bottomCheckboxLayout = QtWidgets.QGridLayout()
         self.alwaysshowCheckbox = QCheckBox(getMessage("forceguiprompt-label"))
 
@@ -1262,6 +1296,30 @@ class ConfigDialog(QtWidgets.QDialog):
             self.serverpassTextbox.setReadOnly(False)
             self.serverpassTextbox.setText(self.storedPassword)
 
+    def createMenubar(self):
+        self.menuBar = QtWidgets.QMenuBar()
+
+        # Edit menu
+        self.editMenu = QtWidgets.QMenu(getMessage("edit-menu-label"), self)
+
+        self.cutAction = self.editMenu.addAction(getMessage("cut-menu-label"))
+        self.cutAction.setShortcuts(QtGui.QKeySequence.Cut)
+
+        self.copyAction = self.editMenu.addAction(getMessage("copy-menu-label"))
+        self.copyAction.setShortcuts(QtGui.QKeySequence.Copy)
+
+        self.pasteAction = self.editMenu.addAction(getMessage("paste-menu-label"))
+        self.pasteAction.setShortcuts(QtGui.QKeySequence.Paste)
+
+        self.selectAction = self.editMenu.addAction(getMessage("selectall-menu-label"))
+        self.selectAction.setShortcuts(QtGui.QKeySequence.SelectAll)
+
+        self.editMenu.addSeparator()
+
+        self.menuBar.addMenu(self.editMenu)
+
+        self.mainLayout.setMenuBar(self.menuBar)
+
     def __init__(self, config, playerpaths, error, defaultConfig):
         self.config = config
         self.defaultConfig = defaultConfig
@@ -1313,6 +1371,14 @@ class ConfigDialog(QtWidgets.QDialog):
         self.addMiscTab()
         self.tabList()
 
+        if isMacOS():
+            self.createMenubar()
+            self.config['menuBar'] = dict()
+            self.config['menuBar']['bar'] = self.menuBar
+            self.config['menuBar']['editMenu'] = self.editMenu
+        else:
+            self.config['menuBar'] = None
+
         self.mainLayout.addWidget(self.stackedFrame, 0, 1)
         self.addBottomLayout()
         self.updatePasswordVisibilty()
@@ -1331,7 +1397,10 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.mediapathTextbox.show()
                 self.mediapathLabel.show()
                 self.mediabrowseButton.show()
-            newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+3
+            if isMacOS():
+                newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50
+            else:
+                newHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+13
             if self.error:
                 newHeight += self.errorLabel.height() + 3
             self.stackedFrame.setFixedHeight(newHeight)
@@ -1340,6 +1409,7 @@ class ConfigDialog(QtWidgets.QDialog):
             self.tabListWidget.setCurrentRow(0)
             self.stackedFrame.setFixedHeight(self.stackedFrame.minimumSizeHint().height())
 
+
         self.showmoreCheckbox.toggled.connect(self.moreToggled)
 
         self.setLayout(self.mainLayout)
@@ -1347,7 +1417,14 @@ class ConfigDialog(QtWidgets.QDialog):
             self.runButton.setFocus()
         else:
             self.storeAndRunButton.setFocus()
-        self.setFixedSize(self.sizeHint())
+        if isMacOS():
+            initialHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50
+            if self.error:
+                initialHeight += 40            
+            self.setFixedWidth(self.sizeHint().width())
+            self.setFixedHeight(initialHeight)
+        else:
+            self.setFixedSize(self.sizeHint())
         self.setAcceptDrops(True)
 
         if constants.SHOW_TOOLTIPS:

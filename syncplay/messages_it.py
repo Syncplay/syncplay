@@ -16,7 +16,7 @@ it = {
     "connection-failed-notification": "Connessione col server fallita",
     "connected-successful-notification": "Connessione al server effettuata con successo",
     "retrying-notification": "%s, Nuovo tentativo in %d secondi...",  # Seconds
-    "handshake-successful-notification": "Connessione stabilita con {} ({})",
+    "reachout-successful-notification": "Collegamento stabilito con {} ({})",
 
     "rewind-notification": "Riavvolgo a causa della differenza temporale con {}",  # User
     "fastforward-notification": "Avanzamento rapido a causa della differenza temporale con {}",  # User
@@ -108,18 +108,18 @@ it = {
     "mpc-be-version-insufficient-error": "La tua versione di MPC è troppo vecchia, per favore usa `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay non è compatibile con questa versione di mpv. Per favore usa un'altra versione di mpv (es. Git HEAD).",
     "player-file-open-error": "Il player non è riuscito ad aprire il file",
-    "player-path-error": "Il path del player non è configurato correttamente. I player supportati sono: mpv, VLC, MPC-HC, MPC-BE e mplayer2",
+    "player-path-error": "Il path del player non è configurato correttamente. I player supportati sono: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2",
     "hostname-empty-error": "Il campo hostname non può essere vuoto",
     "empty-error": "Il campo {} non può esssere vuoto",  # Configuration
     "media-player-error": "Errore media player: \"{}\"",  # Error line
     "unable-import-gui-error": "Non è possibile importare le librerie di interfaccia grafica. Hai bisogno di PySide per poter utilizzare l'interfaccia grafica.",
-    "unable-import-twisted-error": "Non è possibile importare Twisted. Si prega di installare Twisted v12.1. o superiore.",
+    "unable-import-twisted-error": "Non è possibile importare Twisted. Si prega di installare Twisted v16.4.0 o superiore.",
 
     "arguments-missing-error": "Alcuni argomenti obbligatori non sono stati trovati. Fai riferimento a --help",
 
     "unable-to-start-client-error": "Impossibile avviare il client",
 
-    "player-path-config-error": "Il percorso del player non è configurato correttamente. I player supportati sono: mpv, VLC, MPC-HC, MPC-BE e mplayer2.",
+    "player-path-config-error": "Il percorso del player non è configurato correttamente. I player supportati sono: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2.",
     "no-file-path-config-error": "Deve essere selezionato un file prima di avviare il player",
     "no-hostname-config-error": "Il campo hostname non può essere vuoto",
     "invalid-port-config-error": "La porta deve essere valida",
@@ -168,10 +168,12 @@ it = {
     "file-argument": 'file da riprodurre',
     "args-argument": 'opzioni del player, se hai bisogno di utilizzare opzioni che iniziano con - anteponi un singolo \'--\'',
     "clear-gui-data-argument": 'ripristina il percorso e i dati impostati tramite interfaccia grafica e salvati come QSettings',
-    "language-argument": 'lingua per i messaggi di Syncplay (de/en/ru/it)',
+    "language-argument": 'lingua per i messaggi di Syncplay (de/en/ru/it/es/pt_BR)',
 
     "version-argument": 'mostra la tua versione',
     "version-message": "Stai usando la versione di Syncplay {} ({})",
+
+    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)", # TODO: Translate
 
     # Client labels
     "config-window-title": "Configurazione di Syncplay",
@@ -267,7 +269,7 @@ it = {
     "run-label": "Avvia Syncplay",
     "storeandrun-label": "Salva la configurazione e avvia Syncplay",
 
-    "contact-label": "Sentiti libero di inviare un'e-mail a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chattare tramite il <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canale IRC #Syncplay</nobr></a> su irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>segnalare un problema</nobr></a> su GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>lasciare un like sulla nostra pagina Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>seguirci su Twitter</nobr></a>, o visitare <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Non usare Syncplay per inviare dati sensibili.", # TODO: Check translation
+    "contact-label": "Sentiti libero di inviare un'e-mail a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chattare tramite il <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canale IRC #Syncplay</nobr></a> su irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>segnalare un problema</nobr></a> su GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>lasciare un like sulla nostra pagina Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>seguirci su Twitter</nobr></a>, o visitare <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Non usare Syncplay per inviare dati sensibili.",
 
     "joinroom-label": "Entra nella stanza",
     "joinroom-menu-label": "Entra nella stanza {}",
@@ -297,6 +299,8 @@ it = {
     "openmedia-menu-label": "&Apri file multimediali",
     "openstreamurl-menu-label": "Apri indirizzo di &rete",
     "setmediadirectories-menu-label": "Imposta &cartelle multimediali",
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
+    "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
     "exit-menu-label": "&Esci",
     "advanced-menu-label": "&Avanzate",
     "window-menu-label": "&Finestra",
@@ -305,6 +309,12 @@ it = {
     "identifyascontroller-menu-label": "&Identificati come operatore della stanza",
     "settrusteddomains-menu-label": "Imposta &domini fidati",
     "addtrusteddomain-menu-label": "Aggiungi {} come dominio fidato",  # Domain
+
+    "edit-menu-label": "&Modifica",
+    "cut-menu-label": "&Taglia",
+    "copy-menu-label": "&Copia",
+    "paste-menu-label": "&Incolla",
+    "selectall-menu-label": "&Seleziona tutto",
 
     "playback-menu-label": "&Riproduzione",
 
@@ -461,7 +471,7 @@ it = {
     # Server errors
     "unknown-command-server-error": "Comando non riconosciuto {}",  # message
     "not-json-server-error": "Non è una stringa in codifica JSON {}",  # message
-    "line-decode-server-error": "Not a utf-8 string", # TODO: Translate
+    "line-decode-server-error": "Non è una stringa utf-8",
     "not-known-server-error": "Devi essere autenticato dal server prima di poter inviare questo comando",
     "client-drop-server-error": "Il client è caduto: {} -- {}",  # host, error
     "password-required-server-error": "È richiesta una password",
@@ -484,12 +494,12 @@ it = {
     "editplaylist-menu-label": "Modifica la playlist",
 
     "open-containing-folder": "Apri la cartella contenente questo file",
-    "addusersfiletoplaylist-menu-label": "Aggiungi il file {} alla playlist",  # item owner indicator # TODO needs testing
-    "addusersstreamstoplaylist-menu-label": "Aggiungi l'indirizzo {} alla playlist",  # item owner indicator # TODO needs testing
-    "openusersstream-menu-label": "Apri l'indirizzo di {}",  # [username]'s
+    "addyourfiletoplaylist-menu-label": "Aggiungi il tuo file alla playlist",
+    "addotherusersfiletoplaylist-menu-label": "Aggiungi il file di {} alla playlist", # Username
+    "addyourstreamstoplaylist-menu-label": "Aggiungi il tuo indirizzo alla playlist",
+    "addotherusersstreamstoplaylist-menu-label": "Aggiungi l'indirizzo di {} alla playlist", # Username  # item owner indicator
+    "openusersstream-menu-label": "Apri l'indirizzo di {}",  # [username]
     "openusersfile-menu-label": "Apri il file di {}",  # [username]'s
-    "item-is-yours-indicator": "tuo",  # Goes with addusersfiletoplaylist/addusersstreamstoplaylist # TODO needs testing
-    "item-is-others-indicator": "di {}",  # username - goes with addusersfiletoplaylist/addusersstreamstoplaylist # TODO needs testing
 
     "playlist-instruction-item-message": "Trascina qui i file per aggiungerli alla playlist condivisa.",
     "sharedplaylistenabled-tooltip": "Gli operatori della stanza possono aggiungere i file a una playlist sincronizzata per garantire che tutti i partecipanti stiano guardando la stessa cosa. Configura le cartelle multimediali alla voce 'Miscellanea'.",

@@ -28,10 +28,7 @@ class VlcPlayer(BasePlayer):
 
     RE_ANSWER = re.compile(constants.VLC_ANSWER_REGEX)
     SLAVE_ARGS = constants.VLC_SLAVE_ARGS
-    if isMacOS():
-        SLAVE_ARGS.extend(constants.VLC_SLAVE_MACOS_ARGS)
-    else:
-        SLAVE_ARGS.extend(constants.VLC_SLAVE_NONMACOS_ARGS)
+    SLAVE_ARGS.extend(constants.VLC_SLAVE_EXTRA_ARGS)
     vlcport = random.randrange(constants.VLC_MIN_PORT, constants.VLC_MAX_PORT) if (constants.VLC_MIN_PORT < constants.VLC_MAX_PORT) else constants.VLC_MIN_PORT
 
     def __init__(self, client, playerPath, filePath, args):
@@ -343,8 +340,12 @@ class VlcPlayer(BasePlayer):
                 else:
                     call.append(self.__playerController.getMRL(filePath))
             if isLinux():
-                playerController.vlcIntfPath = "/usr/lib/vlc/lua/intf/"
-                playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), ".local/share/vlc/lua/intf/")
+                if 'snap' in playerPath:
+                    playerController.vlcIntfPath = '/snap/vlc/current/usr/lib/vlc/lua/intf/'
+                    playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), "snap/vlc/current/.local/share/vlc/lua/intf/")
+                else:
+                    playerController.vlcIntfPath = "/usr/lib/vlc/lua/intf/"
+                    playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), ".local/share/vlc/lua/intf/")
             elif isMacOS():
                 playerController.vlcIntfPath = "/Applications/VLC.app/Contents/MacOS/share/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(
@@ -354,6 +355,9 @@ class VlcPlayer(BasePlayer):
                 # This should also work for all the other BSDs, such as OpenBSD or DragonFly.
                 playerController.vlcIntfPath = "/usr/local/lib/vlc/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('HOME', '.'), ".local/share/vlc/lua/intf/")
+            elif "vlcportable.exe" in playerPath.lower():
+                playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/App/vlc/lua/intf/"
+                playerController.vlcIntfUserPath = playerController.vlcIntfPath
             else:
                 playerController.vlcIntfPath = os.path.dirname(playerPath).replace("\\", "/") + "/lua/intf/"
                 playerController.vlcIntfUserPath = os.path.join(os.getenv('APPDATA', '.'), "VLC\\lua\\intf\\")

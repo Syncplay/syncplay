@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2001-2017
+# Copyright (c) 2001-2018
 # Allen Short
 # Andy Gayton
 # Andrew Bennetts
@@ -113,7 +113,6 @@ from twisted.internet.interfaces import IReactorFDSet
 from twisted.python import log, runtime
 from zope.interface import implementer
 
-
 class TwistedSocketNotifier(QObject):
     """Connection between an fd event and reader/writer callbacks."""
 
@@ -123,7 +122,7 @@ class TwistedSocketNotifier(QObject):
         QObject.__init__(self, parent)
         self.reactor = reactor
         self.watcher = watcher
-        fd = self.watcher.fileno()
+        fd = watcher.fileno()
         self.notifier = QSocketNotifier(fd, socketType, parent)
         self.notifier.setEnabled(True)
         if socketType == QSocketNotifier.Read:
@@ -251,10 +250,10 @@ class QtReactor(posixbase.PosixReactorBase):
         return self._removeAll(self._reads, self._writes)
 
     def getReaders(self):
-        return list(self._reads.keys())
+        return self._reads.keys()
 
     def getWriters(self):
-        return list(self._writes.keys())
+        return self._writes.keys()
 
     def callLater(self, howlong, *args, **kargs):
         rval = super(QtReactor, self).callLater(howlong, *args, **kargs)
@@ -286,13 +285,10 @@ class QtReactor(posixbase.PosixReactorBase):
         delay = max(delay, 1)
         if not fromqt:
             self.qApp.processEvents(QEventLoop.AllEvents, delay * 1000)
-        t = self.timeout()
-        if t is None:
-            timeout = 0.01
-        else:
-            timeout = min(t, 0.01)
-        self._timer.setInterval(timeout * 1000)
-        self._timer.start()
+        timeout = self.timeout()
+        if timeout is not None:
+            self._timer.setInterval(timeout * 1000)
+            self._timer.start()
 
     def runReturn(self, installSignalHandlers=True):
         self.startRunning(installSignalHandlers=installSignalHandlers)
@@ -337,7 +333,7 @@ class QtEventReactor(QtReactor):
             del self._events[event]
 
     def doEvents(self):
-        handles = list(self._events.keys())
+        handles = self._events.keys()
         if len(handles) > 0:
             val = None
             while val != WAIT_TIMEOUT:

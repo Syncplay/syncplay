@@ -9,7 +9,7 @@
     },
     "files": [
         {
-            "includePattern": "dist_dmg/(.*)",
+            "includePattern": "dist_bintray/(.*)",
             "uploadPattern": "$1",
             "matrixParams": {
                 "override": 1

@@ -1,10 +1,13 @@
 # coding:utf8
 import json
 import time
+from datetime import datetime
 from functools import wraps
 
-from twisted.protocols.basic import LineReceiver
+from twisted import version as twistedVersion
 from twisted.internet.interfaces import IHandshakeListener
+from twisted.protocols.basic import LineReceiver
+from twisted.python.versions import Version
 from zope.interface.declarations import implementer
 
 import syncplay
@@ -334,12 +337,24 @@ class SyncClientProtocol(JSONCommandProtocol):
         answer = message["startTLS"] if "startTLS" in message else None
         if "true" in answer and not self.logged and self._client.protocolFactory.options is not None:
             self.transport.startTLS(self._client.protocolFactory.options)
+            # To be deleted when the support for Twisted between >=16.4.0 and < 17.1.0 is dropped
+            minTwistedVersion = Version('twisted', 17, 1, 0)
+            if twistedVersion < minTwistedVersion:
+                self._client.protocolFactory.options._ctx.set_info_callback(self.customHandshakeCallback)
         elif "false" in answer:
             self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-server"))
-        self.sendHello()
+            self.sendHello()
+
+    def customHandshakeCallback(self, conn, where, ret):
+        # To be deleted when the support for Twisted between >=16.4.0 and < 17.1.0 is dropped
+        from OpenSSL.SSL import SSL_CB_HANDSHAKE_START, SSL_CB_HANDSHAKE_DONE
+        if where == SSL_CB_HANDSHAKE_START:
+            self._client.ui.showDebugMessage("TLS handshake started")
+        if where == SSL_CB_HANDSHAKE_DONE:
+            self._client.ui.showDebugMessage("TLS handshake done")
+            self.handshakeCompleted()
 
     def handshakeCompleted(self):
-        from datetime import datetime
         self._serverCertificateTLS = self.transport.getPeerCertificate()
         self._subjectTLS = self._serverCertificateTLS.get_subject().CN
         self._issuerTLS = self._serverCertificateTLS.get_issuer().CN
@@ -361,6 +376,8 @@ class SyncClientProtocol(JSONCommandProtocol):
                                     {'subject': self._subjectTLS, 'issuer': self._issuerTLS, 'expires': self._expireDateTLS,
                                     'protocolString': self._connVersionStringTLS, 'protocolVersion': self._connVersionNumberTLS,
                                     'cipher': self._cipherNameTLS})
+
+        self.sendHello()
 
 
 class SyncServerProtocol(JSONCommandProtocol):

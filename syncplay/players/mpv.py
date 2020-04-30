@@ -55,7 +55,7 @@ class MpvPlayer(MplayerPlayer):
 
     @staticmethod
     def isValidPlayerPath(path):
-        if "mpv" in path and MpvPlayer.getExpandedPath(path):
+        if "mpv" in path and "mpvnet" not in path and MpvPlayer.getExpandedPath(path):
             return True
         return False
 
@@ -128,7 +128,7 @@ class NewMpvPlayer(OldMpvPlayer):
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), OSDType=constants.OSD_NOTIFICATION,
                        mood=constants.MESSAGE_NEUTRAL):
         if not self._client._config["chatOutputEnabled"]:
-            super(self.__class__, self).displayMessage(message=message, duration=duration, OSDType=OSDType, mood=mood)
+            MplayerPlayer.displayMessage(self, message=message, duration=duration, OSDType=OSDType, mood=mood)
             return
         messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace(
             "\\\\", constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER).replace("<NEWLINE>", "\\n")
@@ -136,7 +136,7 @@ class NewMpvPlayer(OldMpvPlayer):
 
     def displayChatMessage(self, username, message):
         if not self._client._config["chatOutputEnabled"]:
-            super(self.__class__, self).displayChatMessage(username, message)
+            MplayerPlayer.displayChatMessage(self, username, message)
             return
         username = self._sanitizeText(username.replace("\\", constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
         message = self._sanitizeText(message.replace("\\", constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
@@ -197,6 +197,10 @@ class NewMpvPlayer(OldMpvPlayer):
             return self._position
 
     def _storePosition(self, value):
+        if self._client.isPlayingMusic() and self._paused == False and self._position == value and abs(self._position-self._position) < 0.5:
+            self._client.ui.showDebugMessage("EOF DETECTED!")
+            self._position = 0
+            self.setPosition(0)
         self.lastMPVPositionUpdate = time.time()
         if self._recentlyReset():
             self._client.ui.showDebugMessage("Recently reset, so storing position as 0")
@@ -252,7 +256,7 @@ class NewMpvPlayer(OldMpvPlayer):
             self._client.ui.showDebugMessage(
                 "Did not seek as recently reset and {} below 'do not reset position' threshold".format(value))
             return
-        super(self.__class__, self).setPosition(value)
+        MplayerPlayer.setPosition(self, value)
         self.lastMPVPositionUpdate = time.time()
 
     def openFile(self, filePath, resetPosition=False):

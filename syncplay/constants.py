@@ -1,4 +1,24 @@
 # coding:utf8
+# code needed to get customized constants for different OS
+import sys
+
+OS_WINDOWS = "win"
+OS_LINUX = "linux"
+OS_MACOS = "darwin"
+OS_BSD = "freebsd"
+OS_DRAGONFLY = "dragonfly"
+OS_DEFAULT = "default"
+
+def getValueForOS(constantDict):
+    if sys.platform.startswith(OS_WINDOWS):
+        return constantDict[OS_WINDOWS] if OS_WINDOWS in constantDict else constantDict[OS_DEFAULT]
+    if sys.platform.startswith(OS_LINUX):
+        return constantDict[OS_LINUX] if OS_LINUX in constantDict else constantDict[OS_DEFAULT]
+    if sys.platform.startswith(OS_MACOS):
+        return constantDict[OS_MACOS] if OS_MACOS in constantDict else constantDict[OS_DEFAULT]
+    if OS_BSD in sys.platform or sys.platform.startswith(OS_DRAGONFLY):
+        return constantDict[OS_BSD] if OS_BSD in constantDict else constantDict[OS_DEFAULT]
+
 # You might want to change these
 DEFAULT_PORT = 8999
 OSD_DURATION = 3.0
@@ -9,7 +29,8 @@ MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "
 CONFIG_NAMES = [".syncplay", "syncplay.ini"]  # Syncplay searches first to last
 DEFAULT_CONFIG_NAME = "syncplay.ini"
-RECENT_CLIENT_THRESHOLD = "1.6.0"  # This and higher considered 'recent' clients (no warnings)
+RECENT_CLIENT_THRESHOLD = "1.6.4"  # This and higher considered 'recent' clients (no warnings)
+MUSIC_FORMATS = [".mp3", ".m4a", ".m4p", ".wav", ".aiff", ".r", ".ogg", ".flac"] # ALL LOWER CASE!
 WARN_OLD_CLIENTS = True  # Use MOTD to inform old clients to upgrade
 LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
 SHOW_CONTACT_INFO = True  # Displays dev contact details below list in GUI
@@ -24,6 +45,7 @@ FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [
     ['syncplay.pl:8999 (France)', 'syncplay.pl:8999']]
 PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH = 10  # Seconds
 PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD = 5  # Seconds (only triggered if file is paused, e.g. due to EOF)
+EXECUTABLE_COMBOBOX_MINIMUM_LENGTH = 30 # Minimum number of characters that the combobox will make visible
 
 # Overriden by config
 SHOW_OSD = True  # Sends Syncplay messages to media player OSD
@@ -62,9 +84,10 @@ PLAYLIST_MAX_CHARACTERS = 10000
 PLAYLIST_MAX_ITEMS = 250
 MAXIMUM_TAB_WIDTH = 350
 TAB_PADDING = 30
-DEFAULT_WINDOWS_MONOSPACE_FONT = "Consolas"
-DEFAULT_OSX_MONOSPACE_FONT = "Menlo"
-FALLBACK_MONOSPACE_FONT = "Monospace"
+MONOSPACE_FONT = getValueForOS({
+    OS_DEFAULT: "Monospace",
+    OS_MACOS: "Menlo",
+    OS_WINDOWS: "Consolas"})
 DEFAULT_CHAT_FONT_SIZE = 24
 DEFAULT_CHAT_INPUT_FONT_COLOR = "#FFFF00"
 DEFAULT_CHAT_OUTPUT_FONT_COLOR = "#FFFF00"
@@ -133,6 +156,8 @@ MPLAYER_PATHS = ["mplayer2", "mplayer"]
 MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"c:\program files\mpv\mpv.exe", r"c:\program files\mpv-player\mpv.exe",
              r"c:\program Files (x86)\mpv\mpv.exe", r"c:\program Files (x86)\mpv-player\mpv.exe",
              "/Applications/mpv.app/Contents/MacOS/mpv"]
+MPVNET_PATHS = [r"c:\program files\mpv.net\mpvnet.exe", r"c:\program files\mpv.net\mpvnet.exe",
+             r"c:\program Files (x86)\mpv.net\mpvnet.exe", r"c:\program Files (x86)\mpv.net\mpvnet.exe"]
 VLC_PATHS = [
     r"c:\program files (x86)\videolan\vlc\vlc.exe",
     r"c:\program files\videolan\vlc\vlc.exe",
@@ -140,12 +165,14 @@ VLC_PATHS = [
     "/usr/bin/vlc-wrapper",
     "/Applications/VLC.app/Contents/MacOS/VLC",
     "/usr/local/bin/vlc",
-    "/usr/local/bin/vlc-wrapper"
+    "/usr/local/bin/vlc-wrapper",
+    "/snap/bin/vlc"
 ]
 
 VLC_ICONPATH = "vlc.png"
 MPLAYER_ICONPATH = "mplayer.png"
 MPV_ICONPATH = "mpv.png"
+MPVNET_ICONPATH = "mpvnet.ico"
 MPC_ICONPATH = "mpc-hc.png"
 MPC64_ICONPATH = "mpc-hc64.png"
 MPC_BE_ICONPATH = "mpc-be.png"
@@ -175,8 +202,12 @@ STYLE_SUBCHECKBOX = "QCheckBox, QLabel, QRadioButton {{ margin-left: 6px; paddin
 STYLE_SUBLABEL = "QCheckBox, QLabel {{ margin-left: 6px; padding-left: 16px; background:url('{}') left no-repeat }}"  # Graphic path
 STYLE_ERRORLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: red; padding: 2px; background: #FFAAAA; }"
 STYLE_SUCCESSLABEL = "QLabel { color : black; border-style: outset; border-width: 2px; border-radius: 7px; border-color: green; padding: 2px; background: #AAFFAA; }"
-STYLE_READY_PUSHBUTTON = "QPushButton { text-align: left; padding: 10px 5px 10px 5px;}"
-STYLE_AUTO_PLAY_PUSHBUTTON = "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }"
+STYLE_READY_PUSHBUTTON = getValueForOS({
+    OS_DEFAULT: "QPushButton { text-align: left; padding: 10px 5px 10px 5px;}",
+    OS_MACOS: "QPushButton { text-align: left; padding: 10px 5px 10px 15px; margin: 0px 3px 0px 2px}"})
+STYLE_AUTO_PLAY_PUSHBUTTON = getValueForOS({
+    OS_DEFAULT: "QPushButton { text-align: left; padding: 5px 5px 5px 5px; }",
+    OS_MACOS: "QPushButton { text-align: left; padding: 10px 5px 10px 15px; margin: 0px 0px 0px -4px}"})
 STYLE_NOTIFICATIONBOX = "Username { color: #367AA9; font-weight:bold; }"
 STYLE_CONTACT_INFO = "<span style=\"color: grey\"><strong><small>{}</span><br /><br />"  # Contact info message
 STYLE_USER_MESSAGE = "<span style=\"{}\">&lt;{}&gt;</span> {}"
@@ -187,9 +218,19 @@ STYLE_NOFILEITEM_COLOR = 'blue'
 STYLE_NOTCONTROLLER_COLOR = 'grey'
 STYLE_UNTRUSTEDITEM_COLOR = 'purple'
 
+STYLE_DARK_LINKS_COLOR = "a {color: #1A78D5; }"
+STYLE_DARK_ABOUT_LINK_COLOR = "color: #1A78D5;"
+STYLE_DARK_ERRORNOTIFICATION = "color: #E94F64;"
+STYLE_DARK_DIFFERENTITEM_COLOR = '#E94F64'
+STYLE_DARK_NOFILEITEM_COLOR = '#1A78D5'
+STYLE_DARK_NOTCONTROLLER_COLOR = 'grey'
+STYLE_DARK_UNTRUSTEDITEM_COLOR = '#882fbc'
+
 TLS_CERT_ROTATION_MAX_RETRIES = 10
 
-USERLIST_GUI_USERNAME_OFFSET = 21  # Pixels
+USERLIST_GUI_USERNAME_OFFSET = getValueForOS({
+    OS_DEFAULT: 21,
+    OS_MACOS: 26})  # Pixels
 USERLIST_GUI_USERNAME_COLUMN = 0
 USERLIST_GUI_FILENAME_COLUMN = 3
 
@@ -217,8 +258,9 @@ MPV_SYNCPLAYINTF_CONSTANTS_TO_SEND = [
 MPV_SYNCPLAYINTF_LANGUAGE_TO_SEND = ["mpv-key-tab-hint", "mpv-key-hint", "alphakey-mode-warning-first-line", "alphakey-mode-warning-second-line"]
 VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '--no-input-fast-seek',
                   '--play-and-pause', '--start-time=0']
-VLC_SLAVE_MACOS_ARGS = ['--verbose=2', '--no-file-logging']
-VLC_SLAVE_NONMACOS_ARGS = ['--no-one-instance', '--no-one-instance-when-started-from-file']
+VLC_SLAVE_EXTRA_ARGS = getValueForOS({
+     OS_DEFAULT: ['--no-one-instance', '--no-one-instance-when-started-from-file'],
+     OS_MACOS: ['--verbose=2', '--no-file-logging']})
 MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS = ["no-osd set time-pos ", "loadfile "]
 MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS = ["cycle pause"]
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
@@ -275,9 +317,3 @@ DEFAULT_TRUSTED_DOMAINS = ["youtube.com", "youtu.be"]
 TRUSTABLE_WEB_PROTOCOLS = ["http://www.", "https://www.", "http://", "https://"]
 
 PRIVATE_FILE_FIELDS = ["path"]
-
-OS_WINDOWS = "win"
-OS_LINUX = "linux"
-OS_MACOS = "darwin"
-OS_BSD = "freebsd"
-OS_DRAGONFLY = "dragonfly"

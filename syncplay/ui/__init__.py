@@ -12,9 +12,9 @@ except ImportError:
 from syncplay.ui.consoleUI import ConsoleUI
 
 
-def getUi(graphical=True):
+def getUi(graphical=True, passedBar=None):
     if graphical:
-        ui = GraphicalUI()
+        ui = GraphicalUI(passedBar=passedBar)
     else:
         ui = ConsoleUI()
         ui.setDaemon(True)

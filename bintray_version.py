@@ -3,10 +3,12 @@
 import json
 from syncplay import version
 
-f = open('bintray.json', 'r')
+bintrayFileName = 'bintray.json'
+
+f = open(bintrayFileName, 'r')
 data = json.load(f)
 
 data['version']['name'] = 'v' + version
 
-g = open('bintray.json', 'w')
+g = open(bintrayFileName, 'w')
 json.dump(data, g, indent=4)
