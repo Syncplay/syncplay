@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8]
+        python-version: [3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -38,4 +38,4 @@ jobs:
     - name: Test client
       run: |
         python syncplayServer.py &
-        python syncplayClient.py --no-gui -a localhost
+        python syncplayClient.py --no-gui -a localhost -r test -n test
