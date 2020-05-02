@@ -1975,6 +1975,8 @@ class FileSwitchManager(object):
                     if self.mediaFilesCache != newMediaFilesCache:
                         self.mediaFilesCache = newMediaFilesCache
                         self.newInfo = True
+            except Exception as e:
+                self._client.ui.showDebugMessage(str(e))
             finally:
                 self.currentlyUpdating = False
 
