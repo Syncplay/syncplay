@@ -10,7 +10,7 @@ import ast
 from syncplay import constants
 from syncplay.messages import getMessage
 from syncplay.utils import isURL, findResourcePath
-from syncplay.utils import isMacOS, isWindows
+from syncplay.utils import isMacOS, isWindows, isASCII
 
 from syncplay.players.basePlayer import BasePlayer
 
@@ -522,7 +522,7 @@ class MpvPlayer(BasePlayer):
 
             call = [playerPath]
             if filePath:
-                if isWindows() and not utils.isASCII(filePath):
+                if isWindows() and not isASCII(filePath):
                     self.__playerController.delayedFilePath = filePath
                     filePath = None
                 else:
