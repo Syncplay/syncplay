@@ -8,7 +8,6 @@ import threading
 import ast
 
 from syncplay import constants
-from syncplay.players.mplayer import MplayerPlayer
 from syncplay.messages import getMessage
 from syncplay.utils import isURL, findResourcePath
 from syncplay.utils import isMacOS, isWindows
@@ -16,12 +15,13 @@ from syncplay.utils import isMacOS, isWindows
 from syncplay.players.basePlayer import BasePlayer
 
 
-class MpvPlayer(MplayerPlayer):
+class MpvPlayer(BasePlayer):
     RE_VERSION = re.compile(r'.*mpv (\d+)\.(\d+)\.\d+.*')
     osdMessageSeparator = "\\n"
     osdMessageSeparator = "; "  # TODO: Make conditional
     POSITION_QUERY = 'time-pos'
     OSD_QUERY = 'show_text'
+    RE_ANSWER = re.compile(constants.MPLAYER_ANSWER_REGEX)
     lastResetTime = None
     lastMPVPositionUpdate = None
     alertOSDSupported = True
@@ -117,11 +117,19 @@ class MpvPlayer(MplayerPlayer):
             self._client.ui.showErrorMessage(line)
 
 
+    def oldDisplayMessage(
+                self, message,
+                duration=(constants.OSD_DURATION * 1000), OSDType=constants.OSD_NOTIFICATION,
+                mood=constants.MESSAGE_NEUTRAL
+        ):
+            messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")
+            self._listener.sendLine('{} "{!s}" {} {}'.format(
+                self.OSD_QUERY, messageString, duration, constants.MPLAYER_OSD_LEVEL))
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), OSDType=constants.OSD_NOTIFICATION,
                        mood=constants.MESSAGE_NEUTRAL):
         if not self._client._config["chatOutputEnabled"]:
-            MplayerPlayer.displayMessage(self, message=message, duration=duration, OSDType=OSDType, mood=mood)
+            self.oldDisplayMessage(self, message=message, duration=duration, OSDType=OSDType, mood=mood)
             return
         messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace(
             "\\\\", constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER).replace("<NEWLINE>", "\\n")
@@ -358,7 +366,9 @@ class MpvPlayer(MplayerPlayer):
             self._client.ui.showDebugMessage(
                 "Did not seek as recently reset and {} below 'do not reset position' threshold".format(value))
             return
-        MplayerPlayer.setPosition(self, value)
+        self._position = max(value, 0)
+        self._setProperty(self.POSITION_QUERY, "{}".format(value))
+        time.sleep(0.03)
         self.lastMPVPositionUpdate = time.time()
 
     def openFile(self, filePath, resetPosition=False):
@@ -547,7 +557,7 @@ class MpvPlayer(MplayerPlayer):
                 self.__process = subprocess.Popen(
                     call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT,
                     env=env, bufsize=0)
-            threading.Thread.__init__(self, name="MPlayer Listener")
+            threading.Thread.__init__(self, name="MPV Listener")
 
         def __getCwd(self, filePath, env):
             if not filePath:
@@ -565,11 +575,8 @@ class MpvPlayer(MplayerPlayer):
         def run(self):
             line = self.__process.stdout.readline()
             line = line.decode('utf-8')
-            if "MPlayer 1" in line:
-                self.__playerController.notMplayer2()
-            else:
-                line = line.rstrip("\r\n")
-                self.__playerController.lineReceived(line)
+            line = line.rstrip("\r\n")
+            self.__playerController.lineReceived(line)
             while self.__process.poll() is None:
                 line = self.__process.stdout.readline()
                 line = line.decode('utf-8')
