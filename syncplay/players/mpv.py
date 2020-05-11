@@ -6,7 +6,6 @@ import time
 import subprocess
 import threading
 import ast
-import random
 
 from syncplay import constants
 from syncplay.messages import getMessage
@@ -54,17 +53,23 @@ class MpvPlayer(BasePlayer):
         return MpvPlayer(client, MpvPlayer.getExpandedPath(playerPath), filePath, args)
 
     @staticmethod
-    def getStartupArgs(path, userArgs, socketName=None):
+    def getStartupArgs(userArgs):
         args = constants.MPV_ARGS
+        args["script"] = findResourcePath("syncplayintf.lua")
         if userArgs:
-            args.extend(userArgs)
-        args.extend(constants.MPV_SLAVE_ARGS)
-        if constants.MPV_NEW_VERSION:
-            args.extend(constants.MPV_SLAVE_ARGS_NEW)
-            args.extend(["--script={}".format(findResourcePath("syncplayintf.lua"))])
-        if socketName:
-            args.extend((["--input-ipc-server={}".format(socketName)]))
-        print(args)
+            for argToAdd in userArgs:
+                if argToAdd.startswith('--'):
+                    argToAdd = argToAdd[2:]
+                elif argToAdd.startswith('-'):
+                    argToAdd = argToAdd[1:]
+                if argToAdd.strip() == "":
+                    continue
+                if "=" in argToAdd:
+                    (argName, argValue) = argToAdd.split("=")
+                else:
+                    argName = argToAdd
+                    argValue = "yes"
+                args[argName] = argValue
         return args
 
     @staticmethod
@@ -541,14 +546,13 @@ class MpvPlayer(BasePlayer):
 
     class __Listener(threading.Thread):
         def __init__(self, playerController, playerPath, filePath, args):
+            self.playerPath = playerPath
+            self.mpv_arguments = playerController.getStartupArgs(args)
             self.mpv_running = True
             self.sendQueue = []
             self.readyToSend = True
             self.lastSendTime = None
             self.lastNotReadyTime = None
-            self.mpvGUID = random.randrange(constants.VLC_MIN_PORT, constants.VLC_MAX_PORT) if (
-                        constants.VLC_MIN_PORT < constants.VLC_MAX_PORT) else constants.VLC_MIN_PORT
-            self.socketName = "/tmp/syncplay-mpv-socket-{}".format(self.mpvGUID)
             self.__playerController = playerController
             if not self.__playerController._client._config["chatOutputEnabled"]:
                 self.__playerController.alertOSDSupported = False
@@ -560,14 +564,8 @@ class MpvPlayer(BasePlayer):
                     filePath = os.environ['PWD'] + os.path.sep + filePath
                 filePath = os.path.realpath(filePath)
 
-            call = [playerPath]
             if filePath:
-                if isWindows() and not isASCII(filePath):
-                    self.__playerController.delayedFilePath = filePath
-                    filePath = None
-                else:
-                    call.extend([filePath])
-            call.extend(playerController.getStartupArgs(playerPath, args, self.socketName))
+                self.__playerController.delayedFilePath = filePath
 
             # At least mpv may output escape sequences which result in syncplay
             # trying to parse something like
@@ -590,15 +588,8 @@ class MpvPlayer(BasePlayer):
                 if pythonPath is not None:
                     env['PATH'] = '/usr/bin:/usr/local/bin'
                     env['PYTHONPATH'] = pythonPath
-            if filePath:
-                self.__process = subprocess.Popen(
-                    call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT,
-                    cwd=self.__getCwd(filePath, env), env=env, bufsize=0)
-            else:
-                self.__process = subprocess.Popen(
-                    call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT,
-                    env=env, bufsize=0)
-            self.mpvpipe = MPV(start_mpv=False, ipc_socket=self.socketName, log_handler=self.__playerController.mpv_log_handler, loglevel="info")
+            self.mpvpipe = MPV(mpv_location=self.playerPath, loglevel="info", log_handler=self.__playerController.mpv_log_handler, **self.mpv_arguments)
+            self.__process = self.mpvpipe
             #self.mpvpipe.show_text("HELLO WORLD!", 1000)
             threading.Thread.__init__(self, name="MPV Listener")
 
@@ -617,13 +608,7 @@ class MpvPlayer(BasePlayer):
             return cwd
 
         def run(self):
-            line = self.__process.stdout.readline()
-            while self.__process.poll() is None:
-                line = self.__process.stdout.readline()
-            self.mpvpipe.terminate()
-            time.sleep(0.5)
-            self.__playerController.drop()
-
+            pass
 
         def sendChat(self, message):
             if message:
@@ -713,6 +698,12 @@ class MpvPlayer(BasePlayer):
         def actuallySendLine(self, line):
             try:
                 self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
-                self.mpvpipe.command(*line)
+                try:
+                    self.mpvpipe.command(*line)
+                except Exception as e:
+                    self.__playerController._client.ui.showDebugMessage("CANNOT SEND {} DUE TO {}".format(line, e))
+                    self.mpvpipe.terminate()
+                    self.__playerController._takeLocksDown()
+                    self.__playerController.reactor.callFromThread(self.__playerController._client.stop, False)
             except IOError:
                 pass
