@@ -35,13 +35,13 @@ class MpvPlayer(BasePlayer):
             ver = MpvPlayer.RE_VERSION.search(subprocess.check_output([playerPath, '--version']).decode('utf-8'))
         except:
             ver = None
-        constants.MPV_NEW_VERSION = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 17
+        constants.MPV_NEW_VERSION = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 29
         if not constants.MPV_NEW_VERSION:
             from twisted.internet import reactor
             the_reactor = reactor
             the_reactor.callFromThread(client.ui.showErrorMessage,
                                         "This version of mpv is not compatible with Syncplay. "
-                                        "Please use mpv >=0.17.0.", True)
+                                        "Please use mpv >=0.29.0.", True)
             the_reactor.callFromThread(client.stop)
             return
 
