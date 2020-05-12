@@ -41,7 +41,7 @@ class MpvPlayer(BasePlayer):
             the_reactor = reactor
             the_reactor.callFromThread(client.ui.showErrorMessage,
                                         "This version of mpv is not compatible with Syncplay. "
-                                        "Please use mpv >=0.29.0.", True)
+                                        "Please use mpv >=0.23.0.", True)
             the_reactor.callFromThread(client.stop)
             return
 
@@ -49,7 +49,7 @@ class MpvPlayer(BasePlayer):
         if not constants.MPV_OSC_VISIBILITY_CHANGE_VERSION:
             client.ui.showDebugMessage(
                 "This version of mpv is not known to be compatible with changing the OSC visibility. "
-                "Please use mpv >=0.28.0.")
+                "Please use mpv >=0.23.0.")
         return MpvPlayer(client, MpvPlayer.getExpandedPath(playerPath), filePath, args)
 
     @staticmethod
