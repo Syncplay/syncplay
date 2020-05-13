@@ -423,10 +423,10 @@ class MpvPlayer(BasePlayer):
             line = line.replace(constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER, "\\")
             self._listener.sendChat(line[6:-7])
 
-        if "<paused>" in line and "<position>" in line:
-            update_string = line.replace(">", "<").split("<")
+        if "<paused=" in line and ", pos=" in line:
+            update_string = line.replace(">", "<").replace("=", "<").replace(", ", "<").split("<")
             paused_update = update_string[2]
-            position_update = update_string[6]
+            position_update = update_string[4]
             if paused_update == "nil":
                 self._storePauseState(True)
             else:
