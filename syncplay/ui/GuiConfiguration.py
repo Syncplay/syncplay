@@ -1054,7 +1054,7 @@ class ConfigDialog(QtWidgets.QDialog):
             font.setPointSize(self.config[configName + "RelativeFontSize"])
             font.setWeight(self.config[configName + "FontWeight"])
             font.setUnderline(self.config[configName + "FontUnderline"])
-            value, ok = QtWidgets.QFontDialog.getFont(font)
+            ok, value = QtWidgets.QFontDialog.getFont(font)
             if ok:
                 self.config[configName + "FontFamily"] = value.family()
                 self.config[configName + "RelativeFontSize"] = value.pointSize()
@@ -1420,7 +1420,7 @@ class ConfigDialog(QtWidgets.QDialog):
         if isMacOS():
             initialHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50
             if self.error:
-                initialHeight += 40            
+                initialHeight += 40
             self.setFixedWidth(self.sizeHint().width())
             self.setFixedHeight(initialHeight)
         else:
