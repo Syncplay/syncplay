@@ -42,14 +42,16 @@ class WindowsSocket(threading.Thread):
     Data is automatically encoded and decoded as JSON. The callback
     function will be called for each inbound message.
     """
-    def __init__(self, ipc_socket, callback=None):
+    def __init__(self, ipc_socket, callback=None, quit_callback=None):
         """Create the wrapper.
 
         *ipc_socket* is the pipe name. (Not including \\\\.\\pipe\\)
         *callback(json_data)* is the function for recieving events.
+        *quit_callback* is called when the socket connection dies.
         """
         ipc_socket = "\\\\.\\pipe\\" + ipc_socket
         self.callback = callback
+        self.quit_callback = quit_callback
         
         access = _winapi.GENERIC_READ | _winapi.GENERIC_WRITE
         limit = 5 # Connection may fail at first. Try 5 times.
@@ -71,15 +73,21 @@ class WindowsSocket(threading.Thread):
 
         threading.Thread.__init__(self)
 
-    def stop(self):
+    def stop(self, join=True):
         """Terminate the thread."""
         if self.socket is not None:
             self.socket.close()
-        self.join()
+        if join:
+            self.join()
 
     def send(self, data):
         """Send *data* to the pipe, encoded as JSON."""
-        self.socket.send_bytes(json.dumps(data).encode('utf-8') + b'\n')
+        try:
+            self.socket.send_bytes(json.dumps(data).encode('utf-8') + b'\n')
+        except OSError as ex:
+            if len(ex.args) == 1 and ex.args[0] == "handle is closed":
+                raise BrokenPipeError("handle is closed")
+            raise ex
 
     def run(self):
         """Process pipe events. Do not run this directly. Use *start*."""
@@ -102,7 +110,8 @@ class WindowsSocket(threading.Thread):
                     self.callback(json_data)
                 data = b''
         except EOFError:
-            pass
+            if self.quit_callback:
+                self.quit_callback()
 
 class UnixSocket(threading.Thread):
     """
@@ -111,14 +120,16 @@ class UnixSocket(threading.Thread):
     Data is automatically encoded and decoded as JSON. The callback
     function will be called for each inbound message.
     """
-    def __init__(self, ipc_socket, callback=None):
+    def __init__(self, ipc_socket, callback=None, quit_callback=None):
         """Create the wrapper.
 
         *ipc_socket* is the path to the socket.
         *callback(json_data)* is the function for recieving events.
+        *quit_callback* is called when the socket connection dies.
         """
         self.ipc_socket = ipc_socket
         self.callback = callback
+        self.quit_callback = quit_callback
         self.socket = socket.socket(socket.AF_UNIX)
         self.socket.connect(self.ipc_socket)
 
@@ -127,15 +138,22 @@ class UnixSocket(threading.Thread):
 
         threading.Thread.__init__(self)
 
-    def stop(self):
+    def stop(self, join=True):
         """Terminate the thread."""
         if self.socket is not None:
-            self.socket.shutdown(socket.SHUT_WR)
-            self.socket.close()
-        self.join()
+            try:
+                self.socket.shutdown(socket.SHUT_WR)
+                self.socket.close()
+                self.socket = None
+            except OSError:
+                pass # Ignore socket close failure.
+        if join:
+            self.join()
 
     def send(self, data):
         """Send *data* to the socket, encoded as JSON."""
+        if self.socket is None:
+            raise BrokenPipeError("socket is closed")
         self.socket.send(json.dumps(data).encode('utf-8') + b'\n')
 
     def run(self):
@@ -157,6 +175,8 @@ class UnixSocket(threading.Thread):
                 json_data = json.loads(item)
                 self.callback(json_data)
             data = b''
+        if self.quit_callback:
+            self.quit_callback()
 
 class MPVProcess:
     """
@@ -236,21 +256,23 @@ class MPVInter:
     """
     Low-level interface to MPV. Does NOT manage an mpv process. (Internal)
     """
-    def __init__(self, ipc_socket, callback=None):
+    def __init__(self, ipc_socket, callback=None, quit_callback=None):
         """Create the wrapper.
 
         *ipc_socket* is the path to the Unix/Linux socket or name of the Windows pipe.
         *callback(event_name, data)* is the function for recieving events.
+        *quit_callback* is called when the socket connection to MPV dies.
         """
         Socket = UnixSocket
         if os.name == 'nt':
             Socket = WindowsSocket
 
         self.callback = callback
+        self.quit_callback = quit_callback
         if self.callback is None:
             self.callback = lambda event, data: None
         
-        self.socket = Socket(ipc_socket, self.event_callback)
+        self.socket = Socket(ipc_socket, self.event_callback, self.quit_callback)
         self.socket.start()
         self.command_id = 1
         self.rid_lock = threading.Lock()
@@ -258,9 +280,9 @@ class MPVInter:
         self.cid_result = {}
         self.cid_wait = {}
     
-    def stop(self):
+    def stop(self, join=True):
         """Terminate the underlying connection."""
-        self.socket.stop()
+        self.socket.stop(join)
 
     def event_callback(self, data):
         """Internal callback for recieving events from MPV."""
@@ -326,10 +348,10 @@ class EventHandler(threading.Thread):
         """
         self.queue.put((func, args))
 
-    def stop(self):
+    def stop(self, join=True):
         """Terminate the thread."""
         self.queue.put("quit")
-        self.join()
+        self.join(join)
 
     def run(self):
         """Process socket events. Do not run this directly. Use *start*."""
@@ -352,7 +374,8 @@ class MPV:
     Please note that if you are using a really old MPV version, a fallback command
     list is used. Not all commands may actually work when this fallback is used.
     """
-    def __init__(self, start_mpv=True, ipc_socket=None, mpv_location=None, log_handler=None, loglevel=None, **kwargs):
+    def __init__(self, start_mpv=True, ipc_socket=None, mpv_location=None,
+                 log_handler=None, loglevel=None, quit_callback=None, **kwargs):
         """
         Create the interface to MPV and process instance.
 
@@ -361,6 +384,7 @@ class MPV:
         *mpv_location* is the location of MPV for *start_mpv*. (Default: Use MPV in PATH)
         *log_handler(level, prefix, text)* is an optional handler for log events. (Default: Disabled)
         *loglevel* is the level for log messages. Levels are fatal, error, warn, info, v, debug, trace. (Default: Disabled)
+        *quit_callback* is called when the socket connection to MPV dies.
 
         All other arguments are forwarded to MPV as command-line arguments if *start_mpv* is used.
         """
@@ -370,6 +394,7 @@ class MPV:
         self.property_bindings = {}
         self.mpv_process = None
         self.mpv_inter = None
+        self.quit_callback = quit_callback
         self.event_handler = EventHandler()
         self.event_handler.start()
         if ipc_socket is None:
@@ -391,7 +416,7 @@ class MPV:
             else:
                 raise MPVError("MPV process retry limit reached.")
 
-        self.mpv_inter = MPVInter(ipc_socket, self._callback)
+        self.mpv_inter = MPVInter(ipc_socket, self._callback, self._quit_callback)
         self.properties = set(x.replace("-", "_") for x in self.command("get_property", "property-list"))
         try:
             command_list = [x["name"] for x in self.command("get_property", "command-list")]
@@ -425,6 +450,14 @@ class MPV:
             args = data["args"]
             if len(args) == 2 and args[0] == "custom-bind":
                 self.event_handler.put_task(self.key_bindings[args[1]])
+
+    def _quit_callback(self):
+        """
+        Internal handler for quit events.
+        """
+        if self.quit_callback:
+            self.quit_callback()
+        self.terminate(join=False)
 
     def bind_event(self, name, callback):
         """
@@ -563,13 +596,13 @@ class MPV:
     def __del__(self):
         self.terminate()
 
-    def terminate(self):
+    def terminate(self, join=True):
         """Terminate the connection to MPV and process (if *start_mpv* is used)."""
         if self.mpv_process:
             self.mpv_process.stop()
         if self.mpv_inter:
-            self.mpv_inter.stop()
-        self.event_handler.stop()
+            self.mpv_inter.stop(join)
+        self.event_handler.stop(join)
 
     def command(self, command, *args):
         """

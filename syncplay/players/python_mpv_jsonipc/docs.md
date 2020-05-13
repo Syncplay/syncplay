@@ -31,7 +31,7 @@ function will be called for each inbound message.
 #### \_\_init\_\_
 
 ``` python
- | __init__(ipc_socket, callback=None)
+ | __init__(ipc_socket, callback=None, quit_callback=None)
 ```
 
 Create the wrapper.
@@ -87,7 +87,7 @@ function will be called for each inbound message.
 #### \_\_init\_\_
 
 ``` python
- | __init__(ipc_socket, callback=None)
+ | __init__(ipc_socket, callback=None, quit_callback=None)
 ```
 
 Create the wrapper.
@@ -175,7 +175,7 @@ Low-level interface to MPV. Does NOT manage an mpv process. (Internal)
 #### \_\_init\_\_
 
 ``` python
- | __init__(ipc_socket, callback=None)
+ | __init__(ipc_socket, callback=None, quit_callback=None)
 ```
 
 Create the wrapper.
@@ -293,7 +293,7 @@ list is used. Not all commands may actually work when this fallback is used.
 #### \_\_init\_\_
 
 ``` python
- | __init__(start_mpv=True, ipc_socket=None, mpv_location=None, log_handler=None, loglevel=None, ****kwargs)
+ | __init__(start_mpv=True, ipc_socket=None, mpv_location=None, log_handler=None, loglevel=None, quit_callback=None, ****kwargs)
 ```
 
 Create the interface to MPV and process instance.
@@ -407,7 +407,7 @@ Remove callback to an MPV property change.
 
 Decorator to bind a callback to an MPV property change.
 
-@on\_key\_press(property\_name)  
+@property\_observer(property\_name)  
 def my\_callback(name, data):  
 pass
 
@@ -441,7 +441,7 @@ Play the specified URL. An alias to loadfile().
  | terminate()
 ```
 
-Terminate the connection to MPV and process (if started by this module).
+Terminate the connection to MPV and process (if **start\_mpv** is used).
 
 <a name=".python_mpv_jsonipc.MPV.command"></a>
 
