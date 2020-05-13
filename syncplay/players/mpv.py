@@ -588,11 +588,10 @@ class MpvPlayer(BasePlayer):
                 if pythonPath is not None:
                     env['PATH'] = '/usr/bin:/usr/local/bin'
                     env['PYTHONPATH'] = pythonPath
-            self.mpvpipe = MPV(mpv_location=self.playerPath, loglevel="info", log_handler=self.__playerController.mpv_log_handler, **self.mpv_arguments)
+            self.mpvpipe = MPV(mpv_location=self.playerPath, loglevel="info", log_handler=self.__playerController.mpv_log_handler, quit_callback=self.stop_client, **self.mpv_arguments)
             self.__process = self.mpvpipe
             #self.mpvpipe.show_text("HELLO WORLD!", 1000)
             threading.Thread.__init__(self, name="MPV Listener")
-
 
         def __getCwd(self, filePath, env):
             if not filePath:
@@ -695,6 +694,15 @@ class MpvPlayer(BasePlayer):
                 except IndexError:
                     pass
 
+        def stop_client(self):
+            self.readyToSend = False
+            try:
+                self.mpvpipe.terminate()
+            except: #When mpv is already closed
+                pass
+            self.__playerController._takeLocksDown()
+            self.__playerController.reactor.callFromThread(self.__playerController._client.stop, False)
+
         def actuallySendLine(self, line):
             try:
                 self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
@@ -702,8 +710,6 @@ class MpvPlayer(BasePlayer):
                     self.mpvpipe.command(*line)
                 except Exception as e:
                     self.__playerController._client.ui.showDebugMessage("CANNOT SEND {} DUE TO {}".format(line, e))
-                    self.mpvpipe.terminate()
-                    self.__playerController._takeLocksDown()
-                    self.__playerController.reactor.callFromThread(self.__playerController._client.stop, False)
+                    self.stop_client()
             except IOError:
                 pass
