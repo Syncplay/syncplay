@@ -974,7 +974,6 @@ class SyncplayClient(object):
         else:
             return ""
 
-    @requireServerFeature("managedRooms")
     def identifyAsController(self, controlPassword):
         controlPassword = self.stripControlPassword(controlPassword)
         self.ui.showMessage(getMessage("identifying-as-controller-notification").format(controlPassword))
