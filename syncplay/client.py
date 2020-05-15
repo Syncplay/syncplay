@@ -759,7 +759,7 @@ class SyncplayClient(object):
         self._endpoint = HostnameEndpoint(reactor, host, port)
         try:
             caCertFP = open(os.environ['SSL_CERT_FILE'])
-            caCertTwisted = Certificate.loadPEM(caCertFP.read())
+            caCertTwisted = Certificate.loadPEM(caCertFP.read().encode('utf-8')
             caCertFP.close()
             self.protocolFactory.options = optionsForClientTLS(hostname=host)
             self._clientSupportsTLS = True
