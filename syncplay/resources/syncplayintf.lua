@@ -341,6 +341,18 @@ mp.register_script_message('set_syncplayintf_options', function(e)
 	set_syncplayintf_options(e)
 end)
 
+function state_paused_and_position()
+	-- bob
+	local pause_status = tostring(mp.get_property_native("pause"))
+	local position_status = tostring(mp.get_property_native("time-pos"))
+	mp.command('print-text "<paused='..pause_status..', pos='..position_status..'>"')
+	-- mp.command('print-text "<paused>true</paused><position>7.6</position>"')
+end
+
+mp.register_script_message('get_paused_and_position', function()
+	state_paused_and_position()
+end)
+
 -- Default options
 local utils = require 'mp.utils'
 local options = require 'mp.options'

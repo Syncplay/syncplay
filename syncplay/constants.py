@@ -235,9 +235,15 @@ USERLIST_GUI_USERNAME_COLUMN = 0
 USERLIST_GUI_FILENAME_COLUMN = 3
 
 MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 'all=1:global=4:cplayer=4', '-af-add', 'scaletempo']
-MPV_ARGS = ['--force-window', '--idle', '--hr-seek=always', '--keep-open']
-MPV_SLAVE_ARGS = ['--msg-level=all=error,cplayer=info,term-msg=info', '--input-terminal=no', '--input-file=/dev/stdin']
-MPV_SLAVE_ARGS_NEW = ['--term-playing-msg=<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=duration:${=length:0}}\nANS_path=${path}\n</SyncplayUpdateFile>', '--terminal=yes']
+MPV_ARGS = {'force-window': 'yes',
+            'idle': 'yes',
+            'hr-seek': 'always',
+            'keep-open': 'yes',
+            'input-terminal': 'no',
+            'term-playing-msg': '<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=duration:${=length:0}}\nANS_path=${path}\n</SyncplayUpdateFile>',
+            }
+
+
 MPV_NEW_VERSION = False
 MPV_OSC_VISIBILITY_CHANGE_VERSION = False
 MPV_INPUT_PROMPT_START_CHARACTER = "〉"
@@ -261,7 +267,7 @@ VLC_SLAVE_ARGS = ['--extraintf=luaintf', '--lua-intf=syncplay', '--no-quiet', '-
 VLC_SLAVE_EXTRA_ARGS = getValueForOS({
      OS_DEFAULT: ['--no-one-instance', '--no-one-instance-when-started-from-file'],
      OS_MACOS: ['--verbose=2', '--no-file-logging']})
-MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS = ["no-osd set time-pos ", "loadfile "]
+MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS = ["set_property time-pos ", "loadfile "]
 MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS = ["cycle pause"]
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
 VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_]+)(?:\: )?(?P<argument>.*))"
