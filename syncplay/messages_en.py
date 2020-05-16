@@ -1,4 +1,4 @@
-startTLS-server-certificate-invalid-DNS-ID# coding:utf8
+# coding:utf8
 
 """English dictionary"""
 
