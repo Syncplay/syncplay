@@ -9,6 +9,7 @@ import re
 import sys
 import threading
 import time
+from fnmatch import fnmatch
 from copy import deepcopy
 from functools import wraps
 
@@ -135,7 +136,7 @@ class SyncplayClient(object):
 
         if constants.DEBUG_MODE and constants.WARN_ABOUT_MISSING_STRINGS:
             missingStrings = getMissingStrings()
-            if missingStrings is not None and missingStrings is not "":
+            if missingStrings is not None and missingStrings != "":
                 self.ui.showDebugMessage("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
 
     def initProtocol(self, protocol):
@@ -199,9 +200,16 @@ class SyncplayClient(object):
             self.setPosition(-1)
             self.ui.showDebugMessage("Rewinded after double-check")
 
+    def isPlayingMusic(self):
+        if self.userlist.currentUser.file:
+            for musicFormat in constants.MUSIC_FORMATS:
+                if self.userlist.currentUser.file['name'].lower().endswith(musicFormat):
+                    return True
+
     def updatePlayerStatus(self, paused, position):
         position -= self.getUserOffset()
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
+        positionBeforeSeek = self._playerPosition
         self._playerPosition = position
         self._playerPaused = paused
         currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
@@ -222,7 +230,9 @@ class SyncplayClient(object):
 
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
-            if (pauseChange or seeked) and self._protocol:
+            if seeked and not pauseChange and self.isPlayingMusic() and abs(positionBeforeSeek - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD and self.playlist.notJustChangedPlaylist():
+                self.playlist.loadNextFileInPlaylist()
+            elif (pauseChange or seeked) and self._protocol:
                 if seeked:
                     self.playerPositionBeforeLastSeek = self.getGlobalPosition()
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)
@@ -230,7 +240,10 @@ class SyncplayClient(object):
     def prepareToAdvancePlaylist(self):
         if self.playlist.canSwitchToNextPlaylistIndex():
             self.ui.showDebugMessage("Preparing to advance playlist...")
-            self._protocol.sendState(0, True, True, None, True)
+            if self.isPlayingMusic():
+                self._protocol.sendState(0, False, True, None, True)
+            else:
+                self._protocol.sendState(0, True, True, None, True)
         else:
             self.ui.showDebugMessage("Not preparing to advance playlist because the next file cannot be switched to")
 
@@ -500,15 +513,19 @@ class SyncplayClient(object):
                 if self._config['onlySwitchToTrustedDomains']:
                     if self._config['trustedDomains']:
                         for trustedDomain in self._config['trustedDomains']:
-                            trustableURI = ''.join([trustedProtocol, trustedDomain, "/"])
-                            if URIToTest.startswith(trustableURI):
+                            trustableURI = ''.join([trustedProtocol, trustedDomain, "/*"])
+                            if fnmatch(URIToTest, trustableURI):
                                 return True
                     return False
                 else:
                     return True
         return False
 
-    def openFile(self, filePath, resetPosition=False):
+    def openFile(self, filePath, resetPosition=False, fromUser=False):
+        if fromUser and filePath.endswith(".txt") or filePath.endswith(".m3u") or filePath.endswith(".m3u8"):
+            self.playlist.loadPlaylistFromFile(filePath, resetPosition)
+            return
+
         self.playlist.openedFile()
         self._player.openFile(filePath, resetPosition)
         if resetPosition:
@@ -527,10 +544,10 @@ class SyncplayClient(object):
         self.playlist.changeToPlaylistIndex(*args, **kwargs)
 
     def loopSingleFiles(self):
-        return self._config["loopSingleFiles"]
+        return self._config["loopSingleFiles"] or self.isPlayingMusic()
 
     def isPlaylistLoopingEnabled(self):
-        return self._config["loopAtEndOfPlaylist"]
+        return self._config["loopAtEndOfPlaylist"] or self.isPlayingMusic()
 
     def __executePrivacySettings(self, filename, size):
         if self._config['filenamePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
@@ -629,6 +646,12 @@ class SyncplayClient(object):
         return features
 
     def setRoom(self, roomName, resetAutoplay=False):
+        roomSplit = roomName.split(":")
+        if roomName.startswith("+") and len(roomSplit) > 2:
+            roomName = roomSplit[0] + ":" + roomSplit[1]
+            password = roomSplit[2]
+            self.storeControlPassword(roomName, password)
+            self.ui.updateRoomName(roomName)
         self.userlist.currentUser.room = roomName
         if resetAutoplay:
             self.resetAutoPlayState()
@@ -641,6 +664,7 @@ class SyncplayClient(object):
         self.reIdentifyAsController()
 
     def reIdentifyAsController(self):
+        self.setRoom(self.userlist.currentUser.room)
         room = self.userlist.currentUser.room
         if utils.RoomPasswordProvider.isControlledRoom(room):
             storedRoomPassword = self.getControlledRoomPassword(room)
@@ -661,6 +685,9 @@ class SyncplayClient(object):
         readyState = self._config['readyAtStart'] if self.userlist.currentUser.isReady() is None else self.userlist.currentUser.isReady()
         self._protocol.setReady(readyState, manuallyInitiated=False)
         self.reIdentifyAsController()
+        if self._config["loadPlaylistFromFile"]:
+            self.playlist.loadPlaylistFromFile(self._config["loadPlaylistFromFile"])
+            self._config["loadPlaylistFromFile"] = None
 
     def getRoom(self):
         return self.userlist.currentUser.room
@@ -727,7 +754,7 @@ class SyncplayClient(object):
         self._endpoint = HostnameEndpoint(reactor, host, port)
         try:
             caCertFP = open(os.environ['SSL_CERT_FILE'])
-            caCertTwisted = Certificate.loadPEM(caCertFP.read())
+            caCertTwisted = Certificate.loadPEM(caCertFP.read().encode('utf-8'))
             caCertFP.close()
             self.protocolFactory.options = optionsForClientTLS(hostname=host)
             self._clientSupportsTLS = True
@@ -804,6 +831,10 @@ class SyncplayClient(object):
     @requireServerFeature("chat")
     def sendChat(self, message):
         if self._protocol and self._protocol.logged:
+            try:
+                message = message.replace("\n", "").replace("\r", "")
+            except:
+                pass
             message = utils.truncateText(message, constants.MAX_CHAT_MESSAGE_LENGTH)
             self._protocol.sendChatMessage(message)
 
@@ -830,12 +861,16 @@ class SyncplayClient(object):
             self.autoplayCheck()
 
     def autoplayCheck(self):
+        if self.isPlayingMusic():
+            return True
         if self.autoplayConditionsMet():
             self.startAutoplayCountdown()
         else:
             self.stopAutoplayCountdown()
 
     def instaplayConditionsMet(self):
+        if self.isPlayingMusic():
+            return True
         if not self.userlist.currentUser.canControl():
             return False
 
@@ -934,7 +969,6 @@ class SyncplayClient(object):
         else:
             return ""
 
-    @requireServerFeature("managedRooms")
     def identifyAsController(self, controlPassword):
         controlPassword = self.stripControlPassword(controlPassword)
         self.ui.showMessage(getMessage("identifying-as-controller-notification").format(controlPassword))
@@ -1692,6 +1726,25 @@ class SyncplayPlaylist():
         filename = _playlist[_index] if len(_playlist) > _index else None
         return filename
 
+    def loadPlaylistFromFile(self, path, shuffle=False):
+        if not os.path.isfile(path):
+            self._ui.showDebugMessage("Not loading {} as file could not be found".format(path))
+            return
+
+        with open(path) as f:
+            newPlaylist = f.read().splitlines()
+            if shuffle:
+                random.shuffle(newPlaylist)
+            if newPlaylist:
+                self.changePlaylist(newPlaylist, username=None, resetIndex=True)
+
+    def savePlaylistToFile(self, path):
+        with open(path, 'w') as playlistFile:
+            playlistToSave = utils.getListAsMultilineString(self._playlist)
+            playlistFile.write(playlistToSave)
+            self._ui.showMessage("Playlist saved as {}".format(path)) # TODO: Move to messages_en
+
+
     def changePlaylist(self, files, username=None, resetIndex=False):
         if self._playlist == files:
             if self._playlistIndex != 0 and resetIndex:
@@ -1848,7 +1901,7 @@ class FileSwitchManager(object):
         self.mediaDirectoriesNotFound = []
 
     def setClient(self, newClient):
-        self.client = newClient
+        self._client = newClient
 
     def setCurrentDirectory(self, curDir):
         self.currentDirectory = curDir
@@ -1922,6 +1975,8 @@ class FileSwitchManager(object):
                     if self.mediaFilesCache != newMediaFilesCache:
                         self.mediaFilesCache = newMediaFilesCache
                         self.newInfo = True
+            except Exception as e:
+                self._client.ui.showDebugMessage(str(e))
             finally:
                 self.currentlyUpdating = False
 

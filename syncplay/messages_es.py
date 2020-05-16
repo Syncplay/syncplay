@@ -107,6 +107,7 @@ es = {
     "mpc-version-insufficient-error": "La versión de MPC no es suficiente, por favor utiliza `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "La versión de MPC no es suficiente, por favor utiliza `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay no es compatible con esta versión de mpv. Por favor utiliza una versión diferente de mpv (p.ej. Git HEAD).",
+    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "El reproductor falló al abrir el archivo",
     "player-path-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE y mplayer2",
     "hostname-empty-error": "El nombre del host no puede ser vacío",
@@ -168,10 +169,12 @@ es = {
     "file-argument": 'archivo a reproducir',
     "args-argument": 'opciones del reproductor, si necesitas pasar opciones que empiezan con -, pásalas utilizando \'--\'',
     "clear-gui-data-argument": 'restablece ruta y los datos del estado de la ventana GUI almacenados como QSettings',
-    "language-argument": 'lenguaje para los mensajes de Syncplay (de/en/ru/it/es)',
+    "language-argument": 'lenguaje para los mensajes de Syncplay (de/en/ru/it/es/pt_BR)',
 
     "version-argument": 'imprime tu versión',
     "version-message": "Estás usando la versión de Syncplay {} ({})",
+
+    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)", # TODO: Translate
 
     # Client labels
     "config-window-title": "Configuración de Syncplay",
@@ -297,6 +300,8 @@ es = {
     "openmedia-menu-label": "A&brir archivo multimedia",
     "openstreamurl-menu-label": "Abrir URL de &flujo de medios",
     "setmediadirectories-menu-label": "&Establecer directorios de medios",
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
+    "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
     "exit-menu-label": "&Salir",
     "advanced-menu-label": "A&vanzado",
     "window-menu-label": "&Ventana",

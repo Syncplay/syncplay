@@ -107,6 +107,7 @@ it = {
     "mpc-version-insufficient-error": "La tua versione di MPC è troppo vecchia, per favore usa `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "La tua versione di MPC è troppo vecchia, per favore usa `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay non è compatibile con questa versione di mpv. Per favore usa un'altra versione di mpv (es. Git HEAD).",
+    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "Il player non è riuscito ad aprire il file",
     "player-path-error": "Il path del player non è configurato correttamente. I player supportati sono: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2",
     "hostname-empty-error": "Il campo hostname non può essere vuoto",
@@ -168,10 +169,12 @@ it = {
     "file-argument": 'file da riprodurre',
     "args-argument": 'opzioni del player, se hai bisogno di utilizzare opzioni che iniziano con - anteponi un singolo \'--\'',
     "clear-gui-data-argument": 'ripristina il percorso e i dati impostati tramite interfaccia grafica e salvati come QSettings',
-    "language-argument": 'lingua per i messaggi di Syncplay (de/en/ru/it/es)',
+    "language-argument": 'lingua per i messaggi di Syncplay (de/en/ru/it/es/pt_BR)',
 
     "version-argument": 'mostra la tua versione',
     "version-message": "Stai usando la versione di Syncplay {} ({})",
+
+    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)", # TODO: Translate
 
     # Client labels
     "config-window-title": "Configurazione di Syncplay",
@@ -297,6 +300,8 @@ it = {
     "openmedia-menu-label": "&Apri file multimediali",
     "openstreamurl-menu-label": "Apri indirizzo di &rete",
     "setmediadirectories-menu-label": "Imposta &cartelle multimediali",
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
+    "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
     "exit-menu-label": "&Esci",
     "advanced-menu-label": "&Avanzate",
     "window-menu-label": "&Finestra",

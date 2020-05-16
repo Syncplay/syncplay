@@ -21,10 +21,15 @@ from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFiledurat
 from syncplay.vendor import Qt
 from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
+applyDPIScaling = True
+if isLinux():
+    applyDPIScaling = False
+else:
+    applyDPIScaling = True
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, applyDPIScaling)
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, applyDPIScaling)
 if IsPySide2:
     from PySide2.QtCore import QStandardPaths
 if isMacOS() and IsPySide:
@@ -692,9 +697,9 @@ class MainWindow(QtWidgets.QMainWindow):
             pathFound = self._syncplayClient.fileSwitch.findFilepath(firstFile) if not isURL(firstFile) else None
             if self._syncplayClient.userlist.currentUser.file is None or firstFile != self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(firstFile):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile, resetPosition=True))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile, resetPosition=True, fromUser=True))
                 elif pathFound:
-                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound, resetPosition=True))
+                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openmedia-menu-label"), lambda: self.openFile(pathFound, resetPosition=True, fromUser=True))
             if pathFound:
                 menu.addAction(QtGui.QPixmap(resourcespath + "folder_film.png"),
                                getMessage('open-containing-folder'),
@@ -710,6 +715,10 @@ class MainWindow(QtWidgets.QMainWindow):
         menu.addAction(QtGui.QPixmap(resourcespath + "film_edit.png"), getMessage("editplaylist-menu-label"), lambda: self.openEditPlaylistDialog())
         menu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), getMessage("addfilestoplaylist-menu-label"), lambda: self.OpenAddFilesToPlaylistDialog())
         menu.addAction(QtGui.QPixmap(resourcespath + "world_add.png"), getMessage("addurlstoplaylist-menu-label"), lambda: self.OpenAddURIsToPlaylistDialog())
+        menu.addSeparator()
+        menu.addAction(getMessage("loadplaylistfromfile-menu-label"),lambda: self.OpenLoadPlaylistFromFileDialog()) # TODO: Add icon
+        menu.addAction("Load and shuffle playlist from file",lambda: self.OpenLoadPlaylistFromFileDialog(shuffle=True))  # TODO: Add icon and messages_en
+        menu.addAction(getMessage("saveplaylisttofile-menu-label"),lambda: self.OpenSavePlaylistToFileDialog()) # TODO: Add icon
         menu.addSeparator()
         menu.addAction(QtGui.QPixmap(resourcespath + "film_folder_edit.png"), getMessage("setmediadirectories-menu-label"), lambda: self.openSetMediaDirectoriesDialog())
         menu.addAction(QtGui.QPixmap(resourcespath + "shield_edit.png"), getMessage("settrusteddomains-menu-label"), lambda: self.openSetTrustedDomainsDialog())
@@ -753,11 +762,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
             if self._syncplayClient.userlist.currentUser.file is None or filename != self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(filename):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), getMessage("openusersstream-menu-label").format(shortUsername), lambda: self.openFile(filename))
+                    menu.addAction(QtGui.QPixmap(resourcespath + "world_go.png"), getMessage("openusersstream-menu-label").format(shortUsername), lambda: self.openFile(filename, resetPosition=False, fromUser=True))
                 else:
                     pathFound = self._syncplayClient.fileSwitch.findFilepath(filename)
                     if pathFound:
-                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openusersfile-menu-label").format(shortUsername), lambda: self.openFile(pathFound))
+                        menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openusersfile-menu-label").format(shortUsername), lambda: self.openFile(pathFound, resetPosition=False, fromUser=True))
             if self._syncplayClient.isUntrustedTrustableURI(filename):
                 domain = utils.getDomainFromURL(filename)
                 menu.addAction(QtGui.QPixmap(resourcespath + "shield_add.png"), getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
@@ -814,11 +823,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._isTryingToChangeToCurrentFile(filename):
             return
         if isURL(filename):
-            self._syncplayClient._player.openFile(filename, resetPosition=True)
+            self._syncplayClient.openFile(filename, resetPosition=True)
         else:
             pathFound = self._syncplayClient.fileSwitch.findFilepath(filename, highPriority=True)
             if pathFound:
-                self._syncplayClient._player.openFile(pathFound, resetPosition=True)
+                self._syncplayClient.openFile(pathFound, resetPosition=True)
             else:
                 self._syncplayClient.ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
 
@@ -841,11 +850,11 @@ class MainWindow(QtWidgets.QMainWindow):
             if self._isTryingToChangeToCurrentFile(filename):
                 return
             if isURL(filename):
-                self._syncplayClient._player.openFile(filename)
+                self._syncplayClient.openFile(filename)
             else:
                 pathFound = self._syncplayClient.fileSwitch.findFilepath(filename, highPriority=True)
                 if pathFound:
-                    self._syncplayClient._player.openFile(pathFound)
+                    self._syncplayClient.openFile(pathFound)
                 else:
                     self._syncplayClient.fileSwitch.updateInfo()
                     self.showErrorMessage(getMessage("switch-file-not-found-error").format(filename))
@@ -1006,7 +1015,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.mediadirectory = os.path.dirname(fileName)
             self._syncplayClient.fileSwitch.setCurrentDirectory(self.mediadirectory)
             self.saveMediaBrowseSettings()
-            self._syncplayClient._player.openFile(fileName)
+            self._syncplayClient.openFile(fileName, resetPosition=False, fromUser=True)
 
     @needsClient
     def OpenAddFilesToPlaylistDialog(self):
@@ -1040,6 +1049,47 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.addFileToPlaylist(fileName)
         self.updatingPlaylist = False
         self.playlist.updatePlaylist(self.getPlaylistState())
+
+    @needsClient
+    def OpenLoadPlaylistFromFileDialog(self, shuffle=False):
+        self.loadMediaBrowseSettings()
+        if isMacOS() and IsPySide:
+            options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
+        else:
+            options = QtWidgets.QFileDialog.Options()
+        self.mediadirectory = ""
+        currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
+        if currentdirectory and os.path.isdir(currentdirectory):
+            defaultdirectory = currentdirectory
+        else:
+            defaultdirectory = self.getInitialMediaDirectory()
+        browserfilter = "Playlists (*.m3u *.m3u8 *.txt)"
+        filepath, filtr = QtWidgets.QFileDialog.getOpenFileName(
+            self, "Load playlist from file", defaultdirectory,
+            browserfilter, "", options) # TODO: Note Shuffle and move to messages_en
+        if os.path.isfile(filepath):
+            self._syncplayClient.playlist.loadPlaylistFromFile(filepath, shuffle=shuffle)
+            self.playlist.updatePlaylist(self.getPlaylistState())
+
+    @needsClient
+    def OpenSavePlaylistToFileDialog(self):
+        self.loadMediaBrowseSettings()
+        if isMacOS() and IsPySide:
+            options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
+        else:
+            options = QtWidgets.QFileDialog.Options()
+        self.mediadirectory = ""
+        currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
+        if currentdirectory and os.path.isdir(currentdirectory):
+            defaultdirectory = currentdirectory
+        else:
+            defaultdirectory = self.getInitialMediaDirectory()
+        browserfilter = "Playlist (*.m3u8 *.m3u *.txt)"
+        filepath, filtr = QtWidgets.QFileDialog.getSaveFileName(
+            self, "Save playlist to file", defaultdirectory,
+            browserfilter, "", options) # TODO: Move to messages_en
+        if filepath:
+            self._syncplayClient.playlist.savePlaylistToFile(filepath)
 
     @needsClient
     def OpenAddURIsToPlaylistDialog(self):
@@ -1186,7 +1236,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self, getMessage("promptforstreamurl-msgbox-label"),
             getMessage("promptforstreamurlinfo-msgbox-label"), QtWidgets.QLineEdit.Normal, "")
         if ok and streamURL != '':
-            self._syncplayClient._player.openFile(streamURL)
+            self._syncplayClient.openFile(streamURL, resetPosition=False, fromUser=True)
 
     @needsClient
     def createControlledRoom(self):
@@ -1803,10 +1853,10 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 dropfilepath = os.path.abspath(str(url.toLocalFile()))
             if rewindFile == False:
-                self._syncplayClient._player.openFile(dropfilepath)
+                self._syncplayClient.openFile(dropfilepath, resetPosition=False, fromUser=True)
             else:
                 self._syncplayClient.setPosition(0)
-                self._syncplayClient._player.openFile(dropfilepath, resetPosition=True)
+                self._syncplayClient.openFile(dropfilepath, resetPosition=True, fromUser=True)
                 self._syncplayClient.setPosition(0)
 
     def setPlaylist(self, newPlaylist, newIndexFilename=None):
@@ -1848,8 +1898,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:
                     self.playlist.insertItem(index, filePath)
 
-    def openFile(self, filePath, resetPosition=False):
-        self._syncplayClient._player.openFile(filePath, resetPosition)
+    def openFile(self, filePath, resetPosition=False, fromUser=False):
+        self._syncplayClient.openFile(filePath, resetPosition, fromUser=fromUser)
 
     def noPlaylistDuplicates(self, filename):
         if self.isItemInPlaylist(filename):

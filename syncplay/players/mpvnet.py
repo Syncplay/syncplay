@@ -1,8 +1,8 @@
 import os
 from syncplay import constants
-from syncplay.players.mpv import NewMpvPlayer
+from syncplay.players.mpv import MpvPlayer
 
-class MpvnetPlayer(NewMpvPlayer):
+class MpvnetPlayer(MpvPlayer):
 
 
     @staticmethod

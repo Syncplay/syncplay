@@ -320,7 +320,7 @@ class ConfigDialog(QtWidgets.QDialog):
         try:
             self.lastCheckedForUpdates = settings.value("lastCheckedQt", None)
             if self.lastCheckedForUpdates:
-                if self.config["lastCheckedForUpdates"] is not None and self.config["lastCheckedForUpdates"] is not "":
+                if self.config["lastCheckedForUpdates"] != None and self.config["lastCheckedForUpdates"] != "":
                     if self.lastCheckedForUpdates.toPython() > datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f"):
                         self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
                 else:
@@ -1054,7 +1054,7 @@ class ConfigDialog(QtWidgets.QDialog):
             font.setPointSize(self.config[configName + "RelativeFontSize"])
             font.setWeight(self.config[configName + "FontWeight"])
             font.setUnderline(self.config[configName + "FontUnderline"])
-            value, ok = QtWidgets.QFontDialog.getFont(font)
+            ok, value = QtWidgets.QFontDialog.getFont(font)
             if ok:
                 self.config[configName + "FontFamily"] = value.family()
                 self.config[configName + "RelativeFontSize"] = value.pointSize()
@@ -1420,7 +1420,7 @@ class ConfigDialog(QtWidgets.QDialog):
         if isMacOS():
             initialHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50
             if self.error:
-                initialHeight += 40            
+                initialHeight += 40
             self.setFixedWidth(self.sizeHint().width())
             self.setFixedHeight(initialHeight)
         else:

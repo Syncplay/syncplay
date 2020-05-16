@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -ex
+
 mkdir dist/Syncplay.app/Contents/Resources/English.lproj
 mkdir dist/Syncplay.app/Contents/Resources/en_AU.lproj
 mkdir dist/Syncplay.app/Contents/Resources/en_GB.lproj
