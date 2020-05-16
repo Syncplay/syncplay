@@ -9,6 +9,7 @@ import re
 import sys
 import threading
 import time
+from fnmatch import fnmatch
 from copy import deepcopy
 from functools import wraps
 
@@ -506,20 +507,14 @@ class SyncplayClient(object):
         return False
 
     def isURITrusted(self, URIToTest):
-        def sWildcardMatch(a, b):
-            splt = a.split('*')
-            if len(splt) == 1:
-                return b.startswith(a)
-            return b.startswith(splt[0]) and b.endswith(splt[-1])
-
         URIToTest = URIToTest+"/"
         for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:
             if URIToTest.startswith(trustedProtocol):
                 if self._config['onlySwitchToTrustedDomains']:
                     if self._config['trustedDomains']:
                         for trustedDomain in self._config['trustedDomains']:
-                            trustableURI = ''.join([trustedProtocol, trustedDomain, "/"])
-                            if sWildcardMatch(trustableURI, URIToTest):
+                            trustableURI = ''.join([trustedProtocol, trustedDomain, "/*"])
+                            if fnmatch(URIToTest, trustableURI):
                                 return True
                     return False
                 else:
