@@ -241,6 +241,7 @@ MPV_ARGS = {'force-window': 'yes',
             'keep-open': 'yes',
             'input-terminal': 'no',
             'term-playing-msg': '<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=duration:${=length:0}}\nANS_path=${path}\n</SyncplayUpdateFile>',
+            'keep-open-pause': 'yes'
             }
 
 
