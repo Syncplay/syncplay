@@ -107,6 +107,7 @@ ru = {
     "mpc-version-insufficient-error": "Версия MPC слишком старая, пожалуйста, используйте `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "Версия MPC слишком старая, пожалуйста, используйте `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay не совместим с данной версией mpv. Пожалуйста, используйте другую версию mpv (лучше свежайшую).",
+    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "Проигрыватель не может открыть файл.",
     "player-path-error": "Путь к проигрывателю задан неверно. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2.",  # TODO: Translate last sentence
     "hostname-empty-error": "Имя пользователя не может быть пустым.",

@@ -107,6 +107,7 @@ en = {
     "mpc-version-insufficient-error": "MPC version not sufficient, please use `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "MPC version not sufficient, please use `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay is not compatible with this version of mpv. Please use a different version of mpv (e.g. Git HEAD).",
+    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.",
     "player-file-open-error": "Player failed opening file",
     "player-path-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2",
     "hostname-empty-error": "Hostname can't be empty",

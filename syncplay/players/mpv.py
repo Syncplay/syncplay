@@ -314,16 +314,22 @@ class MpvPlayer(BasePlayer):
             self._paused if self.fileLoaded else self._client.getGlobalPaused(), self.getCalculatedPosition())
 
     def drop(self):
-        self._listener.sendLine(['quit'])
+        try:
+            self._listener.sendLine(['quit'])
+        except AttributeError as e:
+            self._client.ui.showDebugMessage("Could not send quit message: {}".format(str(e)))
         self._takeLocksDown()
         self.reactor.callFromThread(self._client.stop, False)
 
     def _takeLocksDown(self):
-        self._durationAsk.set()
-        self._filenameAsk.set()
-        self._pathAsk.set()
-        self._positionAsk.set()
-        self._pausedAsk.set()
+        try:
+            self._durationAsk.set()
+            self._filenameAsk.set()
+            self._pathAsk.set()
+            self._positionAsk.set()
+            self._pausedAsk.set()
+        except:
+            pass
 
 
     def _getPausedAndPosition(self):
@@ -519,6 +525,9 @@ class MpvPlayer(BasePlayer):
             self._client.ui.showMessage(getMessage("mplayer-file-required-notification/example"))
             self.drop()
             return
+        except AttributeError as e:
+            self._client.ui.showErrorMessage("Could not load mpv: " + str(e))
+            return
         self._listener.setDaemon(True)
         self._listener.start()
 
@@ -588,7 +597,12 @@ class MpvPlayer(BasePlayer):
                 if pythonPath is not None:
                     env['PATH'] = '/usr/bin:/usr/local/bin'
                     env['PYTHONPATH'] = pythonPath
-            self.mpvpipe = MPV(mpv_location=self.playerPath, loglevel="info", log_handler=self.__playerController.mpv_log_handler, quit_callback=self.stop_client, **self.mpv_arguments)
+            try:
+                self.mpvpipe = MPV(mpv_location=self.playerPath, loglevel="info", log_handler=self.__playerController.mpv_log_handler, quit_callback=self.stop_client, **self.mpv_arguments)
+            except Exception as e:
+                self.quitReason = getMessage("media-player-error").format(str(e)) + " " + getMessage("mpv-failed-advice")
+                self.__playerController.reactor.callFromThread(self.__playerController._client.ui.showErrorMessage, self.quitReason, True)
+                self.__playerController.drop()
             self.__process = self.mpvpipe
             #self.mpvpipe.show_text("HELLO WORLD!", 1000)
             threading.Thread.__init__(self, name="MPV Listener")
