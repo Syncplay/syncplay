@@ -1901,7 +1901,7 @@ class FileSwitchManager(object):
         self.mediaDirectoriesNotFound = []
 
     def setClient(self, newClient):
-        self.client = newClient
+        self._client = newClient
 
     def setCurrentDirectory(self, curDir):
         self.currentDirectory = curDir
