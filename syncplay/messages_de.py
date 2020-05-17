@@ -325,6 +325,7 @@ de = {
     "startTLS-initiated": "Sichere Verbindung wird versucht",
     "startTLS-secure-connection-ok": "Sichere Verbindung hergestellt ({})",
     "startTLS-server-certificate-invalid": 'Sichere Verbindung fehlgeschlagen. Der Server benutzt ein ungültiges Sicherheitszertifikat. Der Kanal könnte von Dritten abgehört werden. Für weitere Details und Problemlösung siehe <a href="https://syncplay.pl/trouble">hier</a> [Englisch].',
+    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay does not trust this server because it uses a certificate that is not valid for its hostname.", # TODO: Translate
     "startTLS-not-supported-client": "Dieser Server unterstützt kein TLS",
     "startTLS-not-supported-server": "Dieser Server unterstützt kein TLS",
 

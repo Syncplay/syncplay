@@ -99,6 +99,8 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self._client._clientSupportsTLS = False
             elif "certificate verify failed" in str(reason.value):
                 self.dropWithError(getMessage("startTLS-server-certificate-invalid"))
+            elif "mismatched_id=DNS_ID" in str(reason.value):
+                self.dropWithError(getMessage("startTLS-server-certificate-invalid-DNS-ID"))
         except:
             pass
         self._client.destroyProtocol()
