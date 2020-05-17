@@ -238,7 +238,7 @@ MPLAYER_SLAVE_ARGS = ['-slave', '--hr-seek=always', '-nomsgcolor', '-msglevel', 
 MPV_ARGS = {'force-window': 'yes',
             'idle': 'yes',
             'hr-seek': 'always',
-            'keep-open': 'yes',
+            'keep-open': 'always',
             'input-terminal': 'no',
             'term-playing-msg': '<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=duration:${=length:0}}\nANS_path=${path}\n</SyncplayUpdateFile>',
             'keep-open-pause': 'yes'

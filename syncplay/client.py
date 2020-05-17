@@ -76,6 +76,7 @@ class SyncplayClient(object):
         self.serverFeatures = {}
 
         self.lastRewindTime = None
+        self.lastAdvanceTime = None
         self.lastLeftTime = 0
         self.lastPausedOnLeaveTime = None
         self.lastLeftUser = ""
@@ -206,6 +207,9 @@ class SyncplayClient(object):
                 if self.userlist.currentUser.file['name'].lower().endswith(musicFormat):
                     return True
 
+    def seamlessMusicOveride(self):
+        return self.isPlayingMusic() and self._recentlyAdvanced()
+
     def updatePlayerStatus(self, paused, position):
         position -= self.getUserOffset()
         pauseChange, seeked = self._determinePlayerStateChange(paused, position)
@@ -230,9 +234,7 @@ class SyncplayClient(object):
 
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
-            if seeked and not pauseChange and self.isPlayingMusic() and abs(positionBeforeSeek - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD and self.playlist.notJustChangedPlaylist():
-                self.playlist.loadNextFileInPlaylist()
-            elif (pauseChange or seeked) and self._protocol:
+            if (pauseChange or seeked) and self._protocol:
                 if seeked:
                     self.playerPositionBeforeLastSeek = self.getGlobalPosition()
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)
@@ -240,12 +242,15 @@ class SyncplayClient(object):
     def prepareToAdvancePlaylist(self):
         if self.playlist.canSwitchToNextPlaylistIndex():
             self.ui.showDebugMessage("Preparing to advance playlist...")
-            if self.isPlayingMusic():
-                self._protocol.sendState(0, False, True, None, True)
-            else:
-                self._protocol.sendState(0, True, True, None, True)
+            self.lastAdvanceTime = time.time()
+            self._protocol.sendState(0, True, True, None, True)
         else:
             self.ui.showDebugMessage("Not preparing to advance playlist because the next file cannot be switched to")
+
+    def _recentlyAdvanced(self):
+        lastAdvandedDiff = time.time() - self.lastAdvanceTime if self.lastAdvanceTime else None
+        if lastAdvandedDiff is not None and lastAdvandedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
+            return True
 
     def _toggleReady(self, pauseChange, paused):
         if not self.userlist.currentUser.canControl():
@@ -257,6 +262,10 @@ class SyncplayClient(object):
                 self.ui.showMessage(getMessage("set-as-not-ready-notification"))
             else:
                 self.ui.showMessage(getMessage("set-as-ready-notification"))
+        elif self.seamlessMusicOveride():
+            self.ui.showDebugMessage("Readiness toggle ignored due to seamless music override")
+            self._player.setPaused(paused)
+            self._playerPaused = paused
         elif not paused and not self.instaplayConditionsMet():
             paused = True
             self._player.setPaused(paused)
@@ -886,6 +895,8 @@ class SyncplayClient(object):
             return False
 
     def autoplayConditionsMet(self):
+        if self.seamlessMusicOveride():
+            self.setPaused(False)
         recentlyReset = (self.lastRewindTime is not None and abs(time.time() - self.lastRewindTime) < 10) and self._playerPosition < 3
         return (
             self._playerPaused and (self.autoPlay or recentlyReset) and

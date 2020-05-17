@@ -216,11 +216,6 @@ class MpvPlayer(BasePlayer):
         if value is None:
             self._client.ui.showDebugMessage("NONE TYPE POSITION!")
             return
-
-        if self._client.isPlayingMusic() and self._paused == False and self._position == value and abs(self._position-self._position) < 0.5:
-            self._client.ui.showDebugMessage("EOF DETECTED!")
-            self._position = 0
-            self.setPosition(0)
         self.lastMPVPositionUpdate = time.time()
         if self._recentlyReset():
             self._client.ui.showDebugMessage("Recently reset, so storing position as 0")
