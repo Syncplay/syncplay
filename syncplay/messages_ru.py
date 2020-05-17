@@ -47,7 +47,7 @@ ru = {
     "identifying-as-controller-notification": "Идентификация как оператора комнаты с паролем '{}'...",
     "failed-to-identify-as-controller-notification": "{} не прошел идентификацию в качестве оператора комнаты.",
     "authenticated-as-controller-notification": "{} вошел как оператор комнаты.",
-    "created-controlled-room-notification": "Создана управляемая комната '{}' с паролем '{}'. Сохраните эти данные!",  # RoomName, operatorPassword
+    "created-controlled-room-notification": "Создана управляемая комната '{}' с паролем '{}'. Сохраните эти данные!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
     "file-different-notification": "Вероятно, файл, который Вы смотрите, отличается от того, который смотрит {}.",  # User
     "file-differences-notification": "Ваш файл отличается: {}",  # Differences

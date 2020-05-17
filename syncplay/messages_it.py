@@ -47,7 +47,7 @@ it = {
     "identifying-as-controller-notification": "Ti sei identificato come gestore della stanza con password '{}'...",
     "failed-to-identify-as-controller-notification": "{} ha fallito l'identificazione come gestore della stanza.",
     "authenticated-as-controller-notification": "{} autenticato come gestore della stanza",
-    "created-controlled-room-notification": "Stanza gestita '{}' creata con password '{}'. Per favore salva queste informazioni per una consultazione futura!",  # RoomName, operatorPassword
+    "created-controlled-room-notification": "Stanza gestita '{}' creata con password '{}'. Per favore salva queste informazioni per una consultazione futura!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
     "file-different-notification": "Il file che stai riproducendo sembra essere diverso da quello di {}",  # User
     "file-differences-notification": "Il tuo file mostra le seguenti differenze: {}",  # Differences

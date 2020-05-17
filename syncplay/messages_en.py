@@ -47,7 +47,7 @@ en = {
     "identifying-as-controller-notification": "Identifying as room operator with password '{}'...",
     "failed-to-identify-as-controller-notification": "{} failed to identify as a room operator.",
     "authenticated-as-controller-notification": "{} authenticated as a room operator",
-    "created-controlled-room-notification": "Created managed room '{}' with password '{}'. Please save this information for future reference!",  # RoomName, operatorPassword
+    "created-controlled-room-notification": "Created managed room '{}' with password '{}'. Please save this information for future reference!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
     "file-different-notification": "File you are playing appears to be different from {}'s",  # User
     "file-differences-notification": "Your file differs in the following way(s): {}",  # Differences

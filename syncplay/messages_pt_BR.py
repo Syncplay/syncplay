@@ -47,7 +47,7 @@ pt_BR = {
     "identifying-as-controller-notification": "Identificando-se como operador da sala com a senha '{}'...",
     "failed-to-identify-as-controller-notification": "{} falhou ao se identificar como operador da sala.",
     "authenticated-as-controller-notification": "{} autenticou-se como um operador da sala",
-    "created-controlled-room-notification": "Criou a sala gerenciada '{}' com a senha '{}'. Por favor, salve essa informação para futura referência!",  # RoomName, operatorPassword
+    "created-controlled-room-notification": "Criou a sala gerenciada '{}' com a senha '{}'. Por favor, salve essa informação para futura referência!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
     "file-different-notification": "O arquivo que você está tocando parece ser diferente do arquivo de {}",  # User
     "file-differences-notification": "Seus arquivos se diferem da(s) seguinte(s) forma(s): {}",  # Differences

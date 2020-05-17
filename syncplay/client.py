@@ -957,7 +957,7 @@ class SyncplayClient(object):
         self._protocol.requestControlledRoom(roomName, controlPassword)
 
     def controlledRoomCreated(self, roomName, controlPassword):
-        self.ui.showMessage(getMessage("created-controlled-room-notification").format(roomName, controlPassword))
+        self.ui.showMessage(getMessage("created-controlled-room-notification").format(roomName, controlPassword, roomName, roomName + ":" + controlPassword))
         self.setRoom(roomName, resetAutoplay=True)
         self.sendRoom()
         self._protocol.requestControlledRoom(roomName, controlPassword)

@@ -47,7 +47,7 @@ de = {
     "identifying-as-controller-notification": "Identifiziere als Raumleiter mit Passwort „{}“...",  # TODO: find a better translation to "room operator"
     "failed-to-identify-as-controller-notification": "{} konnte sich nicht als Raumleiter identifizieren.",
     "authenticated-as-controller-notification": "{} authentifizierte sich als Raumleiter",
-    "created-controlled-room-notification": "Gesteuerten Raum „{}“ mit Passwort „{}“ erstellt. Bitte diese Informationen für die Zukunft aufheben!",  # RoomName, operatorPassword
+    "created-controlled-room-notification": "Gesteuerten Raum „{}“ mit Passwort „{}“ erstellt. Bitte diese Informationen für die Zukunft aufheben! \n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
     "file-different-notification": "Deine Datei scheint sich von {}s zu unterscheiden",  # User
     "file-differences-notification": "Deine Datei unterscheidet sich auf folgende Art: {}",
