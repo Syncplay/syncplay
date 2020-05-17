@@ -326,6 +326,7 @@ pt_BR = {
     "startTLS-initiated": "Tentando estabelecer conexão segura",
     "startTLS-secure-connection-ok": "Conexão segura estabelecida ({})",
     "startTLS-server-certificate-invalid": 'Não foi possível estabelecer uma conexão segura. O servidor usa um certificado de segurança inválido. Essa comunicação pode ser interceptada por terceiros. Para mais detalhes de solução de problemas, consulte <a href="https://syncplay.pl/trouble">aqui</a>.',
+    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay does not trust this server because it uses a certificate that is not valid for its hostname.", # TODO: Translate
     "startTLS-not-supported-client": "Este client não possui suporte para TLS",
     "startTLS-not-supported-server": "Este servidor não possui suporte para TLS",
 
@@ -373,7 +374,7 @@ pt_BR = {
     "password-tooltip": "Senhas são necessárias apenas para servidores privados.",
     "room-tooltip": "O nome da sala para se conectar pode ser praticamente qualquer coisa, mas você só irá se sincronizar com pessoas na mesma sala.",
 
-    "executable-path-tooltip": "Localização do seu reprodutor de mídia preferido (mpv, VLC, MPC-HC/BE ou mplayer2).",
+    "executable-path-tooltip": "Localização do seu reprodutor de mídia preferido (mpv, mpv.net, VLC, MPC-HC/BE ou mplayer2).",
     "media-path-tooltip": "Localização do vídeo ou transmissão a ser aberto. Necessário com o mplayer2.",
     "player-arguments-tooltip": "Argumentos de comando de linha adicionais para serem repassados ao reprodutor de mídia.",
     "mediasearcdirectories-arguments-tooltip": "Diretório onde o Syncplay vai procurar por arquivos de mídia, por exemplo quando você estiver usando o recurso de clicar para mudar. O Syncplay irá procurar recursivamente pelas subpastas.",

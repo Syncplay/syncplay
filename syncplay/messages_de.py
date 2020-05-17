@@ -373,7 +373,7 @@ de = {
     "password-tooltip": "Passwörter sind nur bei Verbindung zu privaten Servern nötig.",
     "room-tooltip": "Der Raum, der betreten werden soll, kann ein x-beliebiger sein. Allerdings werden nur Clients im selben Raum synchronisiert.",
 
-    "executable-path-tooltip": "Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, MPC-BE, VLC, mplayer2 or mpv).",
+    "executable-path-tooltip": "Pfad zum ausgewählten, unterstützten Mediaplayer (mpv, mpv.net, VLC, MPC-HC/BE or mplayer2).",
     "media-path-tooltip": "Pfad zum wiederzugebenden Video oder Stream. Notwendig für mplayer2.",
     "player-arguments-tooltip": "Zusätzliche Kommandozeilenparameter/-schalter für diesen Mediaplayer.",
     "mediasearcdirectories-arguments-tooltip": "Verzeichnisse, in denen Syncplay nach Mediendateien suchen soll, z.B. wenn du die Click-to-switch-Funktion verwendest. Syncplay wird Unterverzeichnisse rekursiv durchsuchen.",  # TODO: Translate Click-to-switch? (or use as name for feature)

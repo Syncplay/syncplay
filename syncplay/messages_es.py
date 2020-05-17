@@ -374,7 +374,7 @@ es = {
     "password-tooltip": "Las contraseñas son sólo necesarias para conectarse a servidores privados.",
     "room-tooltip": "La sala para unirse en la conexión puede ser casi cualquier cosa, pero sólo se sincronizará con las personas en la misma sala.",
 
-    "executable-path-tooltip": "Ubicación de tu reproductor multimedia compatible elegido (mpv, VLC, MPC-HC/BE o mplayer2).",
+    "executable-path-tooltip": "Ubicación de tu reproductor multimedia compatible elegido (mpv, mpv.net, VLC, MPC-HC/BE o mplayer2).",
     "media-path-tooltip": "Ubicación del video o flujo que se abrirá. Necesario para mplayer2.",
     "player-arguments-tooltip": "Arguementos de línea de comandos adicionales / parámetros para pasar a este reproductor multimedia.",
     "mediasearcdirectories-arguments-tooltip": "Directorios donde Syncplay buscará archivos de medios, p.ej. cuando estás usando la función \"clic para cambiar\". Syncplay buscará recursivamente a través de las subcarpetas.",

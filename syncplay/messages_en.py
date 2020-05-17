@@ -374,7 +374,7 @@ en = {
     "password-tooltip": "Passwords are only needed for connecting to private servers.",
     "room-tooltip": "Room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
 
-    "executable-path-tooltip": "Location of your chosen supported media player (mpv, VLC, MPC-HC/BE or mplayer2).",
+    "executable-path-tooltip": "Location of your chosen supported media player (mpv, mpv.net, VLC, MPC-HC/BE or mplayer2).",
     "media-path-tooltip": "Location of video or stream to be opened. Necessary for mplayer2.",
     "player-arguments-tooltip": "Additional command line arguments / switches to pass on to this media player.",
     "mediasearcdirectories-arguments-tooltip": "Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.",
@@ -454,7 +454,7 @@ en = {
 
 
     # Server arguments
-    "server-argument-description": 'Solution to synchronize playback of multiple MPlayer and MPC-HC/BE instances over the network. Server instance',
+    "server-argument-description": 'Solution to synchronize playback of multiple media player instances over the network. Server instance',
     "server-argument-epilog": 'If no options supplied _config values will be used',
     "server-port-argument": 'server TCP port',
     "server-password-argument": 'server password',

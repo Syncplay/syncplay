@@ -377,7 +377,7 @@ ru = {
     "password-tooltip": "Пароли нужны для подключения к приватным серверам.",
     "room-tooltip": "Комната, в которую Вы попадете сразу после подключения. Синхронизация возможна только между людьми в одной и той же комнате.",
 
-    "executable-path-tooltip": "Расположение Вашего видеопроигрывателя (MPC-HC, MPC-BE, VLC, mplayer2 или mpv).",
+    "executable-path-tooltip": "Расположение Вашего видеопроигрывателя (mpv, mpv.net, VLC, MPC-HC/BE или mplayer2).",
     "media-path-tooltip": "Расположение видеофайла или потока для просмотра. Обязательно для mplayer2.",  # TODO: Confirm translation
     "player-arguments-tooltip": "Передавать дополнительные аргументы командной строки этому проигрывателю.",
     "mediasearcdirectories-arguments-tooltip": "Папки, где Syncplay будет искать медиа файлы, включая подпапки.",

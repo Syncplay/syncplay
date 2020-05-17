@@ -374,7 +374,7 @@ it = {
     "password-tooltip": "La password è necessaria solo in caso di connessione a server privati.",
     "room-tooltip": "La stanza in cui entrare dopo la connessione. Può assumere qualsiasi nome, ma ricorda che sarai sincronizzato solo con gli utenti nella stessa stanza.",
 
-    "executable-path-tooltip": "Percorso del media player desiderato (scegliere tra mpv, VLC, MPC-HC/BE or mplayer2).",
+    "executable-path-tooltip": "Percorso del media player desiderato (scegliere tra mpv, mpv.net, VLC, MPC-HC/BE or mplayer2).",
     "media-path-tooltip": "Percorso del video o stream da aprire. Necessario per mplayer2.",
     "player-arguments-tooltip": "Argomenti da linea di comando aggiuntivi da passare al media player scelto.",
     "mediasearcdirectories-arguments-tooltip": "Cartelle dove Syncplay cercherà i file multimediali, es. quando usi la funzione click to switch. Syncplay cercherà anche nelle sottocartelle.",
