@@ -78,6 +78,7 @@ class SyncplayClient(object):
         self.lastRewindTime = None
         self.lastAdvanceTime = None
         self.lastConnectTime = None
+        self.lastSetRoomTime = None
         self.lastLeftTime = 0
         self.lastPausedOnLeaveTime = None
         self.lastLeftUser = ""
@@ -185,7 +186,7 @@ class SyncplayClient(object):
         pauseChange = self.getPlayerPaused() != paused and self.getGlobalPaused() != paused
         _playerDiff = abs(self.getPlayerPosition() - position)
         _globalDiff = abs(self.getGlobalPosition() - position)
-        seeked = _playerDiff > constants.SEEK_THRESHOLD and _globalDiff > constants.SEEK_THRESHOLD
+        seeked = _playerDiff > constants.SEEK_THRESHOLD and _globalDiff > constants.SEEK_THRESHOLD and not self.recentlySetRoom()
         return pauseChange, seeked
 
     def rewindFile(self):
@@ -256,6 +257,11 @@ class SyncplayClient(object):
     def recentlyConnected(self):
         connectDiff = time.time() - self.lastConnectTime if self.lastConnectTime else None
         if connectDiff is None or connectDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
+            return True
+
+    def recentlySetRoom(self):
+        setroomDiff = time.time() - self.lastSetRoomTime if self.lastSetRoomTime else None
+        if setroomDiff is None or setroomDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
             return True
 
     def _toggleReady(self, pauseChange, paused):
@@ -661,6 +667,7 @@ class SyncplayClient(object):
         return features
 
     def setRoom(self, roomName, resetAutoplay=False):
+        self.lastSetRoomTime = time.time()
         roomSplit = roomName.split(":")
         if roomName.startswith("+") and len(roomSplit) > 2:
             roomName = roomSplit[0] + ":" + roomSplit[1]
