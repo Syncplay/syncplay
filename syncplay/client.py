@@ -77,6 +77,7 @@ class SyncplayClient(object):
 
         self.lastRewindTime = None
         self.lastAdvanceTime = None
+        self.lastConnectTime = None
         self.lastLeftTime = 0
         self.lastPausedOnLeaveTime = None
         self.lastLeftUser = ""
@@ -250,6 +251,11 @@ class SyncplayClient(object):
     def _recentlyAdvanced(self):
         lastAdvandedDiff = time.time() - self.lastAdvanceTime if self.lastAdvanceTime else None
         if lastAdvandedDiff is not None and lastAdvandedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
+            return True
+
+    def recentlyConnected(self):
+        connectDiff = time.time() - self.lastConnectTime if self.lastConnectTime else None
+        if connectDiff is None or connectDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
             return True
 
     def _toggleReady(self, pauseChange, paused):
@@ -691,6 +697,7 @@ class SyncplayClient(object):
         return sharedPlaylistEnabled
 
     def connected(self):
+        self.lastConnectTime = time.time()
         readyState = self._config['readyAtStart'] if self.userlist.currentUser.isReady() is None else self.userlist.currentUser.isReady()
         self._protocol.setReady(readyState, manuallyInitiated=False)
         self.reIdentifyAsController()
@@ -1414,6 +1421,8 @@ class SyncplayUserlist(object):
         return True
 
     def areYouAloneInRoom(self):
+        if self._client.recentlyConnected():
+            return False
         for user in self._users.values():
             if user.room == self.currentUser.room:
                 return False
