@@ -109,6 +109,7 @@ FOLDER_SEARCH_TIMEOUT = 20.0  # Secs - How long to wait until searches in folder
 FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0  # Secs - Frequency of updating cache
 
 # Usually there's no need to adjust these
+DOUBLE_CHECK_REWIND = False
 LAST_PAUSED_DIFF_THRESHOLD = 2
 FILENAME_STRIP_REGEX = "[-~_\.\[\](): ]"
 CONTROL_PASSWORD_STRIP_REGEX = "[^a-zA-Z0-9\-]"

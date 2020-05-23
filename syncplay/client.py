@@ -76,9 +76,12 @@ class SyncplayClient(object):
         self.serverFeatures = {}
 
         self.lastRewindTime = None
+        self.lastUpdatedFileTime = None
         self.lastAdvanceTime = None
         self.lastConnectTime = None
         self.lastSetRoomTime = None
+        self.hadFirstPlaylistIndex = False
+        self.hadFirstStateUpdate = False
         self.lastLeftTime = 0
         self.lastPausedOnLeaveTime = None
         self.lastLeftUser = ""
@@ -186,21 +189,23 @@ class SyncplayClient(object):
         pauseChange = self.getPlayerPaused() != paused and self.getGlobalPaused() != paused
         _playerDiff = abs(self.getPlayerPosition() - position)
         _globalDiff = abs(self.getGlobalPosition() - position)
-        seeked = _playerDiff > constants.SEEK_THRESHOLD and _globalDiff > constants.SEEK_THRESHOLD and not self.recentlySetRoom()
+        seeked = _playerDiff > constants.SEEK_THRESHOLD and _globalDiff > constants.SEEK_THRESHOLD
         return pauseChange, seeked
 
     def rewindFile(self):
-        self.setPosition(-1)
+        self.setPosition(0)
         self.establishRewindDoubleCheck()
 
     def establishRewindDoubleCheck(self):
-        reactor.callLater(0.5, self.doubleCheckRewindFile,)
-        reactor.callLater(1, self.doubleCheckRewindFile,)
-        reactor.callLater(1.5, self.doubleCheckRewindFile,)
+        if constants.DOUBLE_CHECK_REWIND:
+            reactor.callLater(0.5, self.doubleCheckRewindFile,)
+            reactor.callLater(1, self.doubleCheckRewindFile,)
+            reactor.callLater(1.5, self.doubleCheckRewindFile,)
+        return
 
     def doubleCheckRewindFile(self):
         if self.getStoredPlayerPosition() > 5:
-            self.setPosition(-1)
+            self.setPosition(0)
             self.ui.showDebugMessage("Rewinded after double-check")
 
     def isPlayingMusic(self):
@@ -251,7 +256,7 @@ class SyncplayClient(object):
 
     def _recentlyAdvanced(self):
         lastAdvandedDiff = time.time() - self.lastAdvanceTime if self.lastAdvanceTime else None
-        if lastAdvandedDiff is not None and lastAdvandedDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
+        if lastAdvandedDiff is not None and lastAdvandedDiff < constants.AUTOPLAY_DELAY + 5:
             return True
 
     def recentlyConnected(self):
@@ -259,15 +264,17 @@ class SyncplayClient(object):
         if connectDiff is None or connectDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
             return True
 
-    def recentlySetRoom(self):
-        setroomDiff = time.time() - self.lastSetRoomTime if self.lastSetRoomTime else None
-        if setroomDiff is None or setroomDiff < constants.LAST_PAUSED_DIFF_THRESHOLD:
-            return True
+    def recentlyRewound(self, recentRewindThreshold = 5.0):
+        lastRewindTime = self.lastRewindTime
+        if lastRewindTime and self.lastUpdatedFileTime and self.lastUpdatedFileTime > lastRewindTime:
+            lastRewindTime = self.lastRewindTime - 4.5
+        return lastRewindTime is not None and abs(time.time() - lastRewindTime) < recentRewindThreshold
 
     def _toggleReady(self, pauseChange, paused):
         if not self.userlist.currentUser.canControl():
             self._player.setPaused(self._globalPaused)
-            self.toggleReady(manuallyInitiated=True)
+            if not self.recentlyRewound() and not ((self._globalPaused == True) and not self._recentlyAdvanced()):
+                self.toggleReady(manuallyInitiated=True)
             self._playerPaused = self._globalPaused
             pauseChange = False
             if self.userlist.currentUser.isReady():
@@ -278,6 +285,10 @@ class SyncplayClient(object):
             self.ui.showDebugMessage("Readiness toggle ignored due to seamless music override")
             self._player.setPaused(paused)
             self._playerPaused = paused
+        elif (self.recentlyRewound() and (self._globalPaused == True) and not self._recentlyAdvanced()):
+            self._player.setPaused(self._globalPaused)
+            self._playerPaused = self._globalPaused
+            pauseChange = False
         elif not paused and not self.instaplayConditionsMet():
             paused = True
             self._player.setPaused(paused)
@@ -489,6 +500,7 @@ class SyncplayClient(object):
         return self._globalPaused
 
     def updateFile(self, filename, duration, path):
+        self.lastUpdatedFileTime = time.time()
         newPath = ""
         if utils.isURL(path):
             filename = path
@@ -550,6 +562,7 @@ class SyncplayClient(object):
         self.playlist.openedFile()
         self._player.openFile(filePath, resetPosition)
         if resetPosition:
+            self.rewindFile()
             self.establishRewindDoubleCheck()
             self.lastRewindTime = time.time()
             self.autoplayCheck()
@@ -911,12 +924,12 @@ class SyncplayClient(object):
     def autoplayConditionsMet(self):
         if self.seamlessMusicOveride():
             self.setPaused(False)
-        recentlyReset = (self.lastRewindTime is not None and abs(time.time() - self.lastRewindTime) < 10) and self._playerPosition < 3
+        recentlyAdvanced = self._recentlyAdvanced()
         return (
-            self._playerPaused and (self.autoPlay or recentlyReset) and
+            self._playerPaused and (self.autoPlay or recentlyAdvanced) and
             self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported()
             and self.userlist.areAllUsersInRoomReady(requireSameFilenames=self._config["autoplayRequireSameFilenames"])
-            and ((self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold) or recentlyReset)
+            and ((self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold) or recentlyAdvanced)
         )
 
     def autoplayTimerIsRunning(self):
@@ -1618,6 +1631,7 @@ class UiManager(object):
 
 class SyncplayPlaylist():
     def __init__(self, client):
+        self.queuedIndex = None
         self._client = client
         self._ui = self._client.ui
         self._previousPlaylist = None
@@ -1643,11 +1657,15 @@ class SyncplayPlaylist():
         try:
             index = self._playlist.index(filename)
             if index != self._playlistIndex:
-                self.changeToPlaylistIndex(index)
+                self.changeToPlaylistIndex(index, resetPosition=True)
+            else:
+                if filename == self.queuedIndexFilename:
+                    return
+                self._client.rewindFile()
         except ValueError:
             pass
 
-    def changeToPlaylistIndex(self, index, username=None):
+    def changeToPlaylistIndex(self, index, username=None, resetPosition=False):
         if self._playlist is None or len(self._playlist) == 0:
             return
         if index is None:
@@ -1674,10 +1692,12 @@ class SyncplayPlaylist():
         self._playlistIndex = index
         if username is None:
             if self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
+                if resetPosition:
+                    self._client.rewindFile()
                 self._client.setPlaylistIndex(index)
-        else:
+        elif index is not None:
             self._ui.showMessage(getMessage("playlist-selection-changed-notification").format(username))
-            self.switchToNewPlaylistIndex(index)
+            self.switchToNewPlaylistIndex(index, resetPosition=resetPosition)
 
     def canSwitchToNextPlaylistIndex(self):
         if self._thereIsNextPlaylistIndex() and self._client.sharedPlaylistIsEnabled():
@@ -1696,7 +1716,12 @@ class SyncplayPlaylist():
         return False
 
     @needsSharedPlaylistsEnabled
-    def switchToNewPlaylistIndex(self, index, resetPosition=False):
+    def switchToNewPlaylistIndex(self, index, resetPosition = False):
+        try:
+            self.queuedIndexFilename = self._playlist[index]
+        except:
+            self.queuedIndexFilename = None
+            self._ui.showDebugMessage("Failed to find index {} in plauylist".format(index))
         self._lastPlaylistIndexChange = time.time()
         if self._client.playerIsNotReady():
             self._client.addPlayerReadyCallback(lambda x: self.switchToNewPlaylistIndex(index, resetPosition))
@@ -1773,6 +1798,7 @@ class SyncplayPlaylist():
 
 
     def changePlaylist(self, files, username=None, resetIndex=False):
+        self.queuedIndexFilename = None
         if self._playlist == files:
             if self._playlistIndex != 0 and resetIndex:
                 self.changeToPlaylistIndex(0)

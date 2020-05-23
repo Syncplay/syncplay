@@ -73,12 +73,16 @@ class SyncClientProtocol(JSONCommandProtocol):
         self.clientIgnoringOnTheFly = 0
         self.serverIgnoringOnTheFly = 0
         self.logged = False
+        self.hadFirstPlaylistIndex = False
+        self.hadFirstStateUpdate = False
         self._pingService = PingService()
 
     def showDebugMessage(self, line):
         self._client.ui.showDebugMessage(line)
 
     def connectionMade(self):
+        self.hadFirstPlaylistIndex = False
+        self.hadFirstStateUpdate = False
         self._client.initProtocol(self)
         if self._client._clientSupportsTLS:
             if self._client._serverSupportsTLS:
@@ -183,7 +187,12 @@ class SyncClientProtocol(JSONCommandProtocol):
                 manuallyInitiated = values["manuallyInitiated"] if "manuallyInitiated" in values else True
                 self._client.setReady(user, isReady, manuallyInitiated)
             elif command == "playlistIndex":
-                self._client.playlist.changeToPlaylistIndex(values['index'], values['user'])
+                user = values['user']
+                resetPosition = True
+                if not self.hadFirstPlaylistIndex:
+                    self.hadFirstPlaylistIndex = True
+                    resetPosition = False
+                self._client.playlist.changeToPlaylistIndex(values['index'], user, resetPosition=resetPosition)
             elif command == "playlistChange":
                 self._client.playlist.changePlaylist(values['files'], values['user'])
             elif command == "features":
@@ -245,6 +254,8 @@ class SyncClientProtocol(JSONCommandProtocol):
     def handleState(self, state):
         position, paused, doSeek, setBy = None, None, None, None
         messageAge = 0
+        if not self.hadFirstStateUpdate:
+            self.hadFirstStateUpdate = True
         if "ignoringOnTheFly" in state:
             ignore = state["ignoringOnTheFly"]
             if "server" in ignore:
