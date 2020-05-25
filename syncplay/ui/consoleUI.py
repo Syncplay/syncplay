@@ -3,12 +3,13 @@ import re
 import sys
 import threading
 import time
+import os
 
 import syncplay
 from syncplay import constants
 from syncplay import utils
 from syncplay.messages import getMessage
-from syncplay.utils import formatTime
+from syncplay.utils import formatTime, isURL
 
 
 class ConsoleUI(threading.Thread):
@@ -184,6 +185,21 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.identifyAsController(controlpassword)
         elif command.group('command') in constants.COMMANDS_TOGGLE:
             self._syncplayClient.toggleReady()
+        elif command.group('command') in constants.COMMANDS_QUEUE:
+            filename = command.group('parameter')
+            if filename is None:
+                self.showErrorMessage("No file/url given")
+                return
+            elif os.path.isfile(filename) or isURL(filename):
+                filePath = filename
+            else:
+                filePath = self._syncplayClient.fileSwitch.findFilepath(filename)
+            if filePath is None:
+                self.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
+            else:
+                self._syncplayClient.ui.addFileToPlaylist(filePath)
+
+
         else:
             if self._tryAdvancedCommands(data):
                 return
@@ -200,6 +216,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/create"), True)
             self.showMessage(getMessage("commandlist-notification/auth"), True)
             self.showMessage(getMessage("commandlist-notification/chat"), True)
+            self.showMessage(getMessage("commandList-notification/queue"), True)
             self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)
             self.showMessage(getMessage("more-info-notification").format(syncplay.projectURL), True)
 

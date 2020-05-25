@@ -124,6 +124,7 @@ COMMANDS_HELP = ['help', 'h', '?', '/?', r'\?']
 COMMANDS_CREATE = ['c', 'create']
 COMMANDS_AUTH = ['a', 'auth']
 COMMANDS_TOGGLE = ['t', 'toggle']
+COMMANDS_QUEUE = ['queue', 'q', 'add']
 MPC_MIN_VER = "1.6.4"
 MPC_BE_MIN_VER = "1.5.2.3123"
 VLC_MIN_VERSION = "2.2.1"
