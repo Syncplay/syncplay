@@ -22,6 +22,9 @@ class ConsoleUI(threading.Thread):
     def addClient(self, client):
         self._syncplayClient = client
 
+    def addFileToPlaylist(self):
+        pass
+
     def drop(self):
         pass
 

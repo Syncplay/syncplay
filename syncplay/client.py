@@ -61,6 +61,7 @@ class SyncClientFactory(ClientFactory):
 
 class SyncplayClient(object):
     def __init__(self, playerClass, ui, config):
+        self.delayedLoadPath = None
         constants.SHOW_OSD = config['showOSD']
         constants.SHOW_OSD_WARNINGS = config['showOSDWarnings']
         constants.SHOW_SLOWDOWN_OSD = config['showSlowdownOSD']
@@ -781,7 +782,11 @@ class SyncplayClient(object):
             perPlayerArguments = utils.getPlayerArgumentsByPathAsArray(self._config['perPlayerArguments'], self._config['playerPath'])
             if perPlayerArguments:
                 self._config['playerArgs'].extend(perPlayerArguments)
-            reactor.callLater(0.1, self._playerClass.run, self, self._config['playerPath'], self._config['file'], self._config['playerArgs'], )
+            filePath = self._config['file']
+            if self._config['sharedPlaylistEnabled'] and filePath is not None:
+                self.delayedLoadPath = filePath
+                filePath = ""
+            reactor.callLater(0.1, self._playerClass.run, self, self._config['playerPath'], filePath, self._config['playerArgs'], )
             self._playerClass = None
         self.protocolFactory = SyncClientFactory(self)
         if '[' in host:
@@ -1541,6 +1546,9 @@ class UiManager(object):
         self.lastAlertOSDEndTime = None
         self.lastError = ""
 
+    def addFileToPlaylist(self, newPlaylistItem):
+        self.__ui.addFileToPlaylist(newPlaylistItem)
+
     def setPlaylist(self, newPlaylist, newIndexFilename=None):
         self.__ui.setPlaylist(newPlaylist, newIndexFilename)
 
@@ -1653,6 +1661,20 @@ class SyncplayPlaylist():
     def openedFile(self):
         self._lastPlaylistIndexChange = time.time()
 
+    def removeDirsFromPath(self, filePath):
+        if os.path.isfile(filePath):
+            return os.path.basename(filePath)
+        elif utils.isURL(filePath):
+            return filePath
+        self._ui.showDebugMessage("Could not find path: {}".format(filePath))
+
+    def getPlaylistIndexFromPath(self, filePath):
+        filePath = self.removeDirsFromPath(filePath)
+        try:
+            return self._playlist.index(filePath)
+        except ValueError:
+            return
+
     def changeToPlaylistIndexFromFilename(self, filename):
         try:
             index = self._playlist.index(filename)
@@ -1665,7 +1687,41 @@ class SyncplayPlaylist():
         except ValueError:
             pass
 
+    def loadDelayedPath(self, changeToIndex):
+        # Implementing the behaviour set out at https://github.com/Syncplay/syncplay/issues/315
+        if self._client._protocol.hadFirstPlaylistIndex and self._client.delayedLoadPath:
+            delayedLoadPath = str(self._client.delayedLoadPath)
+            self._client.delayedLoadPath = None
+            if self._client.sharedPlaylistIsEnabled():
+                pathWithoutDirs = self.removeDirsFromPath(delayedLoadPath)
+                if len(self._playlist) == 0:
+                    self._client.openFile(delayedLoadPath, resetPosition=True, fromUser=True)
+                    self._client.ui.addFileToPlaylist(delayedLoadPath)
+                else:
+                    try:
+                        currentPlaylistFilename = self._playlist[changeToIndex]
+                    except TypeError:
+                        currentPlaylistFilename = None
+                    if currentPlaylistFilename != pathWithoutDirs:
+                        if pathWithoutDirs not in self._playlist:
+                            if utils.isURL(delayedLoadPath) or utils.isURL(currentPlaylistFilename):
+                                self._client.ui.addFileToPlaylist(delayedLoadPath)
+                            else:
+                                foundFilePath = self._client.fileSwitch.findFilepath(currentPlaylistFilename, highPriority=True)
+                                if foundFilePath is None:
+                                    self._client.openFile(delayedLoadPath, resetPosition=False)
+                                else:
+                                    self._client.ui.showMessage("{}: {}...".format(getMessage("addfilestoplaylist-menu-label"), pathWithoutDirs))
+                                    reactor.callLater(constants.DELAYED_LOAD_WAIT_TIME, self._client.ui.addFileToPlaylist, delayedLoadPath, ) # TODO: Avoid arbitary pause
+                        else:
+                            self._client.ui.showErrorMessage(getMessage("cannot-add-duplicate-error").format(pathWithoutDirs))
+
+            else:
+                self._client.openFile(delayedLoadPath)
+
     def changeToPlaylistIndex(self, index, username=None, resetPosition=False):
+        if self.loadDelayedPath(index):
+            return
         if self._playlist is None or len(self._playlist) == 0:
             return
         if index is None:
