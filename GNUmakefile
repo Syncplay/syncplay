@@ -43,10 +43,12 @@ common:
 	cp -r syncplay/resources/*.png $(LIB_PATH)/syncplay/syncplay/resources/
 	cp -r syncplay/resources/*.lua $(LIB_PATH)/syncplay/syncplay/resources/
 	cp -r syncplay/resources/lua/intf/*.lua $(LIB_PATH)/syncplay/syncplay/resources/lua/intf/
+	cp syncplay/resources/hicolor/128x128/apps/syncplay.png $(SHARE_PATH)/pixmaps/
 
 u-common:
 	-rm -rf $(LIB_PATH)/syncplay
 	-rm $(SHARE_PATH)/icons/hicolor/*/apps/syncplay.png
+	-rm $(SHARE_PATH)/pixmaps/syncplay.png
 
 client:
 	-mkdir -p $(BIN_PATH)
