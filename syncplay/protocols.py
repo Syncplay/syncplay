@@ -206,6 +206,8 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def sendRoomSetting(self, roomName, password=None):
         setting = {}
+        self.hadFirstStateUpdate = False
+        self.hadFirstPlaylistIndex = False
         setting["name"] = roomName
         if password:
             setting["password"] = password
