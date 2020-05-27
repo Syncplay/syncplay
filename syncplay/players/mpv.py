@@ -429,12 +429,12 @@ class MpvPlayer(BasePlayer):
             paused_update = update_string[2]
             position_update = update_string[4]
             if paused_update == "nil":
-                self._storePauseState(True)
+                self._storePauseState(float(self._client.getGlobalPaused()))
             else:
                 self._storePauseState(bool(paused_update == 'true'))
             self._pausedAsk.set()
             if position_update == "nil":
-                self._storePosition(float(0))
+                self._storePosition(float(self._client.getGlobalPosition()))
             else:
                 self._storePosition(float(position_update))
             self._positionAsk.set()
