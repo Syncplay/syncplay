@@ -24,10 +24,12 @@ class ConsoleUI(threading.Thread):
         self._syncplayClient = client
 
     def addFileToPlaylist(self, file):
-        if isURL(file):
-            self._syncplayClient.playlist.addToPlaylist(file)
-        else:
-            filePath = self._syncplayClient.fileSwitch.findFilepath(file)
+        if not isURL(file):
+            if not self._syncplayClient.fileSwitch.findFilepath(file):
+                print(f"{file} is not in any media directory")
+                return
+
+        self._syncplayClient.playlist.addToPlaylist(file)
 
     def drop(self):
         pass

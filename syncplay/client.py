@@ -2001,7 +2001,7 @@ class FileSwitchManager(object):
         self.mediaFilesCache = {}
         self.filenameWatchlist = []
         self.currentDirectory = None
-        self.mediaDirectories = None
+        self.mediaDirectories = client.getConfig().get('mediaSearchDirectories')
         self.lock = threading.Lock()
         self.folderSearchEnabled = True
         self.directorySearchError = None
