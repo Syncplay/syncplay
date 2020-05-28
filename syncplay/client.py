@@ -1880,6 +1880,9 @@ class SyncplayPlaylist():
             self._ui.setPlaylist(self._playlist)
             self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
 
+    def addToPlaylist(self, file):
+        self.changePlaylist([*self._playlist, file])
+
     @needsSharedPlaylistsEnabled
     def undoPlaylistChange(self):
         if self.canUndoPlaylist(self._playlist):

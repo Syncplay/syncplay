@@ -23,8 +23,11 @@ class ConsoleUI(threading.Thread):
     def addClient(self, client):
         self._syncplayClient = client
 
-    def addFileToPlaylist(self):
-        pass
+    def addFileToPlaylist(self, file):
+        if isURL(file):
+            self._syncplayClient.playlist.addToPlaylist(file)
+        else:
+            filePath = self._syncplayClient.fileSwitch.findFilepath(file)
 
     def drop(self):
         pass
@@ -190,15 +193,8 @@ class ConsoleUI(threading.Thread):
             if filename is None:
                 self.showErrorMessage("No file/url given")
                 return
-            elif os.path.isfile(filename) or isURL(filename):
-                filePath = filename
-            else:
-                filePath = self._syncplayClient.fileSwitch.findFilepath(filename)
-            if filePath is None:
-                self.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
-            else:
-                self._syncplayClient.ui.addFileToPlaylist(filePath)
 
+            self._syncplayClient.ui.addFileToPlaylist(filename)
 
         else:
             if self._tryAdvancedCommands(data):
