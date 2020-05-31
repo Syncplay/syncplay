@@ -1,14 +1,14 @@
 # coding:utf8
 
-"""Brazilian Portuguese dictionary"""
+"""Portugal Portuguese dictionary"""
 
 pt_BR = {
-    "LANGUAGE": "Português do Brasil",
+    "LANGUAGE": "Português de Portugal",
 
     # Client notifications
-    "config-cleared-notification": "Configurações removidas. Mudanças serão salvas quando você armazenar uma configuração válida.",
+    "config-cleared-notification": "Configurações removidas. As mudanças serão salvas quando você armazenar uma configuração válida.",
 
-    "relative-config-notification": "Arquivo(s) de configuração relativa carregado(s): {}",
+    "relative-config-notification": "Ficheiro(s) de configuração relativa carregado(s): {}",
 
     "connection-attempt-notification": "Tentando se conectar a {}:{}",  # Port, IP
     "reconnection-attempt-notification": "Conexão com o servidor perdida, tentando reconectar",
@@ -34,67 +34,67 @@ pt_BR = {
     "room-join-notification": "{} entrou na sala: '{}'",  # User
     "left-notification": "{} saiu da sala",  # User
     "left-paused-notification": "{} saiu da sala, {} pausou",  # User who left, User who paused
-    "playing-notification": "{} está tocando '{}' ({})",  # User, file, duration
+    "playing-notification": "{} está reproduzinho '{}' ({})",  # User, file, duration
     "playing-notification/room-addendum":  " na sala: '{}'",  # Room
 
     "not-all-ready": "Não está pronto: {}",  # Usernames
-    "all-users-ready": "Todo mundo está pronto ({} users)",  # Number of ready users
+    "all-users-ready": "Todos utilizadores estão prontos ({} users)",  # Number of ready users
     "ready-to-unpause-notification": "Agora você está definido como pronto - despause novamente para despausar",
     "set-as-ready-notification": "Agora você está definido como pronto",
     "set-as-not-ready-notification": "Agora você está definido como não pronto",
     "autoplaying-notification": "Reprodução automática em {}...",  # Number of seconds until playback will start
 
-    "identifying-as-controller-notification": "Identificando-se como operador da sala com a senha '{}'...",
-    "failed-to-identify-as-controller-notification": "{} falhou ao se identificar como operador da sala.",
-    "authenticated-as-controller-notification": "{} autenticou-se como um operador da sala",
-    "created-controlled-room-notification": "Criou a sala gerenciada '{}' com a senha '{}'. Por favor, salve essa informação para futura referência!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
+    "identifying-as-controller-notification": "Identificando-se como administrador da sala com a senha '{}'...",
+    "failed-to-identify-as-controller-notification": "{} falhou ao se identificar como administrador da sala.",
+    "authenticated-as-controller-notification": "{} autenticou-se como um administrador da sala",
+    "created-controlled-room-notification": "Criou a sala controlada '{}' com a senha '{}'. Por favor, guarda essa informação para futura referência!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
-    "file-different-notification": "O arquivo que você está tocando parece ser diferente do arquivo de {}",  # User
-    "file-differences-notification": "Seus arquivos se diferem da(s) seguinte(s) forma(s): {}",  # Differences
-    "room-file-differences": "Diferenças de arquivos: {}",  # File differences (filename, size, and/or duration)
+    "file-different-notification": "O ficheiro que você está tocando parece ser diferente do ficheiro de {}",  # User
+    "file-differences-notification": "Seus ficheiros se diferem da(s) seguinte(s) forma(s): {}",  # Differences
+    "room-file-differences": "Diferenças de ficheiros: {}",  # File differences (filename, size, and/or duration)
     "file-difference-filename": "nome",
     "file-difference-filesize": "tamanho",
     "file-difference-duration": "duração",
     "alone-in-the-room": "Você está sozinho na sala",
 
-    "different-filesize-notification": " (o tamanho do arquivo deles é diferente do seu!)",
+    "different-filesize-notification": " (o tamanho do ficheiro deles é diferente do seu!)",
     "userlist-playing-notification": "{} está tocando:",  # Username
-    "file-played-by-notification": "Arquivo: {} está sendo tocado por:",  # File
-    "no-file-played-notification": "{} não está tocando um arquivo",  # Username
-    "notplaying-notification": "Pessoas que não estão tocando nenhum arquivo:",
+    "file-played-by-notification": "Ficheiro: {} está sendo reproduzido por:",  # File
+    "no-file-played-notification": "{} não está reproduzinho um ficheiro",  # Username
+    "notplaying-notification": "Pessoas que não estão reproduzinho nenhum ficheiro:",
     "userlist-room-notification":  "Na sala '{}':",  # Room
-    "userlist-file-notification": "Arquivo",
-    "controller-userlist-userflag": "Operador",
+    "userlist-file-notification": "Ficheiro",
+    "controller-userlist-userflag": "Administrador",
     "ready-userlist-userflag": "Pronto",
 
-    "update-check-failed-notification": "Não foi possível verificar automaticamente se o Syncplay {} é a versão mais recente. Deseja visitar https://syncplay.pl/  para checar manualmente por atualizações?",  # Syncplay version
+    "update-check-failed-notification": "Não foi possível verificar automaticamente se o Syncplay {} é a versão mais recente. Deseja visitar https://syncplay.pl/  para verificar manualmente por atualizações?",  # Syncplay version
     "syncplay-uptodate-notification": "O Syncplay está atualizado",
     "syncplay-updateavailable-notification": "Uma nova versão do Syncplay está disponível. Deseja visitar a página de lançamentos?",
 
-    "mplayer-file-required-notification": "Syncplay com mplayer requer que você forneça o arquivo ao começar",
-    "mplayer-file-required-notification/example": "Exemplo de uso: syncplay [opções] [url|caminho_ate_o_arquivo/]nome_do_arquivo",
+    "mplayer-file-required-notification": "Syncplay com mplayer requer que você forneça o ficheiro ao começar",
+    "mplayer-file-required-notification/example": "Exemplo de uso: syncplay [opções] [url|caminho_ate_o_ficheiro/]nome_do_ficheiro",
     "mplayer2-required": "O Syncplay é incompatível com o MPlayer 1.x, por favor use mplayer2 ou mpv",
 
     "unrecognized-command-notification": "Comando não reconhecido",
     "commandlist-notification": "Comandos disponíveis:",
     "commandlist-notification/room": "\tr [nome] - muda de sala",
-    "commandlist-notification/list": "\tl - mostra lista de usuários",
+    "commandlist-notification/list": "\tl - mostra lista de utilizadores",
     "commandlist-notification/undo": "\tu - desfaz último salto",
     "commandlist-notification/pause": "\tp - alterna pausa",
     "commandlist-notification/seek": "\t[s][+-]time - salta para o valor de tempo dado, se + ou - não forem especificados, será o tempo absoluto em segundos ou minutos:segundos",
     "commandlist-notification/help": "\th - esta mensagem de ajuda",
     "commandlist-notification/toggle": "\tt - alterna o seu status de prontidão para assistir",
-    "commandlist-notification/create": "\tc [nome] - cria sala gerenciado usando o nome da sala atual",
-    "commandlist-notification/auth": "\ta [senha] - autentica-se como operador da sala com a senha",
+    "commandlist-notification/create": "\tc [nome] - cria sala gerenciada usando o nome da sala atual",
+    "commandlist-notification/auth": "\ta [senha] - autentica-se como administrador da sala com a senha",
     "commandlist-notification/chat": "\tch [mensagem] - envia uma mensagem no chat da sala",
     "syncplay-version-notification": "Versão do Syncplay: {}",  # syncplay.version
     "more-info-notification": "Mais informações disponíveis em: {}",  # projectURL
 
     "gui-data-cleared-notification": "O Syncplay limpou o caminho e o estado de dados da janela usados pela GUI.",
-    "language-changed-msgbox-label": "O idioma será alterado quando você salvar as mudanças e abrir o Syncplay novamente.",
+    "language-changed-msgbox-label": "O idioma será alterado quando você salvar as alterações e reabrir o Syncplay.",
     "promptforupdate-label": "O Syncplay pode verificar automaticamente por atualizações de tempos em tempos?",
 
-    "media-player-latency-warning": "Aviso: O reprodutor de mídia demorou {} para responder. Se você tiver problemas de sincronização, feche outros programas para liberar recursos do sistema e, se isso não funcionar, tente outro reprodutor de mídia.",  # Seconds to respond
+    "media-player-latency-warning": "Aviso: O reprodutor de mídia demorou {} para responder. Se você tiver problemas de sincronização, desligue outros programas para libertar recursos do sistema e, se isso não funcionar, tente outro reprodutor de mídia.",  # Seconds to respond
     "mpv-unresponsive-error": "O mpv não respondeu por {} segundos, portanto parece que não está funcionando. Por favor, reinicie o Syncplay.",  # Seconds to respond
 
     # Client prompts
@@ -106,7 +106,7 @@ pt_BR = {
     "mpc-slave-error": "Não foi possível abrir o MPC no slave mode!",
     "mpc-version-insufficient-error": "A versão do MPC é muito antiga, por favor use `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "A versão do MPC-BE é muito antiga, por favor use `mpc-be` >= `{}`",
-    "mpv-version-error": "O motivo pelo qual o mpv não pode ser iniciado pode ser devido ao uso de argumentos da linha de comando não suportados ou a uma versão não suportada do mpv.",
+    "mpv-version-error": "O Syncplay não é compatível com esta versão do mpv. Por favor, use uma versão diferente do mpv (por exemplo, Git HEAD).",
     "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "O reprodutor falhou ao abrir o arquivo",
     "player-path-error": "O caminho até o arquivo executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2",
@@ -126,8 +126,8 @@ pt_BR = {
     "invalid-port-config-error": "A porta deve ser válida",
     "empty-value-config-error": "{} não pode ser vazio",  # Config option
 
-    "not-json-error": "Não é uma string codificada como JSON\n",
-    "hello-arguments-error": "Falta de argumentos Hello\n",  # DO NOT TRANSLATE
+    "not-json-error": "Não é uma string codificada como json\n",
+    "hello-arguments-error": "Not enough Hello arguments\n",  # DO NOT TRANSLATE
     "version-mismatch-error": "Discrepância entre versões do client e do servidor\n",
     "vlc-failed-connection": "Falha ao conectar ao VLC. Se você não instalou o syncplay.lua e está usando a versão mais recente do VLC, por favor veja https://syncplay.pl/LUA/ para mais instruções.",
     "vlc-failed-noscript": "O VLC reportou que a interface de script do syncplay.lua não foi instalada. Por favor, veja https://syncplay.pl/LUA/ para mais instruções.",
@@ -169,7 +169,7 @@ pt_BR = {
     "file-argument": 'arquivo a ser tocado',
     "args-argument": 'opções do reprodutor; se você precisar passar opções começando com -, as preceda com um único argumento \'--\'',
     "clear-gui-data-argument": 'redefine o caminho e o estado de dados da janela da GUI para as de QSettings',
-    "language-argument": 'idioma para mensagens do Syncplay (de/en/ru/it/es/pt_BR)',
+    "language-argument": 'idioma para mensagens do Syncplay (de/en/ru/it/es/pt_BR/pt_PT)',
 
     "version-argument": 'exibe sua versão',
     "version-message": "Você está usando o Syncplay versão {} ({})",
