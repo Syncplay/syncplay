@@ -64,6 +64,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Italian.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Spanish.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\PortugueseBR.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\PortuguesePT.nlf"
 
   Unicode true
 
@@ -107,6 +108,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "FileDescription" "Syncplay"
 
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEPT} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEPT} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEPT} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEPT} "FileDescription" "Syncplay"
+  
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
   LangString ^Shortcut $${LANG_ENGLISH} "Create Shortcuts in following locations:"
@@ -168,6 +174,15 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^QuickLaunchBar $${LANG_PORTUGUESEBR} "Barra de acesso rápido"
   LangString ^AutomaticUpdates $${LANG_PORTUGUESEBR} "Verificar atualizações automaticamente"
   LangString ^UninstConfig $${LANG_PORTUGUESEBR} "Deletar arquivo de configuração."
+
+  LangString ^SyncplayLanguage $${LANG_PORTUGUESEPT} "pt_PT"
+  LangString ^Associate $${LANG_PORTUGUESEPT} "Associar Syncplay aos ficheiros multimédia."
+  LangString ^Shortcut $${LANG_PORTUGUESEPT} "Criar atalhos nos seguintes locais:"
+  LangString ^StartMenu $${LANG_PORTUGUESEPT} "Menu Iniciar"
+  LangString ^Desktop $${LANG_PORTUGUESEPT} "Área de trabalho"
+  LangString ^QuickLaunchBar $${LANG_PORTUGUESEPT} "Barra de acesso rápido"
+  LangString ^AutomaticUpdates $${LANG_PORTUGUESEPT} "Verificar atualizações automaticamente"
+  LangString ^UninstConfig $${LANG_PORTUGUESEPT} "Apagar ficheiro de configuração."
 
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "
@@ -276,6 +291,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push Español
     Push $${LANG_PORTUGUESEBR}
     Push 'Português do Brasil'
+    Push $${LANG_PORTUGUESEPT}
+    Push 'Português de Portugal'
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE
