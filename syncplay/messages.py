@@ -15,6 +15,7 @@ messages = {
     "it": messages_it.it,
     "es": messages_es.es,
     "es": messages_pt_BR.pt_BR,
+    "pt_BR": messages_pt_BR.pt_BR,
     "CURRENT": None
 }
 
