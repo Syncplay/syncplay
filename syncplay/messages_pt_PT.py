@@ -2,7 +2,7 @@
 
 """Portugal Portuguese dictionary"""
 
-pt_BR = {
+pt_PT = {
     "LANGUAGE": "Português de Portugal",
 
     # Client notifications
