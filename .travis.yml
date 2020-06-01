@@ -31,7 +31,6 @@ install:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis/macos-install.sh ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then travis/snapcraft-install.sh ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then sudo apt-get install libxkbcommon-x11-0 ; fi
-- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "deb" ]; then sudo apt install syncplay.deb ; fi
 
 before_deploy:
 - ls -al
