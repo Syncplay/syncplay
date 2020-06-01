@@ -32,6 +32,9 @@ install:
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then travis/snapcraft-install.sh ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then sudo apt-get install libxkbcommon-x11-0 ; fi
 
+after_success:
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "deb" ]; then travis/deb-installation-test.sh ; fi
+
 before_deploy:
 - ls -al
 - export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
