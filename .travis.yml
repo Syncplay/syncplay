@@ -12,7 +12,7 @@ jobs:
       os: linux
       env: BUILD_DESTINATION=snapcraft
     - language: minimal
-      dist: bionic
+      dist: focal
       os: linux
       env: BUILD_DESTINATION=deb
     - language: python
