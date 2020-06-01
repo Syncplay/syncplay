@@ -9,7 +9,7 @@ echo "Package: syncplay
 Version: "$(sed -n -e "s/^.*version = //p" syncplay/__init__.py | sed "s/'//g")""$(git describe --exact-match --tags HEAD &>/dev/null && echo -git-$(date -u +%y%m%d%H%M))"
 Architecture: all
 Maintainer: <dev@syncplay.pl>
-Depends: python3 (>= 3.4), python3-pyside2.qtwidgets (>= 5.12.0), python3-twisted (>= 16.4.0), python3-certifi, mpv (>= 0.23) | vlc (>= 2.2.1)
+Depends: python3 (>= 3.4), python3-pyside2.qtwidgets, python3-pyside2.qtcore, python3-twisted (>= 16.4.0), python3-certifi, mpv (>= 0.23) | vlc (>= 2.2.1)
 Homepage: https://syncplay.pl
 Section: web
 Priority: optional
