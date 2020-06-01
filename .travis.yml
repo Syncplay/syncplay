@@ -40,7 +40,7 @@ before_deploy:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis/macos-deploy.sh ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then mv syncplay_build_amd64.snap dist_bintray/syncplay_${VER}_amd64.snap ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then travis/appimage-deploy.sh ; fi
-- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "deb" ]; then mv syncplay.deb dist_bintray/syncplay_${VER}.deb ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "deb" ]; then mv /tmp/syncplay.deb dist_bintray/syncplay_${VER}.deb ; fi
 
 deploy:
   skip_cleanup: true
