@@ -24,3 +24,7 @@ chmod 555 /tmp/syncplay/DEBIAN/prerm
 
 make install DESTDIR=/tmp/syncplay
 dpkg -b /tmp/syncplay/
+
+sudo apt install syncplay.deb
+
+syncplay --no-gui
