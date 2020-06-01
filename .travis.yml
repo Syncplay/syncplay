@@ -11,6 +11,10 @@ jobs:
       dist: xenial
       os: linux
       env: BUILD_DESTINATION=snapcraft
+    - language: minimal
+      dist: xenial
+      os: linux
+      env: BUILD_DESTINATION=deb
     - language: python
       os: linux
       dist: xenial
@@ -21,11 +25,13 @@ script:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then python3 buildPy2app.py py2app ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then sudo snapcraft cleanbuild ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then travis/appimage-script.sh ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "deb" ]; then travis/deb-script.sh ; fi
 
 install:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis/macos-install.sh ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then travis/snapcraft-install.sh ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then sudo apt-get install libxkbcommon-x11-0 ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "deb" ]; then sudo apt install syncplay.deb ; fi
 
 before_deploy:
 - ls -al
@@ -35,6 +41,7 @@ before_deploy:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis/macos-deploy.sh ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then mv syncplay_build_amd64.snap dist_bintray/syncplay_${VER}_amd64.snap ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then travis/appimage-deploy.sh ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "deb" ]; then mv syncplay.deb dist_bintray/syncplay_${VER}.deb ; fi
 
 deploy:
   skip_cleanup: true
