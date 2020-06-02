@@ -64,7 +64,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Italian.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Spanish.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\PortugueseBR.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\PortuguesePT.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Portuguese.nlf"
 
   Unicode true
 
