@@ -87,6 +87,7 @@ it = {
     "commandlist-notification/create": "\tc [nome] - crea una stanza gestita usando il nome della stanza attuale",
     "commandlist-notification/auth": "\ta [password] - autentica come gestore della stanza, utilizzando la password del gestore",
     "commandlist-notification/chat": "\tch [message] - invia un messaggio nella chat della stanza",
+    "commandlist-notification/queue": "\tq [file/URL] - add file or URL to bottom of playlist", # TODO: Translate
     "syncplay-version-notification": "Versione di Syncplay: {}",  # syncplay.version
     "more-info-notification": "Maggiori informazioni a: {}",  # projectURL
 

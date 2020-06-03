@@ -184,6 +184,9 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.identifyAsController(controlpassword)
         elif command.group('command') in constants.COMMANDS_TOGGLE:
             self._syncplayClient.toggleReady()
+        elif command.group('command') in constants.COMMANDS_QUEUE:
+            filename = command.group('parameter')
+            self._syncplayClient.ui.addFileToPlaylist(filename)
         else:
             if self._tryAdvancedCommands(data):
                 return
@@ -200,6 +203,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/create"), True)
             self.showMessage(getMessage("commandlist-notification/auth"), True)
             self.showMessage(getMessage("commandlist-notification/chat"), True)
+            self.showMessage(getMessage("commandlist-notification/queue"), True)
             self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)
             self.showMessage(getMessage("more-info-notification").format(syncplay.projectURL), True)
 

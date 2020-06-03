@@ -87,6 +87,7 @@ es = {
     "commandlist-notification/create": "\tc [nombre] - crear sala administrada usando el nombre de la sala actual",
     "commandlist-notification/auth": "\ta [contraseña] - autentificar como operador de la sala con la contraseña de operador",
     "commandlist-notification/chat": "\tch [mensaje] - enviar un mensaje en la sala",
+    "commandlist-notification/queue": "\tq [file/URL] - add file or URL to bottom of playlist", # TODO: Translate
     "syncplay-version-notification": "Versión de Syncplay: {}",  # syncplay.version
     "more-info-notification": "Más información disponible en: {}",  # projectURL
 

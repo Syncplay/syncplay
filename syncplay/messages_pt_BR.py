@@ -87,6 +87,7 @@ pt_BR = {
     "commandlist-notification/create": "\tc [nome] - cria sala gerenciado usando o nome da sala atual",
     "commandlist-notification/auth": "\ta [senha] - autentica-se como operador da sala com a senha",
     "commandlist-notification/chat": "\tch [mensagem] - envia uma mensagem no chat da sala",
+    "commandlist-notification/queue": "\tq [file/URL] - add file or URL to bottom of playlist", # TODO: Translate
     "syncplay-version-notification": "Versão do Syncplay: {}",  # syncplay.version
     "more-info-notification": "Mais informações disponíveis em: {}",  # projectURL
 

@@ -87,6 +87,7 @@ ru = {
     "commandlist-notification/create": "\tc [name] - создать управляемую комнату с таким же именем, как у текущей",
     "commandlist-notification/auth": "\ta [password] - авторизоваться как оператор комнаты с помощью пароля",
     "commandlist-notification/chat": "\tch [message] - send a chat message in a room",  # TODO: Translate
+    "commandlist-notification/queue": "\tq [file/URL] - add file or URL to bottom of playlist", # TODO: Translate
     "syncplay-version-notification": "Версия Syncplay: {}",  # syncplay.version
     "more-info-notification": "Больше информации на {}",  # projectURL
 
