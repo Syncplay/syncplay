@@ -127,6 +127,7 @@ COMMANDS_TOGGLE = ['t', 'toggle']
 COMMANDS_QUEUE = ['queue', 'q', 'add']
 COMMANDS_PLAYLIST = ['playlist', 'ql', 'pl']
 COMMANDS_SELECT = ['select', 'qs']
+COMMANDS_DELETE = ['delete', 'd', 'qd']
 MPC_MIN_VER = "1.6.4"
 MPC_BE_MIN_VER = "1.5.2.3123"
 VLC_MIN_VERSION = "2.2.1"

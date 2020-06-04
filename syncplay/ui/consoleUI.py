@@ -211,6 +211,13 @@ class ConsoleUI(threading.Thread):
 
             except TypeError:
                 print("invalid index")
+        elif command.group('command') in constants.COMMANDS_DELETE:
+            try:
+                index = int(command.group('parameter').strip())
+                self._syncplayClient.playlist.deleteAtIndex(index)
+
+            except TypeError:
+                print("invalid index")
 
         else:
             if self._tryAdvancedCommands(data):
@@ -229,6 +236,9 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/auth"), True)
             self.showMessage(getMessage("commandlist-notification/chat"), True)
             self.showMessage(getMessage("commandList-notification/queue"), True)
+            self.showMessage(getMessage("commandList-notification/playlist"), True)
+            self.showMessage(getMessage("commandList-notification/select"), True)
+            self.showMessage(getMessage("commandList-notification/delete"), True)
             self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)
             self.showMessage(getMessage("more-info-notification").format(syncplay.projectURL), True)
 

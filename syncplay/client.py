@@ -1883,6 +1883,12 @@ class SyncplayPlaylist():
     def addToPlaylist(self, file):
         self.changePlaylist([*self._playlist, file])
 
+    def deleteAtIndex(self, index):
+        new_playlist = self._playlist.copy()
+        if index < len(new_playlist):
+            del new_playlist[index]
+            self.changePlaylist(new_playlist)
+
     @needsSharedPlaylistsEnabled
     def undoPlaylistChange(self):
         if self.canUndoPlaylist(self._playlist):
