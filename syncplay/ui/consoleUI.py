@@ -198,8 +198,14 @@ class ConsoleUI(threading.Thread):
 
             self._syncplayClient.ui.addFileToPlaylist(filename)
         elif command.group('command') in constants.COMMANDS_PLAYLIST:
-            playlist_elements = [f"\t{i}: {el}" for i, el in enumerate(self._syncplayClient.playlist._playlist)]
+            playlist = self._syncplayClient.playlist
+            playlist_elements = [f"\t{i}: {el}" for i, el in enumerate(playlist._playlist)]
+
             if playlist_elements:
+                i = playlist._playlistIndex
+                if i is not None and i in range(len(playlist_elements)):
+                    playlist_elements[i] = " *" + playlist_elements[i]
+
                 print(*playlist_elements, sep='\n')
             else:
                 print("playlist is currently empty.")
