@@ -108,10 +108,10 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "FileDescription" "Syncplay"
 
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESEPT} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESEPT} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESEPT} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESEPT} "FileDescription" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "FileDescription" "Syncplay"
   
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
@@ -291,7 +291,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push Español
     Push $${LANG_PORTUGUESEBR}
     Push 'Português do Brasil'
-    Push $${LANG_PORTUGUESEPT}
+    Push $${LANG_PORTUGUESE}
     Push 'Português de Portugal'
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
