@@ -197,6 +197,20 @@ class ConsoleUI(threading.Thread):
                 return
 
             self._syncplayClient.ui.addFileToPlaylist(filename)
+        elif command.group('command') in constants.COMMANDS_PLAYLIST:
+            playlist_elements = [f"\t{i}: {el}" for i, el in enumerate(self._syncplayClient.playlist._playlist)]
+            if playlist_elements:
+                print(*playlist_elements, sep='\n')
+            else:
+                print("playlist is currently empty.")
+        elif command.group('command') in constants.COMMANDS_SELECT:
+            try:
+                index = int(command.group('parameter').strip())
+                self._syncplayClient.playlist.changeToPlaylistIndex(index, resetPosition=True)
+                self._syncplayClient.rewindFile()
+
+            except TypeError:
+                print("invalid index")
 
         else:
             if self._tryAdvancedCommands(data):
