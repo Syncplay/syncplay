@@ -667,7 +667,7 @@ class MpvPlayer(BasePlayer):
                                             self.sendQueue.remove(self.sendQueue[itemID])
                                         except UnicodeWarning:
                                             self.__playerController._client.ui.showDebugMessage(
-                                                "<mpv> Unicode mismatch occured when trying to remove duplicate")
+                                                "<mpv> Unicode mismatch occurred when trying to remove duplicate")
                                             # TODO: Prevent this from being triggered
                                             pass
                                         break
