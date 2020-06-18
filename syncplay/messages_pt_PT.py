@@ -1,14 +1,14 @@
 # coding:utf8
 
-"""Brazilian Portuguese dictionary"""
+"""Portugal Portuguese dictionary"""
 
-pt_BR = {
-    "LANGUAGE": "Português do Brasil",
+pt_PT = {
+    "LANGUAGE": "Português de Portugal",
 
     # Client notifications
-    "config-cleared-notification": "Configurações removidas. Mudanças serão salvas quando você armazenar uma configuração válida.",
+    "config-cleared-notification": "Configurações removidas. As mudanças serão salvas quando você armazenar uma configuração válida.",
 
-    "relative-config-notification": "Arquivo(s) de configuração relativa carregado(s): {}",
+    "relative-config-notification": "Ficheiro(s) de configuração relativa carregado(s): {}",
 
     "connection-attempt-notification": "Tentando se conectar a {}:{}",  # Port, IP
     "reconnection-attempt-notification": "Conexão com o servidor perdida, tentando reconectar",
@@ -29,72 +29,72 @@ pt_BR = {
 
     "current-offset-notification": "Deslocamento atual: {} segundos",  # Offset
 
-    "media-directory-list-updated-notification": "Os diretórios de mídia do Syncplay foram atualizados.",
+    "media-directory-list-updated-notification": "Os pastas de mídia do Syncplay foram atualizados.",
 
     "room-join-notification": "{} entrou na sala: '{}'",  # User
     "left-notification": "{} saiu da sala",  # User
     "left-paused-notification": "{} saiu da sala, {} pausou",  # User who left, User who paused
-    "playing-notification": "{} está tocando '{}' ({})",  # User, file, duration
+    "playing-notification": "{} está reproduzinho '{}' ({})",  # User, file, duration
     "playing-notification/room-addendum":  " na sala: '{}'",  # Room
 
     "not-all-ready": "Não está pronto: {}",  # Usernames
-    "all-users-ready": "Todo mundo está pronto ({} users)",  # Number of ready users
+    "all-users-ready": "Todos utilizadores estão prontos ({} users)",  # Number of ready users
     "ready-to-unpause-notification": "Agora você está definido como pronto - despause novamente para despausar",
     "set-as-ready-notification": "Agora você está definido como pronto",
     "set-as-not-ready-notification": "Agora você está definido como não pronto",
     "autoplaying-notification": "Reprodução automática em {}...",  # Number of seconds until playback will start
 
-    "identifying-as-controller-notification": "Identificando-se como operador da sala com a senha '{}'...",
-    "failed-to-identify-as-controller-notification": "{} falhou ao se identificar como operador da sala.",
-    "authenticated-as-controller-notification": "{} autenticou-se como um operador da sala",
-    "created-controlled-room-notification": "Criou a sala gerenciada '{}' com a senha '{}'. Por favor, salve essa informação para futura referência!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
+    "identifying-as-controller-notification": "Identificando-se como administrador da sala com a senha '{}'...",
+    "failed-to-identify-as-controller-notification": "{} falhou ao se identificar como administrador da sala.",
+    "authenticated-as-controller-notification": "{} autenticou-se como um administrador da sala",
+    "created-controlled-room-notification": "Criou a sala controlada '{}' com a senha '{}'. Por favor, guarda essa informação para futura referência!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
-    "file-different-notification": "O arquivo que você está tocando parece ser diferente do arquivo de {}",  # User
-    "file-differences-notification": "Seus arquivos se diferem da(s) seguinte(s) forma(s): {}",  # Differences
-    "room-file-differences": "Diferenças de arquivos: {}",  # File differences (filename, size, and/or duration)
+    "file-different-notification": "O ficheiro que você está tocando parece ser diferente do ficheiro de {}",  # User
+    "file-differences-notification": "Seus ficheiros se diferem da(s) seguinte(s) forma(s): {}",  # Differences
+    "room-file-differences": "Diferenças de ficheiros: {}",  # File differences (filename, size, and/or duration)
     "file-difference-filename": "nome",
     "file-difference-filesize": "tamanho",
     "file-difference-duration": "duração",
     "alone-in-the-room": "Você está sozinho na sala",
 
-    "different-filesize-notification": " (o tamanho do arquivo deles é diferente do seu!)",
+    "different-filesize-notification": " (o tamanho do ficheiro deles é diferente do seu!)",
     "userlist-playing-notification": "{} está tocando:",  # Username
-    "file-played-by-notification": "Arquivo: {} está sendo tocado por:",  # File
-    "no-file-played-notification": "{} não está tocando um arquivo",  # Username
-    "notplaying-notification": "Pessoas que não estão tocando nenhum arquivo:",
+    "file-played-by-notification": "Ficheiro: {} está sendo reproduzido por:",  # File
+    "no-file-played-notification": "{} não está reproduzinho um ficheiro",  # Username
+    "notplaying-notification": "Pessoas que não estão reproduzinho nenhum ficheiro:",
     "userlist-room-notification":  "Na sala '{}':",  # Room
-    "userlist-file-notification": "Arquivo",
-    "controller-userlist-userflag": "Operador",
+    "userlist-file-notification": "Ficheiro",
+    "controller-userlist-userflag": "Administrador",
     "ready-userlist-userflag": "Pronto",
 
-    "update-check-failed-notification": "Não foi possível verificar automaticamente se o Syncplay {} é a versão mais recente. Deseja visitar https://syncplay.pl/  para checar manualmente por atualizações?",  # Syncplay version
+    "update-check-failed-notification": "Não foi possível verificar automaticamente se o Syncplay {} é a versão mais recente. Deseja visitar https://syncplay.pl/  para verificar manualmente por atualizações?",  # Syncplay version
     "syncplay-uptodate-notification": "O Syncplay está atualizado",
     "syncplay-updateavailable-notification": "Uma nova versão do Syncplay está disponível. Deseja visitar a página de lançamentos?",
 
-    "mplayer-file-required-notification": "Syncplay com mplayer requer que você forneça o arquivo ao começar",
-    "mplayer-file-required-notification/example": "Exemplo de uso: syncplay [opções] [url|caminho_ate_o_arquivo/]nome_do_arquivo",
+    "mplayer-file-required-notification": "Syncplay com mplayer requer que você forneça o ficheiro ao começar",
+    "mplayer-file-required-notification/example": "Exemplo de uso: syncplay [opções] [url|caminho_ate_o_ficheiro/]nome_do_ficheiro",
     "mplayer2-required": "O Syncplay é incompatível com o MPlayer 1.x, por favor use mplayer2 ou mpv",
 
     "unrecognized-command-notification": "Comando não reconhecido",
     "commandlist-notification": "Comandos disponíveis:",
     "commandlist-notification/room": "\tr [nome] - muda de sala",
-    "commandlist-notification/list": "\tl - mostra lista de usuários",
+    "commandlist-notification/list": "\tl - mostra lista de utilizadores",
     "commandlist-notification/undo": "\tu - desfaz último salto",
     "commandlist-notification/pause": "\tp - alterna pausa",
     "commandlist-notification/seek": "\t[s][+-]time - salta para o valor de tempo dado, se + ou - não forem especificados, será o tempo absoluto em segundos ou minutos:segundos",
     "commandlist-notification/help": "\th - esta mensagem de ajuda",
     "commandlist-notification/toggle": "\tt - alterna o seu status de prontidão para assistir",
-    "commandlist-notification/create": "\tc [nome] - cria sala gerenciado usando o nome da sala atual",
-    "commandlist-notification/auth": "\ta [senha] - autentica-se como operador da sala com a senha",
+    "commandlist-notification/create": "\tc [nome] - cria sala gerenciada usando o nome da sala atual",
+    "commandlist-notification/auth": "\ta [senha] - autentica-se como administrador da sala com a senha",
     "commandlist-notification/chat": "\tch [mensagem] - envia uma mensagem no chat da sala",
     "syncplay-version-notification": "Versão do Syncplay: {}",  # syncplay.version
     "more-info-notification": "Mais informações disponíveis em: {}",  # projectURL
 
     "gui-data-cleared-notification": "O Syncplay limpou o caminho e o estado de dados da janela usados pela GUI.",
-    "language-changed-msgbox-label": "O idioma será alterado quando você salvar as mudanças e abrir o Syncplay novamente.",
+    "language-changed-msgbox-label": "O idioma será alterado quando você salvar as alterações e reabrir o Syncplay.",
     "promptforupdate-label": "O Syncplay pode verificar automaticamente por atualizações de tempos em tempos?",
 
-    "media-player-latency-warning": "Aviso: O reprodutor de mídia demorou {} para responder. Se você tiver problemas de sincronização, feche outros programas para liberar recursos do sistema e, se isso não funcionar, tente outro reprodutor de mídia.",  # Seconds to respond
+    "media-player-latency-warning": "Aviso: O reprodutor de mídia demorou {} para responder. Se você tiver problemas de sincronização, desligue outros programas para libertar recursos do sistema e, se isso não funcionar, tente outro reprodutor de mídia.",  # Seconds to respond
     "mpv-unresponsive-error": "O mpv não respondeu por {} segundos, portanto parece que não está funcionando. Por favor, reinicie o Syncplay.",  # Seconds to respond
 
     # Client prompts
@@ -106,10 +106,10 @@ pt_BR = {
     "mpc-slave-error": "Não foi possível abrir o MPC no slave mode!",
     "mpc-version-insufficient-error": "A versão do MPC é muito antiga, por favor use `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "A versão do MPC-BE é muito antiga, por favor use `mpc-be` >= `{}`",
-    "mpv-version-error": "O motivo pelo qual o mpv não pode ser iniciado pode ser devido ao uso de argumentos da linha de comando não suportados ou a uma versão não suportada do mpv.",
-    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
-    "player-file-open-error": "O reprodutor falhou ao abrir o arquivo",
-    "player-path-error": "O caminho até o arquivo executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2",
+    "mpv-version-error": "O Syncplay não é compatível com esta versão do mpv. Por favor, use uma versão diferente do mpv (por exemplo, Git HEAD).",
+    "mpv-failed-advice": "O motivo pelo qual o mpv não pode ser iniciado pode ser devido ao uso de argumentos da linha de comando não suportados ou a uma versão não suportada do mpv.", # TODO: Translate
+    "player-file-open-error": "O reprodutor falhou ao abrir o ficheiro",
+    "player-path-error": "O caminho até o ficheiro executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2",
     "hostname-empty-error": "O endereço do servidor não pode ser vazio",
     "empty-error": "{} não pode ser vazio",  # Configuration
     "media-player-error": "Erro do reprodutor de mídia: \"{}\"",  # Error line
@@ -120,15 +120,15 @@ pt_BR = {
 
     "unable-to-start-client-error": "Não foi possível iniciar o client",
 
-    "player-path-config-error": "O caminho até o arquivo executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2.",
-    "no-file-path-config-error": "O arquivo deve ser selecionado antes de iniciar seu reprodutor",
+    "player-path-config-error": "O caminho até o ficheiro executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2.",
+    "no-file-path-config-error": "O ficheiro deve ser selecionado antes de iniciar seu reprodutor",
     "no-hostname-config-error": "O endereço do servidor não pode ser vazio",
     "invalid-port-config-error": "A porta deve ser válida",
     "empty-value-config-error": "{} não pode ser vazio",  # Config option
 
     "not-json-error": "Não é uma string codificada como JSON\n",
     "hello-arguments-error": "Falta de argumentos Hello\n",  # DO NOT TRANSLATE
-    "version-mismatch-error": "Discrepância entre versões do client e do servidor\n",
+    "version-mismatch-error": "Discrepância entre versões do cliente e do servidor\n",
     "vlc-failed-connection": "Falha ao conectar ao VLC. Se você não instalou o syncplay.lua e está usando a versão mais recente do VLC, por favor veja https://syncplay.pl/LUA/ para mais instruções.",
     "vlc-failed-noscript": "O VLC reportou que a interface de script do syncplay.lua não foi instalada. Por favor, veja https://syncplay.pl/LUA/ para mais instruções.",
     "vlc-failed-versioncheck": "Esta versão do VLC não é suportada pelo Syncplay.",
@@ -136,21 +136,21 @@ pt_BR = {
     "feature-sharedPlaylists": "playlists compartilhadas",  # used for not-supported-by-server-error
     "feature-chat": "chat",  # used for not-supported-by-server-error
     "feature-readiness": "prontidão",  # used for not-supported-by-server-error
-    "feature-managedRooms": "salas gerenciadas",  # used for not-supported-by-server-error
+    "feature-managedRooms": "salas administradas",  # used for not-supported-by-server-error
 
     "not-supported-by-server-error": "O recurso {} não é suportado por este servidor.",  # feature
-    "shared-playlists-not-supported-by-server-error": "O recurso de playlists compartilhadas pode não ser suportado por este servidor. Para garantir que funcione corretamente, é necessário um servidor rodando Syncplay {} ou superior, mas este está rodando Syncplay {}.",  # minVersion, serverVersion
+    "shared-playlists-not-supported-by-server-error": "O recurso de playlists compartilhadas pode não ser suportado por este servidor. Para garantir que funcione corretamente, é necessário um servidor a correr Syncplay {} ou superior, mas este está correndoo Syncplay {}.",  # minVersion, serverVersion
     "shared-playlists-disabled-by-server-error": "O recurso de playlists compartilhadas foi desativado nas configurações do servidor. Para usar este recurso, você precisa se conectar a um servidor diferente.",
 
     "invalid-seek-value": "Valor de salto inválido",
     "invalid-offset-value": "Valor de deslocamento inválido",
 
-    "switch-file-not-found-error": "Não foi possível mudar para o arquivo '{0}'. O Syncplay procura nos diretórios de mídia especificados.",  # File not found
-    "folder-search-timeout-error": "A busca por mídias no diretório de mídias foi cancelada pois demorou muito tempo para procurar em '{}'. Isso ocorre quando você seleciona uma pasta com muitas subpastas em sua lista de pastas de mídias a serem pesquisadas.  Para que a troca automática de arquivos funcione novamente, selecione 'Arquivo -> Definir diretórios de mídias' na barra de menus e remova esse diretório ou substitua-o por uma subpasta apropriada. Se a pasta não tiver problemas, é possível reativá-la selecionando 'Arquivo -> Definir diretórios de mídias' e pressionando 'OK'.",  # Folder
-    "folder-search-first-file-timeout-error": "A busca por mídias em '{}' foi interrompida, pois demorou muito para acessar o diretório. Isso pode acontecer se for uma unidade de rede ou se você configurar sua unidade para hibernar depois de um período de inatividade. Para que a troca automática de arquivos funcione novamente, vá para 'Arquivo -> Definir diretórios de mídias' e remova o diretório ou resolva o problema (por exemplo, alterando as configurações de economia de energia da unidade).",  # Folder
-    "added-file-not-in-media-directory-error": "Você carregou um arquivo em '{}', que não é um diretório de mídias conhecido. Você pode adicioná-lo isso como um diretório de mídia selecionando 'Arquivo -> Definir diretórios de mídias' na barra de menus.",  # Folder
-    "no-media-directories-error": "Nenhum diretório de mídias foi definido. Para que os recursos de playlists compartilhadas e troca automática de arquivos funcionem corretamente, selecione 'Arquivo -> Definir diretórios de mídias' e especifique onde o Syncplay deve procurar para encontrar arquivos de mídia.",
-    "cannot-find-directory-error": "Não foi possível encontrar o diretório de mídia '{}'. Para atualizar sua lista de diretórios de mídias, selecione 'Arquivo -> Definir diretórios de mídias' na barra de menus e especifique onde o Syncplay deve procurar para encontrar arquivos de mídia.",
+    "switch-file-not-found-error": "Não foi possível mudar para o ficheiro '{0}'. O Syncplay procura nos pastas de mídia especificados.",  # File not found
+    "folder-search-timeout-error": "A busca por mídias no pasta de mídias foi cancelada pois demorou muito tempo para procurar em '{}'. Isso ocorre quando você seleciona uma pasta com muitas subpastas em sua lista de pastas de mídias a serem pesquisadas.  Para que a troca automática de ficheiros funcione novamente, selecione 'Ficheiro -> Definir pastas de mídias' na barra de menus e remova esse pasta ou substitua-o por uma subpasta apropriada. Se a pasta não tiver problemas, é possível reativá-la selecionando 'Ficheiro -> Definir pastas de mídias' e pressionando 'OK'.",  # Folder
+    "folder-search-first-file-timeout-error": "A busca por mídias em '{}' foi interrompida, pois demorou muito para acessar o pasta. Isso pode acontecer se for uma unidade de rede ou se você configurar o seu dispositivo para hibernar depois de um período de inatividade. Para que a troca automática de ficheiros funcione novamente, vá para 'Ficheiro -> Definir pastas de mídias' e remova o pasta ou resolva o problema (por exemplo, alterando as configurações de economia de energia da unidade).",  # Folder
+    "added-file-not-in-media-directory-error": "Você carregou um ficheiro em '{}', que não é um pasta de mídias conhecido. Você pode adicioná-lo isso como um pasta de mídia selecionando 'Ficheiro -> Definir pastas de mídias' na barra de menus.",  # Folder
+    "no-media-directories-error": "Nenhum pasta de mídias foi definido. Para que os recursos de playlists compartilhadas e troca automática de ficheiros funcionem corretamente, selecione 'Ficheiro -> Definir pastas de mídias' e especifique onde o Syncplay deve procurar para encontrar ficheiros de mídia.",
+    "cannot-find-directory-error": "Não foi possível encontrar o pasta de mídia '{}'. Para atualizar sua lista de pastas de mídias, selecione 'Ficheiro -> Definir pastas de mídias' na barra de menus e especifique onde o Syncplay deve procurar para encontrar ficheiros de mídia.",
 
     "failed-to-load-server-list-error": "Não foi possível carregar a lista de servidores públicos. Por favor, visite https://www.syncplay.pl/ em seu navegador.",
 
@@ -159,14 +159,14 @@ pt_BR = {
     "argument-epilog": 'Se nenhuma opção for fornecida, os valores de _config serão usados',
     "nogui-argument": 'não mostrar GUI',
     "host-argument": 'endereço do servidor',
-    "name-argument": 'nome de usuário desejado',
+    "name-argument": 'nome de utilizador desejado',
     "debug-argument": 'modo depuração',
     "force-gui-prompt-argument": 'fazer o prompt de configuração aparecer',
     "no-store-argument": 'não guardar valores em .syncplay',
     "room-argument": 'sala padrão',
     "password-argument": 'senha do servidor',
     "player-path-argument": 'caminho até o executável do reprodutor de mídia',
-    "file-argument": 'arquivo a ser tocado',
+    "file-argument": 'ficheiro a ser tocado',
     "args-argument": 'opções do reprodutor; se você precisar passar opções começando com -, as preceda com um único argumento \'--\'',
     "clear-gui-data-argument": 'redefine o caminho e o estado de dados da janela da GUI para as de QSettings',
     "language-argument": 'idioma para mensagens do Syncplay (de/en/ru/it/es/pt_BR/pt_PT)',
@@ -174,20 +174,20 @@ pt_BR = {
     "version-argument": 'exibe sua versão',
     "version-message": "Você está usando o Syncplay versão {} ({})",
 
-    "load-playlist-from-file-argument": "carrega playlist de um arquivo de texto (uma entrada por linha)",
+    "load-playlist-from-file-argument": "carrega playlist de um ficheiro de texto (uma entrada por linha)",
 
     # Client labels
     "config-window-title": "Configuração do Syncplay",
 
     "connection-group-title": "Configurações de conexão",
     "host-label": "Endereço do servidor: ",
-    "name-label": "Nome de usuário (opcional): ",
+    "name-label": "Nome de utilizador (opcional): ",
     "password-label": "Senha do servidor (se existir): ",
     "room-label": "Sala padrão: ",
 
     "media-setting-title": "Configurações do reprodutor de mídia",
     "executable-path-label": "Executável do reprodutor:",
-    "media-path-label": "Arquivo de vídeo ou URL (opcional):",
+    "media-path-label": "Ficheiro de vídeo ou URL (opcional):",
     "player-arguments-label": "Argumentos para o reprodutor (opcional):",
     "browse-label": "Navegar",
     "update-server-list-label": "Atualizar lista",
@@ -198,23 +198,23 @@ pt_BR = {
     "privacy-sendraw-option": "Enviar bruto",
     "privacy-sendhashed-option": "Enviar hasheado",
     "privacy-dontsend-option": "Não enviar",
-    "filename-privacy-label": "Informação do nome do arquivo:",
-    "filesize-privacy-label": "Informação do tamanho do arquivo:",
+    "filename-privacy-label": "Informação do nome do ficheiro:",
+    "filesize-privacy-label": "Informação do tamanho do ficheiro:",
     "checkforupdatesautomatically-label": "Verificar atualizações do Syncplay automaticamente",
     "slowondesync-label": "Diminuir velocidade em dessincronizações menores (não suportado pelo MPC-HC/BE)",
     "rewindondesync-label": "Retroceder em dessincronização maiores (recomendado)",
     "fastforwardondesync-label": "Avançar se estiver ficando para trás (recomendado)",
     "dontslowdownwithme-label": "Nunca desacelerar ou retroceder outros (experimental)",
     "pausing-title": "Pausando",
-    "pauseonleave-label": "Pausar quando um usuário sair (por exemplo, se for desconectado)",
+    "pauseonleave-label": "Pausar quando um utilizador sair (por exemplo, se for desconectado)",
     "readiness-title": "Estado de prontidão inicial",
     "readyatstart-label": "Marque-me como 'pronto para assistir' por padrão",
     "forceguiprompt-label": "Não mostrar sempre a janela de configuração do Syncplay",  # (Inverted)
     "showosd-label": "Ativar mensagens na tela (OSD)",
 
-    "showosdwarnings-label": "Incluir avisos (por exemplo, quando arquivos são diferentes, usuários não estão prontos, etc)",
+    "showosdwarnings-label": "Incluir avisos (por exemplo, quando os ficheiros são diferentes, os utilizador não estão prontos, etc)",
     "showsameroomosd-label": "Incluir eventos da sua sala",
-    "shownoncontrollerosd-label": "Incluir eventos de não operadores em salas gerenciadas",
+    "shownoncontrollerosd-label": "Incluir eventos de não administradores em salas administradas",
     "showdifferentroomosd-label": "Incluir eventos de outras salas",
     "showslowdownosd-label": "Incluir notificações de desaceleramento ou retrocedimento",
     "language-label": "Idioma:",
@@ -225,8 +225,8 @@ pt_BR = {
     "misc-label": "Miscelânea",
     "core-behaviour-title": "Comportamento da sala padrão",
     "syncplay-internals-title": "Syncplay internals",
-    "syncplay-mediasearchdirectories-title": "Diretórios a buscar por mídias",
-    "syncplay-mediasearchdirectories-label": "Diretórios a buscar por mídias (um caminho por linha)",
+    "syncplay-mediasearchdirectories-title": "pastas a buscar por mídias",
+    "syncplay-mediasearchdirectories-label": "pastas a buscar por mídias (um caminho por linha)",
     "sync-label": "Sincronizar",
     "sync-otherslagging-title": "Se outros estiverem ficando pra trás...",
     "sync-youlaggging-title": "Se você estiver ficando pra trás...",
@@ -239,7 +239,7 @@ pt_BR = {
     "unpause-title": "Se você apertar play, definir-se como pronto e:",
     "unpause-ifalreadyready-option": "Despausar se você já estiver definido como pronto",
     "unpause-ifothersready-option": "Despausar se você já estiver pronto ou outros na sala estiverem prontos (padrão)",
-    "unpause-ifminusersready-option": "Despausar se você já estiver pronto ou outros na sala estiverem prontos e o número mínimo de usuários está pronto",
+    "unpause-ifminusersready-option": "Despausar se você já estiver pronto ou outros na sala estiverem prontos e o número mínimo de utilizadores está pronto",
     "unpause-always": "Sempre despausar",
     "syncplay-trusteddomains-title": "Domínios confiáveis (para serviços de streaming e conteúdo hospedado)",
 
@@ -262,7 +262,7 @@ pt_BR = {
 
     "mpv-key-tab-hint": "[TAB] para alternar acesso instantâneo ao chat.",
     "mpv-key-hint": "[ENTER] para enviar mensagem. [ESC] para sair do modo de chat.",
-    "alphakey-mode-warning-first-line": "Você pode usar os antigos atalhos do mpv com as teclas a-z.",
+    "alphakey-mode-warning-first-line": "Você pode usar os antigos atalhos do mpv com as teclas A-Z.",
     "alphakey-mode-warning-second-line": "Aperte [TAB] para retornar ao modo de chat instantâneo do Syncplay.",
 
     "help-label": "Ajuda",
@@ -270,7 +270,7 @@ pt_BR = {
     "run-label": "Começar Syncplay",
     "storeandrun-label": "Salvar mudanças e começar Syncplay",
 
-    "contact-label": "Sinta-se livre para mandar um e-mail para <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, conversar via chat pelo <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canal do IRC #Syncplay</nobr></a> no irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>abrir uma issue</nobr></a> pelo GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>curtir nossa página no Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>nos seguir no Twitter</nobr></a> ou visitar <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Não use o Syncplay para mandar informações sensíveis/confidenciais.",
+    "contact-label": "Sinta-se livre para enviar um e-mail para <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, conversar via chat pelo <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>canal do IRC #Syncplay</nobr></a> no irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>abrir uma issue</nobr></a> pelo GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>curtir nossa página no Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>nos seguir no Twitter</nobr></a> ou visitar <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Não use o Syncplay para mandar informações sensíveis/confidenciais.",
 
     "joinroom-label": "Juntar-se a uma sala",
     "joinroom-menu-label": "Juntar-se à sala {}",
@@ -281,33 +281,33 @@ pt_BR = {
     "playbackbuttons-menu-label": "Mostrar botões de reprodução",
     "autoplay-menu-label": "Mostrar botão de reprodução automática",
     "autoplay-guipushbuttonlabel": "Tocar quando todos estiverem prontos",
-    "autoplay-minimum-label": "Mín. de usuários:",
+    "autoplay-minimum-label": "Mín. de utilizadores:",
 
     "sendmessage-label": "Enviar",
 
     "ready-guipushbuttonlabel": "Estou pronto para assistir!",
 
-    "roomuser-heading-label": "Sala / Usuário",
+    "roomuser-heading-label": "Sala / Utilizador",
     "size-heading-label": "Tamanho",
     "duration-heading-label": "Duração",
-    "filename-heading-label": "Nome do arquivo",
+    "filename-heading-label": "Nome do ficheiro",
     "notifications-heading-label": "Notificações",
     "userlist-heading-label": "Lista de quem está tocando o quê",
 
-    "browseformedia-label": "Navegar por arquivos de mídia",
+    "browseformedia-label": "Navegar por ficheiros de mídia",
 
-    "file-menu-label": "&Arquivo",  # & precedes shortcut key
-    "openmedia-menu-label": "A&brir arquivo de mídia",
+    "file-menu-label": "&Ficheiro",  # & precedes shortcut key
+    "openmedia-menu-label": "A&brir ficheiro de mídia",
     "openstreamurl-menu-label": "Abrir &URL de stream de mídia",
-    "setmediadirectories-menu-label": "Definir &diretórios de mídias",
-    "loadplaylistfromfile-menu-label": "&Carregar playlist de arquivo",
-    "saveplaylisttofile-menu-label": "&Salvar playlist em arquivo",
+    "setmediadirectories-menu-label": "Definir &pastas de mídias",
+    "loadplaylistfromfile-menu-label": "&Carregar playlist de ficheiro",
+    "saveplaylisttofile-menu-label": "&Salvar playlist em ficheiro",
     "exit-menu-label": "&Sair",
     "advanced-menu-label": "A&vançado",
     "window-menu-label": "&Janela",
     "setoffset-menu-label": "Definir &deslocamento",
-    "createcontrolledroom-menu-label": "&Criar sala gerenciada",
-    "identifyascontroller-menu-label": "&Identificar-se como operador da sala",
+    "createcontrolledroom-menu-label": "&Criar sala administrada",
+    "identifyascontroller-menu-label": "&Identificar-se como administrador da sala",
     "settrusteddomains-menu-label": "D&efinir domínios confiáveis",
     "addtrusteddomain-menu-label": "Adicionar {} como domínio confiável",  # Domain
 
@@ -320,19 +320,19 @@ pt_BR = {
     "playback-menu-label": "&Reprodução",
 
     "help-menu-label": "&Ajuda",
-    "userguide-menu-label": "Abrir &guia de usuário",
+    "userguide-menu-label": "Abrir &guia de utilizador",
     "update-menu-label": "&Verificar atualizações",
 
     "startTLS-initiated": "Tentando estabelecer conexão segura",
     "startTLS-secure-connection-ok": "Conexão segura estabelecida ({})",
     "startTLS-server-certificate-invalid": 'Não foi possível estabelecer uma conexão segura. O servidor usa um certificado de segurança inválido. Essa comunicação pode ser interceptada por terceiros. Para mais detalhes de solução de problemas, consulte <a href="https://syncplay.pl/trouble">aqui</a>.',
-    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay does not trust this server because it uses a certificate that is not valid for its hostname.", # TODO: Translate
+    "startTLS-server-certificate-invalid-DNS-ID": "O Syncplay não confia neste servidor porque usa um certificado que não é válido para o nome do host.", # TODO: Translate
     "startTLS-not-supported-client": "Este client não possui suporte para TLS",
     "startTLS-not-supported-server": "Este servidor não possui suporte para TLS",
 
     # TLS certificate dialog
     "tls-information-title": "Detalhes do certificado",
-    "tls-dialog-status-label": "<strong>Syncplay está usando uma conexão criptografada para {}.</strong>",
+    "tls-dialog-status-label": "<strong>Syncplay está a usar uma conexão criptografada para {}.</strong>",
     "tls-dialog-desc-label": "A criptografia com um certificado digital mantém as informações em sigilo quando são enviadas para ou do<br/>servidor {}.",
     "tls-dialog-connection-label": "Informações criptografadas usando o Transport Layer Security (TLS), versão {} com o conjunto de cifras (cipher suite)<br/>: {}.",
     "tls-dialog-certificate-label": "Certificado emitido em {} e válido até {}.",
@@ -357,11 +357,11 @@ pt_BR = {
     "editplaylist-msgbox-label": "Definir playlist (uma por linha)",
     "trusteddomains-msgbox-label": "Domínios para os quais é permitido trocar automaticamente (um por linha)",
 
-    "createcontrolledroom-msgbox-label": "Criar sala gerenciada",
-    "controlledroominfo-msgbox-label": "Informe o nome da sala gerenciada\r\n(veja https://syncplay.pl/guide/ para instruções de uso):",
+    "createcontrolledroom-msgbox-label": "Criar sala administrativa",
+    "controlledroominfo-msgbox-label": "Informe o nome da sala administrativa\r\n(veja https://syncplay.pl/guide/ para instruções de uso):",
 
-    "identifyascontroller-msgbox-label": "Identificar-se como operador da sala",
-    "identifyinfo-msgbox-label": "Informe a senha de operador para esta sala\r\n(veja https://syncplay.pl/guide/ para instruções de uso):",
+    "identifyascontroller-msgbox-label": "Identificar-se como administrador da sala",
+    "identifyinfo-msgbox-label": "Informe a senha de administrador para esta sala\r\n(veja https://syncplay.pl/guide/ para instruções de uso):",
 
     "public-server-msgbox-label": "Selecione o servidor público para esta sessão de visualização",
 
@@ -369,43 +369,43 @@ pt_BR = {
 
     # Tooltips
 
-    "host-tooltip": "Hostname ou IP para se conectar, opcionalmente incluindo uma porta (por exemplo, syncplay.pl:8999). Só sincroniza-se com pessoas no mesmo servidor/porta.",
+    "host-tooltip": "Hostname ou IP para se conectar, opcionalmente incluindo uma porta (por exemplo, syncplay.pl:8999). Só sincroniza-se com utilizadores no mesmo servidor/porta.",
     "name-tooltip": "Nome pelo qual você será conhecido. Não há cadastro, então você pode facilmente mudar mais tarde. Se não for especificado, será gerado aleatoriamente.",
     "password-tooltip": "Senhas são necessárias apenas para servidores privados.",
-    "room-tooltip": "O nome da sala para se conectar pode ser praticamente qualquer coisa, mas você só irá se sincronizar com pessoas na mesma sala.",
+    "room-tooltip": "O nome da sala para se conectar pode ser praticamente qualquer coisa, mas você só irá se sincronizar com utilizadores na mesma sala.",
 
     "executable-path-tooltip": "Localização do seu reprodutor de mídia preferido (mpv, mpv.net, VLC, MPC-HC/BE ou mplayer2).",
     "media-path-tooltip": "Localização do vídeo ou transmissão a ser aberto. Necessário com o mplayer2.",
     "player-arguments-tooltip": "Argumentos de comando de linha adicionais para serem repassados ao reprodutor de mídia.",
-    "mediasearcdirectories-arguments-tooltip": "Diretório onde o Syncplay vai procurar por arquivos de mídia, por exemplo quando você estiver usando o recurso de clicar para mudar. O Syncplay irá procurar recursivamente pelas subpastas.",
+    "mediasearcdirectories-arguments-tooltip": "Pasta onde o Syncplay vai procurar por ficheiros de mídia, por exemplo quando você estiver usando o recurso de clicar para mudar. O Syncplay irá procurar recursivamente pelas subpastas.",
 
-    "more-tooltip": "Exibe configurações menos frequentemente utilizadas.",
-    "filename-privacy-tooltip": "Modo de privacidade para mandar nome de arquivo do arquivo atual para o servidor.",
-    "filesize-privacy-tooltip": "Modo de privacidade para mandar tamanho do arquivo atual para o servidor.",
+    "more-tooltip": "Mostrar configurações frequentemente menos utilizadas.",
+    "filename-privacy-tooltip": "Modo de privacidade para mandar nome de ficheiro do ficheiro atual para o servidor.",
+    "filesize-privacy-tooltip": "Modo de privacidade para mandar tamanho do ficheiro atual para o servidor.",
     "privacy-sendraw-tooltip": "Enviar esta informação sem ofuscação. Esta é a opção padrão com mais funcionalidades.",
     "privacy-sendhashed-tooltip": "Mandar versão hasheada da informação, tornando-a menos visível aos outros clients.",
     "privacy-dontsend-tooltip": "Não enviar esta informação ao servidor. Esta opção oferece a maior privacidade.",
-    "checkforupdatesautomatically-tooltip": "Checar o site do Syncplay regularmente para ver se alguma nova versão do Syncplay está disponível.",
+    "checkforupdatesautomatically-tooltip": "Verificar o site do Syncplay regularmente para ver se alguma nova versão do Syncplay está disponível.",
     "slowondesync-tooltip": "Reduzir a velocidade de reprodução temporariamente quando necessário para trazer você de volta à sincronia com os outros espectadores. Não suportado pelo MPC-HC/BE.",
-    "dontslowdownwithme-tooltip": "Significa que outros não serão desacelerados ou retrocedidos se sua reprodução estiver ficando para trás. Útil para operadores de salas.",
+    "dontslowdownwithme-tooltip": "Significa que outros não serão desacelerados ou retrocedidos se sua reprodução estiver ficando para trás. Útil para administradores de salas.",
     "pauseonleave-tooltip": "Pausar reprodução se você for disconectado ou se alguém sair da sua sala.",
     "readyatstart-tooltip": "Definir-se como 'pronto' ao começar (do contrário você será definido como 'não pronto' até mudar seu estado de prontidão)",
-    "forceguiprompt-tooltip": "Diálogo de configuração não é exibido ao abrir um arquivo com o Syncplay.",  # (Inverted)
+    "forceguiprompt-tooltip": "Diálogo de configuração não é exibido ao abrir um ficheiro com o Syncplay.",  # (Inverted)
     "nostore-tooltip": "Começar Syncplay com a dada configuração, mas não guardar as mudanças permanentemente.",  # (Inverted)
     "rewindondesync-tooltip": "Retroceder automaticamente quando necessário para sincronizar. Desabilitar isto pode resultar em grandes dessincronizações!",
-    "fastforwardondesync-tooltip": "Avançar automaticamente quando estiver fora de sincronia com o operador da sala (ou sua posição pretendida caso 'Nunca desacelerar ou retroceder outros' estiver habilitada).",
+    "fastforwardondesync-tooltip": "Avançar automaticamente quando estiver fora de sincronia com o administrador da sala (ou sua posição pretendida caso 'Nunca desacelerar ou retroceder outros' estiver habilitada).",
     "showosd-tooltip": "Envia mensagens do Syncplay à tela do reprodutor de mídia (OSD).",
-    "showosdwarnings-tooltip": "Mostra avisos se: estiver tocando arquivos diferentes, sozinho na sala, usuários não prontos, etc.",
-    "showsameroomosd-tooltip": "Mostra notificações na tela (OSD) sobre eventos relacionados à sala em que o usuário está.",
-    "shownoncontrollerosd-tooltip": "Mostra notificações na tela (OSD) sobre eventos relacionados a não operadores que estão em salas gerenciadas.",
-    "showdifferentroomosd-tooltip": "Mostra notificações na tela (OSD) sobre eventos relacionados à sala em que o usuário não está.",
+    "showosdwarnings-tooltip": "Mostra avisos se: estiver tocando ficheiros diferentes, sozinho na sala, utilizadores não prontos, etc.",
+    "showsameroomosd-tooltip": "Mostra notificações na tela (OSD) sobre eventos relacionados à sala em que o utilizador está.",
+    "shownoncontrollerosd-tooltip": "Mostra notificações na tela (OSD) sobre eventos relacionados a não administradores que estão em salas gerenciadas.",
+    "showdifferentroomosd-tooltip": "Mostra notificações na tela (OSD) sobre eventos relacionados à sala em que o utilizador não está.",
     "showslowdownosd-tooltip": "Mostra notificações na tela (OSD) sobre desaceleramento/retrocedimento por conta de diferença nos tempos.",
-    "showdurationnotification-tooltip": "Útil quando um segmento em um arquivo de múltiplas partes está faltando, mas pode resultar em falsos positivos.",
+    "showdurationnotification-tooltip": "Útil quando um segmento em um ficheiro de múltiplas partes está faltando, mas pode resultar em falsos positivos.",
     "language-tooltip": "Idioma a ser utilizado pelo Syncplay.",
     "unpause-always-tooltip": "Se você pressionar para despausar, sempre te definirá como pronto e despausará em vez de simplesmente te definir com pronto.",
     "unpause-ifalreadyready-tooltip": "Se você pressionar para despausar quando não estiver pronto, irá te definir como pronto - despause novamente para despausar.",
     "unpause-ifothersready-tooltip": "Se você apertar para despausar quando não estiver pronto, só irá despausar quando outros estiverem prontos.",
-    "unpause-ifminusersready-tooltip": "Se você apertar para despausar quando não estiver pronto, só irá despausar quando outros estiverem prontos e o número mínimo de usuários for atingido.",
+    "unpause-ifminusersready-tooltip": "Se você apertar para despausar quando não estiver pronto, só irá despausar quando outros estiverem prontos e o número mínimo de utilizadores for atingido.",
     "trusteddomains-arguments-tooltip": "Domínios para os quais é permitido trocar automaticamente quando as playlists compartilhadas estiverem habilitadas.",
 
     "chatinputenabled-tooltip": "Ativar entrada de chat via mpv (pressione Enter para escrever, Enter para enviar, ESC para cancelar)",
@@ -424,7 +424,7 @@ pt_BR = {
     "chatoutputmode-chatroom-tooltip": "Exibe novas linhas de chat diretamente abaixo da linha anterior.",
     "chatoutputmode-scrolling-tooltip": "Exibe novas linhas de chat rolando-as da direita pra esquerda.",
 
-    "help-tooltip": "Abre o  guia de usuário do Syncplay.pl.",
+    "help-tooltip": "Abre o  guia de utilizadores do Syncplay.pl.",
     "reset-tooltip": "Redefine todas as configurações para seus respectivos padrões.",
     "update-server-list-tooltip": "Conecta ao syncplay.pl para atualizar a lista de servidores públicos.",
 
@@ -450,7 +450,7 @@ pt_BR = {
     "welcome-server-notification": "Seja bem-vindo ao servidor de Syncplay, versão {0}",  # version
     "client-connected-room-server-notification": "{0}({2}) conectou-se à sala '{1}'",  # username, host, room
     "client-left-server-notification": "{0} saiu do servidor",  # name
-    "no-salt-notification": "POR FAVOR, NOTE: Para permitir que as senhas de operadores de sala geradas por esta instância do servidor ainda funcionem quando o servidor for reiniciado, por favor, adicione o seguinte argumento de linha de comando ao executar o servidor de Syncplay no futuro: --salt {}",  # Salt
+    "no-salt-notification": "POR FAVOR, NOTE: Para permitir que as senhas de administradores de sala geradas por esta instância do servidor ainda funcionem quando o servidor for reiniciado, por favor, adicione o seguinte argumento de linha de comando ao executar o servidor de Syncplay no futuro: --salt {}",  # Salt
 
 
     # Server arguments
@@ -464,7 +464,7 @@ pt_BR = {
     "server-motd-argument": "caminho para o arquivo o qual o motd será obtido",
     "server-chat-argument": "O chat deve ser desativado?",
     "server-chat-maxchars-argument": "Número máximo de caracteres numa mensagem do chat (o padrão é {})", # Default number of characters
-    "server-maxusernamelength-argument": "Número máximos de caracteres num nome de usuário (o padrão é {})",
+    "server-maxusernamelength-argument": "Número máximos de caracteres num nome de utilizador (o padrão é {})",
     "server-stats-db-file-argument": "Habilita estatísticas de servidor usando o arquivo db SQLite fornecido",
     "server-startTLS-argument": "Habilita conexões TLS usando os arquivos de certificado no caminho fornecido",
     "server-messed-up-motd-unescaped-placeholders": "A Mensagem do Dia possui placeholders não escapados. Todos os sinais de $ devem ser dobrados (como em $$).",
@@ -472,7 +472,7 @@ pt_BR = {
 
     # Server errors
     "unknown-command-server-error": "Comando desconhecido: {}",  # message
-    "not-json-server-error": "Não é uma string codificada como json: {}",  # message
+    "not-json-server-error": "Não é uma string codificada como JSON: {}",  # message
     "line-decode-server-error": "Não é uma string UTF-8",
     "not-known-server-error": "Você deve ser conhecido pelo servidor antes de mandar este comando",
     "client-drop-server-error": "Drop do client: {} -- {}",  # host, error
@@ -483,26 +483,26 @@ pt_BR = {
     # Playlists
     "playlist-selection-changed-notification":  "{} mudou a seleção da playlist",  # Username
     "playlist-contents-changed-notification": "{} atualizou playlist",  # Username
-    "cannot-find-file-for-playlist-switch-error": "Não foi possível encontrar o arquivo {} no diretórios de mídia para a troca de playlist!",  # Filename
+    "cannot-find-file-for-playlist-switch-error": "Não foi possível encontrar o ficheiro {} no pastas de mídia para a troca de playlist!",  # Filename
     "cannot-add-duplicate-error": "Não foi possível adicionar uma segunda entrada para '{}' para a playlist uma vez que duplicatas não são permitidas.",  # Filename
-    "cannot-add-unsafe-path-error": "Não foi possível automaticamente carregar {} porque este não é um domínio confiado. Você pode trocar para a URL manualmente dando um clique duplo nela na playlist e adicionando o domínio aos domínios confiáveis em 'Arquivo -> Avançado -> Definir domínios confiáveis'. Se você clicar com o botão direito na URL, você pode adicionar esta URL como domínio confiável pelo menu de contexto.",  # Filename
+    "cannot-add-unsafe-path-error": "Não foi possível automaticamente carregar {} porque este não é um domínio confiado. Você pode trocar para a URL manualmente dando um clique duplo nela na playlist e adicionando o domínio aos domínios confiáveis em 'Ficheiro -> Avançado -> Definir domínios confiáveis'. Se você clicar com o botão direito na URL, você pode adicionar esta URL como domínio confiável pelo menu de contexto.",  # Filename
     "sharedplaylistenabled-label": "Habilitar playlists compartilhadas",
     "removefromplaylist-menu-label": "Remover da playlist",
     "shuffleremainingplaylist-menu-label": "Embaralhar resto da playlist",
     "shuffleentireplaylist-menu-label": "Embaralhar toda a playlist",
     "undoplaylist-menu-label": "Desfazer última alteração à playlist",
-    "addfilestoplaylist-menu-label": "Adicionar arquivo(s) ao final da playlist",
+    "addfilestoplaylist-menu-label": "Adicionar ficheiro(s) ao final da playlist",
     "addurlstoplaylist-menu-label": "Adicionar URL(s) ao final da playlist",
     "editplaylist-menu-label": "Editar playlist",
 
-    "open-containing-folder": "Abrir pasta contendo este arquivo",
-    "addyourfiletoplaylist-menu-label": "Adicionar seu arquivo à playlist",
-    "addotherusersfiletoplaylist-menu-label": "Adicionar arquivos de {} à playlist",  # [Username]
+    "open-containing-folder": "Abrir pasta contendo este ficheiro",
+    "addyourfiletoplaylist-menu-label": "Adicionar seu ficheiro à playlist",
+    "addotherusersfiletoplaylist-menu-label": "Adicionar ficheiros de {} à playlist",  # [Username]
     "addyourstreamstoplaylist-menu-label": "Adicionar sua transmissão à playlist",
     "addotherusersstreamstoplaylist-menu-label": "Adicionar transmissão de {} à playlist",  # [Username]
     "openusersstream-menu-label": "Abrir transmissão de {}",  # [username]'s
-    "openusersfile-menu-label": "Abrir arquivo de {}",  # [username]'s
+    "openusersfile-menu-label": "Abrir ficheiro de {}",  # [username]'s
 
-    "playlist-instruction-item-message": "Arraste um arquivo aqui para adicioná-lo à playlist compartilhada.",
-    "sharedplaylistenabled-tooltip": "Operadores da sala podem adicionar arquivos para a playlist compartilhada para tornar mais fácil para todo mundo assistir a mesma coisa. Configure os diretórios de mídia em 'Miscelânea'.",
+    "playlist-instruction-item-message": "Arraste um ficheiro aqui para adicioná-lo à playlist compartilhada.",
+    "sharedplaylistenabled-tooltip": "Operadores da sala podem adicionar ficheiros para a playlist compartilhada para tornar mais fácil para todo mundo assistir a mesma coisa. Configure os pastas de mídia em 'Miscelânea'.",
 }
