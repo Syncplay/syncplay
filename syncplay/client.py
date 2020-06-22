@@ -6,6 +6,7 @@ import os
 import os.path
 import random
 import re
+import string
 import sys
 import threading
 import time
@@ -1608,7 +1609,8 @@ class UiManager(object):
                     self.lastNotificationOSDEndTime = time.time() + constants.OSD_DURATION
                     if self.lastAlertOSDEndTime and time.time() < self.lastAlertOSDEndTime:
                         message = "{}{}{}".format(self.lastAlertOSDMessage, self._client._player.osdMessageSeparator, message)
-            self._client._player.displayMessage(message, int(duration * 1000), OSDType, mood)
+            printableMessage = ''.join(filter(lambda x: x in set(string.printable), message))
+            self._client._player.displayMessage(printableMessage, int(duration * 1000), OSDType, mood)
 
     def setControllerStatus(self, username, isController):
         self.__ui.setControllerStatus(username, isController)
