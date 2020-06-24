@@ -9,7 +9,7 @@ echo "Package: syncplay
 Version: "$(
   sed -n -e "s/^.*version = //p" syncplay/__init__.py | sed "s/'//g"
 )$(
-  if [[ $(git describe --exact-match --tags HEAD | wc -l) = '0' ]]; 
+  if [ $(git describe --exact-match --tags HEAD | wc -l) = '0' ]; 
   then
     echo -git-$(date -u +%y%m%d%H%M)
   fi
