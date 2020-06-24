@@ -6,7 +6,14 @@ set -e
 mkdir -p /tmp/syncplay/DEBIAN
 
 echo "Package: syncplay
-Version: "$(sed -n -e "s/^.*version = //p" syncplay/__init__.py | sed "s/'//g")""$(git describe --exact-match --tags HEAD &>/dev/null && echo -git-$(date -u +%y%m%d%H%M))"
+Version: "$(
+  sed -n -e "s/^.*version = //p" syncplay/__init__.py | sed "s/'//g"
+)$(
+  if [[ $(git describe --exact-match --tags HEAD | wc -l) = '0' ]]; 
+  then
+    echo -git-$(date -u +%y%m%d%H%M)
+  fi
+)"
 Architecture: all
 Maintainer: <dev@syncplay.pl>
 Depends: python3 (>= 3.4), python3-pyside2.qtwidgets, python3-pyside2.qtcore, python3-twisted (>= 16.4.0), python3-certifi, mpv (>= 0.23) | vlc (>= 2.2.1)
