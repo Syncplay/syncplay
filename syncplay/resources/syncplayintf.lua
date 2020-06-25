@@ -626,14 +626,14 @@ function wordwrapify_string(line)
 	local nextChar = 0
 	local chars = 0
     local maxChars = str:len()
-
+	str = string.gsub(str, "\\\"", "\"");
 	repeat
 		nextChar = next_utf8(str, currentChar)
         if nextChar == currentChar then
             return newstr
 		end
 		local charToTest = str:sub(currentChar,nextChar-1)
-		if charToTest ~= "\\" and charToTest ~= "{"  and charToTest ~= "}" and charToTest ~= "%" then
+		if charToTest ~= "{"  and charToTest ~= "}" and charToTest ~= "%" then
 			newstr = newstr .. WORDWRAPIFY_MAGICWORD .. str:sub(currentChar,nextChar-1)
         else
 			newstr = newstr .. str:sub(currentChar,nextChar-1)
