@@ -1,6 +1,7 @@
 
 import os.path
 import re
+import string
 import time
 import threading
 import _thread
@@ -91,7 +92,7 @@ class MpcHcApi:
         cmessage = __OSDDATASTRUCT()
         cmessage.nMsgPos = MsgPos
         cmessage.nDurationMS = DurationMs
-        cmessage.strMsg = message
+        cmessage.strMsg = ''.join(filter(lambda x: x in string.printable, message))
         self.__listener.SendCommand(self.CMD_OSDSHOWMESSAGE, cmessage)
 
     def sendRawCommand(self, cmd, value):
