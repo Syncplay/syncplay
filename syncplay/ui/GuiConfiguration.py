@@ -380,6 +380,15 @@ class ConfigDialog(QtWidgets.QDialog):
             settings.setValue("publicServers", servers)
         self.hostCombobox.setEditText(currentServer)
 
+    def updateRoomHistory(self, newRoom=None):
+        if newRoom is None:
+            newRoom = self.defaultroomCombobox.currentText()
+        roomHistory = self.config['roomhistory']
+        if newRoom in roomHistory:
+            roomHistory.remove(newRoom)
+        roomHistory.insert(0, newRoom)
+        self.config['roomhistory'] = roomHistory
+
     def showErrorMessage(self, errorMessage):
         QtWidgets.QMessageBox.warning(self, "Syncplay", errorMessage)
 
@@ -447,6 +456,7 @@ class ConfigDialog(QtWidgets.QDialog):
         else:
             self.config['file'] = str(self.mediapathTextbox.text())
         self.config['publicServers'] = self.publicServerAddresses
+        self.config['room'] = self.defaultroomCombobox.currentText()
 
         self.pressedclosebutton = False
         self.close()
@@ -599,7 +609,11 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.usernameTextbox.setObjectName("name")
         self.serverpassLabel = QLabel(getMessage("password-label"), self)
-        self.defaultroomTextbox = QLineEdit(self)
+        self.defaultroomCombobox = QtWidgets.QComboBox(self)
+        self.updateRoomHistory(config['room'])
+        for roomHistoryValue in self.config['roomhistory']:
+            self.defaultroomCombobox.addItem(roomHistoryValue)
+        self.defaultroomCombobox.setEditable(True)
         self.usernameLabel = QLabel(getMessage("name-label"), self)
         self.serverpassTextbox = QLineEdit(self)
         self.serverpassTextbox.setText(self.storedPassword)
@@ -614,7 +628,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.hostCombobox.editTextChanged.connect(self.updatePasswordVisibilty)
         self.hostCombobox.currentIndexChanged.connect(self.updatePasswordVisibilty)
         self.defaultroomLabel.setObjectName("room")
-        self.defaultroomTextbox.setObjectName("room")
+        self.defaultroomCombobox.setObjectName("room")
 
         self.connectionSettingsLayout = QtWidgets.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
@@ -624,7 +638,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.connectionSettingsLayout.addWidget(self.usernameLabel, 2, 0)
         self.connectionSettingsLayout.addWidget(self.usernameTextbox, 2, 1)
         self.connectionSettingsLayout.addWidget(self.defaultroomLabel, 3, 0)
-        self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
+        self.connectionSettingsLayout.addWidget(self.defaultroomCombobox, 3, 1)
         self.connectionSettingsLayout.setSpacing(10)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
         if isMacOS():

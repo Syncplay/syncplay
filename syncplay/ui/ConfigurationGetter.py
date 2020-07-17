@@ -29,6 +29,7 @@ class ConfigurationGetter(object):
             "noGui": False,
             "noStore": False,
             "room": "",
+            "roomhistory": [],
             "password": None,
             "playerPath": None,
             "perPlayerArguments": None,
@@ -149,6 +150,7 @@ class ConfigurationGetter(object):
         ]
 
         self._serialised = [
+            "roomhistory",
             "perPlayerArguments",
             "mediaSearchDirectories",
             "trustedDomains",
@@ -181,7 +183,7 @@ class ConfigurationGetter(object):
         self._iniStructure = {
             "server_data": ["host", "port", "password"],
             "client_settings": [
-                "name", "room", "playerPath",
+                "name", "room", "roomhistory", "playerPath",
                 "perPlayerArguments", "slowdownThreshold",
                 "rewindThreshold", "fastforwardThreshold",
                 "slowOnDesync", "rewindOnDesync",
