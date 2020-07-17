@@ -383,6 +383,8 @@ class ConfigDialog(QtWidgets.QDialog):
     def updateRoomHistory(self, newRoom=None):
         if newRoom is None:
             newRoom = self.defaultroomCombobox.currentText()
+        if not newRoom:
+            return
         roomHistory = self.config['roomhistory']
         if newRoom in roomHistory:
             roomHistory.remove(newRoom)
