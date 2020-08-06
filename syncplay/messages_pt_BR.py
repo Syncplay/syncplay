@@ -127,7 +127,7 @@ pt_BR = {
     "empty-value-config-error": "{} não pode ser vazio",  # Config option
 
     "not-json-error": "Não é uma string codificada como JSON\n",
-    "hello-arguments-error": "Falta de argumentos Hello\n",  # DO NOT TRANSLATE
+    "hello-arguments-error": "Not enough Hello arguments\n",  # DO NOT TRANSLATE
     "version-mismatch-error": "Discrepância entre versões do client e do servidor\n",
     "vlc-failed-connection": "Falha ao conectar ao VLC. Se você não instalou o syncplay.lua e está usando a versão mais recente do VLC, por favor veja https://syncplay.pl/LUA/ para mais instruções.",
     "vlc-failed-noscript": "O VLC reportou que a interface de script do syncplay.lua não foi instalada. Por favor, veja https://syncplay.pl/LUA/ para mais instruções.",
