@@ -1881,7 +1881,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.playlist.setPlaylistIndexFilename(filename)
 
     def addFileToPlaylist(self, filePath, index=-1):
-        if os.path.isfile(filePath):
+        if not isURL:
             self.removePlaylistNote()
             filename = os.path.basename(filePath)
             if self.noPlaylistDuplicates(filename):
@@ -1890,7 +1890,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:
                     self.playlist.insertItem(index, filename)
                 self._syncplayClient.fileSwitch.notifyUserIfFileNotInMediaDirectory(filename, filePath)
-        elif isURL(filePath):
+        else:
             self.removePlaylistNote()
             if self.noPlaylistDuplicates(filePath):
                 if self.playlist == -1 or index == -1:
