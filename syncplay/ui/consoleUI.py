@@ -199,7 +199,7 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.ui.addFileToPlaylist(filename)
         elif command.group('command') in constants.COMMANDS_PLAYLIST:
             playlist = self._syncplayClient.playlist
-            playlist_elements = [f"\t{i}: {el}" for i, el in enumerate(playlist._playlist)]
+            playlist_elements = [f"\t{i+1}: {el}" for i, el in enumerate(playlist._playlist)]
 
             if playlist_elements:
                 i = playlist._playlistIndex
@@ -211,7 +211,7 @@ class ConsoleUI(threading.Thread):
                 print("playlist is currently empty.")
         elif command.group('command') in constants.COMMANDS_SELECT:
             try:
-                index = int(command.group('parameter').strip())
+                index = int(command.group('parameter').strip()) - 1
                 self._syncplayClient.playlist.changeToPlaylistIndex(index, resetPosition=True)
                 self._syncplayClient.rewindFile()
 
@@ -219,7 +219,7 @@ class ConsoleUI(threading.Thread):
                 print("invalid index")
         elif command.group('command') in constants.COMMANDS_DELETE:
             try:
-                index = int(command.group('parameter').strip())
+                index = int(command.group('parameter').strip()) - 1
                 self._syncplayClient.playlist.deleteAtIndex(index)
 
             except TypeError:
