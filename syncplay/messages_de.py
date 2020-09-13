@@ -392,6 +392,8 @@ de = {
     "privacy-sendhashed-tooltip": "Die Informationen gehasht übertragen, um sie für andere Clients schwerer lesbar zu machen.",
     "privacy-dontsend-tooltip": "Diese Information nicht übertragen. Dies garantiert den größtmöglichen Datanschutz.",
     "checkforupdatesautomatically-tooltip": "Regelmäßig auf der Syncplay-Website nach Updates suchen.",
+    "autosavejoinstolist-tooltip": "When you join a room in a server, automatically remember the room name in the list of rooms to join.", # TO DO: Translate
+    "autosavejoinstolist-label": "Add rooms you join to the room list e", # TO DO: Translate
     "slowondesync-tooltip": "Reduziert die Abspielgeschwindigkeit zeitweise, um die Synchronität zu den anderen Clients wiederherzustellen.",
     "rewindondesync-label": "Zurückspulen bei großer Zeitdifferenz (empfohlen)",
     "fastforwardondesync-label": "Vorspulen wenn das Video laggt (empfohlen)",

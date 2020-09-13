@@ -53,7 +53,7 @@ class ConsoleInGUI(ConsoleUI):
     def showErrorMessage(self, message, criticalerror=False):
         self._syncplayClient.ui.showErrorMessage(message, criticalerror)
 
-    def updateRoomName(self, room=""):
+    def updateRoomName(self, room=""): #bob
         self._syncplayClient.ui.updateRoomName(room)
 
     def getUserlist(self):
@@ -467,6 +467,18 @@ class MainWindow(QtWidgets.QMainWindow):
             self.roomsCombobox.addItem(roomListValue)
         self.roomsCombobox.setEditText(previousRoomSelection)
 
+    def addRoomToList(self, newRoom=None):
+        if newRoom is None:
+            newRoom = self.roomsCombobox.currentText()
+        if not newRoom:
+            return
+        roomList = self.config['roomList']
+        if newRoom not in roomList:
+            roomList.append(newRoom)
+        self.config['roomList'] = roomList
+        roomList = sorted(roomList)
+        self._syncplayClient.setRoomList(roomList)
+        self.relistRoomList(roomList)
 
     def addClient(self, client):
         self._syncplayClient = client
@@ -879,6 +891,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def updateRoomName(self, room=""):
         self.roomsCombobox.setEditText(room)
+        if self.config['autosaveJoinsToList']:
+            self.addRoomToList(room)
 
     def showDebugMessage(self, message):
         print(message)
@@ -909,6 +923,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if room != self._syncplayClient.getRoom():
             self._syncplayClient.setRoom(room, resetAutoplay=True)
             self._syncplayClient.sendRoom()
+            if self.config['autosaveJoinsToList']:
+                self.addRoomToList(room)
 
     def seekPositionDialog(self):
         seekTime, ok = QtWidgets.QInputDialog.getText(
@@ -1153,6 +1169,7 @@ class MainWindow(QtWidgets.QMainWindow):
         result = RoomsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
             newRooms = utils.convertMultilineStringToList(RoomsTextbox.toPlainText())
+            newRooms = sorted(newRooms)
             self.relistRoomList(newRooms)
             self._syncplayClient.setRoomList(newRooms)
 

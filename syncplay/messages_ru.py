@@ -207,6 +207,7 @@ ru = {
     "filename-privacy-label": "Имя файла:",
     "filesize-privacy-label": "Размер файла:",
     "checkforupdatesautomatically-label": "Проверять обновления автоматически",
+    "autosavejoinstolist-label": "Add rooms you join to the room list", # TO DO: Translate
     "slowondesync-label": "Замедлять при небольших рассинхронизациях (не поддерживаетя в MPC-HC/BE)",
     "rewindondesync-label": "Перемотка при больших рассинхронизациях (настоятельно рекомендуется)",
     "dontslowdownwithme-label": "Никогда не замедлять и не перематывать видео другим (функция тестируется)",
@@ -396,6 +397,7 @@ ru = {
     "privacy-sendhashed-tooltip": "Отправляет хэш-сумму этой информации, делая ее невидимой для других пользователей.",
     "privacy-dontsend-tooltip": "Не отправлять эту информацию на сервер. Предоставляет наибольшую приватность.",
     "checkforupdatesautomatically-tooltip": "Syncplay будет регулярно заходить на сайт и проверять наличие новых версий.",
+    "autosavejoinstolist-tooltip": "When you join a room in a server, automatically remember the room name in the list of rooms to join.", # TO DO: Translate
     "slowondesync-tooltip": "Временно уменьшить скорость воспроизведения в целях синхронизации с другими зрителями. Не поддерживается в MPC-HC/BE.",
     "dontslowdownwithme-tooltip": "Ваши лаги не будут влиять на других зрителей.",
     "pauseonleave-tooltip": "Приостановить воспроизведение, если Вы покинули комнату или кто-то из зрителей отключился от сервера.",

@@ -534,6 +534,7 @@ class SyncplayClient(object):
             # TODO: Handle cases where users add www. to start of domain
 
     def setRoomList(self, newRoomList):
+        newRoomList = sorted(newRoomList)
         from syncplay.ui.ConfigurationGetter import ConfigurationGetter
         ConfigurationGetter().setConfigOption("roomList", newRoomList)
         oldRoomList = self._config['roomList']
@@ -1041,6 +1042,8 @@ class SyncplayClient(object):
     def storeControlPassword(self, room, password):
         if password:
             self.controlpasswords[room] = password
+            if self._config['autosaveJoinsToList']:
+                self.ui.addRoomToList(room+":"+password)
 
     def getControlledRoomPassword(self, room):
         if room in self.controlpasswords:
@@ -1636,6 +1639,9 @@ class UiManager(object):
 
     def updateRoomName(self, room=""):
         self.__ui.updateRoomName(room)
+
+    def addRoomToList(self, room):
+        self.__ui.addRoomToList(room)
 
     def executeCommand(self, command):
         self.__ui.executeCommand(command)

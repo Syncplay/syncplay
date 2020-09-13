@@ -89,6 +89,9 @@ class ConsoleUI(threading.Thread):
     def userListChange(self):
         pass
 
+    def addRoomToList(self):
+        pass
+
     def fileSwitchFoundFiles(self):
         pass
 

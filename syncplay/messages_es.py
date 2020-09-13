@@ -206,6 +206,7 @@ es = {
     "filename-privacy-label": "Información del nombre de archivo:",
     "filesize-privacy-label": "Información del tamaño de archivo:",
     "checkforupdatesautomatically-label": "Buscar actualizaciones de Syncplay automáticamente",
+    "autosavejoinstolist-label": "Add rooms you join to the room list", # TO DO: Translate
     "slowondesync-label": "Ralentizar si hay una desincronización menor (no soportado en MPC-HC/BE)",
     "rewindondesync-label": "Rebobinar si hay una desincronización mayor (recomendado)",
     "fastforwardondesync-label": "Avanzar rápidamente si hay un retraso (recomendado)",
@@ -393,6 +394,7 @@ es = {
     "privacy-sendhashed-tooltip": "Enviar una versión \"hasheada\" de la información, para que sea menos visible para otros clientes.",
     "privacy-dontsend-tooltip": "No enviar esta información al servidor. Esto proporciona la máxima privacidad.",
     "checkforupdatesautomatically-tooltip": "Regularmente verificar con el sitio Web de Syncplay para ver si hay una nueva versión de Syncplay disponible.",
+    "autosavejoinstolist-tooltip": "When you join a room in a server, automatically remember the room name in the list of rooms to join.", # TO DO: Translate
     "slowondesync-tooltip": "Reducir la velocidad de reproducción temporalmente cuando sea necesario, para volver a sincronizar con otros espectadores. No soportado en MPC-HC/BE.",
     "dontslowdownwithme-tooltip": "Significa que otros no se ralentizan ni rebobinan si la reproducción se retrasa. Útil para operadores de la sala.",
     "pauseonleave-tooltip": "Pausa la reproducción si te desconectas o alguien sale de tu sala.",

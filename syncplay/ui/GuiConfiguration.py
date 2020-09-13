@@ -178,6 +178,7 @@ class ConfigDialog(QtWidgets.QDialog):
         result = RoomsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
             newRooms = utils.convertMultilineStringToList(RoomsTextbox.toPlainText())
+            newRooms = sorted(newRooms)
             self.relistRoomList(newRooms)
 
     def safenormcaseandpath(self, path):
@@ -422,9 +423,9 @@ class ConfigDialog(QtWidgets.QDialog):
         if not newRoom:
             return
         roomList = self.config['roomList']
-        if newRoom in roomList:
-            roomList.remove(newRoom)
-        roomList.insert(0, newRoom)
+        if newRoom not in roomList:
+            roomList.append(newRoom)
+        roomList = sorted(roomList)
         self.config['roomList'] = roomList
 
     def showErrorMessage(self, errorMessage):
@@ -495,6 +496,8 @@ class ConfigDialog(QtWidgets.QDialog):
             self.config['file'] = str(self.mediapathTextbox.text())
         self.config['publicServers'] = self.publicServerAddresses
         self.config['room'] = self.roomsCombobox.currentText()
+        if self.config['autosaveJoinsToList']:
+            self.addRoomToList(self.config['room'])
 
         self.pressedclosebutton = False
         self.close()
@@ -649,7 +652,6 @@ class ConfigDialog(QtWidgets.QDialog):
         self.serverpassLabel = QLabel(getMessage("password-label"), self)
         self.roomsCombobox = QtWidgets.QComboBox(self)
         self.roomsCombobox.setEditable(True)
-        # self.addRoomToHistory(config['room']) - TO DO: Make this optional
         self.fillRoomsCombobox()
         self.roomsCombobox.setEditText(config['room'])
         self.usernameLabel = QLabel(getMessage("name-label"), self)
@@ -892,6 +894,10 @@ class ConfigDialog(QtWidgets.QDialog):
         self.automaticupdatesCheckbox = QCheckBox(getMessage("checkforupdatesautomatically-label"))
         self.automaticupdatesCheckbox.setObjectName("checkForUpdatesAutomatically")
         self.internalSettingsLayout.addWidget(self.automaticupdatesCheckbox)
+
+        self.autosaveJoinsToListCheckbox = QCheckBox(getMessage("autosavejoinstolist-label"))
+        self.autosaveJoinsToListCheckbox.setObjectName("autosaveJoinsToList")
+        self.internalSettingsLayout.addWidget(self.autosaveJoinsToListCheckbox)
 
         ## Media path directories
 

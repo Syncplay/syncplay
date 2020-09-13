@@ -38,6 +38,7 @@ class ConfigurationGetter(object):
             "loopAtEndOfPlaylist": False,
             "loopSingleFiles": False,
             "onlySwitchToTrustedDomains": True,
+            "autosaveJoinsToList": True,
             "trustedDomains": constants.DEFAULT_TRUSTED_DOMAINS,
             "file": None,
             "playerArgs": [],
@@ -137,6 +138,7 @@ class ConfigurationGetter(object):
             "loopAtEndOfPlaylist",
             "loopSingleFiles",
             "onlySwitchToTrustedDomains",
+            "autosaveJoinsToList",
             "chatInputEnabled",
             "chatInputFontUnderline",
             "chatDirectInput",
@@ -196,6 +198,7 @@ class ConfigurationGetter(object):
                 "loopSingleFiles",
                 "onlySwitchToTrustedDomains", "trustedDomains", "publicServers"],
             "gui": [
+                "autosaveJoinsToList",
                 "showOSD", "showOSDWarnings", "showSlowdownOSD",
                 "showDifferentRoomOSD", "showSameRoomOSD",
                 "showNonControllerOSD", "showDurationNotification",
