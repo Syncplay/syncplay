@@ -1702,6 +1702,11 @@ class SyncplayPlaylist():
 
     def loadDelayedPath(self, changeToIndex):
         # Implementing the behaviour set out at https://github.com/Syncplay/syncplay/issues/315
+
+        if self._client.playerIsNotReady():
+            self._client.addPlayerReadyCallback(lambda x: self.loadDelayedPath(changeToIndex))
+            return
+
         if self._client._protocol.hadFirstPlaylistIndex and self._client.delayedLoadPath:
             delayedLoadPath = str(self._client.delayedLoadPath)
             self._client.delayedLoadPath = None
