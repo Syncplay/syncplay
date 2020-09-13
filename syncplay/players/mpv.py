@@ -593,7 +593,8 @@ class MpvPlayer(BasePlayer):
                     env['PATH'] = '/usr/bin:/usr/local/bin'
                     env['PYTHONPATH'] = pythonPath
             try:
-                self.mpvpipe = MPV(mpv_location=self.playerPath, loglevel="info", log_handler=self.__playerController.mpv_log_handler, quit_callback=self.stop_client, **self.mpv_arguments)
+                socket = self.mpv_arguments.get('input-ipc-server')
+                self.mpvpipe = MPV(mpv_location=self.playerPath, ipc_socket=socket, loglevel="info", log_handler=self.__playerController.mpv_log_handler, quit_callback=self.stop_client, **self.mpv_arguments)
             except Exception as e:
                 self.quitReason = getMessage("media-player-error").format(str(e)) + " " + getMessage("mpv-failed-advice")
                 self.__playerController.reactor.callFromThread(self.__playerController._client.ui.showErrorMessage, self.quitReason, True)
