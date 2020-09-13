@@ -512,4 +512,7 @@ pt_BR = {
 
     "playlist-instruction-item-message": "Arraste um arquivo aqui para adicioná-lo à playlist compartilhada.",
     "sharedplaylistenabled-tooltip": "Operadores da sala podem adicionar arquivos para a playlist compartilhada para tornar mais fácil para todo mundo assistir a mesma coisa. Configure os diretórios de mídia em 'Miscelânea'.",
+
+    "playlist-empty-error": "Playlist is currently empty.",  # TO DO: Translate
+    "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
 }

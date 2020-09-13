@@ -513,4 +513,7 @@ ru = {
 
     "playlist-instruction-item-message": "Перетащите сюда файлы, чтобы добавить их в общий список.",
     "sharedplaylistenabled-tooltip": "Оператор комнаты может добавлять файлы в список общего воспроизведения для удобного совместного просмотра. Папки воспроизведения настраиваются во вкладке 'Файл'.",
+
+    "playlist-empty-error": "Playlist is currently empty.",  # TO DO: Translate
+    "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
 }

@@ -1892,9 +1892,12 @@ class SyncplayPlaylist():
 
     def deleteAtIndex(self, index):
         new_playlist = self._playlist.copy()
-        if index < len(new_playlist):
+        if index >= 0 and index < len(new_playlist):
             del new_playlist[index]
             self.changePlaylist(new_playlist)
+        else:
+            raise TypeError("Invalid index")
+
 
     @needsSharedPlaylistsEnabled
     def undoPlaylistChange(self):

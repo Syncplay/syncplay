@@ -180,6 +180,7 @@ en = {
 
     "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)",
 
+
     # Client labels
     "config-window-title": "Syncplay configuration",
 
@@ -512,4 +513,7 @@ en = {
 
     "playlist-instruction-item-message": "Drag file here to add it to the shared playlist.",
     "sharedplaylistenabled-tooltip": "Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.",
+
+    "playlist-empty-error": "Playlist is currently empty.",
+    "playlist-invalid-index-error": "Invalid playlist index",
 }

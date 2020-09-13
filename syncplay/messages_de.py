@@ -512,4 +512,7 @@ de = {
 
     "playlist-instruction-item-message": "Zieh eine Datei hierher, um sie zur geteilten Playlist hinzuzufügen.",
     "sharedplaylistenabled-tooltip": "Raumleiter können Dateien zu einer geteilten Playlist hinzufügen und es so erleichtern, gemeinsam das Gleiche zu gucken. Konfiguriere Medienverzeichnisse unter „Diverse“",
+
+    "playlist-empty-error": "Playlist is currently empty.", # TO DO: Translate
+    "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
 }

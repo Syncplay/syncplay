@@ -512,4 +512,7 @@ es = {
 
     "playlist-instruction-item-message": "Desplazar aquí el archivo para agregarlo a la lista de reproducción compartida.",
     "sharedplaylistenabled-tooltip": "Los operadores de la sala pueden agregar archivos a una lista de reproducción sincronizada, para que visualizar la misma cosa sea más sencillo para todos. Configurar directorios multimedia en 'Misc'.",
+
+    "playlist-empty-error": "Playlist is currently empty.", # TO DO: Translate
+    "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
 }

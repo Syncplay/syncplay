@@ -512,4 +512,7 @@ it = {
 
     "playlist-instruction-item-message": "Trascina qui i file per aggiungerli alla playlist condivisa.",
     "sharedplaylistenabled-tooltip": "Gli operatori della stanza possono aggiungere i file a una playlist sincronizzata per garantire che tutti i partecipanti stiano guardando la stessa cosa. Configura le cartelle multimediali alla voce 'Miscellanea'.",
+
+    "playlist-empty-error": "Playlist is currently empty.",  # TO DO: Translate
+    "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
 }

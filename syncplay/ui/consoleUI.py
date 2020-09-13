@@ -24,11 +24,6 @@ class ConsoleUI(threading.Thread):
         self._syncplayClient = client
 
     def addFileToPlaylist(self, file):
-        if not isURL(file):
-            if not self._syncplayClient.fileSwitch.findFilepath(file):
-                print(f"{file} is not in any media directory")
-                return
-
         self._syncplayClient.playlist.addToPlaylist(file)
 
     def drop(self):
@@ -206,24 +201,27 @@ class ConsoleUI(threading.Thread):
                 if i is not None and i in range(len(playlist_elements)):
                     playlist_elements[i] = " *" + playlist_elements[i]
 
-                print(*playlist_elements, sep='\n')
+                self.showMessage("\n".join(playlist_elements), True)
             else:
-                print("playlist is currently empty.")
+                self.showMessage(getMessage("playlist-empty-error"), True)
         elif command.group('command') in constants.COMMANDS_SELECT:
             try:
                 index = int(command.group('parameter').strip()) - 1
+
+                if index < 0 or index >= len(self._syncplayClient.playlist._playlist):
+                    raise TypeError("Invalid playlist index")
                 self._syncplayClient.playlist.changeToPlaylistIndex(index, resetPosition=True)
                 self._syncplayClient.rewindFile()
 
-            except TypeError:
-                print("invalid index")
+            except (TypeError, AttributeError):
+                self.showErrorMessage(getMessage("playlist-invalid-index-error"))
         elif command.group('command') in constants.COMMANDS_DELETE:
             try:
                 index = int(command.group('parameter').strip()) - 1
                 self._syncplayClient.playlist.deleteAtIndex(index)
 
-            except TypeError:
-                print("invalid index")
+            except (TypeError, AttributeError):
+                self.showErrorMessage(getMessage("playlist-invalid-index-error"))
 
         else:
             if self._tryAdvancedCommands(data):

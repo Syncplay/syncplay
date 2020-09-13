@@ -1924,7 +1924,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.playlist.setPlaylistIndexFilename(filename)
 
     def addFileToPlaylist(self, filePath, index=-1):
-        if not isURL:
+        if not isURL(filePath):
             self.removePlaylistNote()
             filename = os.path.basename(filePath)
             if self.noPlaylistDuplicates(filename):
