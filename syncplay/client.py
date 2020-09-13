@@ -1887,6 +1887,15 @@ class SyncplayPlaylist():
             self._ui.setPlaylist(self._playlist)
             self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
 
+    def addToPlaylist(self, file):
+        self.changePlaylist([*self._playlist, file])
+
+    def deleteAtIndex(self, index):
+        new_playlist = self._playlist.copy()
+        if index < len(new_playlist):
+            del new_playlist[index]
+            self.changePlaylist(new_playlist)
+
     @needsSharedPlaylistsEnabled
     def undoPlaylistChange(self):
         if self.canUndoPlaylist(self._playlist):
@@ -2005,7 +2014,7 @@ class FileSwitchManager(object):
         self.mediaFilesCache = {}
         self.filenameWatchlist = []
         self.currentDirectory = None
-        self.mediaDirectories = None
+        self.mediaDirectories = client.getConfig().get('mediaSearchDirectories')
         self.lock = threading.Lock()
         self.folderSearchEnabled = True
         self.directorySearchError = None

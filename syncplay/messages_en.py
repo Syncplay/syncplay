@@ -87,6 +87,10 @@ en = {
     "commandlist-notification/create": "\tc [name] - create managed room using name of current room",
     "commandlist-notification/auth": "\ta [password] - authenticate as room operator with operator password",
     "commandlist-notification/chat": "\tch [message] - send a chat message in a room",
+    "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",
+    "commandList-notification/playlist": "\tql - show the current playlist",
+    "commandList-notification/select": "\tqs [index] - select given entry in the playlist",
+    "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",
     "syncplay-version-notification": "Syncplay version: {}",  # syncplay.version
     "more-info-notification": "More info available at: {}",  # projectURL
 
