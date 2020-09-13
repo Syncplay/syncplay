@@ -87,6 +87,10 @@ de = {
     "commandlist-notification/create": "\tc [name] - erstelle zentral gesteuerten Raum mit dem aktuellen Raumnamen",
     "commandlist-notification/auth": "\ta [password] - authentifiziere als Raumleiter mit Passwort",
     "commandlist-notification/chat": "\tch [message] - Chatnachricht an einem Raum senden",
+    "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist", # TO DO: Translate
+    "commandList-notification/playlist": "\tql - show the current playlist", # TO DO: Translate
+    "commandList-notification/select": "\tqs [index] - select given entry in the playlist", # TO DO: Translate
+    "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist", # TO DO: Translate
     "syncplay-version-notification": "Syncplay Version: {}",  # syncplay.version
     "more-info-notification": "Weitere Informationen auf: {}",  # projectURL
 

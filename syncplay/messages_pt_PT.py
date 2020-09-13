@@ -87,6 +87,10 @@ pt_PT = {
     "commandlist-notification/create": "\tc [nome] - cria sala gerenciada usando o nome da sala atual",
     "commandlist-notification/auth": "\ta [senha] - autentica-se como administrador da sala com a senha",
     "commandlist-notification/chat": "\tch [mensagem] - envia uma mensagem no chat da sala",
+    "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",  # TO DO: Translate
+    "commandList-notification/playlist": "\tql - show the current playlist",  # TO DO: Translate
+    "commandList-notification/select": "\tqs [index] - select given entry in the playlist",  # TO DO: Translate
+    "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",  # TO DO: Translate
     "syncplay-version-notification": "Versão do Syncplay: {}",  # syncplay.version
     "more-info-notification": "Mais informações disponíveis em: {}",  # projectURL
 
