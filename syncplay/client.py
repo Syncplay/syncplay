@@ -533,6 +533,13 @@ class SyncplayClient(object):
             # TODO: Properly add message for setting trusted domains!
             # TODO: Handle cases where users add www. to start of domain
 
+    def setRoomList(self, newRoomList):
+        from syncplay.ui.ConfigurationGetter import ConfigurationGetter
+        ConfigurationGetter().setConfigOption("roomList", newRoomList)
+        oldRoomList = self._config['roomList']
+        if oldRoomList != newRoomList:
+            self._config['roomList'] = newRoomList
+
     def isUntrustedTrustableURI(self, URIToTest):
         if utils.isURL(URIToTest):
             for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:

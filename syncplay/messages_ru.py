@@ -185,6 +185,7 @@ ru = {
     "name-label": "Имя пользователя (не обязательно):",
     "password-label": "Пароль сервера (если требуется):",
     "room-label": "Комната:",
+    "roomlist-msgbox-label": "Edit room list (one per line)", # TODO: Translate
 
     "media-setting-title": "Воспроизведение",
     "executable-path-label": "Путь к проигрывателю:",
@@ -376,6 +377,8 @@ ru = {
     "name-tooltip": "Имя, под которым Вы будете известны. Регистриция не требуется, так что имя пользователя можно легко сменить в любой момент. Будет сгенерировано случайным образом, если не указать.",
     "password-tooltip": "Пароли нужны для подключения к приватным серверам.",
     "room-tooltip": "Комната, в которую Вы попадете сразу после подключения. Синхронизация возможна только между людьми в одной и той же комнате.",
+
+    "edit-rooms-tooltip": "Edit room list.",  # TO DO: Translate
 
     "executable-path-tooltip": "Расположение Вашего видеопроигрывателя (mpv, mpv.net, VLC, MPC-HC/BE или mplayer2).",
     "media-path-tooltip": "Расположение видеофайла или потока для просмотра. Обязательно для mplayer2.",  # TODO: Confirm translation

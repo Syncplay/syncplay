@@ -158,25 +158,27 @@ class ConfigDialog(QtWidgets.QDialog):
 
     def openRoomsDialog(self):
         RoomsDialog = QtWidgets.QDialog()
-        RoomsDialog.setWindowFlags(Qt.FramelessWindowHint)
         RoomsLayout = QtWidgets.QGridLayout()
         RoomsTextbox = QtWidgets.QPlainTextEdit()
+        RoomsDialog.setWindowTitle(getMessage("roomlist-msgbox-label"))
+        RoomsPlaylistLabel = QtWidgets.QLabel(getMessage("roomlist-msgbox-label"))
         RoomsTextbox.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
-        RoomsTextbox.setPlainText(utils.getListAsMultilineString(self.config['roomhistory']))
-        RoomsLayout.addWidget(RoomsTextbox, 0, 0, 1, 1)
+        RoomsTextbox.setPlainText(utils.getListAsMultilineString(self.config['roomList']))
+        RoomsLayout.addWidget(RoomsPlaylistLabel, 0, 0, 1, 1)
+        RoomsLayout.addWidget(RoomsTextbox, 1, 0, 1, 1)
         RoomsButtonBox = QtWidgets.QDialogButtonBox()
         RoomsButtonBox.setOrientation(Qt.Horizontal)
         RoomsButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         RoomsButtonBox.accepted.connect(RoomsDialog.accept)
         RoomsButtonBox.rejected.connect(RoomsDialog.reject)
-        RoomsLayout.addWidget(RoomsButtonBox, 1, 0, 1, 1)
+        RoomsLayout.addWidget(RoomsButtonBox, 2, 0, 1, 1)
         RoomsDialog.setLayout(RoomsLayout)
         RoomsDialog.setModal(True)
         RoomsDialog.show()
         result = RoomsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
             newRooms = utils.convertMultilineStringToList(RoomsTextbox.toPlainText())
-            self.relistRoomHistory(newRooms)
+            self.relistRoomList(newRooms)
 
     def safenormcaseandpath(self, path):
         if utils.isURL(path):
@@ -403,25 +405,27 @@ class ConfigDialog(QtWidgets.QDialog):
         self.hostCombobox.setEditText(currentServer)
 
     def fillRoomsCombobox(self):
+        previousRoomSelection = self.roomsCombobox.currentText()
         self.roomsCombobox.clear()
-        for roomHistoryValue in self.config['roomhistory']:
-            self.roomsCombobox.addItem(roomHistoryValue)
+        for roomListValue in self.config['roomList']:
+            self.roomsCombobox.addItem(roomListValue)
+        self.roomsCombobox.setEditText(previousRoomSelection)
 
-    def relistRoomHistory(self, newRooms):
+    def relistRoomList(self, newRooms):
         filteredNewRooms = [room for room in newRooms if room and not room.isspace()]
-        self.config['roomhistory'] = filteredNewRooms
+        self.config['roomList'] = filteredNewRooms
         self.fillRoomsCombobox()
 
-    def addRoomToHistory(self, newRoom=None):
+    def addRoomToList(self, newRoom=None):
         if newRoom is None:
             newRoom = self.roomsCombobox.currentText()
         if not newRoom:
             return
-        roomHistory = self.config['roomhistory']
-        if newRoom in roomHistory:
-            roomHistory.remove(newRoom)
-        roomHistory.insert(0, newRoom)
-        self.config['roomhistory'] = roomHistory
+        roomList = self.config['roomList']
+        if newRoom in roomList:
+            roomList.remove(newRoom)
+        roomList.insert(0, newRoom)
+        self.config['roomList'] = roomList
 
     def showErrorMessage(self, errorMessage):
         QtWidgets.QMessageBox.warning(self, "Syncplay", errorMessage)
@@ -645,14 +649,16 @@ class ConfigDialog(QtWidgets.QDialog):
         self.serverpassLabel = QLabel(getMessage("password-label"), self)
         self.roomsCombobox = QtWidgets.QComboBox(self)
         self.roomsCombobox.setEditable(True)
-        self.addRoomToHistory(config['room'])
+        # self.addRoomToHistory(config['room']) - TO DO: Make this optional
         self.fillRoomsCombobox()
+        self.roomsCombobox.setEditText(config['room'])
         self.usernameLabel = QLabel(getMessage("name-label"), self)
         self.serverpassTextbox = QLineEdit(self)
         self.serverpassTextbox.setText(self.storedPassword)
         self.defaultroomLabel = QLabel(getMessage("room-label"), self)
         self.editRoomsButton = QtWidgets.QToolButton()
-        self.editRoomsButton.setIcon(QtGui.QIcon(resourcespath + 'eye.png'))
+        self.editRoomsButton.setIcon(QtGui.QIcon(resourcespath + 'bullet_edit_centered.png'))
+        self.editRoomsButton.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "edit-rooms")
         self.editRoomsButton.released.connect(self.openRoomsDialog)
 
         self.hostLabel.setObjectName("host")
@@ -674,7 +680,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.connectionSettingsLayout.addWidget(self.usernameLabel, 2, 0)
         self.connectionSettingsLayout.addWidget(self.usernameTextbox, 2, 1)
         self.connectionSettingsLayout.addWidget(self.defaultroomLabel, 3, 0)
-        self.connectionSettingsLayout.addWidget(self.editRoomsButton, 3, 0, Qt.AlignRight)
+        self.connectionSettingsLayout.addWidget(self.editRoomsButton, 3, 2, Qt.AlignRight)
         self.connectionSettingsLayout.addWidget(self.roomsCombobox, 3, 1)
         self.connectionSettingsLayout.setSpacing(10)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)

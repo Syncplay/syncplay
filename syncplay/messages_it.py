@@ -184,6 +184,7 @@ it = {
     "name-label": "Username (opzionale):",
     "password-label": "Password del server (se necessaria):",
     "room-label": "Stanza di default: ",
+    "roomlist-msgbox-label": "Edit room list (one per line)", # TODO: Translate
 
     "media-setting-title": "Impostazioni del media player",
     "executable-path-label": "Percorso del media player:",
@@ -373,6 +374,8 @@ it = {
     "name-tooltip": "Il nome utente con cui sarai riconosciuto. Nessuna registrazione necessaria, cosi potrai sempre cambiarlo. Se lasciato vuoto, viene scelto un nome casuale.",
     "password-tooltip": "La password è necessaria solo in caso di connessione a server privati.",
     "room-tooltip": "La stanza in cui entrare dopo la connessione. Può assumere qualsiasi nome, ma ricorda che sarai sincronizzato solo con gli utenti nella stessa stanza.",
+
+    "edit-rooms-tooltip": "Edit room list.",  # TO DO: Translate
 
     "executable-path-tooltip": "Percorso del media player desiderato (scegliere tra mpv, mpv.net, VLC, MPC-HC/BE or mplayer2).",
     "media-path-tooltip": "Percorso del video o stream da aprire. Necessario per mplayer2.",

@@ -184,6 +184,7 @@ pt_BR = {
     "name-label": "Nome de usuário (opcional): ",
     "password-label": "Senha do servidor (se existir): ",
     "room-label": "Sala padrão: ",
+    "roomlist-msgbox-label": "Edit room list (one per line)", # TODO: Translate
 
     "media-setting-title": "Configurações do reprodutor de mídia",
     "executable-path-label": "Executável do reprodutor:",
@@ -373,6 +374,8 @@ pt_BR = {
     "name-tooltip": "Nome pelo qual você será conhecido. Não há cadastro, então você pode facilmente mudar mais tarde. Se não for especificado, será gerado aleatoriamente.",
     "password-tooltip": "Senhas são necessárias apenas para servidores privados.",
     "room-tooltip": "O nome da sala para se conectar pode ser praticamente qualquer coisa, mas você só irá se sincronizar com pessoas na mesma sala.",
+
+    "edit-rooms-tooltip": "Edit room list.",  # TO DO: Translate
 
     "executable-path-tooltip": "Localização do seu reprodutor de mídia preferido (mpv, mpv.net, VLC, MPC-HC/BE ou mplayer2).",
     "media-path-tooltip": "Localização do vídeo ou transmissão a ser aberto. Necessário com o mplayer2.",

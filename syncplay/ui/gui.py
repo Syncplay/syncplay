@@ -244,6 +244,7 @@ class MainWindow(QtWidgets.QMainWindow):
     sslInformation = "N/A"
     sslMode = False
 
+
     def setPlaylistInsertPosition(self, newPosition):
         if not self.playlist.isEnabled():
             return
@@ -459,12 +460,21 @@ class MainWindow(QtWidgets.QMainWindow):
             return f(self, *args, **kwds)
         return wrapper
 
+    def fillRoomsCombobox(self):
+        previousRoomSelection = self.roomsCombobox.currentText()
+        self.roomsCombobox.clear()
+        for roomListValue in self.config['roomList']:
+            self.roomsCombobox.addItem(roomListValue)
+        self.roomsCombobox.setEditText(previousRoomSelection)
+
+
     def addClient(self, client):
         self._syncplayClient = client
         if self.console:
             self.console.addClient(client)
-        self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
+        self.roomsCombobox.setEditText(self._syncplayClient.getRoom())
+        self.fillRoomsCombobox()
         try:
             self.playlistGroup.blockSignals(True)
             self.playlistGroup.setChecked(self.config['sharedPlaylistEnabled'])
@@ -502,7 +512,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not featureList["sharedPlaylists"]:
             self.playlistGroup.setEnabled(False)
         self.chatInput.setMaxLength(constants.MAX_CHAT_MESSAGE_LENGTH)
-        self.roomInput.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
+        #self.roomsCombobox.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
 
     def setSSLMode(self, sslMode, sslInformation):
         self.sslMode = sslMode
@@ -868,7 +878,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.playlist.updatePlaylistIndexIcon()
 
     def updateRoomName(self, room=""):
-        self.roomInput.setText(room)
+        self.roomsCombobox.setEditText(room)
 
     def showDebugMessage(self, message):
         print(message)
@@ -889,13 +899,13 @@ class MainWindow(QtWidgets.QMainWindow):
     @needsClient
     def joinRoom(self, room=None):
         if room is None:
-            room = self.roomInput.text()
+            room = self.roomsCombobox.currentText()
         if room == "":
             if self._syncplayClient.userlist.currentUser.file:
                 room = self._syncplayClient.userlist.currentUser.file["name"]
             else:
                 room = self._syncplayClient.defaultRoom
-        self.roomInput.setText(room)
+        self.roomsCombobox.setEditText(room)
         if room != self._syncplayClient.getRoom():
             self._syncplayClient.setRoom(room, resetAutoplay=True)
             self._syncplayClient.sendRoom()
@@ -1120,6 +1130,36 @@ class MainWindow(QtWidgets.QMainWindow):
                 if URI != "":
                     self.addStreamToPlaylist(URI)
             self.updatingPlaylist = False
+
+    def openEditRoomsDialog(self):
+        RoomsDialog = QtWidgets.QDialog()
+        RoomsLayout = QtWidgets.QGridLayout()
+        RoomsTextbox = QtWidgets.QPlainTextEdit()
+        RoomsDialog.setWindowTitle(getMessage("roomlist-msgbox-label"))
+        RoomsPlaylistLabel = QtWidgets.QLabel(getMessage("roomlist-msgbox-label"))
+        RoomsTextbox.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
+        RoomsTextbox.setPlainText(utils.getListAsMultilineString(self.config['roomList']))
+        RoomsLayout.addWidget(RoomsPlaylistLabel, 0, 0, 1, 1)
+        RoomsLayout.addWidget(RoomsTextbox, 1, 0, 1, 1)
+        RoomsButtonBox = QtWidgets.QDialogButtonBox()
+        RoomsButtonBox.setOrientation(Qt.Horizontal)
+        RoomsButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        RoomsButtonBox.accepted.connect(RoomsDialog.accept)
+        RoomsButtonBox.rejected.connect(RoomsDialog.reject)
+        RoomsLayout.addWidget(RoomsButtonBox, 2, 0, 1, 1)
+        RoomsDialog.setLayout(RoomsLayout)
+        RoomsDialog.setModal(True)
+        RoomsDialog.show()
+        result = RoomsDialog.exec_()
+        if result == QtWidgets.QDialog.Accepted:
+            newRooms = utils.convertMultilineStringToList(RoomsTextbox.toPlainText())
+            self.relistRoomList(newRooms)
+            self._syncplayClient.setRoomList(newRooms)
+
+    def relistRoomList(self, newRooms):
+        filteredNewRooms = [room for room in newRooms if room and not room.isspace()]
+        self.config['roomList'] = filteredNewRooms
+        self.fillRoomsCombobox()
 
     @needsClient
     def openEditPlaylistDialog(self):
@@ -1422,14 +1462,14 @@ class MainWindow(QtWidgets.QMainWindow):
         window.listSplit = QtWidgets.QSplitter(Qt.Vertical, self)
         window.listSplit.addWidget(window.userlistFrame)
         window.listLayout.addWidget(window.listSplit)
-
-        window.roomInput = QtWidgets.QLineEdit()
-        window.roomInput.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
-        window.roomInput.returnPressed.connect(self.joinRoom)
+        window.roomsCombobox = QtWidgets.QComboBox(self)
+        window.roomsCombobox.setEditable(True)
+        #window.roomsCombobox.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
         window.roomButton = QtWidgets.QPushButton(
             QtGui.QPixmap(resourcespath + 'door_in.png'),
             getMessage("joinroom-label"))
         window.roomButton.pressed.connect(self.joinRoom)
+        window.roomButton.setFixedWidth(window.roomButton.sizeHint().width())
         window.roomLayout = QtWidgets.QHBoxLayout()
         window.roomFrame = QtWidgets.QFrame()
         window.roomFrame.setLayout(self.roomLayout)
@@ -1441,7 +1481,7 @@ class MainWindow(QtWidgets.QMainWindow):
             window.roomFrame.setContentsMargins(0, 0, 0, 0)
             window.roomLayout.setContentsMargins(0, 0, 0, 0)
         self.roomButton.setToolTip(getMessage("joinroom-tooltip"))
-        window.roomLayout.addWidget(window.roomInput)
+        window.roomLayout.addWidget(window.roomsCombobox)
         window.roomLayout.addWidget(window.roomButton)
         window.roomFrame.setMaximumHeight(window.roomFrame.sizeHint().height())
         window.listLayout.addWidget(window.roomFrame, Qt.AlignRight)
@@ -1673,6 +1713,9 @@ class MainWindow(QtWidgets.QMainWindow):
         window.autoplayAction = window.windowMenu.addAction(getMessage("autoplay-menu-label"))
         window.autoplayAction.setCheckable(True)
         window.autoplayAction.triggered.connect(self.updateAutoplayVisibility)
+
+        window.editroomsAction = window.windowMenu.addAction(QtGui.QPixmap(resourcespath + 'door_open_edit.png'), getMessage("roomlist-msgbox-label"))
+        window.editroomsAction.triggered.connect(self.openEditRoomsDialog)
         window.menuBar.addMenu(window.windowMenu)
 
         # Help menu

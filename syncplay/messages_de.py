@@ -184,6 +184,7 @@ de = {
     "name-label":  "Benutzername (optional):",
     "password-label":  "Server-Passwort (falls nötig):",
     "room-label": "Standard-Raum:",
+    "roomlist-msgbox-label": "Edit room list (one per line)", # TODO: Translate
 
     "media-setting-title": "Media-Player Einstellungen",
     "executable-path-label": "Pfad zum Media-Player:",
@@ -372,6 +373,8 @@ de = {
     "name-tooltip": "Dein Benutzername. Keine Registrierung, kann einfach geändert werden. Bei fehlender Angabe wird ein zufälliger Name generiert.",
     "password-tooltip": "Passwörter sind nur bei Verbindung zu privaten Servern nötig.",
     "room-tooltip": "Der Raum, der betreten werden soll, kann ein x-beliebiger sein. Allerdings werden nur Clients im selben Raum synchronisiert.",
+
+    "edit-rooms-tooltip": "Edit room list.", # TO DO: Translate
 
     "executable-path-tooltip": "Pfad zum ausgewählten, unterstützten Mediaplayer (mpv, mpv.net, VLC, MPC-HC/BE or mplayer2).",
     "media-path-tooltip": "Pfad zum wiederzugebenden Video oder Stream. Notwendig für mplayer2.",
