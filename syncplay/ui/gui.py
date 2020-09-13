@@ -1706,6 +1706,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         window.windowMenu = QtWidgets.QMenu(getMessage("window-menu-label"), self)
 
+        window.editroomsAction = window.windowMenu.addAction(QtGui.QPixmap(resourcespath + 'door_open_edit.png'), getMessage("roomlist-msgbox-label"))
+        window.editroomsAction.triggered.connect(self.openEditRoomsDialog)
+        window.menuBar.addMenu(window.windowMenu)
+
         window.playbackAction = window.windowMenu.addAction(getMessage("playbackbuttons-menu-label"))
         window.playbackAction.setCheckable(True)
         window.playbackAction.triggered.connect(self.updatePlaybackFrameVisibility)
@@ -1714,9 +1718,6 @@ class MainWindow(QtWidgets.QMainWindow):
         window.autoplayAction.setCheckable(True)
         window.autoplayAction.triggered.connect(self.updateAutoplayVisibility)
 
-        window.editroomsAction = window.windowMenu.addAction(QtGui.QPixmap(resourcespath + 'door_open_edit.png'), getMessage("roomlist-msgbox-label"))
-        window.editroomsAction.triggered.connect(self.openEditRoomsDialog)
-        window.menuBar.addMenu(window.windowMenu)
 
         # Help menu
 
