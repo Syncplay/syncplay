@@ -65,7 +65,7 @@ class MpvPlayer(BasePlayer):
                 if argToAdd.strip() == "":
                     continue
                 if "=" in argToAdd:
-                    (argName, argValue) = argToAdd.split("=")
+                    (argName, argValue) = argToAdd.split("=", 1)
                 else:
                     argName = argToAdd
                     argValue = "yes"
