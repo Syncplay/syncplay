@@ -475,7 +475,6 @@ class VlcPlayer(BasePlayer):
                 self.__playerController.vlcDataPath = "/usr/lib/syncplay/resources"
             else:
                 self.__playerController.vlcDataPath = utils.findWorkingDir() + "\\resources"
-            self.__playerController.SLAVE_ARGS.append('--data-path={}'.format(self.__playerController.vlcDataPath))
             self.__playerController.SLAVE_ARGS.append(
                 '--lua-config=syncplay={{modulepath=\"{}\",port=\"{}\"}}'.format(
                     self.__playerController.vlcModulePath, str(self.__playerController.vlcport)))

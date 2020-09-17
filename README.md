@@ -21,7 +21,9 @@
 # SOFTWARE.
 -->
 
-#  Syncplay
+# Syncplay
+[![Travis build Status](https://travis-ci.org/Syncplay/syncplay.svg?branch=master)](https://travis-ci.org/Syncplay/syncplay)
+[![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/Syncplay/syncplay)](https://ci.appveyor.com/project/Et0h/syncplay/branch/master)
 
 Solution to synchronize video playback across multiple instances of mpv, VLC, MPC-HC, MPC-BE and mplayer2 over the Internet.
 

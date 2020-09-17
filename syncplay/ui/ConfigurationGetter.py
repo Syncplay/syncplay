@@ -29,6 +29,7 @@ class ConfigurationGetter(object):
             "noGui": False,
             "noStore": False,
             "room": "",
+            "roomList": [],
             "password": None,
             "playerPath": None,
             "perPlayerArguments": None,
@@ -37,6 +38,7 @@ class ConfigurationGetter(object):
             "loopAtEndOfPlaylist": False,
             "loopSingleFiles": False,
             "onlySwitchToTrustedDomains": True,
+            "autosaveJoinsToList": True,
             "trustedDomains": constants.DEFAULT_TRUSTED_DOMAINS,
             "file": None,
             "playerArgs": [],
@@ -92,7 +94,8 @@ class ConfigurationGetter(object):
             "notificationTimeout": 3,
             "alertTimeout": 5,
             "chatTimeout": 7,
-            "publicServers": []
+            "publicServers": [],
+            "loadPlaylistFromFile": None
         }
 
         self._defaultConfig = self._config.copy()
@@ -135,6 +138,7 @@ class ConfigurationGetter(object):
             "loopAtEndOfPlaylist",
             "loopSingleFiles",
             "onlySwitchToTrustedDomains",
+            "autosaveJoinsToList",
             "chatInputEnabled",
             "chatInputFontUnderline",
             "chatDirectInput",
@@ -148,6 +152,7 @@ class ConfigurationGetter(object):
         ]
 
         self._serialised = [
+            "roomList",
             "perPlayerArguments",
             "mediaSearchDirectories",
             "trustedDomains",
@@ -180,7 +185,7 @@ class ConfigurationGetter(object):
         self._iniStructure = {
             "server_data": ["host", "port", "password"],
             "client_settings": [
-                "name", "room", "playerPath",
+                "name", "room", "roomList", "playerPath",
                 "perPlayerArguments", "slowdownThreshold",
                 "rewindThreshold", "fastforwardThreshold",
                 "slowOnDesync", "rewindOnDesync",
@@ -193,6 +198,7 @@ class ConfigurationGetter(object):
                 "loopSingleFiles",
                 "onlySwitchToTrustedDomains", "trustedDomains", "publicServers"],
             "gui": [
+                "autosaveJoinsToList",
                 "showOSD", "showOSDWarnings", "showSlowdownOSD",
                 "showDifferentRoomOSD", "showSameRoomOSD",
                 "showNonControllerOSD", "showDurationNotification",
@@ -307,6 +313,8 @@ class ConfigurationGetter(object):
                     key = "noGui"
                 if key == "clear_gui_data":
                     key = "clearGUIData"
+                if key == "load_playlist_from_file":
+                    key = "loadPlaylistFromFile"
                 self._config[key] = val
 
     def _splitPortAndHost(self, host):
@@ -495,6 +503,8 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('file', metavar='file', type=str, nargs='?', help=getMessage("file-argument"))
         self._argparser.add_argument('--clear-gui-data', action='store_true', help=getMessage("clear-gui-data-argument"))
         self._argparser.add_argument('-v', '--version', action='store_true', help=getMessage("version-argument"))
+        self._argparser.add_argument('--load-playlist-from-file', metavar="loadPlaylistFromFile", type=str, help=getMessage("load-playlist-from-file-argument"))
+
         self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("args-argument"))
         args = self._argparser.parse_args()
         if args.version:

@@ -47,7 +47,7 @@ ru = {
     "identifying-as-controller-notification": "Идентификация как оператора комнаты с паролем '{}'...",
     "failed-to-identify-as-controller-notification": "{} не прошел идентификацию в качестве оператора комнаты.",
     "authenticated-as-controller-notification": "{} вошел как оператор комнаты.",
-    "created-controlled-room-notification": "Создана управляемая комната '{}' с паролем '{}'. Сохраните эти данные!",  # RoomName, operatorPassword
+    "created-controlled-room-notification": "Создана управляемая комната '{}' с паролем '{}'. Сохраните эти данные!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
     "file-different-notification": "Вероятно, файл, который Вы смотрите, отличается от того, который смотрит {}.",  # User
     "file-differences-notification": "Ваш файл отличается: {}",  # Differences
@@ -87,6 +87,10 @@ ru = {
     "commandlist-notification/create": "\tc [name] - создать управляемую комнату с таким же именем, как у текущей",
     "commandlist-notification/auth": "\ta [password] - авторизоваться как оператор комнаты с помощью пароля",
     "commandlist-notification/chat": "\tch [message] - send a chat message in a room",  # TODO: Translate
+    "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",  # TO DO: Translate
+    "commandList-notification/playlist": "\tql - show the current playlist",  # TO DO: Translate
+    "commandList-notification/select": "\tqs [index] - select given entry in the playlist",  # TO DO: Translate
+    "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",  # TO DO: Translate
     "syncplay-version-notification": "Версия Syncplay: {}",  # syncplay.version
     "more-info-notification": "Больше информации на {}",  # projectURL
 
@@ -107,8 +111,9 @@ ru = {
     "mpc-version-insufficient-error": "Версия MPC слишком старая, пожалуйста, используйте `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "Версия MPC слишком старая, пожалуйста, используйте `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay не совместим с данной версией mpv. Пожалуйста, используйте другую версию mpv (лучше свежайшую).",
+    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "Проигрыватель не может открыть файл.",
-    "player-path-error": "Путь к проигрывателю задан неверно. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2.",  # TODO: Translate last sentence
+    "player-path-error": "Путь к проигрывателю задан неверно. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2.",  # TODO: Translate last sentence
     "hostname-empty-error": "Имя пользователя не может быть пустым.",
     "empty-error": "{} не может быть пустым.",  # Configuration
     "media-player-error": "Ошибка проигрывателя: \"{}\"",  # Error line
@@ -119,7 +124,7 @@ ru = {
 
     "unable-to-start-client-error": "Невозможно запустить клиент",
 
-    "player-path-config-error": "Путь к проигрывателю установлен неверно. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2",  # To do: Translate end
+    "player-path-config-error": "Путь к проигрывателю установлен неверно. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2",  # To do: Translate end
     "no-file-path-config-error": "Файл должен быть указан до включения проигрывателя",
     "no-hostname-config-error": "Имя сервера не может быть пустым",
     "invalid-port-config-error": "Неверный номер порта",
@@ -169,10 +174,12 @@ ru = {
     "file-argument": 'воспроизводимый файл',
     "args-argument": 'параметры проигрывателя; если нужно передать параметры, начинающиеся с - , то сначала пишите \'--\'',
     "clear-gui-data-argument": 'сбрасывает путь и данные о состоянии окна GUI, хранимые как QSettings',
-    "language-argument": 'язык сообщений Syncplay (de/en/ru/it/es)',
+    "language-argument": 'язык сообщений Syncplay (de/en/ru/it/es/pt_BR/pt_PT)',
 
     "version-argument": 'выводит номер версии',
     "version-message": "Вы используете Syncplay версии {} ({})",
+
+    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)", # TODO: Translate
 
     # Client labels
     "config-window-title": "Настройка Syncplay",
@@ -182,6 +189,7 @@ ru = {
     "name-label": "Имя пользователя (не обязательно):",
     "password-label": "Пароль сервера (если требуется):",
     "room-label": "Комната:",
+    "roomlist-msgbox-label": "Edit room list (one per line)", # TODO: Translate
 
     "media-setting-title": "Воспроизведение",
     "executable-path-label": "Путь к проигрывателю:",
@@ -199,6 +207,7 @@ ru = {
     "filename-privacy-label": "Имя файла:",
     "filesize-privacy-label": "Размер файла:",
     "checkforupdatesautomatically-label": "Проверять обновления автоматически",
+    "autosavejoinstolist-label": "Add rooms you join to the room list", # TO DO: Translate
     "slowondesync-label": "Замедлять при небольших рассинхронизациях (не поддерживаетя в MPC-HC/BE)",
     "rewindondesync-label": "Перемотка при больших рассинхронизациях (настоятельно рекомендуется)",
     "dontslowdownwithme-label": "Никогда не замедлять и не перематывать видео другим (функция тестируется)",
@@ -299,6 +308,8 @@ ru = {
     "openmedia-menu-label": "&Открыть файл",
     "openstreamurl-menu-label": "Открыть &ссылку",
     "setmediadirectories-menu-label": "&Папки воспроизведения",
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
+    "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
     "exit-menu-label": "&Выход",
     "advanced-menu-label": "&Дополнительно",
     "window-menu-label": "&Вид",
@@ -324,6 +335,7 @@ ru = {
     "startTLS-initiated": "Attempting secure connection",
     "startTLS-secure-connection-ok": "Secure connection established ({})",
     "startTLS-server-certificate-invalid": 'Secure connection failed. The server uses an invalid security certificate. This communication could be intercepted by a third party. For further details and troubleshooting see <a href="https://syncplay.pl/trouble">here</a>.',
+    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay does not trust this server because it uses a certificate that is not valid for its hostname.",
     "startTLS-not-supported-client": "This client does not support TLS",
     "startTLS-not-supported-server": "This server does not support TLS",
 
@@ -371,7 +383,9 @@ ru = {
     "password-tooltip": "Пароли нужны для подключения к приватным серверам.",
     "room-tooltip": "Комната, в которую Вы попадете сразу после подключения. Синхронизация возможна только между людьми в одной и той же комнате.",
 
-    "executable-path-tooltip": "Расположение Вашего видеопроигрывателя (MPC-HC, MPC-BE, VLC, mplayer2 или mpv).",
+    "edit-rooms-tooltip": "Edit room list.",  # TO DO: Translate
+
+    "executable-path-tooltip": "Расположение Вашего видеопроигрывателя (mpv, mpv.net, VLC, MPC-HC/BE или mplayer2).",
     "media-path-tooltip": "Расположение видеофайла или потока для просмотра. Обязательно для mplayer2.",  # TODO: Confirm translation
     "player-arguments-tooltip": "Передавать дополнительные аргументы командной строки этому проигрывателю.",
     "mediasearcdirectories-arguments-tooltip": "Папки, где Syncplay будет искать медиа файлы, включая подпапки.",
@@ -383,6 +397,7 @@ ru = {
     "privacy-sendhashed-tooltip": "Отправляет хэш-сумму этой информации, делая ее невидимой для других пользователей.",
     "privacy-dontsend-tooltip": "Не отправлять эту информацию на сервер. Предоставляет наибольшую приватность.",
     "checkforupdatesautomatically-tooltip": "Syncplay будет регулярно заходить на сайт и проверять наличие новых версий.",
+    "autosavejoinstolist-tooltip": "When you join a room in a server, automatically remember the room name in the list of rooms to join.", # TO DO: Translate
     "slowondesync-tooltip": "Временно уменьшить скорость воспроизведения в целях синхронизации с другими зрителями. Не поддерживается в MPC-HC/BE.",
     "dontslowdownwithme-tooltip": "Ваши лаги не будут влиять на других зрителей.",
     "pauseonleave-tooltip": "Приостановить воспроизведение, если Вы покинули комнату или кто-то из зрителей отключился от сервера.",
@@ -500,4 +515,7 @@ ru = {
 
     "playlist-instruction-item-message": "Перетащите сюда файлы, чтобы добавить их в общий список.",
     "sharedplaylistenabled-tooltip": "Оператор комнаты может добавлять файлы в список общего воспроизведения для удобного совместного просмотра. Папки воспроизведения настраиваются во вкладке 'Файл'.",
+
+    "playlist-empty-error": "Playlist is currently empty.",  # TO DO: Translate
+    "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
 }

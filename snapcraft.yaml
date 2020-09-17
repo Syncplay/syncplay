@@ -29,6 +29,8 @@ apps:
   syncplay:
     command: bin/desktop-launch $SNAP/usr/bin/python3 $SNAP/bin/syncplay
     desktop: lib/python3.5/site-packages/syncplay/resources/syncplay.desktop
+    environment:
+      DISABLE_WAYLAND: 1
 
   syncplay-server:
     command: bin/syncplay-server

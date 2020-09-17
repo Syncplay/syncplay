@@ -1,30 +1,39 @@
-matrix:
+# These two are defaults, which get overriden by the jobs matrix
+language: minimal
+os: linux
+
+jobs:
   include:
     - language: objective-c
+      os: osx
       osx_image: xcode8.3
-    - language: bash
-      sudo: required
+    - language: minimal
       dist: xenial
+      os: linux
       env: BUILD_DESTINATION=snapcraft
+    - language: minimal
+      dist: focal
+      os: linux
+      env: BUILD_DESTINATION=deb
     - language: python
-      sudo: required
+      os: linux
       dist: xenial
       python: 3.6
       env: BUILD_DESTINATION=appimage
-
-branches:
-  only:
-  - master
 
 script:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then python3 buildPy2app.py py2app ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then sudo snapcraft cleanbuild ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then travis/appimage-script.sh ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "deb" ]; then travis/deb-script.sh ; fi
 
 install:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis/macos-install.sh ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then travis/snapcraft-install.sh ; fi
-- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then ls -al ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then sudo apt-get install libxkbcommon-x11-0 ; fi
+
+after_success:
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "deb" ]; then travis/deb-installation-test.sh ; fi
 
 before_deploy:
 - ls -al
@@ -34,6 +43,7 @@ before_deploy:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis/macos-deploy.sh ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "snapcraft" ]; then mv syncplay_build_amd64.snap dist_bintray/syncplay_${VER}_amd64.snap ; fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "appimage" ]; then travis/appimage-deploy.sh ; fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$BUILD_DESTINATION" == "deb" ]; then mv /tmp/syncplay.deb dist_bintray/syncplay_${VER}.deb ; fi
 
 deploy:
   skip_cleanup: true

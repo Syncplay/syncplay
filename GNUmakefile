@@ -37,7 +37,6 @@ endif
 common:
 	-mkdir -p $(LIB_PATH)/syncplay/syncplay/resources/lua/intf
 	-mkdir -p $(APP_SHORTCUT_PATH)
-	-mkdir -p $(SHARE_PATH)/app-install/icons
 	-mkdir -p $(SHARE_PATH)/pixmaps/
 	cp -r syncplay $(LIB_PATH)/syncplay/
 	chmod 755 $(LIB_PATH)/syncplay/
@@ -45,13 +44,11 @@ common:
 	cp -r syncplay/resources/*.png $(LIB_PATH)/syncplay/syncplay/resources/
 	cp -r syncplay/resources/*.lua $(LIB_PATH)/syncplay/syncplay/resources/
 	cp -r syncplay/resources/lua/intf/*.lua $(LIB_PATH)/syncplay/syncplay/resources/lua/intf/
-	cp syncplay/resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/app-install/icons/
-	cp syncplay/resources/hicolor/48x48/apps/syncplay.png $(SHARE_PATH)/pixmaps/
+	cp syncplay/resources/hicolor/128x128/apps/syncplay.png $(SHARE_PATH)/pixmaps/
 
 u-common:
 	-rm -rf $(LIB_PATH)/syncplay
 	-rm $(SHARE_PATH)/icons/hicolor/*/apps/syncplay.png
-	-rm $(SHARE_PATH)/app-install/icons/syncplay.png
 	-rm $(SHARE_PATH)/pixmaps/syncplay.png
 
 client:

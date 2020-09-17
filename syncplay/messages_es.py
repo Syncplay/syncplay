@@ -47,7 +47,7 @@ es = {
     "identifying-as-controller-notification": "Autentificando como el operador de la sala, con contraseña '{}'...",
     "failed-to-identify-as-controller-notification": "{} falló la autentificación como operador de la sala.",
     "authenticated-as-controller-notification": "{} autentificado como operador de la sala",
-    "created-controlled-room-notification": "Sala administrada '{}' creada con contraseña '{}'. Por favor guarda esta información para referencias futuras!",  # RoomName, operatorPassword
+    "created-controlled-room-notification": "Sala administrada '{}' creada con contraseña '{}'. Por favor guarda esta información para referencias futuras!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
     "file-different-notification": "El archivo que reproduces parece ser diferente al archivo de {}",  # User
     "file-differences-notification": "Tu archivo difiere de la(s) siguiente(s) forma(s): {}",  # Differences
@@ -87,6 +87,10 @@ es = {
     "commandlist-notification/create": "\tc [nombre] - crear sala administrada usando el nombre de la sala actual",
     "commandlist-notification/auth": "\ta [contraseña] - autentificar como operador de la sala con la contraseña de operador",
     "commandlist-notification/chat": "\tch [mensaje] - enviar un mensaje en la sala",
+    "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",  # TO DO: Translate
+    "commandList-notification/playlist": "\tql - show the current playlist",  # TO DO: Translate
+    "commandList-notification/select": "\tqs [index] - select given entry in the playlist",  # TO DO: Translate
+    "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",  # TO DO: Translate
     "syncplay-version-notification": "Versión de Syncplay: {}",  # syncplay.version
     "more-info-notification": "Más información disponible en: {}",  # projectURL
 
@@ -107,8 +111,9 @@ es = {
     "mpc-version-insufficient-error": "La versión de MPC no es suficiente, por favor utiliza `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "La versión de MPC no es suficiente, por favor utiliza `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay no es compatible con esta versión de mpv. Por favor utiliza una versión diferente de mpv (p.ej. Git HEAD).",
+    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "El reproductor falló al abrir el archivo",
-    "player-path-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, VLC, MPC-HC, MPC-BE y mplayer2",
+    "player-path-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE y mplayer2",
     "hostname-empty-error": "El nombre del host no puede ser vacío",
     "empty-error": "{} no puede ser vacío",  # Configuration
     "media-player-error": "Error del reproductor multimedia: \"{}\"",  # Error line
@@ -119,7 +124,7 @@ es = {
 
     "unable-to-start-client-error": "No se logró iniciar el cliente",
 
-    "player-path-config-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, VLC, MPC-HC, MPC-BE y mplayer2.",
+    "player-path-config-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE y mplayer2.",
     "no-file-path-config-error": "El archivo debe ser seleccionado antes de iniciar el reproductor",
     "no-hostname-config-error": "El nombre del host no puede ser vacío",
     "invalid-port-config-error": "El puerto debe ser válido",
@@ -168,10 +173,12 @@ es = {
     "file-argument": 'archivo a reproducir',
     "args-argument": 'opciones del reproductor, si necesitas pasar opciones que empiezan con -, pásalas utilizando \'--\'',
     "clear-gui-data-argument": 'restablece ruta y los datos del estado de la ventana GUI almacenados como QSettings',
-    "language-argument": 'lenguaje para los mensajes de Syncplay (de/en/ru/it/es)',
+    "language-argument": 'lenguaje para los mensajes de Syncplay (de/en/ru/it/es/pt_BR/pt_PT)',
 
     "version-argument": 'imprime tu versión',
     "version-message": "Estás usando la versión de Syncplay {} ({})",
+
+    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)", # TODO: Translate
 
     # Client labels
     "config-window-title": "Configuración de Syncplay",
@@ -181,6 +188,7 @@ es = {
     "name-label":  "Nombre de usuario (opcional):",
     "password-label":  "Contraseña del servidor (si corresponde):",
     "room-label": "Sala por defecto: ",
+    "roomlist-msgbox-label": "Edit room list (one per line)", # TODO: Translate
 
     "media-setting-title": "Configuración del reproductor multimedia",
     "executable-path-label": "Ruta al reproductor multimedia:",
@@ -198,6 +206,7 @@ es = {
     "filename-privacy-label": "Información del nombre de archivo:",
     "filesize-privacy-label": "Información del tamaño de archivo:",
     "checkforupdatesautomatically-label": "Buscar actualizaciones de Syncplay automáticamente",
+    "autosavejoinstolist-label": "Add rooms you join to the room list", # TO DO: Translate
     "slowondesync-label": "Ralentizar si hay una desincronización menor (no soportado en MPC-HC/BE)",
     "rewindondesync-label": "Rebobinar si hay una desincronización mayor (recomendado)",
     "fastforwardondesync-label": "Avanzar rápidamente si hay un retraso (recomendado)",
@@ -297,6 +306,8 @@ es = {
     "openmedia-menu-label": "A&brir archivo multimedia",
     "openstreamurl-menu-label": "Abrir URL de &flujo de medios",
     "setmediadirectories-menu-label": "&Establecer directorios de medios",
+    "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
+    "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
     "exit-menu-label": "&Salir",
     "advanced-menu-label": "A&vanzado",
     "window-menu-label": "&Ventana",
@@ -321,6 +332,7 @@ es = {
     "startTLS-initiated": "Intentando conexión segura",
     "startTLS-secure-connection-ok": "Conexión segura establecida ({})",
     "startTLS-server-certificate-invalid": 'Falló la conexión segura. El servidor utiliza un certificado inválido. Esta comunicación podría ser interceptada por un tercero. Para más detalles y solución de problemas, consulta <a href="https://syncplay.pl/trouble">aquí</a>.',
+    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay does not trust this server because it uses a certificate that is not valid for its hostname.", # TODO: Translate
     "startTLS-not-supported-client": "Este cliente no soporta TLS",
     "startTLS-not-supported-server": "Este servidor no soporta TLS",
 
@@ -368,7 +380,9 @@ es = {
     "password-tooltip": "Las contraseñas son sólo necesarias para conectarse a servidores privados.",
     "room-tooltip": "La sala para unirse en la conexión puede ser casi cualquier cosa, pero sólo se sincronizará con las personas en la misma sala.",
 
-    "executable-path-tooltip": "Ubicación de tu reproductor multimedia compatible elegido (mpv, VLC, MPC-HC/BE o mplayer2).",
+    "edit-rooms-tooltip": "Edit room list.", # TO DO: Translate
+
+    "executable-path-tooltip": "Ubicación de tu reproductor multimedia compatible elegido (mpv, mpv.net, VLC, MPC-HC/BE o mplayer2).",
     "media-path-tooltip": "Ubicación del video o flujo que se abrirá. Necesario para mplayer2.",
     "player-arguments-tooltip": "Arguementos de línea de comandos adicionales / parámetros para pasar a este reproductor multimedia.",
     "mediasearcdirectories-arguments-tooltip": "Directorios donde Syncplay buscará archivos de medios, p.ej. cuando estás usando la función \"clic para cambiar\". Syncplay buscará recursivamente a través de las subcarpetas.",
@@ -380,6 +394,7 @@ es = {
     "privacy-sendhashed-tooltip": "Enviar una versión \"hasheada\" de la información, para que sea menos visible para otros clientes.",
     "privacy-dontsend-tooltip": "No enviar esta información al servidor. Esto proporciona la máxima privacidad.",
     "checkforupdatesautomatically-tooltip": "Regularmente verificar con el sitio Web de Syncplay para ver si hay una nueva versión de Syncplay disponible.",
+    "autosavejoinstolist-tooltip": "When you join a room in a server, automatically remember the room name in the list of rooms to join.", # TO DO: Translate
     "slowondesync-tooltip": "Reducir la velocidad de reproducción temporalmente cuando sea necesario, para volver a sincronizar con otros espectadores. No soportado en MPC-HC/BE.",
     "dontslowdownwithme-tooltip": "Significa que otros no se ralentizan ni rebobinan si la reproducción se retrasa. Útil para operadores de la sala.",
     "pauseonleave-tooltip": "Pausa la reproducción si te desconectas o alguien sale de tu sala.",
@@ -499,4 +514,7 @@ es = {
 
     "playlist-instruction-item-message": "Desplazar aquí el archivo para agregarlo a la lista de reproducción compartida.",
     "sharedplaylistenabled-tooltip": "Los operadores de la sala pueden agregar archivos a una lista de reproducción sincronizada, para que visualizar la misma cosa sea más sencillo para todos. Configurar directorios multimedia en 'Misc'.",
+
+    "playlist-empty-error": "Playlist is currently empty.", # TO DO: Translate
+    "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
 }

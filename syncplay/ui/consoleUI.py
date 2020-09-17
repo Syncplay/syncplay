@@ -3,12 +3,13 @@ import re
 import sys
 import threading
 import time
+import os
 
 import syncplay
 from syncplay import constants
 from syncplay import utils
 from syncplay.messages import getMessage
-from syncplay.utils import formatTime
+from syncplay.utils import formatTime, isURL
 
 
 class ConsoleUI(threading.Thread):
@@ -21,6 +22,9 @@ class ConsoleUI(threading.Thread):
 
     def addClient(self, client):
         self._syncplayClient = client
+
+    def addFileToPlaylist(self, file):
+        self._syncplayClient.playlist.addToPlaylist(file)
 
     def drop(self):
         pass
@@ -83,6 +87,9 @@ class ConsoleUI(threading.Thread):
                     self.showMessage(message, True)
 
     def userListChange(self):
+        pass
+
+    def addRoomToList(self):
         pass
 
     def fileSwitchFoundFiles(self):
@@ -181,6 +188,44 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.identifyAsController(controlpassword)
         elif command.group('command') in constants.COMMANDS_TOGGLE:
             self._syncplayClient.toggleReady()
+        elif command.group('command') in constants.COMMANDS_QUEUE:
+            filename = command.group('parameter')
+            if filename is None:
+                self.showErrorMessage("No file/url given")
+                return
+
+            self._syncplayClient.ui.addFileToPlaylist(filename)
+        elif command.group('command') in constants.COMMANDS_PLAYLIST:
+            playlist = self._syncplayClient.playlist
+            playlist_elements = [f"\t{i+1}: {el}" for i, el in enumerate(playlist._playlist)]
+
+            if playlist_elements:
+                i = playlist._playlistIndex
+                if i is not None and i in range(len(playlist_elements)):
+                    playlist_elements[i] = " *" + playlist_elements[i]
+
+                self.showMessage("\n".join(playlist_elements), True)
+            else:
+                self.showMessage(getMessage("playlist-empty-error"), True)
+        elif command.group('command') in constants.COMMANDS_SELECT:
+            try:
+                index = int(command.group('parameter').strip()) - 1
+
+                if index < 0 or index >= len(self._syncplayClient.playlist._playlist):
+                    raise TypeError("Invalid playlist index")
+                self._syncplayClient.playlist.changeToPlaylistIndex(index, resetPosition=True)
+                self._syncplayClient.rewindFile()
+
+            except (TypeError, AttributeError):
+                self.showErrorMessage(getMessage("playlist-invalid-index-error"))
+        elif command.group('command') in constants.COMMANDS_DELETE:
+            try:
+                index = int(command.group('parameter').strip()) - 1
+                self._syncplayClient.playlist.deleteAtIndex(index)
+
+            except (TypeError, AttributeError):
+                self.showErrorMessage(getMessage("playlist-invalid-index-error"))
+
         else:
             if self._tryAdvancedCommands(data):
                 return
@@ -197,6 +242,10 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/create"), True)
             self.showMessage(getMessage("commandlist-notification/auth"), True)
             self.showMessage(getMessage("commandlist-notification/chat"), True)
+            self.showMessage(getMessage("commandList-notification/queue"), True)
+            self.showMessage(getMessage("commandList-notification/playlist"), True)
+            self.showMessage(getMessage("commandList-notification/select"), True)
+            self.showMessage(getMessage("commandList-notification/delete"), True)
             self.showMessage(getMessage("syncplay-version-notification").format(syncplay.version), True)
             self.showMessage(getMessage("more-info-notification").format(syncplay.projectURL), True)
 

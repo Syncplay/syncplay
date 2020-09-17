@@ -86,7 +86,7 @@ class MpcHcApi:
             _fields_ = [
                 ('nMsgPos', ctypes.c_int32),
                 ('nDurationMS', ctypes.c_int32),
-                ('strMsg', ctypes.c_wchar * (len(message) + 1))
+                ('strMsg', ctypes.c_wchar * (len(message.encode('utf-8')) + 1))
             ]
         cmessage = __OSDDATASTRUCT()
         cmessage.nMsgPos = MsgPos
@@ -406,6 +406,8 @@ class MPCHCAPIPlayer(BasePlayer):
 
     def openFile(self, filePath, resetPosition=False):
         self._mpcApi.openFile(filePath)
+        if resetPosition:
+            self.setPosition(0)
 
     def displayMessage(
         self, message,

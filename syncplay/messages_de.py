@@ -16,7 +16,7 @@ de = {
     "connection-failed-notification": "Verbindung zum Server fehlgeschlagen",
     "connected-successful-notification": "Erfolgreich mit Server verbunden",
     "retrying-notification": "%s, versuche erneut in %d Sekunden...",  # Seconds
-    "reachout-successful-notification": "Successfully reached {} ({})", # TODO: Translate
+    "reachout-successful-notification": "{} ({}) erfolgreich erreicht",
 
     "rewind-notification": "Zurückgespult wegen Zeitdifferenz mit {}",  # User
     "fastforward-notification": "Vorgespult wegen Zeitdifferenz mit {}",  # User
@@ -29,13 +29,13 @@ de = {
 
     "current-offset-notification": "Aktueller Offset: {} Sekunden",  # Offset
 
-    "media-directory-list-updated-notification": "Syncplay media directories have been updated.",  # TODO: Translate
+    "media-directory-list-updated-notification": "Syncplay-Medienverzeichnisse wurden aktualisiert.",
 
-    "room-join-notification": "{} hat den Raum '{}' betreten",  # User
+    "room-join-notification": "{} hat den Raum „{}“ betreten",  # User
     "left-notification": "{} ist gegangen",  # User
     "left-paused-notification": "{} ist gegangen, {} pausierte",  # User who left, User who paused
-    "playing-notification": "{} spielt '{}' ({})",  # User, file, duration
-    "playing-notification/room-addendum":  " in Raum: '{}'",  # Room
+    "playing-notification": "{} spielt „{}“ ({})",  # User, file, duration
+    "playing-notification/room-addendum":  " in Raum: „{}“",  # Room
 
     "not-all-ready": "Noch nicht bereit: {}",  # Usernames
     "all-users-ready": "Alle sind bereit ({} Nutzer)",  # Number of ready users
@@ -44,10 +44,10 @@ de = {
     "set-as-not-ready-notification": "Du bist nicht bereit",
     "autoplaying-notification": "Starte in {}...",  # Number of seconds until playback will start
 
-    "identifying-as-controller-notification": "Identifiziere als Raumleiter mit Passwort '{}'...",  # TODO: find a better translation to "room operator"
+    "identifying-as-controller-notification": "Identifiziere als Raumleiter mit Passwort „{}“...",  # TODO: find a better translation to "room operator"
     "failed-to-identify-as-controller-notification": "{} konnte sich nicht als Raumleiter identifizieren.",
     "authenticated-as-controller-notification": "{} authentifizierte sich als Raumleiter",
-    "created-controlled-room-notification": "Gesteuerten Raum '{}' mit Passwort '{}' erstellt. Bitte diese Informationen für die Zukunft aufheben!",  # RoomName, operatorPassword
+    "created-controlled-room-notification": "Gesteuerten Raum „{}“ mit Passwort „{}“ erstellt. Bitte diese Informationen für die Zukunft aufheben! \n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
     "file-different-notification": "Deine Datei scheint sich von {}s zu unterscheiden",  # User
     "file-differences-notification": "Deine Datei unterscheidet sich auf folgende Art: {}",
@@ -62,7 +62,7 @@ de = {
     "file-played-by-notification": "Datei: {} wird gespielt von:",  # File
     "no-file-played-notification": "{} spielt keine Datei ab",  # Username
     "notplaying-notification": "Personen im Raum, die keine Dateien spielen:",
-    "userlist-room-notification":  "In Raum '{}':",  # Room
+    "userlist-room-notification":  "In Raum „{}“:",  # Room
     "userlist-file-notification": "Datei",
     "controller-userlist-userflag": "Raumleiter",
     "ready-userlist-userflag": "Bereit",
@@ -86,7 +86,11 @@ de = {
     "commandlist-notification/toggle": "\tt - Bereitschaftsanzeige umschalten",
     "commandlist-notification/create": "\tc [name] - erstelle zentral gesteuerten Raum mit dem aktuellen Raumnamen",
     "commandlist-notification/auth": "\ta [password] - authentifiziere als Raumleiter mit Passwort",
-    "commandlist-notification/chat": "\tch [message] - send a chat message in a room",  # TODO: Translate
+    "commandlist-notification/chat": "\tch [message] - Chatnachricht an einem Raum senden",
+    "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist", # TO DO: Translate
+    "commandList-notification/playlist": "\tql - show the current playlist", # TO DO: Translate
+    "commandList-notification/select": "\tqs [index] - select given entry in the playlist", # TO DO: Translate
+    "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist", # TO DO: Translate
     "syncplay-version-notification": "Syncplay Version: {}",  # syncplay.version
     "more-info-notification": "Weitere Informationen auf: {}",  # projectURL
 
@@ -107,19 +111,20 @@ de = {
     "mpc-version-insufficient-error": "MPC-Version nicht ausreichend, bitte nutze `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "MPC-Version nicht ausreichend, bitte nutze `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay ist nicht kompatibel mit dieser Version von mpv.  Bitte benutze eine andere Version (z.B. Git HEAD).",
+    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "Fehler beim Öffnen der Datei durch den Player",
-    "player-path-error": "Ungültiger Player-Pfad. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2",  # To do: Translate end
+    "player-path-error": "Ungültiger Player-Pfad. Unterstützte Player sind: mpv, mpv.net, VLC, MPC-HC, MPC-BE und mplayer2",
     "hostname-empty-error": "Hostname darf nicht leer sein",
     "empty-error": "{} darf nicht leer sein",  # Configuration
     "media-player-error": "Player-Fehler: \"{}\"",  # Error line
     "unable-import-gui-error": "Konnte die GUI-Bibliotheken nicht importieren. PySide muss installiert sein, damit die grafische Oberfläche funktioniert.",
-    "unable-import-twisted-error": "Could not import Twisted. Please install Twisted v16.4.0 or later.", #To do: translate
+    "unable-import-twisted-error": "Twisted konnte nicht importiert werden. Bitte installiere Twisted v16.4.0 oder höher",
 
     "arguments-missing-error": "Notwendige Argumente fehlen, siehe --help",
 
     "unable-to-start-client-error": "Client kann nicht gestartet werden",
 
-    "player-path-config-error": "Player-Pfad ist nicht ordnungsgemäß gesetzt. Supported players are: mpv, VLC, MPC-HC, MPC-BE and mplayer2.",  # To do: Translate end
+    "player-path-config-error": "Player-Pfad ist nicht ordnungsgemäß gesetzt. Unterstützte Player sind: mpv, mpv.net, VLC, MPC-HC, MPC-BE und mplayer2",
     "no-file-path-config-error": "Es muss eine Datei ausgewählt werden, bevor der Player gestartet wird.",
     "no-hostname-config-error": "Hostname darf nicht leer sein",
     "invalid-port-config-error": "Port muss gültig sein",
@@ -132,24 +137,24 @@ de = {
     "vlc-failed-noscript": "Laut VLC ist das syncplay.lua Interface-Skript nicht installiert. Auf https://syncplay.pl/LUA/ [Englisch] findest du eine Anleitung.",
 
     "vlc-failed-versioncheck": "Diese VLC-Version wird von Syncplay nicht unterstützt. Bitte nutze VLC 2.0",
-    "feature-sharedPlaylists": "shared playlists",  # used for not-supported-by-server-error # TODO: Translate
-    "feature-chat": "chat",  # used for not-supported-by-server-error # TODO: Translate
-    "feature-readiness": "readiness",  # used for not-supported-by-server-error # TODO: Translate
-    "feature-managedRooms": "managed rooms",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-sharedPlaylists": "Geteilte Playlists",  # used for not-supported-by-server-error
+    "feature-chat": "Chat",  # used for not-supported-by-server-error
+    "feature-readiness": "Bereitschaftsstatus",  # used for not-supported-by-server-error
+    "feature-managedRooms": "Zentral gesteuerte Räume",  # used for not-supported-by-server-error
 
-    "not-supported-by-server-error": "Dieses Feature wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
-    "shared-playlists-not-supported-by-server-error": "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.",  # minVersion, serverVersion # TODO: Translate
-    "shared-playlists-disabled-by-server-error": "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.",  # TODO: Translate
+    "not-supported-by-server-error": "Diese Funktion wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
+    "shared-playlists-not-supported-by-server-error": "Die Geteilte-Playlists-Funktion wird von diesem Server eventuell nicht unterstützt. Um ein korrektes Funktionieren sicherzustellen wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
+    "shared-playlists-disabled-by-server-error": "Die Geteilte-Playlists-Funktion wurde in der Serverkonfiguration deaktiviert. Um diese Funktion zu verwenden, musst du dich mit einem anderen Server verbinden.",
 
     "invalid-seek-value": "Ungültige Zeitangabe",
     "invalid-offset-value": "Ungültiger Offset-Wert",
 
-    "switch-file-not-found-error": "Konnte nicht zur Datei '{0}' wechseln. Syncplay looks in the specified media directories.",  # File not found, folder it was not found in # TODO: Re-translate "Syncplay sucht im Ordner der aktuellen Datei und angegebenen Medien-Verzeichnissen." to reference to checking in "current media directory"
-    "folder-search-timeout-error": "The search for media in media directories was aborted as it took too long to search through '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through. For automatic file switching to work again please select File->Set Media Directories in the menu bar and remove this directory or replace it with an appropriate sub-folder. If the folder is actually fine then you can re-enable it by selecting File->Set Media Directories and pressing 'OK'.",  # Folder # TODO: Translate
-    "folder-search-first-file-timeout-error": "The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please go to File->Set Media Directories and either remove the directory or resolve the issue (e.g. by changing power saving settings).",  # Folder # TODO: Translate
-    "added-file-not-in-media-directory-error": "You loaded a file in '{}' which is not a known media directory. You can add this as a media directory by selecting File->Set Media Directories in the menu bar.",  # Folder # TODO: Translate
-    "no-media-directories-error": "No media directories have been set. For shared playlist and file switching features to work properly please select File->Set Media Directories and specify where Syncplay should look to find media files.",  # TODO: Translate
-    "cannot-find-directory-error": "Could not find media directory '{}'. To update your list of media directories please select File->Set Media Directories from the menu bar and specify where Syncplay should look to find media files.",  # TODO: Translate
+    "switch-file-not-found-error": "Konnte nicht zur Datei „{0}“ wechseln. Syncplay sucht im Verzeichnis der aktuellen Datei und angegebenen Medienverzeichnissen.",  # File not found, folder it was not found in
+    "folder-search-timeout-error": "Die Suche nach Medien in den Medienverzeichnissen wurde abgebrochen, weil es zu lange gedauert hat, „{}“ zu durchsuchen. Das kann passieren, wenn du in deiner Liste der Medienverzeichnisse ein Verzeichnis mit zu vielen Unterverzeichnissen auswhälst. Damit der automatische Dateiwechsel wieder funktioniert, wähle Datei->Medienverzeichnisse auswählen in der Menüleiste und entferne dieses Verzeichnis oder ersetze es mit einem geeigneten Unterverzeichnis. Wenn das Verzeichnis in Ordnung ist, kannst du es reaktivieren, indem du Datei->Medienverzeichnisse auswählen wählst und „OK“ drückst.",  # Folder
+    "folder-search-first-file-timeout-error": "Die Suche nach Medien in den Medienverzeichnissen wurde abgebrochen, weil es zu lange gedauert hat, auf „{}“ zuzugreifen. Das kann passieren, wenn es sich dabei um ein Netzwerkgerät handelt und du eingestellt hast, dass es sich nach Inaktivität ausschaltet. Damit der automatische Dateiwechsel wieder funktioniert, wähle Datei->Medienverzeichnisse auswählen in der Menüleiste und entferne dieses Verzeichnis oder löse das Problem (z.B. indem du die Energiespareinstellungen anpasst).",  # Folder
+    "added-file-not-in-media-directory-error": "Du hast eine Datei in im Verzeichnis „{}“ geladeden, welches kein bekanntes Medienverzeichnis ist. Du kannst es als Medienverzeichnis hinzufügen, indem du  Datei->Medienverzeichnisse auswählen in der Menüleiste wählst.",  # Folder
+    "no-media-directories-error": "Es wurden keine Medienverzeichnisse ausgewählt. Damit geteilte Playlists und Dateiwechsel korrekt funktionieren, wähle Datei->Medienverzeichnisse auswählen in der Menüleiste und gib an, wo Syncplay nach Mediendateien suchen soll.",
+    "cannot-find-directory-error": "Das Medienverzeichnis „{}“ konnte nicht gefunden werden. Um deine Liste an Medienverzeichnissen anzupassen, wähle Datei->Medienverzeichnisse auswählen in der Menüleiste und gib an, wo Syncplay nach Mediendateien suchen soll.",
 
     "failed-to-load-server-list-error": "Konnte die Liste der öffentlichen Server nicht laden. Bitte besuche https://www.syncplay.pl/ [Englisch] mit deinem Browser.",
 
@@ -168,23 +173,26 @@ de = {
     "file-argument": 'Abzuspielende Datei',
     "args-argument": 'Player-Einstellungen; Wenn du Einstellungen, die mit - beginnen, nutzen willst, stelle ein einzelnes \'--\'-Argument davor',
     "clear-gui-data-argument": 'Setzt die Pfad- und GUI-Fenster-Daten die in den QSettings gespeichert sind zurück',
-    "language-argument": 'Sprache für Syncplay-Nachrichten (de/en/ru/it/es)',
+    "language-argument": 'Sprache für Syncplay-Nachrichten (de/en/ru/it/es/pt_BR/pt_PT)',
 
     "version-argument": 'gibt die aktuelle Version aus',
     "version-message": "Du verwendest Syncplay v. {} ({})",
 
+    "load-playlist-from-file-argument": "lädt eine Playlist aus einer Textdatei (ein Eintrag pro Zeile)",
+
     # Client labels
-    "config-window-title": "Syncplay Konfiguration",
+    "config-window-title": "Syncplay-Konfiguration",
 
     "connection-group-title": "Verbindungseinstellungen",
     "host-label": "Server-Adresse:",
     "name-label":  "Benutzername (optional):",
     "password-label":  "Server-Passwort (falls nötig):",
     "room-label": "Standard-Raum:",
+    "roomlist-msgbox-label": "Edit room list (one per line)", # TODO: Translate
 
     "media-setting-title": "Media-Player Einstellungen",
     "executable-path-label": "Pfad zum Media-Player:",
-    "media-path-label": "Pfad zur Datei:",  # Todo: Translate to 'Path to video (optional)'
+    "media-path-label": "Pfad zum Video (optional):",
     "player-arguments-label": "Playerparameter:",
     "browse-label": "Durchsuchen",
     "update-server-list-label": "Liste aktualisieren",
@@ -200,10 +208,10 @@ de = {
     "checkforupdatesautomatically-label": "Automatisch nach Updates suchen",
     "slowondesync-label": "Verlangsamen wenn nicht synchron (nicht unterstützt mit MPC-HC/BE)",
     "dontslowdownwithme-label": "Nie verlangsamen oder andere zurückspulen (Experimentell)",
-    "pausing-title": "Pausing",  # TODO: Translate
+    "pausing-title": "Pausiere",
     "pauseonleave-label": "Pausieren wenn ein Benutzer austritt",
-    "readiness-title": "Initial readiness state",  # TODO: Translate
-    "readyatstart-label": "Standardmäßig auf \'Bereit\' stellen",
+    "readiness-title": "Anfänglicher Bereitschaftsstatus",
+    "readyatstart-label": "Standardmäßig auf „Bereit“ stellen",
     "forceguiprompt-label": "Diesen Dialog nicht mehr anzeigen",
     "showosd-label": "OSD-Nachrichten anzeigen",
 
@@ -228,7 +236,7 @@ de = {
     "messages-label": "Nachrichten",
     "messages-osd-title": "OSD-(OnScreenDisplay)-Einstellungen",
     "messages-other-title": "Weitere Display-Einstellungen",
-    "chat-label": "Chat",  # TODO: Translate
+    "chat-label": "Chat",
     "privacy-label": "Privatsphäre",
     "privacy-title": "Privatsphäreneinstellungen",
     "unpause-title": "Wenn du Play drückst, auf Bereit setzen und:",
@@ -236,36 +244,36 @@ de = {
     "unpause-ifothersready-option": "Wiedergeben wenn bereits als Bereit gesetzt oder alle anderen bereit sind (Standard)",
     "unpause-ifminusersready-option": "Wiedergeben wenn bereits als Bereit gesetzt oder die minimale Anzahl anderer Nutzer bereit ist",
     "unpause-always": "Immer wiedergeben",
-    "syncplay-trusteddomains-title": "Trusted domains (for streaming services and hosted content)",  # TODO: Translate into German
+    "syncplay-trusteddomains-title": "Vertrauenswürdige Domains (für Streamingdienste und gehostete Inhalte)",
 
-    "chat-title": "Chat message input",  # TODO: Translate
-    "chatinputenabled-label": "Enable chat input via mpv (using enter key)",  # TODO: Translate
-    "chatdirectinput-label": "Allow instant chat input (bypass having to press enter key to chat)",  # TODO: Translate
-    "chatinputfont-label": "Chat input font",  # TODO: Translate
-    "chatfont-label": "Set font",  # TODO: Translate
-    "chatcolour-label": "Set colour",  # TODO: Translate
-    "chatinputposition-label": "Position of message input area in mpv",  # TODO: Translate
-    "chat-top-option": "Top",  # TODO: Translate
-    "chat-middle-option": "Middle",  # TODO: Translate
-    "chat-bottom-option": "Bottom",  # TODO: Translate
-    "chatoutputheader-label": "Chat message output",  # TODO: Translate
-    "chatoutputfont-label": "Chat output font",  # TODO: Translate
-    "chatoutputenabled-label": "Enable chat output in media player (mpv only for now)",  # TODO: Translate
-    "chatoutputposition-label": "Output mode",  # TODO: Translate
-    "chat-chatroom-option": "Chatroom style",  # TODO: Translate
-    "chat-scrolling-option": "Scrolling style",  # TODO: Translate
+    "chat-title": "Chatnachrichten-Eingabe",
+    "chatinputenabled-label": "Chateingabe via mpv erlauben (mit der Entertaste)",
+    "chatdirectinput-label": "Sofotige Chateingabe erlauben (ohne die Entertaste zu drücken)",
+    "chatinputfont-label": "Chateingabe-Schriftart",
+    "chatfont-label": "Schriftart wählen",
+    "chatcolour-label": "Farbe wählen",
+    "chatinputposition-label": "Position des Nachrichteneingabe-Felds in mpv",
+    "chat-top-option": "Oben",
+    "chat-middle-option": "Mitte",
+    "chat-bottom-option": "Unten",
+    "chatoutputheader-label": "Chatnachrichten-Eingabe",
+    "chatoutputfont-label": "Chateingabe-Schriftart",
+    "chatoutputenabled-label": "Chatausgabe im Medienplayer aktivieren (bisher nur mpv)",
+    "chatoutputposition-label": "Ausgabemodus",
+    "chat-chatroom-option": "Chatroom-Stil",
+    "chat-scrolling-option": "Scrolling-Stil",
 
-    "mpv-key-tab-hint": "[TAB] to toggle access to alphabet row key shortcuts.",  # TODO: Translate
-    "mpv-key-hint": "[ENTER] to send message. [ESC] to escape chat mode.",  # TODO: Translate
-    "alphakey-mode-warning-first-line": "You can temporarily use old mpv bindings with a-z keys.",  # TODO: Translate
-    "alphakey-mode-warning-second-line": "Press [TAB] to return to Syncplay chat mode.",  # TODO: Translate
+    "mpv-key-tab-hint": "[TAB] um Zugriff auf die Buchstabentastenkürzel ein-/auszuschalten.",
+    "mpv-key-hint": "[ENTER] um eine Nachricht zu senden. [ESC] um den Chatmodus zu verlassen.",
+    "alphakey-mode-warning-first-line": "Du kannst vorübergehend die alten mpv-Tastaturkürzel mit den a–z-Tasten verwenden.",
+    "alphakey-mode-warning-second-line": "Drücke [TAB], um in den Syncplay-Chatmodus zurückzukehren.",
 
     "help-label": "Hilfe",
-    "reset-label": "Standardwerte zurücksetzen",
+    "reset-label": "Auf Standardwerte zurücksetzen",
     "run-label": "Syncplay starten",
     "storeandrun-label": "Konfiguration speichern und Syncplay starten",
 
-    "contact-label": "Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"https://syncplay.pl/\">https://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates.  OTE: Chat messages are not encrypted so do not use Syncplay to send sensitive information.",  # TODO: Translate  last sentence
+    "contact-label": "Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"https://syncplay.pl/\">https://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates. Chatnachrichten sind nicht verschlüsselt, also verwende Syncplay nicht, um sensible Daten zu verschicken.",
 
     "joinroom-label": "Raum beitreten",
     "joinroom-menu-label": "Raum beitreten {}",  # TODO: Might want to fix this
@@ -278,9 +286,9 @@ de = {
     "autoplay-guipushbuttonlabel": "Automatisch abspielen wenn alle bereit sind",
     "autoplay-minimum-label": "Minimum an Nutzern:",
 
-    "sendmessage-label": "Send",  # TODO: Translate
+    "sendmessage-label": "Senden",
 
-    "ready-guipushbuttonlabel": "Ich bin bereit den Film anzuschauen!",
+    "ready-guipushbuttonlabel": "Ich bin bereit zum Gucken!",
 
     "roomuser-heading-label": "Raum / Benutzer",
     "size-heading-label": "Größe",
@@ -294,15 +302,17 @@ de = {
     "file-menu-label": "&Datei",  # & precedes shortcut key
     "openmedia-menu-label": "&Mediendatei öffnen...",
     "openstreamurl-menu-label": "&Stream URL öffnen",
-    "setmediadirectories-menu-label": "Set media &directories",  # TODO: Translate
+    "setmediadirectories-menu-label": "Medienverzeichnisse &auswählen",
+    "loadplaylistfromfile-menu-label": "&Lade Playlist aus Datei",
+    "saveplaylisttofile-menu-label": "&Speichere Playlist in Datei",
     "exit-menu-label": "&Beenden",
     "advanced-menu-label": "&Erweitert",
     "window-menu-label": "&Fenster",
     "setoffset-menu-label": "&Offset einstellen",
     "createcontrolledroom-menu-label": "&Zentral gesteuerten Raum erstellen",
     "identifyascontroller-menu-label": "Als Raumleiter &identifizieren",
-    "settrusteddomains-menu-label": "Set &trusted domains",  # TODO: Translate
-    "addtrusteddomain-menu-label": "Add {} as trusted domain",  # Domain # TODO: Translate
+    "settrusteddomains-menu-label": "&Vertrauenswürdige Domains auswählen",
+    "addtrusteddomain-menu-label": "{} als vertrauenswürdige Domain hinzufügen",  # Domain
 
     "edit-menu-label": "&Bearbeiten",
     "cut-menu-label": "Aus&schneiden",
@@ -316,39 +326,40 @@ de = {
     "userguide-menu-label": "&Benutzerhandbuch öffnen",
     "update-menu-label": "auf &Aktualisierung prüfen",
 
-    # startTLS messages - TODO: Translate
-    "startTLS-initiated": "Attempting secure connection",
-    "startTLS-secure-connection-ok": "Secure connection established ({})",
-    "startTLS-server-certificate-invalid": 'Secure connection failed. The server uses an invalid security certificate. This communication could be intercepted by a third party. For further details and troubleshooting see <a href="https://syncplay.pl/trouble">here</a>.',
-    "startTLS-not-supported-client": "This client does not support TLS",
-    "startTLS-not-supported-server": "This server does not support TLS",
+    # startTLS messages
+    "startTLS-initiated": "Sichere Verbindung wird versucht",
+    "startTLS-secure-connection-ok": "Sichere Verbindung hergestellt ({})",
+    "startTLS-server-certificate-invalid": 'Sichere Verbindung fehlgeschlagen. Der Server benutzt ein ungültiges Sicherheitszertifikat. Der Kanal könnte von Dritten abgehört werden. Für weitere Details und Problemlösung siehe <a href="https://syncplay.pl/trouble">hier</a> [Englisch].',
+    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay does not trust this server because it uses a certificate that is not valid for its hostname.", # TODO: Translate
+    "startTLS-not-supported-client": "Dieser Server unterstützt kein TLS",
+    "startTLS-not-supported-server": "Dieser Server unterstützt kein TLS",
 
-    # TLS certificate dialog - TODO: Translate
-    "tls-information-title": "Certificate Details",
-    "tls-dialog-status-label": "<strong>Syncplay is using an encrypted connection to {}.</strong>",
-    "tls-dialog-desc-label": "Encryption with a digital certificate keeps information private as it is sent to or from the<br/>server {}.",
-    "tls-dialog-connection-label": "Information encrypted using Transport Layer Security (TLS), version {} with the cipher<br/>suite: {}.",
-    "tls-dialog-certificate-label": "Certificate issued by {} valid until {}.",
+    # TLS certificate dialog
+    "tls-information-title": "Zertifikatdetails",
+    "tls-dialog-status-label": "<strong>Syncplay nutzt eine verschlüsselte Verbindung zu {}.</strong>",
+    "tls-dialog-desc-label": "Verschlüsselung mit einem digitalen Zertifikat hält Informationen geheim, die vom Server {} gesendet oder empfangen werden.",
+    "tls-dialog-connection-label": "Daten werden verschlüsselt mit Transport Layer Security (TLS) Version {} und <br/>folgender Chiffre: {}.",
+    "tls-dialog-certificate-label": "Zertifikat ausgestellt durch {} gültig bis {}.",
 
-    # About dialog - TODO: Translate
-    "about-menu-label": "&About Syncplay",
-    "about-dialog-title": "About Syncplay",
-    "about-dialog-release": "Version {} release {}",
-    "about-dialog-license-text": "Licensed under the Apache&nbsp;License,&nbsp;Version 2.0",
-    "about-dialog-license-button": "License",
-    "about-dialog-dependencies": "Dependencies",
+    # About dialog
+    "about-menu-label": "&Über Syncplay",
+    "about-dialog-title": "Über Syncplay",
+    "about-dialog-release": "Version {} Release {}",
+    "about-dialog-license-text": "Lizensiert unter der Apache-Lizenz&nbsp;Version 2.0",
+    "about-dialog-license-button": "Lizenz",
+    "about-dialog-dependencies": "Abhängigkeiten",
 
     "setoffset-msgbox-label": "Offset einstellen",
     "offsetinfo-msgbox-label": "Offset (siehe https://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
 
-    "promptforstreamurl-msgbox-label": "Stream URL öffnen",
-    "promptforstreamurlinfo-msgbox-label": "Stream URL",
+    "promptforstreamurl-msgbox-label": "Stream-URL öffnen",
+    "promptforstreamurlinfo-msgbox-label": "Stream-URL",
 
-    "addfolder-label": "Add folder",  # TODO: Translate
+    "addfolder-label": "Verzeichnis hinzufügen",
 
-    "adduris-msgbox-label": "Add URLs to playlist (one per line)",  # TODO: Translate
-    "editplaylist-msgbox-label": "Set playlist (one per line)",  # TODO: Translate
-    "trusteddomains-msgbox-label": "Domains it is okay to automatically switch to (one per line)",  # TODO: Translate
+    "adduris-msgbox-label": "URLs zur Playlist hinzufügen (ein Eintrag pro Zeile)",
+    "editplaylist-msgbox-label": "Playlist auswählen (ein Eintrag pro Zeile)",
+    "trusteddomains-msgbox-label": "Domains, zu denen automatisch gewechselt werden darf (ein Eintrag pro Zeile)",
 
     "createcontrolledroom-msgbox-label": "Zentral gesteuerten Raum erstellen",
     "controlledroominfo-msgbox-label": "Namen des zentral gesteuerten Raums eingeben\r\n(siehe https://syncplay.pl/guide/ für eine Anleitung [Englisch]):",
@@ -367,10 +378,12 @@ de = {
     "password-tooltip": "Passwörter sind nur bei Verbindung zu privaten Servern nötig.",
     "room-tooltip": "Der Raum, der betreten werden soll, kann ein x-beliebiger sein. Allerdings werden nur Clients im selben Raum synchronisiert.",
 
-    "executable-path-tooltip": "Pfad zum ausgewählten, unterstützten Mediaplayer (MPC-HC, MPC-BE, VLC, mplayer2 or mpv).",
-    "media-path-tooltip": "Pfad zum wiederzugebenden Video oder Stream. Notwendig für mplayer2.",  # TODO: Confirm translation
-    "player-arguments-tooltip": "Zusätzliche Kommandozeilenparameter / -schalter für diesen Mediaplayer.",
-    "mediasearcdirectories-arguments-tooltip": "Verzeichnisse, in denen Syncplay nach Mediendateien suchen soll, z.B. wenn du das Click-to-switch-Feature verwendest. Syncplay wird rekursiv Unterordner durchsuchen.",  # TODO: Translate Click-to-switch? (or use as name for feature)
+    "edit-rooms-tooltip": "Edit room list.", # TO DO: Translate
+
+    "executable-path-tooltip": "Pfad zum ausgewählten, unterstützten Mediaplayer (mpv, mpv.net, VLC, MPC-HC/BE or mplayer2).",
+    "media-path-tooltip": "Pfad zum wiederzugebenden Video oder Stream. Notwendig für mplayer2.",
+    "player-arguments-tooltip": "Zusätzliche Kommandozeilenparameter/-schalter für diesen Mediaplayer.",
+    "mediasearcdirectories-arguments-tooltip": "Verzeichnisse, in denen Syncplay nach Mediendateien suchen soll, z.B. wenn du die Click-to-switch-Funktion verwendest. Syncplay wird Unterverzeichnisse rekursiv durchsuchen.",  # TODO: Translate Click-to-switch? (or use as name for feature)
 
     "more-tooltip": "Weitere Einstellungen anzeigen.",
     "filename-privacy-tooltip": "Privatheitsmodus beim Senden des Namens der aktuellen Datei zum Server.",
@@ -379,16 +392,18 @@ de = {
     "privacy-sendhashed-tooltip": "Die Informationen gehasht übertragen, um sie für andere Clients schwerer lesbar zu machen.",
     "privacy-dontsend-tooltip": "Diese Information nicht übertragen. Dies garantiert den größtmöglichen Datanschutz.",
     "checkforupdatesautomatically-tooltip": "Regelmäßig auf der Syncplay-Website nach Updates suchen.",
+    "autosavejoinstolist-tooltip": "When you join a room in a server, automatically remember the room name in the list of rooms to join.", # TO DO: Translate
+    "autosavejoinstolist-label": "Add rooms you join to the room list e", # TO DO: Translate
     "slowondesync-tooltip": "Reduziert die Abspielgeschwindigkeit zeitweise, um die Synchronität zu den anderen Clients wiederherzustellen.",
     "rewindondesync-label": "Zurückspulen bei großer Zeitdifferenz (empfohlen)",
     "fastforwardondesync-label": "Vorspulen wenn das Video laggt (empfohlen)",
     "dontslowdownwithme-tooltip": "Lässt andere nicht langsamer werden oder zurückspringen, wenn deine Wiedergabe hängt.",
     "pauseonleave-tooltip": "Wiedergabe anhalten, wenn deine Verbindung verloren geht oder jemand den Raum verlässt.",
-    "readyatstart-tooltip": "Zu Beginn auf 'Bereit' setzen (sonst bist du als 'Nicht Bereit' gesetzt, bis du den Status änderst)",
+    "readyatstart-tooltip": "Zu Beginn auf „Bereit“ setzen (sonst bist du als „Nicht Bereit“ gesetzt, bis du den Status änderst)",
     "forceguiprompt-tooltip": "Der Konfigurationsdialog wird nicht angezeigt, wenn eine Datei mit Syncplay geöffnet wird.",
     "nostore-tooltip": "Syncplay mit den angegebenen Einstellungen starten, diese aber nicht dauerhaft speichern.",
     "rewindondesync-tooltip": "Zum Wiederherstellen der Synchronität in der Zeit zurückspringen (empfohlen)",
-    "fastforwardondesync-tooltip": "Nach vorne springen, wenn asynchron zum Raumleiter (oder deine vorgetäuschte Position, falls 'Niemals verlangsamen oder andere zurückspulen' aktiviert ist).",
+    "fastforwardondesync-tooltip": "Nach vorne springen, wenn asynchron zum Raumleiter (oder deine vorgetäuschte Position, falls „Niemals verlangsamen oder andere zurückspulen“ aktiviert ist).",
     "showosd-tooltip": "Syncplay-Nachrichten auf dem OSD (= OnScreenDisplay, ein eingeblendetes Textfeld) des Players anzeigen.",
     "showosdwarnings-tooltip": "Warnungen bei Unterschiedlichen Dateien oder Alleinsein im Raum anzeigen.",
     "showsameroomosd-tooltip": "OSD-Meldungen über Ereignisse im selben Raum anzeigen.",
@@ -401,36 +416,36 @@ de = {
     "unpause-ifalreadyready-tooltip": "Wenn du nicht bereit bist und Play drückst wirst du als bereit gesetzt - zum Starten der Wiedergabe nochmal drücken.",
     "unpause-ifothersready-tooltip": "Wenn du Play drückst und nicht bereit bist, wird nur gestartet, wenn alle anderen bereit sind.",
     "unpause-ifminusersready-tooltip": "Wenn du Play drückst und nicht bereit bist, wird nur gestartet, wenn die minimale Anzahl anderer Benutzer bereit ist.",
-    "trusteddomains-arguments-tooltip": "Domains that it is okay for Syncplay to automatically switch to when shared playlists is enabled.",  # TODO: Translate into German
+    "trusteddomains-arguments-tooltip": "Domains, zu denen Syncplay automatisch wechself darf, wenn geteilte Playlists aktiviert sind.",
 
-    "chatinputenabled-tooltip": "Enable chat input in mpv (press enter to chat, enter to send, escape to cancel)",  # TODO: Translate
-    "chatdirectinput-tooltip": "Skip having to press 'enter' to go into chat input mode in mpv. Press TAB in mpv to temporarily disable this feature.",  # TODO: Translate
-    "font-label-tooltip": "Font used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",  # TODO: Translate
-    "set-input-font-tooltip": "Font family used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",  # TODO: Translate
-    "set-input-colour-tooltip": "Font colour used for when entering chat messages in mpv. Client-side only, so doesn't affect what other see.",  # TODO: Translate
-    "chatinputposition-tooltip": "Location in mpv where chat input text will appear when you press enter and type.",  # TODO: Translate
-    "chatinputposition-top-tooltip": "Place chat input at top of mpv window.",  # TODO: Translate
-    "chatinputposition-middle-tooltip": "Place chat input in dead centre of mpv window.",  # TODO: Translate
-    "chatinputposition-bottom-tooltip": "Place chat input at bottom of mpv window.",  # TODO: Translate
-    "chatoutputenabled-tooltip": "Show chat messages in OSD (if supported by media player).",  # TODO: Translate
-    "font-output-label-tooltip": "Chat output font.",  # TODO: Translate
-    "set-output-font-tooltip": "Font used for when displaying chat messages.",  # TODO: Translate
-    "chatoutputmode-tooltip": "How chat messages are displayed.",  # TODO: Translate
-    "chatoutputmode-chatroom-tooltip": "Display new lines of chat directly below previous line.",  # TODO: Translate
-    "chatoutputmode-scrolling-tooltip": "Scroll chat text from right to left.",  # TODO: Translate
+    "chatinputenabled-tooltip": "Chateingabe in mpv aktivieren (Drücke Enter zum Chatten, Enter zum Senden, Esc um abzubrechen)",
+    "chatdirectinput-tooltip": "Überspringe, Enter drücken zu müssen, um in mpv in den Chatmodus zu gelangen. Drücke TAB, um diese Funktion vorübergehend zu deaktivieren.",
+    "font-label-tooltip": "Schriftart für die Darstellung der Chateingabe in mpv. Nur clientseitig, beeinflusst also nicht, was andere sehen.",
+    "set-input-font-tooltip": "Schriftfamilie für die Darstellung der Chateingabe in mpv. Nur clientseitig, beeinflusst also nicht, was andere sehen.",
+    "set-input-colour-tooltip": "Schriftfarbe für die Darstellung der Chateingabe in mpv. Nur clientseitig, beeinflusst also nicht, was andere sehen.",
+    "chatinputposition-tooltip": "Position in mpv, an der Text der Chateingabe erscheint, wenn du Enter drückst und tippst.",
+    "chatinputposition-top-tooltip": "Chateingabe oben im mpv-Fenster platzieren.",
+    "chatinputposition-middle-tooltip": "Chateingabe mittig im mpv-Fenster platzieren.",
+    "chatinputposition-bottom-tooltip": "Chateingabe unten im mpv-Fenster platzieren.",
+    "chatoutputenabled-tooltip": "Chatnachrichten im OSD anzeigen (sofern vom Medienplayer unterstützt).",
+    "font-output-label-tooltip": "Chatausgabe-Schriftart.",
+    "set-output-font-tooltip": "Schriftart für die Darstellung von Chatnachrichten.",
+    "chatoutputmode-tooltip": "Wie Chatnachrichten dargestellt werden.",
+    "chatoutputmode-chatroom-tooltip": "Neue Chatzeilen unmittelbar unterder vorangehenden Zeile anzeigen.",
+    "chatoutputmode-scrolling-tooltip": "Chat-Text von rechts nach links scrollen lassen",
 
     "help-tooltip": "Öffnet Hilfe auf syncplay.pl [Englisch]",
     "reset-tooltip": "Alle Einstellungen auf Standardwerte zurücksetzen.",
     "update-server-list-tooltip": "Mit syncplay.pl verbinden um die Liste öffentlicher Server zu aktualisieren.",
 
-    "sslconnection-tooltip": "Securely connected to server. Click for certificate details.",  # TODO: Translate
+    "sslconnection-tooltip": "Sicher mit Server verbunden. Klicken, um Zertifikatdetails anzuzeigen.",
 
     "joinroom-tooltip": "Den aktuellen Raum verlassen und stattdessen den angegebenen betreten.",
     "seektime-msgbox-label": "Springe zur angegebenen Zeit (in Sekunden oder min:sek).  Verwende +/- zum relativen Springen.",
     "ready-tooltip": "Zeigt an, ob du bereit zum anschauen bist",
     "autoplay-tooltip": "Automatisch abspielen, wenn alle Nutzer bereit sind oder die minimale Nutzerzahl erreicht ist.",
     "switch-to-file-tooltip": "Doppelklicken um zu {} zu wechseln",  # Filename
-    "sendmessage-tooltip": "Send message to room",  # TODO: Translate
+    "sendmessage-tooltip": "Nachricht an Raum senden",
 
     # In-userlist notes (GUI)
     "differentsize-note": "Verschiedene Größe!",
@@ -443,7 +458,7 @@ de = {
 
     # Server notifications
     "welcome-server-notification": "Willkommen zum Syncplay-Server, v. {0}",  # version
-    "client-connected-room-server-notification": "{0}({2}) hat den Raum '{1}' betreten",  # username, host, room
+    "client-connected-room-server-notification": "{0}({2}) hat den Raum „{1}“ betreten",  # username, host, room
     "client-left-server-notification": "{0} hat den Server verlassen",  # name
     "no-salt-notification": "WICHTIGER HINWEIS: Damit von dem Server generierte Passwörter für geführte Räume auch nach einem Serverneustart funktionieren, starte den Server mit dem folgenden Parameter: --salt {}",  # Salt
 
@@ -451,52 +466,55 @@ de = {
     "server-argument-description": 'Anwendung, um mehrere MPlayer, MPC-HC/BE und VLC-Instanzen über das Internet zu synchronisieren. Server',
     "server-argument-epilog": 'Wenn keine Optionen angegeben sind, werden die _config-Werte verwendet',
     "server-port-argument": 'Server TCP-Port',
-    "server-password-argument": 'Server Passwort',
+    "server-password-argument": 'Server-Passwort',
     "server-isolate-room-argument": 'Sollen die Räume isoliert sein?',
     "server-salt-argument": "zufällige Zeichenkette, die zur Erstellung von Passwörtern verwendet wird",
     "server-disable-ready-argument": "Bereitschaftsfeature deaktivieren",
     "server-motd-argument": "Pfad zur Datei, von der die Nachricht des Tages geladen wird",
-    "server-chat-argument": "Should chat be disabled?",  # TODO: Translate
-    "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})",  # TODO: Translate
-    "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})", # TODO: Translate
-    "server-stats-db-file-argument": "Enable server stats using the SQLite db file provided", # TODO: Translate
-    "server-startTLS-argument": "Enable TLS connections using the certificate files in the path provided", # TODO: Translate
+    "server-chat-argument": "Soll Chat deaktiviert werden?",
+    "server-chat-maxchars-argument": "Maximale Zeichenzahl in einer Chatnachricht (Standard ist {})",
+    "server-maxusernamelength-argument": "Maximale Zeichenzahl in einem Benutzernamen (Standard ist {})",
+    "server-stats-db-file-argument": "Aktiviere Server-Statistiken mithilfe der bereitgestellten SQLite-db-Datei",
+    "server-startTLS-argument": "Erlaube TLS-Verbindungen mit den Zertifikatdateien im Angegebenen Pfad",
     "server-messed-up-motd-unescaped-placeholders": "Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
     "server-messed-up-motd-too-long": "Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
 
     # Server errors
     "unknown-command-server-error": "Unbekannter Befehl {}",  # message
     "not-json-server-error": "Kein JSON-String {}",  # message
-    "line-decode-server-error": "Not a utf-8 string",  # TODO: Translate
+    "line-decode-server-error": "Keine utf-8-Zeichenkette",
     "not-known-server-error": "Der Server muss dich kennen, bevor du diesen Befehl nutzen kannst",
     "client-drop-server-error": "Client verloren: {} -- {}",  # host, error
     "password-required-server-error": "Passwort nötig",
     "wrong-password-server-error": "Ungültiges Passwort",
     "hello-server-error": "Zu wenige Hello-Argumente",
 
-    # Playlists TODO: Translate all this to German
-    "playlist-selection-changed-notification":  "{} changed the playlist selection",  # Username
-    "playlist-contents-changed-notification": "{} updated the playlist",  # Username
-    "cannot-find-file-for-playlist-switch-error": "Could not find file {} in media directories for playlist switch!",  # Filename
-    "cannot-add-duplicate-error": "Could not add second entry for '{}' to the playlist as no duplicates are allowed.",  # Filename
-    "cannot-add-unsafe-path-error": "Could not automatically load {} because it is not on a trusted domain. You can switch to the URL manually by double clicking it in the playlist, and add trusted domains via File->Advanced->Set Trusted Domains. If you right click on a URL then you can add its domain as a trusted domain via the context menu.",  # Filename
-    "sharedplaylistenabled-label": "Enable shared playlists",
-    "removefromplaylist-menu-label": "Remove from playlist",
-    "shuffleremainingplaylist-menu-label": "Shuffle remaining playlist",
-    "shuffleentireplaylist-menu-label": "Shuffle entire playlist",
-    "undoplaylist-menu-label": "Undo last change to playlist",
-    "addfilestoplaylist-menu-label": "Add file(s) to bottom of playlist",
-    "addurlstoplaylist-menu-label": "Add URL(s) to bottom of playlist",
-    "editplaylist-menu-label": "Edit playlist",
+    # Playlists
+    "playlist-selection-changed-notification":  "{} hat die Playlist-Auswahl geändert",  # Username
+    "playlist-contents-changed-notification": "{} hat die Playlist aktualisiert",  # Username
+    "cannot-find-file-for-playlist-switch-error": "Die Datei {} konnte zum Dateiwechsel nicht in den Medienverzeichnissen gefunden werden!",  # Filename
+    "cannot-add-duplicate-error": "Konnte zweiten Eintrag für „{}“ nicht zur Playlist hinzufügen, weil Dubletten nicht erlaubt sind.",  # Filename
+    "cannot-add-unsafe-path-error": "{} konnte nicht automatisch geladen werden, weil es sich nicht um eine vertrauenswürdige Domain handelt. Du kannst manuell zu der URL wechseln, indem du sie in der Playlist doppelklickst oder vertrauenswürdige Domains unter Datei->Erweitert->Vertrauenswürdige Domains auswählen hinzufügst. Wenn du einen Rechtsklick auf eine URL ausführst, kannst du ihre Domain im Kontextmenü als vertrauenswürdig hinzufügen.",  # Filename
+    "sharedplaylistenabled-label": "Geteilte Playlists aktivieren",
+    "removefromplaylist-menu-label": "Von Playlist entfernen",
+    "shuffleremainingplaylist-menu-label": "Verbleibende Playlist shuffeln",
+    "shuffleentireplaylist-menu-label": "Gesamte Playlist shuffeln",
+    "undoplaylist-menu-label": "Letze Playlist-Änderung rückgängig machen",
+    "addfilestoplaylist-menu-label": "Datei(en) zum Ende der Playlist hinzufügen",
+    "addurlstoplaylist-menu-label": "URL(s) zum Ende der Playlist hinzufügen",
+    "editplaylist-menu-label": "Playlist bearbeiten",
 
-    "open-containing-folder": "Open folder containing this file",
-    "addyourfiletoplaylist-menu-label": "Add your file to playlist",
-    "addotherusersfiletoplaylist-menu-label": "Add {}'s file to playlist",  # [Username]
-    "addyourstreamstoplaylist-menu-label": "Add your stream to playlist",
-    "addotherusersstreamstoplaylist-menu-label": "Add {}' stream to playlist",  # [Username]
-    "openusersstream-menu-label": "Open {}'s stream",  # [username]'s
-    "openusersfile-menu-label": "Open {}'s file",  # [username]'s
+    "open-containing-folder": "Übergeordnetes Verzeichnis der Datei öffnen",
+    "addyourfiletoplaylist-menu-label": "Deine Datei zur Playlist hinzufügen",
+    "addotherusersfiletoplaylist-menu-label": "{}s Datei zur Playlist hinzufügen",  # [Username]
+    "addyourstreamstoplaylist-menu-label": "Deinen Stream zur Playlist hinzufügen",
+    "addotherusersstreamstoplaylist-menu-label": "{}s Stream zur Playlist hinzufügen",  # [Username]
+    "openusersstream-menu-label": "{}s Stream öffnen",  # [username]'s
+    "openusersfile-menu-label": "{}s Datei öffnen",  # [username]'s
 
-    "playlist-instruction-item-message": "Drag file here to add it to the shared playlist.",
-    "sharedplaylistenabled-tooltip": "Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.",
+    "playlist-instruction-item-message": "Zieh eine Datei hierher, um sie zur geteilten Playlist hinzuzufügen.",
+    "sharedplaylistenabled-tooltip": "Raumleiter können Dateien zu einer geteilten Playlist hinzufügen und es so erleichtern, gemeinsam das Gleiche zu gucken. Konfiguriere Medienverzeichnisse unter „Diverse“",
+
+    "playlist-empty-error": "Playlist is currently empty.", # TO DO: Translate
+    "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
 }

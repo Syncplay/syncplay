@@ -30,7 +30,7 @@ import syncplay
 from syncplay.messages import getMissingStrings
 
 missingStrings = getMissingStrings()
-if missingStrings is not None and missingStrings is not "":
+if missingStrings is not None and missingStrings != "":
     import warnings
     warnings.warn("MISSING/UNUSED STRINGS DETECTED:\n{}".format(missingStrings))
 
@@ -63,6 +63,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\German.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Italian.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Spanish.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\PortugueseBR.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Portuguese.nlf"
 
   Unicode true
 
@@ -101,6 +103,16 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_SPANISH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_SPANISH} "FileDescription" "Syncplay"
 
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "FileDescription" "Syncplay"
+
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "FileDescription" "Syncplay"
+  
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
   LangString ^Shortcut $${LANG_ENGLISH} "Create Shortcuts in following locations:"
@@ -153,6 +165,24 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^QuickLaunchBar $${LANG_SPANISH} "Barra de acceso rápido"
   LangString ^AutomaticUpdates $${LANG_SPANISH} "Buscar actualizaciones automáticamente"
   LangString ^UninstConfig $${LANG_SPANISH} "Borrar archivo de configuración."
+
+  LangString ^SyncplayLanguage $${LANG_PORTUGUESEBR} "pt_BR"
+  LangString ^Associate $${LANG_PORTUGUESEBR} "Associar Syncplay aos arquivos multimídia."
+  LangString ^Shortcut $${LANG_PORTUGUESEBR} "Criar atalhos nos seguintes locais:"
+  LangString ^StartMenu $${LANG_PORTUGUESEBR} "Menu Iniciar"
+  LangString ^Desktop $${LANG_PORTUGUESEBR} "Área de trabalho"
+  LangString ^QuickLaunchBar $${LANG_PORTUGUESEBR} "Barra de acesso rápido"
+  LangString ^AutomaticUpdates $${LANG_PORTUGUESEBR} "Verificar atualizações automaticamente"
+  LangString ^UninstConfig $${LANG_PORTUGUESEBR} "Deletar arquivo de configuração."
+
+  LangString ^SyncplayLanguage $${LANG_PORTUGUESE} "pt_PT"
+  LangString ^Associate $${LANG_PORTUGUESE} "Associar Syncplay aos ficheiros multimédia."
+  LangString ^Shortcut $${LANG_PORTUGUESE} "Criar atalhos nos seguintes locais:"
+  LangString ^StartMenu $${LANG_PORTUGUESE} "Menu Iniciar"
+  LangString ^Desktop $${LANG_PORTUGUESE} "Área de trabalho"
+  LangString ^QuickLaunchBar $${LANG_PORTUGUESE} "Barra de acesso rápido"
+  LangString ^AutomaticUpdates $${LANG_PORTUGUESE} "Verificar atualizações automaticamente"
+  LangString ^UninstConfig $${LANG_PORTUGUESE} "Apagar ficheiro de configuração."
 
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "
@@ -259,6 +289,10 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push Italiano
     Push $${LANG_SPANISH}
     Push Español
+    Push $${LANG_PORTUGUESEBR}
+    Push 'Português do Brasil'
+    Push $${LANG_PORTUGUESE}
+    Push 'Português de Portugal'
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE
@@ -389,6 +423,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
     $${If} $$CheckBox_StartMenuShortcut_State == $${BST_CHECKED}
       CreateDirectory $$SMPROGRAMS\Syncplay
+      SetOutPath "$$INSTDIR"
       CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
       CreateShortCut "$$SMPROGRAMS\Syncplay\Syncplay Server.lnk" "$$INSTDIR\syncplayServer.exe" ""
       CreateShortCut "$$SMPROGRAMS\Syncplay\Uninstall.lnk" "$$INSTDIR\Uninstall.exe" ""
@@ -396,10 +431,12 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${EndIf}
 
     $${If} $$CheckBox_DesktopShortcut_State == $${BST_CHECKED}
+      SetOutPath "$$INSTDIR"
       CreateShortCut "$$DESKTOP\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
     $${EndIf}
 
     $${If} $$CheckBox_QuickLaunchShortcut_State == $${BST_CHECKED}
+      SetOutPath "$$INSTDIR"
       CreateShortCut "$$QUICKLAUNCH\Syncplay.lnk" "$$INSTDIR\Syncplay.exe" ""
     $${EndIf}
   FunctionEnd
@@ -667,10 +704,9 @@ class build_installer(py2exe):
         script.compile()
         print("*** DONE ***")
 
-guiIcons = glob('syncplay/resources/*.png') +  ['syncplay/resources/spinner.mng']
+guiIcons = glob('syncplay/resources/*.ico') + glob('syncplay/resources/*.png') +  ['syncplay/resources/spinner.mng']
 
 resources = [
-    "syncplay/resources/icon.ico",
     "syncplay/resources/syncplayintf.lua",
     "syncplay/resources/license.rtf",
     "syncplay/resources/third-party-notices.rtf"

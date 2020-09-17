@@ -6,6 +6,8 @@ from . import messages_ru
 from . import messages_de
 from . import messages_it
 from . import messages_es
+from . import messages_pt_BR
+from . import messages_pt_PT
 
 messages = {
     "en": messages_en.en,
@@ -13,6 +15,8 @@ messages = {
     "de": messages_de.de,
     "it": messages_it.it,
     "es": messages_es.es,
+    "pt_BR": messages_pt_BR.pt_BR,
+    "pt_PT": messages_pt_PT.pt_PT,
     "CURRENT": None
 }
 
@@ -44,9 +48,15 @@ def getMissingStrings():
 
 
 def getInitialLanguage():
-    import locale
     try:
-        initialLanguage = locale.getdefaultlocale()[0].split("_")[0]
+        import sys
+        frozen = getattr(sys, 'frozen', '')
+        if frozen in 'macosx_app':
+            from PySide2.QtCore import QLocale
+            initialLanguage = QLocale.system().uiLanguages()[0].split('-')[0]
+        else:
+            import locale
+            initialLanguage = locale.getdefaultlocale()[0].split("_")[0]
         if initialLanguage not in messages:
             initialLanguage = constants.FALLBACK_INITIAL_LANGUAGE
     except:

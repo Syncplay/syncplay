@@ -156,6 +156,31 @@ class ConfigDialog(QtWidgets.QDialog):
     def openHelp(self):
         self.QtGui.QDesktopServices.openUrl(QUrl("https://syncplay.pl/guide/client/"))
 
+    def openRoomsDialog(self):
+        RoomsDialog = QtWidgets.QDialog()
+        RoomsLayout = QtWidgets.QGridLayout()
+        RoomsTextbox = QtWidgets.QPlainTextEdit()
+        RoomsDialog.setWindowTitle(getMessage("roomlist-msgbox-label"))
+        RoomsPlaylistLabel = QtWidgets.QLabel(getMessage("roomlist-msgbox-label"))
+        RoomsTextbox.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
+        RoomsTextbox.setPlainText(utils.getListAsMultilineString(self.config['roomList']))
+        RoomsLayout.addWidget(RoomsPlaylistLabel, 0, 0, 1, 1)
+        RoomsLayout.addWidget(RoomsTextbox, 1, 0, 1, 1)
+        RoomsButtonBox = QtWidgets.QDialogButtonBox()
+        RoomsButtonBox.setOrientation(Qt.Horizontal)
+        RoomsButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        RoomsButtonBox.accepted.connect(RoomsDialog.accept)
+        RoomsButtonBox.rejected.connect(RoomsDialog.reject)
+        RoomsLayout.addWidget(RoomsButtonBox, 2, 0, 1, 1)
+        RoomsDialog.setLayout(RoomsLayout)
+        RoomsDialog.setModal(True)
+        RoomsDialog.show()
+        result = RoomsDialog.exec_()
+        if result == QtWidgets.QDialog.Accepted:
+            newRooms = utils.convertMultilineStringToList(RoomsTextbox.toPlainText())
+            newRooms = sorted(newRooms)
+            self.relistRoomList(newRooms)
+
     def safenormcaseandpath(self, path):
         if utils.isURL(path):
             return path
@@ -320,7 +345,7 @@ class ConfigDialog(QtWidgets.QDialog):
         try:
             self.lastCheckedForUpdates = settings.value("lastCheckedQt", None)
             if self.lastCheckedForUpdates:
-                if self.config["lastCheckedForUpdates"] is not None and self.config["lastCheckedForUpdates"] is not "":
+                if self.config["lastCheckedForUpdates"] != None and self.config["lastCheckedForUpdates"] != "":
                     if self.lastCheckedForUpdates.toPython() > datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f"):
                         self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
                 else:
@@ -379,6 +404,29 @@ class ConfigDialog(QtWidgets.QDialog):
             settings.beginGroup("PublicServerList")
             settings.setValue("publicServers", servers)
         self.hostCombobox.setEditText(currentServer)
+
+    def fillRoomsCombobox(self):
+        previousRoomSelection = self.roomsCombobox.currentText()
+        self.roomsCombobox.clear()
+        for roomListValue in self.config['roomList']:
+            self.roomsCombobox.addItem(roomListValue)
+        self.roomsCombobox.setEditText(previousRoomSelection)
+
+    def relistRoomList(self, newRooms):
+        filteredNewRooms = [room for room in newRooms if room and not room.isspace()]
+        self.config['roomList'] = filteredNewRooms
+        self.fillRoomsCombobox()
+
+    def addRoomToList(self, newRoom=None):
+        if newRoom is None:
+            newRoom = self.roomsCombobox.currentText()
+        if not newRoom:
+            return
+        roomList = self.config['roomList']
+        if newRoom not in roomList:
+            roomList.append(newRoom)
+        roomList = sorted(roomList)
+        self.config['roomList'] = roomList
 
     def showErrorMessage(self, errorMessage):
         QtWidgets.QMessageBox.warning(self, "Syncplay", errorMessage)
@@ -447,6 +495,9 @@ class ConfigDialog(QtWidgets.QDialog):
         else:
             self.config['file'] = str(self.mediapathTextbox.text())
         self.config['publicServers'] = self.publicServerAddresses
+        self.config['room'] = self.roomsCombobox.currentText()
+        if self.config['autosaveJoinsToList']:
+            self.addRoomToList(self.config['room'])
 
         self.pressedclosebutton = False
         self.close()
@@ -599,11 +650,18 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.usernameTextbox.setObjectName("name")
         self.serverpassLabel = QLabel(getMessage("password-label"), self)
-        self.defaultroomTextbox = QLineEdit(self)
+        self.roomsCombobox = QtWidgets.QComboBox(self)
+        self.roomsCombobox.setEditable(True)
+        self.fillRoomsCombobox()
+        self.roomsCombobox.setEditText(config['room'])
         self.usernameLabel = QLabel(getMessage("name-label"), self)
         self.serverpassTextbox = QLineEdit(self)
         self.serverpassTextbox.setText(self.storedPassword)
         self.defaultroomLabel = QLabel(getMessage("room-label"), self)
+        self.editRoomsButton = QtWidgets.QToolButton()
+        self.editRoomsButton.setIcon(QtGui.QIcon(resourcespath + 'bullet_edit_centered.png'))
+        self.editRoomsButton.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "edit-rooms")
+        self.editRoomsButton.released.connect(self.openRoomsDialog)
 
         self.hostLabel.setObjectName("host")
         self.hostCombobox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "host")
@@ -614,7 +672,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.hostCombobox.editTextChanged.connect(self.updatePasswordVisibilty)
         self.hostCombobox.currentIndexChanged.connect(self.updatePasswordVisibilty)
         self.defaultroomLabel.setObjectName("room")
-        self.defaultroomTextbox.setObjectName("room")
+        self.roomsCombobox.setObjectName("room")
 
         self.connectionSettingsLayout = QtWidgets.QGridLayout()
         self.connectionSettingsLayout.addWidget(self.hostLabel, 0, 0)
@@ -624,7 +682,8 @@ class ConfigDialog(QtWidgets.QDialog):
         self.connectionSettingsLayout.addWidget(self.usernameLabel, 2, 0)
         self.connectionSettingsLayout.addWidget(self.usernameTextbox, 2, 1)
         self.connectionSettingsLayout.addWidget(self.defaultroomLabel, 3, 0)
-        self.connectionSettingsLayout.addWidget(self.defaultroomTextbox, 3, 1)
+        self.connectionSettingsLayout.addWidget(self.editRoomsButton, 3, 2, Qt.AlignRight)
+        self.connectionSettingsLayout.addWidget(self.roomsCombobox, 3, 1)
         self.connectionSettingsLayout.setSpacing(10)
         self.connectionSettingsGroup.setLayout(self.connectionSettingsLayout)
         if isMacOS():
@@ -711,7 +770,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.errorLabel.setStyleSheet(constants.STYLE_SUCCESSLABEL)
             self.errorLabel.setText(error)
             self.errorLabel.setAlignment(Qt.AlignCenter)
-            self.basicOptionsLayout.addWidget(self.errorLabel, 0, 0)
+            self.basicOptionsLayout.addWidget(self.errorLabel)
         self.connectionSettingsGroup.setMaximumHeight(self.connectionSettingsGroup.minimumSizeHint().height())
         self.basicOptionsLayout.setAlignment(Qt.AlignTop)
         self.basicOptionsLayout.addWidget(self.connectionSettingsGroup)
@@ -835,6 +894,10 @@ class ConfigDialog(QtWidgets.QDialog):
         self.automaticupdatesCheckbox = QCheckBox(getMessage("checkforupdatesautomatically-label"))
         self.automaticupdatesCheckbox.setObjectName("checkForUpdatesAutomatically")
         self.internalSettingsLayout.addWidget(self.automaticupdatesCheckbox)
+
+        self.autosaveJoinsToListCheckbox = QCheckBox(getMessage("autosavejoinstolist-label"))
+        self.autosaveJoinsToListCheckbox.setObjectName("autosaveJoinsToList")
+        self.internalSettingsLayout.addWidget(self.autosaveJoinsToListCheckbox)
 
         ## Media path directories
 
@@ -1054,7 +1117,7 @@ class ConfigDialog(QtWidgets.QDialog):
             font.setPointSize(self.config[configName + "RelativeFontSize"])
             font.setWeight(self.config[configName + "FontWeight"])
             font.setUnderline(self.config[configName + "FontUnderline"])
-            value, ok = QtWidgets.QFontDialog.getFont(font)
+            ok, value = QtWidgets.QFontDialog.getFont(font)
             if ok:
                 self.config[configName + "FontFamily"] = value.family()
                 self.config[configName + "RelativeFontSize"] = value.pointSize()
@@ -1419,6 +1482,8 @@ class ConfigDialog(QtWidgets.QDialog):
             self.storeAndRunButton.setFocus()
         if isMacOS():
             initialHeight = self.connectionSettingsGroup.minimumSizeHint().height()+self.mediaplayerSettingsGroup.minimumSizeHint().height()+self.bottomButtonFrame.minimumSizeHint().height()+50
+            if self.error:
+                initialHeight += 40
             self.setFixedWidth(self.sizeHint().width())
             self.setFixedHeight(initialHeight)
         else:

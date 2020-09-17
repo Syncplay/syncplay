@@ -77,7 +77,7 @@ non_us_chars = {
     'И','и','Й','й','К','к','Л','л','М','м','Н','н','О','о','П','п',
     'Р','р','С','с','Т','т','У','у','Ф','ф','Х','х','Ц','ц','Ч','ч',
     'Ш','ш','Щ','щ','Ъ','ъ','Ы','ы','Ь','ь','Э','э','Ю','ю','Я','я',
-    '≥','≠'
+    '≥','≠','Ğ','Ş','ı','ğ','ş'
 }
 
 function format_scrolling(xpos, ypos, text)
@@ -133,6 +133,7 @@ function add_chat(chat_message, mood)
 	chat_log[entry] = { xpos=CANVAS_WIDTH, timecreated=mp.get_time(), text=tostring(chat_message), row=row }
 end
 
+local old_ass_text = ''
 function chat_update()
     local ass = assdraw.ass_new()
 	local chat_ass = ''
@@ -179,7 +180,14 @@ function chat_update()
         ass:append(input_ass())
         ass:append(chat_ass)
     end
-	mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
+
+    -- The commit that introduced the new API removed the internal heuristics on whether a refresh is required,
+    -- so we check for changed text manually to not cause excessive GPU load
+    -- https://github.com/mpv-player/mpv/commit/07287262513c0d1ea46b7beaf100e73f2008295f#diff-d88d582039dea993b6229da9f61ba76cL530
+    if ass.text ~= old_ass_text then
+		mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
+		old_ass_text = ass.text
+	end
 end
 
 function process_alert_osd()
@@ -331,6 +339,18 @@ end)
 
 mp.register_script_message('set_syncplayintf_options', function(e)
 	set_syncplayintf_options(e)
+end)
+
+function state_paused_and_position()
+	-- bob
+	local pause_status = tostring(mp.get_property_native("pause"))
+	local position_status = tostring(mp.get_property_native("time-pos"))
+	mp.command('print-text "<paused='..pause_status..', pos='..position_status..'>"')
+	-- mp.command('print-text "<paused>true</paused><position>7.6</position>"')
+end
+
+mp.register_script_message('get_paused_and_position', function()
+	state_paused_and_position()
 end)
 
 -- Default options
@@ -606,14 +626,14 @@ function wordwrapify_string(line)
 	local nextChar = 0
 	local chars = 0
     local maxChars = str:len()
-
+	str = string.gsub(str, "\\\"", "\"");
 	repeat
 		nextChar = next_utf8(str, currentChar)
         if nextChar == currentChar then
             return newstr
 		end
 		local charToTest = str:sub(currentChar,nextChar-1)
-		if charToTest ~= "\\" and charToTest ~= "{"  and charToTest ~= "}" and charToTest ~= "%" then
+		if charToTest ~= "{"  and charToTest ~= "}" and charToTest ~= "%" then
 			newstr = newstr .. WORDWRAPIFY_MAGICWORD .. str:sub(currentChar,nextChar-1)
         else
 			newstr = newstr .. str:sub(currentChar,nextChar-1)
