@@ -136,6 +136,7 @@ ru = {
     "vlc-failed-connection": "Ошибка подключения к VLC. Если у Вас не установлен syncplay.lua, то обратитесь к https://syncplay.pl/LUA/ за инструкциями.",
     "vlc-failed-noscript": "VLC сообщает, что скрипт интерфейса syncplay.lua не установлен. Пожалуйста, обратитесь к https://syncplay.pl/LUA/ за инструкциями.",
     "vlc-failed-versioncheck": "Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
+    "vlc-initial-warning": 'VLC does not always provide accurate position information to Syncplay, especially for .mp4 and .avi files. If you experience problems with erroneous seeking then please try an alternative media player such as <a href="https://mpv.io/">mpv</a>.', # TODO: Translate
 
     "feature-sharedPlaylists": "shared playlists",  # used for not-supported-by-server-error # TODO: Translate
     "feature-chat": "chat",  # used for not-supported-by-server-error # TODO: Translate

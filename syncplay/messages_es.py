@@ -136,6 +136,7 @@ es = {
     "vlc-failed-connection": "Falló la conexión con VLC. Si no has instalado syncplay.lua y estás usando la última versión de VLC, por favor revisa https://syncplay.pl/LUA/ para obtener instrucciones.",
     "vlc-failed-noscript": "VLC ha reportado que la interfaz syncplay.lua no se ha instalado. Por favor revisa https://syncplay.pl/LUA/ para obtener instrucciones.",
     "vlc-failed-versioncheck": "Esta versión de VLC no está soportada por Syncplay.",
+    "vlc-initial-warning": 'VLC does not always provide accurate position information to Syncplay, especially for .mp4 and .avi files. If you experience problems with erroneous seeking then please try an alternative media player such as <a href="https://mpv.io/">mpv</a>.', # TODO: Translatef
 
     "feature-sharedPlaylists": "listas de reproducción compartidas",  # used for not-supported-by-server-error
     "feature-chat": "chat",  # used for not-supported-by-server-error
