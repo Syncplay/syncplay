@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb, Pilotat
  Project: https://syncplay.pl/
- Version: 0.3.5
+ Version: 0.3.6
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
