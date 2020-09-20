@@ -441,6 +441,7 @@ class VlcPlayer(BasePlayer):
                 else:
                     self.__playerController._client.ui.showDebugMessage("syncplay.lua intf directory not found, so creating directory '{}'".format(vlcSyncplayInterfaceDir))
                     Path(vlcSyncplayInterfaceDir).mkdir(mode=0o755, parents=True, exist_ok=True)
+            try:
                 _createIntfFolder(self.__playerController.vlcIntfUserPath)
                 copyForm = utils.findResourcePath("syncplay.lua")
                 copyTo = os.path.join(self.__playerController.vlcIntfUserPath, "syncplay.lua")
