@@ -32,13 +32,13 @@ class VLCProtocol(LineReceiver):
             if not self.factory.requestedVLCVersion:
                 self.factory.requestedVLCVersion = True
                 self.sendLine("get-vlc-version")
-            # try:
-            lineToSend = line.encode('utf-8') + self.delimiter
-            self.transport.write(lineToSend)
-            if self.factory._playerController._client and self.factory._playerController._client.ui:
-                self.factory._playerController._client.ui.showDebugMessage("player >> {}".format(line))
-            # except:
-                # pass
+            try:
+                lineToSend = line.encode('utf-8') + self.delimiter
+                self.transport.write(lineToSend)
+                if self.factory._playerController._client and self.factory._playerController._client.ui:
+                    self.factory._playerController._client.ui.showDebugMessage("player >> {}".format(line))
+            except:
+                pass
 
     def connectionMade(self):
         self.factory.connected = True
@@ -82,10 +82,10 @@ class VLCClientFactory(ClientFactory):
         self._playerController._vlcclosed.set()
         if not self.connected and not self.timeVLCLaunched:
             # For circumstances where Syncplay is not connected to VLC and is not reconnecting
-            #try:
-            self._process.terminate()
-            #except:  # When VLC is already closed
-            #    pass
+            try:
+                self._process.terminate()
+            except:  # When VLC is already closed
+                pass
 
 
 class VlcPlayer(BasePlayer):
@@ -139,12 +139,14 @@ class VlcPlayer(BasePlayer):
             return
 
     def initWhenConnected(self):
-        self._client.ui.showErrorMessage(getMessage("vlc-initial-warning"))
-        if not self._vlcready.wait(constants.VLC_OPEN_MAX_WAIT_TIME):
-            self._vlcready.set()
-            self._client.ui.showErrorMessage(getMessage("vlc-failed-connection"), True)
-            self.reactor.callFromThread(self._client.stop, True,)
-        self.reactor.callFromThread(self._client.initPlayer, self,)
+        try:
+            if not self._vlcready.wait(constants.VLC_OPEN_MAX_WAIT_TIME):
+                self._vlcready.set()
+                self._client.ui.showErrorMessage(getMessage("vlc-failed-connection"), True)
+                self.reactor.callFromThread(self._client.stop, True,)
+            self.reactor.callFromThread(self._client.initPlayer, self,)
+        except:
+            pass
 
     def _fileUpdateClearEvents(self):
         self._durationAsk.clear()
