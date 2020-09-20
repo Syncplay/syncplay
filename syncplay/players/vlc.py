@@ -441,39 +441,18 @@ class VlcPlayer(BasePlayer):
                 else:
                     self.__playerController._client.ui.showDebugMessage("syncplay.lua intf directory not found, so creating directory '{}'".format(vlcSyncplayInterfaceDir))
                     Path(vlcSyncplayInterfaceDir).mkdir(mode=0o755, parents=True, exist_ok=True)
-            def _intfNeedsUpdating(vlcSyncplayInterfacePath):
-                self.__playerController._client.ui.showDebugMessage("Checking if '{}' exists and if it is the expected version".format(vlcSyncplayInterfacePath))
-                if not os.path.isfile(vlcSyncplayInterfacePath):
-                    self.__playerController._client.ui.showDebugMessage("syncplay.lua not found, so file needs copying")
-                    return True
-                if os.path.isfile(vlcSyncplayInterfacePath):
-                    with open(vlcSyncplayInterfacePath, 'rU') as interfacefile:
-                        for line in interfacefile:
-                            if "local connectorversion" in line:
-                                interface_version = line[26:31]
-                                if interface_version == constants.VLC_INTERFACE_VERSION:
-                                    self.__playerController._client.ui.showDebugMessage("syncplay.lua exists and is expected version, so no file needs copying")
-                                    return False
-                                else:
-                                    self.oldIntfVersion = line[26:31]
-                                    self.__playerController._client.ui.showDebugMessage("syncplay.lua is {} but expected version is {} so file needs to be copied".format(interface_version, constants.VLC_INTERFACE_VERSION))
-                                    return True
-                self.__playerController._client.ui.showDebugMessage("Up-to-dateness checks failed, so copy the file.")
-                return True
-            if _intfNeedsUpdating(os.path.join(self.__playerController.vlcIntfUserPath, "syncplay.lua")):
-                try:
-                    _createIntfFolder(self.__playerController.vlcIntfUserPath)
-                    copyForm = utils.findResourcePath("syncplay.lua")
-                    copyTo = os.path.join(self.__playerController.vlcIntfUserPath, "syncplay.lua")
-                    self.__playerController._client.ui.showDebugMessage("Copying VLC Lua Interface from '{}' to '{}'".format(copyForm, copyTo))
-                    import shutil
-                    if os.path.exists(copyTo):
-                        os.chmod(copyTo, 0o755)
-                    shutil.copyfile(copyForm, copyTo)
+                _createIntfFolder(self.__playerController.vlcIntfUserPath)
+                copyForm = utils.findResourcePath("syncplay.lua")
+                copyTo = os.path.join(self.__playerController.vlcIntfUserPath, "syncplay.lua")
+                self.__playerController._client.ui.showDebugMessage("Copying VLC Lua Interface from '{}' to '{}'".format(copyForm, copyTo))
+                import shutil
+                if os.path.exists(copyTo):
                     os.chmod(copyTo, 0o755)
-                except Exception as e:
-                    self.__playerController._client.ui.showErrorMessage(e)
-                    return
+                shutil.copyfile(copyForm, copyTo)
+                os.chmod(copyTo, 0o755)
+            except Exception as e:
+                self.__playerController._client.ui.showErrorMessage(e)
+                return
             if isLinux():
                 self.__playerController.vlcDataPath = "/usr/lib/syncplay/resources"
             else:
