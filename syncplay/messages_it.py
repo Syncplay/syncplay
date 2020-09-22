@@ -133,10 +133,10 @@ it = {
     "not-json-error": "Non è una stringa con codifica JSON\n",
     "hello-arguments-error": "Not enough Hello arguments\n",  # DO NOT TRANSLATE
     "version-mismatch-error": "La versione del client è diversa da quella del server\n",
-    "vlc-failed-connection": "Impossibile collegarsi a VLC. Se non hai installato syncplay.lua e stai usando l'ultima versione di VLC, fai riferimento a https://syncplay.pl/LUA/ per istruzioni. VLC 4 does not support Syncplay.", # TO DO: TRANSLATE
+    "vlc-failed-connection": "Impossibile collegarsi a VLC. Se non hai installato syncplay.lua e stai usando l'ultima versione di VLC, fai riferimento a https://syncplay.pl/LUA/ per istruzioni. Syncplay and VLC 4 are not currently compatible, so either use VLC 3 or an alternative such as mpv.", # TO DO: TRANSLATE
     "vlc-failed-noscript": "VLC ha segnalato che lo script di interfaccia syncplay.lua non è stato installato. Per favore, fai riferimento a https://syncplay.pl/LUA/ per istruzioni.",
     "vlc-failed-versioncheck": "Questa versione di VLC non è supportata da Syncplay.",
-    "vlc-initial-warning": 'VLC does not always provide accurate position information to Syncplay, especially for .mp4 and .avi files. If you experience problems with erroneous seeking then please try an alternative media player such as <a href="https://mpv.io/">mpv</a>.', # TODO: Translate
+    "vlc-initial-warning": 'VLC does not always provide accurate position information to Syncplay, especially for .mp4 and .avi files. If you experience problems with erroneous seeking then please try an alternative media player such as <a href="https://mpv.io/">mpv</a> (or <a href="https://github.com/stax76/mpv.net/">mpv.net</a> for Windows users).', # TODO: Translate
 
     "feature-sharedPlaylists": "playlist condivise",  # used for not-supported-by-server-error
     "feature-chat": "chat",  # used for not-supported-by-server-error

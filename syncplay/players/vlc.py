@@ -140,6 +140,7 @@ class VlcPlayer(BasePlayer):
 
     def initWhenConnected(self):
         try:
+            self._client.ui.showErrorMessage(getMessage("vlc-initial-warning"))
             if not self._vlcready.wait(constants.VLC_OPEN_MAX_WAIT_TIME):
                 self._vlcready.set()
                 self._client.ui.showErrorMessage(getMessage("vlc-failed-connection"), True)
