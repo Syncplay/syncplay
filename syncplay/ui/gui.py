@@ -1488,7 +1488,7 @@ class MainWindow(QtWidgets.QMainWindow):
             QtGui.QPixmap(resourcespath + 'door_in.png'),
             getMessage("joinroom-label"))
         window.roomButton.pressed.connect(self.joinRoom)
-        window.roomButton.setFixedWidth(window.roomButton.sizeHint().width())
+        window.roomButton.setFixedWidth(window.roomButton.sizeHint().width()+3)
         window.roomLayout = QtWidgets.QHBoxLayout()
         window.roomFrame = QtWidgets.QFrame()
         window.roomFrame.setLayout(self.roomLayout)
