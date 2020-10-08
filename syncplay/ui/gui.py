@@ -1457,7 +1457,7 @@ class MainWindow(QtWidgets.QMainWindow):
             window.sslButton.setVisible(False)
             window.sslButton.setFixedHeight(27)
             window.sslButton.setFixedWidth(27)
-        window.sslButton.pressed.connect(self.openSSLDetails)
+        window.sslButton.pressed.connect(lambda: self.openSSLDetails())
         window.sslButton.setToolTip(getMessage("sslconnection-tooltip"))
         window.listFrame = QtWidgets.QFrame()
         window.listFrame.setLineWidth(0)
@@ -1487,7 +1487,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.roomButton = QtWidgets.QPushButton(
             QtGui.QIcon(QtGui.QPixmap(resourcespath + 'door_in.png')),
             getMessage("joinroom-label"))
-        window.roomButton.pressed.connect(self.joinRoom)
+        window.roomButton.pressed.connect(lambda room=None: self.joinRoom(room))
         window.roomButton.setFixedWidth(window.roomButton.sizeHint().width()+3)
         window.roomLayout = QtWidgets.QHBoxLayout()
         window.roomFrame = QtWidgets.QFrame()
@@ -1539,10 +1539,10 @@ class MainWindow(QtWidgets.QMainWindow):
         window.playlist.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         window.playlist.setDefaultDropAction(Qt.MoveAction)
         window.playlist.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
-        window.playlist.doubleClicked.connect(self.playlistItemClicked)
+        window.playlist.doubleClicked.connect(lambda item: self.playlistItemClicked(item))
         window.playlist.setContextMenuPolicy(Qt.CustomContextMenu)
         window.playlist.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        window.playlist.customContextMenuRequested.connect(self.openPlaylistMenu)
+        window.playlist.customContextMenuRequested.connect(lambda position: self.openPlaylistMenu(position))
         self.playlistUpdateTimer = task.LoopingCall(self.playlistChangeCheck)
         self.playlistUpdateTimer.start(0.1, True)
         noteFont = QtGui.QFont()
@@ -1579,7 +1579,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.autoplayPushButton.setText(getMessage("autoplay-guipushbuttonlabel"))
         window.autoplayPushButton.setCheckable(True)
         window.autoplayPushButton.setAutoExclusive(False)
-        window.autoplayPushButton.toggled.connect(self.changeAutoplayState)
+        window.autoplayPushButton.toggled.connect(lambda source=None: self.changeAutoplayState(source))
         window.autoplayPushButton.setFont(autoPlayFont)
         if isMacOS():
             window.autoplayFrame.setMinimumWidth(window.listFrame.sizeHint().width())
@@ -1600,7 +1600,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.autoplayThresholdSpinbox.setMinimum(2)
         window.autoplayThresholdSpinbox.setMaximum(99)
         window.autoplayThresholdSpinbox.setToolTip(getMessage("autoplay-tooltip"))
-        window.autoplayThresholdSpinbox.valueChanged.connect(self.changeAutoplayThreshold)
+        window.autoplayThresholdSpinbox.valueChanged.connect(lambda source=None: self.changeAutoplayThreshold(source))
         window.autoplayLayout.addWidget(window.autoplayPushButton, Qt.AlignRight)
         window.autoplayLayout.addWidget(window.autoplayLabel, Qt.AlignRight)
         window.autoplayLayout.addWidget(window.autoplayThresholdSpinbox, Qt.AlignRight)
@@ -1629,17 +1629,17 @@ class MainWindow(QtWidgets.QMainWindow):
         window.playbackLayout.addWidget(window.seekButton)
         window.unseekButton = QtWidgets.QPushButton(QtGui.QIcon(QtGui.QPixmap(resourcespath + 'arrow_undo.png')), "")
         window.unseekButton.setToolTip(getMessage("undoseek-menu-label"))
-        window.unseekButton.pressed.connect(self.undoSeek)
+        window.unseekButton.pressed.connect(lambda: self.undoSeek())
 
         window.miscLayout = QtWidgets.QHBoxLayout()
         window.playbackLayout.addWidget(window.unseekButton)
         window.playButton = QtWidgets.QPushButton(QtGui.QIcon(QtGui.QPixmap(resourcespath + 'control_play_blue.png')), "")
         window.playButton.setToolTip(getMessage("play-menu-label"))
-        window.playButton.pressed.connect(self.play)
+        window.playButton.pressed.connect(lambda: self.play())
         window.playbackLayout.addWidget(window.playButton)
         window.pauseButton = QtWidgets.QPushButton(QtGui.QIcon(QtGui.QPixmap(resourcespath + 'control_pause_blue.png')), "")
         window.pauseButton.setToolTip(getMessage("pause-menu-label"))
-        window.pauseButton.pressed.connect(self.pause)
+        window.pauseButton.pressed.connect(lambda: self.pause())
         window.playbackLayout.addWidget(window.pauseButton)
         window.playbackFrame.setMaximumHeight(window.playbackFrame.sizeHint().height())
         window.playbackFrame.setMaximumWidth(window.playbackFrame.sizeHint().width())
@@ -1659,20 +1659,20 @@ class MainWindow(QtWidgets.QMainWindow):
         window.fileMenu = QtWidgets.QMenu(getMessage("file-menu-label"), self)
         window.openAction = window.fileMenu.addAction(QtGui.QIcon(QtGui.QPixmap(resourcespath + 'folder_explore.png')),
                                                       getMessage("openmedia-menu-label"))
-        window.openAction.triggered.connect(self.browseMediapath)
+        window.openAction.triggered.connect(lambda: self.browseMediapath())
         window.openAction = window.fileMenu.addAction(QtGui.QIcon(QtGui.QPixmap(resourcespath + 'world_explore.png')),
                                                       getMessage("openstreamurl-menu-label"))
-        window.openAction.triggered.connect(self.promptForStreamURL)
+        window.openAction.triggered.connect(lambda: self.promptForStreamURL())
         window.openAction = window.fileMenu.addAction(QtGui.QIcon(QtGui.QPixmap(resourcespath + 'film_folder_edit.png')),
                                                       getMessage("setmediadirectories-menu-label"))
-        window.openAction.triggered.connect(self.openSetMediaDirectoriesDialog)
+        window.openAction.triggered.connect(lambda: self.openSetMediaDirectoriesDialog())
 
         window.exitAction = window.fileMenu.addAction(getMessage("exit-menu-label"))
         if isMacOS():
             window.exitAction.setMenuRole(QtWidgets.QAction.QuitRole)
         else:
             window.exitAction.setIcon(QtGui.QIcon(QtGui.QPixmap(resourcespath + 'cross.png')))
-        window.exitAction.triggered.connect(self.exitSyncplay)
+        window.exitAction.triggered.connect(lambda: self.exitSyncplay())
 
         if(window.editMenu is not None):
             window.menuBar.insertMenu(window.editMenu.menuAction(), window.fileMenu)
@@ -1685,11 +1685,11 @@ class MainWindow(QtWidgets.QMainWindow):
         window.playAction = window.playbackMenu.addAction(
             QtGui.QIcon(QtGui.QPixmap(resourcespath + 'control_play_blue.png')),
             getMessage("play-menu-label"))
-        window.playAction.triggered.connect(self.play)
+        window.playAction.triggered.connect(lambda: self.play())
         window.pauseAction = window.playbackMenu.addAction(
             QtGui.QIcon(QtGui.QPixmap(resourcespath + 'control_pause_blue.png')),
             getMessage("pause-menu-label"))
-        window.pauseAction.triggered.connect(self.pause)
+        window.pauseAction.triggered.connect(lambda: self.pause())
         window.seekAction = window.playbackMenu.addAction(
             QtGui.QIcon(QtGui.QPixmap(resourcespath + 'clock_go.png')),
             getMessage("seektime-menu-label"))
@@ -1697,7 +1697,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.unseekAction = window.playbackMenu.addAction(
             QtGui.QIcon(QtGui.QPixmap(resourcespath + 'arrow_undo.png')),
             getMessage("undoseek-menu-label"))
-        window.unseekAction.triggered.connect(self.undoSeek)
+        window.unseekAction.triggered.connect(lambda: self.undoSeek())
 
         window.menuBar.addMenu(window.playbackMenu)
 
@@ -1707,17 +1707,17 @@ class MainWindow(QtWidgets.QMainWindow):
         window.setoffsetAction = window.advancedMenu.addAction(
             QtGui.QIcon(QtGui.QPixmap(resourcespath + 'timeline_marker.png')),
             getMessage("setoffset-menu-label"))
-        window.setoffsetAction.triggered.connect(self.setOffset)
+        window.setoffsetAction.triggered.connect(lambda: self.setOffset())
         window.setTrustedDomainsAction = window.advancedMenu.addAction(
             QtGui.QIcon(QtGui.QPixmap(resourcespath + 'shield_edit.png')),
             getMessage("settrusteddomains-menu-label"))
-        window.setTrustedDomainsAction.triggered.connect(self.openSetTrustedDomainsDialog)
+        window.setTrustedDomainsAction.triggered.connect(lambda: self.openSetTrustedDomainsDialog())
         window.createcontrolledroomAction = window.advancedMenu.addAction(
             QtGui.QIcon(QtGui.QPixmap(resourcespath + 'page_white_key.png')), getMessage("createcontrolledroom-menu-label"))
-        window.createcontrolledroomAction.triggered.connect(self.createControlledRoom)
+        window.createcontrolledroomAction.triggered.connect(lambda: self.createControlledRoom())
         window.identifyascontroller = window.advancedMenu.addAction(QtGui.QIcon(QtGui.QPixmap(resourcespath + 'key_go.png')),
                                                                     getMessage("identifyascontroller-menu-label"))
-        window.identifyascontroller.triggered.connect(self.identifyAsController)
+        window.identifyascontroller.triggered.connect(lambda: self.identifyAsController())
 
         window.menuBar.addMenu(window.advancedMenu)
 

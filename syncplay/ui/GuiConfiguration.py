@@ -1394,7 +1394,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.publicServerAddresses = []
 
         self._playerProbeThread = GetPlayerIconThread()
-        self._playerProbeThread.done.connect(self._updateExecutableIcon)
+        self._playerProbeThread.done.connect(lambda iconpath, playerpath: self._updateExecutableIcon(iconpath, playerpath))
         self._playerProbeThread.start()
 
         if self.config['clearGUIData'] == True:
