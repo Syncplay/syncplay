@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb, Pilotat
  Project: https://syncplay.pl/
- Version: 0.4.0
+ Version: 0.4.1
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -88,8 +88,6 @@ local quitcheckfrequency = 20 -- Check whether VLC has closed every X loops
 local host = "localhost"
 local port
 
-local titlemultiplier = 604800 -- One week
-
 local msgterminator = "\n"
 local msgseperator = ": "
 local argseperator = ", "
@@ -107,8 +105,6 @@ local oldfilepath
 local oldinputstate
 local newfilepath
 local newinputstate
-local oldtitle = 0
-local newtitle = 0
 
 local channel1
 local channel2
@@ -178,12 +174,6 @@ function detectchanges()
                 notificationbuffer = notificationbuffer .. "filepath-change"..notificationmarker..msgterminator
             end
 
-            local titleerror
-            newtitle, titleerror = get_var("title", 0)
-            if newtitle ~= oldtitle and get_var("time", 0) > 1 then
-                vlc.misc.mwait(vlc.misc.mdate() + durationdelay) -- Don't give new title with old time
-            end
-            oldtitle = newtitle
             notificationbuffer = notificationbuffer .. "playstate"..msgseperator..tostring(get_play_state())..msgterminator
             notificationbuffer = notificationbuffer .. "position"..msgseperator..tostring(get_time())..msgterminator
         else
@@ -260,14 +250,6 @@ function get_var( vartoget, fallbackvar )
                 response = fallbackvar
                 errormsg = noinput
             end
-        elseif vartoget == "title" then
-            item = get_VLC_item()
-            if item then
-                response = vlc.player.get_title_index()
-            else
-                response = fallbackvar
-                errormsg = noinput
-            end
         end
     end
 
@@ -296,40 +278,25 @@ function set_var(vartoset, varvalue)
         if vlc.player.is_playing() then
             if vartoset == "time" then
                 vlc.player.seek_by_time_absolute(varvalue * 1000000)
-            elseif vartoset == "title" then
-                vlc.player.title_goto(varvalue)
             end
         end
         return  errormsg
     end
 end
 
-function get_time()
-    local realtime, errormsg, longtime, title, titletime
-    realtime, errormsg = get_var("time", 0) -- Seconds
+    function get_time()
+    local time, errormsg, longtime
+    time, errormsg = get_var("time", 0) -- Seconds
     if errormsg ~= nil and errormsg ~= "" then
         return errormsg
     end
-
-    title = get_var("title", 0)
-
-    if errormsg ~= nil and errormsg ~= "" then
-        return realtime
-    end
-    titletime = title * titlemultiplier -- weeks
-    longtime = titletime + realtime
-    return longtime
+    return time
 end
 
 function set_time(timetoset)
     if vlc_is_playing() and timetoset ~= nil then
-        local response, errormsg, realtime, titletrack
-        realtime = timetoset % titlemultiplier
-        oldtitle = radixsafe_tonumber(get_var("title", 0))
-        newtitle = (timetoset - realtime) / titlemultiplier
-        if oldtitle ~= newtitle and newtitle > -1 then
-            set_var("title", radixsafe_tonumber(newtitle))
-        end
+        local response, errormsg, time
+        realtime = timetoset
         errormsg = set_var("time", radixsafe_tonumber(realtime))
         return errormsg
     else
