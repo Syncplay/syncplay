@@ -1042,8 +1042,11 @@ class SyncplayClient(object):
     def storeControlPassword(self, room, password):
         if password:
             self.controlpasswords[room] = password
-            if self._config['autosaveJoinsToList']:
-                self.ui.addRoomToList(room+":"+password)
+            try:
+                if self._config['autosaveJoinsToList']:
+                    self.ui.addRoomToList(room+":"+password)
+            except:
+                pass
 
     def getControlledRoomPassword(self, room):
         if room in self.controlpasswords:

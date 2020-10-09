@@ -891,8 +891,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def updateRoomName(self, room=""):
         self.roomsCombobox.setEditText(room)
-        if self.config['autosaveJoinsToList']:
-            self.addRoomToList(room)
+        try:
+            if self.config['autosaveJoinsToList']:
+                self.addRoomToList(room)
+        except:
+            pass
 
     def showDebugMessage(self, message):
         print(message)
