@@ -487,6 +487,7 @@ class MPV:
                 self.event_handler.put_task(self.key_bindings[args[1]])
 
     def _start_mpv(self, ipc_socket, mpv_location, **kwargs):
+        # Attempt to start MPV 3 times.
         for i in range(3):
             try:
                 self.mpv_process = MPVProcess(ipc_socket, mpv_location, **kwargs)
@@ -689,6 +690,7 @@ class IINA(MPV):
     """The main IINA interface class. Use this to control the MPV player instantiated by IINA."""
 
     def _start_mpv(self, ipc_socket, mpv_location, **kwargs):
+        # Attempt to start IINA 3 times.
         for i in range(3):
             try:
                 self.mpv_process = IINAProcess(ipc_socket, mpv_location, **kwargs)
