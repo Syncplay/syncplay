@@ -2,10 +2,9 @@ import os
 from syncplay import constants
 from syncplay.utils import findResourcePath
 from syncplay.players.mpv import MpvPlayer
-from syncplay.players.python_mpv_jsonipc.python_mpv_jsonipc import IINA
+from syncplay.players.ipc_iina import IINA
 
 class IinaPlayer(MpvPlayer):
-
 
     @staticmethod
     def run(client, playerPath, filePath, args):
