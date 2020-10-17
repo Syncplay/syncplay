@@ -730,6 +730,5 @@ class MpvPlayer(BasePlayer):
                 except Exception as e:
                     self.__playerController._client.ui.showDebugMessage("CANNOT SEND {} DUE TO {}".format(line, e))
                     self.stop_client()
-                    raise
             except IOError:
                 pass

@@ -37,7 +37,6 @@ class IinaPlayer(MpvPlayer):
         l = []
         for path in constants.IINA_PATHS:
             p = IinaPlayer.getExpandedPath(path)
-            print(p)
             if p:
                 l.append(p)
         return l
