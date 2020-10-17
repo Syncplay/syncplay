@@ -113,7 +113,7 @@ ru = {
     "mpv-version-error": "Syncplay не совместим с данной версией mpv. Пожалуйста, используйте другую версию mpv (лучше свежайшую).",
     "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "Проигрыватель не может открыть файл.",
-    "player-path-error": "Путь к проигрывателю задан неверно. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2.",  # TODO: Translate last sentence
+    "player-path-error": "Путь к проигрывателю задан неверно. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 and IINA.",  # TODO: Translate last sentence
     "hostname-empty-error": "Имя пользователя не может быть пустым.",
     "empty-error": "{} не может быть пустым.",  # Configuration
     "media-player-error": "Ошибка проигрывателя: \"{}\"",  # Error line
@@ -124,7 +124,7 @@ ru = {
 
     "unable-to-start-client-error": "Невозможно запустить клиент",
 
-    "player-path-config-error": "Путь к проигрывателю установлен неверно. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2",  # To do: Translate end
+    "player-path-config-error": "Путь к проигрывателю установлен неверно. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 and IINA",  # To do: Translate end
     "no-file-path-config-error": "Файл должен быть указан до включения проигрывателя",
     "no-hostname-config-error": "Имя сервера не может быть пустым",
     "invalid-port-config-error": "Неверный номер порта",
@@ -386,7 +386,7 @@ ru = {
 
     "edit-rooms-tooltip": "Edit room list.",  # TO DO: Translate
 
-    "executable-path-tooltip": "Расположение Вашего видеопроигрывателя (mpv, mpv.net, VLC, MPC-HC/BE или mplayer2).",
+    "executable-path-tooltip": "Расположение Вашего видеопроигрывателя (mpv, mpv.net, VLC, MPC-HC/BE, mplayer2, или IINA).",
     "media-path-tooltip": "Расположение видеофайла или потока для просмотра. Обязательно для mplayer2.",  # TODO: Confirm translation
     "player-arguments-tooltip": "Передавать дополнительные аргументы командной строки этому проигрывателю.",
     "mediasearcdirectories-arguments-tooltip": "Папки, где Syncplay будет искать медиа файлы, включая подпапки.",
