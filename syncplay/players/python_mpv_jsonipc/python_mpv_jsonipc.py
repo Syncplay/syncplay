@@ -8,6 +8,8 @@ import random
 import queue
 import logging
 
+from syncplay.utils import resourcespath
+
 log = logging.getLogger('mpv-jsonipc')
 
 if os.name == "nt":
@@ -207,13 +209,11 @@ class MPVProcess:
 
         log.debug("Using IPC socket {0} for MPV.".format(ipc_socket))
         self.ipc_socket = ipc_socket
-        args = [mpv_location]
-        self._set_default(kwargs, "idle", True)
-        self._set_default(kwargs, "input_ipc_server", ipc_socket_name)
-        self._set_default(kwargs, "input_terminal", False)
-        self._set_default(kwargs, "terminal", False)
-        args.extend("--{0}={1}".format(v[0].replace("_", "-"), self._mpv_fmt(v[1]))
-                    for v in kwargs.items())
+        args = self._get_arglist(mpv_location, **kwargs)
+
+        self._start_process(ipc_socket, args)
+
+    def _start_process(self, ipc_socket, args):
         self.process = subprocess.Popen(args)
         ipc_exists = False
         for _ in range(100): # Give MPV 10 seconds to start.
@@ -238,6 +238,16 @@ class MPVProcess:
         if key not in prop_dict:
             prop_dict[key] = value
 
+    def _get_arglist(self, exec_location, **kwargs):
+        args = [exec_location]
+        self._set_default(kwargs, "idle", True)
+        self._set_default(kwargs, "input_ipc_server", ipc_socket_name)
+        self._set_default(kwargs, "input_terminal", False)
+        self._set_default(kwargs, "terminal", False)
+        args.extend("--{0}={1}".format(v[0].replace("_", "-"), self._mpv_fmt(v[1]))
+                    for v in kwargs.items())
+        return args
+
     def _mpv_fmt(self, data):
         if data == True:
             return "yes"
@@ -251,6 +261,40 @@ class MPVProcess:
         self.process.terminate()
         if os.name != 'nt' and os.path.exists(self.ipc_socket):
             os.remove(self.ipc_socket)
+
+class IINAProcess(MPVProcess):
+    """
+    Manages an IINA process, ensuring the socket or pipe is available. (Internal)
+    """
+
+    def _start_process(self, ipc_socket, args):
+        self.process = subprocess.Popen(args)
+        ipc_exists = False
+        for _ in range(100): # Give IINA 10 seconds to start.
+            time.sleep(0.1)
+            self.process.poll()
+            if os.path.exists(ipc_socket):
+                ipc_exists = True
+                log.debug("Found IINA socket.")
+                break
+            if self.process.returncode != 0: # iina-cli returns immediately after its start
+                log.error("IINA failed with returncode {0}.".format(self.process.returncode))
+                break
+        else:
+            self.process.terminate()
+            raise MPVError("IINA start timed out.")
+        
+        if not ipc_exists or self.process.returncode != 0:
+            self.process.terminate()
+            raise MPVError("IINA not started.")
+
+    def _get_arglist(self, exec_location, **kwargs):
+        args = [exec_location]
+        args.append(resourcespath + 'syncplay.png')
+        self._set_default(kwargs, "mpv-input-ipc-server", self.ipc_socket)
+        args.extend("--{0}={1}".format(v[0].replace("_", "-"), self._mpv_fmt(v[1]))
+                    for v in kwargs.items())
+        return args
 
 class MPVInter:
     """
@@ -405,16 +449,7 @@ class MPV:
                 ipc_socket = "/tmp/{0}".format(rand_file)
 
         if start_mpv:
-            # Attempt to start MPV 3 times.
-            for i in range(3):
-                try:
-                    self.mpv_process = MPVProcess(ipc_socket, mpv_location, **kwargs)
-                    break
-                except MPVError:
-                    log.warning("MPV start failed.", exc_info=1)
-                    continue
-            else:
-                raise MPVError("MPV process retry limit reached.")
+            self._start_mpv(ipc_socket, mpv_location, **kwargs)
 
         self.mpv_inter = MPVInter(ipc_socket, self._callback, self._quit_callback)
         self.properties = set(x.replace("-", "_") for x in self.command("get_property", "property-list"))
@@ -450,6 +485,17 @@ class MPV:
             args = data["args"]
             if len(args) == 2 and args[0] == "custom-bind":
                 self.event_handler.put_task(self.key_bindings[args[1]])
+
+    def _start_mpv(self, ipc_socket, mpv_location, **kwargs):
+        for i in range(3):
+            try:
+                self.mpv_process = MPVProcess(ipc_socket, mpv_location, **kwargs)
+                break
+            except MPVError:
+                log.warning("MPV start failed.", exc_info=1)
+                continue
+        else:
+            raise MPVError("MPV process retry limit reached.")
 
     def _quit_callback(self):
         """
@@ -638,3 +684,17 @@ class MPV:
 
     def __dir__(self):
         return self._dir
+
+class IINA(MPV):
+    """The main IINA interface class. Use this to control the MPV player instantiated by IINA."""
+
+    def _start_mpv(self, ipc_socket, mpv_location, **kwargs):
+        for i in range(3):
+            try:
+                self.mpv_process = IINAProcess(ipc_socket, mpv_location, **kwargs)
+                break
+            except MPVError:
+                log.warning("IINA start failed.", exc_info=1)
+                continue
+        else:
+            raise MPVError("IINA process retry limit reached.")

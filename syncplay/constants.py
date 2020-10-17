@@ -139,6 +139,8 @@ USER_READY_MIN_VERSION = "1.3.0"
 SHARED_PLAYLIST_MIN_VERSION = "1.4.0"
 CHAT_MIN_VERSION = "1.5.0"
 FEATURE_LIST_MIN_VERSION = "1.5.0"
+
+IINA_PATHS = ['/Applications/IINA.app/Contents/MacOS/iina-cli']
 MPC_PATHS = [
     r"c:\program files (x86)\mpc-hc\mpc-hc.exe",
     r"c:\program files\mpc-hc\mpc-hc.exe",
@@ -176,6 +178,7 @@ VLC_PATHS = [
 ]
 
 VLC_ICONPATH = "vlc.png"
+IINA_ICONPATH = "iina.png"
 MPLAYER_ICONPATH = "mplayer.png"
 MPV_ICONPATH = "mpv.png"
 MPVNET_ICONPATH = "mpvnet.png"
@@ -250,6 +253,13 @@ MPV_ARGS = {'force-window': 'yes',
             'keep-open-pause': 'yes'
             }
 
+IINA_PROPERTIES = {'geometry': '25%+100+100', 
+                   'idle': 'yes',
+                   'hr-seek': 'always',
+                   'input-terminal': 'no',
+                   'term-playing-msg': '<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=duration:${=length:0}}\nANS_path=${path}\n</SyncplayUpdateFile>',
+                   'keep-open-pause': 'yes',
+                   }
 
 MPV_NEW_VERSION = False
 MPV_OSC_VISIBILITY_CHANGE_VERSION = False

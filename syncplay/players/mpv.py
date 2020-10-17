@@ -504,6 +504,12 @@ class MpvPlayer(BasePlayer):
         from twisted.internet import reactor
         self.reactor = reactor
         self._client = client
+        self._set_defaults()
+
+        self._playerIPCHandler = MPV
+        self._create_listener(playerPath, filePath, args)
+
+    def _set_defaults(self):
         self._paused = None
         self._position = 0.0
         self._duration = None
@@ -513,8 +519,10 @@ class MpvPlayer(BasePlayer):
         self.lastLoadedTime = None
         self.fileLoaded = False
         self.delayedFilePath = None
+
+    def _create_listener(self, playerPath, filePath, args):
         try:
-            self._listener = self.__Listener(self, playerPath, filePath, args)
+            self._listener = self.__Listener(self, self._playerIPCHandler, playerPath, filePath, args)
         except ValueError:
             self._client.ui.showMessage(getMessage("mplayer-file-required-notification"))
             self._client.ui.showMessage(getMessage("mplayer-file-required-notification/example"))
@@ -549,7 +557,8 @@ class MpvPlayer(BasePlayer):
         self.lineReceived(text)
 
     class __Listener(threading.Thread):
-        def __init__(self, playerController, playerPath, filePath, args):
+        def __init__(self, playerController, playerIPCHandler, playerPath, filePath, args):
+            self.playerIPCHandler = playerIPCHandler
             self.playerPath = playerPath
             self.mpv_arguments = playerController.getStartupArgs(args)
             self.mpv_running = True
@@ -594,7 +603,7 @@ class MpvPlayer(BasePlayer):
                     env['PYTHONPATH'] = pythonPath
             try:
                 socket = self.mpv_arguments.get('input-ipc-server')
-                self.mpvpipe = MPV(mpv_location=self.playerPath, ipc_socket=socket, loglevel="info", log_handler=self.__playerController.mpv_log_handler, quit_callback=self.stop_client, **self.mpv_arguments)
+                self.mpvpipe = self.playerIPCHandler(mpv_location=self.playerPath, ipc_socket=socket, loglevel="info", log_handler=self.__playerController.mpv_log_handler, quit_callback=self.stop_client, **self.mpv_arguments)
             except Exception as e:
                 self.quitReason = getMessage("media-player-error").format(str(e)) + " " + getMessage("mpv-failed-advice")
                 self.__playerController.reactor.callFromThread(self.__playerController._client.ui.showErrorMessage, self.quitReason, True)
@@ -721,5 +730,6 @@ class MpvPlayer(BasePlayer):
                 except Exception as e:
                     self.__playerController._client.ui.showDebugMessage("CANNOT SEND {} DUE TO {}".format(line, e))
                     self.stop_client()
+                    raise
             except IOError:
                 pass
