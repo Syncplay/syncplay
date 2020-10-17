@@ -140,7 +140,7 @@ SHARED_PLAYLIST_MIN_VERSION = "1.4.0"
 CHAT_MIN_VERSION = "1.5.0"
 FEATURE_LIST_MIN_VERSION = "1.5.0"
 
-IINA_PATHS = ['/Applications/IINA.app/Contents/MacOS/iina-cli']
+IINA_PATHS = ['/Applications/IINA.app/Contents/MacOS/IINA']
 MPC_PATHS = [
     r"c:\program files (x86)\mpc-hc\mpc-hc.exe",
     r"c:\program files\mpc-hc\mpc-hc.exe",

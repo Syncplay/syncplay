@@ -43,18 +43,24 @@ class IinaPlayer(MpvPlayer):
 
     @staticmethod
     def isValidPlayerPath(path):
-        if "iina-cli" in path and IinaPlayer.getExpandedPath(path):
+        if "iina-cli" in path or "iina-cli" in IinaPlayer.getExpandedPath(path):
             return True
         return False
 
     @staticmethod
     def getExpandedPath(playerPath):
+        if "iina-cli" in playerPath:
+            pass
+        elif "IINA.app/Contents/MacOS/IINA" in playerPath:
+            playerPath = os.path.join(os.path.dirname(playerPath), "iina-cli")
+        
         if os.access(playerPath, os.X_OK):
             return playerPath
         for path in os.environ['PATH'].split(':'):
             path = os.path.join(os.path.realpath(path), playerPath)
             if os.access(path, os.X_OK):
-                return path
+                return path  
+        return playerPath
 
     @staticmethod
     def getIconPath(path):
@@ -68,7 +74,7 @@ class IinaPlayer(MpvPlayer):
 
         self._playerIPCHandler = IINA
         self._create_listener(playerPath, filePath, args)
-
+      
     def _preparePlayer(self):
         for key, value in constants.IINA_PROPERTIES.items():
             self._setProperty(key, value)
