@@ -79,3 +79,10 @@ class IinaPlayer(MpvPlayer):
             self._setProperty(key, value)
         self._listener.sendLine(["load-script", findResourcePath("syncplayintf.lua")])
         super()._preparePlayer()
+
+    def _onFileUpdate(self):
+        # do not show file info for our placeholder image in Syncplay UI
+        if self._filename == "iina-bkg.png":
+            return
+        else:
+            super()._onFileUpdate()
