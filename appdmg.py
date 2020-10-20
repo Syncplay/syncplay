@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
-
-
-import biplist
 import os.path
+
+import plistlib
 
 application = defines.get('app', 'dist/Syncplay.app')
 appname = os.path.basename(application)
 
+def read_plist(path):
+    with open(path, 'rb') as f:
+        return plistlib.load(f)
 
 def icon_from_app(app_path):
     plist_path = os.path.join(app_path, 'Contents', 'Info.plist')
-    plist = biplist.readPlist(plist_path)
+    plist = read_plist(plist_path)
     icon_name = plist['CFBundleIconFile']
     icon_root, icon_ext = os.path.splitext(icon_name)
     if not icon_ext:
         icon_ext = '.icns'
     icon_name = icon_root + icon_ext
     return os.path.join(app_path, 'Contents', 'Resources', icon_name)
-
 
 # Volume format (see hdiutil create -help)
 format = defines.get('format', 'UDZO')
