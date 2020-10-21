@@ -198,7 +198,6 @@ class MPVProcess:
                 mpv_location = "mpv"
         
         log.debug("Staring MPV from {0}.".format(mpv_location))
-        ipc_socket_name = ipc_socket
         if os.name == 'nt':
             ipc_socket = "\\\\.\\pipe\\" + ipc_socket
 
@@ -239,7 +238,7 @@ class MPVProcess:
     def _get_arglist(self, exec_location, **kwargs):
         args = [exec_location]
         self._set_default(kwargs, "idle", True)
-        self._set_default(kwargs, "input_ipc_server", ipc_socket_name)
+        self._set_default(kwargs, "input_ipc_server", self.ipc_socket)
         self._set_default(kwargs, "input_terminal", False)
         self._set_default(kwargs, "terminal", False)
         args.extend("--{0}={1}".format(v[0].replace("_", "-"), self._mpv_fmt(v[1]))
