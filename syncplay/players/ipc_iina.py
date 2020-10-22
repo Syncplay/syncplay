@@ -48,6 +48,7 @@ class IINAProcess(MPVProcess):
 
     def _get_arglist(self, exec_location, **kwargs):
         args = [exec_location]
+        args.append('--no-stdin')
         args.append(resourcespath + 'iina-bkg.png')
         self._set_default(kwargs, "mpv-input-ipc-server", self.ipc_socket)
         args.extend("--{0}={1}".format(v[0].replace("_", "-"), self._mpv_fmt(v[1]))
