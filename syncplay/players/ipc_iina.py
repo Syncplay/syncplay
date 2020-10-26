@@ -25,8 +25,8 @@ class IINAProcess(MPVProcess):
     Manages an IINA process, ensuring the socket or pipe is available. (Internal)
     """
 
-    def _start_process(self, ipc_socket, args):
-        self.process = subprocess.Popen(args)
+    def _start_process(self, ipc_socket, args, env):
+        self.process = subprocess.Popen(args, env=env)
         ipc_exists = False
         for _ in range(100): # Give IINA 10 seconds to start.
             time.sleep(0.1)

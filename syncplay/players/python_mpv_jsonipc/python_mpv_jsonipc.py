@@ -182,7 +182,7 @@ class MPVProcess:
     """
     Manages an MPV process, ensuring the socket or pipe is available. (Internal)
     """
-    def __init__(self, ipc_socket, mpv_location=None, **kwargs):
+    def __init__(self, ipc_socket, mpv_location=None, env=None, **kwargs):
         """
         Create and start the MPV process. Will block until socket/pipe is available.
 
@@ -208,9 +208,9 @@ class MPVProcess:
         self.ipc_socket = ipc_socket
         args = self._get_arglist(mpv_location, **kwargs)
 
-        self._start_process(ipc_socket, args)
+        self._start_process(ipc_socket, args, env=env)
 
-    def _start_process(self, ipc_socket, args):
+    def _start_process(self, ipc_socket, args, env):
         self.process = subprocess.Popen(args)
         ipc_exists = False
         for _ in range(100): # Give MPV 10 seconds to start.
