@@ -16,7 +16,7 @@ ru = {
     "connection-failed-notification": "Не удалось подключиться к серверу",
     "connected-successful-notification": "Соединение с сервером установлено",
     "retrying-notification": "%s, следующая попытка через %d секунд(ы)...",  # Seconds
-    "reachout-successful-notification": "Successfully reached {} ({})", # TODO: Translate
+    "reachout-successful-notification": "Подключение к {} ({}) успешно",
 
     "rewind-notification": "Перемотано из-за разницы во времени с {}",  # User
     "fastforward-notification": "Ускорено из-за разницы во времени с {}",  # User
@@ -47,8 +47,7 @@ ru = {
     "identifying-as-controller-notification": "Идентификация как оператора комнаты с паролем '{}'...",
     "failed-to-identify-as-controller-notification": "{} не прошел идентификацию в качестве оператора комнаты.",
     "authenticated-as-controller-notification": "{} вошел как оператор комнаты.",
-    "created-controlled-room-notification": "Создана управляемая комната '{}' с паролем '{}'. Сохраните эти данные!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
-
+    "created-controlled-room-notification": "Создана управляемая комната '{}' с паролем '{}'. Сохраните эти данные!\n\nВ управляемых комнатах всех синхронизируют с оператором (-ами) комнаты, только у которых есть права ставить и снимать с паузы, перематывать и изменять список воспроизведения.\n\nПопросите обычных зрителей подключиться к комнате '{}', а операторы могут подключиться к комнате '{}', чтобы автоматически авторизироваться.", # RoomName, operatorPassword, roomName, roomName:operatorPassword
     "file-different-notification": "Вероятно, файл, который Вы смотрите, отличается от того, который смотрит {}.",  # User
     "file-differences-notification": "Ваш файл отличается: {}",  # Differences
     "room-file-differences": "Несовпадения файла: {}",  # File differences (filename, size, and/or duration)
@@ -77,20 +76,20 @@ ru = {
 
     "unrecognized-command-notification": "Неизвестная команда.",
     "commandlist-notification": "Доступные команды:",
-    "commandlist-notification/room": "\tr [name] - сменить комнату",
+    "commandlist-notification/room": "\tr [имя комнаты] - сменить комнату",
     "commandlist-notification/list": "\tl - показать список пользователей",
     "commandlist-notification/undo": "\tu - отменить последнюю перемотку",
     "commandlist-notification/pause": "\tp - вкл./выкл. паузу",
     "commandlist-notification/seek": "\t[s][+-]time - перемотать к заданному моменту времени, если не указан + или -, то время считается абсолютным (от начала файла) в секундах или мин:сек",
     "commandlist-notification/help": "\th - помощь",
     "commandlist-notification/toggle": "\tt - переключить статус готов/не готов к просмотру",
-    "commandlist-notification/create": "\tc [name] - создать управляемую комнату с таким же именем, как у текущей",
-    "commandlist-notification/auth": "\ta [password] - авторизоваться как оператор комнаты с помощью пароля",
-    "commandlist-notification/chat": "\tch [message] - send a chat message in a room",  # TODO: Translate
-    "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",  # TO DO: Translate
-    "commandList-notification/playlist": "\tql - show the current playlist",  # TO DO: Translate
-    "commandList-notification/select": "\tqs [index] - select given entry in the playlist",  # TO DO: Translate
-    "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",  # TO DO: Translate
+    "commandlist-notification/create": "\tc [имя комнаты] - создать управляемую комнату с таким же именем, как у текущей",
+    "commandlist-notification/auth": "\ta [пароль] - авторизоваться как оператор комнаты с помощью пароля",
+    "commandlist-notification/chat": "\tch [сообщение] - выслать сообщение в комнату",
+    "commandList-notification/queue": "\tqa [файл/URL] - добавить файл или URL в конец списка воспроизведения",
+    "commandList-notification/playlist": "\tql - показать текущий список воспроизведения",
+    "commandList-notification/select": "\tqs [индекс] - выделить указанный пункт в списке воспроизведения",
+    "commandList-notification/delete": "\tqd [индекс] - удалить указанный пункт из списка воспроизведения",
     "syncplay-version-notification": "Версия Syncplay: {}",  # syncplay.version
     "more-info-notification": "Больше информации на {}",  # projectURL
 
@@ -111,9 +110,9 @@ ru = {
     "mpc-version-insufficient-error": "Версия MPC слишком старая, пожалуйста, используйте `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "Версия MPC слишком старая, пожалуйста, используйте `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay не совместим с данной версией mpv. Пожалуйста, используйте другую версию mpv (лучше свежайшую).",
-    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
+    "mpv-failed-advice": "Возможно, mpv не может запуститься из-за неподдерживаемых параметров командной строки или неподдерживаемой версии mpv.",
     "player-file-open-error": "Проигрыватель не может открыть файл.",
-    "player-path-error": "Путь к проигрывателю задан неверно. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2.",  # TODO: Translate last sentence
+    "player-path-error": "Путь к проигрывателю задан неверно. Поддерживаемые проигрыватели: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2.",
     "hostname-empty-error": "Имя пользователя не может быть пустым.",
     "empty-error": "{} не может быть пустым.",  # Configuration
     "media-player-error": "Ошибка проигрывателя: \"{}\"",  # Error line
@@ -136,23 +135,22 @@ ru = {
     "vlc-failed-connection": "Ошибка подключения к VLC. Если у Вас не установлен syncplay.lua, то обратитесь к https://syncplay.pl/LUA/ за инструкциями.Syncplay and VLC 4 are not currently compatible, so either use VLC 3 or an alternative such as mpv.", # TO DO: TRANSLATE
     "vlc-failed-noscript": "VLC сообщает, что скрипт интерфейса syncplay.lua не установлен. Пожалуйста, обратитесь к https://syncplay.pl/LUA/ за инструкциями.",
     "vlc-failed-versioncheck": "Данная версия VLC не поддерживается Syncplay. Пожалуйста, используйте VLC версии 2 или выше.",
-    "vlc-initial-warning": 'VLC does not always provide accurate position information to Syncplay, especially for .mp4 and .avi files. If you experience problems with erroneous seeking then please try an alternative media player such as <a href="https://mpv.io/">mpv</a> (or <a href="https://github.com/stax76/mpv.net/">mpv.net</a> for Windows users).', # TODO: Translate
+    "vlc-initial-warning": 'VLC не всегда предоставляет точную информацию о позиции воспроизведения, особенно для файлов с расширениями .mp4 и .avi. Если вы столкнулись с проблемами с перемоткой, попробуйте, пожалуйста, другой проигрыватель, например, <a href="https://mpv.io/">mpv</a> (или <a href="https://github.com/stax76/mpv.net/">mpv.net</a> для Windows).',
 
-    "feature-sharedPlaylists": "shared playlists",  # used for not-supported-by-server-error # TODO: Translate
-    "feature-chat": "chat",  # used for not-supported-by-server-error # TODO: Translate
-    "feature-readiness": "readiness",  # used for not-supported-by-server-error # TODO: Translate
-    "feature-managedRooms": "managed rooms",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-sharedPlaylists": "общий список воспроизведения",  # used for not-supported-by-server-error
+    "feature-chat": "чат",  # used for not-supported-by-server-error
+    "feature-readiness": "готовность",  # used for not-supported-by-server-error
+    "feature-managedRooms": "управляемые комнаты",  # used for not-supported-by-server-error
 
-    "not-supported-by-server-error": "The {} feature is not supported by this server..",  # feature # TODO: Translate
-    # OLD TRANSLATION: "not-supported-by-server-error": u"Эта возможность не поддерживается сервером. Требуется сервер Syncplay {}+, вы подключены к серверу Syncplay {}.",  # minVersion, serverVersion
+    "not-supported-by-server-error": "Возможность '{}' не поддерживается сервером.",  # feature
     "shared-playlists-not-supported-by-server-error": "Общие списки воспроизведения могут не поддерживаться сервером. Для корректной работы требуется сервер Syncplay {}+, вы подключены к серверу Syncplay {}.",  # minVersion, serverVersion
-    "shared-playlists-disabled-by-server-error": "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.",  # TODO: Translate
+    "shared-playlists-disabled-by-server-error": "Общий список воспроизведения отключён сервером. Чтобы использовать эту возможность, подключитесь к другому серверу.",
 
     "invalid-seek-value": "Некорректное значение для перемотки",
     "invalid-offset-value": "Некорректное смещение",
 
     "switch-file-not-found-error": "Невозможно найти файл '{0}'. Проверьте папки воспроизведения.",  # File not found
-    "folder-search-timeout-error": "Поиск файла был прерван в папке '{}'. Это может происходить из-за большого количества подпапок. Для корректной работы поиска файлов зайдите через выпадающее меню в Файл->Папки воспроизведения и удалите данную папку из списка, или замените её на нужную подпапку. If the folder is actually fine then you can re-enable it by selecting File->Set Media Directories and pressing 'OK'.",  # Folder # TODO: Translate last sentence
+    "folder-search-timeout-error": "Поиск файла был прерван в папке '{}'. Это может происходить из-за большого количества подпапок. Для корректной работы поиска файлов зайдите через выпадающее меню в Файл->Папки воспроизведения и удалите данную папку из списка или замените её на нужную подпапку. Если на самом деле с папкой всё в порядке, вы можете cнова её включить через выпадающее меню Файл->Папки воспроизведения.", # Folder
     "folder-search-first-file-timeout-error": "Поиск файла в '{}' был прерван, так как невозможно открыть каталог. Это может происходить, если это сетевой диск или диск перешел в режим экономии энергии. Для корректной работы поиска файлов зайдите через выпадающее меню в Файл->Папки воспроизведения и удалите данную папку, или решите проблему через изменение параметров энергосбережения.",  # Folder
     "added-file-not-in-media-directory-error": "Вы загрузили файл из '{}', который не числится в папках воспроизведения. Вы можете добавить его через выпадающее меню Файл->Папки воспроизведения.",  # Folder
     "no-media-directories-error": "Вы не указали папки воспроизведения. Для корректной работы зайдите через выпадающее меню в Файл->Папки воспроизведения и укажите нужные каталоги.",
@@ -180,7 +178,7 @@ ru = {
     "version-argument": 'выводит номер версии',
     "version-message": "Вы используете Syncplay версии {} ({})",
 
-    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)", # TODO: Translate
+    "load-playlist-from-file-argument": "загружает список воспроизведения из текстового файла (один пункт на строку)",
 
     # Client labels
     "config-window-title": "Настройка Syncplay",
@@ -190,11 +188,11 @@ ru = {
     "name-label": "Имя пользователя (не обязательно):",
     "password-label": "Пароль сервера (если требуется):",
     "room-label": "Комната:",
-    "roomlist-msgbox-label": "Edit room list (one per line)", # TODO: Translate
+    "roomlist-msgbox-label": "Редактировать список комнат (одна на строку)",
 
     "media-setting-title": "Воспроизведение",
     "executable-path-label": "Путь к проигрывателю:",
-    "media-path-label": "Путь к видеофайлу:",  # Todo: Translate to 'Path to video (optional)'
+    "media-path-label": "Путь к видеофайлу (не обязателен):",
     "player-arguments-label": "Аргументы запуска проигрывателя:",
     "browse-label": "Выбрать",
     "update-server-list-label": "Обновить список",
@@ -208,7 +206,7 @@ ru = {
     "filename-privacy-label": "Имя файла:",
     "filesize-privacy-label": "Размер файла:",
     "checkforupdatesautomatically-label": "Проверять обновления автоматически",
-    "autosavejoinstolist-label": "Add rooms you join to the room list", # TO DO: Translate
+    "autosavejoinstolist-label": "Добавлять комнаты, к которым вы подключаетесь, в список комнат",
     "slowondesync-label": "Замедлять при небольших рассинхронизациях (не поддерживаетя в MPC-HC/BE)",
     "rewindondesync-label": "Перемотка при больших рассинхронизациях (настоятельно рекомендуется)",
     "dontslowdownwithme-label": "Никогда не замедлять и не перематывать видео другим (функция тестируется)",
@@ -241,7 +239,7 @@ ru = {
     "messages-label": "Сообщения",
     "messages-osd-title": "Настройки OSD",
     "messages-other-title": "Другие настройки отображения",
-    "chat-label": "Chat",  # TODO: Translate
+    "chat-label": "Чат",
     "privacy-label": "Приватность",
     "privacy-title": "Настройки приватности",
     "unpause-title": "Если вы стартуете, то:",
@@ -252,8 +250,8 @@ ru = {
     "syncplay-trusteddomains-title": "Доверенные сайты (стрим-сервисы, видеохостинги, файлы в сети)",
     "addtrusteddomain-menu-label": "Добавить {} как доверенный сайт",  # Domain
 
-    "chat-title": "Chat message input",  # TODO: Translate
-    "chatinputenabled-label": "Enable chat input via mpv (using enter key)",  # TODO: Translate
+    "chat-title": "Ввод сообщения",
+    "chatinputenabled-label": "Разрешить ввод сообщений в mpv (при помощи клавиши 'ввод')",
     "chatdirectinput-label": "Allow instant chat input (bypass having to press enter key to chat)",  # TODO: Translate
     "chatinputfont-label": "Chat input font",  # TODO: Translate
     "chatfont-label": "Set font",  # TODO: Translate
