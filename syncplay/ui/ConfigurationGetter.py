@@ -196,6 +196,7 @@ class ConfigurationGetter(object):
                 "autoplayInitialState", "mediaSearchDirectories",
                 "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
                 "loopSingleFiles",
+                "autoplayRequireSameFilenames",
                 "onlySwitchToTrustedDomains", "trustedDomains", "publicServers"],
             "gui": [
                 "autosaveJoinsToList",
