@@ -22,9 +22,7 @@ init:
   - pip install twisted[tls] certifi
   - pip install zope.interface
   - type nul > %PYTHON%\lib\site-packages\zope\__init__.py
-  - curl -L https://bintray.com/alby128/py2exe/download_file?file_path=py2exe-0.9.3.0-cp36-none-win32.whl -o py2exe-0.9.3.0-cp36-none-win32.whl
-  - pip install py2exe-0.9.3.0-cp36-none-win32.whl
-  - del py2exe-0.9.3.0-cp36-none-win32.whl
+  - pip install py2exe
   - pip install shiboken2==5.12.3 PySide2==5.12.3
   - pip freeze
   
