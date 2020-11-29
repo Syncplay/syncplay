@@ -113,7 +113,7 @@ it = {
     "mpv-version-error": "Syncplay non è compatibile con questa versione di mpv. Per favore usa un'altra versione di mpv (es. Git HEAD).",
     "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "Il player non è riuscito ad aprire il file",
-    "player-path-error": "Il path del player non è configurato correttamente. I player supportati sono: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2",
+    "player-path-error": "Il path del player non è configurato correttamente. I player supportati sono: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 e IINA",
     "hostname-empty-error": "Il campo hostname non può essere vuoto",
     "empty-error": "Il campo {} non può esssere vuoto",  # Configuration
     "media-player-error": "Errore media player: \"{}\"",  # Error line
@@ -124,7 +124,7 @@ it = {
 
     "unable-to-start-client-error": "Impossibile avviare il client",
 
-    "player-path-config-error": "Il percorso del player non è configurato correttamente. I player supportati sono: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2.",
+    "player-path-config-error": "Il percorso del player non è configurato correttamente. I player supportati sono: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 e IINA.",
     "no-file-path-config-error": "Deve essere selezionato un file prima di avviare il player",
     "no-hostname-config-error": "Il campo hostname non può essere vuoto",
     "invalid-port-config-error": "La porta deve essere valida",
@@ -174,7 +174,7 @@ it = {
     "file-argument": 'file da riprodurre',
     "args-argument": 'opzioni del player, se hai bisogno di utilizzare opzioni che iniziano con - anteponi un singolo \'--\'',
     "clear-gui-data-argument": 'ripristina il percorso e i dati impostati tramite interfaccia grafica e salvati come QSettings',
-    "language-argument": 'lingua per i messaggi di Syncplay (de/en/ru/it/es/pt_BR/pt_PT)',
+    "language-argument": 'lingua per i messaggi di Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr)',
 
     "version-argument": 'mostra la tua versione',
     "version-message": "Stai usando la versione di Syncplay {} ({})",
@@ -383,7 +383,7 @@ it = {
 
     "edit-rooms-tooltip": "Edit room list.",  # TO DO: Translate
 
-    "executable-path-tooltip": "Percorso del media player desiderato (scegliere tra mpv, mpv.net, VLC, MPC-HC/BE or mplayer2).",
+    "executable-path-tooltip": "Percorso del media player desiderato (scegliere tra mpv, mpv.net, VLC, MPC-HC/BE, mplayer2 o IINA).",
     "media-path-tooltip": "Percorso del video o stream da aprire. Necessario per mplayer2.",
     "player-arguments-tooltip": "Argomenti da linea di comando aggiuntivi da passare al media player scelto.",
     "mediasearcdirectories-arguments-tooltip": "Cartelle dove Syncplay cercherà i file multimediali, es. quando usi la funzione click to switch. Syncplay cercherà anche nelle sottocartelle.",

@@ -11,7 +11,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from twisted.internet.protocol import ClientFactory
+from twisted.internet.protocol import ReconnectingClientFactory
 from twisted.protocols.basic import LineReceiver
 
 from syncplay import constants, utils
@@ -49,8 +49,7 @@ class VLCProtocol(LineReceiver):
     def connectionLost(self, reason):
         self.factory.connected = False
 
-
-class VLCClientFactory(ClientFactory):
+class VLCClientFactory(ReconnectingClientFactory):
     def __init__(self, playerController, vlcHasResponded, vlcLaunchedTime, vlcProcess):
         self._playerController = playerController
         self._process = vlcProcess

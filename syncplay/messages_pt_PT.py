@@ -113,7 +113,7 @@ pt_PT = {
     "mpv-version-error": "O Syncplay não é compatível com esta versão do mpv. Por favor, use uma versão diferente do mpv (por exemplo, Git HEAD).",
     "mpv-failed-advice": "O motivo pelo qual o mpv não pode ser iniciado pode ser devido ao uso de argumentos da linha de comando não suportados ou a uma versão não suportada do mpv.", # TODO: Translate
     "player-file-open-error": "O reprodutor falhou ao abrir o ficheiro",
-    "player-path-error": "O caminho até o ficheiro executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2",
+    "player-path-error": "O caminho até o ficheiro executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 e IINA",
     "hostname-empty-error": "O endereço do servidor não pode ser vazio",
     "empty-error": "{} não pode ser vazio",  # Configuration
     "media-player-error": "Erro do reprodutor de mídia: \"{}\"",  # Error line
@@ -124,7 +124,7 @@ pt_PT = {
 
     "unable-to-start-client-error": "Não foi possível iniciar o client",
 
-    "player-path-config-error": "O caminho até o ficheiro executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE e mplayer2.",
+    "player-path-config-error": "O caminho até o ficheiro executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 e IINA.",
     "no-file-path-config-error": "O ficheiro deve ser selecionado antes de iniciar seu reprodutor",
     "no-hostname-config-error": "O endereço do servidor não pode ser vazio",
     "invalid-port-config-error": "A porta deve ser válida",
@@ -174,7 +174,7 @@ pt_PT = {
     "file-argument": 'ficheiro a ser tocado',
     "args-argument": 'opções do reprodutor; se você precisar passar opções começando com -, as preceda com um único argumento \'--\'',
     "clear-gui-data-argument": 'redefine o caminho e o estado de dados da janela da GUI para as de QSettings',
-    "language-argument": 'idioma para mensagens do Syncplay (de/en/ru/it/es/pt_BR/pt_PT)',
+    "language-argument": 'idioma para mensagens do Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr)',
 
     "version-argument": 'exibe sua versão',
     "version-message": "Você está usando o Syncplay versão {} ({})",
@@ -382,7 +382,7 @@ pt_PT = {
 
     "edit-rooms-tooltip": "Edit room list.",  # TO DO: Translate
 
-    "executable-path-tooltip": "Localização do seu reprodutor de mídia preferido (mpv, mpv.net, VLC, MPC-HC/BE ou mplayer2).",
+    "executable-path-tooltip": "Localização do seu reprodutor de mídia preferido (mpv, mpv.net, VLC, MPC-HC/BE, mplayer2 ou IINA).",
     "media-path-tooltip": "Localização do vídeo ou transmissão a ser aberto. Necessário com o mplayer2.",
     "player-arguments-tooltip": "Argumentos de comando de linha adicionais para serem repassados ao reprodutor de mídia.",
     "mediasearcdirectories-arguments-tooltip": "Pasta onde o Syncplay vai procurar por ficheiros de mídia, por exemplo quando você estiver usando o recurso de clicar para mudar. O Syncplay irá procurar recursivamente pelas subpastas.",

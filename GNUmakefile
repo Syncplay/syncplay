@@ -38,6 +38,7 @@ common:
 	-mkdir -p $(LIB_PATH)/syncplay/syncplay/resources/lua/intf
 	-mkdir -p $(APP_SHORTCUT_PATH)
 	-mkdir -p $(SHARE_PATH)/pixmaps/
+	-mkdir -p $(SHARE_PATH)/icons/
 	cp -r syncplay $(LIB_PATH)/syncplay/
 	chmod 755 $(LIB_PATH)/syncplay/
 	cp -r syncplay/resources/hicolor $(SHARE_PATH)/icons/
