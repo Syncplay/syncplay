@@ -174,7 +174,7 @@ es = {
     "file-argument": 'archivo a reproducir',
     "args-argument": 'opciones del reproductor, si necesitas pasar opciones que empiezan con -, pásalas utilizando \'--\'',
     "clear-gui-data-argument": 'restablece ruta y los datos del estado de la ventana GUI almacenados como QSettings',
-    "language-argument": 'lenguaje para los mensajes de Syncplay (de/en/ru/it/es/pt_BR/pt_PT)',
+    "language-argument": 'lenguaje para los mensajes de Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr)',
 
     "version-argument": 'imprime tu versión',
     "version-message": "Estás usando la versión de Syncplay {} ({})",

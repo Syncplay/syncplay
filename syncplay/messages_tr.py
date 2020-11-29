@@ -2,7 +2,7 @@
 
 """Turkish dictionary"""
 
-en = {
+tr = {
     "LANGUAGE": "Türkçe", # Turkish
 
     # Client notifications
