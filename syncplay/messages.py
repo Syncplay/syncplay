@@ -11,14 +11,14 @@ from . import messages_pt_PT
 from . import messages_tr
 
 messages = {
-    "en": messages_en.en,
-    "ru": messages_ru.ru,
     "de": messages_de.de,
-    "it": messages_it.it,
+    "en": messages_en.en,
     "es": messages_es.es,
-    "pt_BR": messages_pt_BR.pt_BR,
+    "it": messages_it.it,
     "pt_PT": messages_pt_PT.pt_PT,
+    "pt_BR": messages_pt_BR.pt_BR,
     "tr": messages_tr.tr,
+    "ru": messages_ru.ru,
     "CURRENT": None
 }
 
