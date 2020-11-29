@@ -9,11 +9,10 @@ import ast
 
 from syncplay import constants
 from syncplay.messages import getMessage
+from syncplay.players.basePlayer import BasePlayer
 from syncplay.utils import isURL, findResourcePath
 from syncplay.utils import isMacOS, isWindows, isASCII
-from syncplay.players.python_mpv_jsonipc.python_mpv_jsonipc import MPV
-
-from syncplay.players.basePlayer import BasePlayer
+from syncplay.vendor.python_mpv_jsonipc.python_mpv_jsonipc import MPV
 
 class MpvPlayer(BasePlayer):
     RE_VERSION = re.compile(r'.*mpv (\d+)\.(\d+)\.\d+.*')
