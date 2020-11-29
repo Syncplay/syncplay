@@ -113,7 +113,7 @@ tr = {
     "mpv-version-error": "Syncplay, mpv'nin bu sürümüyle uyumlu değil. Lütfen farklı bir mpv sürümü kullanın (ör. Git HEAD).",
     "mpv-failed-advice": "Mpv'nin başlatılamamasının nedeni, desteklenmeyen komut satırı bağımsız değişkenlerinin veya mpv'nin desteklenmeyen bir sürümünün kullanılması olabilir.",
     "player-file-open-error": "Oynatıcı dosyayı açamadı",
-    "player-path-error": "Oynatıcı yolu doğru ayarlanmadı. Desteklenen oynatıcılar şunlardır: mpv, mpv.net, VLC, MPC-HC, MPC-BE ve mplayer2",
+    "player-path-error": "Oynatıcı yolu doğru ayarlanmadı. Desteklenen oynatıcılar şunlardır: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 ve IINA",
     "hostname-empty-error": "Ana bilgisayar adı boş olamaz",
     "empty-error": "{} boş olamaz",  # Configuration
     "media-player-error": "Medaya oynatıcısı hatası: \"{}\"",  # Error line
@@ -124,7 +124,7 @@ tr = {
 
     "unable-to-start-client-error": "İstemci başlatılamıyor",
 
-    "player-path-config-error": "Oynatıcı yolu doğru ayarlanmadı. Desteklenen oyuncular şunlardır: mpv, mpv.net, VLC, MPC-HC, MPC-BE ve mplayer2.",
+    "player-path-config-error": "Oynatıcı yolu doğru ayarlanmadı. Desteklenen oyuncular şunlardır: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 ve IINA.",
     "no-file-path-config-error": "Oynatıcınız başlatılmadan önce dosya seçilmelidir",
     "no-hostname-config-error": "Ana bilgisayar adı boş olamaz",
     "invalid-port-config-error": "Bağlantı noktası geçerli olmalıdır",
@@ -384,7 +384,7 @@ tr = {
 
     "edit-rooms-tooltip": "Oda listesini düzenleyin.",
 
-    "executable-path-tooltip": "Seçtiğiniz desteklenen medya oynatıcının konumu (mpv, mpv.net, VLC, MPC-HC / BE veya mplayer2).",
+    "executable-path-tooltip": "Seçtiğiniz desteklenen medya oynatıcının konumu (mpv, mpv.net, VLC, MPC-HC / BE, mplayer2 veya IINA).",
     "media-path-tooltip": "Açılacak videonun veya akışın konumu. Mplayer2 için gerekli.",
     "player-arguments-tooltip": "Bu medya oynatıcıya iletilecek ek komut satırı argümanları / anahtarları.",
     "mediasearcdirectories-arguments-tooltip": "Syncplay'in medya dosyalarını arayacağı dizinler, ör. geçmek için tıklama özelliğini kullandığınızda. Syncplay, alt klasörler arasında yinelemeli olarak bakacaktır.",
