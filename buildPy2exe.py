@@ -359,7 +359,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${NSD_CreateLabel} 8u 95u 187u 10u "$$(^Shortcut)"
     Pop $$Label_Shortcut
 
-    $${NSD_CreateCheckbox} 8u 105u 60u 10u "$$(^StartMenu)"
+    $${NSD_CreateCheckbox} 8u 105u 70u 10u "$$(^StartMenu)"
     Pop $$CheckBox_StartMenuShortcut
 
     $${NSD_CreateCheckbox} 78u 105u 70u 10u "$$(^Desktop)"
