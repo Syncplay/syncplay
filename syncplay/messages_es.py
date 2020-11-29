@@ -113,7 +113,7 @@ es = {
     "mpv-version-error": "Syncplay no es compatible con esta versión de mpv. Por favor utiliza una versión diferente de mpv (p.ej. Git HEAD).",
     "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "El reproductor falló al abrir el archivo",
-    "player-path-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE y mplayer2",
+    "player-path-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2, y IINA",
     "hostname-empty-error": "El nombre del host no puede ser vacío",
     "empty-error": "{} no puede ser vacío",  # Configuration
     "media-player-error": "Error del reproductor multimedia: \"{}\"",  # Error line
@@ -124,7 +124,7 @@ es = {
 
     "unable-to-start-client-error": "No se logró iniciar el cliente",
 
-    "player-path-config-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE y mplayer2.",
+    "player-path-config-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 y IINA.",
     "no-file-path-config-error": "El archivo debe ser seleccionado antes de iniciar el reproductor",
     "no-hostname-config-error": "El nombre del host no puede ser vacío",
     "invalid-port-config-error": "El puerto debe ser válido",
@@ -383,7 +383,7 @@ es = {
 
     "edit-rooms-tooltip": "Edit room list.", # TO DO: Translate
 
-    "executable-path-tooltip": "Ubicación de tu reproductor multimedia compatible elegido (mpv, mpv.net, VLC, MPC-HC/BE o mplayer2).",
+    "executable-path-tooltip": "Ubicación de tu reproductor multimedia compatible elegido (mpv, mpv.net, VLC, MPC-HC/BE, mplayer2 o IINA).",
     "media-path-tooltip": "Ubicación del video o flujo que se abrirá. Necesario para mplayer2.",
     "player-arguments-tooltip": "Arguementos de línea de comandos adicionales / parámetros para pasar a este reproductor multimedia.",
     "mediasearcdirectories-arguments-tooltip": "Directorios donde Syncplay buscará archivos de medios, p.ej. cuando estás usando la función \"clic para cambiar\". Syncplay buscará recursivamente a través de las subcarpetas.",

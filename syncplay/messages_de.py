@@ -113,7 +113,7 @@ de = {
     "mpv-version-error": "Syncplay ist nicht kompatibel mit dieser Version von mpv.  Bitte benutze eine andere Version (z.B. Git HEAD).",
     "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
     "player-file-open-error": "Fehler beim Öffnen der Datei durch den Player",
-    "player-path-error": "Ungültiger Player-Pfad. Unterstützte Player sind: mpv, mpv.net, VLC, MPC-HC, MPC-BE und mplayer2",
+    "player-path-error": "Ungültiger Player-Pfad. Unterstützte Player sind: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 und IINA",
     "hostname-empty-error": "Hostname darf nicht leer sein",
     "empty-error": "{} darf nicht leer sein",  # Configuration
     "media-player-error": "Player-Fehler: \"{}\"",  # Error line
@@ -124,7 +124,7 @@ de = {
 
     "unable-to-start-client-error": "Client kann nicht gestartet werden",
 
-    "player-path-config-error": "Player-Pfad ist nicht ordnungsgemäß gesetzt. Unterstützte Player sind: mpv, mpv.net, VLC, MPC-HC, MPC-BE und mplayer2",
+    "player-path-config-error": "Player-Pfad ist nicht ordnungsgemäß gesetzt. Unterstützte Player sind: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 und IINA",
     "no-file-path-config-error": "Es muss eine Datei ausgewählt werden, bevor der Player gestartet wird.",
     "no-hostname-config-error": "Hostname darf nicht leer sein",
     "invalid-port-config-error": "Port muss gültig sein",
@@ -381,7 +381,7 @@ de = {
 
     "edit-rooms-tooltip": "Edit room list.", # TO DO: Translate
 
-    "executable-path-tooltip": "Pfad zum ausgewählten, unterstützten Mediaplayer (mpv, mpv.net, VLC, MPC-HC/BE or mplayer2).",
+    "executable-path-tooltip": "Pfad zum ausgewählten, unterstützten Mediaplayer (mpv, mpv.net, VLC, MPC-HC/BE, mplayer2, oder IINA).",
     "media-path-tooltip": "Pfad zum wiederzugebenden Video oder Stream. Notwendig für mplayer2.",
     "player-arguments-tooltip": "Zusätzliche Kommandozeilenparameter/-schalter für diesen Mediaplayer.",
     "mediasearcdirectories-arguments-tooltip": "Verzeichnisse, in denen Syncplay nach Mediendateien suchen soll, z.B. wenn du die Click-to-switch-Funktion verwendest. Syncplay wird Unterverzeichnisse rekursiv durchsuchen.",  # TODO: Translate Click-to-switch? (or use as name for feature)
