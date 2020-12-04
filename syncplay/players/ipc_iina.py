@@ -2,7 +2,7 @@ import os.path
 import subprocess
 import time
 
-from syncplay.players.python_mpv_jsonipc.python_mpv_jsonipc import log, MPV, MPVError, MPVProcess
+from syncplay.vendor.python_mpv_jsonipc.python_mpv_jsonipc import log, MPV, MPVError, MPVProcess
 from syncplay.utils import resourcespath
 
 class IINA(MPV):
