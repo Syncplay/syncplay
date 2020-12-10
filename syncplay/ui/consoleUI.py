@@ -197,7 +197,7 @@ class ConsoleUI(threading.Thread):
             self._syncplayClient.ui.addFileToPlaylist(filename)
         elif command.group('command') in constants.COMMANDS_PLAYLIST:
             playlist = self._syncplayClient.playlist
-            playlist_elements = [f"\t{i+1}: {el}" for i, el in enumerate(playlist._playlist)]
+            playlist_elements = ["\t{}: {}".format(i+1, el) for i, el in enumerate(playlist._playlist)]
 
             if playlist_elements:
                 i = playlist._playlistIndex

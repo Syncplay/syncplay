@@ -1,7 +1,7 @@
 name: syncplay
 summary: Syncplay
 version: build
-version-script: cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}'
+adopt-info: syncplay
 summary: Client/server to synchronize media playback on many computers
 description: |
   Syncplay synchronises the position and play state of multiple media players
@@ -10,28 +10,55 @@ description: |
   media player then this will be replicated across all media players connected to
   the same server and in the same 'room' (viewing session). When a new person
   joins they will also be synchronised. Syncplay also includes text-based chat so
-  you can discuss a video as you watch it (or you could use third-party Voice over 
+  you can discuss a video as you watch it (or you could use third-party Voice over
   IP software to talk over a video).
 
 confinement: classic
 icon: syncplay/resources/syncplay.png
 grade: stable
+base: core18
+
+apps:
+  syncplay:
+    command: python3 $SNAP/bin/syncplay
+    desktop: lib/python3.6/site-packages/syncplay/resources/syncplay.desktop
+    environment:
+      LIBGL_DRIVERS_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri
+
+  syncplay-server:
+    command: bin/syncplay-server
+    desktop: lib/python3.6/site-packages/syncplay/resources/syncplay-server.desktop
 
 parts:
   syncplay:
     plugin: python
+    python-version: python3
     source: .
     stage-packages:
-      - python3-pyside
-    after: [desktop-qt4]
+      - libnss3
+      - libxcomposite1
+      - libxcursor1
+      - libxtst6
+      - libxrandr2
+      - libglu1-mesa
+      - libgles2-mesa
+      - fontconfig
+      - libxkbcommon0
+      - libxkbcommon-x11-0
+      - libxi6
+      - libegl1
+      - shared-mime-info
+      - libgdk-pixbuf2.0-0
+      - locales-all
+      - libxslt1.1
+      - xfonts-base
+      - xfonts-scalable
+    python-packages:
+      - pyside2
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version $(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')
 
-apps:
-  syncplay:
-    command: bin/desktop-launch $SNAP/usr/bin/python3 $SNAP/bin/syncplay
-    desktop: lib/python3.5/site-packages/syncplay/resources/syncplay.desktop
-    environment:
-      DISABLE_WAYLAND: 1
-
-  syncplay-server:
-    command: bin/syncplay-server
-    desktop: lib/python3.5/site-packages/syncplay/resources/syncplay-server.desktop
+layout:
+  /etc/fonts:
+    bind: $SNAP/pyside/etc/fonts
