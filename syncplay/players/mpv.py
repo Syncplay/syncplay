@@ -590,7 +590,7 @@ class MpvPlayer(BasePlayer):
             # to allow that version of python to be executed in the mpv subprocess.
             if isMacOS():
                 try:
-                    env['PATH'] = '/usr/local/bin:/usr/bin'
+                    env['PATH'] = '/opt/homebrew/bin:/usr/local/bin:/usr/bin'
                     ytdl_path = subprocess.check_output(['which', 'youtube-dl'], text=True, env=env).rstrip('\n')
                     with open(ytdl_path, 'rb') as f:
                         ytdl_shebang = f.readline()
