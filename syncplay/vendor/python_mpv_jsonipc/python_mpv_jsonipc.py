@@ -211,7 +211,7 @@ class MPVProcess:
         self._start_process(ipc_socket, args, env=env)
 
     def _start_process(self, ipc_socket, args, env):
-        self.process = subprocess.Popen(args)
+        self.process = subprocess.Popen(args, env=env)
         ipc_exists = False
         for _ in range(100): # Give MPV 10 seconds to start.
             time.sleep(0.1)
