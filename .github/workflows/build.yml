@@ -124,6 +124,6 @@ jobs:
       - name: Deploy
         uses: actions/upload-artifact@v2
         with:
-          name: syncplay*.deb
+          name: syncplay.deb
           path: |
             dist_actions/syncplay*.deb
