@@ -105,6 +105,9 @@ jobs:
       - name: Build
         run: ci/deb-script.sh
 
+      - name: Build server
+        run: ci/deb-server-script.sh 
+        
       - name: Test
         run: ci/deb-installation-test.sh
 
@@ -115,11 +118,12 @@ jobs:
           echo "VER=$VER" >> $GITHUB_ENV
           mkdir dist_actions
           mv /tmp/syncplay.deb dist_actions/syncplay_${VER}.deb
+          mv /tmp/syncplay-server.deb dist_actions/syncplay-server_${VER}.deb
           ls -al dist_actions
 
       - name: Deploy
         uses: actions/upload-artifact@v2
         with:
-          name: syncplay_${{ env.VER }}.deb
+          name: syncplay.deb
           path: |
-            dist_actions/syncplay_${{ env.VER }}.deb
+            dist_actions/syncplay*.deb
