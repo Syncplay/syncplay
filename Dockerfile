@@ -7,7 +7,9 @@ ENV SALT="changethis"
 
 RUN apt update
 RUN apt-get install -y make python3 python3-twisted python3-pyside
-RUN make install
+
+COPY . /syncplay
+RUN cd syncplay && make install .
 
 EXPOSE $PORT
 
