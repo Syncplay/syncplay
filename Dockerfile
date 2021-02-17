@@ -9,7 +9,7 @@ RUN apt update
 RUN apt-get install -y make python3 python3-twisted python3-pyside
 
 COPY . /syncplay
-RUN cd syncplay && make install .
+RUN cd syncplay && make install
 
 EXPOSE $PORT
 
