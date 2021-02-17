@@ -1,14 +1,12 @@
 FROM ubuntu:18.04
 
-ENV VERSION="v1.6.7"
-ENV PASSWORD="changethis"
 ENV MOTD="Welcome to our Docker Syncplay server!"
 ENV PORT=8999
+ENV PASSWORD="changethis"
 ENV SALT="changethis"
 
 RUN apt update
-RUN apt-get install -y make git python3 python3-twisted python3-pyside
-RUN git checkout $VERSION
+RUN apt-get install -y make python3 python3-twisted python3-pyside
 RUN make install
 
 EXPOSE $PORT
