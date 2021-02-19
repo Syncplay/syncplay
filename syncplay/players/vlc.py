@@ -50,6 +50,24 @@ class VLCProtocol(LineReceiver):
         self.factory.connected = False
 
 class VLCClientFactory(ReconnectingClientFactory):
+
+    # http://twistedmatrix.com/documents/current/api/twisted.internet.protocol.ReconnectingClientFactory.html
+    #
+    initialDelay = 0.3
+    maxDelay = 0.45
+    maxRetries = 50
+
+    def startedConnecting(self, connector):
+        self._playerController._client.ui.showDebugMessage("Starting to connect to VLC...")
+
+    def clientConnectionLost(self, connector, reason):
+        self._playerController._client.ui.showDebugMessage("Connection to VLC lost: {}".format(reason))
+        ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
+
+    def clientConnectionFailed(self, connector, reason):
+        self._playerController._client.ui.showDebugMessage("Connection to VLC failed: {}".format(reason))
+        ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
+
     def __init__(self, playerController, vlcHasResponded, vlcLaunchedTime, vlcProcess):
         self._playerController = playerController
         self._process = vlcProcess
