@@ -91,6 +91,7 @@ tr = {
     "commandList-notification/playlist": "\tql - mevcut oynatma listesini gösterir",
     "commandList-notification/select": "\tqs [index] - oynatma listesinde verilen girişi seçer",
     "commandList-notification/delete": "\tqd [index] - verilen girişi oynatma listesinden siler",
+    "commandList-notification/load": "\tlf [path] - load file",
     "syncplay-version-notification": "Syncplay sürümü: {}",  # syncplay.version
     "more-info-notification": "Daha fazla bilgiye şu adresten ulaşabilirsiniz: {}",  # projectURL
 

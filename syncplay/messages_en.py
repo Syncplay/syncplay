@@ -91,6 +91,7 @@ en = {
     "commandList-notification/playlist": "\tql - show the current playlist",
     "commandList-notification/select": "\tqs [index] - select given entry in the playlist",
     "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",
+    "commandList-notification/load": "\tlf [path] - load file",
     "syncplay-version-notification": "Syncplay version: {}",  # syncplay.version
     "more-info-notification": "More info available at: {}",  # projectURL
 

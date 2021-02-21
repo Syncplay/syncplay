@@ -90,6 +90,7 @@ ru = {
     "commandList-notification/playlist": "\tql - показать текущий список воспроизведения",
     "commandList-notification/select": "\tqs [индекс] - выделить указанный пункт в списке воспроизведения",
     "commandList-notification/delete": "\tqd [индекс] - удалить указанный пункт из списка воспроизведения",
+    "commandList-notification/load": "\tlf [path] - load file",
     "syncplay-version-notification": "Версия Syncplay: {}",  # syncplay.version
     "more-info-notification": "Больше информации на {}",  # projectURL
 

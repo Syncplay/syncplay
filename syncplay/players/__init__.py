@@ -18,6 +18,7 @@ except ImportError:
     from syncplay.players.basePlayer import DummyPlayer
     IinaPlayer = DummyPlayer
 
+from syncplay.players.httpPlayer import HttpPlayer
 
 def getAvailablePlayers():
-    return [MPCHCAPIPlayer, MpvPlayer, MpvnetPlayer, VlcPlayer, MpcBePlayer, MplayerPlayer, IinaPlayer]
+    return [MPCHCAPIPlayer, MpvPlayer, MpvnetPlayer, VlcPlayer, MpcBePlayer, MplayerPlayer, IinaPlayer, HttpPlayer]

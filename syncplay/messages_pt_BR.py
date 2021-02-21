@@ -91,6 +91,7 @@ pt_BR = {
     "commandList-notification/playlist": "\tql - show the current playlist",  # TO DO: Translate
     "commandList-notification/select": "\tqs [index] - select given entry in the playlist",  # TO DO: Translate
     "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",  # TO DO: Translate
+    "commandList-notification/load": "\tlf [path] - load file",
     "syncplay-version-notification": "Versão do Syncplay: {}",  # syncplay.version
     "more-info-notification": "Mais informações disponíveis em: {}",  # projectURL
 
