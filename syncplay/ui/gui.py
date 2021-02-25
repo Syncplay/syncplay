@@ -26,8 +26,11 @@ if isLinux():
     applyDPIScaling = False
 else:
     applyDPIScaling = True
-if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, applyDPIScaling)
+try:
+    if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, applyDPIScaling)
+except AttributeError:
+    pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, applyDPIScaling)
 if IsPySide2:
