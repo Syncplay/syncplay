@@ -25,8 +25,8 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip3 install -U setuptools wheel pip
-          pip3 install pywin32 twisted[tls] certifi
-          pip3 install shiboken2 pyside2
+          pip3 install -r requirements.txt
+          pip3 install -r requirements_gui.txt
           pip3 install py2exe
 
       - name: Check Python dependencies
@@ -37,7 +37,7 @@ jobs:
 
       - name: Build
         run: |
-          $ver = (findstr __version__ .\syncplay\__init__.py).split("'")[1]
+          $ver = (findstr __version__ .\syncplay\syncplay\__init__.py).split("'")[1]
           echo $ver
           echo "VER=$ver" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           python buildPy2exe.py
