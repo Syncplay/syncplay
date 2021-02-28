@@ -764,7 +764,7 @@ info = dict(
         }
     },
     data_files=[("resources", resources), ("resources/lua/intf", intf_resources)],
-    zipfile="lib/libsync",
+    zipfile="lib/libsync.zip",
     cmdclass={"py2exe": build_installer},
 )
 
