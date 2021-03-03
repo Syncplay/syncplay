@@ -1602,7 +1602,6 @@ class UiManager(object):
 
     def showOSDMessage(self, message, duration=constants.OSD_DURATION, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL):
         if(isNoOSDMessage(message)):
-            print("SKIPPED !!!!! {}".format(message))
             return
 
         autoplayConditionsMet = self._client.autoplayConditionsMet()
