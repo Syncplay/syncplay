@@ -9,6 +9,7 @@ from . import messages_es
 from . import messages_pt_BR
 from . import messages_pt_PT
 from . import messages_tr
+import re
 
 messages = {
     "de": messages_de.de,
@@ -22,6 +23,10 @@ messages = {
     "CURRENT": None
 }
 
+no_osd_message_list = [
+    "slowdown-notification",
+    "revert-notification",
+]
 
 def getLanguages():
     langList = {}
@@ -30,10 +35,16 @@ def getLanguages():
             langList[lang] = getMessage("LANGUAGE", lang)
     return langList
 
+def isNoOSDMessage(message):
+    for no_osd_message in no_osd_message_list:
+        regex = "^" + getMessage(no_osd_message).replace("{}", ".+") + "$"
+        regex_test = bool(re.match(regex, message))
+        if regex_test:
+            return True
+    return False
 
 def setLanguage(lang):
     messages["CURRENT"] = lang
-
 
 def getMissingStrings():
     missingStrings = ""

@@ -39,7 +39,7 @@ except:
 from syncplay import utils, constants, version
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME
-from syncplay.messages import getMissingStrings, getMessage
+from syncplay.messages import getMissingStrings, getMessage, isNoOSDMessage
 from syncplay.protocols import SyncClientProtocol
 from syncplay.utils import isMacOS
 
@@ -1601,6 +1601,10 @@ class UiManager(object):
         self.__ui.showUserList(currentUser, rooms)
 
     def showOSDMessage(self, message, duration=constants.OSD_DURATION, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL):
+        if(isNoOSDMessage(message)):
+            print("SKIPPED !!!!! {}".format(message))
+            return
+
         autoplayConditionsMet = self._client.autoplayConditionsMet()
         if OSDType == constants.OSD_ALERT and not constants.SHOW_OSD_WARNINGS and not self._client.autoplayTimerIsRunning():
             return
