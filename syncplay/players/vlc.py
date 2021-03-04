@@ -297,7 +297,7 @@ class VlcPlayer(BasePlayer):
                     # value = value.decode('utf-8')
                 self._filepath = value
             self._pathAsk.set()
-        elif name == "duration":
+        elif name == "duration" or name == "duration-change":
             if value == "no-input":
                 self._duration = 0
             elif value == "invalid-32-bit-value":
@@ -306,6 +306,11 @@ class VlcPlayer(BasePlayer):
             else:
                 self._duration = float(value.replace(",", "."))
             self._durationAsk.set()
+            if name == "duration-change":
+                self._filechanged = True
+                t = threading.Thread(target=self._onFileUpdate)
+                t.setDaemon(True)
+                t.start()
         elif name == "playstate":
             self._paused = bool(value != 'playing') if (value != "no-input" and self._filechanged == False) else self._client.getGlobalPaused()
             diff = time.time() - self._lastVLCPositionUpdate if self._lastVLCPositionUpdate else 0
