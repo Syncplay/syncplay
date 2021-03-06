@@ -500,8 +500,10 @@ class SyncplayClient(object):
             return True
         return self._globalPaused
 
-    def eofReportedByPlayer(self, filepath):
-        self.playlist.eofReportedByPlayer(filepath)
+    def eofReportedByPlayer(self):
+        if self.playlist.notJustChangedPlaylist():
+            self.ui.showDebugMessage("Fixing file duration to allow for playlist advancement")
+            self.userlist.currentUser.file["duration"] = self._playerPosition
 
     def updateFile(self, filename, duration, path):
         self.lastUpdatedFileTime = time.time()
@@ -1965,11 +1967,6 @@ class SyncplayPlaylist():
     def notJustChangedPlaylist(self):
         secondsSinceLastChange = time.time() - self._lastPlaylistIndexChange
         return secondsSinceLastChange > constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
-
-    def eofReportedByPlayer(self, filepath):
-        if self.notJustChangedPlaylist():
-            self._ui.showDebugMessage("Advancing to next item in playlist due to media player EOF report: {}".format(filepath))
-            self.loadNextFileInPlaylist()
 
     @needsSharedPlaylistsEnabled
     def loadNextFileInPlaylist(self):
