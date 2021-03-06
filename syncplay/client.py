@@ -501,7 +501,7 @@ class SyncplayClient(object):
         return self._globalPaused
 
     def eofReportedByPlayer(self):
-        if self.playlist.notJustChangedPlaylist():
+        if self.playlist.notJustChangedPlaylist() and self.userlist.currentUser.file:
             self.ui.showDebugMessage("Fixing file duration to allow for playlist advancement")
             self.userlist.currentUser.file["duration"] = self._playerPosition
 
