@@ -150,6 +150,8 @@ MPC_PATHS = [
     r"c:\program files (x86)\media player classic - home cinema\mpc-hc.exe",
     r"c:\program files (x86)\k-lite codec pack\media player classic\mpc-hc.exe",
     r"c:\program files\k-lite codec pack\media Player classic\mpc-hc.exe",
+    r"C:\program files\k-lite codec pack\mpc-hc64\mpc-hc64.exe",
+    r"C:\program files (x86)\k-lite codec pack\mpc-hc64\mpc-hc64.exe",
     r"c:\program files (x86)\combined community codec pack\mpc\mpc-hc.exe",
     r"c:\program files\combined community codec pack\mpc\mpc-hc.exe",
     r"c:\program files\mpc homecinema (x64)\mpc-hc64.exe",
