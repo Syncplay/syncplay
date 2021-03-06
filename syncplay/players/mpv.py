@@ -213,8 +213,8 @@ class MpvPlayer(BasePlayer):
         else:
             return self._position
 
-    def eofDetected(self, path):
-        self._client.eofReportedByPlayer(path)
+    def eofDetected(self):
+        self._client.eofReportedByPlayer()
 
     def _storePosition(self, value):
         if value is None:
@@ -423,13 +423,12 @@ class MpvPlayer(BasePlayer):
 
     def _handleUnknownLine(self, line):
         self.mpvErrorCheck(line)
-        if "<eof>" in line:
-            line = line[5:-6]
-            self.eofDetected(line)
-
         if "<chat>" in line:
             line = line.replace(constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER, "\\")
             self._listener.sendChat(line[6:-7])
+
+        if "<eof>" in line:
+            self.eofDetected()
 
         if "<paused=" in line and ", pos=" in line:
             update_string = line.replace(">", "<").replace("=", "<").replace(", ", "<").split("<")

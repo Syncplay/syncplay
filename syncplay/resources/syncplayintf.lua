@@ -297,9 +297,7 @@ chat_timer=mp.add_periodic_timer(TICK_INTERVAL, chat_update)
 
 mp.observe_property('eof-reached', 'bool', function(e)
 	if mp.get_property_native("eof-reached") == true then
-		line = mp.get_property_native("path")
-		line = line.gsub(line,"\\", "\\\\")
-		mp.command('print-text "<eof>' .. line .. '</eof>"')
+		mp.command('print-text "<eof>"')
 	end
 end)
 
