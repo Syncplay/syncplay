@@ -1,0 +1,115 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" (C) Copyright 2021 Bruno Kleinert <fuddl@debian.org>,
+.\"
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH Syncplay 1 "February 7 2021"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+syncplay \- synchronize playback of various video players via internet
+.SH SYNOPSIS
+.B syncplay
+.RI [ options ]
+.RI [ file ]
+.RI [ playeroptions ]
+.SH DESCRIPTION
+This manual page documents briefly the
+.B syncplay
+command.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics,
+.\" respectively.
+\fBsyncplay\fP is a program that allows you to watch movies with friends or
+family at different places synchronized via the internet.
+
+When a viewer pauses/continues playback or seeks within their media player this
+will be replicated across all media players connected to the same server in the
+same viewing session. A chat function is included so viewers can discuss the
+movie while watching it. To improve the communication experience for viewers,
+the Syncplay developers and this package suggest to use additional VoIP
+(package mumble) or video phone (package jami) software.
+
+Technically, it synchronizes the position and play states of multiple mpv, VLC,
+MPC-HC and MPC-BEmedia player instances so viewers' players present the same
+movie at the same time.
+
+There are known synchronization issues with VLC. If you experience such problems
+use MPV instead.
+
+.SH OPTIONS
+
+This program follows the usual GNU command line syntax, with long
+options starting with two dashes (`-').
+A summary of options is included below.
+
+.TP
+.B \-h, \-\-help
+Show summary of options.
+
+.TP
+.B \-\-no\-gui
+Do not show the graphical user interface.
+
+.TP
+.B \-a hostname, \-\-host hostname
+Address of the server to connect to.
+
+.TP
+.B \-n username, \-\-name username
+User name to use.
+
+.TP
+.B \-d, \-\-debug
+Enable debug mode.
+
+.TP
+.B \-g, \-\-force\-gui\-prompt
+Force configuration window to appear when Syncplay starts.
+
+.TP
+.B \-\-no\-store
+Do not store configuration settings in .syncplay.
+
+.TP
+.B \-r [room], \-\-room [room]
+Default room to use.
+
+.TP
+.B \-p [password], \-\-password [password]
+The password for the server.
+
+.TP
+.B \-\-player\-path path
+Path to the player binary.
+
+.TP
+.B \-\-language language
+Language of Syncplay messages. Valid values are de/en/ru/it/es/pt_BR/pt_PT/tr.
+
+.TP
+.B \-\-clear\-gui\-data
+Resets path and window state GUI data stored as QSettings.
+
+.TP
+.B \-v, \-\-version
+Show version of program.
+
+.TP
+.B \-\-load\-playlist\-from\-file file
+Loads the playlist from file. One entry per line.
+
+.SH SEE ALSO
+.BR syncplay-server (1).

@@ -1,0 +1,98 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" (C) Copyright 2021 Bruno Kleinert <fuddl@debian.org>,
+.\"
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH "Syncplay Server" 1 "February 7 2021"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+syncplay-server \- server to host syncplay rooms
+.SH SYNOPSIS
+.B syncplay-server
+.RI [ options ]
+.RI [ file ]
+.RI [ playeroptions ]
+.SH DESCRIPTION
+This manual page documents briefly the
+.B syncplay-server
+command.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics,
+.\" respectively.
+\fBsyncplay-server\fP is a program that syncplay clients connect to and hosts
+rooms.
+
+To host rooms for viewers via internet, make sure the server can be accessed
+from the internet, i.e., its listening port is not blocked by a NAT or a
+firewall.
+
+.SH OPTIONS
+
+This program follows the usual GNU command line syntax, with long
+options starting with two dashes (`-').
+A summary of options is included below.
+
+.TP
+.B \-h, \-\-help
+Show summary of options.
+
+.TP
+.B \-\-port [port]
+TCP port to listen for connections.
+
+.TP
+.B \-\-password [password]
+Server password.
+
+.TP
+.B \-\-isolate\-rooms
+Whether rooms should be isolated.
+
+.TP
+.B \-\-disable\-ready
+Disable readiness feature.
+
+.TP
+.B \-\-disable\-chat
+Disable the chat function.
+
+.TP
+.B \-\-salt [salt]
+Random string used to generate managed room passwords.
+
+.TP
+.B \-\-motd\-file [file]
+Path to a file from which motd (Message Of The Day) will be read.
+
+.TP
+.B \-\-max\-chat\-message\-length [maxChatMessageLength]
+Maximum number of characters in one chat message (default is 150).
+
+.TP
+.B \-\-max\-username\-length [maxUsernameLength]
+Maximum number of characters in a username (default is 150).
+
+.TP
+.B \-\-stats\-db\-file [file]
+Enable server statistics using the SQLite database file.
+
+.TP
+.B \-\-tls [path]
+Enable TLS connections using the certificate files in path.
+
+.SH SEE ALSO
+.BR syncplay (1).
+
