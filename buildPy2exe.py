@@ -118,7 +118,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_TURKISH} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_TURKISH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_TURKISH} "FileDescription" "Syncplay"
-  
+
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
   LangString ^Shortcut $${LANG_ENGLISH} "Create Shortcuts in following locations:"
@@ -757,14 +757,14 @@ info = dict(
             'dist_dir': OUT_DIR,
             'packages': 'PySide2, cffi, OpenSSL, certifi',
             'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file',
-            'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, Tkinter',
+            'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, tcl, tkinter',
             'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
             'optimize': 2,
             'compressed': 1
         }
     },
     data_files=[("resources", resources), ("resources/lua/intf", intf_resources)],
-    zipfile="lib/libsync",
+    zipfile="lib/libsync.zip",
     cmdclass={"py2exe": build_installer},
 )
 
