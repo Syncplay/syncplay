@@ -60,127 +60,127 @@ jobs:
           path: |
             Syncplay-${{ env.VER }}-Setup.exe
 
-  # macos:
-  #   name: Build for macOS
-  #   runs-on: macos-10.15
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+  macos:
+    name: Build for macOS
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  #     - name: Setup Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: '3.7'
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
 
-  #     - name: Check Python install
-  #       run: |
-  #         which python3
-  #         python3 --version
-  #         which pip3
-  #         pip3 --version
+      - name: Check Python install
+        run: |
+          which python3
+          python3 --version
+          which pip3
+          pip3 --version
 
-  #     - name: Install Python dependencies
-  #       run: |
-  #         pip3 install -U setuptools wheel pip
-  #         pip3 install twisted[tls] appnope requests certifi
-  #         pip3 install shiboken2==5.13.1 pyside2==5.13.1
-  #         pip3 install py2app
+      - name: Install Python dependencies
+        run: |
+          pip3 install -U setuptools wheel pip
+          pip3 install twisted[tls] appnope requests certifi
+          pip3 install shiboken2==5.13.1 pyside2==5.13.1
+          pip3 install py2app
 
-  #     - name: Check Python dependencies
-  #       run: |
-  #         python3 -c "from PySide2 import __version__; print(__version__)"
-  #         python3 -c "from PySide2.QtCore import __version__; print(__version__)"
-  #         python3 -c "from PySide2.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))"
-  #         python3 -c "import ssl; print(ssl)"
-  #         python3 -c "from py2app.recipes import pyside2"
-  #         echo $DYLD_LIBRARY_PATH
-  #         echo $DYLD_FRAMEWORK_PATH
-  #         python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LDLIBRARY"))'
+      - name: Check Python dependencies
+        run: |
+          python3 -c "from PySide2 import __version__; print(__version__)"
+          python3 -c "from PySide2.QtCore import __version__; print(__version__)"
+          python3 -c "from PySide2.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))"
+          python3 -c "import ssl; print(ssl)"
+          python3 -c "from py2app.recipes import pyside2"
+          echo $DYLD_LIBRARY_PATH
+          echo $DYLD_FRAMEWORK_PATH
+          python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LDLIBRARY"))'
 
-  #     - name: Build
-  #       run: |
-  #         python3 ci/pyside2_linker.py
-  #         export LIBPYTHON_FOLDER="$(python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LIBDIR"))')"
-  #         ln -s $LIBPYTHON_FOLDER/libpython3.7m.dylib $LIBPYTHON_FOLDER/libpython3.7.dylib
-  #         export DYLD_FRAMEWORK_PATH="$(python3 -c 'from PySide2.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))')"
-  #         export DYLD_LIBRARY_PATH="$(python3 -c 'import os.path, PySide2; print(os.path.dirname(PySide2.__file__))'):$(python3 -c 'import os.path, shiboken2; print(os.path.dirname(shiboken2.__file__))')"
-  #         python3 buildPy2app.py py2app
+      - name: Build
+        run: |
+          python3 ci/pyside2_linker.py
+          export LIBPYTHON_FOLDER="$(python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LIBDIR"))')"
+          ln -s $LIBPYTHON_FOLDER/libpython3.7m.dylib $LIBPYTHON_FOLDER/libpython3.7.dylib
+          export DYLD_FRAMEWORK_PATH="$(python3 -c 'from PySide2.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))')"
+          export DYLD_LIBRARY_PATH="$(python3 -c 'import os.path, PySide2; print(os.path.dirname(PySide2.__file__))'):$(python3 -c 'import os.path, shiboken2; print(os.path.dirname(shiboken2.__file__))')"
+          python3 buildPy2app.py py2app
 
-  #     - name: Prepare for deployment
-  #       run: |
-  #         ls -al
-  #         export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
-  #         echo "VER=$VER" >> $GITHUB_ENV
-  #         mkdir dist_actions
-  #         ci/macos-deploy.sh
-  #         ls -al dist_actions
+      - name: Prepare for deployment
+        run: |
+          ls -al
+          export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+          echo "VER=$VER" >> $GITHUB_ENV
+          mkdir dist_actions
+          ci/macos-deploy.sh
+          ls -al dist_actions
 
-  #     - name: Deploy
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: Syncplay_${{ env.VER }}.dmg
-  #         path: |
-  #           dist_actions/Syncplay_${{ env.VER }}.dmg
+      - name: Deploy
+        uses: actions/upload-artifact@v2
+        with:
+          name: Syncplay_${{ env.VER }}.dmg
+          path: |
+            dist_actions/Syncplay_${{ env.VER }}.dmg
 
-  # appimage:
-  #   name: Build AppImage
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+  appimage:
+    name: Build AppImage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  #     - name: Install dependencies
-  #       run: |
-  #         sudo apt-get install libxkbcommon-x11-0
+      - name: Install dependencies
+        run: |
+          sudo apt-get install libxkbcommon-x11-0
 
-  #     - name: Build
-  #       run: ci/appimage-script.sh
+      - name: Build
+        run: ci/appimage-script.sh
 
-  #     - name: Prepare for deployment
-  #       run: |
-  #         ls -al
-  #         export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
-  #         echo "VER=$VER" >> $GITHUB_ENV
-  #         mkdir dist_actions
-  #         ci/appimage-deploy.sh
-  #         ls -al dist_actions
+      - name: Prepare for deployment
+        run: |
+          ls -al
+          export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+          echo "VER=$VER" >> $GITHUB_ENV
+          mkdir dist_actions
+          ci/appimage-deploy.sh
+          ls -al dist_actions
 
-  #     - name: Deploy
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: Syncplay-${{ env.VER }}-x86_64.AppImage
-  #         path: |
-  #           dist_actions/Syncplay-${{ env.VER }}-x86_64.AppImage
+      - name: Deploy
+        uses: actions/upload-artifact@v2
+        with:
+          name: Syncplay-${{ env.VER }}-x86_64.AppImage
+          path: |
+            dist_actions/Syncplay-${{ env.VER }}-x86_64.AppImage
 
-  # deb:
-  #   name: Build Debian package
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+  deb:
+    name: Build Debian package
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  #     - name: Build
-  #       run: ci/deb-script.sh
+      - name: Build
+        run: ci/deb-script.sh
 
-  #     - name: Build server
-  #       run: ci/deb-server-script.sh
+      - name: Build server
+        run: ci/deb-server-script.sh
 
-  #     - name: Test
-  #       run: ci/deb-installation-test.sh
+      - name: Test
+        run: ci/deb-installation-test.sh
 
-  #     - name: Prepare for deployment
-  #       run: |
-  #         ls -al
-  #         export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
-  #         echo "VER=$VER" >> $GITHUB_ENV
-  #         mkdir dist_actions
-  #         mv /tmp/syncplay.deb dist_actions/syncplay_${VER}.deb
-  #         mv /tmp/syncplay-server.deb dist_actions/syncplay-server_${VER}.deb
-  #         ls -al dist_actions
+      - name: Prepare for deployment
+        run: |
+          ls -al
+          export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+          echo "VER=$VER" >> $GITHUB_ENV
+          mkdir dist_actions
+          mv /tmp/syncplay.deb dist_actions/syncplay_${VER}.deb
+          mv /tmp/syncplay-server.deb dist_actions/syncplay-server_${VER}.deb
+          ls -al dist_actions
 
-  #     - name: Deploy
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: syncplay.deb
-  #         path: |
-  #           dist_actions/syncplay*.deb
+      - name: Deploy
+        uses: actions/upload-artifact@v2
+        with:
+          name: syncplay.deb
+          path: |
+            dist_actions/syncplay*.deb
