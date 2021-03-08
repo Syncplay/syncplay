@@ -178,9 +178,16 @@ jobs:
           mv /tmp/syncplay-server.deb dist_actions/syncplay-server_${VER}.deb
           ls -al dist_actions
 
-      - name: Deploy
+      - name: Deploy full deb
         uses: actions/upload-artifact@v2
         with:
           name: syncplay.deb
           path: |
-            dist_actions/syncplay*.deb
+            dist_actions/syncplay_${VER}.deb
+
+      - name: Deploy server deb
+        uses: actions/upload-artifact@v2
+        with:
+          name: syncplay.deb
+          path: |
+            dist_actions/syncplay-server_${VER}.deb
