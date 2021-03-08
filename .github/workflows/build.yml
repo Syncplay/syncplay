@@ -188,6 +188,6 @@ jobs:
       - name: Deploy server deb
         uses: actions/upload-artifact@v2
         with:
-          name: syncplay.deb
+          name: syncplay-server.deb
           path: |
             dist_actions/syncplay-server_${VER}.deb
