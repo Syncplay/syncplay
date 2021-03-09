@@ -112,6 +112,10 @@ class WindowsSocket(threading.Thread):
         except EOFError:
             if self.quit_callback:
                 self.quit_callback()
+        except Exception as ex:
+            log.error("Pipe connection died.", exc_info=1)
+            if self.quit_callback:
+                self.quit_callback()
 
 class UnixSocket(threading.Thread):
     """
@@ -159,22 +163,25 @@ class UnixSocket(threading.Thread):
     def run(self):
         """Process socket events. Do not run this directly. Use *start*."""
         data = b''
-        while True:
-            current_data = self.socket.recv(1024)
-            if current_data == b'':
-                break
+        try:
+            while True:
+                current_data = self.socket.recv(1024)
+                if current_data == b'':
+                    break
 
-            data += current_data
-            if data[-1] != 10:
-                continue
-
-            data = data.decode('utf-8', 'ignore').encode('utf-8')
-            for item in data.split(b'\n'):
-                if item == b'':
+                data += current_data
+                if data[-1] != 10:
                     continue
-                json_data = json.loads(item)
-                self.callback(json_data)
-            data = b''
+
+                data = data.decode('utf-8', 'ignore').encode('utf-8')
+                for item in data.split(b'\n'):
+                    if item == b'':
+                        continue
+                    json_data = json.loads(item)
+                    self.callback(json_data)
+                data = b''
+        except Exception as ex:
+            log.error("Socket connection died.", exc_info=1)
         if self.quit_callback:
             self.quit_callback()
 
@@ -182,7 +189,7 @@ class MPVProcess:
     """
     Manages an MPV process, ensuring the socket or pipe is available. (Internal)
     """
-    def __init__(self, ipc_socket, mpv_location=None, env=None, **kwargs):
+    def __init__(self, ipc_socket, mpv_location=None, **kwargs):
         """
         Create and start the MPV process. Will block until socket/pipe is available.
 
@@ -198,6 +205,7 @@ class MPVProcess:
                 mpv_location = "mpv"
         
         log.debug("Staring MPV from {0}.".format(mpv_location))
+        ipc_socket_name = ipc_socket
         if os.name == 'nt':
             ipc_socket = "\\\\.\\pipe\\" + ipc_socket
 
@@ -206,12 +214,14 @@ class MPVProcess:
 
         log.debug("Using IPC socket {0} for MPV.".format(ipc_socket))
         self.ipc_socket = ipc_socket
-        args = self._get_arglist(mpv_location, **kwargs)
-
-        self._start_process(ipc_socket, args, env=env)
-
-    def _start_process(self, ipc_socket, args, env):
-        self.process = subprocess.Popen(args, env=env)
+        args = [mpv_location]
+        self._set_default(kwargs, "idle", True)
+        self._set_default(kwargs, "input_ipc_server", ipc_socket_name)
+        self._set_default(kwargs, "input_terminal", False)
+        self._set_default(kwargs, "terminal", False)
+        args.extend("--{0}={1}".format(v[0].replace("_", "-"), self._mpv_fmt(v[1]))
+                    for v in kwargs.items())
+        self.process = subprocess.Popen(args)
         ipc_exists = False
         for _ in range(100): # Give MPV 10 seconds to start.
             time.sleep(0.1)
@@ -234,16 +244,6 @@ class MPVProcess:
     def _set_default(self, prop_dict, key, value):
         if key not in prop_dict:
             prop_dict[key] = value
-
-    def _get_arglist(self, exec_location, **kwargs):
-        args = [exec_location]
-        self._set_default(kwargs, "idle", True)
-        self._set_default(kwargs, "input_ipc_server", self.ipc_socket)
-        self._set_default(kwargs, "input_terminal", False)
-        self._set_default(kwargs, "terminal", False)
-        args.extend("--{0}={1}".format(v[0].replace("_", "-"), self._mpv_fmt(v[1]))
-                    for v in kwargs.items())
-        return args
 
     def _mpv_fmt(self, data):
         if data == True:
@@ -412,7 +412,16 @@ class MPV:
                 ipc_socket = "/tmp/{0}".format(rand_file)
 
         if start_mpv:
-            self._start_mpv(ipc_socket, mpv_location, **kwargs)
+            # Attempt to start MPV 3 times.
+            for i in range(3):
+                try:
+                    self.mpv_process = MPVProcess(ipc_socket, mpv_location, **kwargs)
+                    break
+                except MPVError:
+                    log.warning("MPV start failed.", exc_info=1)
+                    continue
+            else:
+                raise MPVError("MPV process retry limit reached.")
 
         self.mpv_inter = MPVInter(ipc_socket, self._callback, self._quit_callback)
         self.properties = set(x.replace("-", "_") for x in self.command("get_property", "property-list"))
@@ -448,18 +457,6 @@ class MPV:
             args = data["args"]
             if len(args) == 2 and args[0] == "custom-bind":
                 self.event_handler.put_task(self.key_bindings[args[1]])
-
-    def _start_mpv(self, ipc_socket, mpv_location, **kwargs):
-        # Attempt to start MPV 3 times.
-        for i in range(3):
-            try:
-                self.mpv_process = MPVProcess(ipc_socket, mpv_location, **kwargs)
-                break
-            except MPVError:
-                log.warning("MPV start failed.", exc_info=1)
-                continue
-        else:
-            raise MPVError("MPV process retry limit reached.")
 
     def _quit_callback(self):
         """
