@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb, Pilotat
  Project: https://syncplay.pl/
- Version: 0.3.5
+ Version: 0.3.6
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -78,9 +78,14 @@ Syncplay should install this automatically to your user folder.
 
 --]==========================================================================]
 
-local connectorversion = "0.3.5"
+local connectorversion = "0.3.6"
 local vlcversion = vlc.misc.version()
 local vlcmajorversion = tonumber(vlcversion:sub(1,1)) -- get the major version of VLC
+
+if vlcmajorversion > 3 then
+    vlc.misc.quit()
+end
+
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
 local loopsleepduration = 2500 -- Pause for every event loop (uses microseconds)
 local quitcheckfrequency = 20 -- Check whether VLC has closed every X loops

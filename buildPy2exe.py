@@ -64,6 +64,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Italian.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Spanish.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\PortugueseBR.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Portuguese.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Turkish.nlf"
 
   Unicode true
 
@@ -106,6 +108,16 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "FileDescription" "Syncplay"
+
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "FileDescription" "Syncplay"
+
+  VIAddVersionKey /LANG=$${LANG_TURKISH} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_TURKISH} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_TURKISH} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_TURKISH} "FileDescription" "Syncplay"
 
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
@@ -168,6 +180,24 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^QuickLaunchBar $${LANG_PORTUGUESEBR} "Barra de acesso rápido"
   LangString ^AutomaticUpdates $${LANG_PORTUGUESEBR} "Verificar atualizações automaticamente"
   LangString ^UninstConfig $${LANG_PORTUGUESEBR} "Deletar arquivo de configuração."
+
+  LangString ^SyncplayLanguage $${LANG_PORTUGUESE} "pt_PT"
+  LangString ^Associate $${LANG_PORTUGUESE} "Associar Syncplay aos ficheiros multimédia."
+  LangString ^Shortcut $${LANG_PORTUGUESE} "Criar atalhos nos seguintes locais:"
+  LangString ^StartMenu $${LANG_PORTUGUESE} "Menu Iniciar"
+  LangString ^Desktop $${LANG_PORTUGUESE} "Área de trabalho"
+  LangString ^QuickLaunchBar $${LANG_PORTUGUESE} "Barra de acesso rápido"
+  LangString ^AutomaticUpdates $${LANG_PORTUGUESE} "Verificar atualizações automaticamente"
+  LangString ^UninstConfig $${LANG_PORTUGUESE} "Apagar ficheiro de configuração."
+
+  LangString ^SyncplayLanguage $${LANG_TURKISH} "tr"
+  LangString ^Associate $${LANG_TURKISH} "Syncplay'i ortam dosyalarıyla ilişkilendirin."
+  LangString ^Shortcut $${LANG_TURKISH} "Aşağıdaki konumlarda kısayollar oluşturun:"
+  LangString ^StartMenu $${LANG_TURKISH} "Başlangıç menüsü"
+  LangString ^Desktop $${LANG_TURKISH} "Masaüstü"
+  LangString ^QuickLaunchBar $${LANG_TURKISH} "Hızlı Başlatma Çubuğu"
+  LangString ^AutomaticUpdates $${LANG_TURKISH} "Güncellemeleri otomatik denetle"
+  LangString ^UninstConfig $${LANG_TURKISH} "Yapılandırma dosyasını silin."
 
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "
@@ -276,6 +306,10 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push Español
     Push $${LANG_PORTUGUESEBR}
     Push 'Português do Brasil'
+    Push $${LANG_PORTUGUESE}
+    Push 'Português de Portugal'
+    Push $${LANG_TURKISH}
+    Push 'Türkçe'
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE
@@ -325,7 +359,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
     $${NSD_CreateLabel} 8u 95u 187u 10u "$$(^Shortcut)"
     Pop $$Label_Shortcut
 
-    $${NSD_CreateCheckbox} 8u 105u 60u 10u "$$(^StartMenu)"
+    $${NSD_CreateCheckbox} 8u 105u 70u 10u "$$(^StartMenu)"
     Pop $$CheckBox_StartMenuShortcut
 
     $${NSD_CreateCheckbox} 78u 105u 70u 10u "$$(^Desktop)"
@@ -723,14 +757,14 @@ info = dict(
             'dist_dir': OUT_DIR,
             'packages': 'PySide2, cffi, OpenSSL, certifi',
             'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file',
-            'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, Tkinter',
+            'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, tcl, tkinter',
             'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
             'optimize': 2,
             'compressed': 1
         }
     },
     data_files=[("resources", resources), ("resources/lua/intf", intf_resources)],
-    zipfile="lib/libsync",
+    zipfile="lib/libsync.zip",
     cmdclass={"py2exe": build_installer},
 )
 

@@ -9,11 +9,8 @@ def read(fname):
     with open(fname, 'r') as f:
         return f.read()
 
-if os.getenv('SNAPCRAFT_PART_BUILD', None) is not None:
-    installRequirements = ["pyasn1"] + read('requirements.txt').splitlines()
-else:
-    installRequirements = read('requirements.txt').splitlines() +\
-                          read('requirements_gui.txt').splitlines()
+installRequirements = read('requirements.txt').splitlines() +\
+                        read('requirements_gui.txt').splitlines()
 
 setuptools.setup(
     name="syncplay",
@@ -55,12 +52,13 @@ setuptools.setup(
         "Natural Language :: German",
         "Natural Language :: Italian",
         "Natural Language :: Russian",
-        "Natural Language :: Spanish",        
+        "Natural Language :: Spanish",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Internet",
         "Topic :: Multimedia :: Video"
     ],

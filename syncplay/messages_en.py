@@ -47,7 +47,7 @@ en = {
     "identifying-as-controller-notification": "Identifying as room operator with password '{}'...",
     "failed-to-identify-as-controller-notification": "{} failed to identify as a room operator.",
     "authenticated-as-controller-notification": "{} authenticated as a room operator",
-    "created-controlled-room-notification": "Created managed room '{}' with password '{}'. Please save this information for future reference!",  # RoomName, operatorPassword
+    "created-controlled-room-notification": "Created managed room '{}' with password '{}'. Please save this information for future reference!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
     "file-different-notification": "File you are playing appears to be different from {}'s",  # User
     "file-differences-notification": "Your file differs in the following way(s): {}",  # Differences
@@ -87,6 +87,10 @@ en = {
     "commandlist-notification/create": "\tc [name] - create managed room using name of current room",
     "commandlist-notification/auth": "\ta [password] - authenticate as room operator with operator password",
     "commandlist-notification/chat": "\tch [message] - send a chat message in a room",
+    "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",
+    "commandList-notification/playlist": "\tql - show the current playlist",
+    "commandList-notification/select": "\tqs [index] - select given entry in the playlist",
+    "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",
     "syncplay-version-notification": "Syncplay version: {}",  # syncplay.version
     "more-info-notification": "More info available at: {}",  # projectURL
 
@@ -107,8 +111,9 @@ en = {
     "mpc-version-insufficient-error": "MPC version not sufficient, please use `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "MPC version not sufficient, please use `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay is not compatible with this version of mpv. Please use a different version of mpv (e.g. Git HEAD).",
+    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.",
     "player-file-open-error": "Player failed opening file",
-    "player-path-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2",
+    "player-path-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2, and IINA",
     "hostname-empty-error": "Hostname can't be empty",
     "empty-error": "{} can't be empty",  # Configuration
     "media-player-error": "Media player error: \"{}\"",  # Error line
@@ -119,7 +124,7 @@ en = {
 
     "unable-to-start-client-error": "Unable to start client",
 
-    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE and mplayer2.",
+    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2, and IINA.",
     "no-file-path-config-error": "File must be selected before starting your player",
     "no-hostname-config-error": "Hostname can't be empty",
     "invalid-port-config-error": "Port must be valid",
@@ -128,9 +133,10 @@ en = {
     "not-json-error": "Not a json encoded string\n",
     "hello-arguments-error": "Not enough Hello arguments\n",  # DO NOT TRANSLATE
     "version-mismatch-error": "Mismatch between versions of client and server\n",
-    "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua and are using the latest verion of VLC then please refer to https://syncplay.pl/LUA/ for instructions.",
+    "vlc-failed-connection": "Failed to connect to VLC. If you have not installed syncplay.lua and are using the latest verion of VLC then please refer to https://syncplay.pl/LUA/ for instructions. Syncplay and VLC 4 are not currently compatible, so either use VLC 3 or an alternative such as mpv.",
     "vlc-failed-noscript": "VLC has reported that the syncplay.lua interface script has not been installed. Please refer to https://syncplay.pl/LUA/ for instructions.",
     "vlc-failed-versioncheck": "This version of VLC is not supported by Syncplay.",
+    "vlc-initial-warning": 'VLC does not always provide accurate position information to Syncplay, especially for .mp4 and .avi files. If you experience problems with erroneous seeking then please try an alternative media player such as <a href="https://mpv.io/">mpv</a> (or <a href="https://github.com/stax76/mpv.net/">mpv.net</a> for Windows users).',
 
     "feature-sharedPlaylists": "shared playlists",  # used for not-supported-by-server-error
     "feature-chat": "chat",  # used for not-supported-by-server-error
@@ -168,12 +174,13 @@ en = {
     "file-argument": 'file to play',
     "args-argument": 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
     "clear-gui-data-argument": 'resets path and window state GUI data stored as QSettings',
-    "language-argument": 'language for Syncplay messages (de/en/ru/it/es/pt_BR)',
+    "language-argument": 'language for Syncplay messages (de/en/ru/it/es/pt_BR/pt_PT/tr)',
 
     "version-argument": 'prints your version',
     "version-message": "You're using Syncplay version {} ({})",
 
     "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)",
+
 
     # Client labels
     "config-window-title": "Syncplay configuration",
@@ -183,6 +190,7 @@ en = {
     "name-label":  "Username (optional):",
     "password-label":  "Server password (if any):",
     "room-label": "Default room: ",
+    "roomlist-msgbox-label": "Edit room list (one per line)",
 
     "media-setting-title": "Media player settings",
     "executable-path-label": "Path to media player:",
@@ -200,6 +208,7 @@ en = {
     "filename-privacy-label": "Filename information:",
     "filesize-privacy-label": "File size information:",
     "checkforupdatesautomatically-label": "Check for Syncplay updates automatically",
+    "autosavejoinstolist-label": "Add rooms you join to the room list",
     "slowondesync-label": "Slow down on minor desync (not supported on MPC-HC/BE)",
     "rewindondesync-label": "Rewind on major desync (recommended)",
     "fastforwardondesync-label": "Fast-forward if lagging behind (recommended)",
@@ -325,6 +334,7 @@ en = {
     "startTLS-initiated": "Attempting secure connection",
     "startTLS-secure-connection-ok": "Secure connection established ({})",
     "startTLS-server-certificate-invalid": 'Secure connection failed. The server uses an invalid security certificate. This communication could be intercepted by a third party. For further details and troubleshooting see <a href="https://syncplay.pl/trouble">here</a>.',
+    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay does not trust this server because it uses a certificate that is not valid for its hostname.",
     "startTLS-not-supported-client": "This client does not support TLS",
     "startTLS-not-supported-server": "This server does not support TLS",
 
@@ -372,7 +382,9 @@ en = {
     "password-tooltip": "Passwords are only needed for connecting to private servers.",
     "room-tooltip": "Room to join upon connection can be almost anything, but you will only be synchronised with people in the same room.",
 
-    "executable-path-tooltip": "Location of your chosen supported media player (mpv, VLC, MPC-HC/BE or mplayer2).",
+    "edit-rooms-tooltip": "Edit room list.",
+
+    "executable-path-tooltip": "Location of your chosen supported media player (mpv, mpv.net, VLC, MPC-HC/BE, mplayer2 or IINA).",
     "media-path-tooltip": "Location of video or stream to be opened. Necessary for mplayer2.",
     "player-arguments-tooltip": "Additional command line arguments / switches to pass on to this media player.",
     "mediasearcdirectories-arguments-tooltip": "Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.",
@@ -384,6 +396,7 @@ en = {
     "privacy-sendhashed-tooltip": "Send a hashed version of the information, making it less visible to other clients.",
     "privacy-dontsend-tooltip": "Do not send this information to the server. This provides for maximum privacy.",
     "checkforupdatesautomatically-tooltip": "Regularly check with the Syncplay website to see whether a new version of Syncplay is available.",
+    "autosavejoinstolist-tooltip": "When you join a room in a server, automatically remember the room name in the list of rooms to join.",
     "slowondesync-tooltip": "Reduce playback rate temporarily when needed to bring you back in sync with other viewers. Not supported on MPC-HC/BE.",
     "dontslowdownwithme-tooltip": "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room operators.",
     "pauseonleave-tooltip": "Pause playback if you get disconnected or someone leaves from your room.",
@@ -452,7 +465,7 @@ en = {
 
 
     # Server arguments
-    "server-argument-description": 'Solution to synchronize playback of multiple MPlayer and MPC-HC/BE instances over the network. Server instance',
+    "server-argument-description": 'Solution to synchronize playback of multiple media player instances over the network. Server instance',
     "server-argument-epilog": 'If no options supplied _config values will be used',
     "server-port-argument": 'server TCP port',
     "server-password-argument": 'server password',
@@ -503,4 +516,7 @@ en = {
 
     "playlist-instruction-item-message": "Drag file here to add it to the shared playlist.",
     "sharedplaylistenabled-tooltip": "Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.",
+
+    "playlist-empty-error": "Playlist is currently empty.",
+    "playlist-invalid-index-error": "Invalid playlist index",
 }

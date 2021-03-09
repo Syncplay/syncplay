@@ -77,7 +77,13 @@ non_us_chars = {
     'И','и','Й','й','К','к','Л','л','М','м','Н','н','О','о','П','п',
     'Р','р','С','с','Т','т','У','у','Ф','ф','Х','х','Ц','ц','Ч','ч',
     'Ш','ш','Щ','щ','Ъ','ъ','Ы','ы','Ь','ь','Э','э','Ю','ю','Я','я',
-    '≥','≠'
+    '≥','≠','Ğ','Ş','ı','ğ','ş',
+	'ç', 'ñ',
+    '´',
+    '`',
+    '^',
+    '~', 'ẽ', 'ĩ', 'ũ',
+    '¨',
 }
 
 function format_scrolling(xpos, ypos, text)
@@ -339,6 +345,18 @@ end)
 
 mp.register_script_message('set_syncplayintf_options', function(e)
 	set_syncplayintf_options(e)
+end)
+
+function state_paused_and_position()
+	-- bob
+	local pause_status = tostring(mp.get_property_native("pause"))
+	local position_status = tostring(mp.get_property_native("time-pos"))
+	mp.command('print-text "<paused='..pause_status..', pos='..position_status..'>"')
+	-- mp.command('print-text "<paused>true</paused><position>7.6</position>"')
+end
+
+mp.register_script_message('get_paused_and_position', function()
+	state_paused_and_position()
 end)
 
 -- Default options
@@ -614,14 +632,14 @@ function wordwrapify_string(line)
 	local nextChar = 0
 	local chars = 0
     local maxChars = str:len()
-
+	str = string.gsub(str, "\\\"", "\"");
 	repeat
 		nextChar = next_utf8(str, currentChar)
         if nextChar == currentChar then
             return newstr
 		end
 		local charToTest = str:sub(currentChar,nextChar-1)
-		if charToTest ~= "\\" and charToTest ~= "{"  and charToTest ~= "}" and charToTest ~= "%" then
+		if charToTest ~= "{"  and charToTest ~= "}" and charToTest ~= "%" then
 			newstr = newstr .. WORDWRAPIFY_MAGICWORD .. str:sub(currentChar,nextChar-1)
         else
 			newstr = newstr .. str:sub(currentChar,nextChar-1)

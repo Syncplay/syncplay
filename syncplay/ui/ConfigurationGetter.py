@@ -29,6 +29,7 @@ class ConfigurationGetter(object):
             "noGui": False,
             "noStore": False,
             "room": "",
+            "roomList": [],
             "password": None,
             "playerPath": None,
             "perPlayerArguments": None,
@@ -37,6 +38,7 @@ class ConfigurationGetter(object):
             "loopAtEndOfPlaylist": False,
             "loopSingleFiles": False,
             "onlySwitchToTrustedDomains": True,
+            "autosaveJoinsToList": True,
             "trustedDomains": constants.DEFAULT_TRUSTED_DOMAINS,
             "file": None,
             "playerArgs": [],
@@ -136,6 +138,7 @@ class ConfigurationGetter(object):
             "loopAtEndOfPlaylist",
             "loopSingleFiles",
             "onlySwitchToTrustedDomains",
+            "autosaveJoinsToList",
             "chatInputEnabled",
             "chatInputFontUnderline",
             "chatDirectInput",
@@ -149,6 +152,7 @@ class ConfigurationGetter(object):
         ]
 
         self._serialised = [
+            "roomList",
             "perPlayerArguments",
             "mediaSearchDirectories",
             "trustedDomains",
@@ -181,7 +185,7 @@ class ConfigurationGetter(object):
         self._iniStructure = {
             "server_data": ["host", "port", "password"],
             "client_settings": [
-                "name", "room", "playerPath",
+                "name", "room", "roomList", "playerPath",
                 "perPlayerArguments", "slowdownThreshold",
                 "rewindThreshold", "fastforwardThreshold",
                 "slowOnDesync", "rewindOnDesync",
@@ -192,8 +196,10 @@ class ConfigurationGetter(object):
                 "autoplayInitialState", "mediaSearchDirectories",
                 "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
                 "loopSingleFiles",
+                "autoplayRequireSameFilenames",
                 "onlySwitchToTrustedDomains", "trustedDomains", "publicServers"],
             "gui": [
+                "autosaveJoinsToList",
                 "showOSD", "showOSDWarnings", "showSlowdownOSD",
                 "showDifferentRoomOSD", "showSameRoomOSD",
                 "showNonControllerOSD", "showDurationNotification",

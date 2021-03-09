@@ -7,17 +7,26 @@ from . import messages_de
 from . import messages_it
 from . import messages_es
 from . import messages_pt_BR
+from . import messages_pt_PT
+from . import messages_tr
+import re
 
 messages = {
-    "en": messages_en.en,
-    "ru": messages_ru.ru,
     "de": messages_de.de,
-    "it": messages_it.it,
+    "en": messages_en.en,
     "es": messages_es.es,
-    "es": messages_pt_BR.pt_BR,
+    "it": messages_it.it,
+    "pt_PT": messages_pt_PT.pt_PT,
+    "pt_BR": messages_pt_BR.pt_BR,
+    "tr": messages_tr.tr,
+    "ru": messages_ru.ru,
     "CURRENT": None
 }
 
+no_osd_message_list = [
+    "slowdown-notification",
+    "revert-notification",
+]
 
 def getLanguages():
     langList = {}
@@ -26,10 +35,16 @@ def getLanguages():
             langList[lang] = getMessage("LANGUAGE", lang)
     return langList
 
+def isNoOSDMessage(message):
+    for no_osd_message in no_osd_message_list:
+        regex = "^" + getMessage(no_osd_message).replace("{}", ".+") + "$"
+        regex_test = bool(re.match(regex, message))
+        if regex_test:
+            return True
+    return False
 
 def setLanguage(lang):
     messages["CURRENT"] = lang
-
 
 def getMissingStrings():
     missingStrings = ""

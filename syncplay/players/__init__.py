@@ -12,7 +12,12 @@ try:
 except ImportError:
     from syncplay.players.basePlayer import DummyPlayer
     MpcBePlayer = DummyPlayer
+try:
+    from syncplay.players.iina import IinaPlayer
+except ImportError:
+    from syncplay.players.basePlayer import DummyPlayer
+    IinaPlayer = DummyPlayer
 
 
 def getAvailablePlayers():
-    return [MPCHCAPIPlayer, MpvPlayer, MpvnetPlayer, VlcPlayer, MpcBePlayer, MplayerPlayer]
+    return [MPCHCAPIPlayer, MpvPlayer, MpvnetPlayer, VlcPlayer, MpcBePlayer, MplayerPlayer, IinaPlayer]
