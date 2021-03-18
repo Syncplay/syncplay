@@ -23,7 +23,6 @@
 
 # Syncplay
 ![GitHub Actions build status](https://github.com/Syncplay/syncplay/workflows/Build/badge.svg)
-[![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/Syncplay/syncplay)](https://ci.appveyor.com/project/Et0h/syncplay/branch/master)
 
 Solution to synchronize video playback across multiple instances of mpv, VLC, MPC-HC, MPC-BE and mplayer2 over the Internet.
 
