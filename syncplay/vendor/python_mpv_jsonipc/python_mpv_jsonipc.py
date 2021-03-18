@@ -38,7 +38,7 @@ class MPVError(Exception):
 class WindowsSocket(threading.Thread):
     """
     Wraps a Windows named pipe in a high-level interface. (Internal)
-    
+
     Data is automatically encoded and decoded as JSON. The callback
     function will be called for each inbound message.
     """
@@ -52,7 +52,7 @@ class WindowsSocket(threading.Thread):
         ipc_socket = "\\\\.\\pipe\\" + ipc_socket
         self.callback = callback
         self.quit_callback = quit_callback
-        
+
         access = _winapi.GENERIC_READ | _winapi.GENERIC_WRITE
         limit = 5 # Connection may fail at first. Try 5 times.
         for _ in range(limit):
@@ -120,7 +120,7 @@ class WindowsSocket(threading.Thread):
 class UnixSocket(threading.Thread):
     """
     Wraps a Unix/Linux socket in a high-level interface. (Internal)
-    
+
     Data is automatically encoded and decoded as JSON. The callback
     function will be called for each inbound message.
     """
@@ -189,7 +189,7 @@ class MPVProcess:
     """
     Manages an MPV process, ensuring the socket or pipe is available. (Internal)
     """
-    def __init__(self, ipc_socket, mpv_location=None, **kwargs):
+    def __init__(self, ipc_socket, mpv_location=None, env=None, **kwargs):
         """
         Create and start the MPV process. Will block until socket/pipe is available.
 
@@ -203,9 +203,8 @@ class MPVProcess:
                 mpv_location = "mpv.exe"
             else:
                 mpv_location = "mpv"
-        
+
         log.debug("Staring MPV from {0}.".format(mpv_location))
-        ipc_socket_name = ipc_socket
         if os.name == 'nt':
             ipc_socket = "\\\\.\\pipe\\" + ipc_socket
 
@@ -214,14 +213,12 @@ class MPVProcess:
 
         log.debug("Using IPC socket {0} for MPV.".format(ipc_socket))
         self.ipc_socket = ipc_socket
-        args = [mpv_location]
-        self._set_default(kwargs, "idle", True)
-        self._set_default(kwargs, "input_ipc_server", ipc_socket_name)
-        self._set_default(kwargs, "input_terminal", False)
-        self._set_default(kwargs, "terminal", False)
-        args.extend("--{0}={1}".format(v[0].replace("_", "-"), self._mpv_fmt(v[1]))
-                    for v in kwargs.items())
-        self.process = subprocess.Popen(args)
+        args = self._get_arglist(mpv_location, **kwargs)
+
+        self._start_process(ipc_socket, args, env=env)
+
+    def _start_process(self, ipc_socket, args, env):
+        self.process = subprocess.Popen(args, env=env)
         ipc_exists = False
         for _ in range(100): # Give MPV 10 seconds to start.
             time.sleep(0.1)
@@ -236,7 +233,7 @@ class MPVProcess:
         else:
             self.process.terminate()
             raise MPVError("MPV start timed out.")
-        
+
         if not ipc_exists or self.process.returncode is not None:
             self.process.terminate()
             raise MPVError("MPV not started.")
@@ -244,6 +241,16 @@ class MPVProcess:
     def _set_default(self, prop_dict, key, value):
         if key not in prop_dict:
             prop_dict[key] = value
+
+    def _get_arglist(self, exec_location, **kwargs):
+        args = [exec_location]
+        self._set_default(kwargs, "idle", True)
+        self._set_default(kwargs, "input_ipc_server", self.ipc_socket)
+        self._set_default(kwargs, "input_terminal", False)
+        self._set_default(kwargs, "terminal", False)
+        args.extend("--{0}={1}".format(v[0].replace("_", "-"), self._mpv_fmt(v[1]))
+                    for v in kwargs.items())
+        return args
 
     def _mpv_fmt(self, data):
         if data == True:
@@ -278,7 +285,7 @@ class MPVInter:
         self.quit_callback = quit_callback
         if self.callback is None:
             self.callback = lambda event, data: None
-        
+
         self.socket = Socket(ipc_socket, self.event_callback, self.quit_callback)
         self.socket.start()
         self.command_id = 1
@@ -286,7 +293,7 @@ class MPVInter:
         self.socket_lock = threading.Lock()
         self.cid_result = {}
         self.cid_wait = {}
-    
+
     def stop(self, join=True):
         """Terminate the underlying connection."""
         self.socket.stop(join)
@@ -298,11 +305,11 @@ class MPVInter:
             self.cid_wait[data["request_id"]].set()
         elif "event" in data:
             self.callback(data["event"], data)
-    
+
     def command(self, command, *args):
         """
         Issue a command to MPV. Will block until completed or timeout is reached.
-        
+
         *command* is the name of the MPV command
 
         All further arguments are forwarded to the MPV command.
@@ -344,13 +351,13 @@ class EventHandler(threading.Thread):
         """Create an instance of the thread."""
         self.queue = queue.Queue()
         threading.Thread.__init__(self)
-    
+
     def put_task(self, func, *args):
         """
         Put a new task to the thread.
-        
+
         *func* is the function to call
-        
+
         All further arguments are forwarded to *func*.
         """
         self.queue.put((func, args))
@@ -374,10 +381,10 @@ class EventHandler(threading.Thread):
 class MPV:
     """
     The main MPV interface class. Use this to control MPV.
-    
+
     This will expose all mpv commands as callable methods and all properties.
     You can set properties and call the commands directly.
-    
+
     Please note that if you are using a really old MPV version, a fallback command
     list is used. Not all commands may actually work when this fallback is used.
     """
@@ -412,16 +419,7 @@ class MPV:
                 ipc_socket = "/tmp/{0}".format(rand_file)
 
         if start_mpv:
-            # Attempt to start MPV 3 times.
-            for i in range(3):
-                try:
-                    self.mpv_process = MPVProcess(ipc_socket, mpv_location, **kwargs)
-                    break
-                except MPVError:
-                    log.warning("MPV start failed.", exc_info=1)
-                    continue
-            else:
-                raise MPVError("MPV process retry limit reached.")
+            self._start_mpv(ipc_socket, mpv_location, **kwargs)
 
         self.mpv_inter = MPVInter(ipc_socket, self._callback, self._quit_callback)
         self.properties = set(x.replace("-", "_") for x in self.command("get_property", "property-list"))
@@ -440,7 +438,7 @@ class MPV:
         self.observer_lock = threading.Lock()
         self.keybind_id = 1
         self.keybind_lock = threading.Lock()
-        
+
         if log_handler is not None and loglevel is not None:
             self.command("request_log_messages", loglevel)
             @self.on_event("log-message")
@@ -457,6 +455,18 @@ class MPV:
             args = data["args"]
             if len(args) == 2 and args[0] == "custom-bind":
                 self.event_handler.put_task(self.key_bindings[args[1]])
+
+    def _start_mpv(self, ipc_socket, mpv_location, **kwargs):
+        # Attempt to start MPV 3 times.
+        for i in range(3):
+            try:
+                self.mpv_process = MPVProcess(ipc_socket, mpv_location, **kwargs)
+                break
+            except MPVError:
+                log.warning("MPV start failed.", exc_info=1)
+                continue
+        else:
+            raise MPVError("MPV process retry limit reached.")
 
     def _quit_callback(self):
         """
@@ -567,7 +577,7 @@ class MPV:
             self.bind_property_observer(name, func)
             return func
         return wrapper
-    
+
     def wait_for_property(self, name):
         """
         Waits for the value of a property to change.
@@ -615,11 +625,11 @@ class MPV:
         """
         Send a command to MPV. All commands are bound to the class by default,
         except JSON IPC specific commands. This may also be useful to retain
-        compatibility with python-mpv, as it does not bind all of the commands. 
+        compatibility with python-mpv, as it does not bind all of the commands.
 
         *command* is the command name.
 
-        All further arguments are forwarded to the MPV command. 
+        All further arguments are forwarded to the MPV command.
         """
         return self.mpv_inter.command(command, *args)
 
