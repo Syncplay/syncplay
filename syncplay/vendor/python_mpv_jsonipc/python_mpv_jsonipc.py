@@ -38,7 +38,7 @@ class MPVError(Exception):
 class WindowsSocket(threading.Thread):
     """
     Wraps a Windows named pipe in a high-level interface. (Internal)
-    
+
     Data is automatically encoded and decoded as JSON. The callback
     function will be called for each inbound message.
     """
@@ -52,7 +52,7 @@ class WindowsSocket(threading.Thread):
         ipc_socket = "\\\\.\\pipe\\" + ipc_socket
         self.callback = callback
         self.quit_callback = quit_callback
-        
+
         access = _winapi.GENERIC_READ | _winapi.GENERIC_WRITE
         limit = 5 # Connection may fail at first. Try 5 times.
         for _ in range(limit):
@@ -112,11 +112,15 @@ class WindowsSocket(threading.Thread):
         except EOFError:
             if self.quit_callback:
                 self.quit_callback()
+        except Exception as ex:
+            log.error("Pipe connection died.", exc_info=1)
+            if self.quit_callback:
+                self.quit_callback()
 
 class UnixSocket(threading.Thread):
     """
     Wraps a Unix/Linux socket in a high-level interface. (Internal)
-    
+
     Data is automatically encoded and decoded as JSON. The callback
     function will be called for each inbound message.
     """
@@ -159,22 +163,25 @@ class UnixSocket(threading.Thread):
     def run(self):
         """Process socket events. Do not run this directly. Use *start*."""
         data = b''
-        while True:
-            current_data = self.socket.recv(1024)
-            if current_data == b'':
-                break
+        try:
+            while True:
+                current_data = self.socket.recv(1024)
+                if current_data == b'':
+                    break
 
-            data += current_data
-            if data[-1] != 10:
-                continue
-
-            data = data.decode('utf-8', 'ignore').encode('utf-8')
-            for item in data.split(b'\n'):
-                if item == b'':
+                data += current_data
+                if data[-1] != 10:
                     continue
-                json_data = json.loads(item)
-                self.callback(json_data)
-            data = b''
+
+                data = data.decode('utf-8', 'ignore').encode('utf-8')
+                for item in data.split(b'\n'):
+                    if item == b'':
+                        continue
+                    json_data = json.loads(item)
+                    self.callback(json_data)
+                data = b''
+        except Exception as ex:
+            log.error("Socket connection died.", exc_info=1)
         if self.quit_callback:
             self.quit_callback()
 
@@ -196,7 +203,7 @@ class MPVProcess:
                 mpv_location = "mpv.exe"
             else:
                 mpv_location = "mpv"
-        
+
         log.debug("Staring MPV from {0}.".format(mpv_location))
         if os.name == 'nt':
             ipc_socket = "\\\\.\\pipe\\" + ipc_socket
@@ -226,7 +233,7 @@ class MPVProcess:
         else:
             self.process.terminate()
             raise MPVError("MPV start timed out.")
-        
+
         if not ipc_exists or self.process.returncode is not None:
             self.process.terminate()
             raise MPVError("MPV not started.")
@@ -278,7 +285,7 @@ class MPVInter:
         self.quit_callback = quit_callback
         if self.callback is None:
             self.callback = lambda event, data: None
-        
+
         self.socket = Socket(ipc_socket, self.event_callback, self.quit_callback)
         self.socket.start()
         self.command_id = 1
@@ -286,7 +293,7 @@ class MPVInter:
         self.socket_lock = threading.Lock()
         self.cid_result = {}
         self.cid_wait = {}
-    
+
     def stop(self, join=True):
         """Terminate the underlying connection."""
         self.socket.stop(join)
@@ -298,11 +305,11 @@ class MPVInter:
             self.cid_wait[data["request_id"]].set()
         elif "event" in data:
             self.callback(data["event"], data)
-    
+
     def command(self, command, *args):
         """
         Issue a command to MPV. Will block until completed or timeout is reached.
-        
+
         *command* is the name of the MPV command
 
         All further arguments are forwarded to the MPV command.
@@ -344,13 +351,13 @@ class EventHandler(threading.Thread):
         """Create an instance of the thread."""
         self.queue = queue.Queue()
         threading.Thread.__init__(self)
-    
+
     def put_task(self, func, *args):
         """
         Put a new task to the thread.
-        
+
         *func* is the function to call
-        
+
         All further arguments are forwarded to *func*.
         """
         self.queue.put((func, args))
@@ -374,10 +381,10 @@ class EventHandler(threading.Thread):
 class MPV:
     """
     The main MPV interface class. Use this to control MPV.
-    
+
     This will expose all mpv commands as callable methods and all properties.
     You can set properties and call the commands directly.
-    
+
     Please note that if you are using a really old MPV version, a fallback command
     list is used. Not all commands may actually work when this fallback is used.
     """
@@ -431,7 +438,7 @@ class MPV:
         self.observer_lock = threading.Lock()
         self.keybind_id = 1
         self.keybind_lock = threading.Lock()
-        
+
         if log_handler is not None and loglevel is not None:
             self.command("request_log_messages", loglevel)
             @self.on_event("log-message")
@@ -570,7 +577,7 @@ class MPV:
             self.bind_property_observer(name, func)
             return func
         return wrapper
-    
+
     def wait_for_property(self, name):
         """
         Waits for the value of a property to change.
@@ -618,11 +625,11 @@ class MPV:
         """
         Send a command to MPV. All commands are bound to the class by default,
         except JSON IPC specific commands. This may also be useful to retain
-        compatibility with python-mpv, as it does not bind all of the commands. 
+        compatibility with python-mpv, as it does not bind all of the commands.
 
         *command* is the command name.
 
-        All further arguments are forwarded to the MPV command. 
+        All further arguments are forwarded to the MPV command.
         """
         return self.mpv_inter.command(command, *args)
 
