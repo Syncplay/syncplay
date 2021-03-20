@@ -190,9 +190,9 @@ class AboutDialog(QtWidgets.QDialog):
 
     def openDependencies(self):
         if isWindows():
-            QtGui.QDesktopServices.openUrl(QUrl("file:///" + resourcespath + "third-party-notices.rtf"))
+            QtGui.QDesktopServices.openUrl(QUrl("file:///" + resourcespath + "third-party-notices.txt"))
         else:
-            QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + "third-party-notices.rtf"))
+            QtGui.QDesktopServices.openUrl(QUrl("file://" + resourcespath + "third-party-notices.txt"))
 
 
 class CertificateDialog(QtWidgets.QDialog):
