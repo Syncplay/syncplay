@@ -1,0 +1,548 @@
+Syncplay relies on the following softwares, in compliance with their licenses.
+
+- Python 3
+
+Copyright © 2001-2021 Python Software Foundation; All Rights Reserved
+
+PSF LICENSE AGREEMENT FOR PYTHON 3
+1. This LICENSE AGREEMENT is between the Python Software Foundation ("PSF"), and
+   the Individual or Organization ("Licensee") accessing and otherwise using Python
+   3 software in source or binary form and its associated documentation.
+
+2. Subject to the terms and conditions of this License Agreement, PSF hereby
+   grants Licensee a nonexclusive, royalty-free, world-wide license to reproduce,
+   analyze, test, perform and/or display publicly, prepare derivative works,
+   distribute, and otherwise use Python 3 alone or in any derivative
+   version, provided, however, that PSF's License Agreement and PSF's notice of
+   copyright, i.e., "Copyright © 2001-2021 Python Software Foundation; All Rights
+   Reserved" are retained in Python 3 alone or in any derivative version
+   prepared by Licensee.
+
+3. In the event Licensee prepares a derivative work that is based on or
+   incorporates Python 3 or any part thereof, and wants to make the
+   derivative work available to others as provided herein, then Licensee hereby
+   agrees to include in any such work a brief summary of the changes made to Python
+   3.
+
+4. PSF is making Python 3 available to Licensee on an "AS IS" basis.
+   PSF MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.  BY WAY OF
+   EXAMPLE, BUT NOT LIMITATION, PSF MAKES NO AND DISCLAIMS ANY REPRESENTATION OR
+   WARRANTY OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE
+   USE OF PYTHON 3.8.8 WILL NOT INFRINGE ANY THIRD PARTY RIGHTS.
+
+5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON 3
+   FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS A RESULT OF
+   MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON 3, OR ANY DERIVATIVE
+   THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+
+6. This License Agreement will automatically terminate upon a material breach of
+   its terms and conditions.
+
+7. Nothing in this License Agreement shall be deemed to create any relationship
+   of agency, partnership, or joint venture between PSF and Licensee.  This License
+   Agreement does not grant permission to use PSF trademarks or trade name in a
+   trademark sense to endorse or promote products or services of Licensee, or any
+   third party.
+
+8. By copying, installing or otherwise using Python 3 Licensee agrees
+   to be bound by the terms and conditions of this License Agreement.
+
+Further notices regarding the Python Standard Library can be found at
+https://docs.python.org/3.8/license.html
+
+#########################################################################################
+
+- Qt.py
+
+Copyright (c) 2016 Marcus Ottosson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+#########################################################################################
+
+- Qt for Python
+
+Copyright (C) 2018 The Qt Company Ltd.
+Contact: https://www.qt.io/licensing/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#########################################################################################
+
+- Qt
+
+This program uses Qt under the GNU LGPL version 3.
+
+Qt is a C++ toolkit for cross-platform application development.
+
+Qt provides single-source portability across all major desktop operating systems. It is
+also available for embedded Linux and other embedded and mobile operating systems.
+
+Qt is available under three different licensing options designed to accommodate the needs
+of our various users.
+
+Qt licensed under our commercial license agreement is appropriate for development of
+proprietary/commercial software where you do not want to share any source code with third
+parties or otherwise cannot comply with the terms of the GNU LGPL version 3 or GNU LGPL
+version 2.1.
+
+Qt licensed under the GNU LGPL version 3 is appropriate for the development of Qt applications
+provided you can comply with the terms and conditions of the GNU LGPL version 3.
+
+Qt licensed under the GNU LGPL version 2.1 is appropriate for the development of Qt
+applications provided you can comply with the terms and conditions of the GNU LGPL version 2.1.
+
+Please see qt.io/licensing for an overview of Qt licensing.
+
+Copyright (C) 2017 The Qt Company Ltd and other contributors.
+
+Qt and the Qt logo are trademarks of The Qt Company Ltd.
+
+Qt is The Qt Company Ltd product developed as an open source project. See qt.io for more information.
+
+#########################################################################################
+
+- Twisted
+
+Copyright (c) 2001-2017
+Allen Short
+Amber Hawkie Brown
+Andrew Bennetts
+Andy Gayton
+Antoine Pitrou
+Apple Computer, Inc.
+Ashwini Oruganti
+Benjamin Bruheim
+Bob Ippolito
+Canonical Limited
+Christopher Armstrong
+David Reid
+Divmod Inc.
+Donovan Preston
+Eric Mangold
+Eyal Lotem
+Google Inc.
+Hybrid Logic Ltd.
+Hynek Schlawack
+Itamar Turner-Trauring
+James Knight
+Jason A. Mobarak
+Jean-Paul Calderone
+Jessica McKellar
+Jonathan D. Simms
+Jonathan Jacobs
+Jonathan Lange
+Julian Berman
+Jürgen Hermann
+Kevin Horn
+Kevin Turner
+Laurens Van Houtven
+Mary Gardiner
+Massachusetts Institute of Technology
+Matthew Lefkowitz
+Moshe Zadka
+Paul Swartz
+Pavel Pergamenshchik
+Rackspace, US Inc.
+Ralph Meijer
+Richard Wall
+Sean Riley
+Software Freedom Conservancy
+Tavendo GmbH
+Thijs Triemstra
+Thomas Herve
+Timothy Allen
+Tom Prince
+Travis B. Hartwell
+
+and others that have contributed code to the public domain.
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+#########################################################################################
+
+- qt5reactor
+
+Copyright (c) 2001-2018
+Allen Short
+Andy Gayton
+Andrew Bennetts
+Antoine Pitrou
+Apple Computer, Inc.
+Ashwini Oruganti
+bakbuk
+Benjamin Bruheim
+Bob Ippolito
+Burak Nehbit
+Canonical Limited
+Christopher Armstrong
+Christopher R. Wood
+David Reid
+Donovan Preston
+Elvis Stansvik
+Eric Mangold
+Eyal Lotem
+Glenn Tarbox
+Google Inc.
+Hybrid Logic Ltd.
+Hynek Schlawack
+Itamar Turner-Trauring
+James Knight
+Jason A. Mobarak
+Jean-Paul Calderone
+Jessica McKellar
+Jonathan Jacobs
+Jonathan Lange
+Jonathan D. Simms
+Jürgen Hermann
+Julian Berman
+Kevin Horn
+Kevin Turner
+Kyle Altendorf
+Laurens Van Houtven
+Mary Gardiner
+Matthew Lefkowitz
+Massachusetts Institute of Technology
+Moshe Zadka
+Paul Swartz
+Pavel Pergamenshchik
+Ralph Meijer
+Richard Wall
+Sean Riley
+Software Freedom Conservancy
+Tarashish Mishra
+Travis B. Hartwell
+Thijs Triemstra
+Thomas Herve
+Timothy Allen
+Tom Prince
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+#########################################################################################
+
+- appnope
+
+Copyright (c) 2013, Min Ragan-Kelley
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#########################################################################################
+
+- py2exe
+
+Copyright (c) 2000-2013 Thomas Heller, Jimmy Retzlaff
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+#########################################################################################
+
+- py2app
+
+Copyright (c) 2004 Bob Ippolito.
+
+Some parts copyright (c) 2010-2014 Ronald Oussoren
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+#########################################################################################
+
+- dmgbuild
+
+Copyright (c) 2014 Alastair Houghton
+Copyright (c) 2017 The Qt Company Ltd.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+#########################################################################################
+
+- Requests
+
+Copyright 2018 Kenneth Reitz
+
+Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDI-
+TIONS OF ANY KIND, either express or implied. See the License for the specific lang-
+uage governing permissions and limitations under the License.
+
+#########################################################################################
+
+- mpv-repl
+
+Copyright 2016, James Ross-Gowan
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+
+#########################################################################################
+
+- python-certifi
+
+This Source Code Form is subject to the terms of the Mozilla Public License,
+v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain
+one at http://mozilla.org/MPL/2.0/.
+
+#########################################################################################
+
+- cffi
+
+This package has been mostly done by Armin Rigo with help from
+Maciej Fijałkowski. The idea is heavily based (although not directly
+copied) from LuaJIT ffi by Mike Pall.
+
+Other contributors:
+
+  Google Inc.
+
+The MIT License
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+#########################################################################################
+
+- service-identity
+
+Copyright (c) 2014 Hynek Schlawack
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+#########################################################################################
+
+- pyopenssl
+
+Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDI-
+TIONS OF ANY KIND, either express or implied. See the License for the specific lang-
+uage governing permissions and limitations under the License.
+
+#########################################################################################
+
+- cryptography
+
+Authors listed here: https://github.com/pyca/cryptography/blob/master/AUTHORS.rst
+
+Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDI-
+TIONS OF ANY KIND, either express or implied. See the License for the specific lang-
+uage governing permissions and limitations under the License.
+
+#########################################################################################
+
+- Darkdetect
+
+Copyright (c) 2019, Alberto Sottile
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of "darkdetect" nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL "Alberto Sottile" BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#########################################################################################
+
+- Python MPV JSONIPC
+Authors listed here: https://github.com/iwalton3/python-mpv-jsonipc/ (principal developer Ian Walton / iwalton3)
+
+Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDI-
+TIONS OF ANY KIND, either express or implied. See the License for the specific lang-
+uage governing permissions and limitations under the License.
+
+#########################################################################################
+
+- Icons
+
+Syncplay uses the following icons and images:
+
+- Silk icon set 1.3
+_________________________________________
+Mark James
+http://www.famfamfam.com/lab/icons/silk/
+_________________________________________
+
+This work is licensed under a
+Creative Commons Attribution 2.5 License.
+[ http://creativecommons.org/licenses/by/2.5/ ]
+
+This means you may use it for any purpose,
+and make any changes you like.
+All I ask is that you include a link back
+to this page in your credits.
+
+Are you using this icon set? Send me an email
+(including a link or picture if available) to
+mjames@gmail.com
+
+Any other questions about this icon set please
+contact mjames@gmail.com
+
+- Silk Companion 1
+
+Copyright Damien Guard - CC-BY 3.0
+https://damieng.com/creative/icons/silk-companion-1-icons
+
+- Padlock free icon
+CC-BY 3.0
+Icon made by Maxim Basinski from https://www.flaticon.com/free-icon/padlock_291248
+
+
