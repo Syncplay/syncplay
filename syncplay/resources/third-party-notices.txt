@@ -1,4 +1,4 @@
-Syncplay relies on the following softwares, in compliance with their licenses.
+Syncplay relies on the following software, in compliance with their licenses.
 
 - Python 3
 
