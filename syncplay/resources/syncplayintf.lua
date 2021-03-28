@@ -295,6 +295,13 @@ end
 
 chat_timer=mp.add_periodic_timer(TICK_INTERVAL, chat_update)
 
+mp.observe_property('eof-reached', 'bool', function(e)
+	if mp.get_property_native("eof-reached") == true then
+		mp.command('print-text "<eof>"')
+	end
+end)
+
+
 mp.register_script_message('chat', function(e)
 	add_chat(e)
 end)
@@ -985,7 +992,7 @@ function readyMpvAfterSettingsKnown()
 				add_repl_alpharow_bindings(alpharowbindings)
 				mp.add_forced_key_binding('tab', handle_tab)
 			end
-        end 
+        end
         syncplayintfSet = true
     end
 end
