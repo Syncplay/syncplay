@@ -1,17 +1,16 @@
-
-FROM python:alpine3.13
+FROM ubuntu:18.04
 
 ENV MOTD="Welcome to our Docker Syncplay server!"
 ENV PORT=8999
 ENV PASSWORD="changethis"
 ENV SALT="changethis"
 
-RUN apk update && apk add make
-#RUN apt update
-#RUN apt-get install -y make python3 python3-twisted python3-pyside
+RUN apt update && apt-get install -y make python3 python3-twisted
 
 COPY . /syncplay
-RUN cd syncplay && make install
+WORKDIR syncplay
+
+RUN make install
 
 EXPOSE $PORT
 
