@@ -9,8 +9,8 @@ def read(fname):
     with open(fname, 'r') as f:
         return f.read()
 
-installRequirements = read('requirements.txt').splitlines() +\
-                        read('requirements_gui.txt').splitlines()
+installRequirements = read('requirements.txt').splitlines()
+guiRequirements = read('requirements_gui.txt').splitlines()
 
 setuptools.setup(
     name="syncplay",
@@ -27,13 +27,16 @@ setuptools.setup(
     download_url=projectURL + 'download/',
     packages=setuptools.find_packages(),
     install_requires=installRequirements,
+    extras_require={
+        'gui': guiRequirements,
+    },
     python_requires=">=3.4",
     entry_points={
         'console_scripts': [
             'syncplay-server = syncplay.ep_server:main',
         ],
         'gui_scripts': [
-            'syncplay = syncplay.ep_client:main',
+            'syncplay = syncplay.ep_client:main [gui]',
         ]
     },
     include_package_data=True,
