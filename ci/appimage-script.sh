@@ -101,7 +101,7 @@ mv pl.syncplay.syncplay.appdata.xml AppDir/usr/share/metainfo/
 cp "$REPO_ROOT"/syncplay/resources/syncplay.desktop ./pl.syncplay.syncplay.desktop
 
 #export CONDA_PACKAGES="Pillow"
-export PIP_REQUIREMENTS="."
+export PIP_REQUIREMENTS=".[gui]"
 export PIP_WORKDIR="$REPO_ROOT"
 export VERSION="$(cat $REPO_ROOT/syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
 export OUTPUT=Syncplay-$VERSION-x86_64.AppImage
