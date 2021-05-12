@@ -569,7 +569,8 @@ class SyncplayClient(object):
         return False
 
     def openFile(self, filePath, resetPosition=False, fromUser=False):
-        if fromUser and filePath.endswith(".txt") or filePath.endswith(".m3u") or filePath.endswith(".m3u8"):
+        if not (filePath.startswith("http://") or filePath.startswith("https://"))\
+                and ((fromUser and filePath.endswith(".txt")) or filePath.endswith(".m3u") or filePath.endswith(".m3u8")):
             self.playlist.loadPlaylistFromFile(filePath, resetPosition)
             return
 
