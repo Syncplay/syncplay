@@ -15,6 +15,6 @@ RUN make install
 EXPOSE $PORT
 
 RUN apt-get install -y net-tools 
-HEALTHCHECK CMD netstat -tulpn | grep 8999 || exit 1
+HEALTHCHECK CMD netstat -tulpn | grep $PORT || exit 1
 
 CMD echo $MOTD > motd.txt && syncplay-server --password $PASSWORD --port $PORT --salt $SALT --motd-file motd.txt
