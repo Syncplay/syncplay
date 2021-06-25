@@ -23,7 +23,6 @@
 
 # Syncplay
 ![GitHub Actions build status](https://github.com/Syncplay/syncplay/workflows/Build/badge.svg)
-[![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/Syncplay/syncplay)](https://ci.appveyor.com/project/Et0h/syncplay/branch/master)
 
 Solution to synchronize video playback across multiple instances of mpv, VLC, MPC-HC, MPC-BE and mplayer2 over the Internet.
 
@@ -45,7 +44,7 @@ Syncplay is not a file sharing service.
 
 ## License
 
-This project, the Syncplay released binaries, and all the files included in this repository unless stated otherwise in the header of the file, are licensed under the [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0.html). A copy of this license is included in the LICENSE file of this repository. Licenses and attribution notices for third-party media are set out in [third-party-notices.rtf](syncplay/resources/third-party-notices.rtf).
+This project, the Syncplay released binaries, and all the files included in this repository unless stated otherwise in the header of the file, are licensed under the [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0.html). A copy of this license is included in the LICENSE file of this repository. Licenses and attribution notices for third-party media are set out in [third-party-notices.txt](syncplay/resources/third-party-notices.txt).
 
 ## Authors
 * *Initial concept and core internals developer* - Uriziel.

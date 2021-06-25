@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb, Pilotat
  Project: https://syncplay.pl/
- Version: 0.3.6
+ Version: 0.3.7
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -78,7 +78,7 @@ Syncplay should install this automatically to your user folder.
 
 --]==========================================================================]
 
-local connectorversion = "0.3.6"
+local connectorversion = "0.3.7"
 local vlcversion = vlc.misc.version()
 local vlcmajorversion = tonumber(vlcversion:sub(1,1)) -- get the major version of VLC
 
@@ -114,6 +114,8 @@ local newfilepath
 local newinputstate
 local oldtitle = 0
 local newtitle = 0
+local oldduration = 0
+local newduration = 0
 
 local channel1
 local channel2
@@ -179,6 +181,11 @@ function detectchanges()
             oldtitle = newtitle
             notificationbuffer = notificationbuffer .. "playstate"..msgseperator..tostring(get_play_state())..msgterminator
             notificationbuffer = notificationbuffer .. "position"..msgseperator..tostring(get_time())..msgterminator
+            newduration = get_duration()
+            if oldduration ~= newduration then
+                oldduration = newduration
+                notificationbuffer = notificationbuffer .. "duration-change"..msgseperator..tostring(newduration)..msgterminator
+            end
         else
             notificationbuffer = notificationbuffer .. "playstate"..msgseperator..noinput..msgterminator
             notificationbuffer = notificationbuffer .. "position"..msgseperator..noinput..msgterminator
@@ -189,7 +196,6 @@ function detectchanges()
             oldinputstate = newinputstate
             notificationbuffer = notificationbuffer.."inputstate-change"..msgseperator..tostring(newinputstate)..msgterminator
         end
-
     return notificationbuffer
 end
 
@@ -406,7 +412,7 @@ function get_duration ()
             local i = 0
             response = 0
             repeat
-                vlc.misc.mwait(vlc.misc.mdate() + durationdelay)
+                -- vlc.misc.mwait(vlc.misc.mdate() + durationdelay)
                 if item and item:duration() then
                     response = item:duration()
                     if response < 1 then
@@ -420,7 +426,6 @@ function get_duration ()
         else
             errormsg = noinput
         end
-
     return response, errormsg
 end
 
@@ -490,7 +495,10 @@ function do_command ( command, argument)
 
     if     command == "get-interface-version" then response           = "interface-version"..msgseperator..connectorversion..msgterminator
     elseif command == "get-vlc-version"       then response           = "vlc-version"..msgseperator..vlcversion..msgterminator
-    elseif command == "get-duration"          then response           = "duration"..msgseperator..errormerge(get_duration())..msgterminator
+    elseif command == "get-duration"          then
+        newduration = errormerge(get_duration())
+        response           = "duration"..msgseperator..newduration..msgterminator
+        oldduration = newduration
     elseif command == "get-filepath"          then response           = "filepath"..msgseperator..errormerge(get_filepath())..msgterminator
     elseif command == "get-filename"          then response           = "filename"..msgseperator..errormerge(get_filename())..msgterminator
     elseif command == "get-title"             then response           = "title"..msgseperator..errormerge(get_var("title", 0))..msgterminator

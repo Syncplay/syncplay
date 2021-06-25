@@ -4,4 +4,5 @@ include syncplay/resources/*.png
 include syncplay/resources/*.mng
 include syncplay/resources/*.lua
 include syncplay/resources/*.rtf
+include syncplay/resources/*.txt
 include syncplay/resources/lua/intf/*.lua

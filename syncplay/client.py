@@ -500,6 +500,11 @@ class SyncplayClient(object):
             return True
         return self._globalPaused
 
+    def eofReportedByPlayer(self):
+        if self.playlist.notJustChangedPlaylist() and self.userlist.currentUser.file:
+            self.ui.showDebugMessage("Fixing file duration to allow for playlist advancement")
+            self.userlist.currentUser.file["duration"] = self._playerPosition
+
     def updateFile(self, filename, duration, path):
         self.lastUpdatedFileTime = time.time()
         newPath = ""

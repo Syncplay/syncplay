@@ -11,7 +11,7 @@ import syncplay
 
 APP = ['syncplayClient.py']
 DATA_FILES = [
-    ('resources', glob('syncplay/resources/*.png') + glob('syncplay/resources/*.rtf') + glob('syncplay/resources/*.lua')),
+    ('resources', glob('syncplay/resources/*.png') + glob('syncplay/resources/*.rtf') + glob('syncplay/resources/*.txt') + glob('syncplay/resources/*.lua')),
     ('resources/lua/intf', glob('syncplay/resources/lua/intf/*.lua'))
 ]
 OPTIONS = {
