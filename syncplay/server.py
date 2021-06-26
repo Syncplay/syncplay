@@ -428,6 +428,10 @@ class Room(object):
         if self._roomsDir is None:
             return
         if len(self._playlist) == 0:
+            try:
+                os.remove(os.path.join(self._roomsDir, self.sanitizeFilename(self._name)+'.room'))
+            except Exception:
+                pass
             return
         data = {}
         data['name'] = self._name
