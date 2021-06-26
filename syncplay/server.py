@@ -421,6 +421,9 @@ class Room(object):
     def __str__(self, *args, **kwargs):
         return self.getName()
 
+    def sanitizeFilename(self, filename, blacklist="<>:/\\|?*\"", placeholder="_"):
+        return ''.join([c if c not in blacklist and ord(c) >= 32 else placeholder for c in filename])
+
     def writeToFile(self):
         if self._roomsDir is None:
             return
@@ -431,7 +434,7 @@ class Room(object):
         data['playlist'] = self._playlist
         data['playlistIndex'] = self._playlistIndex
         data['position'] = self._position
-        with open(os.path.join(self._roomsDir, self._name+'.room'), "w") as outfile:
+        with open(os.path.join(self._roomsDir, self.sanitizeFilename(self._name)+'.room'), "w") as outfile:
             json.dump(data, outfile)
 
     def loadFromFile(self, filename):
