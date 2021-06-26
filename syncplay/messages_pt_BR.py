@@ -473,6 +473,7 @@ pt_BR = {
     "server-salt-argument": "string aleatória utilizada para gerar senhas de salas gerenciadas",
     "server-disable-ready-argument": "desativar recurso de prontidão",
     "server-motd-argument": "caminho para o arquivo o qual o motd será obtido",
+    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
     "server-chat-argument": "O chat deve ser desativado?",
     "server-chat-maxchars-argument": "Número máximo de caracteres numa mensagem do chat (o padrão é {})", # Default number of characters
     "server-maxusernamelength-argument": "Número máximos de caracteres num nome de usuário (o padrão é {})",

@@ -473,6 +473,7 @@ tr = {
     "server-salt-argument": "yönetilen oda şifreleri oluşturmak için kullanılan rastgele dize",
     "server-disable-ready-argument": "hazır olma özelliğini devre dışı bırak",
     "server-motd-argument": "motd alınacak dosyanın yolu",
+    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
     "server-chat-argument": "Sohbet devre dışı bırakılmalı mı?",
     "server-chat-maxchars-argument": "Bir sohbet mesajındaki maksimum karakter sayısı (varsayılan: {})", # Default number of characters
     "server-maxusernamelength-argument": "Bir kullanıcı adındaki maksimum karakter sayısı (varsayılan {})",

@@ -472,6 +472,7 @@ es = {
     "server-salt-argument": "cadena aleatoria utilizada para generar contraseñas de salas administradas",
     "server-disable-ready-argument": "deshabilitar la función de preparación",
     "server-motd-argument": "ruta al archivo del cual se obtendrá el texto motd",
+    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
     "server-chat-argument": "¿Debería deshabilitarse el chat?",
     "server-chat-maxchars-argument": "Número máximo de caracteres en un mensaje de chat (el valor predeterminado es {})", # Default number of characters
     "server-maxusernamelength-argument": "Número máximo de caracteres para el nombre de usuario (el valor predeterminado es {})",

@@ -4,6 +4,7 @@ import hashlib
 import os
 import random
 import time
+import json
 from string import Template
 
 from twisted.enterprise import adbapi
@@ -25,7 +26,7 @@ from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomString
 
 
 class SyncFactory(Factory):
-    def __init__(self, port='', password='', motdFilePath=None, isolateRooms=False, salt=None,
+    def __init__(self, port='', password='', motdFilePath=None, roomsDirPath=None, isolateRooms=False, salt=None,
                  disableReady=False, disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH,
                  maxUsernameLength=constants.MAX_USERNAME_LENGTH, statsDbFile=None, tlsCertPath=None):
         self.isolateRooms = isolateRooms
@@ -40,12 +41,13 @@ class SyncFactory(Factory):
             print(getMessage("no-salt-notification").format(salt))
         self._salt = salt
         self._motdFilePath = motdFilePath
+        self._roomsDirPath = roomsDirPath if os.path.isdir(roomsDirPath) else None
         self.disableReady = disableReady
         self.disableChat = disableChat
         self.maxChatMessageLength = maxChatMessageLength if maxChatMessageLength is not None else constants.MAX_CHAT_MESSAGE_LENGTH
         self.maxUsernameLength = maxUsernameLength if maxUsernameLength is not None else constants.MAX_USERNAME_LENGTH
         if not isolateRooms:
-            self._roomManager = RoomManager()
+            self._roomManager = RoomManager(self._roomsDirPath)
         else:
             self._roomManager = PublicRoomManager()
         if statsDbFile is not None:
@@ -311,8 +313,20 @@ class DBManager(object):
 
 
 class RoomManager(object):
-    def __init__(self):
+    def __init__(self, roomsDir=None):
+        self._roomsDir = roomsDir
         self._rooms = {}
+        if self._roomsDir is not None:
+            for root, dirs, files in os.walk(self._roomsDir):
+                for file in files:
+                    if file.endswith(".room"):
+                        room = Room('', self._roomsDir)
+                        room.loadFromFile(os.path.join(root, file))
+                        roomName = truncateText(room.getName(), constants.MAX_ROOM_NAME_LENGTH)
+                        if len(room.getPlaylist()) == 0:
+                            os.remove(os.path.join(root, file))
+                        else:
+                            self._rooms[roomName] = room
 
     def broadcastRoom(self, sender, whatLambda):
         room = sender.getRoom()
@@ -342,7 +356,8 @@ class RoomManager(object):
         oldRoom = watcher.getRoom()
         if oldRoom:
             oldRoom.removeWatcher(watcher)
-            self._deleteRoomIfEmpty(oldRoom)
+            if self._roomsDir is None:
+                self._deleteRoomIfEmpty(oldRoom)
 
     def _getRoom(self, roomName):
         if roomName in self._rooms:
@@ -351,7 +366,7 @@ class RoomManager(object):
             if RoomPasswordProvider.isControlledRoom(roomName):
                 room = ControlledRoom(roomName)
             else:
-                room = Room(roomName)
+                room = Room(roomName, self._roomsDir)
             self._rooms[roomName] = room
             return room
 
@@ -392,8 +407,9 @@ class Room(object):
     STATE_PAUSED = 0
     STATE_PLAYING = 1
 
-    def __init__(self, name):
+    def __init__(self, name, _roomsDir=None):
         self._name = name
+        self._roomsDir = _roomsDir
         self._watchers = {}
         self._playState = self.STATE_PAUSED
         self._setBy = None
@@ -404,6 +420,27 @@ class Room(object):
 
     def __str__(self, *args, **kwargs):
         return self.getName()
+
+    def writeToFile(self):
+        if self._roomsDir is None:
+            return
+        if len(self._playlist) == 0:
+            return
+        data = {}
+        data['name'] = self._name
+        data['playlist'] = self._playlist
+        data['playlistIndex'] = self._playlistIndex
+        data['position'] = self._position
+        with open(os.path.join(self._roomsDir, self._name+'.room'), "w") as outfile:
+            json.dump(data, outfile)
+
+    def loadFromFile(self, filename):
+        with open(filename) as json_file:
+            data = json.load(json_file)
+            self._name = truncateText(data['name'], constants.MAX_ROOM_NAME_LENGTH)
+            self._playlist = data['playlist']
+            self._playlistIndex = data['playlistIndex']
+            self._position = data['position']
 
     def getName(self):
         return self._name
@@ -424,6 +461,7 @@ class Room(object):
     def setPaused(self, paused=STATE_PAUSED, setBy=None):
         self._playState = paused
         self._setBy = setBy
+        self.writeToFile()
 
     def setPosition(self, position, setBy=None):
         self._position = position
@@ -465,9 +503,11 @@ class Room(object):
 
     def setPlaylist(self, files, setBy=None):
         self._playlist = files
+        self.writeToFile()
 
     def setPlaylistIndex(self, index, setBy=None):
         self._playlistIndex = index
+        self.writeToFile()
 
     def getPlaylist(self):
         return self._playlist
@@ -687,6 +727,7 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--disable-chat', action='store_true', help=getMessage("server-chat-argument"))
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"), default=os.environ.get('SYNCPLAY_SALT'))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
+        self._argparser.add_argument('--rooms-dir', metavar='rooms', type=str, nargs='?', help=getMessage("server-rooms-argument"))
         self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength', type=int, nargs='?', help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
         self._argparser.add_argument('--max-username-length', metavar='maxUsernameLength', type=int, nargs='?', help=getMessage("server-maxusernamelength-argument").format(constants.MAX_USERNAME_LENGTH))
         self._argparser.add_argument('--stats-db-file', metavar='file', type=str, nargs='?', help=getMessage("server-stats-db-file-argument"))

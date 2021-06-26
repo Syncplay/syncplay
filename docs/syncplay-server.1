@@ -78,6 +78,10 @@ Random string used to generate managed room passwords.
 Path to a file from which motd (Message Of The Day) will be read.
 
 .TP
+.B \-\-rooms\-dir [directory]
+Path to a directory from where room data will be written to and read from. This will enable rooms to persist without watchers and through restarts. Will not work if using \fB--isolate-rooms\fP.
+
+.TP
 .B \-\-max\-chat\-message\-length [maxChatMessageLength]
 Maximum number of characters in one chat message (default is 150).
 

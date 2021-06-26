@@ -472,6 +472,7 @@ de = {
     "server-salt-argument": "zufällige Zeichenkette, die zur Erstellung von Passwörtern verwendet wird",
     "server-disable-ready-argument": "Bereitschaftsfeature deaktivieren",
     "server-motd-argument": "Pfad zur Datei, von der die Nachricht des Tages geladen wird",
+    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
     "server-chat-argument": "Soll Chat deaktiviert werden?",
     "server-chat-maxchars-argument": "Maximale Zeichenzahl in einer Chatnachricht (Standard ist {})",
     "server-maxusernamelength-argument": "Maximale Zeichenzahl in einem Benutzernamen (Standard ist {})",
