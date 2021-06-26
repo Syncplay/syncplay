@@ -41,7 +41,7 @@ class SyncFactory(Factory):
             print(getMessage("no-salt-notification").format(salt))
         self._salt = salt
         self._motdFilePath = motdFilePath
-        self._roomsDirPath = roomsDirPath if os.path.isdir(roomsDirPath) else None
+        self._roomsDirPath = roomsDirPath if roomsDirPath is not None and os.path.isdir(roomsDirPath) else None
         self.disableReady = disableReady
         self.disableChat = disableChat
         self.maxChatMessageLength = maxChatMessageLength if maxChatMessageLength is not None else constants.MAX_CHAT_MESSAGE_LENGTH
