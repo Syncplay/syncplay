@@ -475,6 +475,7 @@ class Room(object):
         for watcher in self._watchers.values():
             watcher.setPosition(position)
             self._setBy = setBy
+        self.writeToFile()
 
     def isPlaying(self):
         return self._playState == self.STATE_PLAYING
@@ -486,7 +487,7 @@ class Room(object):
         return list(self._watchers.values())
 
     def addWatcher(self, watcher):
-        if self._watchers:
+        if self._watchers or self._roomsDir is not None:
             watcher.setPosition(self.getPosition())
         self._watchers[watcher.getName()] = watcher
         watcher.setRoom(self)
@@ -496,8 +497,9 @@ class Room(object):
             return
         del self._watchers[watcher.getName()]
         watcher.setRoom(None)
-        if not self._watchers:
+        if not self._watchers and self._roomsDir is None:
             self._position = 0
+        self.writeToFile()
 
     def isEmpty(self):
         return not bool(self._watchers)
