@@ -327,6 +327,7 @@ class RoomManager(object):
                         roomName = truncateText(room.getName(), constants.MAX_ROOM_NAME_LENGTH)
                         if len(room.getPlaylist()) == 0 or room.isStale(self._timer):
                             os.remove(os.path.join(root, file))
+                            del room
                         else:
                             self._rooms[roomName] = room
 
