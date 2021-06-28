@@ -470,6 +470,7 @@ ru = {
     "server-disable-ready-argument": "отключить статусы готов/не готов",
     "server-motd-argument": "путь к файлу, из которого будет извлекаться MOTD-сообщение",
     "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-timer-argument": "time in seconds before a persistent room with no watchers is pruned. 0 disables pruning", # TODO: Translate
     "server-chat-argument": "Должен ли чат быть отключён?",
     "server-chat-maxchars-argument": "Максимальное число символов в сообщениях в чате (по умолчанию {})",
     "server-maxusernamelength-argument": "Максимальное число символов в именах пользователей (по умолчанию {})",

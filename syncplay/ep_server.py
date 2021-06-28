@@ -35,6 +35,7 @@ def main():
         args.password,
         args.motd_file,
         args.rooms_dir,
+        args.rooms_timer,
         args.isolate_rooms,
         args.salt,
         args.disable_ready,

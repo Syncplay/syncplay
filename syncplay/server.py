@@ -26,7 +26,7 @@ from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomString
 
 
 class SyncFactory(Factory):
-    def __init__(self, port='', password='', motdFilePath=None, roomsDirPath=None, isolateRooms=False, salt=None,
+    def __init__(self, port='', password='', motdFilePath=None, roomsDirPath=None, roomsTimer=31558149, isolateRooms=False, salt=None,
                  disableReady=False, disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH,
                  maxUsernameLength=constants.MAX_USERNAME_LENGTH, statsDbFile=None, tlsCertPath=None):
         self.isolateRooms = isolateRooms
@@ -42,12 +42,13 @@ class SyncFactory(Factory):
         self._salt = salt
         self._motdFilePath = motdFilePath
         self._roomsDirPath = roomsDirPath if roomsDirPath is not None and os.path.isdir(roomsDirPath) else None
+        self._roomsTimer = roomsTimer if roomsDirPath is not None and isinstance(roomsTimer, int) and roomsTimer > 0 else 0
         self.disableReady = disableReady
         self.disableChat = disableChat
         self.maxChatMessageLength = maxChatMessageLength if maxChatMessageLength is not None else constants.MAX_CHAT_MESSAGE_LENGTH
         self.maxUsernameLength = maxUsernameLength if maxUsernameLength is not None else constants.MAX_USERNAME_LENGTH
         if not isolateRooms:
-            self._roomManager = RoomManager(self._roomsDirPath)
+            self._roomManager = RoomManager(self._roomsDirPath, self._roomsTimer)
         else:
             self._roomManager = PublicRoomManager()
         if statsDbFile is not None:
@@ -313,8 +314,9 @@ class DBManager(object):
 
 
 class RoomManager(object):
-    def __init__(self, roomsDir=None):
+    def __init__(self, roomsDir=None, timer=0):
         self._roomsDir = roomsDir
+        self._timer = timer
         self._rooms = {}
         if self._roomsDir is not None:
             for root, dirs, files in os.walk(self._roomsDir):
@@ -323,7 +325,7 @@ class RoomManager(object):
                         room = Room('', self._roomsDir)
                         room.loadFromFile(os.path.join(root, file))
                         roomName = truncateText(room.getName(), constants.MAX_ROOM_NAME_LENGTH)
-                        if len(room.getPlaylist()) == 0:
+                        if len(room.getPlaylist()) == 0 or room.isStale(self._timer):
                             os.remove(os.path.join(root, file))
                         else:
                             self._rooms[roomName] = room
@@ -356,16 +358,18 @@ class RoomManager(object):
         oldRoom = watcher.getRoom()
         if oldRoom:
             oldRoom.removeWatcher(watcher)
-            if self._roomsDir is None:
+            if self._roomsDir is None or oldRoom.isStale(self._timer):
                 self._deleteRoomIfEmpty(oldRoom)
 
     def _getRoom(self, roomName):
-        if roomName in self._rooms:
+        if roomName in self._rooms and not self._rooms[roomName].isStale(self._timer):
             return self._rooms[roomName]
         else:
             if RoomPasswordProvider.isControlledRoom(roomName):
                 room = ControlledRoom(roomName)
             else:
+                if roomName in self._rooms:
+                    self._deleteRoomIfEmpty(self._rooms[roomName])
                 room = Room(roomName, self._roomsDir)
             self._rooms[roomName] = room
             return room
@@ -416,6 +420,7 @@ class Room(object):
         self._playlist = []
         self._playlistIndex = None
         self._lastUpdate = time.time()
+        self._lastSavedUpdate = 0
         self._position = 0
 
     def __str__(self, *args, **kwargs):
@@ -444,6 +449,7 @@ class Room(object):
         data['playlist'] = self._playlist
         data['playlistIndex'] = self._playlistIndex
         data['position'] = self._position
+        data['lastSavedUpdate'] = self._lastSavedUpdate
         with open(os.path.join(self._roomsDir, self.sanitizeFilename(self._name)+'.room'), "w") as outfile:
             json.dump(data, outfile)
 
@@ -454,6 +460,12 @@ class Room(object):
             self._playlist = data['playlist']
             self._playlistIndex = data['playlistIndex']
             self._position = data['position']
+            self._lastSavedUpdate = data['lastSavedUpdate']
+
+    def isStale(self, timer):
+        if timer == 0 or self._lastSavedUpdate == 0:
+            return False
+        return time.time() - self._lastSavedUpdate > timer
 
     def getName(self):
         return self._name
@@ -464,7 +476,7 @@ class Room(object):
             watcher = min(self._watchers.values())
             self._setBy = watcher
             self._position = watcher.getPosition()
-            self._lastUpdate = time.time()
+            self._lastSavedUpdate = self._lastUpdate = time.time()
             return self._position
         elif self._position is not None:
             return self._position + (age if self._playState == self.STATE_PLAYING else 0)
@@ -743,6 +755,7 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"), default=os.environ.get('SYNCPLAY_SALT'))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
         self._argparser.add_argument('--rooms-dir', metavar='rooms', type=str, nargs='?', help=getMessage("server-rooms-argument"))
+        self._argparser.add_argument('--rooms-timer', metavar='timer', type=int, nargs='?',default=31558149, help=getMessage("server-timer-argument"))
         self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength', type=int, nargs='?', help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
         self._argparser.add_argument('--max-username-length', metavar='maxUsernameLength', type=int, nargs='?', help=getMessage("server-maxusernamelength-argument").format(constants.MAX_USERNAME_LENGTH))
         self._argparser.add_argument('--stats-db-file', metavar='file', type=str, nargs='?', help=getMessage("server-stats-db-file-argument"))
