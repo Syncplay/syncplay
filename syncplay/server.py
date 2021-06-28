@@ -421,11 +421,17 @@ class Room(object):
     def __str__(self, *args, **kwargs):
         return self.getName()
 
+    def roomsCanPersist(self):
+        return self._roomsDir is not None
+
+    def isPermanent(self):
+        return self.roomsCanPersist()
+
     def sanitizeFilename(self, filename, blacklist="<>:/\\|?*\"", placeholder="_"):
         return ''.join([c if c not in blacklist and ord(c) >= 32 else placeholder for c in filename])
 
     def writeToFile(self):
-        if self._roomsDir is None:
+        if not self.isPermanent():
             return
         if len(self._playlist) == 0:
             try:
@@ -487,7 +493,7 @@ class Room(object):
         return list(self._watchers.values())
 
     def addWatcher(self, watcher):
-        if self._watchers or self._roomsDir is not None:
+        if self._watchers or self.isPermanent():
             watcher.setPosition(self.getPosition())
         self._watchers[watcher.getName()] = watcher
         watcher.setRoom(self)
@@ -497,7 +503,7 @@ class Room(object):
             return
         del self._watchers[watcher.getName()]
         watcher.setRoom(None)
-        if not self._watchers and self._roomsDir is None:
+        if not self._watchers and not self.isPermanent():
             self._position = 0
         self.writeToFile()
 
