@@ -438,9 +438,10 @@ class Room(object):
     def writeToFile(self):
         if not self.isPermanent():
             return
+        filename = os.path.join(self._roomsDir, self.sanitizeFilename(self._name)+'.room')
         if len(self._playlist) == 0:
             try:
-                os.remove(os.path.join(self._roomsDir, self.sanitizeFilename(self._name)+'.room'))
+                os.remove(filename)
             except Exception:
                 pass
             return
@@ -450,7 +451,7 @@ class Room(object):
         data['playlistIndex'] = self._playlistIndex
         data['position'] = self._position
         data['lastSavedUpdate'] = self._lastSavedUpdate
-        with open(os.path.join(self._roomsDir, self.sanitizeFilename(self._name)+'.room'), "w") as outfile:
+        with open(filename, "w") as outfile:
             json.dump(data, outfile)
 
     def loadFromFile(self, filename):
