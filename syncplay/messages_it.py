@@ -82,6 +82,7 @@ it = {
     "commandlist-notification/undo": "\tu - annulla l'ultima ricerca",
     "commandlist-notification/pause": "\tp - attiva o disattiva la pausa",
     "commandlist-notification/seek": "\t[s][+-]tempo - salta all'istante di tempo dato, se + o - non è specificato si considera il tempo assoluto in secondi o min:sec",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position",
     "commandlist-notification/help": "\th - mostra questo help",
     "commandlist-notification/toggle": "\tt - attiva o disattiva la funzionalità \"pronto\"",
     "commandlist-notification/create": "\tc [nome] - crea una stanza gestita usando il nome della stanza attuale",

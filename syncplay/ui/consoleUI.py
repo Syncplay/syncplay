@@ -237,6 +237,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/undo"), True)
             self.showMessage(getMessage("commandlist-notification/pause"), True)
             self.showMessage(getMessage("commandlist-notification/seek"), True)
+            self.showMessage(getMessage("commandlist-notification/offset"), True)
             self.showMessage(getMessage("commandlist-notification/help"), True)
             self.showMessage(getMessage("commandlist-notification/toggle"), True)
             self.showMessage(getMessage("commandlist-notification/create"), True)

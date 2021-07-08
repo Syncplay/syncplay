@@ -82,6 +82,7 @@ ru = {
     "commandlist-notification/undo": "\tu - отменить последнюю перемотку",
     "commandlist-notification/pause": "\tp - вкл./выкл. паузу",
     "commandlist-notification/seek": "\t[s][+-]time - перемотать к заданному моменту времени, если не указан + или -, то время считается абсолютным (от начала файла) в секундах или мин:сек",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position",
     "commandlist-notification/help": "\th - помощь",
     "commandlist-notification/toggle": "\tt - переключить статус готов/не готов к просмотру",
     "commandlist-notification/create": "\tc [name] - создать управляемую комнату с таким же именем, как у текущей",

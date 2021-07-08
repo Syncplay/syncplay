@@ -82,6 +82,7 @@ tr = {
     "commandlist-notification/undo": "\tu - son isteği geri alır",
     "commandlist-notification/pause": "\tp - duraklatmayı değiştirir",
     "commandlist-notification/seek": "\t[s][+-]time - verilen zaman değerine atlar, eğer + veya - belirtilmezse, saniye:dakika cinsinden mutlak zamandır.",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position",
     "commandlist-notification/help": "\th - yardım",
     "commandlist-notification/toggle": "\tt - izlemeye hazır olup olmadığınızı değiştirir",
     "commandlist-notification/create": "\tc [name] - mevcut odanın adını kullanarak yönetilen oda oluştur",
