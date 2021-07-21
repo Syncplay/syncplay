@@ -131,7 +131,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get install libxkbcommon-x11-0
+          sudo apt-get install --no-install-recommends \
+            libglib2.0-0 \
+            libxkbcommon-x11-0 \
+          ;
 
       - name: Build
         run: ci/appimage-script.sh
