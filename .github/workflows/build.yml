@@ -134,6 +134,7 @@ jobs:
           sudo apt-get install --no-install-recommends \
             libglib2.0-0 \
             libxkbcommon-x11-0 \
+            libxcb1 \
           ;
 
       - name: Build

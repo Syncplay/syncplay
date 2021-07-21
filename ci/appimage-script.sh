@@ -112,6 +112,7 @@ export OUTPUT=Syncplay-$VERSION-x86_64.AppImage
     --output appimage --custom-apprun AppRun.sh \
 	-l /usr/lib/x86_64-linux-gnu/libgthread-2.0.so.0 \
 	-l /usr/lib/x86_64-linux-gnu/libxkbcommon-x11.so.0 \
+	-l /usr/lib/x86_64-linux-gnu/libxcb.so.1 \
 ;
 
 mv Syncplay*.AppImage "$OLD_CWD"
