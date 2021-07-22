@@ -9,9 +9,9 @@ import re
 import sys
 import threading
 import time
-from fnmatch import fnmatch
 from copy import deepcopy
 from functools import wraps
+from urllib.parse import urlparse
 
 from twisted.application.internet import ClientService
 from twisted.internet.endpoints import HostnameEndpoint
@@ -546,27 +546,47 @@ class SyncplayClient(object):
         if oldRoomList != newRoomList:
             self._config['roomList'] = newRoomList
 
+    def _isURITrustableAndTrusted(self, URIToTest):
+        """Returns a tuple of booleans: (trustable, trusted).
+        
+        A given URI is "trustable" if it uses HTTP or HTTPS (constants.TRUSTABLE_WEB_PROTOCOLS).
+        A given URI is "trusted" if it matches an entry in the trustedDomains config.
+        Such an entry is considered matching if the domain is the same and the path
+        is a prefix of the given URI's path.
+        A "trustable" URI is always "trusted" if the config onlySwitchToTrustedDomains is false.
+        """
+        o = urlparse(URIToTest)
+        trustable = o.scheme in constants.TRUSTABLE_WEB_PROTOCOLS
+        if not trustable:
+            # untrustable URIs are never trusted, return early
+            return False, False
+        if not self._config['onlySwitchToTrustedDomains']:
+            # trust all trustable URIs in this case
+            return trustable, True
+        # check for matching trusted domains
+        if self._config['trustedDomains']:
+            for entry in self._config['trustedDomains']:
+                trustedDomain, _, path = entry.partition('/')
+                if o.hostname not in (trustedDomain, "www." + trustedDomain):
+                    # domain does not match
+                    continue
+                if path and not o.path.startswith('/' + path):
+                    # trusted domain has a path component and it does not match
+                    continue
+                # match found, trust this domain
+                return trustable, True
+        # no matches found, do not trust this domain
+        return trustable, False
+
     def isUntrustedTrustableURI(self, URIToTest):
         if utils.isURL(URIToTest):
-            for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:
-                if URIToTest.startswith(trustedProtocol) and not self.isURITrusted(URIToTest):
-                    return True
+            trustable, trusted = self._isURITrustableAndTrusted(URIToTest)
+            return trustable and not trusted
         return False
 
     def isURITrusted(self, URIToTest):
-        URIToTest = URIToTest+"/"
-        for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:
-            if URIToTest.startswith(trustedProtocol):
-                if self._config['onlySwitchToTrustedDomains']:
-                    if self._config['trustedDomains']:
-                        for trustedDomain in self._config['trustedDomains']:
-                            trustableURI = ''.join([trustedProtocol, trustedDomain, "/*"])
-                            if fnmatch(URIToTest, trustableURI):
-                                return True
-                    return False
-                else:
-                    return True
-        return False
+        trustable, trusted = self._isURITrustableAndTrusted(URIToTest)
+        return trustable and trusted
 
     def openFile(self, filePath, resetPosition=False, fromUser=False):
         if fromUser and filePath.endswith(".txt") or filePath.endswith(".m3u") or filePath.endswith(".m3u8"):
