@@ -395,12 +395,15 @@ def playlistIsValid(files):
 
 def getDomainFromURL(URL):
     try:
-        URL = URL.split("//")[-1].split("/")[0]
-        if URL.startswith("www."):
-            URL = URL[4:]
-        return URL
-    except:
+        o = urllib.parse.urlparse(URL)
+    except ValueError:
+        # not a URL
         return None
+    if o.hostname is not None and o.hostname.startswith("www."):
+        return o.hostname[4:]
+    else:
+        # may return None if URL does not have domain (invalid url)
+        return o.hostname
 
 
 def open_system_file_browser(path):
