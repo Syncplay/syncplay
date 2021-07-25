@@ -277,7 +277,7 @@ es = {
     "run-label": "Ejecutar Syncplay",
     "storeandrun-label": "Almacenar la configuración y ejecutar Syncplay",
 
-    "contact-label": "No dudes en enviar un correo electrónico a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, chatea a través del canal de IRC <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay</nobr></a> en irc.freenode.net, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>reportar un problema</nobr></a> vía GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>danos \"me gusta\" en Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>síguenos en Twitter</nobr></a>, o visita <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. No utilices Syncplay para enviar información sensible.",
+    "contact-label": "No dudes en enviar un correo electrónico a <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>reportar un problema</nobr></a> vía GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>danos \"me gusta\" en Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>síguenos en Twitter</nobr></a>, o visita <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. No utilices Syncplay para enviar información sensible.",
 
     "joinroom-label": "Unirse a la sala",
     "joinroom-menu-label": "Unirse a la sala {}",

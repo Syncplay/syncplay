@@ -277,7 +277,7 @@ ru = {
     "run-label": "Запустить",
     "storeandrun-label": "Сохранить и запустить",
 
-    "contact-label": "Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, в <a href=\"https://webchat.freenode.net/?channels=#syncplay\">IRC канал #Syncplay</a> на irc.freenode.net или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"https://syncplay.pl/\">www.syncplay.pl</a> за информацией, помощью и обновлениями! Не используйте Syncplay для передачи конфиденциальной информации.",
+    "contact-label": "Есть идея, нашли ошибку или хотите оставить отзыв? Пишите на <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a> или <a href=\"https://github.com/Uriziel/syncplay/issues\">задавайте вопросы через GitHub</a>. Кроме того, заходите на <a href=\"https://syncplay.pl/\">www.syncplay.pl</a> за информацией, помощью и обновлениями! Не используйте Syncplay для передачи конфиденциальной информации.",
 
     "joinroom-label": "Зайти в комнату",
     "joinroom-menu-label": "Зайти в комнату {}",

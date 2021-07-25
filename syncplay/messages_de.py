@@ -274,7 +274,7 @@ de = {
     "run-label": "Syncplay starten",
     "storeandrun-label": "Konfiguration speichern und Syncplay starten",
 
-    "contact-label": "Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a>, chatte auf dem <a href=\"https://webchat.freenode.net/?channels=#syncplay\">#Syncplay IRC-Kanal</a> auf irc.freenode.net oder <a href=\"https://github.com/Uriziel/syncplay/issues\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"https://syncplay.pl/\">https://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates. Chatnachrichten sind nicht verschlüsselt, also verwende Syncplay nicht, um sensible Daten zu verschicken.",
+    "contact-label": "Du hast eine Idee, einen Bug gefunden oder möchtest Feedback geben? Sende eine E-Mail an <a href=\"mailto:dev@syncplay.pl\">dev@syncplay.pl</a> oder <a href=\"https://github.com/Uriziel/syncplay/issues\">öffne eine Fehlermeldung auf GitHub</a>. Außerdem findest du auf <a href=\"https://syncplay.pl/\">https://syncplay.pl/</a> weitere Informationen, Hilfestellungen und Updates. Chatnachrichten sind nicht verschlüsselt, also verwende Syncplay nicht, um sensible Daten zu verschicken.",
 
     "joinroom-label": "Raum beitreten",
     "joinroom-menu-label": "Raum beitreten {}",  # TODO: Might want to fix this

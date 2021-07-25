@@ -278,7 +278,7 @@ tr = {
     "run-label": "Syncplay'i çalıştırın",
     "storeandrun-label": "Yapılandırmayı depolayın ve Syncplay'i çalıştırın",
 
-    "contact-label": "E-posta <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a> göndermekten çekinmeyin. irc.freenode.net'te <a href=\"https://webchat.freenode.net/?channels=#syncplay\"><nobr>#Syncplay IRC channel</nobr></a> kanalı üzerinden yazabilir, GitHub üzerinden <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>sorun bildirebilir</nobr></a>, Facebook üzerinden <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>bizi beğenebilir</nobr></a>, Twitter üzerinden <a href=\"https://twitter.com/Syncplay/\"><nobr>bizi takip edebilir</nobr></a>, veya <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a> adresinden sayfamızı ziyaret edebilirsiniz. Hassas bilgileri göndermek için Syncplay kullanmayın.",
+    "contact-label": "E-posta <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a> göndermekten çekinmeyin, GitHub üzerinden <a href=\"https://github.com/Uriziel/syncplay/issues\"><nobr>sorun bildirebilir</nobr></a>, Facebook üzerinden <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>bizi beğenebilir</nobr></a>, Twitter üzerinden <a href=\"https://twitter.com/Syncplay/\"><nobr>bizi takip edebilir</nobr></a>, veya <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a> adresinden sayfamızı ziyaret edebilirsiniz. Hassas bilgileri göndermek için Syncplay kullanmayın.",
 
     "joinroom-label": "Odaya katıl",
     "joinroom-menu-label": "{} odasına katıl",
