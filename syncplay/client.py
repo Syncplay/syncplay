@@ -1059,8 +1059,16 @@ class SyncplayClient(object):
 
     def checkForUpdate(self, userInitiated):
         try:
-            import urllib.request, urllib.parse, urllib.error, syncplay, sys, json
-            params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number, 'language': syncplay.messages.messages["CURRENT"], 'platform': sys.platform, 'userInitiated': userInitiated})
+            import urllib.request, urllib.parse, urllib.error, syncplay, sys, json, platform
+            try:
+                architecture = platform.architecture()[0]
+            except:
+                architecture = "Unknown"
+            try:
+                machine = platform.machine()
+            except:
+                machine = "Unknown"
+            params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number, 'language': syncplay.messages.messages["CURRENT"], 'platform': sys.platform, 'architecture': architecture, 'machine': machine, 'userInitiated': userInitiated})
             if isMacOS():
                 import requests
                 response = requests.get(constants.SYNCPLAY_UPDATE_URL.format(params))
