@@ -115,4 +115,5 @@ export OUTPUT=Syncplay-$VERSION-x86_64.AppImage
 	-l /usr/lib/x86_64-linux-gnu/libxcb.so.1 \
 ;
 
+
 mv Syncplay*.AppImage "$OLD_CWD"
