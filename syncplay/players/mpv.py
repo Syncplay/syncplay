@@ -65,6 +65,8 @@ class MpvPlayer(BasePlayer):
                     continue
                 if "=" in argToAdd:
                     (argName, argValue) = argToAdd.split("=", 1)
+                    if argValue[0] == '"' and argValue[-1] == '"':
+                        argValue = argValue[1:-1]
                 else:
                     argName = argToAdd
                     argValue = "yes"
@@ -210,6 +212,9 @@ class MpvPlayer(BasePlayer):
             return self._position + diff
         else:
             return self._position
+
+    def eofDetected(self):
+        self._client.eofReportedByPlayer()
 
     def _storePosition(self, value):
         if value is None:
@@ -418,10 +423,12 @@ class MpvPlayer(BasePlayer):
 
     def _handleUnknownLine(self, line):
         self.mpvErrorCheck(line)
-
         if "<chat>" in line:
             line = line.replace(constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER, "\\")
             self._listener.sendChat(line[6:-7])
+
+        if "<eof>" in line:
+            self.eofDetected()
 
         if "<paused=" in line and ", pos=" in line:
             update_string = line.replace(">", "<").replace("=", "<").replace(", ", "<").split("<")

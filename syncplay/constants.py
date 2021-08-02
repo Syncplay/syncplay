@@ -29,7 +29,7 @@ MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "
 CONFIG_NAMES = [".syncplay", "syncplay.ini"]  # Syncplay searches first to last
 DEFAULT_CONFIG_NAME = "syncplay.ini"
-RECENT_CLIENT_THRESHOLD = "1.6.7"  # This and higher considered 'recent' clients (no warnings)
+RECENT_CLIENT_THRESHOLD = "1.6.8"  # This and higher considered 'recent' clients (no warnings)
 MUSIC_FORMATS = [".mp3", ".m4a", ".m4p", ".wav", ".aiff", ".r", ".ogg", ".flac"] # ALL LOWER CASE!
 WARN_OLD_CLIENTS = True  # Use MOTD to inform old clients to upgrade
 LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
@@ -131,7 +131,7 @@ COMMANDS_DELETE = ['delete', 'd', 'qd']
 MPC_MIN_VER = "1.6.4"
 MPC_BE_MIN_VER = "1.5.2.3123"
 VLC_MIN_VERSION = "2.2.1"
-VLC_INTERFACE_VERSION = "0.3.6"
+VLC_INTERFACE_VERSION = "0.3.7"
 VLC_LATENCY_ERROR_THRESHOLD = 2.0
 MPV_UNRESPONSIVE_THRESHOLD = 60.0
 CONTROLLED_ROOMS_MIN_VERSION = "1.3.0"
@@ -150,6 +150,8 @@ MPC_PATHS = [
     r"c:\program files (x86)\media player classic - home cinema\mpc-hc.exe",
     r"c:\program files (x86)\k-lite codec pack\media player classic\mpc-hc.exe",
     r"c:\program files\k-lite codec pack\media Player classic\mpc-hc.exe",
+    r"C:\program files\k-lite codec pack\mpc-hc64\mpc-hc64.exe",
+    r"C:\program files (x86)\k-lite codec pack\mpc-hc64\mpc-hc64.exe",
     r"c:\program files (x86)\combined community codec pack\mpc\mpc-hc.exe",
     r"c:\program files\combined community codec pack\mpc\mpc-hc.exe",
     r"c:\program files\mpc homecinema (x64)\mpc-hc64.exe",
@@ -287,7 +289,7 @@ VLC_SLAVE_EXTRA_ARGS = getValueForOS({
 MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS = ["set_property time-pos ", "loadfile "]
 MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS = ["cycle pause"]
 MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
-VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_]+)(?:\: )?(?P<argument>.*))"
+VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_-]+)(?:\: )?(?P<argument>.*))"
 UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
 UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,9}(?:[^\d\.](?:\d{1,9})){0,2}(?:\.(?:\d{1,3}))?)$"
 UI_SEEK_REGEX = r"^(?:s|seek)?\ ?(?P<sign>[+-])?(?P<time>\d{1,4}(?:[^\d\.](?:\d{1,6})){0,2}(?:\.(?:\d{1,3}))?)$"

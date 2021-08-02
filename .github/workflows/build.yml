@@ -1,5 +1,5 @@
 name: Build
-on: push
+on: [push, pull_request]
 
 jobs:
   windows:
@@ -124,14 +124,18 @@ jobs:
 
   appimage:
     name: Build AppImage
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Install dependencies
         run: |
-          sudo apt-get install libxkbcommon-x11-0
+          sudo apt-get install --no-install-recommends \
+            libglib2.0-0 \
+            libxkbcommon-x11-0 \
+            libxcb1 \
+          ;
 
       - name: Build
         run: ci/appimage-script.sh
@@ -178,9 +182,16 @@ jobs:
           mv /tmp/syncplay-server.deb dist_actions/syncplay-server_${VER}.deb
           ls -al dist_actions
 
-      - name: Deploy
+      - name: Deploy full deb
         uses: actions/upload-artifact@v2
         with:
           name: syncplay.deb
           path: |
-            dist_actions/syncplay*.deb
+            dist_actions/syncplay_*.deb
+
+      - name: Deploy server deb
+        uses: actions/upload-artifact@v2
+        with:
+          name: syncplay-server.deb
+          path: |
+            dist_actions/syncplay-server_*.deb

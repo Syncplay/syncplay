@@ -39,7 +39,7 @@ except:
 from syncplay import utils, constants, version
 from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME
-from syncplay.messages import getMissingStrings, getMessage
+from syncplay.messages import getMissingStrings, getMessage, isNoOSDMessage
 from syncplay.protocols import SyncClientProtocol
 from syncplay.utils import isMacOS
 
@@ -499,6 +499,11 @@ class SyncplayClient(object):
         if not self._lastGlobalUpdate:
             return True
         return self._globalPaused
+
+    def eofReportedByPlayer(self):
+        if self.playlist.notJustChangedPlaylist() and self.userlist.currentUser.file:
+            self.ui.showDebugMessage("Fixing file duration to allow for playlist advancement")
+            self.userlist.currentUser.file["duration"] = self._playerPosition
 
     def updateFile(self, filename, duration, path):
         self.lastUpdatedFileTime = time.time()
@@ -1054,8 +1059,16 @@ class SyncplayClient(object):
 
     def checkForUpdate(self, userInitiated):
         try:
-            import urllib.request, urllib.parse, urllib.error, syncplay, sys, json
-            params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number, 'language': syncplay.messages.messages["CURRENT"], 'platform': sys.platform, 'userInitiated': userInitiated})
+            import urllib.request, urllib.parse, urllib.error, syncplay, sys, json, platform
+            try:
+                architecture = platform.architecture()[0]
+            except:
+                architecture = "Unknown"
+            try:
+                machine = platform.machine()
+            except:
+                machine = "Unknown"
+            params = urllib.parse.urlencode({'version': syncplay.version, 'milestone': syncplay.milestone, 'release_number': syncplay.release_number, 'language': syncplay.messages.messages["CURRENT"], 'platform': sys.platform, 'architecture': architecture, 'machine': machine, 'userInitiated': userInitiated})
             if isMacOS():
                 import requests
                 response = requests.get(constants.SYNCPLAY_UPDATE_URL.format(params))
@@ -1601,6 +1614,9 @@ class UiManager(object):
         self.__ui.showUserList(currentUser, rooms)
 
     def showOSDMessage(self, message, duration=constants.OSD_DURATION, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL):
+        if(isNoOSDMessage(message)):
+            return
+
         autoplayConditionsMet = self._client.autoplayConditionsMet()
         if OSDType == constants.OSD_ALERT and not constants.SHOW_OSD_WARNINGS and not self._client.autoplayTimerIsRunning():
             return
