@@ -35,7 +35,7 @@ en = {
     "left-notification": "{} has left",  # User
     "left-paused-notification": "{} left, {} paused",  # User who left, User who paused
     "playing-notification": "{} is playing '{}' ({})",  # User, file, duration
-    "playing-notification/room-addendum":  " in room: '{}'",  # Room
+    "playing-notification/room-addendum": " in room: '{}'",  # Room
 
     "not-all-ready": "Not ready: {}",  # Usernames
     "all-users-ready": "Everyone is ready ({} users)",  # Number of ready users
@@ -163,11 +163,11 @@ en = {
     "argument-description": 'Solution to synchronize playback of multiple media player instances over the network.',
     "argument-epilog": 'If no options supplied _config values will be used',
     "nogui-argument": 'show no GUI',
-    "host-argument": 'server\'s address',
+    "host-argument": "server's address",
     "name-argument": 'desired username',
     "debug-argument": 'debug mode',
     "force-gui-prompt-argument": 'make configuration prompt appear',
-    "no-store-argument": 'don\'t store values in .syncplay',
+    "no-store-argument": "don't store values in .syncplay",
     "room-argument": 'default room',
     "password-argument": 'server password',
     "player-path-argument": 'path to your player executable',
