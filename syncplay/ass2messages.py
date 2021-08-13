@@ -11,7 +11,7 @@ from pyonfx import *
 
 #message_en.py  hold the original English messages we translte from  for the syncplay gui
 # https://raw.githubusercontent.com/Syncplay/syncplay/master/syncplay/messages_en.py
-# this will serves aslo as a template to generate dict_message_file
+# this will serves also as a template to generate dict_message_file
 import messages_en
 messages=messages_en.en
 
@@ -65,7 +65,7 @@ def decodeHTMLEntities(s):
 
 note='# This file was mainly auto generated from ass2messages.py applied on '+ass_message_file+' to get these messages\n'
 note+='# its format has been harmonized, values are always stored in doublequotes strings, \n'
-note+='# if double quoted string in the value then they should be esacaped like this \\". There is\n'
+note+='# if double quoted string in the value then they should be escaped like this \\". There is\n'
 note+='# thus no reason to have single quoted strings. Tabs \\t and newlines \\n need also to be escaped.\n' 
 note+='# whith ass2messages.py which handles these issues, this is no more a nightmare to handle. \n'
 note+='# I fixed partially messages_en.py serving as template. an entry should be added in messages.py:\n'
