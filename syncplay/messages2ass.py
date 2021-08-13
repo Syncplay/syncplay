@@ -23,8 +23,9 @@ io = Ass() #Will use aegisub template Untitled.ass as basis instead of "in.ass"
 io.set_output(ass_message_file)
 meta, styles, lines = io.get_data()
 
-#include by string the <lang> messages file to convert to ass
-# name=messages_<lang>.<lang>
+#include by string name "module.class"
+#We need to include the messages_<lang>.py file to convert to ass
+#thus name is messages_<lang>.<lang>
 #as lang is 'en', it will include message_en.py a dictionary of English messages for the syncplay gui
 # https://raw.githubusercontent.com/Syncplay/syncplay/master/syncplay/messages_en.py
 #equivalent to messages=messages_en.en
