@@ -1,6 +1,6 @@
 # coding:utf8
 #
-# ass2messages.py,   dictionary to subtitle exporter to automate translation
+# ass2messages.py,   ass subtitle to dictionary converter
 # version 2.0
 # author sosie-js - sos-productions.com
 #==========================================
