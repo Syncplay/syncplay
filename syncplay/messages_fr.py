@@ -1,6 +1,6 @@
 # coding:utf8
 
-"""French dictionary"""
+"""English dictionary"""
 
 # This file was mainly auto generated from ass2messages.py applied on messages_fr.ass to get these messages
 # its format has been harmonized, values are always stored in doublequotes strings, 

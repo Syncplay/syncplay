@@ -4,12 +4,12 @@ from syncplay import constants
 from . import messages_en
 from . import messages_ru
 from . import messages_de
-from . import messages_fr
 from . import messages_it
 from . import messages_es
 from . import messages_pt_BR
 from . import messages_pt_PT
 from . import messages_tr
+from . import messages_fr
 import re
 
 messages = {
