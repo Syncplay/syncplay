@@ -497,7 +497,8 @@ class MPCHCAPIPlayer(BasePlayer):
     def getIconPath(path):
         if (
             MPCHCAPIPlayer.getExpandedPath(path).lower().endswith('mpc-hc64.exe'.lower()) or
-            MPCHCAPIPlayer.getExpandedPath(path).lower().endswith('mpc-hc64_nvo.exe'.lower())
+            MPCHCAPIPlayer.getExpandedPath(path).lower().endswith('mpc-hc64_nvo.exe'.lower()) or
+            MPCHCAPIPlayer.getExpandedPath(path).lower().endswith(r'x64\mpc-hc\shoukaku.exe'.lower())
         ):
             return constants.MPC64_ICONPATH
         else:
@@ -515,7 +516,7 @@ class MPCHCAPIPlayer(BasePlayer):
             if (
                 path.lower().endswith('mpc-hc.exe'.lower()) or path.lower().endswith('mpc-hcportable.exe'.lower()) or
                 path.lower().endswith('mpc-hc64.exe'.lower()) or path.lower().endswith('mpc-hc64_nvo.exe'.lower()) or
-                path.lower().endswith('mpc-hc_nvo.exe'.lower())
+                path.lower().endswith('mpc-hc_nvo.exe'.lower()) or path.lower().endswith('shoukaku.exe'.lower())
             ):
                 return path
         if os.path.isfile(path + "mpc-hc.exe"):
@@ -547,4 +548,10 @@ class MPCHCAPIPlayer(BasePlayer):
             return path
         if os.path.isfile(path + "\\mpc-hc64_nvo.exe"):
             path += "\\mpc-hc64_nvo.exe"
+            return path
+        if os.path.isfile(path + "shoukaku.exe"):
+            path += "shoukaku.exe"
+            return path
+        if os.path.isfile(path + "\\shoukaku.exe"):
+            path += "\\shoukaku.exe"
             return path
