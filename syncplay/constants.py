@@ -150,17 +150,19 @@ MPC_PATHS = [
     r"c:\program files (x86)\media player classic - home cinema\mpc-hc.exe",
     r"c:\program files (x86)\k-lite codec pack\media player classic\mpc-hc.exe",
     r"c:\program files\k-lite codec pack\media Player classic\mpc-hc.exe",
-    r"C:\program files\k-lite codec pack\mpc-hc64\mpc-hc64.exe",
-    r"C:\program files (x86)\k-lite codec pack\mpc-hc64\mpc-hc64.exe",
+    r"c:\program files\k-lite codec pack\mpc-hc64\mpc-hc64.exe",
+    r"c:\program files (x86)\k-lite codec pack\mpc-hc64\mpc-hc64.exe",
     r"c:\program files (x86)\combined community codec pack\mpc\mpc-hc.exe",
     r"c:\program files\combined community codec pack\mpc\mpc-hc.exe",
     r"c:\program files\mpc homecinema (x64)\mpc-hc64.exe",
+    r"c:\program files (x86)\lav filters\x86\mpc-hc\shoukaku.exe",
+    r"c:\program files (x86)\lav filters\x64\mpc-hc\shoukaku.exe"
 ]
 MPC_BE_PATHS = [
-    r"c:\Program Files\MPC-BE x64\mpc-be64.exe",
-    r"c:\Program Files\MPC-BE x64\mpc-be.exe",
-    r"c:\Program Files\MPC-BE\mpc-be64.exe",
-    r"c:\Program Files\MPC-BE\mpc-be.exe"
+    r"c:\program files\mpc-be x64\mpc-be64.exe",
+    r"c:\program files\mpc-be x64\mpc-be.exe",
+    r"c:\program files\mpc-be\mpc-be64.exe",
+    r"c:\program files\mpc-be\mpc-be.exe"
 ]
 MPLAYER_PATHS = ["mplayer2", "mplayer"]
 MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"c:\program files\mpv\mpv.exe", r"c:\program files\mpv-player\mpv.exe",
