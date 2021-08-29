@@ -495,14 +495,11 @@ class MPCHCAPIPlayer(BasePlayer):
 
     @staticmethod
     def getIconPath(path):
-        if (
-            MPCHCAPIPlayer.getExpandedPath(path).lower().endswith('mpc-hc64.exe'.lower()) or
-            MPCHCAPIPlayer.getExpandedPath(path).lower().endswith('mpc-hc64_nvo.exe'.lower()) or
-            MPCHCAPIPlayer.getExpandedPath(path).lower().endswith(r'x64\mpc-hc\shoukaku.exe'.lower())
-        ):
-            return constants.MPC64_ICONPATH
-        else:
-            return constants.MPC_ICONPATH
+        lower_path = MPCHCAPIPlayer.getExpandedPath(path).lower()
+        for mpc_64_filename in constants.MPC64_EXECUTABLES:
+            if lower_path.endswith(mpc_64_filename):
+                return constants.MPC64_ICONPATH
+        return constants.MPC_ICONPATH
 
     @staticmethod
     def isValidPlayerPath(path):
@@ -512,46 +509,15 @@ class MPCHCAPIPlayer(BasePlayer):
 
     @staticmethod
     def getExpandedPath(path):
+        lower_path = path.lower()
         if os.path.isfile(path):
-            if (
-                path.lower().endswith('mpc-hc.exe'.lower()) or path.lower().endswith('mpc-hcportable.exe'.lower()) or
-                path.lower().endswith('mpc-hc64.exe'.lower()) or path.lower().endswith('mpc-hc64_nvo.exe'.lower()) or
-                path.lower().endswith('mpc-hc_nvo.exe'.lower()) or path.lower().endswith('shoukaku.exe'.lower())
-            ):
+            for mpc_executable_filename in constants.MPC_EXECUTABLES:
+                if lower_path.endswith(mpc_executable_filename):
+                    return path
+        for mpc_executable_filename in constants.MPC_EXECUTABLES:
+            if os.path.isfile(path + mpc_executable_filename):
+                path += mpc_executable_filename
                 return path
-        if os.path.isfile(path + "mpc-hc.exe"):
-            path += "mpc-hc.exe"
-            return path
-        if os.path.isfile(path + "\\mpc-hc.exe"):
-            path += "\\mpc-hc.exe"
-            return path
-        if os.path.isfile(path + "mpc-hcportable.exe"):
-            path += "mpc-hcportable.exe"
-            return path
-        if os.path.isfile(path + "\\mpc-hcportable.exe"):
-            path += "\\mpc-hcportable.exe"
-            return path
-        if os.path.isfile(path + "mpc-hc_nvo.exe"):
-            path += "mpc-hc_nvo.exe"
-            return path
-        if os.path.isfile(path + "\\mpc-hc_nvo.exe"):
-            path += "\\mpc-hc_nvo.exe"
-            return path
-        if os.path.isfile(path + "mpc-hc64.exe"):
-            path += "mpc-hc64.exe"
-            return path
-        if os.path.isfile(path + "\\mpc-hc64.exe"):
-            path += "\\mpc-hc64.exe"
-            return path
-        if os.path.isfile(path + "mpc-hc64_nvo.exe"):
-            path += "mpc-hc64_nvo.exe"
-            return path
-        if os.path.isfile(path + "\\mpc-hc64_nvo.exe"):
-            path += "\\mpc-hc64_nvo.exe"
-            return path
-        if os.path.isfile(path + "shoukaku.exe"):
-            path += "shoukaku.exe"
-            return path
-        if os.path.isfile(path + "\\shoukaku.exe"):
-            path += "\\shoukaku.exe"
-            return path
+            elif os.path.isfile(path + "\\" +  mpc_executable_filename):
+                path += "\\" + mpc_executable_filename
+                return path

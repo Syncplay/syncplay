@@ -158,6 +158,10 @@ MPC_PATHS = [
     r"c:\program files (x86)\lav filters\x86\mpc-hc\shoukaku.exe",
     r"c:\program files (x86)\lav filters\x64\mpc-hc\shoukaku.exe"
 ]
+
+MPC_EXECUTABLES = ["mpc-hc.exe", "mpc-hc64.exe", "mpc-hcportable.exe", "mpc-hc_nvo.exe", "mpc-hc64_nvo.exe", "shoukaku.exe"]
+MPC64_EXECUTABLES = ["mpc-hc64.exe", "mpc-hc64_nvo.exe", "x64\mpc-hc\shoukaku.exe"]
+
 MPC_BE_PATHS = [
     r"c:\program files\mpc-be x64\mpc-be64.exe",
     r"c:\program files\mpc-be x64\mpc-be.exe",
