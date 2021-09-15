@@ -1,10 +1,13 @@
 import sys
 
-from twisted.internet import reactor
+from twisted.internet import reactor, endpoints
 from twisted.internet.endpoints import TCP4ServerEndpoint, TCP6ServerEndpoint
 from twisted.internet.error import CannotListenError
 
+from twisted.web import server, resource
+
 from syncplay.server import SyncFactory, ConfigurationGetter
+from syncplay.webapi import WebAPI
 
 class ServerStatus: pass
 
@@ -27,6 +30,7 @@ def failed4(f):
         print(f.value)
         print("IPv4 listening failed.")
 
+
 def main():
     argsGetter = ConfigurationGetter()
     args = argsGetter.getConfiguration()
@@ -43,6 +47,9 @@ def main():
         args.stats_db_file,
         args.tls
     )
+    site = server.Site(WebAPI(factory))
+    endpoint = endpoints.TCP4ServerEndpoint(reactor, 8080)
+    endpoint.listen(site)
     endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))
     endpoint6.listen(factory).addCallbacks(isListening6, failed6)
     endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))
@@ -55,3 +62,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

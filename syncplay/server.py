@@ -260,6 +260,9 @@ class SyncFactory(Factory):
         if self._TLSattempts < constants.TLS_CERT_ROTATION_MAX_RETRIES:
             self.serverAcceptsTLS = True
 
+    def _getRoomManager(self):
+        return self._roomManager
+
 
 class StatsRecorder(object):
     def __init__(self, dbHandle, roomManager):
@@ -356,8 +359,9 @@ class RoomManager(object):
             return room
 
     def _deleteRoomIfEmpty(self, room):
-        if room.isEmpty() and room.getName() in self._rooms:
-            del self._rooms[room.getName()]
+        #if room.isEmpty() and room.getName() in self._rooms:
+        #    del self._rooms[room.getName()]
+        print("Would delete room: " + room.getName())
 
     def findFreeUsername(self, username):
         username = truncateText(username, constants.MAX_USERNAME_LENGTH)
