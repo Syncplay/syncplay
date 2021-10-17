@@ -731,7 +731,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                lambda: utils.open_system_file_browser(pathFound))
             if self._syncplayClient.isUntrustedTrustableURI(firstFile):
                 domain = utils.getDomainFromURL(firstFile)
-                menu.addAction(QtGui.QPixmap(resourcespath + "shield_add.png"), getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
+                if domain:
+                    menu.addAction(QtGui.QPixmap(resourcespath + "shield_add.png"), getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
             menu.addAction(QtGui.QPixmap(resourcespath + "delete.png"), getMessage("removefromplaylist-menu-label"), lambda: self.deleteSelectedPlaylistItems())
             menu.addSeparator()
         menu.addAction(QtGui.QPixmap(resourcespath + "arrow_switch.png"), getMessage("shuffleremainingplaylist-menu-label"), lambda: self.shuffleRemainingPlaylist())
@@ -794,7 +795,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openusersfile-menu-label").format(shortUsername), lambda: self.openFile(pathFound, resetPosition=False, fromUser=True))
             if self._syncplayClient.isUntrustedTrustableURI(filename):
                 domain = utils.getDomainFromURL(filename)
-                menu.addAction(QtGui.QPixmap(resourcespath + "shield_add.png"), getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
+                if domain:
+                    menu.addAction(QtGui.QPixmap(resourcespath + "shield_add.png"), getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
 
             if not isURL(filename) and filename != getMessage("nofile-note"):
                 path = self._syncplayClient.fileSwitch.findFilepath(filename)

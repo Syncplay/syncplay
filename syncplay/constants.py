@@ -345,6 +345,6 @@ SYNCPLAY_DOWNLOAD_URL = "https://syncplay.pl/download/"
 SYNCPLAY_PUBLIC_SERVER_LIST_URL = "https://syncplay.pl/listpublicservers?{}"  # Params
 
 DEFAULT_TRUSTED_DOMAINS = ["youtube.com", "youtu.be"]
-TRUSTABLE_WEB_PROTOCOLS = ["http://www.", "https://www.", "http://", "https://"]
+TRUSTABLE_WEB_PROTOCOLS = ["http", "https"]
 
 PRIVATE_FILE_FIELDS = ["path"]
