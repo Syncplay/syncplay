@@ -286,7 +286,16 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
     Call GetSize
     Call DriveSpace
-    Call Language
+
+    $${GetParameters} $$0
+    ClearErrors
+    $${GetOptions} $$0 "/LANG=" $$0
+    $${IfNot} $${Errors}
+    $${AndIf} $$0 <> 0
+      StrCpy $$LANGUAGE $$0
+    $${Else}
+      Call Language
+    $${EndIf}
   FunctionEnd
 
   ;Language selection dialog
