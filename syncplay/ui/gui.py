@@ -1491,6 +1491,9 @@ class MainWindow(QtWidgets.QMainWindow):
         window.listLayout.addWidget(window.listSplit)
         window.roomsCombobox = QtWidgets.QComboBox(self)
         window.roomsCombobox.setEditable(True)
+        caseSensitiveCompleter = QtWidgets.QCompleter("", self)
+        caseSensitiveCompleter.setCaseSensitivity(Qt.CaseSensitive)
+        window.roomsCombobox.setCompleter(caseSensitiveCompleter)
         #window.roomsCombobox.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
         window.roomButton = QtWidgets.QPushButton(
             QtGui.QPixmap(resourcespath + 'door_in.png'),
