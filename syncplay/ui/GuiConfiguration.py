@@ -177,6 +177,7 @@ class ConfigDialog(QtWidgets.QDialog):
         RoomsLayout.addWidget(RoomsButtonBox, 2, 0, 1, 1)
         RoomsDialog.setLayout(RoomsLayout)
         RoomsDialog.setModal(True)
+        RoomsDialog.setWindowFlags(RoomsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         RoomsDialog.show()
         result = RoomsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -668,7 +669,6 @@ class ConfigDialog(QtWidgets.QDialog):
         self.editRoomsButton.setIcon(QtGui.QIcon(resourcespath + 'bullet_edit_centered.png'))
         self.editRoomsButton.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "edit-rooms")
         self.editRoomsButton.released.connect(self.openRoomsDialog)
-
         self.hostLabel.setObjectName("host")
         self.hostCombobox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "host")
         self.usernameLabel.setObjectName("name")

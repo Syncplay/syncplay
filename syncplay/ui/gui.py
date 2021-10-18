@@ -1145,6 +1145,7 @@ class MainWindow(QtWidgets.QMainWindow):
         URIsLayout.addWidget(URIsButtonBox, 2, 0, 1, 1)
         URIsDialog.setLayout(URIsLayout)
         URIsDialog.setModal(True)
+        URIsDialog.setWindowFlags(URIsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         URIsDialog.show()
         result = URIsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1175,6 +1176,7 @@ class MainWindow(QtWidgets.QMainWindow):
         RoomsLayout.addWidget(RoomsButtonBox, 2, 0, 1, 1)
         RoomsDialog.setLayout(RoomsLayout)
         RoomsDialog.setModal(True)
+        RoomsDialog.setWindowFlags(RoomsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         RoomsDialog.show()
         result = RoomsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1209,6 +1211,7 @@ class MainWindow(QtWidgets.QMainWindow):
         editPlaylistDialog.setModal(True)
         editPlaylistDialog.setMinimumWidth(600)
         editPlaylistDialog.setMinimumHeight(500)
+        editPlaylistDialog.setWindowFlags(editPlaylistDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         editPlaylistDialog.show()
         result = editPlaylistDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1239,6 +1242,7 @@ class MainWindow(QtWidgets.QMainWindow):
         MediaDirectoriesAddFolderButton.pressed.connect(lambda: self.openAddMediaDirectoryDialog(MediaDirectoriesTextbox, MediaDirectoriesDialog))
         MediaDirectoriesLayout.addWidget(MediaDirectoriesAddFolderButton, 1, 1, 1, 1, Qt.AlignTop)
         MediaDirectoriesDialog.setLayout(MediaDirectoriesLayout)
+        MediaDirectoriesDialog.setWindowFlags(MediaDirectoriesDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         MediaDirectoriesDialog.setModal(True)
         MediaDirectoriesDialog.show()
         result = MediaDirectoriesDialog.exec_()
@@ -1264,6 +1268,7 @@ class MainWindow(QtWidgets.QMainWindow):
         TrustedDomainsButtonBox.rejected.connect(TrustedDomainsDialog.reject)
         TrustedDomainsLayout.addWidget(TrustedDomainsButtonBox, 2, 0, 1, 1)
         TrustedDomainsDialog.setLayout(TrustedDomainsLayout)
+        TrustedDomainsDialog.setWindowFlags(TrustedDomainsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         TrustedDomainsDialog.setModal(True)
         TrustedDomainsDialog.show()
         result = TrustedDomainsDialog.exec_()
