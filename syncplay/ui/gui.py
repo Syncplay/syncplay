@@ -1099,7 +1099,7 @@ class MainWindow(QtWidgets.QMainWindow):
             defaultdirectory = currentdirectory
         else:
             defaultdirectory = self.getInitialMediaDirectory()
-        browserfilter = "Playlists (*.m3u *.m3u8 *.txt)"
+        browserfilter = "Playlists (*.txt *.m3u8)"
         filepath, filtr = QtWidgets.QFileDialog.getOpenFileName(
             self, "Load playlist from file", defaultdirectory,
             browserfilter, "", options) # TODO: Note Shuffle and move to messages_en
@@ -1120,7 +1120,7 @@ class MainWindow(QtWidgets.QMainWindow):
             defaultdirectory = currentdirectory
         else:
             defaultdirectory = self.getInitialMediaDirectory()
-        browserfilter = "Playlist (*.m3u8 *.m3u *.txt)"
+        browserfilter = "Playlist (*.txt)"
         filepath, filtr = QtWidgets.QFileDialog.getSaveFileName(
             self, "Save playlist to file", defaultdirectory,
             browserfilter, "", options) # TODO: Move to messages_en
