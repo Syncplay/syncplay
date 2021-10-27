@@ -82,7 +82,7 @@ es = {
     "commandlist-notification/undo": "\tu - deshacer última búsqueda",
     "commandlist-notification/pause": "\tp - activar pausa",
     "commandlist-notification/seek": "\t[s][+-]tiempo - ir al tiempo definido, si no se especifica + o -, será el tiempo absoluto en segundos o min:sec",
-    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
     "commandlist-notification/help": "\th - esta ayuda",
     "commandlist-notification/toggle": "\tt - activa/inactiva señal que estás listo para ver",
     "commandlist-notification/create": "\tc [nombre] - crear sala administrada usando el nombre de la sala actual",

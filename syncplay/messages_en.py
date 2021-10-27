@@ -82,7 +82,7 @@ en = {
     "commandlist-notification/undo": "\tu - undo last seek",
     "commandlist-notification/pause": "\tp - toggle pause",
     "commandlist-notification/seek": "\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec",
-    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature",
     "commandlist-notification/help": "\th - this help",
     "commandlist-notification/toggle": "\tt - toggles whether you are ready to watch or not",
     "commandlist-notification/create": "\tc [name] - create managed room using name of current room",
