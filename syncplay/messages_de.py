@@ -82,6 +82,7 @@ de = {
     "commandlist-notification/undo": "\tu - Letzter Zeitsprung rückgängig",
     "commandlist-notification/pause": "\tp - Pausieren / weiter",
     "commandlist-notification/seek": "\t[s][+-]Zeit - zu einer bestimmten Zeit spulen, ohne + oder - wird als absolute Zeit gewertet; Angabe in Sekunden oder Minuten:Sekunden",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position",
     "commandlist-notification/help": "\th - Diese Hilfe",
     "commandlist-notification/toggle": "\tt - Bereitschaftsanzeige umschalten",
     "commandlist-notification/create": "\tc [name] - erstelle zentral gesteuerten Raum mit dem aktuellen Raumnamen",

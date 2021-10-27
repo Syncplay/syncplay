@@ -83,6 +83,7 @@ pt_BR = {
     "commandlist-notification/undo": "\tu - desfaz último salto",
     "commandlist-notification/pause": "\tp - alterna pausa",
     "commandlist-notification/seek": "\t[s][+-]time - salta para o valor de tempo dado, se + ou - não forem especificados, será o tempo absoluto em segundos ou minutos:segundos",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position",
     "commandlist-notification/help": "\th - esta mensagem de ajuda",
     "commandlist-notification/toggle": "\tt - alterna o seu status de prontidão para assistir",
     "commandlist-notification/create": "\tc [nome] - cria sala gerenciado usando o nome da sala atual",
