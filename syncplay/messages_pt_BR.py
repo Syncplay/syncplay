@@ -90,6 +90,7 @@ pt_BR = {
     "commandlist-notification/auth": "\ta [senha] - autentica-se como operador da sala com a senha",
     "commandlist-notification/chat": "\tch [mensagem] - envia uma mensagem no chat da sala",
     "commandList-notification/queue": "\tqa [file/url] - adiciona arquivo ou URL para o final da playlist",
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - mostra a playlist atual",
     "commandList-notification/select": "\tqs [index] - seleciona uma dada entrada na playlist",
     "commandList-notification/delete": "\tqd [index] - deleta uma dada entrada na playlist",

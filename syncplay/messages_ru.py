@@ -88,6 +88,7 @@ ru = {
     "commandlist-notification/auth": "\ta [пароль] - авторизоваться как оператор комнаты с помощью пароля",
     "commandlist-notification/chat": "\tch [сообщение] - выслать сообщение в комнату",
     "commandList-notification/queue": "\tqa [файл/URL] - добавить файл или URL в конец списка воспроизведения",
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - показать текущий список воспроизведения",
     "commandList-notification/select": "\tqs [индекс] - выделить указанный пункт в списке воспроизведения",
     "commandList-notification/delete": "\tqd [индекс] - удалить указанный пункт из списка воспроизведения",

@@ -89,6 +89,7 @@ tr = {
     "commandlist-notification/auth": "\ta [password] - operatör şifresi ile oda operatörü olarak kimlik doğrular",
     "commandlist-notification/chat": "\tch [message] - bir odaya sohbet mesajı gönderir",
     "commandList-notification/queue": "\tqa [file/url] - oynatma listesinin altına dosya veya bağlantı ekler",
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - mevcut oynatma listesini gösterir",
     "commandList-notification/select": "\tqs [index] - oynatma listesinde verilen girişi seçer",
     "commandList-notification/delete": "\tqd [index] - verilen girişi oynatma listesinden siler",

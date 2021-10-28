@@ -193,8 +193,10 @@ class ConsoleUI(threading.Thread):
             if filename is None:
                 self.showErrorMessage("No file/url given")
                 return
-
             self._syncplayClient.ui.addFileToPlaylist(filename)
+        elif command.group('command') in constants.COMMANDS_QUEUEANDSELECT:
+            self._syncplayClient.playlist.switchToNewPlaylistItem = True
+            self.executeCommand("{} {}".format(constants.COMMANDS_QUEUE[0], command.group('parameter')))
         elif command.group('command') in constants.COMMANDS_PLAYLIST:
             playlist = self._syncplayClient.playlist
             playlist_elements = ["\t{}: {}".format(i+1, el) for i, el in enumerate(playlist._playlist)]
@@ -244,6 +246,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/auth"), True)
             self.showMessage(getMessage("commandlist-notification/chat"), True)
             self.showMessage(getMessage("commandList-notification/queue"), True)
+            self.showMessage(getMessage("commandList-notification/queueandselect"), True)
             self.showMessage(getMessage("commandList-notification/playlist"), True)
             self.showMessage(getMessage("commandList-notification/select"), True)
             self.showMessage(getMessage("commandList-notification/delete"), True)

@@ -89,6 +89,7 @@ en = {
     "commandlist-notification/auth": "\ta [password] - authenticate as room operator with operator password",
     "commandlist-notification/chat": "\tch [message] - send a chat message in a room",
     "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",
     "commandList-notification/playlist": "\tql - show the current playlist",
     "commandList-notification/select": "\tqs [index] - select given entry in the playlist",
     "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",

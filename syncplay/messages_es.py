@@ -89,6 +89,7 @@ es = {
     "commandlist-notification/auth": "\ta [contraseña] - autentificar como operador de la sala con la contraseña de operador",
     "commandlist-notification/chat": "\tch [mensaje] - enviar un mensaje en la sala",
     "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",  # TO DO: Translate
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - show the current playlist",  # TO DO: Translate
     "commandList-notification/select": "\tqs [index] - select given entry in the playlist",  # TO DO: Translate
     "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",  # TO DO: Translate

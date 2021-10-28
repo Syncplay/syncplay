@@ -1700,6 +1700,7 @@ class SyncplayPlaylist():
         self._playlist = []
         self._playlistIndex = None
         self.addedChangeListCallback = False
+        self.switchToNewPlaylistItem = False
         self._lastPlaylistIndexChange = time.time()
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
@@ -1864,6 +1865,10 @@ class SyncplayPlaylist():
             self._ui.showDebugMessage("Could not change playlist index due to IndexError")
 
     def _getValidIndexFromNewPlaylist(self, newPlaylist=None):
+        if self.switchToNewPlaylistItem:
+            self.switchToNewPlaylistItem = False
+            return len(self._playlist)
+
         if self._playlistIndex is None or not newPlaylist or len(newPlaylist) <= 1:
             return 0
 
