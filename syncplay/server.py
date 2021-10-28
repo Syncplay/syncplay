@@ -4,6 +4,7 @@ import hashlib
 import os
 import random
 import time
+import json
 from string import Template
 
 from twisted.enterprise import adbapi
@@ -25,7 +26,7 @@ from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomString
 
 
 class SyncFactory(Factory):
-    def __init__(self, port='', password='', motdFilePath=None, isolateRooms=False, salt=None,
+    def __init__(self, port='', password='', motdFilePath=None, roomsDirPath=None, roomsTimer=31558149, isolateRooms=False, salt=None,
                  disableReady=False, disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH,
                  maxUsernameLength=constants.MAX_USERNAME_LENGTH, statsDbFile=None, tlsCertPath=None):
         self.isolateRooms = isolateRooms
@@ -40,12 +41,14 @@ class SyncFactory(Factory):
             print(getMessage("no-salt-notification").format(salt))
         self._salt = salt
         self._motdFilePath = motdFilePath
+        self._roomsDirPath = roomsDirPath if roomsDirPath is not None and os.path.isdir(roomsDirPath) else None
+        self._roomsTimer = roomsTimer if roomsDirPath is not None and isinstance(roomsTimer, int) and roomsTimer > 0 else 0
         self.disableReady = disableReady
         self.disableChat = disableChat
         self.maxChatMessageLength = maxChatMessageLength if maxChatMessageLength is not None else constants.MAX_CHAT_MESSAGE_LENGTH
         self.maxUsernameLength = maxUsernameLength if maxUsernameLength is not None else constants.MAX_USERNAME_LENGTH
         if not isolateRooms:
-            self._roomManager = RoomManager()
+            self._roomManager = RoomManager(self._roomsDirPath, self._roomsTimer)
         else:
             self._roomManager = PublicRoomManager()
         if statsDbFile is not None:
@@ -311,8 +314,22 @@ class DBManager(object):
 
 
 class RoomManager(object):
-    def __init__(self):
+    def __init__(self, roomsDir=None, timer=0):
+        self._roomsDir = roomsDir
+        self._timer = timer
         self._rooms = {}
+        if self._roomsDir is not None:
+            for root, dirs, files in os.walk(self._roomsDir):
+                for file in files:
+                    if file.endswith(".room"):
+                        room = Room('', self._roomsDir)
+                        room.loadFromFile(os.path.join(root, file))
+                        roomName = truncateText(room.getName(), constants.MAX_ROOM_NAME_LENGTH)
+                        if len(room.getPlaylist()) == 0 or room.isStale(self._timer):
+                            os.remove(os.path.join(root, file))
+                            del room
+                        else:
+                            self._rooms[roomName] = room
 
     def broadcastRoom(self, sender, whatLambda):
         room = sender.getRoom()
@@ -342,16 +359,19 @@ class RoomManager(object):
         oldRoom = watcher.getRoom()
         if oldRoom:
             oldRoom.removeWatcher(watcher)
-            self._deleteRoomIfEmpty(oldRoom)
+            if self._roomsDir is None or oldRoom.isStale(self._timer):
+                self._deleteRoomIfEmpty(oldRoom)
 
     def _getRoom(self, roomName):
-        if roomName in self._rooms:
+        if roomName in self._rooms and not self._rooms[roomName].isStale(self._timer):
             return self._rooms[roomName]
         else:
             if RoomPasswordProvider.isControlledRoom(roomName):
                 room = ControlledRoom(roomName)
             else:
-                room = Room(roomName)
+                if roomName in self._rooms:
+                    self._deleteRoomIfEmpty(self._rooms[roomName])
+                room = Room(roomName, self._roomsDir)
             self._rooms[roomName] = room
             return room
 
@@ -392,18 +412,62 @@ class Room(object):
     STATE_PAUSED = 0
     STATE_PLAYING = 1
 
-    def __init__(self, name):
+    def __init__(self, name, _roomsDir=None):
         self._name = name
+        self._roomsDir = _roomsDir
         self._watchers = {}
         self._playState = self.STATE_PAUSED
         self._setBy = None
         self._playlist = []
         self._playlistIndex = None
         self._lastUpdate = time.time()
+        self._lastSavedUpdate = 0
         self._position = 0
 
     def __str__(self, *args, **kwargs):
         return self.getName()
+
+    def roomsCanPersist(self):
+        return self._roomsDir is not None
+
+    def isPermanent(self):
+        return self.roomsCanPersist()
+
+    def sanitizeFilename(self, filename, blacklist="<>:/\\|?*\"", placeholder="_"):
+        return ''.join([c if c not in blacklist and ord(c) >= 32 else placeholder for c in filename])
+
+    def writeToFile(self):
+        if not self.isPermanent():
+            return
+        filename = os.path.join(self._roomsDir, self.sanitizeFilename(self._name)+'.room')
+        if len(self._playlist) == 0:
+            try:
+                os.remove(filename)
+            except Exception:
+                pass
+            return
+        data = {}
+        data['name'] = self._name
+        data['playlist'] = self._playlist
+        data['playlistIndex'] = self._playlistIndex
+        data['position'] = self._position
+        data['lastSavedUpdate'] = self._lastSavedUpdate
+        with open(filename, "w") as outfile:
+            json.dump(data, outfile)
+
+    def loadFromFile(self, filename):
+        with open(filename) as json_file:
+            data = json.load(json_file)
+            self._name = truncateText(data['name'], constants.MAX_ROOM_NAME_LENGTH)
+            self._playlist = data['playlist']
+            self._playlistIndex = data['playlistIndex']
+            self._position = data['position']
+            self._lastSavedUpdate = data['lastSavedUpdate']
+
+    def isStale(self, timer):
+        if timer == 0 or self._lastSavedUpdate == 0:
+            return False
+        return time.time() - self._lastSavedUpdate > timer
 
     def getName(self):
         return self._name
@@ -414,7 +478,7 @@ class Room(object):
             watcher = min(self._watchers.values())
             self._setBy = watcher
             self._position = watcher.getPosition()
-            self._lastUpdate = time.time()
+            self._lastSavedUpdate = self._lastUpdate = time.time()
             return self._position
         elif self._position is not None:
             return self._position + (age if self._playState == self.STATE_PLAYING else 0)
@@ -424,12 +488,14 @@ class Room(object):
     def setPaused(self, paused=STATE_PAUSED, setBy=None):
         self._playState = paused
         self._setBy = setBy
+        self.writeToFile()
 
     def setPosition(self, position, setBy=None):
         self._position = position
         for watcher in self._watchers.values():
             watcher.setPosition(position)
             self._setBy = setBy
+        self.writeToFile()
 
     def isPlaying(self):
         return self._playState == self.STATE_PLAYING
@@ -441,7 +507,7 @@ class Room(object):
         return list(self._watchers.values())
 
     def addWatcher(self, watcher):
-        if self._watchers:
+        if self._watchers or self.isPermanent():
             watcher.setPosition(self.getPosition())
         self._watchers[watcher.getName()] = watcher
         watcher.setRoom(self)
@@ -451,8 +517,9 @@ class Room(object):
             return
         del self._watchers[watcher.getName()]
         watcher.setRoom(None)
-        if not self._watchers:
+        if not self._watchers and not self.isPermanent():
             self._position = 0
+        self.writeToFile()
 
     def isEmpty(self):
         return not bool(self._watchers)
@@ -465,9 +532,11 @@ class Room(object):
 
     def setPlaylist(self, files, setBy=None):
         self._playlist = files
+        self.writeToFile()
 
     def setPlaylistIndex(self, index, setBy=None):
         self._playlistIndex = index
+        self.writeToFile()
 
     def getPlaylist(self):
         return self._playlist
@@ -687,6 +756,8 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--disable-chat', action='store_true', help=getMessage("server-chat-argument"))
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"), default=os.environ.get('SYNCPLAY_SALT'))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
+        self._argparser.add_argument('--rooms-dir', metavar='rooms', type=str, nargs='?', help=getMessage("server-rooms-argument"))
+        self._argparser.add_argument('--rooms-timer', metavar='timer', type=int, nargs='?',default=31558149, help=getMessage("server-timer-argument"))
         self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength', type=int, nargs='?', help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
         self._argparser.add_argument('--max-username-length', metavar='maxUsernameLength', type=int, nargs='?', help=getMessage("server-maxusernamelength-argument").format(constants.MAX_USERNAME_LENGTH))
         self._argparser.add_argument('--stats-db-file', metavar='file', type=str, nargs='?', help=getMessage("server-stats-db-file-argument"))

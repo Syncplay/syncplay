@@ -475,6 +475,8 @@ en = {
     "server-salt-argument": "random string used to generate managed room passwords",
     "server-disable-ready-argument": "disable readiness feature",
     "server-motd-argument": "path to file from which motd will be fetched",
+    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts",
+    "server-timer-argument": "time in seconds before a persistent room with no watchers is pruned. 0 disables pruning",
     "server-chat-argument": "Should chat be disabled?",
     "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})", # Default number of characters
     "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})",
