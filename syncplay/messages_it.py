@@ -474,8 +474,8 @@ it = {
     "server-salt-argument": "usare stringhe casuali per generare le password delle stanze gestite",
     "server-disable-ready-argument": "disabilita la funzionalità \"pronto\"",
     "server-motd-argument": "percorso del file da cui verrà letto il messaggio del giorno",
-    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
-    "server-timer-argument": "time in seconds before a persistent room with no watchers is pruned. 0 disables pruning", # TODO: Translate
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "abilita o disabilita la chat",
     "server-chat-maxchars-argument": "Numero massimo di caratteri in un messaggio di chat (default è {})", # Default number of characters
     "server-maxusernamelength-argument": "Numero massimo di caratteri in un nome utente (default è {})",

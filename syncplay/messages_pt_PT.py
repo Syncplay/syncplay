@@ -474,8 +474,8 @@ pt_PT = {
     "server-salt-argument": "string aleatória utilizada para gerar senhas de salas gerenciadas",
     "server-disable-ready-argument": "desativar recurso de prontidão",
     "server-motd-argument": "caminho para o arquivo o qual o motd será obtido",
-    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
-    "server-timer-argument": "time in seconds before a persistent room with no watchers is pruned. 0 disables pruning", # TODO: Translate
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "O chat deve ser desativado?",
     "server-chat-maxchars-argument": "Número máximo de caracteres numa mensagem do chat (o padrão é {})", # Default number of characters
     "server-maxusernamelength-argument": "Número máximos de caracteres num nome de utilizador (o padrão é {})",

@@ -617,11 +617,27 @@ class SyncServerProtocol(JSONCommandProtocol):
             }
             userlist[room.getName()][watcher.getName()] = userFile
 
+    def _addDummyUserOnList(self, userlist, dummyRoom,dummyCount):
+        if dummyRoom not in userlist:
+            userlist[dummyRoom] = {}
+        dummyFile = {
+            "position": 0,
+            "file": {},
+            "controller": False,
+            "isReady": True,
+            "features": []
+        }
+        userlist[dummyRoom][" " * dummyCount] = dummyFile
+
     def sendList(self):
         userlist = {}
         watchers = self._factory.getAllWatchersForUser(self._watcher)
+        dummyCount = 0
         for watcher in watchers:
             self._addUserOnList(userlist, watcher)
+        for emptyRoom in self._factory.getEmptyPersistentRooms():
+            dummyCount += 1
+            self._addDummyUserOnList(userlist, emptyRoom, dummyCount)
         self.sendMessage({"List": userlist})
 
     @requireLogged
