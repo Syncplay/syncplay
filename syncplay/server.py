@@ -463,7 +463,7 @@ class RoomManager(object):
             return self._rooms[roomName]
         else:
             if RoomPasswordProvider.isControlledRoom(roomName):
-                room = ControlledRoom(roomName)
+                room = ControlledRoom(roomName, self._roomsDbHandle)
             else:
                 if roomName in self._rooms:
                     self._deleteRoomIfEmpty(self._rooms[roomName])
@@ -645,8 +645,8 @@ class Room(object):
 
 
 class ControlledRoom(Room):
-    def __init__(self, name):
-        Room.__init__(self, name)
+    def __init__(self, name, roomsdbhandle):
+        Room.__init__(self, name, roomsdbhandle)
         self._controllers = {}
 
     def getPosition(self):
@@ -669,6 +669,7 @@ class ControlledRoom(Room):
         Room.removeWatcher(self, watcher)
         if watcher.getName() in self._controllers:
             del self._controllers[watcher.getName()]
+        self.writeToDb()
 
     def setPaused(self, paused=Room.STATE_PAUSED, setBy=None):
         if self.canControl(setBy):
