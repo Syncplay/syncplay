@@ -457,6 +457,7 @@ it = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Stai usando Syncplay {} ma una nuova versione è disponibile presso https://syncplay.pl",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate
 
     # Server notifications
     "welcome-server-notification": "Benvenuto nel server Syncplay, ver. {0}",  # version

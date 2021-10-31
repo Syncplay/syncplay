@@ -24,7 +24,6 @@ from syncplay.messages import getMessage
 from syncplay.protocols import SyncServerProtocol
 from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid, truncateText, getListAsMultilineString, convertMultilineStringToList
 
-
 class SyncFactory(Factory):
     def __init__(self, port='', password='', motdFilePath=None, roomsDbFile=None, permanentRoomsFile=None, isolateRooms=False, salt=None,
                  disableReady=False, disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH,
@@ -93,6 +92,7 @@ class SyncFactory(Factory):
         features["isolateRooms"] = self.isolateRooms
         features["readiness"] = not self.disableReady
         features["managedRooms"] = True
+        features["persistentRooms"] = self.roomsDbFile is not None
         features["chat"] = not self.disableChat
         features["maxChatMessageLength"] = self.maxChatMessageLength
         features["maxUsernameLength"] = self.maxUsernameLength
@@ -532,7 +532,10 @@ class Room(object):
         return self._roomsDbHandle is not None
 
     def isPersistent(self):
-        return self.roomsCanPersist()
+        return self.roomsCanPersist() and not self.isMarkedAsTemporary()
+
+    def isMarkedAsTemporary(self):
+        return "-temp" in self.getName()
 
     def isPlaylistEmpty(self):
         return len(self._playlist) == 0

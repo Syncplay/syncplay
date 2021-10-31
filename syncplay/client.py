@@ -640,6 +640,7 @@ class SyncplayClient(object):
             "chat": utils.meetsMinVersion(self.serverVersion, constants.CHAT_MIN_VERSION),
             "readiness": utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION),
             "managedRooms": utils.meetsMinVersion(self.serverVersion, constants.CONTROLLED_ROOMS_MIN_VERSION),
+            "persistentRooms": False,
             "maxChatMessageLength": constants.FALLBACK_MAX_CHAT_MESSAGE_LENGTH,
             "maxUsernameLength": constants.FALLBACK_MAX_USERNAME_LENGTH,
             "maxRoomNameLength": constants.FALLBACK_MAX_ROOM_NAME_LENGTH,
@@ -711,6 +712,7 @@ class SyncplayClient(object):
         features["featureList"] = True
         features["readiness"] = True
         features["managedRooms"] = True
+        features["persistentRooms"] = True
 
         return features
 

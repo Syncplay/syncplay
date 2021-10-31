@@ -131,12 +131,19 @@ class SyncClientProtocol(JSONCommandProtocol):
             self._client.setUsername(username)
             self._client.setRoom(roomName)
         self.logged = True
+        if self.persistentRoomWarning(featureList):
+            if len(motd) > 0:
+                motd += "\n\n"
+            motd += getMessage("persistent-rooms-notice")
         if motd:
             self._client.ui.showMessage(motd, True, True)
         self._client.ui.showMessage(getMessage("connected-successful-notification"))
         self._client.connected()
         self._client.sendFile()
         self._client.setServerVersion(version, featureList)
+
+    def persistentRoomWarning(self, serverFeatures):
+        return serverFeatures["persistentRooms"]  if "persistentRooms" in serverFeatures else False
 
     def sendHello(self):
         hello = {}
@@ -441,6 +448,7 @@ class SyncServerProtocol(JSONCommandProtocol):
             self._features["featureList"] = False
             self._features["readiness"] = meetsMinVersion(self._version, USER_READY_MIN_VERSION)
             self._features["managedRooms"] = meetsMinVersion(self._version, CONTROLLED_ROOMS_MIN_VERSION)
+            self._features["persistentRooms"] = False
         return self._features
 
     def isLogged(self):
@@ -496,6 +504,11 @@ class SyncServerProtocol(JSONCommandProtocol):
             self._logged = True
             self.sendHello(version)
 
+    def persistentRoomWarning(self, clientFeatures, serverFeatures):
+        serverPersistentRooms = serverFeatures["persistentRooms"]
+        clientPersistentRooms = clientFeatures["persistentRooms"] if "persistentRooms" in clientFeatures else False
+        return serverPersistentRooms and not clientPersistentRooms
+
     @requireLogged
     def handleChat(self, chatMessage):
         if not self._factory.disableChat:
@@ -520,8 +533,12 @@ class SyncServerProtocol(JSONCommandProtocol):
             hello["room"] = {"name": room.getName()}
         hello["version"] = clientVersion  # Used so 1.2.X client works on newer server
         hello["realversion"] = syncplay.version
-        hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
         hello["features"] = self._factory.getFeatures()
+        hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
+        if self.persistentRoomWarning(clientFeatures=self._features, serverFeatures=hello["features"]):
+            if len(hello["motd"]) > 0:
+                hello["motd"] += "\n\n"
+            hello["motd"] += getMessage("persistent-rooms-notice")
         self.sendMessage({"Hello": hello})
 
     @requireLogged
