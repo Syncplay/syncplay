@@ -536,7 +536,7 @@ class Room(object):
         return self.roomsCanPersist() and not self.isMarkedAsTemporary()
 
     def isMarkedAsTemporary(self):
-        return "-temp" in self.getName()
+        return "-temp" in self.getName().lower()
 
     def isPlaylistEmpty(self):
         return len(self._playlist) == 0
