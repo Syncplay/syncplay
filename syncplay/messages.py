@@ -28,10 +28,6 @@ no_osd_message_list = [
     "revert-notification",
 ]
 
-def isMacOS():
-    import sys
-    return sys.platform.startswith(constants.OS_MACOS)
-
 def getLanguages():
     langList = {}
     for lang in messages:
@@ -68,7 +64,7 @@ def getInitialLanguage():
     try:
         import sys
         frozen = getattr(sys, 'frozen', '')
-        if isMacOS() and frozen in 'macosx_app':
+        if frozen and frozen in 'macosx_app':
             from PySide2.QtCore import QLocale
             initialLanguage = QLocale.system().uiLanguages()[0].split('-')[0]
         else:
