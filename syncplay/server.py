@@ -47,7 +47,7 @@ class SyncFactory(Factory):
         self.maxChatMessageLength = maxChatMessageLength if maxChatMessageLength is not None else constants.MAX_CHAT_MESSAGE_LENGTH
         self.maxUsernameLength = maxUsernameLength if maxUsernameLength is not None else constants.MAX_USERNAME_LENGTH
         self.permanentRoomsFile = permanentRoomsFile if permanentRoomsFile is not None and os.path.isfile(permanentRoomsFile) else None
-        self.permanentRooms = self.loadListFromMultilineTextFile(self.permanentRoomsFile)
+        self.permanentRooms = self.loadListFromMultilineTextFile(self.permanentRoomsFile) if self.permanentRoomsFile is not None else []
         if not isolateRooms:
             self._roomManager = RoomManager(self.roomsDbFile, self.permanentRooms)
         else:
@@ -149,11 +149,17 @@ class SyncFactory(Factory):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, None)
         self._roomManager.broadcast(watcher, l)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
+        if self.roomsDbFile:
+            l = lambda w: w.sendList()
+            self._roomManager.broadcast(watcher, l)
 
     def removeWatcher(self, watcher):
         if watcher and watcher.getRoom():
             self.sendLeftMessage(watcher)
             self._roomManager.removeWatcher(watcher)
+            if self.roomsDbFile:
+                l = lambda w: w.sendList()
+                self._roomManager.broadcast(watcher, l)
 
     def sendLeftMessage(self, watcher):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"left": True})
@@ -163,6 +169,9 @@ class SyncFactory(Factory):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True, "version": watcher.getVersion(), "features": watcher.getFeatures()}) if w != watcher else None
         self._roomManager.broadcast(watcher, l)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
+        if self.roomsDbFile:
+            l = lambda w: w.sendList()
+            self._roomManager.broadcast(watcher, l)
 
     def sendFileUpdate(self, watcher):
         if watcher.getFile():
@@ -472,12 +481,11 @@ class RoomManager(object):
             return room
 
     def _deleteRoomIfEmpty(self, room):
-        if room.isEmpty() and room.isNotPermanent() and room.getName() in self._rooms:
-            if room.isPersistent():
-                if room.isPlaylistEmpty():
-                    self._roomsDbHandle.deleteRoom(room.getName())
-                else:
-                    return()
+        if room.isEmpty() and room.getName():
+            if self._roomsDbHandle and room.isNotPermanent():
+                if room.isPersistent() and not room.isPlaylistEmpty():
+                    return
+                self._roomsDbHandle.deleteRoom(room.getName())
             del self._rooms[room.getName()]
 
     def findFreeUsername(self, username):
@@ -643,6 +651,8 @@ class Room(object):
     def getPlaylistIndex(self):
         return self._playlistIndex
 
+    def getControllers(self):
+        return []
 
 class ControlledRoom(Room):
     def __init__(self, name, roomsdbhandle):
@@ -691,7 +701,7 @@ class ControlledRoom(Room):
         return watcher.getName() in self._controllers
 
     def getControllers(self):
-        return self._controllers
+        return {}
 
 
 class Watcher(object):
@@ -770,6 +780,9 @@ class Watcher(object):
     def sendChatMessage(self, message):
         if self._connector.meetsMinVersion(constants.CHAT_MIN_VERSION):
             self._connector.sendMessage({"Chat": message})
+
+    def sendList(self):
+        self._connector.sendList()
 
     def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self._connector.sendSetReady(username, isReady, manuallyInitiated)
