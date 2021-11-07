@@ -468,6 +468,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.roomsCombobox.clear()
         for roomListValue in self.config['roomList']:
             self.roomsCombobox.addItem(roomListValue)
+        for room in self.currentRooms:
+            if room not in self.config['roomList']:
+                self.roomsCombobox.addItem(room)
         self.roomsCombobox.setEditText(previousRoomSelection)
 
     def addRoomToList(self, newRoom=None):
@@ -603,7 +606,9 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self._syncplayClient.fileSwitch.setCurrentDirectory(os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]))
 
+        self.currentRooms = []
         for room in rooms:
+            self.currentRooms.append(room)
             if self.hideEmptyRooms:
                 foundEmptyRooms = False
                 for user in rooms[room]:
@@ -704,6 +709,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.listTreeView.expandAll()
         self.updateListGeometry()
         self._syncplayClient.fileSwitch.setFilenameWatchlist(self.newWatchlist)
+        self.fillRoomsCombobox()
 
     @needsClient
     def undoPlaylistChange(self):
@@ -2085,6 +2091,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._syncplayClient = None
         self.folderSearchEnabled = True
         self.hideEmptyRooms = False
+        self.currentRooms = []
         self.QtGui = QtGui
         if isMacOS():
             self.setWindowFlags(self.windowFlags())
