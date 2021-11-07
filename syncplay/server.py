@@ -150,7 +150,7 @@ class SyncFactory(Factory):
         self._roomManager.broadcast(watcher, l)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
         if self.roomsDbFile:
-            l = lambda w: w.sendList()
+            l = lambda w: w.sendList(toGUIOnly=True)
             self._roomManager.broadcast(watcher, l)
 
     def removeWatcher(self, watcher):
@@ -158,7 +158,7 @@ class SyncFactory(Factory):
             self.sendLeftMessage(watcher)
             self._roomManager.removeWatcher(watcher)
             if self.roomsDbFile:
-                l = lambda w: w.sendList()
+                l = lambda w: w.sendList(toGUIOnly=True)
                 self._roomManager.broadcast(watcher, l)
 
     def sendLeftMessage(self, watcher):
@@ -170,7 +170,7 @@ class SyncFactory(Factory):
         self._roomManager.broadcast(watcher, l)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
         if self.roomsDbFile:
-            l = lambda w: w.sendList()
+            l = lambda w: w.sendList(toGUIOnly=True)
             self._roomManager.broadcast(watcher, l)
 
     def sendFileUpdate(self, watcher):
@@ -781,8 +781,22 @@ class Watcher(object):
         if self._connector.meetsMinVersion(constants.CHAT_MIN_VERSION):
             self._connector.sendMessage({"Chat": message})
 
-    def sendList(self):
+    def sendList(self, toGUIOnly=False):
+        if toGUIOnly and self.isGUIUser(self._connector.getFeatures()):
+            clientFeatures = self._connector.getFeatures()
+            if "uiMode" in clientFeatures:
+                if clientFeatures["uiMode"] == constants.CONSOLE_UI_MODE:
+                    return
+            else:
+                return
         self._connector.sendList()
+
+    def isGUIUser(self, clientFeatures):
+        clientFeatures = self._connector.getFeatures()
+        uiMode = clientFeatures["uiMode"] if "uiMode" in clientFeatures else constants.UNKNOWN_UI_MODE
+        if uiMode == constants.UNKNOWN_UI_MODE:
+            uiMode = constants.FALLBACK_ASSUMED_UI_MODE
+        return uiMode == constants.GRAPHICAL_UI_MODE
 
     def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self._connector.sendSetReady(username, isReady, manuallyInitiated)

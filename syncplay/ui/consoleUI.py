@@ -18,6 +18,7 @@ class ConsoleUI(threading.Thread):
         self.PromptResult = ""
         self.promptMode.set()
         self._syncplayClient = None
+        self.uiMode = constants.CONSOLE_UI_MODE
         threading.Thread.__init__(self, name="ConsoleUI")
 
     def addClient(self, client):

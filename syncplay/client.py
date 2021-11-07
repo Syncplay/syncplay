@@ -707,6 +707,7 @@ class SyncplayClient(object):
         # Can change during runtime:
         features["sharedPlaylists"] = self.sharedPlaylistIsEnabled()  # Can change during runtime
         features["chat"] = self.chatIsEnabled()  # Can change during runtime
+        features["uiMode"] = self.ui.getUIMode()
 
         # Static for this version/release of Syncplay:
         features["featureList"] = True
@@ -1594,6 +1595,9 @@ class UiManager(object):
         self.lastAlertOSDMessage = None
         self.lastAlertOSDEndTime = None
         self.lastError = ""
+
+    def getUIMode(self):
+        return self.__ui.uiMode
 
     def addFileToPlaylist(self, newPlaylistItem):
         self.__ui.addFileToPlaylist(newPlaylistItem)

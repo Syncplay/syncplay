@@ -2081,3 +2081,4 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
         self.setAcceptDrops(True)
         self.clearedPlaylistNote = False
+        self.uiMode = constants.GRAPHICAL_UI_MODE

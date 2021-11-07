@@ -11,7 +11,7 @@ from twisted.python.versions import Version
 from zope.interface.declarations import implementer
 
 import syncplay
-from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT, CONTROLLED_ROOMS_MIN_VERSION, USER_READY_MIN_VERSION, SHARED_PLAYLIST_MIN_VERSION, CHAT_MIN_VERSION
+from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT, CONTROLLED_ROOMS_MIN_VERSION, USER_READY_MIN_VERSION, SHARED_PLAYLIST_MIN_VERSION, CHAT_MIN_VERSION, UNKNOWN_UI_MODE
 from syncplay.messages import getMessage
 from syncplay.utils import meetsMinVersion
 
@@ -143,7 +143,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         self._client.setServerVersion(version, featureList)
 
     def persistentRoomWarning(self, serverFeatures):
-        return serverFeatures["persistentRooms"]  if "persistentRooms" in serverFeatures else False
+        return serverFeatures["persistentRooms"] if "persistentRooms" in serverFeatures else False
 
     def sendHello(self):
         hello = {}
@@ -449,6 +449,7 @@ class SyncServerProtocol(JSONCommandProtocol):
             self._features["readiness"] = meetsMinVersion(self._version, USER_READY_MIN_VERSION)
             self._features["managedRooms"] = meetsMinVersion(self._version, CONTROLLED_ROOMS_MIN_VERSION)
             self._features["persistentRooms"] = False
+            self._features["uiMode"] = UNKNOWN_UI_MODE
         return self._features
 
     def isLogged(self):
@@ -652,9 +653,10 @@ class SyncServerProtocol(JSONCommandProtocol):
         dummyCount = 0
         for watcher in watchers:
             self._addUserOnList(userlist, watcher)
-        for emptyRoom in self._factory.getEmptyPersistentRooms():
-            dummyCount += 1
-            self._addDummyUserOnList(userlist, emptyRoom, dummyCount)
+        if self._watcher.isGUIUser(self.getFeatures()):
+            for emptyRoom in self._factory.getEmptyPersistentRooms():
+                dummyCount += 1
+                self._addDummyUserOnList(userlist, emptyRoom, dummyCount)
         self.sendMessage({"List": userlist})
 
     @requireLogged
