@@ -291,6 +291,7 @@ ru = {
     "autoplay-menu-label": "Показывать кнопку &автовоспроизведения",
     "autoplay-guipushbuttonlabel": "Стартовать, когда все будут готовы",
     "autoplay-minimum-label": "Минимум зрителей:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
     "sendmessage-label": "Выслать",
 
     "ready-guipushbuttonlabel": "Я готов",

@@ -291,6 +291,7 @@ es = {
     "autoplay-menu-label": "Mostrar botón de auto-reproducción",
     "autoplay-guipushbuttonlabel": "Reproducir cuando todos estén listos",
     "autoplay-minimum-label": "Mín. de usuarios:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Enviar",
 

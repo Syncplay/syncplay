@@ -292,6 +292,7 @@ tr = {
     "autoplay-menu-label": "Otomatik oynat düğmesini göster",
     "autoplay-guipushbuttonlabel": "Her şey hazır olduğunda oynat",
     "autoplay-minimum-label": "Asgari kullanıcı:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Gönder",
 

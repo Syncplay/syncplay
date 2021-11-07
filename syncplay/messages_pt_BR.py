@@ -292,6 +292,7 @@ pt_BR = {
     "autoplay-menu-label": "Mostrar botão de reprodução automática",
     "autoplay-guipushbuttonlabel": "Tocar quando todos estiverem prontos",
     "autoplay-minimum-label": "Mín. de usuários:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Enviar",
 

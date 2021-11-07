@@ -291,6 +291,7 @@ it = {
     "autoplay-menu-label": "Mostra il tasto di riproduzione automatica",
     "autoplay-guipushbuttonlabel": "Riproduci quando tutti sono pronti",
     "autoplay-minimum-label": "Minimo utenti pronti:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Invia",
 

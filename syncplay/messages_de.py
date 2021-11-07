@@ -288,6 +288,7 @@ de = {
     "autoplay-menu-label": "Auto-Play-Knopf anzeigen",
     "autoplay-guipushbuttonlabel": "Automatisch abspielen wenn alle bereit sind",
     "autoplay-minimum-label": "Minimum an Nutzern:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Senden",
 

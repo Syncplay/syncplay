@@ -292,6 +292,7 @@ en = {
     "autoplay-menu-label": "Show auto-play button",
     "autoplay-guipushbuttonlabel": "Play when all ready",
     "autoplay-minimum-label": "Min users:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms",
 
     "sendmessage-label": "Send",
 
