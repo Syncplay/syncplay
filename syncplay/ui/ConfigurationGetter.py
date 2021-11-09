@@ -514,13 +514,15 @@ class ConfigurationGetter(object):
         self._overrideConfigWithArgs(args)
         if not self._config['noGui']:
             try:
-                from syncplay.vendor.Qt import QtWidgets, IsPySide, IsPySide2
+                from syncplay.vendor.Qt import QtWidgets, IsPySide, IsPySide2, QtGui
                 from syncplay.vendor.Qt.QtCore import QCoreApplication
                 from syncplay.vendor import qt5reactor
                 if not (IsPySide2 or IsPySide):
                     raise ImportError
                 if QCoreApplication.instance() is None:
                     self.app = QtWidgets.QApplication(sys.argv)
+                    self.app.setStyle(QtWidgets.QStyleFactory.create("fusion"))
+                    self.app.setPalette(self.getDarkPalette(QtGui))
                 qt5reactor.install()
                 if isMacOS():
                     import appnope
@@ -549,6 +551,29 @@ class ConfigurationGetter(object):
         if self._config['language']:
             setLanguage(self._config['language'])
         return self._config
+
+    def getDarkPalette(self, QtGui):
+        # Based on https://gist.github.com/lschmierer/443b8e21ad93e2a2d7eb#gistcomment-3503395
+        darkPalette = QtGui.QPalette()
+        darkPalette.setColor(QtGui.QPalette.Window, QtGui.QColor(53, 53, 53))
+        darkPalette.setColor(QtGui.QPalette.WindowText, QtGui.QColor(255, 255, 255))
+        darkPalette.setColor(QtGui.QPalette.Base, QtGui.QColor(35, 35, 35))
+        darkPalette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(53, 53, 53))
+        darkPalette.setColor(QtGui.QPalette.ToolTipBase, QtGui.QColor(25, 25, 25))
+        darkPalette.setColor(QtGui.QPalette.ToolTipText, QtGui.QColor(255, 255, 255))
+        darkPalette.setColor(QtGui.QPalette.Text, QtGui.QColor(255, 255, 255))
+        darkPalette.setColor(QtGui.QPalette.Button, QtGui.QColor(53, 53, 53))
+        darkPalette.setColor(QtGui.QPalette.ButtonText, QtGui.QColor(255, 255, 255))
+        darkPalette.setColor(QtGui.QPalette.BrightText, QtGui.QColor(255, 0, 0))
+        darkPalette.setColor(QtGui.QPalette.Link, QtGui.QColor(42, 130, 218))
+        darkPalette.setColor(QtGui.QPalette.Highlight, QtGui.QColor(42, 130, 218))
+        darkPalette.setColor(QtGui.QPalette.HighlightedText, QtGui.QColor(35, 35, 35))
+        darkPalette.setColor(QtGui.QPalette.Active, QtGui.QPalette.Button, QtGui.QColor(53, 53, 53))
+        darkPalette.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.ButtonText, QtGui.QColor(128, 128, 128))
+        darkPalette.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, QtGui.QColor(128, 128, 128))
+        darkPalette.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.Text, QtGui.QColor(128, 128, 128))
+        darkPalette.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.Light, QtGui.QColor(53, 53, 53))
+        return darkPalette
 
     def setConfigOption(self, option, value):
         path = self._getConfigurationFilePath()
