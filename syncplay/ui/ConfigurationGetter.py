@@ -10,7 +10,7 @@ from configparser import SafeConfigParser, DEFAULTSECT
 from syncplay import constants, utils, version, milestone
 from syncplay.messages import getMessage, setLanguage, isValidLanguage
 from syncplay.players.playerFactory import PlayerFactory
-from syncplay.utils import isMacOS
+from syncplay.utils import isMacOS, isWindows
 
 
 class InvalidConfigValue(Exception):
@@ -521,8 +521,12 @@ class ConfigurationGetter(object):
                     raise ImportError
                 if QCoreApplication.instance() is None:
                     self.app = QtWidgets.QApplication(sys.argv)
-                    self.app.setStyle(QtWidgets.QStyleFactory.create("fusion"))
-                    self.app.setPalette(self.getDarkPalette(QtGui))
+                    if isWindows():
+                        from syncplay.vendor import darkdetect
+                        isDarkMode = darkdetect.isDark()
+                        if isDarkMode:
+                            self.app.setStyle(QtWidgets.QStyleFactory.create("fusion"))
+                            self.app.setPalette(self.getDarkPalette(QtGui))
                 qt5reactor.install()
                 if isMacOS():
                     import appnope
