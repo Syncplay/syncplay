@@ -521,12 +521,15 @@ class ConfigurationGetter(object):
                     raise ImportError
                 if QCoreApplication.instance() is None:
                     self.app = QtWidgets.QApplication(sys.argv)
-                    if isWindows():
-                        from syncplay.vendor import darkdetect
-                        isDarkMode = darkdetect.isDark()
-                        if isDarkMode:
-                            self.app.setStyle(QtWidgets.QStyleFactory.create("fusion"))
-                            self.app.setPalette(self.getDarkPalette(QtGui))
+                    try:
+                        if isWindows():
+                            from syncplay.vendor import darkdetect
+                            isDarkMode = darkdetect.isDark()
+                            if isDarkMode:
+                                self.app.setStyle(QtWidgets.QStyleFactory.create("fusion"))
+                                self.app.setPalette(self.getDarkPalette(QtGui))
+                    except:
+                        pass
                 qt5reactor.install()
                 if isMacOS():
                     import appnope
