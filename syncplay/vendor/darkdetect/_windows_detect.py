@@ -7,12 +7,12 @@ def theme():
     # In HKEY_CURRENT_USER, get the Personalisation Key.
     try:
         key = getKey(hkey, "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
+        # In the Personalisation Key, get the AppsUseLightTheme subkey. This returns a tuple.
+        # The first item in the tuple is the result we want (0 or 1 indicating Dark Mode or Light Mode); the other value is the type of subkey e.g. DWORD, QWORD, String, etc.
+        subkey = getSubkeyValue(key, "AppsUseLightTheme")[0]
     except FileNotFoundError:
         # some headless Windows instances (e.g. GitHub Actions or Docker images) do not have this key
         return None
-    # In the Personalisation Key, get the AppsUseLightTheme subkey. This returns a tuple.
-    # The first item in the tuple is the result we want (0 or 1 indicating Dark Mode or Light Mode); the other value is the type of subkey e.g. DWORD, QWORD, String, etc.
-    subkey = getSubkeyValue(key, "AppsUseLightTheme")[0]
     return valueMeaning[subkey]
 
 def isDark():
