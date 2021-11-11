@@ -36,6 +36,9 @@ jobs:
           python3 -c "from PySide2.QtCore import __version__; print(__version__)"
           python3 -c "from PySide2.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))"
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Build
         run: |
           $ver = (findstr version .\syncplay\__init__.py).split("'")[1]
