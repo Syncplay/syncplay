@@ -523,8 +523,8 @@ class ConfigurationGetter(object):
                     self.app = QtWidgets.QApplication(sys.argv)
                     if isWindows():
                         try:
-                            from syncplay.vendor.darkdetect import _windows_detect
-                            isDarkMode = _windows_detect.isDark()
+                            from syncplay.vendor import darkdetect
+                            isDarkMode = darkdetect.isDark()
                         except:
                             isDarkMode = False
                         if isDarkMode:
