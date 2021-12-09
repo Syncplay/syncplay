@@ -468,6 +468,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.roomsCombobox.clear()
         for roomListValue in self.config['roomList']:
             self.roomsCombobox.addItem(roomListValue)
+        for room in self.currentRooms:
+            if room not in self.config['roomList']:
+                self.roomsCombobox.addItem(room)
         self.roomsCombobox.setEditText(previousRoomSelection)
 
     def addRoomToList(self, newRoom=None):
@@ -603,7 +606,16 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self._syncplayClient.fileSwitch.setCurrentDirectory(os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]))
 
+        self.currentRooms = []
         for room in rooms:
+            self.currentRooms.append(room)
+            if self.hideEmptyRooms:
+                foundEmptyRooms = False
+                for user in rooms[room]:
+                    if user.username.strip() == "":
+                        foundEmptyRooms = True
+                if foundEmptyRooms:
+                    continue
             self.newWatchlist = []
             roomitem = QtGui.QStandardItem(room)
             font = QtGui.QFont()
@@ -624,6 +636,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 roomitem.setIcon(QtGui.QPixmap(resourcespath + 'chevrons_right.png'))
 
             for user in rooms[room]:
+                if user.username.strip() == "":
+                    continue
                 useritem = QtGui.QStandardItem(user.username)
                 isController = user.isController()
                 sameRoom = room == currentUser.room
@@ -695,6 +709,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.listTreeView.expandAll()
         self.updateListGeometry()
         self._syncplayClient.fileSwitch.setFilenameWatchlist(self.newWatchlist)
+        self.fillRoomsCombobox()
 
     @needsClient
     def undoPlaylistChange(self):
@@ -1753,6 +1768,9 @@ class MainWindow(QtWidgets.QMainWindow):
         window.autoplayAction.setCheckable(True)
         window.autoplayAction.triggered.connect(self.updateAutoplayVisibility)
 
+        window.hideEmptyRoomsAction = window.windowMenu.addAction(getMessage("hideemptyrooms-menu-label"))
+        window.hideEmptyRoomsAction.setCheckable(True)
+        window.hideEmptyRoomsAction.triggered.connect(self.updateEmptyRoomVisiblity)
 
         # Help menu
 
@@ -1817,6 +1835,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def updateAutoplayVisibility(self):
         self.autoplayFrame.setVisible(self.autoplayAction.isChecked())
+
+    def updateEmptyRoomVisiblity(self):
+        self.hideEmptyRooms = self.hideEmptyRoomsAction.isChecked()
+        if self._syncplayClient:
+            self._syncplayClient.getUserList()
 
     def changeReadyState(self):
         self.updateReadyIcon()
@@ -2017,6 +2040,7 @@ class MainWindow(QtWidgets.QMainWindow):
         settings.setValue("pos", self.pos())
         settings.setValue("showPlaybackButtons", self.playbackAction.isChecked())
         settings.setValue("showAutoPlayButton", self.autoplayAction.isChecked())
+        settings.setValue("hideEmptyRooms", self.hideEmptyRoomsAction.isChecked())
         settings.setValue("autoplayChecked", self.autoplayPushButton.isChecked())
         settings.setValue("autoplayMinUsers", self.autoplayThresholdSpinbox.value())
         settings.endGroup()
@@ -2040,6 +2064,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if settings.value("showAutoPlayButton", "false") == "true":
             self.autoplayAction.setChecked(True)
             self.updateAutoplayVisibility()
+        if settings.value("hideEmptyRooms", "false") == "true":
+            self.hideEmptyRooms = True
+            self.hideEmptyRoomsAction.setChecked(True)
         if settings.value("autoplayChecked", "false") == "true":
             self.updateAutoPlayState(True)
             self.autoplayPushButton.setChecked(True)
@@ -2063,6 +2090,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lastCheckedForUpdates = None
         self._syncplayClient = None
         self.folderSearchEnabled = True
+        self.hideEmptyRooms = False
+        self.currentRooms = []
         self.QtGui = QtGui
         if isMacOS():
             self.setWindowFlags(self.windowFlags())
@@ -2081,3 +2110,4 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
         self.setAcceptDrops(True)
         self.clearedPlaylistNote = False
+        self.uiMode = constants.GRAPHICAL_UI_MODE

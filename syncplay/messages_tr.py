@@ -292,6 +292,7 @@ tr = {
     "autoplay-menu-label": "Otomatik oynat düğmesini göster",
     "autoplay-guipushbuttonlabel": "Her şey hazır olduğunda oynat",
     "autoplay-minimum-label": "Asgari kullanıcı:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Gönder",
 
@@ -458,6 +459,7 @@ tr = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Syncplay {} kullanıyorsunuz ancak daha yeni bir sürüm https://syncplay.pl adresinde mevcut",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
 
     # Server notifications
     "welcome-server-notification": "Syncplay sunucusuna hoş geldiniz, ver. {0}",  # version
@@ -475,8 +477,8 @@ tr = {
     "server-salt-argument": "yönetilen oda şifreleri oluşturmak için kullanılan rastgele dize",
     "server-disable-ready-argument": "hazır olma özelliğini devre dışı bırak",
     "server-motd-argument": "motd alınacak dosyanın yolu",
-    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
-    "server-timer-argument": "time in seconds before a persistent room with no watchers is pruned. 0 disables pruning", # TODO: Translate
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "Sohbet devre dışı bırakılmalı mı?",
     "server-chat-maxchars-argument": "Bir sohbet mesajındaki maksimum karakter sayısı (varsayılan: {})", # Default number of characters
     "server-maxusernamelength-argument": "Bir kullanıcı adındaki maksimum karakter sayısı (varsayılan {})",

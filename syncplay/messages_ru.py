@@ -291,6 +291,7 @@ ru = {
     "autoplay-menu-label": "Показывать кнопку &автовоспроизведения",
     "autoplay-guipushbuttonlabel": "Стартовать, когда все будут готовы",
     "autoplay-minimum-label": "Минимум зрителей:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
     "sendmessage-label": "Выслать",
 
     "ready-guipushbuttonlabel": "Я готов",
@@ -455,6 +456,7 @@ ru = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Вы используете Syncplay версии {}. Доступна более новая версия на https://syncplay.pl/",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
 
     # Server notifications
     "welcome-server-notification": "Добро пожаловать на сервер Syncplay версии {0}",  # version
@@ -471,8 +473,8 @@ ru = {
     "server-salt-argument": "генерировать пароли к управляемым комнатам на основании указанной строки (соли)",
     "server-disable-ready-argument": "отключить статусы готов/не готов",
     "server-motd-argument": "путь к файлу, из которого будет извлекаться MOTD-сообщение",
-    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
-    "server-timer-argument": "time in seconds before a persistent room with no watchers is pruned. 0 disables pruning", # TODO: Translate
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "Должен ли чат быть отключён?",
     "server-chat-maxchars-argument": "Максимальное число символов в сообщениях в чате (по умолчанию {})",
     "server-maxusernamelength-argument": "Максимальное число символов в именах пользователей (по умолчанию {})",

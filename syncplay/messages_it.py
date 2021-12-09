@@ -291,6 +291,7 @@ it = {
     "autoplay-menu-label": "Mostra il tasto di riproduzione automatica",
     "autoplay-guipushbuttonlabel": "Riproduci quando tutti sono pronti",
     "autoplay-minimum-label": "Minimo utenti pronti:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Invia",
 
@@ -457,6 +458,7 @@ it = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Stai usando Syncplay {} ma una nuova versione è disponibile presso https://syncplay.pl",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate
 
     # Server notifications
     "welcome-server-notification": "Benvenuto nel server Syncplay, ver. {0}",  # version
@@ -474,8 +476,8 @@ it = {
     "server-salt-argument": "usare stringhe casuali per generare le password delle stanze gestite",
     "server-disable-ready-argument": "disabilita la funzionalità \"pronto\"",
     "server-motd-argument": "percorso del file da cui verrà letto il messaggio del giorno",
-    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
-    "server-timer-argument": "time in seconds before a persistent room with no watchers is pruned. 0 disables pruning", # TODO: Translate
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "abilita o disabilita la chat",
     "server-chat-maxchars-argument": "Numero massimo di caratteri in un messaggio di chat (default è {})", # Default number of characters
     "server-maxusernamelength-argument": "Numero massimo di caratteri in un nome utente (default è {})",

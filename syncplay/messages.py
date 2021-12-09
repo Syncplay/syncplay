@@ -64,7 +64,7 @@ def getInitialLanguage():
     try:
         import sys
         frozen = getattr(sys, 'frozen', '')
-        if frozen in 'macosx_app':
+        if frozen and frozen in 'macosx_app':
             from PySide2.QtCore import QLocale
             initialLanguage = QLocale.system().uiLanguages()[0].split('-')[0]
         else:

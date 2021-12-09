@@ -78,12 +78,13 @@ Random string used to generate managed room passwords.
 Path to a file from which motd (Message Of The Day) will be read.
 
 .TP
-.B \-\-rooms\-dir [directory]
-Path to a directory from where room data will be written to and read from. This will enable rooms to persist without watchers and through restarts. Will not work if using \fB\-\-isolate\-rooms\fP.
+.B \-\-rooms\-db-file [directory]
+Enables room persistence. Path is to where a database file should be loaded/create where room data will be written to and read from. This will enable rooms to persist without watchers and through restarts. Will not work if using \fB\-\-isolate\-rooms\fP.
 
 .TP
-.B \-\-rooms\-timer [directory]
-Requires \fB\-\-rooms\-timer\fP. Time in seconds that rooms will persist without users. \fB0\fP disables the timer, meaning rooms persist permanently.
+.B \-\-permanent\-rooms-file [directory]
+Specifies a list of rooms that will still be listed even if their playlist is empty. Path is to where a text file with one room per line. This will require persistent rooms to be enabled.
+
 
 .TP
 .B \-\-max\-chat\-message\-length [maxChatMessageLength]

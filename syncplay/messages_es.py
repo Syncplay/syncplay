@@ -291,6 +291,7 @@ es = {
     "autoplay-menu-label": "Mostrar botón de auto-reproducción",
     "autoplay-guipushbuttonlabel": "Reproducir cuando todos estén listos",
     "autoplay-minimum-label": "Mín. de usuarios:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Enviar",
 
@@ -457,6 +458,7 @@ es = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Estás usando Syncplay {} pero hay una versión más nueva disponible en https://syncplay.pl",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
 
     # Server notifications
     "welcome-server-notification": "Bienvenido al servidor de Syncplay, ver. {0}",  # version
@@ -474,8 +476,8 @@ es = {
     "server-salt-argument": "cadena aleatoria utilizada para generar contraseñas de salas administradas",
     "server-disable-ready-argument": "deshabilitar la función de preparación",
     "server-motd-argument": "ruta al archivo del cual se obtendrá el texto motd",
-    "server-rooms-argument": "path to directory to store/fetch room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
-    "server-timer-argument": "time in seconds before a persistent room with no watchers is pruned. 0 disables pruning", # TODO: Translate
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "¿Debería deshabilitarse el chat?",
     "server-chat-maxchars-argument": "Número máximo de caracteres en un mensaje de chat (el valor predeterminado es {})", # Default number of characters
     "server-maxusernamelength-argument": "Número máximo de caracteres para el nombre de usuario (el valor predeterminado es {})",
