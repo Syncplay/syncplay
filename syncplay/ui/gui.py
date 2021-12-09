@@ -40,7 +40,7 @@ if isMacOS() and IsPySide:
     from Cocoa import NSString, NSUTF8StringEncoding
 lastCheckedForUpdates = None
 from syncplay.vendor import darkdetect
-if isMacOS():
+if isMacOS() or isWindows():
 	isDarkMode = darkdetect.isDark()
 else:
 	isDarkMode = None
