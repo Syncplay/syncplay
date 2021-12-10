@@ -465,11 +465,11 @@ class RoomManager(object):
         oldRoom = watcher.getRoom()
         if oldRoom:
             oldRoom.removeWatcher(watcher)
-            if self._roomsDir is None or oldRoom.isStale(self._timer):
+            if self._roomsDbFile is None:
                 self._deleteRoomIfEmpty(oldRoom)
 
     def _getRoom(self, roomName):
-        if roomName in self._rooms and not self._rooms[roomName].isStale(self._timer):
+        if roomName in self._rooms:
             return self._rooms[roomName]
         else:
             if RoomPasswordProvider.isControlledRoom(roomName):
