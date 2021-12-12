@@ -465,8 +465,7 @@ class RoomManager(object):
         oldRoom = watcher.getRoom()
         if oldRoom:
             oldRoom.removeWatcher(watcher)
-            if self._roomsDbFile is None:
-                self._deleteRoomIfEmpty(oldRoom)
+            self._deleteRoomIfEmpty(oldRoom)
 
     def _getRoom(self, roomName):
         if roomName in self._rooms:
