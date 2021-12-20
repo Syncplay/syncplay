@@ -1,14 +1,6 @@
 # coding:utf8
 
-"""English dictionary"""
-
-# This file was mainly auto generated from ass2messages.py applied on messages_fr.ass to get these messages
-# its format has been harmonized, values are always stored in doublequotes strings, 
-# if double quoted string in the value then they should be esacaped like this \". There is
-# thus no reason to have single quoted strings. Tabs \t and newlines \n need also to be escaped.
-# whith ass2messages.py which handles these issues, this is no more a nightmare to handle. 
-# I fixed partially messages_en.py serving as template. an entry should be added in messages.py:
-# "fr": messages_fr.fr,  . Produced by sosie - sos-productions.com
+"""French dictionary"""
 
 fr = {
     "LANGUAGE": "Français",
