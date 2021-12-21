@@ -82,6 +82,7 @@ fr = {
     "commandlist-notification/undo": "\tu - annuler la dernière recherche",
     "commandlist-notification/pause": "\tp - basculer sur pause",
     "commandlist-notification/seek": "\t[s][+-]temps - recherche la valeur de temps donnée, si + ou - n'est pas spécifié c'est le temps absolu en secondes ou min:sec",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
     "commandlist-notification/help": "\th - cette aide",
     "commandlist-notification/toggle": "\tt - bascule si vous êtes prêt à regarder ou non",
     "commandlist-notification/create": "\tc [nom] - crée une salle gérée en utilisant le nom de la salle actuelle",
@@ -290,6 +291,7 @@ fr = {
     "autoplay-menu-label": "Afficher le bouton de lecture automatique",
     "autoplay-guipushbuttonlabel": "Jouer quand tout est prêt",
     "autoplay-minimum-label": "Utilisateurs minimum:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Envoyer",
 
@@ -456,6 +458,7 @@ fr = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Vous utilisez Syncplay {} mais une version plus récente est disponible sur https://syncplay.pl",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # NOTE: Do not translate the word -temp # TODO: Translate
 
     # Server notifications
     "welcome-server-notification": "Bienvenue sur le serveur Syncplay, ver.",  # version
@@ -473,6 +476,8 @@ fr = {
     "server-salt-argument": "chaîne aléatoire utilisée pour générer les mots de passe des salons gérés",
     "server-disable-ready-argument": "désactiver la fonction de préparation",
     "server-motd-argument": "chemin vers le fichier à partir duquel motd sera récupéré",
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled",, # TODO: Translate
     "server-chat-argument": "Le chat doit-il être désactivé?",
     "server-chat-maxchars-argument": "Nombre maximum de caractères dans un message de discussion (la valeur par défaut est {})", # Default number of characters
     "server-maxusernamelength-argument": "Nombre maximum de caractères dans un nom d'utilisateur (la valeur par défaut est {})",
