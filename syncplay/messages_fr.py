@@ -477,7 +477,7 @@ fr = {
     "server-disable-ready-argument": "désactiver la fonction de préparation",
     "server-motd-argument": "chemin vers le fichier à partir duquel motd sera récupéré",
     "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
-    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled",, # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "Le chat doit-il être désactivé?",
     "server-chat-maxchars-argument": "Nombre maximum de caractères dans un message de discussion (la valeur par défaut est {})", # Default number of characters
     "server-maxusernamelength-argument": "Nombre maximum de caractères dans un nom d'utilisateur (la valeur par défaut est {})",
