@@ -35,7 +35,7 @@ en = {
     "left-notification": "{} has left",  # User
     "left-paused-notification": "{} left, {} paused",  # User who left, User who paused
     "playing-notification": "{} is playing '{}' ({})",  # User, file, duration
-    "playing-notification/room-addendum":  " in room: '{}'",  # Room
+    "playing-notification/room-addendum": " in room: '{}'",  # Room
 
     "not-all-ready": "Not ready: {}",  # Usernames
     "all-users-ready": "Everyone is ready ({} users)",  # Number of ready users
@@ -165,18 +165,18 @@ en = {
     "argument-description": 'Solution to synchronize playback of multiple media player instances over the network.',
     "argument-epilog": 'If no options supplied _config values will be used',
     "nogui-argument": 'show no GUI',
-    "host-argument": 'server\'s address',
+    "host-argument": "server's address",
     "name-argument": 'desired username',
     "debug-argument": 'debug mode',
     "force-gui-prompt-argument": 'make configuration prompt appear',
-    "no-store-argument": 'don\'t store values in .syncplay',
+    "no-store-argument": "don't store values in .syncplay",
     "room-argument": 'default room',
     "password-argument": 'server password',
     "player-path-argument": 'path to your player executable',
     "file-argument": 'file to play',
     "args-argument": 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
     "clear-gui-data-argument": 'resets path and window state GUI data stored as QSettings',
-    "language-argument": 'language for Syncplay messages (de/en/ru/it/es/pt_BR/pt_PT/tr)',
+    "language-argument": 'language for Syncplay messages (de/en/ru/it/es/pt_BR/pt_PT/tr/fr)',
 
     "version-argument": 'prints your version',
     "version-message": "You're using Syncplay version {} ({})",

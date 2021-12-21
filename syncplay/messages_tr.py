@@ -176,7 +176,7 @@ tr = {
     "file-argument": 'oynatmak için dosya',
     "args-argument": 'oynatıcı seçenekleri, ile başlayan seçenekleri iletmeniz gerekiyorsa - bunların başına tek \'--\' argümanı ekleyin',
     "clear-gui-data-argument": 'QSettings olarak depolanan yol ve pencere durumu GUI verilerini sıfırlar',
-    "language-argument": 'Syncplay mesajları için dil (de/en/ru/it/es/pt_BR/pt_PT/tr)',
+    "language-argument": 'Syncplay mesajları için dil (de/en/ru/it/es/pt_BR/pt_PT/tr/fr)',
 
     "version-argument": 'versiyonunuzu yazdırır',
     "version-message": "Syncplay sürümünü kullanıyorsunuz {} ({})",

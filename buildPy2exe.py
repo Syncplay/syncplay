@@ -66,7 +66,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\PortugueseBR.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Portuguese.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Turkish.nlf"
-
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\French.nlf"
+ 
   Unicode true
 
   Name "Syncplay $version"
@@ -118,6 +119,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_TURKISH} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_TURKISH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_TURKISH} "FileDescription" "Syncplay"
+  
+  VIAddVersionKey /LANG=$${LANG_FRENCH} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_FRENCH} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_FRENCH} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_FRENCH} "FileDescription" "Syncplay"
 
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
@@ -198,6 +204,15 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^QuickLaunchBar $${LANG_TURKISH} "Hızlı Başlatma Çubuğu"
   LangString ^AutomaticUpdates $${LANG_TURKISH} "Güncellemeleri otomatik denetle"
   LangString ^UninstConfig $${LANG_TURKISH} "Yapılandırma dosyasını silin."
+  
+  LangString ^SyncplayLanguage $${LANG_FRENCH} "fr"
+  LangString ^Associate $${LANG_FRENCH} "Associer Syncplay avec les fichiers multimedias."
+  LangString ^Shortcut $${LANG_FRENCH} "Créer Racourcis pour les chemins suivants:"
+  LangString ^StartMenu $${LANG_FRENCH} "Menu Démarrer"
+  LangString ^Desktop $${LANG_FRENCH} "Bureau"
+  LangString ^QuickLaunchBar $${LANG_FRENCH} "Barre de Lancement Rapide"
+  LangString ^AutomaticUpdates $${LANG_FRENCH} "Vérifier automatiquement les mises à jour"
+  LangString ^UninstConfig $${LANG_FRENCH} "Supprimer le fichier de configuration."
 
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "

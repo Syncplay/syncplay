@@ -9,12 +9,14 @@ from . import messages_es
 from . import messages_pt_BR
 from . import messages_pt_PT
 from . import messages_tr
+from . import messages_fr
 import re
 
 messages = {
     "de": messages_de.de,
     "en": messages_en.en,
     "es": messages_es.es,
+    "fr": messages_fr.fr,
     "it": messages_it.it,
     "pt_PT": messages_pt_PT.pt_PT,
     "pt_BR": messages_pt_BR.pt_BR,
