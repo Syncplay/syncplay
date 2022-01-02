@@ -1,6 +1,7 @@
 import os
 from syncplay import constants
 from syncplay.players.mpv import MpvPlayer
+from syncplay.utils import playerPathExists
 
 class MpvnetPlayer(MpvPlayer):
 
@@ -30,11 +31,11 @@ class MpvnetPlayer(MpvPlayer):
 
     @staticmethod
     def getExpandedPath(playerPath):
-        if not os.path.isfile(playerPath):
-            if os.path.isfile(playerPath + "mpvnet.exe"):
+        if not playerPathExists(playerPath):
+            if playerPathExists(playerPath + "mpvnet.exe"):
                 playerPath += "mpvnet.exe"
                 return playerPath
-            elif os.path.isfile(playerPath + "\\mpvnet.exe"):
+            elif playerPathExists(playerPath + "\\mpvnet.exe"):
                 playerPath += "\\mpvnet.exe"
                 return playerPath
         if os.access(playerPath, os.X_OK):

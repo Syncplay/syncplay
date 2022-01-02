@@ -417,6 +417,13 @@ def open_system_file_browser(path):
     else:
         subprocess.Popen(["xdg-open", path])
 
+def playerPathExists(path):
+    if os.path.isfile(path):
+        return True
+    elif "mpvnet.exe" in path and os.path.isfile(path.replace("mpvnet.exe","mpvnet.com")):
+        return True
+    else:
+        return False
 
 def getListOfPublicServers():
     try:

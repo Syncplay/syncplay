@@ -173,8 +173,12 @@ MPLAYER_PATHS = ["mplayer2", "mplayer"]
 MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"c:\program files\mpv\mpv.exe", r"c:\program files\mpv-player\mpv.exe",
              r"c:\program Files (x86)\mpv\mpv.exe", r"c:\program Files (x86)\mpv-player\mpv.exe",
              "/Applications/mpv.app/Contents/MacOS/mpv"]
-MPVNET_PATHS = [r"c:\program files\mpv.net\mpvnet.exe", r"c:\program files\mpv.net\mpvnet.exe",
-             r"c:\program Files (x86)\mpv.net\mpvnet.exe", r"c:\program Files (x86)\mpv.net\mpvnet.exe"]
+MPVNET_PATHS = [r"c:\program files\mpv.net\mpvnet.exe", r"c:\program Files (x86)\mpv.net\mpvnet.exe"]
+try:
+    import os
+    MPVNET_PATHS.append(os.path.expandvars(r'%LOCALAPPDATA%\Microsoft\WindowsApps\mpvnet.exe'))
+except:
+    pass
 VLC_PATHS = [
     r"c:\program files (x86)\videolan\vlc\vlc.exe",
     r"c:\program files\videolan\vlc\vlc.exe",
