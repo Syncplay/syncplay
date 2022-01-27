@@ -10,6 +10,7 @@ from . import messages_pt_BR
 from . import messages_pt_PT
 from . import messages_tr
 from . import messages_fr
+from . import messages_zh_CN
 import re
 
 messages = {
@@ -22,6 +23,7 @@ messages = {
     "pt_BR": messages_pt_BR.pt_BR,
     "tr": messages_tr.tr,
     "ru": messages_ru.ru,
+    "zh_CN": messages_zh_CN.zh_CN,
     "CURRENT": None
 }
 
