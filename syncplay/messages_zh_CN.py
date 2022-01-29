@@ -192,7 +192,7 @@ zh_CN = {
     "name-label":  "用户名（可选）:",
     "password-label":  "服务器密码（若需要）:",
     "room-label": "默认房间: ",
-    "roomlist-msgbox-label": "编辑房间列表（每一行为一个房间）",
+    "roomlist-msgbox-label": "编辑房间列表（每行一个房间）",
 
     "media-setting-title": "播放器设置",
     "executable-path-label": "播放器路径:",
