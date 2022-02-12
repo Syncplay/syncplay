@@ -125,7 +125,7 @@ class SyncFactory(Factory):
 
     def addWatcher(self, watcherProtocol, username, roomName):
         roomName = truncateText(roomName, constants.MAX_ROOM_NAME_LENGTH)
-        username = self._roomManager.findFreeUsername(username)
+        username = self._roomManager.findFreeUsername(username, self.maxUsernameLength)
         watcher = Watcher(self, watcherProtocol, username)
         self.setWatcherRoom(watcher, roomName, asJoin=True)
 
@@ -488,8 +488,8 @@ class RoomManager(object):
                 self._roomsDbHandle.deleteRoom(room.getName())
             del self._rooms[room.getName()]
 
-    def findFreeUsername(self, username):
-        username = truncateText(username, constants.MAX_USERNAME_LENGTH)
+    def findFreeUsername(self, username, maxUsernameLength=constants.MAX_USERNAME_LENGTH):
+        username = truncateText(username, maxUsernameLength)
         allnames = []
         for room in self._rooms.values():
             for watcher in room.getWatchers():

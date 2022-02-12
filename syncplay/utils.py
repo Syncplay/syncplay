@@ -232,8 +232,9 @@ def truncateText(unicodeText, maxLength):
         unicodeText = unicodeText.decode('utf-8')
     except:
         pass
+
     try:
-        return(str(unicodeText.encode("utf-8"), "utf-8", errors="ignore")[:maxLength])
+        return str(unicodeText.encode("utf-8"), "utf-8", errors="ignore")[:maxLength]
     except:
         pass
     return ""
