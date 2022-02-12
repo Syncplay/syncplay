@@ -175,7 +175,7 @@ fr = {
     "file-argument": "fichier à lire",
     "args-argument": 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
     "clear-gui-data-argument": "réinitialise les données GUI du chemin et de l'état de la fenêtre stockées en tant que QSettings",
-    "language-argument": "langue pour les messages Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr/fr)",
+    "language-argument": "langue pour les messages Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)",
 
     "version-argument": "imprime votre version",
     "version-message": "Vous utilisez Syncplay version {} ({})",

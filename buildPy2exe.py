@@ -67,6 +67,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Portuguese.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Turkish.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\French.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
  
   Unicode true
 
@@ -124,6 +125,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_FRENCH} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_FRENCH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_FRENCH} "FileDescription" "Syncplay"
+  
+  VIAddVersionKey /LANG=$${LANG_SIMPCHINESE} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_SIMPCHINESE} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_SIMPCHINESE} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_SIMPCHINESE} "FileDescription" "Syncplay"
 
   LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
   LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
@@ -213,6 +219,15 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^QuickLaunchBar $${LANG_FRENCH} "Barre de Lancement Rapide"
   LangString ^AutomaticUpdates $${LANG_FRENCH} "Vérifier automatiquement les mises à jour"
   LangString ^UninstConfig $${LANG_FRENCH} "Supprimer le fichier de configuration."
+  
+  LangString ^SyncplayLanguage $${LANG_SIMPCHINESE} "zh_CN"
+  LangString ^Associate $${LANG_SIMPCHINESE} "将Syncplay与多媒体文件关联。"
+  LangString ^Shortcut $${LANG_SIMPCHINESE} "在以下位置创建快捷方式:"
+  LangString ^StartMenu $${LANG_SIMPCHINESE} "开始菜单"
+  LangString ^Desktop $${LANG_SIMPCHINESE} "桌面"
+  LangString ^QuickLaunchBar $${LANG_SIMPCHINESE} "快速启动栏"
+  LangString ^AutomaticUpdates $${LANG_SIMPCHINESE} "自动检查更新"
+  LangString ^UninstConfig $${LANG_SIMPCHINESE} "删除配置文件"
 
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "
@@ -334,6 +349,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push 'Português de Portugal'
     Push $${LANG_TURKISH}
     Push 'Türkçe'
+    Push $${LANG_SIMPCHINESE}
+    Push '简体中文'
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE

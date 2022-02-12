@@ -176,7 +176,7 @@ de = {
     "file-argument": 'Abzuspielende Datei',
     "args-argument": 'Player-Einstellungen; Wenn du Einstellungen, die mit - beginnen, nutzen willst, stelle ein einzelnes \'--\'-Argument davor',
     "clear-gui-data-argument": 'Setzt die Pfad- und GUI-Fenster-Daten die in den QSettings gespeichert sind zurück',
-    "language-argument": 'Sprache für Syncplay-Nachrichten (de/en/ru/it/es/pt_BR/pt_PT/tr/fr)',
+    "language-argument": 'Sprache für Syncplay-Nachrichten (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
 
     "version-argument": 'gibt die aktuelle Version aus',
     "version-message": "Du verwendest Syncplay v. {} ({})",
