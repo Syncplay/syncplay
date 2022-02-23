@@ -2058,8 +2058,11 @@ class MainWindow(QtWidgets.QMainWindow):
         settings.beginGroup("MainWindow")
         self.resize(settings.value("size", QSize(700, 500)))
         movePos = settings.value("pos", QPoint(200, 200))
-        windowGeometry = QtWidgets.QApplication.desktop().availableGeometry(self)
-        posIsOnScreen = windowGeometry.contains(QtCore.QRect(movePos.x(), movePos.y(), 1, 1))
+        combinedScreenWidth = 0
+        for i, screen in enumerate(QtWidgets.QApplication.screens()):
+            combinedScreenWidth = combinedScreenWidth + screen.availableGeometry().width()
+            combinedScreenWidth = combinedScreenWidth + screen.availableVirtualGeometry().width()
+        posIsOnScreen = movePos.x() < combinedScreenWidth
         if not posIsOnScreen:
             movePos = QPoint(200,200)
         self.move(movePos)
