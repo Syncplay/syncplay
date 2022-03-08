@@ -82,12 +82,14 @@ pt_PT = {
     "commandlist-notification/undo": "\tu - desfaz último salto",
     "commandlist-notification/pause": "\tp - alterna pausa",
     "commandlist-notification/seek": "\t[s][+-]time - salta para o valor de tempo dado, se + ou - não forem especificados, será o tempo absoluto em segundos ou minutos:segundos",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
     "commandlist-notification/help": "\th - esta mensagem de ajuda",
     "commandlist-notification/toggle": "\tt - alterna o seu status de prontidão para assistir",
     "commandlist-notification/create": "\tc [nome] - cria sala gerenciada usando o nome da sala atual",
     "commandlist-notification/auth": "\ta [senha] - autentica-se como administrador da sala com a senha",
     "commandlist-notification/chat": "\tch [mensagem] - envia uma mensagem no chat da sala",
     "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",  # TO DO: Translate
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - show the current playlist",  # TO DO: Translate
     "commandList-notification/select": "\tqs [index] - select given entry in the playlist",  # TO DO: Translate
     "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",  # TO DO: Translate
@@ -174,7 +176,7 @@ pt_PT = {
     "file-argument": 'ficheiro a ser tocado',
     "args-argument": 'opções do reprodutor; se você precisar passar opções começando com -, as preceda com um único argumento \'--\'',
     "clear-gui-data-argument": 'redefine o caminho e o estado de dados da janela da GUI para as de QSettings',
-    "language-argument": 'idioma para mensagens do Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr)',
+    "language-argument": 'idioma para mensagens do Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
 
     "version-argument": 'exibe sua versão',
     "version-message": "Você está usando o Syncplay versão {} ({})",
@@ -288,6 +290,7 @@ pt_PT = {
     "autoplay-menu-label": "Mostrar botão de reprodução automática",
     "autoplay-guipushbuttonlabel": "Tocar quando todos estiverem prontos",
     "autoplay-minimum-label": "Mín. de utilizadores:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Enviar",
 
@@ -455,6 +458,7 @@ pt_PT = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Você está usando o Syncplay {}, mas uma versão mais nova está disponível em https://syncplay.pl",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
 
     # Server notifications
     "welcome-server-notification": "Seja bem-vindo ao servidor de Syncplay, versão {0}",  # version
@@ -472,6 +476,8 @@ pt_PT = {
     "server-salt-argument": "string aleatória utilizada para gerar senhas de salas gerenciadas",
     "server-disable-ready-argument": "desativar recurso de prontidão",
     "server-motd-argument": "caminho para o arquivo o qual o motd será obtido",
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "O chat deve ser desativado?",
     "server-chat-maxchars-argument": "Número máximo de caracteres numa mensagem do chat (o padrão é {})", # Default number of characters
     "server-maxusernamelength-argument": "Número máximos de caracteres num nome de utilizador (o padrão é {})",

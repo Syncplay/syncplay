@@ -4,6 +4,7 @@ import hashlib
 import os
 import random
 import time
+import json
 from string import Template
 
 from twisted.enterprise import adbapi
@@ -21,14 +22,14 @@ import syncplay
 from syncplay import constants
 from syncplay.messages import getMessage
 from syncplay.protocols import SyncServerProtocol
-from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid, truncateText
-
+from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid, truncateText, getListAsMultilineString, convertMultilineStringToList
 
 class SyncFactory(Factory):
-    def __init__(self, port='', password='', motdFilePath=None, isolateRooms=False, salt=None,
+    def __init__(self, port='', password='', motdFilePath=None, roomsDbFile=None, permanentRoomsFile=None, isolateRooms=False, salt=None,
                  disableReady=False, disableChat=False, maxChatMessageLength=constants.MAX_CHAT_MESSAGE_LENGTH,
                  maxUsernameLength=constants.MAX_USERNAME_LENGTH, statsDbFile=None, tlsCertPath=None):
         self.isolateRooms = isolateRooms
+        syncplay.messages.setLanguage(syncplay.messages.getInitialLanguage())
         print(getMessage("welcome-server-notification").format(syncplay.version))
         self.port = port
         if password:
@@ -40,16 +41,19 @@ class SyncFactory(Factory):
             print(getMessage("no-salt-notification").format(salt))
         self._salt = salt
         self._motdFilePath = motdFilePath
+        self.roomsDbFile = roomsDbFile
         self.disableReady = disableReady
         self.disableChat = disableChat
         self.maxChatMessageLength = maxChatMessageLength if maxChatMessageLength is not None else constants.MAX_CHAT_MESSAGE_LENGTH
         self.maxUsernameLength = maxUsernameLength if maxUsernameLength is not None else constants.MAX_USERNAME_LENGTH
+        self.permanentRoomsFile = permanentRoomsFile if permanentRoomsFile is not None and os.path.isfile(permanentRoomsFile) else None
+        self.permanentRooms = self.loadListFromMultilineTextFile(self.permanentRoomsFile) if self.permanentRoomsFile is not None else []
         if not isolateRooms:
-            self._roomManager = RoomManager()
+            self._roomManager = RoomManager(self.roomsDbFile, self.permanentRooms)
         else:
             self._roomManager = PublicRoomManager()
         if statsDbFile is not None:
-            self._statsDbHandle = DBManager(statsDbFile)
+            self._statsDbHandle = StatsDBManager(statsDbFile)
             self._statsRecorder = StatsRecorder(self._statsDbHandle, self._roomManager)
             statsDelay = 5*(int(self.port)%10 + 1)
             self._statsRecorder.startRecorder(statsDelay)
@@ -63,6 +67,16 @@ class SyncFactory(Factory):
             self.certPath = None
             self.options = None
             self.serverAcceptsTLS = False
+
+    def loadListFromMultilineTextFile(self, path):
+        if not os.path.isfile(path):
+            return []
+        with open(path) as f:
+            multiline = f.read().splitlines()
+        return multiline
+
+    def loadRoom(self):
+        rooms = self._roomsDbHandle.loadRooms()
 
     def buildProtocol(self, addr):
         return SyncServerProtocol(self)
@@ -79,6 +93,7 @@ class SyncFactory(Factory):
         features["isolateRooms"] = self.isolateRooms
         features["readiness"] = not self.disableReady
         features["managedRooms"] = True
+        features["persistentRooms"] = self.roomsDbFile is not None
         features["chat"] = not self.disableChat
         features["maxChatMessageLength"] = self.maxChatMessageLength
         features["maxUsernameLength"] = self.maxUsernameLength
@@ -110,7 +125,7 @@ class SyncFactory(Factory):
 
     def addWatcher(self, watcherProtocol, username, roomName):
         roomName = truncateText(roomName, constants.MAX_ROOM_NAME_LENGTH)
-        username = self._roomManager.findFreeUsername(username)
+        username = self._roomManager.findFreeUsername(username, self.maxUsernameLength)
         watcher = Watcher(self, watcherProtocol, username)
         self.setWatcherRoom(watcher, roomName, asJoin=True)
 
@@ -134,11 +149,17 @@ class SyncFactory(Factory):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, None)
         self._roomManager.broadcast(watcher, l)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
+        if self.roomsDbFile:
+            l = lambda w: w.sendList(toGUIOnly=True)
+            self._roomManager.broadcast(watcher, l)
 
     def removeWatcher(self, watcher):
         if watcher and watcher.getRoom():
             self.sendLeftMessage(watcher)
             self._roomManager.removeWatcher(watcher)
+            if self.roomsDbFile:
+                l = lambda w: w.sendList(toGUIOnly=True)
+                self._roomManager.broadcast(watcher, l)
 
     def sendLeftMessage(self, watcher):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"left": True})
@@ -148,6 +169,9 @@ class SyncFactory(Factory):
         l = lambda w: w.sendSetting(watcher.getName(), watcher.getRoom(), None, {"joined": True, "version": watcher.getVersion(), "features": watcher.getFeatures()}) if w != watcher else None
         self._roomManager.broadcast(watcher, l)
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), False))
+        if self.roomsDbFile:
+            l = lambda w: w.sendList(toGUIOnly=True)
+            self._roomManager.broadcast(watcher, l)
 
     def sendFileUpdate(self, watcher):
         if watcher.getFile():
@@ -168,6 +192,9 @@ class SyncFactory(Factory):
 
     def getAllWatchersForUser(self, forUser):
         return self._roomManager.getAllWatchersForUser(forUser)
+
+    def getEmptyPersistentRooms(self):
+        return self._roomManager.getEmptyPersistentRooms()
 
     def authRoomController(self, watcher, password, roomBaseName=None):
         room = watcher.getRoom()
@@ -290,8 +317,33 @@ class StatsRecorder(object):
         except:
             pass
 
+class RoomsRecorder(StatsRecorder):
+    def __init__(self, dbHandle, roomManager):
+        self._dbHandle = dbHandle
+        self._roomManagerHandle = roomManager
 
-class DBManager(object):
+    def startRecorder(self, delay):
+        try:
+            self._dbHandle.connect()
+            reactor.callLater(delay, self._scheduleClientSnapshot) # TODO: FIX THIS!
+        except:
+            print("--- Error in initializing the stats database. Server Stats not enabled. ---")
+
+    def _scheduleClientSnapshot(self):
+        self._clientSnapshotTimer = task.LoopingCall(self._runClientSnapshot)
+        self._clientSnapshotTimer.start(constants.SERVER_STATS_SNAPSHOT_INTERVAL)
+
+    def _runClientSnapshot(self):
+        try:
+            snapshotTime = int(time.time())
+            rooms = self._roomManagerHandle.exportRooms()
+            for room in rooms.values():
+                for watcher in room.getWatchers():
+                    self._dbHandle.addVersionLog(snapshotTime, watcher.getVersion())
+        except:
+            pass
+
+class StatsDBManager(object):
     def __init__(self, dbpath):
         self._dbPath = dbpath
         self._connection = None
@@ -305,17 +357,74 @@ class DBManager(object):
         self._createSchema()
 
     def _createSchema(self):
-        initQuery = 'create table if not exists clients_snapshots (snapshot_time integer, version string)'
-        self._connection.runQuery(initQuery)
+        initQuery = 'create table if not exists clients_snapshots (snapshot_time INTEGER, version STRING)'
+        return self._connection.runQuery(initQuery)
 
     def addVersionLog(self, timestamp, version):
         content = (timestamp, version, )
         self._connection.runQuery("INSERT INTO clients_snapshots VALUES (?, ?)", content)
 
+class RoomDBManager(object):
+    def __init__(self, dbpath, loadroomscallback):
+        self._dbPath = dbpath
+        self._connection = None
+        self._loadRoomsCallback = loadroomscallback
+
+    def __del__(self):
+        if self._connection is not None:
+            self._connection.close()
+
+    def connect(self):
+        self._connection = adbapi.ConnectionPool("sqlite3", self._dbPath, check_same_thread=False)
+        self._createSchema().addCallback(self.loadRooms)
+
+    def _createSchema(self):
+        initQuery = 'create table if not exists persistent_rooms (name STRING PRIMARY KEY, playlist STRING, playlistIndex INTEGER, position REAL, lastSavedUpdate INTEGER)'
+        return self._connection.runQuery(initQuery)
+
+    def saveRoom(self, name, playlist, playlistIndex, position, lastUpdate):
+        content = (name, playlist, playlistIndex, position, lastUpdate)
+        self._connection.runQuery("INSERT OR REPLACE INTO persistent_rooms VALUES (?, ?, ?, ?, ?)", content)
+
+    def deleteRoom(self, name):
+        self._connection.runQuery("DELETE FROM persistent_rooms where name = ?", [name])
+
+    def loadRooms(self, result=None):
+        roomsQuery = "SELECT * FROM persistent_rooms"
+        rooms = self._connection.runQuery(roomsQuery)
+        rooms.addCallback(self.loadedRooms)
+
+    def loadedRooms(self, rooms):
+        self._loadRoomsCallback(rooms)
 
 class RoomManager(object):
-    def __init__(self):
+    def __init__(self, roomsdbfile=None, permanentRooms=[]):
+        self._roomsDbFile = roomsdbfile
         self._rooms = {}
+        self._permanentRooms = permanentRooms
+        if self._roomsDbFile is not None:
+            self._roomsDbHandle = RoomDBManager(self._roomsDbFile, self.loadRooms)
+            self._roomsDbHandle.connect()
+        else:
+            self._roomsDbHandle = None
+
+    def loadRooms(self, rooms):
+        roomsLoaded = []
+        for roomDetails in rooms:
+            roomName = truncateText(roomDetails[0], constants.MAX_ROOM_NAME_LENGTH)
+            room = Room(roomDetails[0], self._roomsDbHandle)
+            room.loadRoom(roomDetails)
+            if roomName in self._permanentRooms:
+                room.setPermanent(True)
+            self._rooms[roomName] = room
+            roomsLoaded.append(roomName)
+        for roomName in self._permanentRooms:
+            if roomName not in roomsLoaded:
+                roomDetails = (roomName, "", 0, 0, 0)
+                room = Room(roomName, self._roomsDbHandle)
+                room.loadRoom(roomDetails)
+                room.setPermanent(True)
+                self._rooms[roomName] = room
 
     def broadcastRoom(self, sender, whatLambda):
         room = sender.getRoom()
@@ -335,6 +444,20 @@ class RoomManager(object):
                 watchers.append(watcher)
         return watchers
 
+    def getPersistentRooms(self, sender):
+        persistentRooms = []
+        for room in self._rooms.values():
+            if room.isPersistent():
+                persistentRooms.append(room.getName())
+        return persistentRooms
+
+    def getEmptyPersistentRooms(self):
+        emptyPersistentRooms = []
+        for room in self._rooms.values():
+            if len(room.getWatchers()) == 0:
+                emptyPersistentRooms.append(room.getName())
+        return emptyPersistentRooms
+
     def moveWatcher(self, watcher, roomName):
         roomName = truncateText(roomName, constants.MAX_ROOM_NAME_LENGTH)
         self.removeWatcher(watcher)
@@ -352,19 +475,24 @@ class RoomManager(object):
             return self._rooms[roomName]
         else:
             if RoomPasswordProvider.isControlledRoom(roomName):
-                room = ControlledRoom(roomName)
+                room = ControlledRoom(roomName, self._roomsDbHandle)
             else:
-                room = Room(roomName)
+                if roomName in self._rooms:
+                    self._deleteRoomIfEmpty(self._rooms[roomName])
+                room = Room(roomName, self._roomsDbHandle)
             self._rooms[roomName] = room
             return room
 
     def _deleteRoomIfEmpty(self, room):
-        #if room.isEmpty() and room.getName() in self._rooms:
-        #    del self._rooms[room.getName()]
-        print("Would delete room: " + room.getName())
+        if room.isEmpty() and room.getName():
+            if self._roomsDbHandle and room.isNotPermanent():
+                if room.isPersistent() and not room.isPlaylistEmpty():
+                    return
+                self._roomsDbHandle.deleteRoom(room.getName())
+            del self._rooms[room.getName()]
 
-    def findFreeUsername(self, username):
-        username = truncateText(username, constants.MAX_USERNAME_LENGTH)
+    def findFreeUsername(self, username, maxUsernameLength=constants.MAX_USERNAME_LENGTH):
+        username = truncateText(username, maxUsernameLength)
         allnames = []
         for room in self._rooms.values():
             for watcher in room.getWatchers():
@@ -396,18 +524,57 @@ class Room(object):
     STATE_PAUSED = 0
     STATE_PLAYING = 1
 
-    def __init__(self, name):
+    def __init__(self, name, roomsdbhandle):
         self._name = name
+        self._roomsDbHandle = roomsdbhandle
         self._watchers = {}
         self._playState = self.STATE_PAUSED
         self._setBy = None
         self._playlist = []
         self._playlistIndex = None
         self._lastUpdate = time.time()
+        self._lastSavedUpdate = 0
         self._position = 0
+        self._permanent = False
 
     def __str__(self, *args, **kwargs):
         return self.getName()
+
+    def roomsCanPersist(self):
+        return self._roomsDbHandle is not None
+
+    def isPersistent(self):
+        return self.roomsCanPersist() and not self.isMarkedAsTemporary()
+
+    def isMarkedAsTemporary(self):
+        roomName = self.getName().lower()
+        return roomName.endswith("-temp") or "-temp:" in roomName
+
+    def isPlaylistEmpty(self):
+        return len(self._playlist) == 0
+
+    def isPermanent(self):
+        return self._permanent
+
+    def isNotPermanent(self):
+        return not self.isPermanent()
+
+    def sanitizeFilename(self, filename, blacklist="<>:/\\|?*\"", placeholder="_"):
+        return ''.join([c if c not in blacklist and ord(c) >= 32 else placeholder for c in filename])
+
+    def writeToDb(self):
+        if not self.isPersistent():
+            return
+        processed_playlist = getListAsMultilineString(self._playlist)
+        self._roomsDbHandle.saveRoom(self._name, processed_playlist, self._playlistIndex, self._position, self._lastSavedUpdate)
+
+    def loadRoom(self, room):
+        name, playlist, playlistindex, position, lastupdate = room
+        self._name = name
+        self._playlist = convertMultilineStringToList(playlist)
+        self._playlistIndex = playlistindex
+        self._position = position
+        self._lastSavedUpdate = lastupdate
 
     def getName(self):
         return self._name
@@ -418,7 +585,7 @@ class Room(object):
             watcher = min(self._watchers.values())
             self._setBy = watcher
             self._position = watcher.getPosition()
-            self._lastUpdate = time.time()
+            self._lastSavedUpdate = self._lastUpdate = time.time()
             return self._position
         elif self._position is not None:
             return self._position + (age if self._playState == self.STATE_PLAYING else 0)
@@ -428,12 +595,17 @@ class Room(object):
     def setPaused(self, paused=STATE_PAUSED, setBy=None):
         self._playState = paused
         self._setBy = setBy
+        self.writeToDb()
 
     def setPosition(self, position, setBy=None):
         self._position = position
         for watcher in self._watchers.values():
             watcher.setPosition(position)
             self._setBy = setBy
+        self.writeToDb()
+
+    def setPermanent(self, newState):
+        self._permanent = newState
 
     def isPlaying(self):
         return self._playState == self.STATE_PLAYING
@@ -445,7 +617,7 @@ class Room(object):
         return list(self._watchers.values())
 
     def addWatcher(self, watcher):
-        if self._watchers:
+        if self._watchers or self.isPersistent():
             watcher.setPosition(self.getPosition())
         self._watchers[watcher.getName()] = watcher
         watcher.setRoom(self)
@@ -455,8 +627,9 @@ class Room(object):
             return
         del self._watchers[watcher.getName()]
         watcher.setRoom(None)
-        if not self._watchers:
+        if not self._watchers and not self.isPersistent():
             self._position = 0
+        self.writeToDb()
 
     def isEmpty(self):
         return not bool(self._watchers)
@@ -469,9 +642,11 @@ class Room(object):
 
     def setPlaylist(self, files, setBy=None):
         self._playlist = files
+        self.writeToDb()
 
     def setPlaylistIndex(self, index, setBy=None):
         self._playlistIndex = index
+        self.writeToDb()
 
     def getPlaylist(self):
         return self._playlist
@@ -479,10 +654,12 @@ class Room(object):
     def getPlaylistIndex(self):
         return self._playlistIndex
 
+    def getControllers(self):
+        return []
 
 class ControlledRoom(Room):
-    def __init__(self, name):
-        Room.__init__(self, name)
+    def __init__(self, name, roomsdbhandle):
+        Room.__init__(self, name, roomsdbhandle)
         self._controllers = {}
 
     def getPosition(self):
@@ -505,6 +682,7 @@ class ControlledRoom(Room):
         Room.removeWatcher(self, watcher)
         if watcher.getName() in self._controllers:
             del self._controllers[watcher.getName()]
+        self.writeToDb()
 
     def setPaused(self, paused=Room.STATE_PAUSED, setBy=None):
         if self.canControl(setBy):
@@ -526,7 +704,7 @@ class ControlledRoom(Room):
         return watcher.getName() in self._controllers
 
     def getControllers(self):
-        return self._controllers
+        return {}
 
 
 class Watcher(object):
@@ -605,6 +783,23 @@ class Watcher(object):
     def sendChatMessage(self, message):
         if self._connector.meetsMinVersion(constants.CHAT_MIN_VERSION):
             self._connector.sendMessage({"Chat": message})
+
+    def sendList(self, toGUIOnly=False):
+        if toGUIOnly and self.isGUIUser(self._connector.getFeatures()):
+            clientFeatures = self._connector.getFeatures()
+            if "uiMode" in clientFeatures:
+                if clientFeatures["uiMode"] == constants.CONSOLE_UI_MODE:
+                    return
+            else:
+                return
+        self._connector.sendList()
+
+    def isGUIUser(self, clientFeatures):
+        clientFeatures = self._connector.getFeatures()
+        uiMode = clientFeatures["uiMode"] if "uiMode" in clientFeatures else constants.UNKNOWN_UI_MODE
+        if uiMode == constants.UNKNOWN_UI_MODE:
+            uiMode = constants.FALLBACK_ASSUMED_UI_MODE
+        return uiMode == constants.GRAPHICAL_UI_MODE
 
     def sendSetReady(self, username, isReady, manuallyInitiated=True):
         self._connector.sendSetReady(username, isReady, manuallyInitiated)
@@ -691,6 +886,8 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--disable-chat', action='store_true', help=getMessage("server-chat-argument"))
         self._argparser.add_argument('--salt', metavar='salt', type=str, nargs='?', help=getMessage("server-salt-argument"), default=os.environ.get('SYNCPLAY_SALT'))
         self._argparser.add_argument('--motd-file', metavar='file', type=str, nargs='?', help=getMessage("server-motd-argument"))
+        self._argparser.add_argument('--rooms-db-file', metavar='rooms', type=str, nargs='?', help=getMessage("server-rooms-argument"))
+        self._argparser.add_argument('--permanent-rooms-file', metavar='permanentrooms', type=str, nargs='?', help=getMessage("server-permanent-rooms-argument"))
         self._argparser.add_argument('--max-chat-message-length', metavar='maxChatMessageLength', type=int, nargs='?', help=getMessage("server-chat-maxchars-argument").format(constants.MAX_CHAT_MESSAGE_LENGTH))
         self._argparser.add_argument('--max-username-length', metavar='maxUsernameLength', type=int, nargs='?', help=getMessage("server-maxusernamelength-argument").format(constants.MAX_USERNAME_LENGTH))
         self._argparser.add_argument('--stats-db-file', metavar='file', type=str, nargs='?', help=getMessage("server-stats-db-file-argument"))

@@ -7,18 +7,24 @@
 import ctypes
 import ctypes.util
 
-appkit = ctypes.cdll.LoadLibrary(ctypes.util.find_library('AppKit'))
-objc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('objc'))
+try:
+    # macOS Big Sur+ use "a built-in dynamic linker cache of all system-provided libraries"
+    appkit = ctypes.cdll.LoadLibrary('AppKit.framework/AppKit')
+    objc = ctypes.cdll.LoadLibrary('libobjc.dylib')
+except OSError:
+    # revert to full path for older OS versions and hardened programs
+    appkit = ctypes.cdll.LoadLibrary(ctypes.util.find_library('AppKit'))
+    objc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('objc'))
 
 void_p = ctypes.c_void_p
 ull = ctypes.c_uint64
 
 objc.objc_getClass.restype = void_p
 objc.sel_registerName.restype = void_p
-objc.objc_msgSend.restype = void_p
-objc.objc_msgSend.argtypes = [void_p, void_p]
 
-msg = objc.objc_msgSend
+# See https://docs.python.org/3/library/ctypes.html#function-prototypes for arguments description
+MSGPROTOTYPE = ctypes.CFUNCTYPE(void_p, void_p, void_p, void_p)
+msg = MSGPROTOTYPE(('objc_msgSend', objc), ((1 ,'', None), (1, '', None), (1, '', None)))
 
 def _utf8(s):
     if not isinstance(s, bytes):

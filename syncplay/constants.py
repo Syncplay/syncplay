@@ -125,6 +125,7 @@ COMMANDS_CREATE = ['c', 'create']
 COMMANDS_AUTH = ['a', 'auth']
 COMMANDS_TOGGLE = ['t', 'toggle']
 COMMANDS_QUEUE = ['queue', 'qa', 'add']
+COMMANDS_QUEUEANDSELECT = ['queueandselect','qas']
 COMMANDS_PLAYLIST = ['playlist', 'ql', 'pl']
 COMMANDS_SELECT = ['select', 'qs']
 COMMANDS_DELETE = ['delete', 'd', 'qd']
@@ -172,8 +173,12 @@ MPLAYER_PATHS = ["mplayer2", "mplayer"]
 MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"c:\program files\mpv\mpv.exe", r"c:\program files\mpv-player\mpv.exe",
              r"c:\program Files (x86)\mpv\mpv.exe", r"c:\program Files (x86)\mpv-player\mpv.exe",
              "/Applications/mpv.app/Contents/MacOS/mpv"]
-MPVNET_PATHS = [r"c:\program files\mpv.net\mpvnet.exe", r"c:\program files\mpv.net\mpvnet.exe",
-             r"c:\program Files (x86)\mpv.net\mpvnet.exe", r"c:\program Files (x86)\mpv.net\mpvnet.exe"]
+MPVNET_PATHS = [r"c:\program files\mpv.net\mpvnet.exe", r"c:\program Files (x86)\mpv.net\mpvnet.exe"]
+try:
+    import os
+    MPVNET_PATHS.append(os.path.expandvars(r'%LOCALAPPDATA%\Microsoft\WindowsApps\mpvnet.exe'))
+except:
+    pass
 VLC_PATHS = [
     r"c:\program files (x86)\videolan\vlc\vlc.exe",
     r"c:\program files\videolan\vlc\vlc.exe",
@@ -345,6 +350,11 @@ SYNCPLAY_DOWNLOAD_URL = "https://syncplay.pl/download/"
 SYNCPLAY_PUBLIC_SERVER_LIST_URL = "https://syncplay.pl/listpublicservers?{}"  # Params
 
 DEFAULT_TRUSTED_DOMAINS = ["youtube.com", "youtu.be"]
-TRUSTABLE_WEB_PROTOCOLS = ["http://www.", "https://www.", "http://", "https://"]
+TRUSTABLE_WEB_PROTOCOLS = ["http", "https"]
 
 PRIVATE_FILE_FIELDS = ["path"]
+
+CONSOLE_UI_MODE = "CLI"
+GRAPHICAL_UI_MODE = "GUI"
+UNKNOWN_UI_MODE = "Unknown"
+FALLBACK_ASSUMED_UI_MODE = GRAPHICAL_UI_MODE

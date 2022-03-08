@@ -35,7 +35,7 @@ en = {
     "left-notification": "{} has left",  # User
     "left-paused-notification": "{} left, {} paused",  # User who left, User who paused
     "playing-notification": "{} is playing '{}' ({})",  # User, file, duration
-    "playing-notification/room-addendum":  " in room: '{}'",  # Room
+    "playing-notification/room-addendum": " in room: '{}'",  # Room
 
     "not-all-ready": "Not ready: {}",  # Usernames
     "all-users-ready": "Everyone is ready ({} users)",  # Number of ready users
@@ -82,12 +82,14 @@ en = {
     "commandlist-notification/undo": "\tu - undo last seek",
     "commandlist-notification/pause": "\tp - toggle pause",
     "commandlist-notification/seek": "\t[s][+-]time - seek to the given value of time, if + or - is not specified it's absolute time in seconds or min:sec",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature",
     "commandlist-notification/help": "\th - this help",
     "commandlist-notification/toggle": "\tt - toggles whether you are ready to watch or not",
     "commandlist-notification/create": "\tc [name] - create managed room using name of current room",
     "commandlist-notification/auth": "\ta [password] - authenticate as room operator with operator password",
     "commandlist-notification/chat": "\tch [message] - send a chat message in a room",
     "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",
     "commandList-notification/playlist": "\tql - show the current playlist",
     "commandList-notification/select": "\tqs [index] - select given entry in the playlist",
     "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",
@@ -163,18 +165,18 @@ en = {
     "argument-description": 'Solution to synchronize playback of multiple media player instances over the network.',
     "argument-epilog": 'If no options supplied _config values will be used',
     "nogui-argument": 'show no GUI',
-    "host-argument": 'server\'s address',
+    "host-argument": "server's address",
     "name-argument": 'desired username',
     "debug-argument": 'debug mode',
     "force-gui-prompt-argument": 'make configuration prompt appear',
-    "no-store-argument": 'don\'t store values in .syncplay',
+    "no-store-argument": "don't store values in .syncplay",
     "room-argument": 'default room',
     "password-argument": 'server password',
     "player-path-argument": 'path to your player executable',
     "file-argument": 'file to play',
     "args-argument": 'player options, if you need to pass options starting with - prepend them with single \'--\' argument',
     "clear-gui-data-argument": 'resets path and window state GUI data stored as QSettings',
-    "language-argument": 'language for Syncplay messages (de/en/ru/it/es/pt_BR/pt_PT/tr)',
+    "language-argument": 'language for Syncplay messages (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
 
     "version-argument": 'prints your version',
     "version-message": "You're using Syncplay version {} ({})",
@@ -290,6 +292,7 @@ en = {
     "autoplay-menu-label": "Show auto-play button",
     "autoplay-guipushbuttonlabel": "Play when all ready",
     "autoplay-minimum-label": "Min users:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms",
 
     "sendmessage-label": "Send",
 
@@ -456,6 +459,7 @@ en = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "You are using Syncplay {} but a newer version is available from https://syncplay.pl",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # NOTE: Do not translate the word -temp
 
     # Server notifications
     "welcome-server-notification": "Welcome to Syncplay server, ver. {0}",  # version
@@ -473,6 +477,8 @@ en = {
     "server-salt-argument": "random string used to generate managed room passwords",
     "server-disable-ready-argument": "disable readiness feature",
     "server-motd-argument": "path to file from which motd will be fetched",
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts",
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled",
     "server-chat-argument": "Should chat be disabled?",
     "server-chat-maxchars-argument": "Maximum number of characters in a chat message (default is {})", # Default number of characters
     "server-maxusernamelength-argument": "Maximum number of characters in a username (default is {})",

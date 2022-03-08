@@ -82,12 +82,14 @@ de = {
     "commandlist-notification/undo": "\tu - Letzter Zeitsprung rückgängig",
     "commandlist-notification/pause": "\tp - Pausieren / weiter",
     "commandlist-notification/seek": "\t[s][+-]Zeit - zu einer bestimmten Zeit spulen, ohne + oder - wird als absolute Zeit gewertet; Angabe in Sekunden oder Minuten:Sekunden",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature",
     "commandlist-notification/help": "\th - Diese Hilfe",
     "commandlist-notification/toggle": "\tt - Bereitschaftsanzeige umschalten",
     "commandlist-notification/create": "\tc [name] - erstelle zentral gesteuerten Raum mit dem aktuellen Raumnamen",
     "commandlist-notification/auth": "\ta [password] - authentifiziere als Raumleiter mit Passwort",
     "commandlist-notification/chat": "\tch [message] - Chatnachricht an einem Raum senden",
     "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist", # TO DO: Translate
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - show the current playlist", # TO DO: Translate
     "commandList-notification/select": "\tqs [index] - select given entry in the playlist", # TO DO: Translate
     "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist", # TO DO: Translate
@@ -174,7 +176,7 @@ de = {
     "file-argument": 'Abzuspielende Datei',
     "args-argument": 'Player-Einstellungen; Wenn du Einstellungen, die mit - beginnen, nutzen willst, stelle ein einzelnes \'--\'-Argument davor',
     "clear-gui-data-argument": 'Setzt die Pfad- und GUI-Fenster-Daten die in den QSettings gespeichert sind zurück',
-    "language-argument": 'Sprache für Syncplay-Nachrichten (de/en/ru/it/es/pt_BR/pt_PT/tr)',
+    "language-argument": 'Sprache für Syncplay-Nachrichten (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
 
     "version-argument": 'gibt die aktuelle Version aus',
     "version-message": "Du verwendest Syncplay v. {} ({})",
@@ -286,6 +288,7 @@ de = {
     "autoplay-menu-label": "Auto-Play-Knopf anzeigen",
     "autoplay-guipushbuttonlabel": "Automatisch abspielen wenn alle bereit sind",
     "autoplay-minimum-label": "Minimum an Nutzern:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Senden",
 
@@ -456,6 +459,7 @@ de = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Du nutzt Syncplay Version {}, aber es gibt eine neuere Version auf https://syncplay.pl",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
 
     # Server notifications
     "welcome-server-notification": "Willkommen zum Syncplay-Server, v. {0}",  # version
@@ -472,6 +476,8 @@ de = {
     "server-salt-argument": "zufällige Zeichenkette, die zur Erstellung von Passwörtern verwendet wird",
     "server-disable-ready-argument": "Bereitschaftsfeature deaktivieren",
     "server-motd-argument": "Pfad zur Datei, von der die Nachricht des Tages geladen wird",
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "Soll Chat deaktiviert werden?",
     "server-chat-maxchars-argument": "Maximale Zeichenzahl in einer Chatnachricht (Standard ist {})",
     "server-maxusernamelength-argument": "Maximale Zeichenzahl in einem Benutzernamen (Standard ist {})",

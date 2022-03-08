@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Syncplay server
 Comment=Synchronize video playback over network
 Exec=syncplay-server %u
@@ -7,3 +6,4 @@ Terminal=true
 Type=Application
 Icon=syncplay
 Categories=AudioVideo;Audio;Video;
+Keywords=syncplay;server;sync;

@@ -426,7 +426,6 @@ class MPV:
         try:
             command_list = [x["name"] for x in self.command("get_property", "command-list")]
         except MPVError:
-            log.warning("Using fallback command list.")
             command_list = FALLBACK_COMMAND_LIST
         for command in command_list:
             object.__setattr__(self, command.replace("-", "_"), self._get_wrapper(command))

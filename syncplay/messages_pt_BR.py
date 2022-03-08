@@ -58,7 +58,7 @@ pt_BR = {
     "file-difference-duration": "duração",
     "alone-in-the-room": "Você está sozinho na sala",
 
-    "different-filesize-notification": " (o tamanho do arquivo deles é diferente do seu!)",
+    "different-filesize-notification": " (o tamanho do arquivo dele(s) é diferente do seu!)",
     "userlist-playing-notification": "{} está tocando:",  # Username
     "file-played-by-notification": "Arquivo: {} está sendo tocado por:",  # File
     "no-file-played-notification": "{} não está tocando um arquivo",  # Username
@@ -68,7 +68,7 @@ pt_BR = {
     "controller-userlist-userflag": "Operador",
     "ready-userlist-userflag": "Pronto",
 
-    "update-check-failed-notification": "Não foi possível verificar automaticamente se o Syncplay {} é a versão mais recente. Deseja visitar https://syncplay.pl/  para checar manualmente por atualizações?",  # Syncplay version
+    "update-check-failed-notification": "Não foi possível verificar automaticamente se o Syncplay {} é a versão mais recente. Deseja visitar https://syncplay.pl/ para checar manualmente por atualizações?",  # Syncplay version
     "syncplay-uptodate-notification": "O Syncplay está atualizado",
     "syncplay-updateavailable-notification": "Uma nova versão do Syncplay está disponível. Deseja visitar a página de lançamentos?",
 
@@ -82,22 +82,24 @@ pt_BR = {
     "commandlist-notification/list": "\tl - mostra lista de usuários",
     "commandlist-notification/undo": "\tu - desfaz último salto",
     "commandlist-notification/pause": "\tp - alterna pausa",
-    "commandlist-notification/seek": "\t[s][+-]time - salta para o valor de tempo dado, se + ou - não forem especificados, será o tempo absoluto em segundos ou minutos:segundos",
+    "commandlist-notification/seek": "\t[s][+-]tempo - salta para o valor de tempo fornecido, se + ou - não forem especificados, será o tempo absoluto em segundos ou minutos:segundos",
+    "commandlist-notification/offset": "\to[+-]duração - Desloca a reprodução local pelo valor de duração fornecido (em segundos ou min:seg) em relação à posição de tepmo do servidor - essa é uma função descontinuada",
     "commandlist-notification/help": "\th - esta mensagem de ajuda",
     "commandlist-notification/toggle": "\tt - alterna o seu status de prontidão para assistir",
-    "commandlist-notification/create": "\tc [nome] - cria sala gerenciado usando o nome da sala atual",
+    "commandlist-notification/create": "\tc [nome] - cria uma sala gerenciada usando o nome da sala atual",
     "commandlist-notification/auth": "\ta [senha] - autentica-se como operador da sala com a senha",
     "commandlist-notification/chat": "\tch [mensagem] - envia uma mensagem no chat da sala",
-    "commandList-notification/queue": "\tqa [file/url] - adiciona arquivo ou URL para o final da playlist",
+    "commandList-notification/queue": "\tqa [arquivo/url] - adiciona um arquivo ou URL para o final da playlist",
+    "commandList-notification/queueandselect": "\tqas [arquivo/url] - adiciona um arquivo ou URL para o final da playlist e o seleciona",
     "commandList-notification/playlist": "\tql - mostra a playlist atual",
-    "commandList-notification/select": "\tqs [index] - seleciona uma dada entrada na playlist",
-    "commandList-notification/delete": "\tqd [index] - deleta uma dada entrada na playlist",
+    "commandList-notification/select": "\tqs [índice] - seleciona um item da playlist",
+    "commandList-notification/delete": "\tqd [index] - remove um item da playlist",
     "syncplay-version-notification": "Versão do Syncplay: {}",  # syncplay.version
     "more-info-notification": "Mais informações disponíveis em: {}",  # projectURL
 
     "gui-data-cleared-notification": "O Syncplay limpou o caminho e o estado de dados da janela usados pela GUI.",
     "language-changed-msgbox-label": "O idioma será alterado quando você salvar as mudanças e abrir o Syncplay novamente.",
-    "promptforupdate-label": "O Syncplay pode verificar automaticamente por atualizações de tempos em tempos?",
+    "promptforupdate-label": "Permite o Syncplay verificar automaticamente por atualizações de tempos em tempos?",
 
     "media-player-latency-warning": "Aviso: O reprodutor de mídia demorou {} para responder. Se você tiver problemas de sincronização, feche outros programas para liberar recursos do sistema e, se isso não funcionar, tente outro reprodutor de mídia.",  # Seconds to respond
     "mpv-unresponsive-error": "O mpv não respondeu por {} segundos, portanto parece que não está funcionando. Por favor, reinicie o Syncplay.",  # Seconds to respond
@@ -115,29 +117,29 @@ pt_BR = {
     "mpv-failed-advice": "O motivo pelo qual o mpv não pode ser iniciado pode ser devido ao uso de argumentos da linha de comando não suportados ou a uma versão não suportada do mpv.",
     "player-file-open-error": "O reprodutor falhou ao abrir o arquivo",
     "player-path-error": "O caminho até o arquivo executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 e IINA",
-    "hostname-empty-error": "O endereço do servidor não pode ser vazio",
-    "empty-error": "{} não pode ser vazio",  # Configuration
+    "hostname-empty-error": "O endereço do servidor não pode estar vazio",
+    "empty-error": "{} não pode estar vazio",  # Configuration
     "media-player-error": "Erro do reprodutor de mídia: \"{}\"",  # Error line
     "unable-import-gui-error": "Não foi possível importar bibliotecas da GUI. Se você não possuir o PySide instalado, instale-o para que a GUI funcione.",
     "unable-import-twisted-error": "Não foi possível importar o Twisted. Por favor, instale o Twisted v16.4.0 ou superior.",
 
     "arguments-missing-error": "Alguns argumentos necessários estão faltando, por favor reveja --help",
 
-    "unable-to-start-client-error": "Não foi possível iniciar o client",
+    "unable-to-start-client-error": "Não foi possível iniciar o cliente",
 
     "player-path-config-error": "O caminho até o arquivo executável do reprodutor não está configurado corretamente. Os reprodutores suportados são: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 e IINA.",
     "no-file-path-config-error": "O arquivo deve ser selecionado antes de iniciar seu reprodutor",
-    "no-hostname-config-error": "O endereço do servidor não pode ser vazio",
+    "no-hostname-config-error": "O endereço do servidor não pode estar vazio",
     "invalid-port-config-error": "A porta deve ser válida",
-    "empty-value-config-error": "{} não pode ser vazio",  # Config option
+    "empty-value-config-error": "{} não pode estar vazio",  # Config option
 
     "not-json-error": "Não é uma string codificada como JSON\n",
     "hello-arguments-error": "Not enough Hello arguments\n",  # DO NOT TRANSLATE
     "version-mismatch-error": "Discrepância entre versões do client e do servidor\n",
-    "vlc-failed-connection": "Falha ao conectar ao VLC. Se você não instalou o syncplay.lua e está usando a versão mais recente do VLC, por favor veja https://syncplay.pl/LUA/ para mais instruções. Syncplay e VLC 4 são atualmente incompatíveis, portanto ou use VLC 3 ou use outro reprodutor, como o mpv.",
+    "vlc-failed-connection": "Falha ao conectar ao VLC. Se você não instalou o syncplay.lua e está usando a versão mais recente do VLC, por favor veja https://syncplay.pl/LUA/ para mais instruções. Syncplay e VLC 4 são atualmente incompatíveis, portanto use VLC 3 ou use outro reprodutor, como o mpv.",
     "vlc-failed-noscript": "O VLC reportou que a interface de script do syncplay.lua não foi instalada. Por favor, veja https://syncplay.pl/LUA/ para mais instruções.",
     "vlc-failed-versioncheck": "Esta versão do VLC não é suportada pelo Syncplay.",
-    "vlc-initial-warning": 'O VLC nem sempre fornece informações precisas de posição para o Syncplay, especialmente para arquivos .mp4 ou .avi. Se você experienciar problemas com busca (seeking) incorreta, por favor, tente um reprodutor de mídia alternativo, como o <a href="https://mpv.io/">mpv</a> (ou <a href="https://github.com/stax76/mpv.net/">mpv.net</a>, uma alternativa mais simples do mpv a usuários Windows).',
+    "vlc-initial-warning": 'O VLC nem sempre fornece informações precisas de posição para o Syncplay, especialmente para arquivos .mp4 ou .avi. Se você experienciar problemas com busca (seeking) incorreta, por favor, tente um reprodutor de mídia alternativo, como o <a href="https://mpv.io/">mpv</a> (ou <a href="https://github.com/stax76/mpv.net/">mpv.net</a>, uma alternativa mais simples do mpv a usuários de Windows).',
 
     "feature-sharedPlaylists": "playlists compartilhadas",  # used for not-supported-by-server-error
     "feature-chat": "chat",  # used for not-supported-by-server-error
@@ -175,7 +177,7 @@ pt_BR = {
     "file-argument": 'arquivo a ser tocado',
     "args-argument": 'opções do reprodutor; se você precisar passar opções começando com -, as preceda com um único argumento \'--\'',
     "clear-gui-data-argument": 'redefine o caminho e o estado de dados da janela da GUI para as de QSettings',
-    "language-argument": 'idioma para mensagens do Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr)',
+    "language-argument": 'idioma para mensagens do Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
 
     "version-argument": 'exibe sua versão',
     "version-message": "Você está usando o Syncplay versão {} ({})",
@@ -208,7 +210,7 @@ pt_BR = {
     "filename-privacy-label": "Informação do nome do arquivo:",
     "filesize-privacy-label": "Informação do tamanho do arquivo:",
     "checkforupdatesautomatically-label": "Verificar atualizações do Syncplay automaticamente",
-    "autosavejoinstolist-label": "Adicionar salas que você entra para a lista de salas",
+    "autosavejoinstolist-label": "Adicionar salas que você visitou para a sua lista de salas",
     "slowondesync-label": "Diminuir velocidade em dessincronizações menores (não suportado pelo MPC-HC/BE)",
     "rewindondesync-label": "Retroceder em dessincronização maiores (recomendado)",
     "fastforwardondesync-label": "Avançar se estiver ficando para trás (recomendado)",
@@ -229,13 +231,13 @@ pt_BR = {
     "automatic-language": "Padrão ({})",  # Default language
     "showdurationnotification-label": "Avisar sobre discrepância nas durações dos arquivos de mídia",
     "basics-label": "Básicos",
-    "readiness-label": "Play/Pause",
+    "readiness-label": "Tocar/Pausar",
     "misc-label": "Miscelânea",
-    "core-behaviour-title": "Comportamento da sala padrão",
+    "core-behaviour-title": "Comportamento principal da sala",
     "syncplay-internals-title": "Configurações internas do Syncplay",
     "syncplay-mediasearchdirectories-title": "Diretórios a buscar por mídias",
     "syncplay-mediasearchdirectories-label": "Diretórios a buscar por mídias (um caminho por linha)",
-    "sync-label": "Sincronizar",
+    "sync-label": "Sincronização",
     "sync-otherslagging-title": "Se outros estiverem ficando pra trás...",
     "sync-youlaggging-title": "Se você estiver ficando pra trás...",
     "messages-label": "Mensagens",
@@ -251,21 +253,21 @@ pt_BR = {
     "unpause-always": "Sempre despausar",
     "syncplay-trusteddomains-title": "Domínios confiáveis (para serviços de streaming e conteúdo hospedado)",
 
-    "chat-title": "Entrada de mensagem do chat",
-    "chatinputenabled-label": "Habilitar entrada de chat via mpv",
-    "chatdirectinput-label": "Permitir entrada instantânea de chat (evita ter de apertar Enter para abrir o chat)",
-    "chatinputfont-label": "Fonte da entrada de chat",
+    "chat-title": "Digitação de mensagem no chat",
+    "chatinputenabled-label": "Habilitar digitação no chat via mpv",
+    "chatdirectinput-label": "Permitir digitação instantânea no chat (evita ter de apertar Enter para abrir o chat)",
+    "chatinputfont-label": "Fonte da digitação no chat",
     "chatfont-label": "Definir fonte",
     "chatcolour-label": "Definir cor",
-    "chatinputposition-label": "Posição da área de entrada de mensagens no mpv",
+    "chatinputposition-label": "Posição da área de digitação de mensagens no mpv",
     "chat-top-option": "Topo",
     "chat-middle-option": "Meio",
-    "chat-bottom-option": "Fundo",
+    "chat-bottom-option": "Baixo",
     "chatoutputheader-label": "Saída de mensagem do chat",
     "chatoutputfont-label": "Fonte da saída de chat",
-    "chatoutputenabled-label": "Habilitar saída de chat no reprodutor de mídia (apenas mpv por enquanto)",
+    "chatoutputenabled-label": "Habilitar saída de chat no reprodutor de mídia (apenas no mpv por enquanto)",
     "chatoutputposition-label": "Modo de saída",
-    "chat-chatroom-option": "Estilo sala de bate-papo",
+    "chat-chatroom-option": "Estilo da sala de bate-papo",
     "chat-scrolling-option": "Estilo de rolagem",
 
     "mpv-key-tab-hint": "[TAB] para alternar acesso instantâneo ao chat.",
@@ -278,18 +280,19 @@ pt_BR = {
     "run-label": "Começar Syncplay",
     "storeandrun-label": "Salvar mudanças e começar Syncplay",
 
-    "contact-label": "Sinta-se livre para mandar um e-mail para <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, <a href=\"https://github.com/Syncplay/syncplay/issues\"><nobr>abrir uma issue</nobr></a> pelo GitHub / <a href=\"https://github.com/Syncplay/syncplay/discussions\"><nobr>start a discussion</nobr></a> to make a suggestion or ask a question via GitHub,, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>curtir nossa página no Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>nos seguir no Twitter</nobr></a> ou visitar <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Não use o Syncplay para mandar informações sensíveis/confidenciais.", # TODO: Update translation
-
+    "contact-label": "Sinta-se livre para mandar um e-mail para <a href=\"mailto:dev@syncplay.pl\"><nobr>dev@syncplay.pl</nobr></a>, <a href=\"https://github.com/Syncplay/syncplay/issues\"><nobr>abrir uma issue</nobr></a> para reportar um bug/problema via GitHub, <a href=\"https://github.com/Syncplay/syncplay/discussions\"><nobr>começar uma discussão</nobr></a> para fazer uma sugestão ou uma pergunta via GitHub, <a href=\"https://www.facebook.com/SyncplaySoftware\"><nobr>curtir nossa página no Facebook</nobr></a>, <a href=\"https://twitter.com/Syncplay/\"><nobr>nos seguir no Twitter</nobr></a>, ou visitar <a href=\"https://syncplay.pl/\"><nobr>https://syncplay.pl/</nobr></a>. Não use o Syncplay para mandar informações sensíveis/confidenciais.",
+    
     "joinroom-label": "Juntar-se a uma sala",
     "joinroom-menu-label": "Juntar-se à sala {}",
     "seektime-menu-label": "Saltar para o tempo",
     "undoseek-menu-label": "Desfazer salto",
-    "play-menu-label": "Play",
-    "pause-menu-label": "Pause",
+    "play-menu-label": "Tocar",
+    "pause-menu-label": "Pausar",
     "playbackbuttons-menu-label": "Mostrar botões de reprodução",
     "autoplay-menu-label": "Mostrar botão de reprodução automática",
     "autoplay-guipushbuttonlabel": "Tocar quando todos estiverem prontos",
     "autoplay-minimum-label": "Mín. de usuários:",
+    "hideemptyrooms-menu-label": "Esconder salas persistentes vazias",
 
     "sendmessage-label": "Enviar",
 
@@ -357,7 +360,7 @@ pt_BR = {
     "offsetinfo-msgbox-label": "Deslocamento (veja https://syncplay.pl/guide/ para instruções de uso):",
 
     "promptforstreamurl-msgbox-label": "Abrir transmissão de mídia via URL",
-    "promptforstreamurlinfo-msgbox-label": "Transmitir URL",
+    "promptforstreamurlinfo-msgbox-label": "URL da transmissão",
 
     "addfolder-label": "Adicionar pasta",
 
@@ -435,7 +438,7 @@ pt_BR = {
     "chatoutputmode-chatroom-tooltip": "Exibe novas linhas de chat diretamente abaixo da linha anterior.",
     "chatoutputmode-scrolling-tooltip": "Exibe novas linhas de chat rolando-as da direita pra esquerda.",
 
-    "help-tooltip": "Abre o  guia de usuário do Syncplay.pl.",
+    "help-tooltip": "Abre o  guia de usuário no Syncplay.pl.",
     "reset-tooltip": "Redefine todas as configurações para seus respectivos padrões.",
     "update-server-list-tooltip": "Conecta ao syncplay.pl para atualizar a lista de servidores públicos.",
 
@@ -456,6 +459,7 @@ pt_BR = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Você está usando o Syncplay {}, mas uma versão mais nova está disponível em https://syncplay.pl",  # ClientVersion
+    "persistent-rooms-notice": "AVISO: Este servidor usa salas persistentes, o que significa que as informações da playlist são salvas entre sessões de reprodução. Se você quer criar uma sala onde a informação não será salva, coloque -temp no final do nome da sala.", # NOTE: Do not translate the word -temp
 
     # Server notifications
     "welcome-server-notification": "Seja bem-vindo ao servidor de Syncplay, versão {0}",  # version
@@ -465,7 +469,7 @@ pt_BR = {
 
 
     # Server arguments
-    "server-argument-description": 'Solução para sincronizar a reprodução de múltiplas instâncias de MPlayer e MPC-HC/BE pela rede. Instância de servidor',
+    "server-argument-description": 'Solução para sincronizar a reprodução de múltiplas instâncias de players de mídia pela rede. Instância de servidor',
     "server-argument-epilog": 'Se nenhuma opção for fornecida, os valores de _config serão utilizados',
     "server-port-argument": 'porta TCP do servidor',
     "server-password-argument": 'senha do servidor',
@@ -473,6 +477,8 @@ pt_BR = {
     "server-salt-argument": "string aleatória utilizada para gerar senhas de salas gerenciadas",
     "server-disable-ready-argument": "desativar recurso de prontidão",
     "server-motd-argument": "caminho para o arquivo o qual o motd será obtido",
+    "server-rooms-argument": "caminho para o arquivo de banco de dádos a ser usado e/ou criado para salvar dados de salas persistentes. Permite que salas persistam sem espectadores e através de reinicializações.",
+    "server-permanent-rooms-argument": "caminho para o arquivo que lista salas permanentes que serão listadas mesmo que a sala esteja vazia (na forma de um arquivo de texto que lista uma sala por linha) - requer salas persistentes ativada",
     "server-chat-argument": "O chat deve ser desativado?",
     "server-chat-maxchars-argument": "Número máximo de caracteres numa mensagem do chat (o padrão é {})", # Default number of characters
     "server-maxusernamelength-argument": "Número máximos de caracteres num nome de usuário (o padrão é {})",
@@ -486,7 +492,7 @@ pt_BR = {
     "not-json-server-error": "Não é uma string codificada como json: {}",  # message
     "line-decode-server-error": "Não é uma string UTF-8",
     "not-known-server-error": "Você deve ser conhecido pelo servidor antes de mandar este comando",
-    "client-drop-server-error": "Drop do client: {} -- {}",  # host, error
+    "client-drop-server-error": "Cliente desconectado: {} -- {}",  # host, error
     "password-required-server-error": "Senha necessária",
     "wrong-password-server-error": "Senha incorreta fornecida",
     "hello-server-error": "Not enough Hello arguments",  # DO NOT TRANSLATE

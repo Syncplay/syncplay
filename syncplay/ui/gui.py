@@ -40,7 +40,7 @@ if isMacOS() and IsPySide:
     from Cocoa import NSString, NSUTF8StringEncoding
 lastCheckedForUpdates = None
 from syncplay.vendor import darkdetect
-if isMacOS():
+if isMacOS() or isWindows():
 	isDarkMode = darkdetect.isDark()
 else:
 	isDarkMode = None
@@ -468,6 +468,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.roomsCombobox.clear()
         for roomListValue in self.config['roomList']:
             self.roomsCombobox.addItem(roomListValue)
+        for room in self.currentRooms:
+            if room not in self.config['roomList']:
+                self.roomsCombobox.addItem(room)
         self.roomsCombobox.setEditText(previousRoomSelection)
 
     def addRoomToList(self, newRoom=None):
@@ -603,7 +606,16 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self._syncplayClient.fileSwitch.setCurrentDirectory(os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]))
 
+        self.currentRooms = []
         for room in rooms:
+            self.currentRooms.append(room)
+            if self.hideEmptyRooms:
+                foundEmptyRooms = False
+                for user in rooms[room]:
+                    if user.username.strip() == "":
+                        foundEmptyRooms = True
+                if foundEmptyRooms:
+                    continue
             self.newWatchlist = []
             roomitem = QtGui.QStandardItem(room)
             font = QtGui.QFont()
@@ -624,6 +636,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 roomitem.setIcon(QtGui.QPixmap(resourcespath + 'chevrons_right.png'))
 
             for user in rooms[room]:
+                if user.username.strip() == "":
+                    continue
                 useritem = QtGui.QStandardItem(user.username)
                 isController = user.isController()
                 sameRoom = room == currentUser.room
@@ -695,6 +709,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.listTreeView.expandAll()
         self.updateListGeometry()
         self._syncplayClient.fileSwitch.setFilenameWatchlist(self.newWatchlist)
+        self.fillRoomsCombobox()
 
     @needsClient
     def undoPlaylistChange(self):
@@ -731,7 +746,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                lambda: utils.open_system_file_browser(pathFound))
             if self._syncplayClient.isUntrustedTrustableURI(firstFile):
                 domain = utils.getDomainFromURL(firstFile)
-                menu.addAction(QtGui.QPixmap(resourcespath + "shield_add.png"), getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
+                if domain:
+                    menu.addAction(QtGui.QPixmap(resourcespath + "shield_add.png"), getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
             menu.addAction(QtGui.QPixmap(resourcespath + "delete.png"), getMessage("removefromplaylist-menu-label"), lambda: self.deleteSelectedPlaylistItems())
             menu.addSeparator()
         menu.addAction(QtGui.QPixmap(resourcespath + "arrow_switch.png"), getMessage("shuffleremainingplaylist-menu-label"), lambda: self.shuffleRemainingPlaylist())
@@ -794,7 +810,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         menu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openusersfile-menu-label").format(shortUsername), lambda: self.openFile(pathFound, resetPosition=False, fromUser=True))
             if self._syncplayClient.isUntrustedTrustableURI(filename):
                 domain = utils.getDomainFromURL(filename)
-                menu.addAction(QtGui.QPixmap(resourcespath + "shield_add.png"), getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
+                if domain:
+                    menu.addAction(QtGui.QPixmap(resourcespath + "shield_add.png"), getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
 
             if not isURL(filename) and filename != getMessage("nofile-note"):
                 path = self._syncplayClient.fileSwitch.findFilepath(filename)
@@ -1097,7 +1114,7 @@ class MainWindow(QtWidgets.QMainWindow):
             defaultdirectory = currentdirectory
         else:
             defaultdirectory = self.getInitialMediaDirectory()
-        browserfilter = "Playlists (*.m3u *.m3u8 *.txt)"
+        browserfilter = "Playlists (*.txt *.m3u8)"
         filepath, filtr = QtWidgets.QFileDialog.getOpenFileName(
             self, "Load playlist from file", defaultdirectory,
             browserfilter, "", options) # TODO: Note Shuffle and move to messages_en
@@ -1118,7 +1135,7 @@ class MainWindow(QtWidgets.QMainWindow):
             defaultdirectory = currentdirectory
         else:
             defaultdirectory = self.getInitialMediaDirectory()
-        browserfilter = "Playlist (*.m3u8 *.m3u *.txt)"
+        browserfilter = "Playlist (*.txt)"
         filepath, filtr = QtWidgets.QFileDialog.getSaveFileName(
             self, "Save playlist to file", defaultdirectory,
             browserfilter, "", options) # TODO: Move to messages_en
@@ -1143,6 +1160,7 @@ class MainWindow(QtWidgets.QMainWindow):
         URIsLayout.addWidget(URIsButtonBox, 2, 0, 1, 1)
         URIsDialog.setLayout(URIsLayout)
         URIsDialog.setModal(True)
+        URIsDialog.setWindowFlags(URIsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         URIsDialog.show()
         result = URIsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1173,6 +1191,7 @@ class MainWindow(QtWidgets.QMainWindow):
         RoomsLayout.addWidget(RoomsButtonBox, 2, 0, 1, 1)
         RoomsDialog.setLayout(RoomsLayout)
         RoomsDialog.setModal(True)
+        RoomsDialog.setWindowFlags(RoomsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         RoomsDialog.show()
         result = RoomsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1207,6 +1226,7 @@ class MainWindow(QtWidgets.QMainWindow):
         editPlaylistDialog.setModal(True)
         editPlaylistDialog.setMinimumWidth(600)
         editPlaylistDialog.setMinimumHeight(500)
+        editPlaylistDialog.setWindowFlags(editPlaylistDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         editPlaylistDialog.show()
         result = editPlaylistDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1237,6 +1257,7 @@ class MainWindow(QtWidgets.QMainWindow):
         MediaDirectoriesAddFolderButton.pressed.connect(lambda: self.openAddMediaDirectoryDialog(MediaDirectoriesTextbox, MediaDirectoriesDialog))
         MediaDirectoriesLayout.addWidget(MediaDirectoriesAddFolderButton, 1, 1, 1, 1, Qt.AlignTop)
         MediaDirectoriesDialog.setLayout(MediaDirectoriesLayout)
+        MediaDirectoriesDialog.setWindowFlags(MediaDirectoriesDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         MediaDirectoriesDialog.setModal(True)
         MediaDirectoriesDialog.show()
         result = MediaDirectoriesDialog.exec_()
@@ -1262,6 +1283,7 @@ class MainWindow(QtWidgets.QMainWindow):
         TrustedDomainsButtonBox.rejected.connect(TrustedDomainsDialog.reject)
         TrustedDomainsLayout.addWidget(TrustedDomainsButtonBox, 2, 0, 1, 1)
         TrustedDomainsDialog.setLayout(TrustedDomainsLayout)
+        TrustedDomainsDialog.setWindowFlags(TrustedDomainsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         TrustedDomainsDialog.setModal(True)
         TrustedDomainsDialog.show()
         result = TrustedDomainsDialog.exec_()
@@ -1489,6 +1511,9 @@ class MainWindow(QtWidgets.QMainWindow):
         window.listLayout.addWidget(window.listSplit)
         window.roomsCombobox = QtWidgets.QComboBox(self)
         window.roomsCombobox.setEditable(True)
+        caseSensitiveCompleter = QtWidgets.QCompleter("", self)
+        caseSensitiveCompleter.setCaseSensitivity(Qt.CaseSensitive)
+        window.roomsCombobox.setCompleter(caseSensitiveCompleter)
         #window.roomsCombobox.setMaxLength(constants.MAX_ROOM_NAME_LENGTH)
         window.roomButton = QtWidgets.QPushButton(
             QtGui.QPixmap(resourcespath + 'door_in.png'),
@@ -1743,6 +1768,9 @@ class MainWindow(QtWidgets.QMainWindow):
         window.autoplayAction.setCheckable(True)
         window.autoplayAction.triggered.connect(self.updateAutoplayVisibility)
 
+        window.hideEmptyRoomsAction = window.windowMenu.addAction(getMessage("hideemptyrooms-menu-label"))
+        window.hideEmptyRoomsAction.setCheckable(True)
+        window.hideEmptyRoomsAction.triggered.connect(self.updateEmptyRoomVisiblity)
 
         # Help menu
 
@@ -1807,6 +1835,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def updateAutoplayVisibility(self):
         self.autoplayFrame.setVisible(self.autoplayAction.isChecked())
+
+    def updateEmptyRoomVisiblity(self):
+        self.hideEmptyRooms = self.hideEmptyRoomsAction.isChecked()
+        if self._syncplayClient:
+            self._syncplayClient.getUserList()
 
     def changeReadyState(self):
         self.updateReadyIcon()
@@ -2007,6 +2040,7 @@ class MainWindow(QtWidgets.QMainWindow):
         settings.setValue("pos", self.pos())
         settings.setValue("showPlaybackButtons", self.playbackAction.isChecked())
         settings.setValue("showAutoPlayButton", self.autoplayAction.isChecked())
+        settings.setValue("hideEmptyRooms", self.hideEmptyRoomsAction.isChecked())
         settings.setValue("autoplayChecked", self.autoplayPushButton.isChecked())
         settings.setValue("autoplayMinUsers", self.autoplayThresholdSpinbox.value())
         settings.endGroup()
@@ -2023,13 +2057,21 @@ class MainWindow(QtWidgets.QMainWindow):
         settings = QSettings("Syncplay", "MainWindow")
         settings.beginGroup("MainWindow")
         self.resize(settings.value("size", QSize(700, 500)))
-        self.move(settings.value("pos", QPoint(200, 200)))
+        movePos = settings.value("pos", QPoint(200, 200))
+        windowGeometry = QtWidgets.QApplication.desktop().availableGeometry(self)
+        posIsOnScreen = windowGeometry.contains(QtCore.QRect(movePos.x(), movePos.y(), 1, 1))
+        if not posIsOnScreen:
+            movePos = QPoint(200,200)
+        self.move(movePos)
         if settings.value("showPlaybackButtons", "false") == "true":
             self.playbackAction.setChecked(True)
             self.updatePlaybackFrameVisibility()
         if settings.value("showAutoPlayButton", "false") == "true":
             self.autoplayAction.setChecked(True)
             self.updateAutoplayVisibility()
+        if settings.value("hideEmptyRooms", "false") == "true":
+            self.hideEmptyRooms = True
+            self.hideEmptyRoomsAction.setChecked(True)
         if settings.value("autoplayChecked", "false") == "true":
             self.updateAutoPlayState(True)
             self.autoplayPushButton.setChecked(True)
@@ -2053,6 +2095,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lastCheckedForUpdates = None
         self._syncplayClient = None
         self.folderSearchEnabled = True
+        self.hideEmptyRooms = False
+        self.currentRooms = []
         self.QtGui = QtGui
         if isMacOS():
             self.setWindowFlags(self.windowFlags())
@@ -2071,3 +2115,4 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
         self.setAcceptDrops(True)
         self.clearedPlaylistNote = False
+        self.uiMode = constants.GRAPHICAL_UI_MODE

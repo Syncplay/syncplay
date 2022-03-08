@@ -38,6 +38,8 @@ def main():
         args.port,
         args.password,
         args.motd_file,
+        args.rooms_db_file,
+        args.permanent_rooms_file,
         args.isolate_rooms,
         args.salt,
         args.disable_ready,

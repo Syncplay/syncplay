@@ -17,4 +17,4 @@ mkdir dist/Syncplay.app/Contents/Resources/es_419.lproj
 pip3 install dmgbuild
 mv syncplay/resources/macOS_readme.pdf syncplay/resources/.macOS_readme.pdf
 
-dmgbuild -s appdmg.py "Syncplay" dist_actions/Syncplay_${VER}.dmg
+python3 -m dmgbuild -s appdmg.py "Syncplay" dist_actions/Syncplay_${VER}.dmg

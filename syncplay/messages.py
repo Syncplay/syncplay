@@ -9,17 +9,21 @@ from . import messages_es
 from . import messages_pt_BR
 from . import messages_pt_PT
 from . import messages_tr
+from . import messages_fr
+from . import messages_zh_CN
 import re
 
 messages = {
     "de": messages_de.de,
     "en": messages_en.en,
     "es": messages_es.es,
+    "fr": messages_fr.fr,
     "it": messages_it.it,
     "pt_PT": messages_pt_PT.pt_PT,
     "pt_BR": messages_pt_BR.pt_BR,
     "tr": messages_tr.tr,
     "ru": messages_ru.ru,
+    "zh_CN": messages_zh_CN.zh_CN,
     "CURRENT": None
 }
 
@@ -64,7 +68,7 @@ def getInitialLanguage():
     try:
         import sys
         frozen = getattr(sys, 'frozen', '')
-        if frozen in 'macosx_app':
+        if frozen and frozen in 'macosx_app':
             from PySide2.QtCore import QLocale
             initialLanguage = QLocale.system().uiLanguages()[0].split('-')[0]
         else:

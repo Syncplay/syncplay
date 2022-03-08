@@ -82,12 +82,14 @@ it = {
     "commandlist-notification/undo": "\tu - annulla l'ultima ricerca",
     "commandlist-notification/pause": "\tp - attiva o disattiva la pausa",
     "commandlist-notification/seek": "\t[s][+-]tempo - salta all'istante di tempo dato, se + o - non è specificato si considera il tempo assoluto in secondi o min:sec",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
     "commandlist-notification/help": "\th - mostra questo help",
     "commandlist-notification/toggle": "\tt - attiva o disattiva la funzionalità \"pronto\"",
     "commandlist-notification/create": "\tc [nome] - crea una stanza gestita usando il nome della stanza attuale",
     "commandlist-notification/auth": "\ta [password] - autentica come gestore della stanza, utilizzando la password del gestore",
     "commandlist-notification/chat": "\tch [message] - invia un messaggio nella chat della stanza",
     "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",  # TO DO: Translate
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - show the current playlist",  # TO DO: Translate
     "commandList-notification/select": "\tqs [index] - select given entry in the playlist",  # TO DO: Translate
     "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",  # TO DO: Translate
@@ -174,7 +176,7 @@ it = {
     "file-argument": 'file da riprodurre',
     "args-argument": 'opzioni del player, se hai bisogno di utilizzare opzioni che iniziano con - anteponi un singolo \'--\'',
     "clear-gui-data-argument": 'ripristina il percorso e i dati impostati tramite interfaccia grafica e salvati come QSettings',
-    "language-argument": 'lingua per i messaggi di Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr)',
+    "language-argument": 'lingua per i messaggi di Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
 
     "version-argument": 'mostra la tua versione',
     "version-message": "Stai usando la versione di Syncplay {} ({})",
@@ -289,6 +291,7 @@ it = {
     "autoplay-menu-label": "Mostra il tasto di riproduzione automatica",
     "autoplay-guipushbuttonlabel": "Riproduci quando tutti sono pronti",
     "autoplay-minimum-label": "Minimo utenti pronti:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Invia",
 
@@ -455,6 +458,7 @@ it = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Stai usando Syncplay {} ma una nuova versione è disponibile presso https://syncplay.pl",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate
 
     # Server notifications
     "welcome-server-notification": "Benvenuto nel server Syncplay, ver. {0}",  # version
@@ -472,6 +476,8 @@ it = {
     "server-salt-argument": "usare stringhe casuali per generare le password delle stanze gestite",
     "server-disable-ready-argument": "disabilita la funzionalità \"pronto\"",
     "server-motd-argument": "percorso del file da cui verrà letto il messaggio del giorno",
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "abilita o disabilita la chat",
     "server-chat-maxchars-argument": "Numero massimo di caratteri in un messaggio di chat (default è {})", # Default number of characters
     "server-maxusernamelength-argument": "Numero massimo di caratteri in un nome utente (default è {})",

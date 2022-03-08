@@ -82,12 +82,14 @@ tr = {
     "commandlist-notification/undo": "\tu - son isteği geri alır",
     "commandlist-notification/pause": "\tp - duraklatmayı değiştirir",
     "commandlist-notification/seek": "\t[s][+-]time - verilen zaman değerine atlar, eğer + veya - belirtilmezse, saniye:dakika cinsinden mutlak zamandır.",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
     "commandlist-notification/help": "\th - yardım",
     "commandlist-notification/toggle": "\tt - izlemeye hazır olup olmadığınızı değiştirir",
     "commandlist-notification/create": "\tc [name] - mevcut odanın adını kullanarak yönetilen oda oluştur",
     "commandlist-notification/auth": "\ta [password] - operatör şifresi ile oda operatörü olarak kimlik doğrular",
     "commandlist-notification/chat": "\tch [message] - bir odaya sohbet mesajı gönderir",
     "commandList-notification/queue": "\tqa [file/url] - oynatma listesinin altına dosya veya bağlantı ekler",
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - mevcut oynatma listesini gösterir",
     "commandList-notification/select": "\tqs [index] - oynatma listesinde verilen girişi seçer",
     "commandList-notification/delete": "\tqd [index] - verilen girişi oynatma listesinden siler",
@@ -174,7 +176,7 @@ tr = {
     "file-argument": 'oynatmak için dosya',
     "args-argument": 'oynatıcı seçenekleri, ile başlayan seçenekleri iletmeniz gerekiyorsa - bunların başına tek \'--\' argümanı ekleyin',
     "clear-gui-data-argument": 'QSettings olarak depolanan yol ve pencere durumu GUI verilerini sıfırlar',
-    "language-argument": 'Syncplay mesajları için dil (de/en/ru/it/es/pt_BR/pt_PT/tr)',
+    "language-argument": 'Syncplay mesajları için dil (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
 
     "version-argument": 'versiyonunuzu yazdırır',
     "version-message": "Syncplay sürümünü kullanıyorsunuz {} ({})",
@@ -290,6 +292,7 @@ tr = {
     "autoplay-menu-label": "Otomatik oynat düğmesini göster",
     "autoplay-guipushbuttonlabel": "Her şey hazır olduğunda oynat",
     "autoplay-minimum-label": "Asgari kullanıcı:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
 
     "sendmessage-label": "Gönder",
 
@@ -456,6 +459,7 @@ tr = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Syncplay {} kullanıyorsunuz ancak daha yeni bir sürüm https://syncplay.pl adresinde mevcut",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
 
     # Server notifications
     "welcome-server-notification": "Syncplay sunucusuna hoş geldiniz, ver. {0}",  # version
@@ -473,6 +477,8 @@ tr = {
     "server-salt-argument": "yönetilen oda şifreleri oluşturmak için kullanılan rastgele dize",
     "server-disable-ready-argument": "hazır olma özelliğini devre dışı bırak",
     "server-motd-argument": "motd alınacak dosyanın yolu",
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "Sohbet devre dışı bırakılmalı mı?",
     "server-chat-maxchars-argument": "Bir sohbet mesajındaki maksimum karakter sayısı (varsayılan: {})", # Default number of characters
     "server-maxusernamelength-argument": "Bir kullanıcı adındaki maksimum karakter sayısı (varsayılan {})",

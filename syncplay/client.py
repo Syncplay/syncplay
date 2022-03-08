@@ -9,9 +9,9 @@ import re
 import sys
 import threading
 import time
-from fnmatch import fnmatch
 from copy import deepcopy
 from functools import wraps
+from urllib.parse import urlparse
 
 from twisted.application.internet import ClientService
 from twisted.internet.endpoints import HostnameEndpoint
@@ -546,30 +546,51 @@ class SyncplayClient(object):
         if oldRoomList != newRoomList:
             self._config['roomList'] = newRoomList
 
+    def _isURITrustableAndTrusted(self, URIToTest):
+        """Returns a tuple of booleans: (trustable, trusted).
+        
+        A given URI is "trustable" if it uses HTTP or HTTPS (constants.TRUSTABLE_WEB_PROTOCOLS).
+        A given URI is "trusted" if it matches an entry in the trustedDomains config.
+        Such an entry is considered matching if the domain is the same and the path
+        is a prefix of the given URI's path.
+        A "trustable" URI is always "trusted" if the config onlySwitchToTrustedDomains is false.
+        """
+        o = urlparse(URIToTest)
+        trustable = o.scheme in constants.TRUSTABLE_WEB_PROTOCOLS
+        if not trustable:
+            # untrustable URIs are never trusted, return early
+            return False, False
+        if not self._config['onlySwitchToTrustedDomains']:
+            # trust all trustable URIs in this case
+            return trustable, True
+        # check for matching trusted domains
+        if self._config['trustedDomains']:
+            for entry in self._config['trustedDomains']:
+                trustedDomain, _, path = entry.partition('/')
+                if o.hostname not in (trustedDomain, "www." + trustedDomain):
+                    # domain does not match
+                    continue
+                if path and not o.path.startswith('/' + path):
+                    # trusted domain has a path component and it does not match
+                    continue
+                # match found, trust this domain
+                return trustable, True
+        # no matches found, do not trust this domain
+        return trustable, False
+
     def isUntrustedTrustableURI(self, URIToTest):
         if utils.isURL(URIToTest):
-            for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:
-                if URIToTest.startswith(trustedProtocol) and not self.isURITrusted(URIToTest):
-                    return True
+            trustable, trusted = self._isURITrustableAndTrusted(URIToTest)
+            return trustable and not trusted
         return False
 
     def isURITrusted(self, URIToTest):
-        URIToTest = URIToTest+"/"
-        for trustedProtocol in constants.TRUSTABLE_WEB_PROTOCOLS:
-            if URIToTest.startswith(trustedProtocol):
-                if self._config['onlySwitchToTrustedDomains']:
-                    if self._config['trustedDomains']:
-                        for trustedDomain in self._config['trustedDomains']:
-                            trustableURI = ''.join([trustedProtocol, trustedDomain, "/*"])
-                            if fnmatch(URIToTest, trustableURI):
-                                return True
-                    return False
-                else:
-                    return True
-        return False
+        trustable, trusted = self._isURITrustableAndTrusted(URIToTest)
+        return trustable and trusted
 
     def openFile(self, filePath, resetPosition=False, fromUser=False):
-        if fromUser and filePath.endswith(".txt") or filePath.endswith(".m3u") or filePath.endswith(".m3u8"):
+        if not (filePath.startswith("http://") or filePath.startswith("https://"))\
+                and ((fromUser and filePath.endswith(".txt")) or filePath.endswith(".m3u") or filePath.endswith(".m3u8")):
             self.playlist.loadPlaylistFromFile(filePath, resetPosition)
             return
 
@@ -619,6 +640,7 @@ class SyncplayClient(object):
             "chat": utils.meetsMinVersion(self.serverVersion, constants.CHAT_MIN_VERSION),
             "readiness": utils.meetsMinVersion(self.serverVersion, constants.USER_READY_MIN_VERSION),
             "managedRooms": utils.meetsMinVersion(self.serverVersion, constants.CONTROLLED_ROOMS_MIN_VERSION),
+            "persistentRooms": False,
             "maxChatMessageLength": constants.FALLBACK_MAX_CHAT_MESSAGE_LENGTH,
             "maxUsernameLength": constants.FALLBACK_MAX_USERNAME_LENGTH,
             "maxRoomNameLength": constants.FALLBACK_MAX_ROOM_NAME_LENGTH,
@@ -685,11 +707,13 @@ class SyncplayClient(object):
         # Can change during runtime:
         features["sharedPlaylists"] = self.sharedPlaylistIsEnabled()  # Can change during runtime
         features["chat"] = self.chatIsEnabled()  # Can change during runtime
+        features["uiMode"] = self.ui.getUIMode()
 
         # Static for this version/release of Syncplay:
         features["featureList"] = True
         features["readiness"] = True
         features["managedRooms"] = True
+        features["persistentRooms"] = True
 
         return features
 
@@ -1572,6 +1596,9 @@ class UiManager(object):
         self.lastAlertOSDEndTime = None
         self.lastError = ""
 
+    def getUIMode(self):
+        return self.__ui.uiMode
+
     def addFileToPlaylist(self, newPlaylistItem):
         self.__ui.addFileToPlaylist(newPlaylistItem)
 
@@ -1679,6 +1706,7 @@ class SyncplayPlaylist():
         self._playlist = []
         self._playlistIndex = None
         self.addedChangeListCallback = False
+        self.switchToNewPlaylistItem = False
         self._lastPlaylistIndexChange = time.time()
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
@@ -1843,6 +1871,10 @@ class SyncplayPlaylist():
             self._ui.showDebugMessage("Could not change playlist index due to IndexError")
 
     def _getValidIndexFromNewPlaylist(self, newPlaylist=None):
+        if self.switchToNewPlaylistItem:
+            self.switchToNewPlaylistItem = False
+            return len(self._playlist)
+
         if self._playlistIndex is None or not newPlaylist or len(newPlaylist) <= 1:
             return 0
 

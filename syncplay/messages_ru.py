@@ -81,12 +81,14 @@ ru = {
     "commandlist-notification/undo": "\tu - отменить последнюю перемотку",
     "commandlist-notification/pause": "\tp - вкл./выкл. паузу",
     "commandlist-notification/seek": "\t[s][+-]time - перемотать к заданному моменту времени, если не указан + или -, то время считается абсолютным (от начала файла) в секундах или мин:сек",
+    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
     "commandlist-notification/help": "\th - помощь",
     "commandlist-notification/toggle": "\tt - переключить статус готов/не готов к просмотру",
     "commandlist-notification/create": "\tc [имя комнаты] - создать управляемую комнату с таким же именем, как у текущей",
     "commandlist-notification/auth": "\ta [пароль] - авторизоваться как оператор комнаты с помощью пароля",
     "commandlist-notification/chat": "\tch [сообщение] - выслать сообщение в комнату",
     "commandList-notification/queue": "\tqa [файл/URL] - добавить файл или URL в конец списка воспроизведения",
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - показать текущий список воспроизведения",
     "commandList-notification/select": "\tqs [индекс] - выделить указанный пункт в списке воспроизведения",
     "commandList-notification/delete": "\tqd [индекс] - удалить указанный пункт из списка воспроизведения",
@@ -173,7 +175,7 @@ ru = {
     "file-argument": 'воспроизводимый файл',
     "args-argument": 'параметры проигрывателя; если нужно передать параметры, начинающиеся с - , то сначала пишите \'--\'',
     "clear-gui-data-argument": 'сбрасывает путь и данные о состоянии окна GUI, хранимые как QSettings',
-    "language-argument": 'язык сообщений Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr)',
+    "language-argument": 'язык сообщений Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
 
     "version-argument": 'выводит номер версии',
     "version-message": "Вы используете Syncplay версии {} ({})",
@@ -289,6 +291,7 @@ ru = {
     "autoplay-menu-label": "Показывать кнопку &автовоспроизведения",
     "autoplay-guipushbuttonlabel": "Стартовать, когда все будут готовы",
     "autoplay-minimum-label": "Минимум зрителей:",
+    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
     "sendmessage-label": "Выслать",
 
     "ready-guipushbuttonlabel": "Я готов",
@@ -453,6 +456,7 @@ ru = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Вы используете Syncplay версии {}. Доступна более новая версия на https://syncplay.pl/",  # ClientVersion
+    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
 
     # Server notifications
     "welcome-server-notification": "Добро пожаловать на сервер Syncplay версии {0}",  # version
@@ -469,6 +473,8 @@ ru = {
     "server-salt-argument": "генерировать пароли к управляемым комнатам на основании указанной строки (соли)",
     "server-disable-ready-argument": "отключить статусы готов/не готов",
     "server-motd-argument": "путь к файлу, из которого будет извлекаться MOTD-сообщение",
+    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
+    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
     "server-chat-argument": "Должен ли чат быть отключён?",
     "server-chat-maxchars-argument": "Максимальное число символов в сообщениях в чате (по умолчанию {})",
     "server-maxusernamelength-argument": "Максимальное число символов в именах пользователей (по умолчанию {})",
