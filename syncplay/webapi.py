@@ -13,7 +13,9 @@ class WebAPI(resource.Resource):
         # return a simple form for browsers
         return (b"<!DOCTYPE html><html><head><meta charset='utf-8'>"
                 b"<title></title></head><body>"
-                b"<form method='POST'><input name='room'><input name='url'></form>")
+                b"<form method='POST'><label for='room'>Room:</label><input name='room'><br/>"
+                b"<label for='url'>URL:</label><input name='url'><br/>"
+                b"<input type='submit'/></form></body></html>")
 
     def render_POST(self, request):
         url = ""
