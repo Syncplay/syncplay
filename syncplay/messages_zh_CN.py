@@ -484,6 +484,7 @@ zh_CN = {
     "server-maxusernamelength-argument": "用户名中的最大字符数（默认为{}）。",
     "server-stats-db-file-argument": "使用提供的SQLite db文件启用服务器统计功能",
     "server-startTLS-argument": "使用提供的路径中的证书文件启用TLS连接",
+    "server-webhook-port-argument": 'server Webhook TCP port', # TODO translate
     "server-messed-up-motd-unescaped-placeholders": "每日信息中有未转义的占位符。所有 $ 字符应当重复两遍 ($$).",
     "server-messed-up-motd-too-long": "每日信息过长 - 最大{}个chars, 给出的长度{}",
 

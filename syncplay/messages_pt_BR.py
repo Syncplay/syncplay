@@ -484,6 +484,7 @@ pt_BR = {
     "server-maxusernamelength-argument": "Número máximos de caracteres num nome de usuário (o padrão é {})",
     "server-stats-db-file-argument": "Habilita estatísticas de servidor usando o arquivo db SQLite fornecido",
     "server-startTLS-argument": "Habilita conexões TLS usando os arquivos de certificado no caminho fornecido",
+    "server-webhook-port-argument": 'server Webhook TCP port', # TODO translate
     "server-messed-up-motd-unescaped-placeholders": "A Mensagem do Dia possui placeholders não escapados. Todos os sinais de $ devem ser dobrados (como em $$).",
     "server-messed-up-motd-too-long": "A Mensagem do Dia é muito longa - máximo de {} caracteres, {} foram dados.",
 

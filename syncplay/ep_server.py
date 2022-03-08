@@ -50,8 +50,9 @@ def main():
         args.tls
     )
     site = server.Site(WebAPI(factory))
-    endpoint = endpoints.TCP4ServerEndpoint(reactor, 8080)
-    endpoint.listen(site)
+    if args.webhook_port:
+        endpoint = endpoints.TCP4ServerEndpoint(reactor, int(args.webhook_port))
+        endpoint.listen(site)
     endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))
     endpoint6.listen(factory).addCallbacks(isListening6, failed6)
     endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))

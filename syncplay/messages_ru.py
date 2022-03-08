@@ -480,6 +480,7 @@ ru = {
     "server-maxusernamelength-argument": "Максимальное число символов в именах пользователей (по умолчанию {})",
     "server-stats-db-file-argument": "Включить статистику сервера в указанном файле SQLite",
     "server-startTLS-argument": "Включить TLS-соединения используя файлы сертификатов в указанном пути",
+    "server-webhook-port-argument": 'server Webhook TCP port', # TODO translate
     "server-messed-up-motd-unescaped-placeholders": "MOTD-сообщение содержит неэкранированные спецсимволы. Все знаки $ должны быть продублированы ($$).",
     "server-messed-up-motd-too-long": "MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
 

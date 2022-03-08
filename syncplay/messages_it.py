@@ -483,6 +483,7 @@ it = {
     "server-maxusernamelength-argument": "Numero massimo di caratteri in un nome utente (default è {})",
     "server-stats-db-file-argument": "Abilita la raccolta dei dati statistici nel file SQLite indicato",
     "server-startTLS-argument": "Abilita il protocollo TLS usando i certificati contenuti nel percorso indicato",
+    "server-webhook-port-argument": 'server Webhook TCP port', # TODO translate
     "server-messed-up-motd-unescaped-placeholders": "Il messaggio del giorno ha dei caratteri non 'escaped'. Tutti i simboli $ devono essere doppi ($$).",
     "server-messed-up-motd-too-long": "Il messaggio del giorno è troppo lungo - numero massimo di caratteri è {}, {} trovati.",
 

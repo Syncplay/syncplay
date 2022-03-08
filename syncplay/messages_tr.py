@@ -484,6 +484,7 @@ tr = {
     "server-maxusernamelength-argument": "Bir kullanıcı adındaki maksimum karakter sayısı (varsayılan {})",
     "server-stats-db-file-argument": "SQLite db dosyasını kullanarak sunucu istatistiklerini etkinleştirin",
     "server-startTLS-argument": "Dosya yolundaki sertifika dosyalarını kullanarak TLS bağlantılarını etkinleştirin",
+    "server-webhook-port-argument": 'server Webhook TCP port', # TODO translate
     "server-messed-up-motd-unescaped-placeholders": "Günün Mesajında çıkış karaktersiz yer tutucular var. Tüm $ işaretleri iki katına çıkarılmalıdır ($$).",
     "server-messed-up-motd-too-long": "Günün Mesajı çok uzun - maksimum {} karakter olmalı, {} verildi.",
 

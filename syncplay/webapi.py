@@ -10,6 +10,7 @@ class WebAPI(resource.Resource):
         self._factory = factory
 
     def render_GET(self, request):
+        # return a simple form for browsers
         return (b"<!DOCTYPE html><html><head><meta charset='utf-8'>"
                 b"<title></title></head><body>"
                 b"<form method='POST'><input name='room'><input name='url'></form>")

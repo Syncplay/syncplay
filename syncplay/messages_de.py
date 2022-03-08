@@ -483,6 +483,7 @@ de = {
     "server-maxusernamelength-argument": "Maximale Zeichenzahl in einem Benutzernamen (Standard ist {})",
     "server-stats-db-file-argument": "Aktiviere Server-Statistiken mithilfe der bereitgestellten SQLite-db-Datei",
     "server-startTLS-argument": "Erlaube TLS-Verbindungen mit den Zertifikatdateien im Angegebenen Pfad",
+    "server-webhook-port-argument": 'Server Webhook TCP-port',
     "server-messed-up-motd-unescaped-placeholders": "Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
     "server-messed-up-motd-too-long": "Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
 
