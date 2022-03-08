@@ -49,10 +49,12 @@ def main():
         args.stats_db_file,
         args.tls
     )
-    site = server.Site(WebAPI(factory))
     if args.webhook_port:
-        endpoint = endpoints.TCP4ServerEndpoint(reactor, int(args.webhook_port))
-        endpoint.listen(site)
+        site = server.Site(WebAPI(factory))
+        webapi6 = TCP6ServerEndpoint(reactor, int(args.webhook_port))
+        webapi6.listen(site)
+        #webapi4 = TCP4ServerEndpoint(reactor, int(args.webhook_port))
+        #webapi4.listen(site)
     endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))
     endpoint6.listen(factory).addCallbacks(isListening6, failed6)
     endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))
