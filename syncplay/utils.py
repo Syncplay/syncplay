@@ -383,7 +383,7 @@ def getListAsMultilineString(pathArray):
 
 
 def convertMultilineStringToList(multilineString):
-    return str.split(multilineString, "\n") if multilineString else ""
+    return str.split(multilineString, "\n") if multilineString else []
 
 
 def playlistIsValid(files):
