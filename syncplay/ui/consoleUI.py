@@ -228,6 +228,8 @@ class ConsoleUI(threading.Thread):
 
             except (TypeError, AttributeError):
                 self.showErrorMessage(getMessage("playlist-invalid-index-error"))
+        elif command.group('command') in constants.COMMANDS_NEXT:
+            self._syncplayClient.playlist.loadNextFileInPlaylist()
 
         else:
             if self._tryAdvancedCommands(data):
