@@ -92,6 +92,7 @@ en = {
     "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",
     "commandList-notification/playlist": "\tql - show the current playlist",
     "commandList-notification/select": "\tqs [index] - select given entry in the playlist",
+    "commandList-notification/next": "\tqn - select next entry in the playlist",
     "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",
     "syncplay-version-notification": "Syncplay version: {}",  # syncplay.version
     "more-info-notification": "More info available at: {}",  # projectURL
