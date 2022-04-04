@@ -23,7 +23,7 @@ zh_CN = {
     "slowdown-notification": "与{}不同步，正在慢速播放",  # User
     "revert-notification": "播放速度恢复一倍速",
 
-    "pause-notification": "{}暂停了",  # User
+    "pause-notification": "{}暂停了 ({})",  # User
     "unpause-notification": "{}重新开始播放",  # User
     "seek-notification": "{}从{}跳转到{}",  # User, from time, to time
 

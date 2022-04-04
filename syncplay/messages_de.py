@@ -23,7 +23,7 @@ de = {
     "slowdown-notification": "Verlangsamt wegen Zeitdifferenz mit {}",  # User
     "revert-notification": "Normalgeschwindigkeit",
 
-    "pause-notification": "{} pausierte",  # User
+    "pause-notification": "{} pausierte ({})",  # User
     "unpause-notification": "{} startete",  # User
     "seek-notification": "{} sprang von {} nach {}",  # User, from time, to time
 

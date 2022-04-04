@@ -23,7 +23,7 @@ fr = {
     "slowdown-notification": "Ralentissement dû au décalage de temps avec {}",  # User
     "revert-notification": "Retour à la vitesse normale",
 
-    "pause-notification": "{} en pause",  # User
+    "pause-notification": "{} en pause ({})",  # User
     "unpause-notification": "{} non suspendu",  # User
     "seek-notification": "{} est passé de {} à {}",  # User, from time, to time
 
