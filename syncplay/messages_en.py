@@ -23,7 +23,7 @@ en = {
     "slowdown-notification": "Slowing down due to time difference with {}",  # User
     "revert-notification": "Reverting speed back to normal",
 
-    "pause-notification": "{} paused",  # User
+    "pause-notification": "{} paused at {}",  # User
     "unpause-notification": "{} unpaused",  # User
     "seek-notification": "{} jumped from {} to {}",  # User, from time, to time
 
