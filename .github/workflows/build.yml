@@ -82,7 +82,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip3 install -U setuptools==60.*.* wheel pip
+          pip3 install -U setuptools==60.* wheel pip
           pip3 install twisted[tls] appnope requests certifi
           pip3 install shiboken2==5.15.2 pyside2==5.15.2
           pip3 install altgraph modulegraph macholib
