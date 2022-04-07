@@ -360,7 +360,7 @@ class SyncplayClient(object):
         self._player.setPaused(True)
         madeChangeOnPlayer = True
         if (self.lastLeftTime < time.time() - constants.OSD_DURATION) or hideFromOSD == True:
-            self.ui.showMessage(getMessage("pause-notification").format(setBy), hideFromOSD)
+            self.ui.showMessage(getMessage("pause-notification").format(setBy, utils.formatTime(self.getGlobalPosition())), hideFromOSD)
         else:
             self.ui.showMessage(getMessage("left-paused-notification").format(self.lastLeftUser, setBy), hideFromOSD)
         return madeChangeOnPlayer

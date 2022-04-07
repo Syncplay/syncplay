@@ -23,7 +23,7 @@ pt_PT = {
     "slowdown-notification": "Diminuindo a velocidade devido à diferença de tempo com {}",  # User
     "revert-notification": "Revertendo velocidade ao normal",
 
-    "pause-notification": "{} pausou",  # User
+    "pause-notification": "{} pausou ({})",  # User
     "unpause-notification": "{} despausou",  # User
     "seek-notification": "{} saltou de {} para {}",  # User, from time, to time
 
