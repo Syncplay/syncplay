@@ -23,7 +23,7 @@ it = {
     "slowdown-notification": "Rallento a causa della differenza temporale con {}",  # User
     "revert-notification": "Ripristino la velocità di riproduzione normale",
 
-    "pause-notification": "{} ha messo in pausa ({})",  # User
+    "pause-notification": "{} ha messo in pausa ({})",  # User, Time - TODO: Change into format "{} paused at {}" in line with English message
     "unpause-notification": "{} ha ripreso la riproduzione",  # User
     "seek-notification": "{} è passato da {} a {}",  # User, from time, to time
 

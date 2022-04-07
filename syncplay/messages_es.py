@@ -23,7 +23,7 @@ es = {
     "slowdown-notification": "Ralentizando debido a diferencia de tiempo con {}",  # User
     "revert-notification": "Revirtiendo a la velocidad normal",
 
-    "pause-notification": "{} pausado ({})",  # User
+    "pause-notification": "{} pausado ({})", # User, Time - TODO: Change into format "{} paused at {}" in line with English message
     "unpause-notification": "{} resumido",  # User
     "seek-notification": "{} saltó desde {} hasta {}",  # User, from time, to time
 

@@ -23,7 +23,7 @@ tr = {
     "slowdown-notification": "{} ile zaman farkı nedeniyele nedeniyle yavaşlıyor",  # User
     "revert-notification": "Hızı normale döndürülüyor",
 
-    "pause-notification": "{} duraklattı ({})",  # User
+    "pause-notification": "{} duraklattı ({})",  # User, Time - TODO: Change into format "{} paused at {}" in line with English message
     "unpause-notification": "{} devam ettirdi",  # User
     "seek-notification": "{}, {} konumundan {} konumuna atladı",  # User, from time, to time
 

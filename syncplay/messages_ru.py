@@ -23,7 +23,7 @@ ru = {
     "slowdown-notification": "Воспроизведение замедлено из-за разницы во времени с {}",  # User
     "revert-notification": "Возвращаемся к нормальной скорости воспроизведения",
 
-    "pause-notification": "{} приостановил воспроизведение ({})",  # User
+    "pause-notification": "{} приостановил воспроизведение ({})",  # User, Time - TODO: Change into format "{} paused at {}" in line with English message
     "unpause-notification": "{} возобновил воспроизведение",  # User
     "seek-notification": "{} перемотал с {} на {}",  # User, from time, to time
 
