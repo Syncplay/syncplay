@@ -24,8 +24,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Version and platform:**
- - OS: [e.g. Windows 10 or macOS 10.15]
+ - OS: [e.g. Windows 10 64-bit or macOS 10.15]
  - Syncplay version and build type: [e.g. Syncplay 1.6.9 portable]
+ - Media player and version:  [e.g. VLC 3.0.16 32-bit]
 
 
 **Additional context**
