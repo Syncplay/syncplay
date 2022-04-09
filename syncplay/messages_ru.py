@@ -91,6 +91,7 @@ ru = {
     "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - показать текущий список воспроизведения",
     "commandList-notification/select": "\tqs [индекс] - выделить указанный пункт в списке воспроизведения",
+    "commandList-notification/next": "\tqn - выделить следующий пункт в списке воспроизведения",
     "commandList-notification/delete": "\tqd [индекс] - удалить указанный пункт из списка воспроизведения",
     "syncplay-version-notification": "Версия Syncplay: {}",  # syncplay.version
     "more-info-notification": "Больше информации на {}",  # projectURL

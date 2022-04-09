@@ -92,6 +92,7 @@ zh_CN = {
     "commandList-notification/queueandselect": "\tqas [file/url] - 在播放列表最后添加文件或URL并选中",
     "commandList-notification/playlist": "\tql - 显示当前播放列表",
     "commandList-notification/select": "\tqs [index] - 选中播放列表中指定序号的视频",
+    "commandList-notification/next": "\tqn - select next entry in the playlist", # TODO: Translate
     "commandList-notification/delete": "\tqd [index] - 删除播放列表中指定序号的视频",
     "syncplay-version-notification": "当前Syncplay版本为{}",  # syncplay.version
     "more-info-notification": "更多信息请参照{}",  # projectURL

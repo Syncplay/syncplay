@@ -92,6 +92,7 @@ tr = {
     "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
     "commandList-notification/playlist": "\tql - mevcut oynatma listesini gösterir",
     "commandList-notification/select": "\tqs [index] - oynatma listesinde verilen girişi seçer",
+    "commandList-notification/next": "\tqn - select next entry in the playlist", # TODO: Translate
     "commandList-notification/delete": "\tqd [index] - verilen girişi oynatma listesinden siler",
     "syncplay-version-notification": "Syncplay sürümü: {}",  # syncplay.version
     "more-info-notification": "Daha fazla bilgiye şu adresten ulaşabilirsiniz: {}",  # projectURL

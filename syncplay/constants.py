@@ -129,6 +129,7 @@ COMMANDS_QUEUEANDSELECT = ['queueandselect','qas']
 COMMANDS_PLAYLIST = ['playlist', 'ql', 'pl']
 COMMANDS_SELECT = ['select', 'qs']
 COMMANDS_DELETE = ['delete', 'd', 'qd']
+COMMANDS_NEXT = ["next", "qn"]
 MPC_MIN_VER = "1.6.4"
 MPC_BE_MIN_VER = "1.5.2.3123"
 VLC_MIN_VERSION = "2.2.1"

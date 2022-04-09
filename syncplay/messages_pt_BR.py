@@ -93,6 +93,7 @@ pt_BR = {
     "commandList-notification/queueandselect": "\tqas [arquivo/url] - adiciona um arquivo ou URL para o final da playlist e o seleciona",
     "commandList-notification/playlist": "\tql - mostra a playlist atual",
     "commandList-notification/select": "\tqs [índice] - seleciona um item da playlist",
+    "commandList-notification/next": "\tqn - select next entry in the playlist", # TODO: Translate
     "commandList-notification/delete": "\tqd [index] - remove um item da playlist",
     "syncplay-version-notification": "Versão do Syncplay: {}",  # syncplay.version
     "more-info-notification": "Mais informações disponíveis em: {}",  # projectURL
