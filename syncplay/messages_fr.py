@@ -89,6 +89,7 @@ fr = {
     "commandlist-notification/auth": "\tun [mot de passe] - s'authentifier en tant qu'opérateur de salle avec le mot de passe opérateur",
     "commandlist-notification/chat": "\tch [message] - envoyer un message de chat dans une pièce",
     "commandList-notification/queue": "\tqa [fichier/url] - ajoute un fichier ou une URL au bas de la liste de lecture",
+    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it", # TODO: Translate
     "commandList-notification/playlist": "\tql - afficher la liste de lecture actuelle",
     "commandList-notification/select": "\tqs [index] - sélectionnez l'entrée donnée dans la liste de lecture",
     "commandList-notification/next": "\tqn - select next entry in the playlist", # TODO: Translate
