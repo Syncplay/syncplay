@@ -333,8 +333,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push ""
     Push $${LANG_ENGLISH}
     Push English
-    Push $${LANG_POLISH}
-    Push Polski
+    Push $${LANG_FRENCH}
+    Push Français
     Push $${LANG_RUSSIAN}
     Push Русский
     Push $${LANG_GERMAN}
