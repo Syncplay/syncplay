@@ -797,7 +797,7 @@ info = dict(
         'py2exe': {
             'dist_dir': OUT_DIR,
             'packages': 'PySide2, cffi, OpenSSL, certifi',
-            'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file',
+            'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file, sqlite3',
             'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, tcl, tkinter',
             'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
             'optimize': 2,
