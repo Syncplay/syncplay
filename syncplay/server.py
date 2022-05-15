@@ -482,6 +482,8 @@ class RoomManager(object):
 
     def _deleteRoomIfEmpty(self, room):
         if room.isEmpty() and room.getName():
+            if self._roomsDbHandle and room.isPermanent():
+                return
             if self._roomsDbHandle and room.isNotPermanent():
                 if room.isPersistent() and not room.isPlaylistEmpty():
                     return
