@@ -292,12 +292,12 @@ ru = {
     "autoplay-menu-label": "Показывать кнопку &автовоспроизведения",
     "autoplay-guipushbuttonlabel": "Стартовать, когда все будут готовы",
     "autoplay-minimum-label": "Минимум зрителей:",
-    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
+    "hideemptyrooms-menu-label": "Скрыть пустые пустоянные комнаты",
     "sendmessage-label": "Выслать",
 
     "ready-guipushbuttonlabel": "Я готов",
 
-    "roomuser-heading-label": "Комната / Зритель",
+    "roomuser-heading-label": "Комната/Зритель",
 
     "size-heading-label": "Размер",
     "duration-heading-label": "Время",
@@ -456,8 +456,8 @@ ru = {
     "nofile-note": "(Никакой файл не проигрывается)",
 
     # Server messages to client
-    "new-syncplay-available-motd-message": "Вы используете Syncplay версии {}. Доступна более новая версия на https://syncplay.pl/",  # ClientVersion
-    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
+    "new-syncplay-available-motd-message": "Вы используете Syncplay версии {}. На https://syncplay.pl/ доступна более новая версия.",  # ClientVersion
+    "persistent-rooms-notice": "ВНИМАНИЕ: Этот сервер использует постоянные комнаты, это означает что информация списка воспроизведения сохраняется между сеансами воспроизведения. Если вы хотите создать комнату, в которой информация не сохраняется, поставьте -temp в конце названия комнаты.",
 
     # Server notifications
     "welcome-server-notification": "Добро пожаловать на сервер Syncplay версии {0}",  # version
@@ -472,10 +472,10 @@ ru = {
     "server-password-argument": 'пароль к серверу',
     "server-isolate-room-argument": 'должны ли комнаты быть изолированными?',
     "server-salt-argument": "генерировать пароли к управляемым комнатам на основании указанной строки (соли)",
-    "server-disable-ready-argument": "отключить статусы готов/не готов",
+    "server-disable-ready-argument": "отключить статусы готовности",
     "server-motd-argument": "путь к файлу, из которого будет извлекаться MOTD-сообщение",
-    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
-    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
+    "server-rooms-argument": "путь к файлу базы данных для использования и/или создания хранилища постоянных данных о комнате. Позволяет комнатам сохраняться без просматривающих, а также после перезапусков",
+    "server-permanent-rooms-argument": "путь к файлу со списком постоянных комнат, которые будут перечислены, даже если комната пуста (в виде текстового файла, в котором указана одна комната на строку) - требуется, чтобы постоянные комнаты были включены",
     "server-chat-argument": "Должен ли чат быть отключён?",
     "server-chat-maxchars-argument": "Максимальное число символов в сообщениях в чате (по умолчанию {})",
     "server-maxusernamelength-argument": "Максимальное число символов в именах пользователей (по умолчанию {})",
