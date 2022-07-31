@@ -58,6 +58,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   !include FileFunc.nsh
 
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\English.nlf"
+  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Esperanto.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Polish.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Russian.nlf"
   LoadLanguageFile "$${NSISDIR}\Contrib\Language files\German.nlf"
@@ -85,6 +86,11 @@ NSIS_SCRIPT_TEMPLATE = r"""
   VIAddVersionKey /LANG=$${LANG_ENGLISH} "FileVersion" "$version.0"
   VIAddVersionKey /LANG=$${LANG_ENGLISH} "LegalCopyright" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_ENGLISH} "FileDescription" "Syncplay"
+
+  VIAddVersionKey /LANG=$${LANG_ESPERANTO} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_ESPERANTO} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_ESPERANTO} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_ESPERANTO} "FileDescription" "Syncplay"
 
   VIAddVersionKey /LANG=$${LANG_POLISH} "ProductName" "Syncplay"
   VIAddVersionKey /LANG=$${LANG_POLISH} "FileVersion" "$version.0"
@@ -139,6 +145,15 @@ NSIS_SCRIPT_TEMPLATE = r"""
   LangString ^QuickLaunchBar $${LANG_ENGLISH} "Quick Launch Bar"
   LangString ^AutomaticUpdates $${LANG_ENGLISH} "Check for updates automatically"
   LangString ^UninstConfig $${LANG_ENGLISH} "Delete configuration file."
+
+  LangString ^SyncplayLanguage $${LANG_ESPERANTO} "eo"
+  LangString ^Associate $${LANG_ESPERANTO} "Asocii vidaŭdaĵajn dosierojn kun Syncplay."
+  LangString ^Shortcut $${LANG_ESPERANTO} "Krei mallongigojn en la jenaj lokoj:"
+  LangString ^StartMenu $${LANG_ESPERANTO} "Start-menuo"
+  LangString ^Desktop $${LANG_ESPERANTO} "Labortablo"
+  LangString ^QuickLaunchBar $${LANG_ESPERANTO} "Tujbreto"
+  LangString ^AutomaticUpdates $${LANG_ESPERANTO} "Kontroli ĝisdatigojn memage"
+  LangString ^UninstConfig $${LANG_ESPERANTO} "Forigi dosieron kun agordaro."
 
   LangString ^SyncplayLanguage $${LANG_POLISH} "pl"
   LangString ^Associate $${LANG_POLISH} "Skojarz Syncplaya z multimediami"
@@ -333,6 +348,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
     Push ""
     Push $${LANG_ENGLISH}
     Push English
+    Push $${LANG_ESPERANTO}
+    Push Esperanto
     Push $${LANG_FRENCH}
     Push Français
     Push $${LANG_RUSSIAN}
@@ -785,9 +802,9 @@ common_info = dict(
 info = dict(
     common_info,
     windows=[{
-      "script": "syncplayClient.py",
-      "icon_resources": [(1, "syncplay\\resources\\icon.ico")],
-      'dest_base': "Syncplay"},
+        "script": "syncplayClient.py",
+        "icon_resources": [(1, "syncplay\\resources\\icon.ico")],
+        'dest_base': "Syncplay"},
     ],
     console=['syncplayServer.py'],
     # *** If you wish to make the Syncplay client use console mode (for --no-gui to work) then comment out the above two lines and uncomment the following line:
