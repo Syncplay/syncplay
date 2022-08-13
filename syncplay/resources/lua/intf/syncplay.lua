@@ -5,7 +5,7 @@
  Principal author: Etoh
  Other contributors: DerGenaue, jb, Pilotat
  Project: https://syncplay.pl/
- Version: 0.4.1
+ Version: 0.4.4
 
  Note:
  * This interface module is intended to be used in conjunction with Syncplay.
@@ -78,7 +78,7 @@ Syncplay should install this automatically to your user folder.
 
 --]==========================================================================]
 
-local connectorversion = "0.4.0"
+local connectorversion = "0.4.4"
 local vlcversion = vlc.misc.version()
 local vlcmajorversion = tonumber(vlcversion:sub(1,1)) -- get the major version of VLC
 local durationdelay = 500000 -- Pause for get_duration command etc for increased reliability (uses microseconds)
@@ -113,7 +113,7 @@ local l
 local running = true
 
 function get_VLC_item()
-    return vlcmajorversion > 3 and vlc.player.item() or vlc.input.item()
+    return vlc.player.item()
 end
 
 
@@ -152,7 +152,7 @@ function quit_vlc()
 end
 
 function vlc_is_playing()
-    if (vlcmajorversion > 3 and vlc.player.is_playing()) or (vlcmajorversion  < 4 and vlc.object.input()) then
+    if vlc.player.is_playing() then
         return true
     else
         return false
@@ -165,27 +165,27 @@ function detectchanges()
 
     local notificationbuffer = ""
 
-        if vlc_is_playing() then
-            newinputstate = "input"
-            newfilepath = get_filepath()
+    if vlc_is_playing() then
+        newinputstate = "input"
+        newfilepath = get_filepath()
 
-            if newfilepath ~= oldfilepath and get_filepath() ~= unknownstream then
-                oldfilepath = newfilepath
-                notificationbuffer = notificationbuffer .. "filepath-change"..notificationmarker..msgterminator
-            end
-
-            notificationbuffer = notificationbuffer .. "playstate"..msgseperator..tostring(get_play_state())..msgterminator
-            notificationbuffer = notificationbuffer .. "position"..msgseperator..tostring(get_time())..msgterminator
-        else
-            notificationbuffer = notificationbuffer .. "playstate"..msgseperator..noinput..msgterminator
-            notificationbuffer = notificationbuffer .. "position"..msgseperator..noinput..msgterminator
-            newinputstate = noinput
+        if newfilepath ~= oldfilepath and get_filepath() ~= unknownstream then
+            oldfilepath = newfilepath
+            notificationbuffer = notificationbuffer .. "filepath-change"..notificationmarker..msgterminator
         end
 
-        if newinputstate ~= oldinputstate then
-            oldinputstate = newinputstate
-            notificationbuffer = notificationbuffer.."inputstate-change"..msgseperator..tostring(newinputstate)..msgterminator
-        end
+        notificationbuffer = notificationbuffer .. "playstate"..msgseperator..tostring(get_play_state())..msgterminator
+        notificationbuffer = notificationbuffer .. "position"..msgseperator..tostring(get_time())..msgterminator
+    else
+        notificationbuffer = notificationbuffer .. "playstate"..msgseperator..noinput..msgterminator
+        notificationbuffer = notificationbuffer .. "position"..msgseperator..noinput..msgterminator
+        newinputstate = noinput
+    end
+
+    if newinputstate ~= oldinputstate then
+        oldinputstate = newinputstate
+        notificationbuffer = notificationbuffer.."inputstate-change"..msgseperator..tostring(newinputstate)..msgterminator
+    end
 
     return notificationbuffer
 end
@@ -231,25 +231,13 @@ function get_var( vartoget, fallbackvar )
     local response
     local errormsg
 
-    if vlcmajorversion < 4 then
-        local input = vlc.object.input()
-        if input then
-            response = vlc.var.get(input,tostring(vartoget))
+
+    if vartoget == "time" then
+        if vlc.player.is_playing() then
+            response = vlc.player.get_time() / 1000000
         else
             response = fallbackvar
             errormsg = noinput
-        end
-        if vlcmajorversion > 2 and vartoget == "time" then
-            response = response / 1000000
-        end
-    else
-        if vartoget == "time" then
-            if vlc.player.is_playing() then
-                response = vlc.player.get_time() / 1000000
-            else
-                response = fallbackvar
-                errormsg = noinput
-            end
         end
     end
 
@@ -261,30 +249,15 @@ function set_var(vartoset, varvalue)
     -- [Used by the set-time and set-rate commands]
 
     local errormsg
-    if vlcmajorversion < 4 then
-
-        local input = vlc.object.input()
-
-        if vlcmajorversion > 2 and vartoset == "time" then
-            varvalue = varvalue * 1000000
+    if vlc.player.is_playing() then
+        if vartoset == "time" then
+            vlc.player.seek_by_time_absolute(varvalue * 1000000)
         end
-
-        if input then
-            vlc.var.set(input,tostring(vartoset),varvalue)
-        else
-            errormsg = noinput
-        end
-    else
-        if vlc.player.is_playing() then
-            if vartoset == "time" then
-                vlc.player.seek_by_time_absolute(varvalue * 1000000)
-            end
-        end
-        return  errormsg
     end
+    return  errormsg
 end
 
-    function get_time()
+function get_time()
     local time, errormsg, longtime
     time, errormsg = get_var("time", 0) -- Seconds
     if errormsg ~= nil and errormsg ~= "" then
@@ -324,23 +297,22 @@ function get_filepath ()
 
     local response
     local errormsg
-    if vlcmajorversion < 4 then local input = vlc.object.input() end
-    if vlcmajorversion > 3 and vlc.player.is_playing() or input then
-        local item =  vlcmajorversion > 3 and vlc.player.item() or vlc.input.item()
+    if vlc.player.is_playing() or input then
+        local item = vlc.player.item()
         if item then
             if string.find(item:uri(),"file://") then
-                 response = vlc.strings.decode_uri(item:uri())
+                response = vlc.strings.decode_uri(item:uri())
             elseif string.find(item:uri(),"dvd://") or string.find(item:uri(),"simpledvd://") then
-                 response = ":::DVD:::"
+                response = ":::DVD:::"
             else
-                 local metas = item:metas()
-                 if metas and metas["url"] and string.len(metas["url"]) > 0 then
-                      response = metas["url"]
-                 elseif item:uri() and string.len(item:uri()) > 0 then
-                      response = item:uri()
-                 else
-                      response = unknownstream
-                 end
+                local metas = item:metas()
+                if metas and metas["url"] and string.len(metas["url"]) > 0 then
+                    response = metas["url"]
+                elseif item:uri() and string.len(item:uri()) > 0 then
+                    response = item:uri()
+                else
+                    response = unknownstream
+                end
             end
         else
             errormsg = noinput
@@ -363,8 +335,7 @@ function get_filename ()
         return unknownstream
     end
     if filename == "" then
-        if vlcmajorversion < 4 then local input = vlc.object.input() end
-        if vlcmajorversion > 3 and vlc.player.is_playing() or input then
+        if vlc.player.is_playing() or input then
             local item = get_VLC_item()
             if item then
                 if item.name then
@@ -383,7 +354,7 @@ function get_filename ()
             response = string.sub(tostring(filename), index+1)
         end
     else
-          response = noinput
+        response = noinput
     end
 
     return response
@@ -394,27 +365,26 @@ function get_duration ()
 
     local response
     local errormsg
-        if vlcmajorversion < 4 then local input = vlc.object.input() end
-        if vlcmajorversion > 3 and vlc.player.is_playing() or input then
-            local item = get_VLC_item()
-            -- Try to get duration, which might not be available straight away
-            local i = 0
-            response = 0
-            repeat
-                vlc.misc.mwait(vlc.misc.mdate() + durationdelay)
-                if item and item:duration() then
-                    response = item:duration()
-                    if response < 1 then
-                        response = 0
-                    elseif string.sub(vlcversion,1,5) == "3.0.0" and response > 2147 and math.abs(response-(vlc.var.get(input,"length")/1000000)) > 5 then
-                        errormsg = "invalid-32-bit-value"
-                    end
+    if vlc.player.is_playing() or input then
+        local item = get_VLC_item()
+        -- Try to get duration, which might not be available straight away
+        local i = 0
+        response = 0
+        repeat
+            vlc.misc.mwait(vlc.misc.mdate() + durationdelay)
+            if item and item:duration() then
+                response = item:duration()
+                if response < 1 then
+                    response = 0
+                elseif string.sub(vlcversion,1,5) == "3.0.0" and response > 2147 and math.abs(response-(vlc.var.get(input,"length")/1000000)) > 5 then
+                    errormsg = "invalid-32-bit-value"
                 end
-                i = i + 1
-            until response > 1 or i > 5
-        else
-            errormsg = noinput
-        end
+            end
+            i = i + 1
+        until response > 1 or i > 5
+    else
+        errormsg = noinput
+    end
 
     return response, errormsg
 end
@@ -424,8 +394,7 @@ function display_osd ( argument )
     -- [Used by display-osd command]
     local errormsg
     local osdarray
-    if vlcmajorversion < 4 then local input = vlc.object.input() end
-    if vlcmajorversion > 3 and (vlc.player.is_playing() and vlc.osd and vlc.object.vout()) or input then
+    if (vlc.player.is_playing() and vlc.osd and vlc.object.vout()) or input then
         if not channel1 then
             channel1 = vlc.osd.channel_register()
         end
@@ -494,7 +463,7 @@ function do_command ( command, argument)
     elseif command == "set-rate"              then           errormsg = set_var("rate", radixsafe_tonumber(argument))
     elseif command == "set-title"             then           errormsg = set_var("title", radixsafe_tonumber(argument))
     elseif command == "display-osd"           then           errormsg = display_osd(argument)
-	elseif command == "display-secondary-osd" then           errormsg = display_secondary_osd(argument)
+    elseif command == "display-secondary-osd" then           errormsg = display_secondary_osd(argument)
     elseif command == "load-file"             then response           = load_file(argument)
     elseif command == "close-vlc"             then                      quit_vlc()
     else                                                     errormsg = unknowncommand
@@ -541,12 +510,12 @@ else
     vlc.msg.info("Hosting Syncplay interface on port: "..port)
 end
 
-    -- main loop, which alternates between writing and reading
+-- main loop, which alternates between writing and reading
 
 while running == true do
     --accept new connections and select active clients
     local quitcheckcounter = 0
-	local fd = l:accept()
+    local fd = l:accept()
     local buffer, inputbuffer, responsebuffer = "", "", ""
     while fd >= 0 and running == true do
 
