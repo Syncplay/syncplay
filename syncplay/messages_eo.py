@@ -2,10 +2,13 @@
 
 """Esperanto dictionary"""
 
+# Filename, dictionary name and LANGUAGE-TAG value based on ISO country code. Language tag listed at https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN
+
 # Komentoj kun tradukistaj notoj komenciĝas per «FARU:».
 
 eo = {
     "LANGUAGE": "Esperanto",
+    "LANGUAGE-TAG": "eo",
 
     # Client notifications
     "config-cleared-notification": "Agordoj vakiĝis. Ŝanĝoj konserviĝos kiam vi enmemorigos validan agordaron.",
@@ -529,4 +532,15 @@ eo = {
 
     "playlist-empty-error": "Ludlisto nun estas malplena.",
     "playlist-invalid-index-error": "Nevalida indico de ludlisto",
+
+    # Strings for Windows NSIS installer
+
+    "installer-language-file": "Esperanto.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-associate": "Asocii vidaŭdaĵajn dosierojn kun Syncplay.",
+    "installer-shortcut": "Krei mallongigojn en la jenaj lokoj:",
+    "installer-start-menu": "Start-menuo",
+    "installer-desktop": "Labortablo",
+    "installer-quick-launch-bar": "Tujbreto",
+    "installer-automatic-updates": "Kontroli ĝisdatigojn memage",
+    "installer-uninstall-configuration": "Forigi dosieron kun agordaro.",
 }

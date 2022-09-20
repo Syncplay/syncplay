@@ -2,8 +2,11 @@
 
 """French dictionary"""
 
+# Filename, dictionary name and LANGUAGE-TAG value based on ISO country code. Language tag listed at https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN
+
 fr = {
     "LANGUAGE": "Français",
+    "LANGUAGE-TAG": "fr",
 
     # Client notifications
     "config-cleared-notification": "Paramètres effacés. Les modifications seront enregistrées lorsque vous enregistrez une configuration valide.",
@@ -526,4 +529,15 @@ fr = {
 
     "playlist-empty-error": "La liste de lecture est actuellement vide.",
     "playlist-invalid-index-error": "Index de liste de lecture non valide",
+
+    # Strings for Windows NSIS installer
+
+    "installer-language-file": "French.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-associate": "Associer Syncplay avec les fichiers multimedias.",
+    "installer-shortcut": "Créer Racourcis pour les chemins suivants:",
+    "installer-start-menu": "Menu Démarrer",
+    "installer-desktop": "Bureau",
+    "installer-quick-launch-bar": "Barre de Lancement Rapide",
+    "installer-automatic-updates": "Vérifier automatiquement les mises à jour",
+    "installer-uninstall-configuration": "Supprimer le fichier de configuration.",
 }

@@ -2,8 +2,11 @@
 
 """Turkish dictionary"""
 
+# Filename, dictionary name and LANGUAGE-TAG value based on ISO country code. Language tag listed at https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN
+
 tr = {
     "LANGUAGE": "Türkçe", # Turkish
+    "LANGUAGE-TAG": "tr",
 
     # Client notifications
     "config-cleared-notification": "Ayarlar temizlendi. Geçerli bir konfigürasyon kaydettiğinizde değişiklikler kaydedilecektir.",
@@ -526,4 +529,15 @@ tr = {
 
     "playlist-empty-error": "Oynatma listesi şu anda boş.",
     "playlist-invalid-index-error": "Geçersiz oynatma listesi dizini",
+
+    # Strings for Windows NSIS installer
+
+    "installer-language-file": "Turkish.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-associate": "Syncplay'i ortam dosyalarıyla ilişkilendirin.",
+    "installer-shortcut": "Aşağıdaki konumlarda kısayollar oluşturun:",
+    "installer-start-menu": "Başlangıç menüsü",
+    "installer-desktop": "Masaüstü",
+    "installer-quick-launch-bar": "Hızlı Başlatma Çubuğu",
+    "installer-automatic-updates": "Güncellemeleri otomatik denetle",
+    "installer-uninstall-configuration": "Yapılandırma dosyasını silin.",
 }
