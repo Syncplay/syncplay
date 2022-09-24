@@ -2,8 +2,11 @@
 
 """Russian dictionary"""
 
+# Filename, dictionary name and LANGUAGE-TAG value based on ISO country code. Language tag listed at https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN
+
 ru = {
     "LANGUAGE": "Русский",  # (Russian)
+    "LANGUAGE-TAG": "ru",
 
     # Client notifications
     "config-cleared-notification": "Настройки сброшены. Изменения вступят в силу при сохранении корректной конфигурации.",
@@ -521,4 +524,15 @@ ru = {
 
     "playlist-empty-error": "Список воспроизведения пуст.",
     "playlist-invalid-index-error": "Неверный индекс в списке воспроизведения",
+
+    # Strings for Windows NSIS installer
+
+    "installer-language-file": "Russian.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-associate": "Ассоциировать Syncplay с видеофайлами",
+    "installer-shortcut": "Создать ярлыки:",
+    "installer-start-menu": "в меню Пуск",
+    "installer-desktop": "на рабочем столе",
+    "installer-quick-launch-bar": "в меню быстрого запуска",
+    "installer-automatic-updates": "Проверять обновления автоматически", # TODO: Confirm Russian translation ("Check for updates automatically")
+    "installer-uninstall-configuration": "Удалить файл настроек.",
 }

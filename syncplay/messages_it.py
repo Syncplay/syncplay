@@ -2,8 +2,11 @@
 
 """Italian dictionary"""
 
+# Filename, dictionary name and LANGUAGE-TAG value based on ISO country code. Language tag listed at https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN
+
 it = {
     "LANGUAGE": "Italiano",
+    "LANGUAGE-TAG": "it",
 
     # Client notifications
     "config-cleared-notification": "Impostazioni iniziali ripristinate. I cambiamenti saranno memorizzati quando salverai una configurazione valida.",
@@ -525,4 +528,15 @@ it = {
 
     "playlist-empty-error": "Playlist is currently empty.",  # TO DO: Translate
     "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
+
+    # Strings for Windows NSIS installer
+
+    "installer-language-file": "Italian.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-associate": "Associa Syncplay con i file multimediali.",
+    "installer-shortcut": "Crea i collegamenti nei percorsi seguenti:",
+    "installer-start-menu": "Menu Start",
+    "installer-desktop": "Desktop",
+    "installer-quick-launch-bar": "Barra di avvio rapido",
+    "installer-automatic-updates": "Controllo automatico degli aggiornamenti",
+    "installer-uninstall-configuration": "Cancella i file di configurazione.",
 }

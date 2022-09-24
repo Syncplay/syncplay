@@ -2,8 +2,11 @@
 
 """Simplified Chinese dictionary"""
 
+# Filename, dictionary name and LANGUAGE-TAG value based on ISO country code. Language tag listed at https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN
+
 zh_CN = {
     "LANGUAGE": "简体中文",
+    "LANGUAGE-TAG": "zh_CN",
 
     # Client notifications
     "config-cleared-notification": "设置已清除。 当你存储一个有效的配置时，更改将被保存。",
@@ -526,4 +529,15 @@ zh_CN = {
 
     "playlist-empty-error": "播放列表目前是空的。",
     "playlist-invalid-index-error": "无效的播放列表索引",
+
+    # Strings for Windows NSIS installer
+
+    "installer-language-file": "SimpChinese.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-associate": "将Syncplay与多媒体文件关联。",
+    "installer-shortcut": "在以下位置创建快捷方式:",
+    "installer-start-menu": "开始菜单",
+    "installer-desktop": "桌面",
+    "installer-quick-launch-bar": "快速启动栏",
+    "installer-automatic-updates": "自动检查更新",
+    "installer-uninstall-configuration": "删除配置文件",
 }

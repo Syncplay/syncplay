@@ -27,7 +27,7 @@ except ImportError:
     from py2exe.distutils_buildexe import py2exe
 
 import syncplay
-from syncplay.messages import getMissingStrings
+from syncplay.messages import getMissingStrings, getMessage, getLanguages
 
 missingStrings = getMissingStrings()
 if missingStrings is not None and missingStrings != "":
@@ -52,23 +52,64 @@ NSIS_COMPILE = get_nsis_path()
 
 OUT_DIR = "syncplay_v{}".format(syncplay.version)
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
+
+languages = getLanguages()
+
+def getLangTagFromNLF(lang):
+    return "LANG_" + getMessage("installer-language-file", lang).upper().replace(".NLF","").replace("_","")
+
+
+# Load languages
+loadLanguageFileString = ""
+for lang in languages:
+    lineToAdd = "LoadLanguageFile \"$${{NSISDIR}}\\Contrib\\Language files\\{}\"".format(getMessage("installer-language-file", lang))
+    loadLanguageFileString = loadLanguageFileString + "\r\n" + lineToAdd
+
+# Add Version Keys
+versionKeysString = ""
+for lang in languages:
+    languageIdent = getLangTagFromNLF(lang)
+    lineToAdd = r"""  VIAddVersionKey /LANG=$${LANG_IDENT} "ProductName" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_IDENT} "FileVersion" "$version.0"
+  VIAddVersionKey /LANG=$${LANG_IDENT} "LegalCopyright" "Syncplay"
+  VIAddVersionKey /LANG=$${LANG_IDENT} "FileDescription" "Syncplay"
+  """.replace("LANG_IDENT", languageIdent)
+    versionKeysString = versionKeysString + "\r\n" + lineToAdd
+
+# Add Language Strings
+languageString = ""
+for lang in languages:
+    languageIdent = getLangTagFromNLF(lang)
+
+    # dict_dict = {'dict1':dict1, 'dicta':dicta, 'dict666':dict666}
+    #
+    # for name,dict_ in dict_dict.items():
+    #     print 'the name of the dictionary is ', name
+    #     print 'the dictionary looks like ', dict_
+
+    langStringDict = {
+        # "[NSIS key name]": "[messages_*.py key name]"
+        "SyncplayLanguage": "LANGUAGE-TAG",
+        "Associate": "installer-associate",
+        "Shortcut": "installer-shortcut",
+        "StartMenu": "installer-start-menu",
+        "Desktop": "installer-desktop",
+        "QuickLaunchBar": "installer-quick-launch-bar",
+        "AutomaticUpdates": "installer-automatic-updates",
+        "UninstConfig": "installer-uninstall-configuration"
+    }
+    for nsisKey, messageKey in langStringDict.items():
+        nsisValue = getMessage(messageKey, lang)
+        lineToAdd = "  LangString ^" + nsisKey + " $${" + languageIdent + "} \"" + nsisValue + "\""
+        languageString = languageString + "\r\n" + lineToAdd
+    languageString = languageString + "\r\n"
+
 NSIS_SCRIPT_TEMPLATE = r"""
   !include LogicLib.nsh
   !include nsDialogs.nsh
   !include FileFunc.nsh
 
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\English.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Esperanto.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Polish.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Russian.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\German.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Italian.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Spanish.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\PortugueseBR.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Portuguese.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\Turkish.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\French.nlf"
-  LoadLanguageFile "$${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
+""" + loadLanguageFileString + r"""
  
   Unicode true
 
@@ -82,168 +123,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
   SetCompressor /SOLID lzma
 
   VIProductVersion "$version.0"
-  VIAddVersionKey /LANG=$${LANG_ENGLISH} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_ENGLISH} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_ENGLISH} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_ENGLISH} "FileDescription" "Syncplay"
-
-  VIAddVersionKey /LANG=$${LANG_ESPERANTO} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_ESPERANTO} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_ESPERANTO} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_ESPERANTO} "FileDescription" "Syncplay"
-
-  VIAddVersionKey /LANG=$${LANG_POLISH} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_POLISH} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_POLISH} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_POLISH} "FileDescription" "Syncplay"
-
-  VIAddVersionKey /LANG=$${LANG_RUSSIAN} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_RUSSIAN} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_RUSSIAN} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_RUSSIAN} "FileDescription" "Syncplay"
-
-  VIAddVersionKey /LANG=$${LANG_ITALIAN} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_ITALIAN} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_ITALIAN} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_ITALIAN} "FileDescription" "Syncplay"
-
-  VIAddVersionKey /LANG=$${LANG_SPANISH} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_SPANISH} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_SPANISH} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_SPANISH} "FileDescription" "Syncplay"
-
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESEBR} "FileDescription" "Syncplay"
-
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_PORTUGUESE} "FileDescription" "Syncplay"
-
-  VIAddVersionKey /LANG=$${LANG_TURKISH} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_TURKISH} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_TURKISH} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_TURKISH} "FileDescription" "Syncplay"
   
-  VIAddVersionKey /LANG=$${LANG_FRENCH} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_FRENCH} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_FRENCH} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_FRENCH} "FileDescription" "Syncplay"
-  
-  VIAddVersionKey /LANG=$${LANG_SIMPCHINESE} "ProductName" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_SIMPCHINESE} "FileVersion" "$version.0"
-  VIAddVersionKey /LANG=$${LANG_SIMPCHINESE} "LegalCopyright" "Syncplay"
-  VIAddVersionKey /LANG=$${LANG_SIMPCHINESE} "FileDescription" "Syncplay"
-
-  LangString ^SyncplayLanguage $${LANG_ENGLISH} "en"
-  LangString ^Associate $${LANG_ENGLISH} "Associate Syncplay with multimedia files."
-  LangString ^Shortcut $${LANG_ENGLISH} "Create Shortcuts in following locations:"
-  LangString ^StartMenu $${LANG_ENGLISH} "Start Menu"
-  LangString ^Desktop $${LANG_ENGLISH} "Desktop"
-  LangString ^QuickLaunchBar $${LANG_ENGLISH} "Quick Launch Bar"
-  LangString ^AutomaticUpdates $${LANG_ENGLISH} "Check for updates automatically"
-  LangString ^UninstConfig $${LANG_ENGLISH} "Delete configuration file."
-
-  LangString ^SyncplayLanguage $${LANG_ESPERANTO} "eo"
-  LangString ^Associate $${LANG_ESPERANTO} "Asocii vidaŭdaĵajn dosierojn kun Syncplay."
-  LangString ^Shortcut $${LANG_ESPERANTO} "Krei mallongigojn en la jenaj lokoj:"
-  LangString ^StartMenu $${LANG_ESPERANTO} "Start-menuo"
-  LangString ^Desktop $${LANG_ESPERANTO} "Labortablo"
-  LangString ^QuickLaunchBar $${LANG_ESPERANTO} "Tujbreto"
-  LangString ^AutomaticUpdates $${LANG_ESPERANTO} "Kontroli ĝisdatigojn memage"
-  LangString ^UninstConfig $${LANG_ESPERANTO} "Forigi dosieron kun agordaro."
-
-  LangString ^SyncplayLanguage $${LANG_POLISH} "pl"
-  LangString ^Associate $${LANG_POLISH} "Skojarz Syncplaya z multimediami"
-  LangString ^Shortcut $${LANG_POLISH} "Utworz skroty w nastepujacych miejscach:"
-  LangString ^StartMenu $${LANG_POLISH} "Menu Start"
-  LangString ^Desktop $${LANG_POLISH} "Pulpit"
-  LangString ^QuickLaunchBar $${LANG_POLISH} "Pasek szybkiego uruchamiania"
-  LangString ^UninstConfig $${LANG_POLISH} "Usun plik konfiguracyjny."
-
-  LangString ^SyncplayLanguage $${LANG_RUSSIAN} "ru"
-  LangString ^Associate $${LANG_RUSSIAN} "Ассоциировать Syncplay с видеофайлами"
-  LangString ^Shortcut $${LANG_RUSSIAN} "Создать ярлыки:"
-  LangString ^StartMenu $${LANG_RUSSIAN} "в меню Пуск"
-  LangString ^Desktop $${LANG_RUSSIAN} "на рабочем столе"
-  LangString ^QuickLaunchBar $${LANG_RUSSIAN} "в меню быстрого запуска"
-  LangString ^AutomaticUpdates $${LANG_RUSSIAN} "Проверять обновления автоматически"; TODO: Confirm Russian translation ("Check for updates automatically")
-  LangString ^UninstConfig $${LANG_RUSSIAN} "Удалить файл настроек."
-
-  LangString ^SyncplayLanguage $${LANG_GERMAN} "de"
-  LangString ^Associate $${LANG_GERMAN} "Syncplay als Standardprogramm für Multimedia-Dateien verwenden."
-  LangString ^Shortcut $${LANG_GERMAN} "Erstelle Verknüpfungen an folgenden Orten:"
-  LangString ^StartMenu $${LANG_GERMAN} "Startmenü"
-  LangString ^Desktop $${LANG_GERMAN} "Desktop"
-  LangString ^QuickLaunchBar $${LANG_GERMAN} "Schnellstartleiste"
-  LangString ^AutomaticUpdates $${LANG_GERMAN} "Automatisch nach Updates suchen";
-  LangString ^UninstConfig $${LANG_GERMAN} "Konfigurationsdatei löschen."
-
-  LangString ^SyncplayLanguage $${LANG_ITALIAN} "it"
-  LangString ^Associate $${LANG_ITALIAN} "Associa Syncplay con i file multimediali."
-  LangString ^Shortcut $${LANG_ITALIAN} "Crea i collegamenti nei percorsi seguenti:"
-  LangString ^StartMenu $${LANG_ITALIAN} "Menu Start"
-  LangString ^Desktop $${LANG_ITALIAN} "Desktop"
-  LangString ^QuickLaunchBar $${LANG_ITALIAN} "Barra di avvio rapido"
-  LangString ^AutomaticUpdates $${LANG_ITALIAN} "Controllo automatico degli aggiornamenti"
-  LangString ^UninstConfig $${LANG_ITALIAN} "Cancella i file di configurazione."
-
-  LangString ^SyncplayLanguage $${LANG_SPANISH} "es"
-  LangString ^Associate $${LANG_SPANISH} "Asociar Syncplay con archivos multimedia."
-  LangString ^Shortcut $${LANG_SPANISH} "Crear accesos directos en las siguientes ubicaciones:"
-  LangString ^StartMenu $${LANG_SPANISH} "Menú de inicio"
-  LangString ^Desktop $${LANG_SPANISH} "Escritorio"
-  LangString ^QuickLaunchBar $${LANG_SPANISH} "Barra de acceso rápido"
-  LangString ^AutomaticUpdates $${LANG_SPANISH} "Buscar actualizaciones automáticamente"
-  LangString ^UninstConfig $${LANG_SPANISH} "Borrar archivo de configuración."
-
-  LangString ^SyncplayLanguage $${LANG_PORTUGUESEBR} "pt_BR"
-  LangString ^Associate $${LANG_PORTUGUESEBR} "Associar Syncplay aos arquivos multimídia."
-  LangString ^Shortcut $${LANG_PORTUGUESEBR} "Criar atalhos nos seguintes locais:"
-  LangString ^StartMenu $${LANG_PORTUGUESEBR} "Menu Iniciar"
-  LangString ^Desktop $${LANG_PORTUGUESEBR} "Área de trabalho"
-  LangString ^QuickLaunchBar $${LANG_PORTUGUESEBR} "Barra de acesso rápido"
-  LangString ^AutomaticUpdates $${LANG_PORTUGUESEBR} "Verificar atualizações automaticamente"
-  LangString ^UninstConfig $${LANG_PORTUGUESEBR} "Deletar arquivo de configuração."
-
-  LangString ^SyncplayLanguage $${LANG_PORTUGUESE} "pt_PT"
-  LangString ^Associate $${LANG_PORTUGUESE} "Associar Syncplay aos ficheiros multimédia."
-  LangString ^Shortcut $${LANG_PORTUGUESE} "Criar atalhos nos seguintes locais:"
-  LangString ^StartMenu $${LANG_PORTUGUESE} "Menu Iniciar"
-  LangString ^Desktop $${LANG_PORTUGUESE} "Área de trabalho"
-  LangString ^QuickLaunchBar $${LANG_PORTUGUESE} "Barra de acesso rápido"
-  LangString ^AutomaticUpdates $${LANG_PORTUGUESE} "Verificar atualizações automaticamente"
-  LangString ^UninstConfig $${LANG_PORTUGUESE} "Apagar ficheiro de configuração."
-
-  LangString ^SyncplayLanguage $${LANG_TURKISH} "tr"
-  LangString ^Associate $${LANG_TURKISH} "Syncplay'i ortam dosyalarıyla ilişkilendirin."
-  LangString ^Shortcut $${LANG_TURKISH} "Aşağıdaki konumlarda kısayollar oluşturun:"
-  LangString ^StartMenu $${LANG_TURKISH} "Başlangıç menüsü"
-  LangString ^Desktop $${LANG_TURKISH} "Masaüstü"
-  LangString ^QuickLaunchBar $${LANG_TURKISH} "Hızlı Başlatma Çubuğu"
-  LangString ^AutomaticUpdates $${LANG_TURKISH} "Güncellemeleri otomatik denetle"
-  LangString ^UninstConfig $${LANG_TURKISH} "Yapılandırma dosyasını silin."
-  
-  LangString ^SyncplayLanguage $${LANG_FRENCH} "fr"
-  LangString ^Associate $${LANG_FRENCH} "Associer Syncplay avec les fichiers multimedias."
-  LangString ^Shortcut $${LANG_FRENCH} "Créer Racourcis pour les chemins suivants:"
-  LangString ^StartMenu $${LANG_FRENCH} "Menu Démarrer"
-  LangString ^Desktop $${LANG_FRENCH} "Bureau"
-  LangString ^QuickLaunchBar $${LANG_FRENCH} "Barre de Lancement Rapide"
-  LangString ^AutomaticUpdates $${LANG_FRENCH} "Vérifier automatiquement les mises à jour"
-  LangString ^UninstConfig $${LANG_FRENCH} "Supprimer le fichier de configuration."
-  
-  LangString ^SyncplayLanguage $${LANG_SIMPCHINESE} "zh_CN"
-  LangString ^Associate $${LANG_SIMPCHINESE} "将Syncplay与多媒体文件关联。"
-  LangString ^Shortcut $${LANG_SIMPCHINESE} "在以下位置创建快捷方式:"
-  LangString ^StartMenu $${LANG_SIMPCHINESE} "开始菜单"
-  LangString ^Desktop $${LANG_SIMPCHINESE} "桌面"
-  LangString ^QuickLaunchBar $${LANG_SIMPCHINESE} "快速启动栏"
-  LangString ^AutomaticUpdates $${LANG_SIMPCHINESE} "自动检查更新"
-  LangString ^UninstConfig $${LANG_SIMPCHINESE} "删除配置文件"
-
+  """ + versionKeysString + languageString + r"""
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "
 

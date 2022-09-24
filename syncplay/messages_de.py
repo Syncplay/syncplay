@@ -2,8 +2,11 @@
 
 """Deutsch dictionary"""
 
+# Filename, dictionary name and LANGUAGE-TAG value based on ISO country code. Language tag listed at https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN
+
 de = {
     "LANGUAGE": "Deutsch",  # (German)
+    "LANGUAGE-TAG": "de",
 
     # Client notifications
     "config-cleared-notification": "Einstellungen gelöscht. Änderungen werden gespeichert, wenn du eine gültige Konfiguration speicherst.",
@@ -525,4 +528,15 @@ de = {
 
     "playlist-empty-error": "Playlist is currently empty.", # TO DO: Translate
     "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
+
+    # Strings for Windows NSIS installer
+
+    "installer-language-file": "German.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-associate": "Syncplay als Standardprogramm für Multimedia-Dateien verwenden.",
+    "installer-shortcut": "Erstelle Verknüpfungen an folgenden Orten:",
+    "installer-start-menu": "Startmenü",
+    "installer-desktop": "Desktop",
+    "installer-quick-launch-bar": "Schnellstartleiste",
+    "installer-automatic-updates": "Automatisch nach Updates suchen;",
+    "installer-uninstall-configuration": "Konfigurationsdatei löschen.",
 }

@@ -2,8 +2,11 @@
 
 """Portugal Portuguese dictionary"""
 
+# Filename, dictionary name and LANGUAGE-TAG value based on ISO country code. Language tag listed at https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN
+
 pt_PT = {
     "LANGUAGE": "Português de Portugal",
+    "LANGUAGE-TAG": "pt_PT",
 
     # Client notifications
     "config-cleared-notification": "Configurações removidas. As mudanças serão salvas quando você armazenar uma configuração válida.",
@@ -525,4 +528,15 @@ pt_PT = {
 
     "playlist-empty-error": "Playlist is currently empty.",  # TO DO: Translate
     "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
+
+    # Strings for Windows NSIS installer
+
+    "installer-language-file": "Portuguese.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-associate": "Associar Syncplay aos ficheiros multimédia.",
+    "installer-shortcut": "Criar atalhos nos seguintes locais:",
+    "installer-start-menu": "Menu Iniciar",
+    "installer-desktop": "Área de trabalho",
+    "installer-quick-launch-bar": "Barra de acesso rápido",
+    "installer-automatic-updates": "Verificar atualizações automaticamente",
+    "installer-uninstall-configuration": "Apagar ficheiro de configuração.",
 }
