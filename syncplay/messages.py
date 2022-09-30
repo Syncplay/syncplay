@@ -1,8 +1,8 @@
 # coding:utf8
 from syncplay import constants
 
-from . import messages_en
 from . import messages_de
+from . import messages_en
 from . import messages_es
 from . import messages_eo
 from . import messages_fr
