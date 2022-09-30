@@ -191,7 +191,7 @@ pt_BR = {
     "file-argument": 'arquivo a ser tocado',
     "args-argument": 'opções do reprodutor; se você precisar passar opções começando com -, as preceda com um único argumento \'--\'',
     "clear-gui-data-argument": 'redefine o caminho e o estado de dados da janela da GUI para as de QSettings',
-    "language-argument": 'idioma para mensagens do Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
+    "language-argument": 'idioma para mensagens do Syncplay ({})', # Languages
 
     "version-argument": 'exibe sua versão',
     "version-message": "Você está usando o Syncplay versão {} ({})",

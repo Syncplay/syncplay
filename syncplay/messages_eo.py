@@ -193,7 +193,7 @@ eo = {
     "file-argument": 'ludota dosiero',
     "args-argument": 'agordoj de ludilo; se vi bezonas doni elektojn, kiuj komenciĝas per «-», antaŭmetu solan parametron «--»',
     "clear-gui-data-argument": 'restarigas vojon kaj datumojn pri stato de la fenestro, konservitajn en la formo [QSettings]',
-    "language-argument": 'lingvo por mesaĝoj de Syncplay (de/en/eo/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
+    "language-argument": 'lingvo por mesaĝoj de Syncplay ({})', # Languages
 
     "version-argument": 'presas vian version',
     "version-message": "Vi uzas programon Syncplay, versio {} ({})",

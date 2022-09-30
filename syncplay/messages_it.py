@@ -190,7 +190,7 @@ it = {
     "file-argument": 'file da riprodurre',
     "args-argument": 'opzioni del player, se hai bisogno di utilizzare opzioni che iniziano con - anteponi un singolo \'--\'',
     "clear-gui-data-argument": 'ripristina il percorso e i dati impostati tramite interfaccia grafica e salvati come QSettings',
-    "language-argument": 'lingua per i messaggi di Syncplay (de/en/ru/it/es/pt_BR/pt_PT/tr/fr/zh_CN)',
+    "language-argument": 'lingua per i messaggi di Syncplay ({})', # Languages
 
     "version-argument": 'mostra la tua versione',
     "version-message": "Stai usando la versione di Syncplay {} ({})",

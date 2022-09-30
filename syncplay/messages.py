@@ -42,6 +42,13 @@ def getLanguages():
             langList[lang] = getMessage("LANGUAGE", lang)
     return langList
 
+def getLanguageTags():
+    langList = {}
+    for lang in messages:
+        if lang != "CURRENT":
+            langList[lang] = getMessage("LANGUAGE-TAG", lang)
+    return langList
+
 def isNoOSDMessage(message):
     for no_osd_message in no_osd_message_list:
         regex = "^" + getMessage(no_osd_message).replace("{}", ".+") + "$"
@@ -109,3 +116,13 @@ def getMessage(type_, locale=None):
         print("WARNING: Cannot find message '{}'!".format(type_))
         #return "!{}".format(type_)  # TODO: Remove
         raise KeyError(type_)
+
+def populateLanguageArgument():
+    languageTags = "/".join(getLanguageTags())
+    langList = {}
+    for lang in messages:
+        if lang != "CURRENT":
+            messages[lang]["language-argument"] = messages[lang]["language-argument"].format(languageTags)
+    return langList
+
+populateLanguageArgument()
