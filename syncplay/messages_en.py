@@ -8,6 +8,16 @@ en = {
     "LANGUAGE": "English",
     "LANGUAGE-TAG": "en",
 
+    # Strings for Windows NSIS installer
+    "installer-language-file": "English.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-associate": "Associate Syncplay with multimedia files.",
+    "installer-shortcut": "Create Shortcuts in following locations:",
+    "installer-start-menu": "Start Menu",
+    "installer-desktop": "Desktop",
+    "installer-quick-launch-bar": "Quick Launch Bar",
+    "installer-automatic-updates": "Check for updates automatically",
+    "installer-uninstall-configuration": "Delete configuration file.",
+
     # Client notifications
     "config-cleared-notification": "Settings cleared. Changes will be saved when you store a valid configuration.",
 
@@ -529,15 +539,4 @@ en = {
 
     "playlist-empty-error": "Playlist is currently empty.",
     "playlist-invalid-index-error": "Invalid playlist index",
-
-    # Strings for Windows NSIS installer
-
-    "installer-language-file": "English.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
-    "installer-associate": "Associate Syncplay with multimedia files.",
-    "installer-shortcut": "Create Shortcuts in following locations:",
-    "installer-start-menu": "Start Menu",
-    "installer-desktop": "Desktop",
-    "installer-quick-launch-bar": "Quick Launch Bar",
-    "installer-automatic-updates": "Check for updates automatically",
-    "installer-uninstall-configuration": "Delete configuration file.",
 }

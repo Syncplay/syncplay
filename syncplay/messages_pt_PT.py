@@ -8,6 +8,16 @@ pt_PT = {
     "LANGUAGE": "Português de Portugal",
     "LANGUAGE-TAG": "pt_PT",
 
+    # Strings for Windows NSIS installer
+    "installer-language-file": "Portuguese.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-associate": "Associar Syncplay aos ficheiros multimédia.",
+    "installer-shortcut": "Criar atalhos nos seguintes locais:",
+    "installer-start-menu": "Menu Iniciar",
+    "installer-desktop": "Área de trabalho",
+    "installer-quick-launch-bar": "Barra de acesso rápido",
+    "installer-automatic-updates": "Verificar atualizações automaticamente",
+    "installer-uninstall-configuration": "Apagar ficheiro de configuração.",
+
     # Client notifications
     "config-cleared-notification": "Configurações removidas. As mudanças serão salvas quando você armazenar uma configuração válida.",
 
@@ -528,15 +538,4 @@ pt_PT = {
 
     "playlist-empty-error": "Playlist is currently empty.",  # TO DO: Translate
     "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
-
-    # Strings for Windows NSIS installer
-
-    "installer-language-file": "Portuguese.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
-    "installer-associate": "Associar Syncplay aos ficheiros multimédia.",
-    "installer-shortcut": "Criar atalhos nos seguintes locais:",
-    "installer-start-menu": "Menu Iniciar",
-    "installer-desktop": "Área de trabalho",
-    "installer-quick-launch-bar": "Barra de acesso rápido",
-    "installer-automatic-updates": "Verificar atualizações automaticamente",
-    "installer-uninstall-configuration": "Apagar ficheiro de configuração.",
 }
