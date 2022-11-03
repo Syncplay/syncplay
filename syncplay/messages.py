@@ -5,6 +5,7 @@ from . import messages_de
 from . import messages_en
 from . import messages_es
 from . import messages_eo
+from . import messages_fi
 from . import messages_fr
 from . import messages_it
 from . import messages_pt_PT
@@ -20,6 +21,7 @@ messages = {
     "en": messages_en.en,
     "es": messages_es.es,
     "eo": messages_eo.eo,
+    "fi": messages_fi.fi,
     "fr": messages_fr.fr,
     "it": messages_it.it,
     "pt_PT": messages_pt_PT.pt_PT,
