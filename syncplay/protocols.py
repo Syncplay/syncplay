@@ -97,6 +97,11 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def connectionLost(self, reason):
         try:
+            self._client.ui.showDebugMessage(str(reason.stack))
+            self._client.ui.showDebugMessage(str(reason.value))
+        except:
+            pass
+        try:
             if "Invalid DNS-ID" in str(reason.value):
                 self._client._serverSupportsTLS = False
             elif "tlsv1 alert protocol version" in str(reason.value):
