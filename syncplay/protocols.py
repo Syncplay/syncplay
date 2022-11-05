@@ -92,7 +92,7 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-server"))
                 self.sendHello()
         else:
-            self._client.ui.showMessage(getMessage("startTLS-not-supported-client"))
+            self._client.ui.showErrorMessage(getMessage("startTLS-not-supported-client"))
             self.sendHello()
 
     def connectionLost(self, reason):
@@ -102,9 +102,13 @@ class SyncClientProtocol(JSONCommandProtocol):
             elif "tlsv1 alert protocol version" in str(reason.value):
                 self._client._clientSupportsTLS = False
             elif "certificate verify failed" in str(reason.value):
-                self.dropWithError(getMessage("startTLS-server-certificate-invalid"))
+                self._client.ui.showErrorMessage(getMessage("startTLS-server-certificate-invalid"))
+                self._client._clientSupportsTLS = False
             elif "mismatched_id=DNS_ID" in str(reason.value):
-                self.dropWithError(getMessage("startTLS-server-certificate-invalid-DNS-ID"))
+                self._client.ui.showErrorMessage(getMessage("startTLS-server-certificate-invalid-DNS-ID"))
+                self._client._clientSupportsTLS = False
+            elif "tls" in str(reason.stack):
+                self._client._clientSupportsTLS = False
         except:
             pass
         self._client.destroyProtocol()
