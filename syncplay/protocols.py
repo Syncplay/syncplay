@@ -105,6 +105,15 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self.dropWithError(getMessage("startTLS-server-certificate-invalid"))
             elif "mismatched_id=DNS_ID" in str(reason.value):
                 self.dropWithError(getMessage("startTLS-server-certificate-invalid-DNS-ID"))
+            elif reason:
+                try:
+                    self._client.ui.showErrorMessage(str(type(reason)))
+                    self._client.ui.showErrorMessage(str(reason))
+                    if reason.stack:
+                        self._client.ui.showErrorMessage(str(reason.stack))
+                    self._client.ui.showErrorMessage(str(reason.value))
+                except:
+                    pass
         except:
             pass
         self._client.destroyProtocol()
