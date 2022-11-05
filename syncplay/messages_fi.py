@@ -10,35 +10,35 @@ fi = {
 
      # Strings for Windows NSIS installer
      "installer-language-file": "Finnish.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
-     "installer-associate": "Yhdistä Syncplay toimimaan multimedia-tiedostojen kanssa.",
-     "installer-shortcut": "Luo oikopolut seuraaviin kohteisiin:",
-     "installer-start-menu": "Käynnistysvalikko",
+     "installer-associate": "Aseta Syncplay avaamaan multimedia-tiedostoja.",
+     "installer-shortcut": "Luo pikakuvakkeet seuraaviin kohteisiin:",
+     "installer-start-menu": "Käynnistä-valokko",
      "installer-desktop": "Työpöytä",
      "installer-quick-launch-bar": "Pikakäynnistyspalkki",
      "installer-automatic-updates": "Tarkista päivitykset automaattisesti",
      "installer-uninstall-configuration": "Poista asetustiedosto.",
 
      # Client notifications
-     "config-cleared-notification": "Asetukset pyyhitty. Muutokset tallennetaan kun toimitat uuden kelvollisen asetuskokonaisuuden.",
+     "config-cleared-notification": "Asetukset pyyhitty. Muutokset muistetaan tallentaessa kelvolliset asetukset.",
 
-     "relative-config-notification": "Asiaankuuluva asetustiedosto(t) ladattu: {}",
+     "relative-config-notification": "Ladattiin asetustiedosto(t): {}",
 
      "connection-attempt-notification": "Yritetään yhdistää kohteeseen {}:{}",  # Port, IP
-     "reconnection-attempt-notification": "Yhteys palvelimeen menetettiin, koetetaan uudelleenyhdistämistä",
+     "reconnection-attempt-notification": "Yhteys palvelimeen menetettiin, yritetään uudelleenyhdistämistä",
      "disconnection-notification": "Yhteys palvelimeen katkaistu",
-     "connection-failed-notification": "Yhteydenotto palvelimeen epäonnistui",
-     "connected-successful-notification": "Yhteys onnistuneesti muodostettu palvelimeen",
-     "retrying-notification": "%s, Uusi yritys %d sekunnissa...",  # Seconds
+     "connection-failed-notification": "Palvelimeen yhdistäminen epäonnistui",
+     "connected-successful-notification": "Yhteys muodostettu palvelimeen onnistuneesti",
+     "retrying-notification": "%s, Yritetetään uudelleen %d sekunnissa...",  # Seconds
      "reachout-successful-notification": "Tavoitettu onnistuneesti {} ({})",
 
-     "rewind-notification": "Taaksepäin kelattu koska ilmeni aikaero {}",  # User
-     "fastforward-notification": "Pikakelaus eteenpäin koska ilmeni aikaero {}",  # User
-     "slowdown-notification": "Hidastetaan toistoa aikaeroilmentymän takia {}",  # User
-     "revert-notification": "Palautetaan toistonopeus tavanomaiseksi",
+     "rewind-notification": "Kelattiin taaksepäin käyttäjän {} aikaeron vuoksi",  # User
+     "fastforward-notification": "Pikakelattiin käyttäjän {} aikaeron vuoksi",  # User
+     "slowdown-notification": "Hidastetaan toistoa käyttäjän {} aikaeron vuoksi",  # User
+     "revert-notification": "Palautetaan toistonopeus normaaliksi",
 
-     "pause-notification": "{} tauotettu ajassa {}",  # User, Time
-     "unpause-notification": "{} tauotus pois",  # User
-     "seek-notification": "{} hypätään ajasta {} aikaan {}",  # User, from time, to time
+     "pause-notification": "{} tauotti kohdassa {}",  # User, Time
+     "unpause-notification": "{} jatkoi toistoa",  # User
+     "seek-notification": "{} hyppäsi kohdasta {} kohtaan {}",  # User, from time, to time
 
      "current-offset-notification": "Nykyinen aikaero: {} sekuntia",  # Offset
 
@@ -46,57 +46,57 @@ fi = {
 
      "room-join-notification": "{} liittyi huoneeseen: '{}'",  # User
      "left-notification": "{} poistui",  # User
-     "left-paused-notification": "{} poistui, {} laittoi tauolle",  # User who left, User who paused
+     "left-paused-notification": "{} poistui, {} tauotti",  # User who left, User who paused
      "playing-notification": "{} toistaa '{}' ({})",  # User, file, duration
      "playing-notification/room-addendum": " huoneessa: '{}'",  # Room
 
      "not-all-ready": "Ei valmiina: {}",  # Usernames
-     "all-users-ready": "Kaikki ovat valmiina ({} users)",  # Number of ready users
-     "ready-to-unpause-notification": "Asetit itsesi nyt valmiiksi - paina tauko pois uudelleen päättääksesi tauon",
+     "all-users-ready": "Kaikki ovat valmiita ({} users)",  # Number of ready users
+     "ready-to-unpause-notification": "Asetit itsesi nyt valmiiksi - paina taukoa uudelleen päättääksesi tauon",
      "set-as-ready-notification": "Asetit itsesi valmiiksi",
-     "set-as-not-ready-notification": "Ilmaisit että et ole nyt valmiina",
+     "set-as-not-ready-notification": "Ilmaisit ettet ole vielä valmis",
      "autoplaying-notification": "Automaattinen toisto alkaa {}...",  # Number of seconds until playback will start
 
-     "identifying-as-controller-notification": "Olet asemoitunut huonevalvojaksi salasanalla '{}'...",
-     "failed-to-identify-as-controller-notification": "{} huonevalvojana tunnistautuminen epäonnistui.",
-     "authenticated-as-controller-notification": "{} tunnistauduttu huonevalvojana",
-     "created-controlled-room-notification": "Hallinnoitava huone '{}' luotu salasanalla '{}'. Taltioithan nämä tiedot tulevaa varten!\n\nHallinnoiduissa huoneissa kaikki osallistujat pidetään yhdentyneenä huoneen valvojan tai valvojien toimien kanssa ja valvojat ovat ainoita jotka voivat tauottaa toiston, poistaa tauotuksen tai hakea kohtaa aikajanalta toiston aikana, sekä myös muuntaa itse toistoluetteloa.\n\nSinun tulisi pyytää tavanomaisia katselijoita liittymään huoneeseen '{}' huonevalvojat taas voivat liittyä huoneeseen '{}' automaattisesti itsensä tunnistautuen.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
+     "identifying-as-controller-notification": "Tunnistaudutaan huoneen operaattoriksi salasanalla '{}'...",
+     "failed-to-identify-as-controller-notification": "{} huoneen operaattoriksi tunnistautuminen epäonnistui.",
+     "authenticated-as-controller-notification": "{} tunnistautui huoneen operaattoriksi",
+     "created-controlled-room-notification": "Luotiin hallittu huone '{}' salasanalla '{}'. Kirjoita tämä talteen tulevaisuudessa löydettäväksi!\n\nHallinnoiduissa huoneissa kaikkien osallistujien kohdat pidetään synkronoituneena huoneen operaattori(e)n kanssa ja vain he voivat tauottaa, jatkaa tai kelata ja muuttaa soittolistaa.\n\nSinun tulisi pyytää vakiokatsojia liittymään huoneeseen '{}' huoneen operaattorit taas voivat liittyä huoneeseen '{}' tunnistautuakseen automaattisesti.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
-     "file-different-notification": "Toistamasi tiedosto näyttää olevan eri kuin {}'n",  # User
-     "file-differences-notification": "Tiedostosi on eroavainen seuraavilla tavoilla: {}",  # Differences
+     "file-different-notification": "Vaikutat toistavan eri tiedostoa verrattuna käyttäjään {}",  # User
+     "file-differences-notification": "Tiedostosi poikkeaa seuraavasti: {}",  # Differences
      "room-file-differences": "Tiedostoerot: {}",  # File differences (filename, size, and/or duration)
      "file-difference-filename": "nimi",
      "file-difference-filesize": "koko",
      "file-difference-duration": "kesto",
      "alone-in-the-room": "Olet huoneessa yksin",
 
-     "different-filesize-notification": " (heidän tiedostokokonsa on eriävä sinun tiedostostasi!)",
+     "different-filesize-notification": " (hänen tiedostokokonsa poikkeaa omastasi!)",
      "userlist-playing-notification": "{} toistaa:",  # Username
-     "file-played-by-notification": "File: {} on toistossa:",  # File
-     "no-file-played-notification": "{} ei toista tiedostoa",  # Username
-     "notplaying-notification": "ihmiset jotka eivät toista mitään tiedostoa:",
+     "file-played-by-notification": "Toistetaan tiedostoa {}",  # File
+     "no-file-played-notification": "{} ei toista mitään tiedostoa",  # Username
+     "notplaying-notification": "Käyttäjät, jotka eivät toista mitään:",
      "userlist-room-notification":  "Huoneessa '{}':",  # Room
      "userlist-file-notification": "Tiedosto",
-     "controller-userlist-userflag": "Hallinnoitsija",
-     "ready-userlist-userflag": "Valmis",
+     "controller-userlist-userflag": "Operaattori",
+     "ready-userlist-userflag": "Valmiina",
 
-     "update-check-failed-notification": "Automaattista tarkistusta ei saatu tehtyä onko Syncplay {} ajantasalla. Haluatko käväistä osoitteessa https://syncplay.pl/ tarkistaaksesi mahdolliset päivitykset itse?",  # Syncplay version
+     "update-check-failed-notification": "Syncplay {} ajantasaisuutta ei voitu tarkistaa. Haluatko vierailla osoitteessa https://syncplay.pl/ tarkistaaksesi päivitykset käsin?",  # Syncplay version
      "syncplay-uptodate-notification": "Syncplay on ajantasalla",
-     "syncplay-updateavailable-notification": "Syncplayn uusi julkaisu on tarjolla. Haluatko käytä julkaisusivulla?",
+     "syncplay-updateavailable-notification": "Syncplayn uusi versio on saatavilla. Haluatko vierailla julkaisusivulla?",
 
-     "mplayer-file-required-notification": "Käytettäessä mplayer-toisto-ohjelmaa Syncplayssä vaatii että toimitat tiedoston aloittamista varten",
-     "mplayer-file-required-notification/example": "Käyttöesimerkki: syncplay [vaihtoehdot] [osoite|polku/]tiedostonimi",
-     "mplayer2-required": "Syncplay ei ole yhteensopiva MPlayer version 1.x kanssa, käytä mplayer2:ta tai sitten mpv:tä",
+     "mplayer-file-required-notification": "Käytettäessä Mplayer-sovellusta Syncplay vaatii tiedostonimen käynnistettäessä",
+     "mplayer-file-required-notification/example": "Käyttöesimerkki: syncplay [asetukset] [osoite|polku/]tiedostonimi",
+     "mplayer2-required": "Syncplay ei ole yhteensopiva MPlayer version 1.x kanssa, käytä mplayer2:ta mpv:tä",
 
-     "unrecognized-command-notification": "Tuntematon käsky",
-     "commandlist-notification": "Käytettävissä olevat käskyt:",
-     "commandlist-notification/room": "\tr [nimi] - vaihda huone",
+     "unrecognized-command-notification": "Tuntematon komento",
+     "commandlist-notification": "Käytettävissä olevat komennot:",
+     "commandlist-notification/room": "\tr [nimi] - vaihda huonetta",
      "commandlist-notification/list": "\tl - näytä käyttäjäluettelo",
      "commandlist-notification/undo": "\tu - peru edellinen kohtahaku",
-     "commandlist-notification/pause": "\tp - kytke tauko",
-     "commandlist-notification/seek": "\t[s][+-]aika - siirry annettuun aikakohtaan, jos + tai - ei määritetä, kyseessä on yleiskattava aikasiirtymä sekunneissa tai min:sek",
+     "commandlist-notification/pause": "\tp - tauota tai päätä tauko",
+     "commandlist-notification/seek": "\t[s][+-]aika - siirry annettuun kohtaan, mikäli + tai - ei ole määritetty, kyseessä on absoluuttinen kohta sekunneissa tai min:sek",
      "commandlist-notification/offset": "\to[+-]kesto - tee poikkeama paikalliselle toistolle annetun keston kautta (sekunneissa tai min:sek) palvelimen hakukohdasta - tämä ominaisuus on vanhentunut",
-     "commandlist-notification/help": "\th - tämä apu",
+     "commandlist-notification/help": "\th - tämä ohje",
      "commandlist-notification/toggle": "\tt - määrittää oletko valmis aloittamaan katselun vaiko et",
      "commandlist-notification/create": "\tc [nimi] - luo hallinnoitu huone käyttäen nykyisen huoneen nimeä",
      "commandlist-notification/auth": "\ta [salasana] - tunnistaudu huonevalvojana valvojan salasanalla",
