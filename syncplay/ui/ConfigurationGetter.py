@@ -514,10 +514,10 @@ class ConfigurationGetter(object):
         self._overrideConfigWithArgs(args)
         if not self._config['noGui']:
             try:
-                from syncplay.vendor.Qt import QtWidgets, IsPySide, IsPySide2, QtGui
+                from syncplay.vendor.Qt import QtWidgets, IsPySide, IsPySide2, IsPySide6, QtGui
                 from syncplay.vendor.Qt.QtCore import QCoreApplication
                 from syncplay.vendor import qt5reactor
-                if not (IsPySide2 or IsPySide):
+                if not (IsPySide6 or IsPySide2 or IsPySide):
                     raise ImportError
                 if QCoreApplication.instance() is None:
                     self.app = QtWidgets.QApplication(sys.argv)

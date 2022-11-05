@@ -19,7 +19,7 @@ from syncplay.utils import resourcespath
 from syncplay.utils import isLinux, isWindows, isMacOS
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from syncplay.vendor import Qt
-from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2
+from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2, IsPySide6
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
 applyDPIScaling = True
 if isLinux():
@@ -33,7 +33,9 @@ except AttributeError:
     pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, applyDPIScaling)
-if IsPySide2:
+if IsPySide6:
+    from PySide6.QtCore import QStandardPaths
+elif IsPySide2:
     from PySide2.QtCore import QStandardPaths
 if isMacOS() and IsPySide:
     from Foundation import NSURL
@@ -828,7 +830,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.listTreeView.setFirstColumnSpanned(roomtocheck, self.listTreeView.rootIndex(), True)
                 roomtocheck += 1
             self.listTreeView.header().setStretchLastSection(False)
-            if IsPySide2:
+            if IsPySide6 or IsPySide2:
                 self.listTreeView.header().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
                 self.listTreeView.header().setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
                 self.listTreeView.header().setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
@@ -842,7 +844,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.listTreeView.header().width() < (NarrowTabsWidth+self.listTreeView.header().sectionSize(3)):
                 self.listTreeView.header().resizeSection(3, self.listTreeView.header().width()-NarrowTabsWidth)
             else:
-                if IsPySide2:
+                if IsPySide6 or IsPySide2:
                     self.listTreeView.header().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
                 if IsPySide:
                     self.listTreeView.header().setResizeMode(3, QtWidgets.QHeaderView.Stretch)
@@ -1026,7 +1028,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 defaultdirectory = QtGui.QDesktopServices.storageLocation(QtGui.QDesktopServices.HomeLocation)
             else:
                 defaultdirectory = ""
-        elif IsPySide2:
+        elif IsPySide6 or IsPySide2:
             if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]) and includeUserSpecifiedDirectories:
                 defaultdirectory = self.config["mediaSearchDirectories"][0]
             elif includeUserSpecifiedDirectories and os.path.isdir(self.mediadirectory):
@@ -2058,7 +2060,10 @@ class MainWindow(QtWidgets.QMainWindow):
         settings.beginGroup("MainWindow")
         self.resize(settings.value("size", QSize(700, 500)))
         movePos = settings.value("pos", QPoint(200, 200))
-        windowGeometry = QtWidgets.QApplication.desktop().availableGeometry(self)
+        if not IsPySide6:
+            windowGeometry = QtWidgets.QApplication.desktop().availableGeometry(self)
+        else:
+            windowGeometry = QtWidgets.QApplication.primaryScreen().geometry()
         posIsOnScreen = windowGeometry.contains(QtCore.QRect(movePos.x(), movePos.y(), 1, 1))
         if not posIsOnScreen:
             movePos = QPoint(200,200)

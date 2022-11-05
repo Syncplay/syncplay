@@ -11,7 +11,7 @@ from syncplay.players.playerFactory import PlayerFactory
 from syncplay.utils import isBSD, isLinux, isMacOS, isWindows
 from syncplay.utils import resourcespath, posixresourcespath, playerPathExists
 
-from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, IsPySide, IsPySide2
+from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, IsPySide, IsPySide2, IsPySide6
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine, QEventLoop, Signal
 from syncplay.vendor.Qt.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
 from syncplay.vendor.Qt.QtGui import QCursor, QIcon, QImage, QDesktopServices
@@ -22,7 +22,9 @@ except AttributeError:
     pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
-if IsPySide2:
+if IsPySide6:
+    from PySide6.QtCore import QStandardPaths
+elif IsPySide2:
     from PySide2.QtCore import QStandardPaths
 
 
@@ -451,7 +453,7 @@ class ConfigDialog(QtWidgets.QDialog):
                 defaultdirectory = QDesktopServices.storageLocation(QDesktopServices.HomeLocation)
             else:
                 defaultdirectory = ""
-        elif IsPySide2:
+        elif IsPySide6 or IsPySide2:
             if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
                 defaultdirectory = self.config["mediaSearchDirectories"][0]
             elif os.path.isdir(self.mediadirectory):
@@ -725,7 +727,10 @@ class ConfigDialog(QtWidgets.QDialog):
         self.executablepathLabel.setObjectName("executable-path")
         self.executablepathCombobox.setObjectName("executable-path")
         self.executablepathCombobox.setMinimumContentsLength(constants.EXECUTABLE_COMBOBOX_MINIMUM_LENGTH)
-        self.executablepathCombobox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLength)
+        if not IsPySide6:
+            self.executablepathCombobox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLength)
+        else:
+            self.executablepathCombobox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
         self.mediapathLabel.setObjectName("media-path")
         self.mediapathTextbox.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "media-path")
         self.playerargsLabel.setObjectName("player-arguments")

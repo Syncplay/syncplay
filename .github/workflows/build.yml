@@ -63,15 +63,16 @@ jobs:
 
   macos:
     name: Build for macOS
-    runs-on: macos-10.15
+    runs-on: macos-12
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
+        run: |
+          wget https://www.python.org/ftp/python/3.10.6/python-3.10.6-macos11.pkg
+          sudo installer -verbose -pkg ./python-3.10.6-macos11.pkg -target /
+          echo "/Library/Frameworks/Python.framework/Versions/3.10/bin" >> $GITHUB_PATH
 
       - name: Check Python install
         run: |
@@ -79,44 +80,41 @@ jobs:
           python3 --version
           which pip3
           pip3 --version
+          file python3
 
       - name: Install Python dependencies
         run: |
-          pip3 install -U setuptools==60.* wheel pip
-          pip3 install twisted[tls] appnope requests certifi
-          pip3 install shiboken2==5.15.2 pyside2==5.15.2
-          pip3 install altgraph modulegraph macholib
+          pip3 install -U pip setuptools wheel
+          pip3 install -r requirements.txt
+          pip3 install -r requirements_gui.txt
+          pip3 install py2app
 
-      - name: Install py2app
+      - name: Install universal2 dependencies
+        env:
+          CFLAGS: -arch x86_64 -arch arm64
+          ARCHFLAGS: -arch x86_64 -arch arm64
         run: |
-          git clone https://github.com/albertosottile/py2app.git
-          cd py2app
-          git checkout stubs
-          cd py2app/apptemplate
-          python3 setup.py build
-          cd ../..
-          python3 setup.py build
-          python3 setup.py install
-          cd ..
+          pip3 uninstall zope.interface -y
+          pip3 install --no-binary :all: zope.interface
+
+          pip3 uninstall cffi -y
+          pip3 install --no-binary :all: cffi
+
+          pip3 uninstall cryptography -y
+          pip3 download --platform macosx_10_10_universal2 --only-binary :all: --no-deps --dest . cryptography
+          pip3 install --no-cache-dir --no-index --find-links . cryptography
 
       - name: Check Python dependencies
         run: |
-          python3 -c "from PySide2 import __version__; print(__version__)"
-          python3 -c "from PySide2.QtCore import __version__; print(__version__)"
-          python3 -c "from PySide2.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))"
+          python3 -c "from PySide6 import __version__; print(__version__)"
+          python3 -c "from PySide6.QtCore import __version__; print(__version__)"
+          python3 -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))"
           python3 -c "import ssl; print(ssl)"
-          python3 -c "from py2app.recipes import pyside2"
-          echo $DYLD_LIBRARY_PATH
-          echo $DYLD_FRAMEWORK_PATH
-          # python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LDLIBRARY"))'
+          python3 -c "from py2app.recipes import pyside6"
+          python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LDLIBRARY"))'
 
       - name: Build
         run: |
-          python3 ci/pyside2_linker.py
-          # export LIBPYTHON_FOLDER="$(python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LIBDIR"))')"
-          # ln -s $LIBPYTHON_FOLDER/libpython3.9m.dylib $LIBPYTHON_FOLDER/libpython3.9.dylib
-          export DYLD_FRAMEWORK_PATH="$(python3 -c 'from PySide2.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))')"
-          export DYLD_LIBRARY_PATH="$(python3 -c 'import os.path, PySide2; print(os.path.dirname(PySide2.__file__))'):$(python3 -c 'import os.path, shiboken2; print(os.path.dirname(shiboken2.__file__))')"
           python3 buildPy2app.py py2app
 
       - name: Prepare for deployment
