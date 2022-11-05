@@ -19,11 +19,13 @@ from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor, task, defer, threads
 
 try:
+    SSL_CERT_FILE = None
     import certifi
-    from twisted.internet.ssl import Certificate, optionsForClientTLS
+    import pem
+    from twisted.internet.ssl import Certificate, optionsForClientTLS, trustRootFromCertificates
     certPath = certifi.where()
     if os.path.exists(certPath):
-        os.environ['SSL_CERT_FILE'] = certPath
+        SSL_CERT_FILE = certPath
     elif 'zip' in certPath:
         import tempfile
         import zipfile
@@ -32,7 +34,7 @@ try:
         archive = zipfile.ZipFile(zipPath, 'r')
         tmpDir = tempfile.gettempdir()
         extractedPath = archive.extract(memberPath, tmpDir)
-        os.environ['SSL_CERT_FILE'] = extractedPath
+        SSL_CERT_FILE = extractedPath
 except:
     pass
 
@@ -831,10 +833,9 @@ class SyncplayClient(object):
         port = int(port)
         self._endpoint = HostnameEndpoint(reactor, host, port)
         try:
-            caCertFP = open(os.environ['SSL_CERT_FILE'])
-            caCertTwisted = Certificate.loadPEM(caCertFP.read().encode('utf-8'))
-            caCertFP.close()
-            self.protocolFactory.options = optionsForClientTLS(hostname=host)
+            certs = pem.parse_file(SSL_CERT_FILE)
+            trustRoot = trustRootFromCertificates([Certificate.loadPEM(str(cert)) for cert in certs])
+            self.protocolFactory.options = optionsForClientTLS(hostname=host, trustRoot=trustRoot)
             self._clientSupportsTLS = True
         except Exception as e:
             self.ui.showDebugMessage(str(e))
