@@ -112,7 +112,7 @@ class SyncClientProtocol(JSONCommandProtocol):
             elif "mismatched_id=DNS_ID" in str(reason.value):
                 self._client.ui.showErrorMessage(getMessage("startTLS-server-certificate-invalid-DNS-ID"))
                 self._client._clientSupportsTLS = False
-            elif "tls" in str(reason.stack):
+            elif "tls" in str(reason.stack) or "SSL" in str(reason.value):
                 self._client._clientSupportsTLS = False
         except:
             pass
