@@ -80,7 +80,7 @@ jobs:
           python3 --version
           which pip3
           pip3 --version
-          file python3
+          file $(which python3)
 
       - name: Install Python dependencies
         run: |
@@ -101,7 +101,7 @@ jobs:
           pip3 install --no-binary :all: cffi
 
           pip3 uninstall cryptography -y
-          pip3 download --platform macosx_10_10_universal2 --only-binary :all: --no-deps --dest . cryptography
+          pip3 download --platform macosx_10_10_universal2 --only-binary :all: --no-deps --dest . cryptography==38.0.1
           pip3 install --no-cache-dir --no-index --find-links . cryptography
 
       - name: Check Python dependencies
