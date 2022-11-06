@@ -12,7 +12,7 @@ fi = {
      "installer-language-file": "Finnish.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
      "installer-associate": "Aseta Syncplay avaamaan multimedia-tiedostoja.",
      "installer-shortcut": "Luo pikakuvakkeet seuraaviin kohteisiin:",
-     "installer-start-menu": "Käynnistä-valokko",
+     "installer-start-menu": "Käynnistä-valikko",
      "installer-desktop": "Työpöytä",
      "installer-quick-launch-bar": "Pikakäynnistyspalkki",
      "installer-automatic-updates": "Tarkista päivitykset automaattisesti",
@@ -21,7 +21,7 @@ fi = {
      # Client notifications
      "config-cleared-notification": "Asetukset pyyhitty. Muutokset muistetaan tallentaessa kelvolliset asetukset.",
 
-     "relative-config-notification": "Ladattiin asetustiedosto(t): {}",
+     "relative-config-notification": "Ladattiin hakemiston asetustiedosto(t): {}",
 
      "connection-attempt-notification": "Yritetään yhdistää kohteeseen {}:{}",  # Port, IP
      "reconnection-attempt-notification": "Yhteys palvelimeen menetettiin, yritetään uudelleenyhdistämistä",
@@ -51,7 +51,7 @@ fi = {
      "playing-notification/room-addendum": " huoneessa: '{}'",  # Room
 
      "not-all-ready": "Ei valmiina: {}",  # Usernames
-     "all-users-ready": "Kaikki ovat valmiita ({} users)",  # Number of ready users
+     "all-users-ready": "Kaikki ovat valmiita ({} käyttäjää)",  # Number of ready users
      "ready-to-unpause-notification": "Asetit itsesi nyt valmiiksi - paina taukoa uudelleen päättääksesi tauon",
      "set-as-ready-notification": "Asetit itsesi valmiiksi",
      "set-as-not-ready-notification": "Ilmaisit ettet ole vielä valmis",
