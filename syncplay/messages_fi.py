@@ -90,40 +90,40 @@ fi = {
 
      "unrecognized-command-notification": "Tuntematon komento",
      "commandlist-notification": "Käytettävissä olevat komennot:",
-     "commandlist-notification/room": "\tr [nimi] - vaihda huonetta",
+     "commandlist-notification/room": "\tr [nimi] - siirry huoneeseen",
      "commandlist-notification/list": "\tl - näytä käyttäjäluettelo",
      "commandlist-notification/undo": "\tu - peru edellinen kohtahaku",
      "commandlist-notification/pause": "\tp - tauota tai päätä tauko",
-     "commandlist-notification/seek": "\t[s][+-]aika - siirry annettuun kohtaan, mikäli + tai - ei ole määritetty, kyseessä on absoluuttinen kohta sekunneissa tai min:sek",
-     "commandlist-notification/offset": "\to[+-]kesto - tee poikkeama paikalliselle toistolle annetun keston kautta (sekunneissa tai min:sek) palvelimen hakukohdasta - tämä ominaisuus on vanhentunut",
+     "commandlist-notification/seek": "\t[s][+-]kohta - siirry annettuun kohtaan, mikäli + tai - ei ole määritetty, kyseessä on absoluuttinen kohta sekunneissa tai min:sek",
+     "commandlist-notification/offset": "\to[+-]kesto - tee aikaero palvelimeen paikallisesti keston verran - tämä ominaisuus on deprekoitu",
      "commandlist-notification/help": "\th - tämä ohje",
      "commandlist-notification/toggle": "\tt - määrittää oletko valmis aloittamaan katselun vaiko et",
-     "commandlist-notification/create": "\tc [nimi] - luo hallinnoitu huone käyttäen nykyisen huoneen nimeä",
-     "commandlist-notification/auth": "\ta [salasana] - tunnistaudu huonevalvojana valvojan salasanalla",
-     "commandlist-notification/chat": "\tch [viesti] - lähetä huoneeseen keskusteluviesti",
-     "commandList-notification/queue": "\tqa [tiedosto/osoite] - lisää tiedosto tai osoite toistoluettelon alaosaan",
-     "commandList-notification/queueandselect": "\tqas [tiedosto/osoite] - lisää tiedosto tai osoite toistoluettelon alaosaan ja valitse se",
-     "commandList-notification/playlist": "\tql - näytä nykyinen toistoluettelo",
-     "commandList-notification/select": "\tqs [sisällys] - valitse kohde toistoluettelossa",
-     "commandList-notification/next": "\tqn - valitse seuraava toistoluettelon kohde",
-     "commandList-notification/delete": "\tqd [sisällys] - poista valittu kohde toistoluettelosta",
-     "syncplay-version-notification": "Syncplayn julkaisu: {}",  # syncplay.version
-     "more-info-notification": "Lisätietoja kohteessa: {}",  # projectURL
+     "commandlist-notification/create": "\tc [nimi] - tee tästä huoneesta hallittu",
+     "commandlist-notification/auth": "\ta [salasana] - tunnistaudu operaattoriksi salasanalla",
+     "commandlist-notification/chat": "\tch [viesti] - lähetä viesti huoneeseen",
+     "commandList-notification/queue": "\tqa [tiedosto/osoite] - lisää tiedosto tai osoite soittolistan loppuun",
+     "commandList-notification/queueandselect": "\tqas [tiedosto/osoite] - lisää tiedosto tai osoite soittolistan loppuun, sekä valitse se",
+     "commandList-notification/playlist": "\tql - näytä nykyinen soittolista",
+     "commandList-notification/select": "\tqs [sisällys] - valitse kohde soittolistassa",
+     "commandList-notification/next": "\tqn - valitse toistolistalla seuraava kohde",
+     "commandList-notification/delete": "\tqd [sisällys] - poista valittu kohde soittolistalta",
+     "syncplay-version-notification": "Syncplayn versio: {}",  # syncplay.version
+     "more-info-notification": "Lisätietoja osoitteessa: {}",  # projectURL
 
-     "gui-data-cleared-notification": "Syncplay tyhjensi polun- ja ikkunatila-asetukset joita käyttöliittymässä oli käytössä.",
-     "language-changed-msgbox-label": "Kieli muuttuu kun käynnistät jälleen Syncplayn.",
-     "promptforupdate-label": "Hyväksytkö että Syncplay tarkistaa päivityksiä automaattisesti aika ajoin?",
+     "gui-data-cleared-notification": "Syncplay on tyhjentänyt käyttöliittymän polun ja ikkunan tiedot.",
+     "language-changed-msgbox-label": "Kieli vaihdetaan Syncplayn uudelleenkäynnistyksen yhteydessä.",
+     "promptforupdate-label": "Sallitko Syncplayn tarkistavan päivitykset automaattisesti ajoittain?",
 
-     "media-player-latency-warning": "Varoitus: mediantoisto-ohjelma käytti {} sekuntia vastaamiseen. Mikäli kohtaat yhdentämisongelmia, sulje muita sovelluksia vapauttaaksesi järjestelmävaroja, ja mikäli se ei auta, kokeile jotakin muuta toisto-ohjelmaa.",  # Seconds to respond
-     "mpv-unresponsive-error": "mpv ei ole vastannut käskyihin {} sekuntiin joten vaikuttaa siltä että se ei toimi oikein. Voi olla paras uudelleenkäynnistää Syncplay.",  # Seconds to respond
+     "media-player-latency-warning": "Varoitus: mediasoittimeltä kesti {} sekuntia vastata. Mikäli kohtaat synkronointi-ongelmia, sulje muita sovelluksia vapauttaaksesi järjestelmäresursseja, ja mikäli se ei toimi, yritä toista mediasoitinta.",  # Seconds to respond
+     "mpv-unresponsive-error": "mpv ei ole vastannut {} sekuntiin, joten se vaikuttaa toimineen virheellisesti. Käynnistä Syncplay uudelleen.",  # Seconds to respond
 
      # Client prompts
-     "enter-to-exit-prompt": "Paina syöttöpainiketta (enter:iä) poistuaksesi\n",
+     "enter-to-exit-prompt": "Paina rivinvaihtonäppäintä (Enter) poistuaksesi\n",
 
      # Client errors
-     "missing-arguments-error": "Joitakin vaadittuja vipuja uupuu, käytä avuksesi --help",
-     "server-timeout-error": "Yhteydenottoaika palvelimeen ylittyi",
-     "mpc-slave-error": "MPC:tä ei saatu käynnistettyä alistustilassa!",
+     "missing-arguments-error": "Joitakin vaadittuja argumentteja uupuu, katso --help",
+     "server-timeout-error": "Aikakatkaisu yhdistäessä palvelimeen",
+     "mpc-slave-error": "MPC:tä ei voitu käynnistetää orjatilassa!",
      "mpc-version-insufficient-error": "MPC-versio ei ole riittävä, käytä `mpc-hc` >= `{}`",
      "mpc-be-version-insufficient-error": "MPC-versio ei riittävä, käytä `mpc-be` >= `{}`",
      "mpv-version-error": "Syncplay ei ole yhteensopiva tämän mpv-soittimen version kanssa. Käytäthän mpv:n uudempaa julkaisua jotta saat toiston käyntiin(esim. Git HEAD).",
