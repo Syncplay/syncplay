@@ -85,7 +85,7 @@ fi = {
      "syncplay-updateavailable-notification": "Syncplayn uusi versio on saatavilla. Haluatko vierailla julkaisusivulla?",
 
      "mplayer-file-required-notification": "Käytettäessä Mplayer-sovellusta Syncplay vaatii tiedostonimen käynnistettäessä",
-     "mplayer-file-required-notification/example": "Käyttöesimerkki: syncplay [asetukset] [osoite|polku/]tiedostonimi",
+     "mplayer-file-required-notification/example": "Käyttöesimerkki: syncplay [argumentit] [osoite|polku/]tiedostonimi",
      "mplayer2-required": "Syncplay ei ole yhteensopiva MPlayer version 1.x kanssa, käytä mplayer2:ta mpv:tä",
 
      "unrecognized-command-notification": "Tuntematon komento",
@@ -114,7 +114,7 @@ fi = {
      "language-changed-msgbox-label": "Kieli vaihdetaan Syncplayn uudelleenkäynnistyksen yhteydessä.",
      "promptforupdate-label": "Sallitko Syncplayn tarkistavan päivitykset automaattisesti ajoittain?",
 
-     "media-player-latency-warning": "Varoitus: mediasoittimeltä kesti {} sekuntia vastata. Mikäli kohtaat synkronointi-ongelmia, sulje muita sovelluksia vapauttaaksesi järjestelmäresursseja, ja mikäli se ei toimi, yritä toista mediasoitinta.",  # Seconds to respond
+     "media-player-latency-warning": "Varoitus: mediasoittimelta kesti {} sekuntia vastata. Mikäli kohtaat synkronointi-ongelmia, sulje muita sovelluksia vapauttaaksesi järjestelmäresursseja, ja mikäli se ei auta, kokeile toista mediasoitinta.",  # Seconds to respond
      "mpv-unresponsive-error": "mpv ei ole vastannut {} sekuntiin, joten se vaikuttaa toimineen virheellisesti. Käynnistä Syncplay uudelleen.",  # Seconds to respond
 
      # Client prompts
@@ -123,7 +123,7 @@ fi = {
      # Client errors
      "missing-arguments-error": "Joitakin vaadittuja argumentteja uupuu, katso --help",
      "server-timeout-error": "Aikakatkaisu yhdistäessä palvelimeen",
-     "mpc-slave-error": "MPC:tä ei voitu käynnistetää orjatilassa!",
+     "mpc-slave-error": "MPC:tä ei voitu käynnistää slave-tilassa!",
      "mpc-version-insufficient-error": "MPC-versio ei ole riittävä, käytä `mpc-hc` >= `{}`",
      "mpc-be-version-insufficient-error": "MPC-versio ei riittävä, käytä `mpc-be` >= `{}`",
      "mpv-version-error": "Syncplay ei ole yhteensopiva tämän mpv-soittimen version kanssa. Käytäthän mpv:n uudempaa julkaisua jotta saat toiston käyntiin(esim. Git HEAD).",
