@@ -135,8 +135,9 @@ jobs:
 
   appimage:
     name: Build AppImage
-    runs-on: 
-      group: ubuntu-runners
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-20.04, ubuntu-18.04]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
