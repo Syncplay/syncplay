@@ -145,10 +145,12 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo add-apt-repository universe
           sudo apt-get install --no-install-recommends \
             libglib2.0-0 \
             libxkbcommon-x11-0 \
             libxcb1 \
+            fuse \
           ;
 
       - name: Build
