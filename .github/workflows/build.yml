@@ -135,7 +135,8 @@ jobs:
 
   appimage:
     name: Build AppImage
-    runs-on: ubuntu-18.04
+    runs-on: 
+      group: ubuntu-runners
     steps:
       - name: Checkout
         uses: actions/checkout@v2
