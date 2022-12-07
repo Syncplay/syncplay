@@ -170,7 +170,7 @@ jobs:
         with:
           name: Syncplay-${{ env.VER }}-x86_64.AppImage
           path: |
-            dist_actions/Syncplay-${{ env.VER }}-x86_64.AppImage
+            dist_actions/Syncplay-${{ env.VER }}-${{ matrix.os }}-x86_64.AppImage
 
   deb:
     name: Build Debian package
