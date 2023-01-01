@@ -80,7 +80,7 @@ jobs:
           python3 --version
           which pip3
           pip3 --version
-          file python3
+          file $(which python3)
 
       - name: Install Python dependencies
         run: |

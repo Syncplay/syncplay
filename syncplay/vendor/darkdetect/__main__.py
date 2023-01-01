@@ -4,16 +4,6 @@
 #  Distributed under the terms of the 3-clause BSD License.
 #-----------------------------------------------------------------------------
 
-import typing
+import darkdetect
 
-def theme():
-    return None
-        
-def isDark():
-    return None
-    
-def isLight():
-    return None
-
-def listener(callback: typing.Callable[[str], None]) -> None:
-    raise NotImplementedError()
+print('Current theme: {}'.format(darkdetect.theme()))
