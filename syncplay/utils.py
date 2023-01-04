@@ -1,4 +1,4 @@
-
+# coding:utf8
 import ast
 import datetime
 import hashlib

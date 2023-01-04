@@ -1,3 +1,4 @@
+# coding:utf8
 import os
 from syncplay import constants
 from syncplay.utils import findResourcePath

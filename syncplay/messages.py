@@ -73,6 +73,21 @@ def getMissingStrings():
 
     return missingStrings
 
+def listMessages(languages):
+    languageNames = []
+    for language in languages:
+        languageNames.append(messages[language]["LANGUAGE"])
+    comparison = "Listing Syncplay messages in the following languages: {}.\n".format(", ".join(languageNames))
+    for message in messages["en"]:
+        comparison = comparison + "[{}]\n".format(message)
+        for language in languages:
+            languageName = messages[language]["LANGUAGE"]
+            messageText = messages[language][message] if message in messages[language] else "<UNTRANSLATED>"
+            comparison = comparison + "{}: {}\n".format(languageName, messageText)
+        comparison = comparison + "\n"
+    return comparison
+
+# print(listMessages(["en","fi"]))
 
 def getInitialLanguage():
     try:

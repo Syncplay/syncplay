@@ -1,3 +1,4 @@
+# coding:utf8
 from syncplay import constants
 
 

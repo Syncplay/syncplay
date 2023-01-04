@@ -1,4 +1,4 @@
-
+# coding:utf8
 from syncplay import ui
 from syncplay.messages import getMessage
 from syncplay.ui.ConfigurationGetter import ConfigurationGetter

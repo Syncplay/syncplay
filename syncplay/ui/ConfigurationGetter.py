@@ -1,4 +1,4 @@
-
+# coding:utf8
 import argparse
 import ast
 import codecs

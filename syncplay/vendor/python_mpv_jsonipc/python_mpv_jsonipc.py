@@ -1,3 +1,4 @@
+# coding:utf8
 import threading
 import socket
 import json
@@ -85,8 +86,6 @@ class WindowsSocket(threading.Thread):
         try:
             self.socket.send_bytes(json.dumps(data).encode('utf-8') + b'\n')
         except OSError as ex:
-            if len(ex.args) == 1 and ex.args[0] == "handle is closed":
-                raise BrokenPipeError("handle is closed")
             raise ex
 
     def run(self):

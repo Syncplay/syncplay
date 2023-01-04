@@ -1,4 +1,4 @@
-
+# coding:utf8
 import os.path
 
 from syncplay import constants

@@ -1,3 +1,4 @@
+# coding:utf8
 import argparse
 import codecs
 import hashlib

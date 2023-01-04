@@ -1,3 +1,4 @@
+# coding:utf8
 import os
 from syncplay import constants
 from syncplay.players.mpv import MpvPlayer
