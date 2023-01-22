@@ -2,9 +2,7 @@ import argparse
 import codecs
 import hashlib
 import os
-import random
 import time
-import json
 from string import Template
 
 from twisted.enterprise import adbapi
