@@ -500,6 +500,8 @@ fr = {
     "server-startTLS-argument": "Activer les connexions TLS à l'aide des fichiers de certificat dans le chemin fourni",
     "server-messed-up-motd-unescaped-placeholders": "Le message du jour a des espaces réservés non échappés. Tous les signes $ doivent être doublés ($$).",
     "server-messed-up-motd-too-long": "Le message du jour est trop long: {}caractères maximum, {} donnés.",
+    "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
+    "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
 
     # Server errors
     "unknown-command-server-error": "Commande inconnue {}",  # message

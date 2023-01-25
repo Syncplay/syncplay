@@ -6,18 +6,25 @@ from twisted.internet.error import CannotListenError
 
 from syncplay.server import SyncFactory, ConfigurationGetter
 
-class ServerStatus: pass
+
+class ServerStatus:
+    listening6 = False
+    listening4 = False
+
 
 def isListening6(f):
     ServerStatus.listening6 = True
 
+
 def isListening4(f):
     ServerStatus.listening4 = True
+
 
 def failed6(f):
     ServerStatus.listening6 = False
     print(f.value)
     print("IPv6 listening failed.")
+
 
 def failed4(f):
     ServerStatus.listening4 = False
@@ -26,6 +33,7 @@ def failed4(f):
     else:
         print(f.value)
         print("IPv4 listening failed.")
+
 
 def main():
     argsGetter = ConfigurationGetter()
@@ -45,15 +53,25 @@ def main():
         args.stats_db_file,
         args.tls
     )
-    endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))
-    endpoint6.listen(factory).addCallbacks(isListening6, failed6)
-    endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))
-    endpoint4.listen(factory).addCallbacks(isListening4, failed4)
+
+    if args.ipv6_only is True:
+        endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))
+        endpoint6.listen(factory).addCallbacks(isListening6, failed6)
+    elif args.ipv4_only is True:
+        endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))
+        endpoint4.listen(factory).addCallbacks(isListening4, failed4)
+    else:
+        endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))
+        endpoint6.listen(factory).addCallbacks(isListening6, failed6)
+        endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))
+        endpoint4.listen(factory).addCallbacks(isListening4, failed4)
+
     if ServerStatus.listening6 or ServerStatus.listening4:
         reactor.run()
     else:
         print("Unable to listen using either IPv4 and IPv6 protocols. Quitting the server now.")
         sys.exit()
+
 
 if __name__ == "__main__":
     main()

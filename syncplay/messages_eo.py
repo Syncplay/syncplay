@@ -503,6 +503,8 @@ eo = {
     "server-startTLS-argument": "Ŝalti TLS-konektojn per la atestilaj dosieroj en la donita vojo",
     "server-messed-up-motd-unescaped-placeholders": "Mesaĝo de tago havas neŝirmitajn anstataŭiĝojn. Ĉiuj dolarsignoj devus aperi duoble ($$).",
     "server-messed-up-motd-too-long": "Mesaĝo de tago estas tro longa – maksimuma kvanto estas {} signoj, sed {} estas donitaj.",
+    "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
+    "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
 
     # Server errors
     "unknown-command-server-error": "Nekonata ordono {}",  # message

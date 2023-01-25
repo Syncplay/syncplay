@@ -500,6 +500,8 @@ zh_CN = {
     "server-startTLS-argument": "使用提供的路径中的证书文件启用TLS连接",
     "server-messed-up-motd-unescaped-placeholders": "每日信息中有未转义的占位符。所有 $ 字符应当重复两遍 ($$).",
     "server-messed-up-motd-too-long": "每日信息过长 - 最大{}个chars, 给出的长度{}",
+    "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
+    "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
 
     # Server errors
     "unknown-command-server-error": "未知命令 {}",  # message

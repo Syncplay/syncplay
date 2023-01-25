@@ -499,6 +499,8 @@ pt_PT = {
     "server-startTLS-argument": "Habilita conexões TLS usando os arquivos de certificado no caminho fornecido",
     "server-messed-up-motd-unescaped-placeholders": "A Mensagem do Dia possui placeholders não escapados. Todos os sinais de $ devem ser dobrados (como em $$).",
     "server-messed-up-motd-too-long": "A Mensagem do Dia é muito longa - máximo de {} caracteres, {} foram dados.",
+    "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
+    "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
 
     # Server errors
     "unknown-command-server-error": "Comando desconhecido: {}",  # message

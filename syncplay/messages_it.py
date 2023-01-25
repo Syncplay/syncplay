@@ -499,6 +499,8 @@ it = {
     "server-startTLS-argument": "Abilita il protocollo TLS usando i certificati contenuti nel percorso indicato",
     "server-messed-up-motd-unescaped-placeholders": "Il messaggio del giorno ha dei caratteri non 'escaped'. Tutti i simboli $ devono essere doppi ($$).",
     "server-messed-up-motd-too-long": "Il messaggio del giorno è troppo lungo - numero massimo di caratteri è {}, {} trovati.",
+    "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
+    "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
 
     # Server errors
     "unknown-command-server-error": "Comando non riconosciuto {}",  # message
