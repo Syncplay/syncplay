@@ -38,6 +38,7 @@ def failed4(f):
 def main():
     argsGetter = ConfigurationGetter()
     args = argsGetter.getConfiguration()
+
     factory = SyncFactory(
         args.port,
         args.password,
@@ -55,15 +56,15 @@ def main():
     )
 
     if args.ipv6_only is True:
-        endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))
+        endpoint6 = TCP6ServerEndpoint(reactor, int(args.port), interface=args.interface_ipv6)
         endpoint6.listen(factory).addCallbacks(isListening6, failed6)
     elif args.ipv4_only is True:
-        endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))
+        endpoint4 = TCP4ServerEndpoint(reactor, int(args.port), interface=args.interface_ipv4)
         endpoint4.listen(factory).addCallbacks(isListening4, failed4)
     else:
-        endpoint6 = TCP6ServerEndpoint(reactor, int(args.port))
+        endpoint6 = TCP6ServerEndpoint(reactor, int(args.port), interface=args.interface_ipv6)
         endpoint6.listen(factory).addCallbacks(isListening6, failed6)
-        endpoint4 = TCP4ServerEndpoint(reactor, int(args.port))
+        endpoint4 = TCP4ServerEndpoint(reactor, int(args.port), interface=args.interface_ipv4)
         endpoint4.listen(factory).addCallbacks(isListening4, failed4)
 
     if ServerStatus.listening6 or ServerStatus.listening4:

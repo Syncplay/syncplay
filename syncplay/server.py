@@ -891,3 +891,5 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--tls', metavar='path', type=str, nargs='?', help=getMessage("server-startTLS-argument"))
         self._argparser.add_argument('--ipv4-only', action='store_true', help=getMessage("server-listen-only-on-ipv4"))
         self._argparser.add_argument('--ipv6-only', action='store_true', help=getMessage("server-listen-only-on-ipv6"))
+        self._argparser.add_argument('--interface-ipv4', metavar='interfaceIPv4', type=str, nargs='?', help=getMessage("server-interface-ipv4"), default='')
+        self._argparser.add_argument('--interface-ipv6', metavar='interfaceIPv6', type=str, nargs='?', help=getMessage("server-interface-ipv6"), default='')

@@ -502,6 +502,8 @@ pt_BR = {
     "server-messed-up-motd-too-long": "A Mensagem do Dia é muito longa - máximo de {} caracteres, {} foram dados.",
     "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
     "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
+    "server-interface-ipv4": "The IP address to bind to for IPv4. Leaving it empty defaults to using all.",
+    "server-interface-ipv6": "The IP address to bind to for IPv6. Leaving it empty defaults to using all.",
 
     # Server errors
     "unknown-command-server-error": "Comando desconhecido: {}",  # message

@@ -502,6 +502,8 @@ zh_CN = {
     "server-messed-up-motd-too-long": "每日信息过长 - 最大{}个chars, 给出的长度{}",
     "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
     "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
+    "server-interface-ipv4": "The IP address to bind to for IPv4. Leaving it empty defaults to using all.",
+    "server-interface-ipv6": "The IP address to bind to for IPv6. Leaving it empty defaults to using all.",
 
     # Server errors
     "unknown-command-server-error": "未知命令 {}",  # message
