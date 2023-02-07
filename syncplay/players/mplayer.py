@@ -266,7 +266,7 @@ class MplayerPlayer(BasePlayer):
 
     @staticmethod
     def isValidPlayerPath(path):
-        if "mplayer" in path and MplayerPlayer.getExpandedPath(path) and "mplayerc.exe" not in path:  # "mplayerc.exe" is Media Player Classic (not Home Cinema):
+        if "mplayer" in path and MplayerPlayer.getExpandedPath(path) and "mplayerc.exe" not in path and "smplayer.exe" not in path:  # "mplayerc.exe" is Media Player Classic (not Home Cinema) and smplayer.exe is SMPlayer:
             return True
         return False
 
