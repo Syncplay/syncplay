@@ -635,6 +635,9 @@ class SyncplayClient(object):
         self.serverVersion = version
         self.checkForFeatureSupport(featureList)
 
+    def sendFeaturesToPlayer(self):
+        self._player.setFeatures(self.serverFeatures)
+
     def checkForFeatureSupport(self, featureList):
         self.serverFeatures = {
             "featureList": utils.meetsMinVersion(self.serverVersion, constants.FEATURE_LIST_MIN_VERSION),
@@ -671,7 +674,10 @@ class SyncplayClient(object):
             "backslashSubstituteCharacter={}".format(constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER)]
         self.ui.setFeatures(self.serverFeatures)
         if self._player:
-            self._player.setFeatures(self.serverFeatures)
+            self.sendFeaturesToPlayer()
+        else:
+            # Player might not have been loaded if connecting to localhost (#545)
+            self.addPlayerReadyCallback(lambda x: self.sendFeaturesToPlayer())
 
     def getSanitizedCurrentUserFile(self):
         if self.userlist.currentUser.file:
