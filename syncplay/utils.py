@@ -195,7 +195,7 @@ def blackholeStdoutForFrozenWindow():
             _file = None
             _error = None
 
-            def write(self, text, fname='.syncplay.log'):
+            def write(self, text, fname='.syncplay.log', encoding='utf-8'):
                 if self._file is None and self._error is None:
                     if os.name != 'nt':
                         path = os.path.join(os.getenv('HOME', '.'), fname)
