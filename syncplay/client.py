@@ -1929,7 +1929,13 @@ class SyncplayPlaylist():
             self._ui.showMessage("Playlist saved as {}".format(path)) # TODO: Move to messages_en
 
 
+    def playlistNeedsRestoring(self, files, username):
+        return self._client.sharedPlaylistIsEnabled() and self._playlist != None and files == [] and username == None and not self._playlistBufferIsFromOldRoom(self._client.userlist.currentUser.room)
+
     def changePlaylist(self, files, username=None, resetIndex=False):
+        if self.playlistNeedsRestoring(files, username):
+            files = self._playlist.copy()
+            self._playlist = []
         self.queuedIndexFilename = None
         if self._playlist == files:
             if self._playlistIndex != 0 and resetIndex:
