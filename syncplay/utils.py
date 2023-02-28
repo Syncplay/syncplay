@@ -201,7 +201,7 @@ def blackholeStdoutForFrozenWindow():
                         path = os.path.join(os.getenv('HOME', '.'), fname)
                     else:
                         path = os.path.join(os.getenv('APPDATA', '.'), fname)
-                    self._file = open(path, 'a')
+                    self._file = open(path, 'a', encoding='utf-8')
                     # TODO: Handle errors.
                 if self._file is not None:
                     self._file.write(text)
