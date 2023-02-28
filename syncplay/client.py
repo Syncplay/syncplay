@@ -569,8 +569,15 @@ class SyncplayClient(object):
         if self._config['trustedDomains']:
             for entry in self._config['trustedDomains']:
                 trustedDomain, _, path = entry.partition('/')
-                if o.hostname not in (trustedDomain, "www." + trustedDomain):
-                    # domain does not match
+                foundMatch = False
+                if o.hostname in (trustedDomain, "www." + trustedDomain):
+                    foundMatch = True
+                elif "*" in trustedDomain:
+                    wildcardRegex = "^("+re.escape(trustedDomain).replace("\\*","([^.]+)")+")$"
+                    wildcardMatch = bool(re.fullmatch(wildcardRegex, o.hostname, re.IGNORECASE))
+                    if wildcardMatch:
+                        foundMatch = True
+                if not foundMatch:
                     continue
                 if path and not o.path.startswith('/' + path):
                     # trusted domain has a path component and it does not match
