@@ -12,6 +12,7 @@ from . import messages_pt_BR
 from . import messages_tr
 from . import messages_ru
 from . import messages_zh_CN
+from . import messages_ko
 import re
 
 # In alphabetical order
@@ -27,6 +28,7 @@ messages = {
     "tr": messages_tr.tr,
     "ru": messages_ru.ru,
     "zh_CN": messages_zh_CN.zh_CN,
+    "ko": messages_ko.ko,
     "CURRENT": None
 }
 

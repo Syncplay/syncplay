@@ -235,7 +235,6 @@ ko = {
     "readyatstart-label": "기본적으로 '시청 준비됨'으로 설정",
     "forceguiprompt-label": "항상 Syncplay 구성 창을 표시하지 않음",  # (Inverted)
     "showosd-label": "OSD 메시지 활성화",
-OSD 메시지 활성화
     "showosdwarnings-label": "경고 포함 (예: 파일이 다른 경우, 사용자가 준비되지 않음)",
     "showsameroomosd-label": "사용자의 방에 이벤트 포함하기",
     "shownoncontrollerosd-label": "관리되는 방에 비운영자의 이벤트 포함하기",
