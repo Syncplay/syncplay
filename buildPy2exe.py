@@ -111,9 +111,6 @@ for lang in languages:
     languagePushString = languagePushString + "Push $${" + languageIdent + "}\r\n"
     languagePushString = languagePushString + "Push '" + getMessage("LANGUAGE", lang) + "'\r\n"
 
-print(languagePushString)
-exit()
-
 NSIS_SCRIPT_TEMPLATE = r"""
   !include LogicLib.nsh
   !include nsDialogs.nsh
