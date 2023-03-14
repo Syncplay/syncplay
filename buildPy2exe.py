@@ -566,6 +566,7 @@ class NSISScript(object):
             installFiles=installFiles,
             totalSize=totalSize,
         )
+        print(contents)
         with codecs.open(SETUP_SCRIPT_PATH, "w", "utf-8-sig") as outfile:
             outfile.write(contents)
 
