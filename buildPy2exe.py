@@ -104,6 +104,13 @@ for lang in languages:
         languageString = languageString + "\r\n" + lineToAdd
     languageString = languageString + "\r\n"
 
+# Add Language Pushs
+languagePushString = ""
+for lang in languages:
+    languageIdent = getLangTagFromNLF(lang)
+    languagePushString = languagePushString + "Push $${" + languageIdent + "}\r\n"
+    languagePushString = languagePushString + "Push '" + getMessage("LANGUAGE", lang) + "'\r\n"
+
 NSIS_SCRIPT_TEMPLATE = r"""
   !include LogicLib.nsh
   !include nsDialogs.nsh
@@ -227,28 +234,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   ;Language selection dialog
   Function Language
     Push ""
-    Push $${LANG_ENGLISH}
-    Push English
-    Push $${LANG_ESPERANTO}
-    Push Esperanto
-    Push $${LANG_FRENCH}
-    Push Français
-    Push $${LANG_RUSSIAN}
-    Push Русский
-    Push $${LANG_GERMAN}
-    Push Deutsch
-    Push $${LANG_ITALIAN}
-    Push Italiano
-    Push $${LANG_SPANISH}
-    Push Español
-    Push $${LANG_PORTUGUESEBR}
-    Push 'Português do Brasil'
-    Push $${LANG_PORTUGUESE}
-    Push 'Português de Portugal'
-    Push $${LANG_TURKISH}
-    Push 'Türkçe'
-    Push $${LANG_SIMPCHINESE}
-    Push '简体中文'
+    """ + languagePushString + r"""
     Push A ; A means auto count languages
     LangDLL::LangDialog "Language Selection" "Please select the language of Syncplay and the installer"
     Pop $$LANGUAGE

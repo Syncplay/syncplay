@@ -569,8 +569,15 @@ class SyncplayClient(object):
         if self._config['trustedDomains']:
             for entry in self._config['trustedDomains']:
                 trustedDomain, _, path = entry.partition('/')
-                if o.hostname not in (trustedDomain, "www." + trustedDomain):
-                    # domain does not match
+                foundMatch = False
+                if o.hostname in (trustedDomain, "www." + trustedDomain):
+                    foundMatch = True
+                elif "*" in trustedDomain:
+                    wildcardRegex = "^("+re.escape(trustedDomain).replace("\\*","([^.]+)")+")$"
+                    wildcardMatch = bool(re.fullmatch(wildcardRegex, o.hostname, re.IGNORECASE))
+                    if wildcardMatch:
+                        foundMatch = True
+                if not foundMatch:
                     continue
                 if path and not o.path.startswith('/' + path):
                     # trusted domain has a path component and it does not match
@@ -635,6 +642,9 @@ class SyncplayClient(object):
         self.serverVersion = version
         self.checkForFeatureSupport(featureList)
 
+    def sendFeaturesToPlayer(self):
+        self._player.setFeatures(self.serverFeatures)
+
     def checkForFeatureSupport(self, featureList):
         self.serverFeatures = {
             "featureList": utils.meetsMinVersion(self.serverVersion, constants.FEATURE_LIST_MIN_VERSION),
@@ -671,7 +681,10 @@ class SyncplayClient(object):
             "backslashSubstituteCharacter={}".format(constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER)]
         self.ui.setFeatures(self.serverFeatures)
         if self._player:
-            self._player.setFeatures(self.serverFeatures)
+            self.sendFeaturesToPlayer()
+        else:
+            # Player might not have been loaded if connecting to localhost (#545)
+            self.addPlayerReadyCallback(lambda x: self.sendFeaturesToPlayer())
 
     def getSanitizedCurrentUserFile(self):
         if self.userlist.currentUser.file:
@@ -1923,7 +1936,19 @@ class SyncplayPlaylist():
             self._ui.showMessage("Playlist saved as {}".format(path)) # TODO: Move to messages_en
 
 
+    def playlistNeedsRestoring(self, files, username):
+        return self._client.sharedPlaylistIsEnabled() and self._playlist != None and files == [] and username == None and not self._playlistBufferIsFromOldRoom(self._client.userlist.currentUser.room)
+
+    def playlistNeedsRestoring(self, files, username):
+        return self._client.sharedPlaylistIsEnabled() and len(self._playlist) > 0 and not files and username == None and (self._previousPlaylistRoom == None or self._previousPlaylistRoom == self._client.userlist.currentUser.room)
+
     def changePlaylist(self, files, username=None, resetIndex=False):
+        if self.playlistNeedsRestoring(files, username):
+            self._ui.showDebugMessage("Restoring playlist on reconnect...")
+            files = self._playlist.copy()
+            self._client._protocol.setPlaylist(files)
+            self._client._protocol.setPlaylistIndex(self._playlistIndex)
+            return
         self.queuedIndexFilename = None
         if self._playlist == files:
             if self._playlistIndex != 0 and resetIndex:

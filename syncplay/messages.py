@@ -5,6 +5,7 @@ from . import messages_de
 from . import messages_en
 from . import messages_es
 from . import messages_eo
+from . import messages_fi
 from . import messages_fr
 from . import messages_it
 from . import messages_pt_PT
@@ -12,6 +13,7 @@ from . import messages_pt_BR
 from . import messages_tr
 from . import messages_ru
 from . import messages_zh_CN
+from . import messages_ko
 import re
 
 # In alphabetical order
@@ -20,6 +22,7 @@ messages = {
     "en": messages_en.en,
     "es": messages_es.es,
     "eo": messages_eo.eo,
+    "fi": messages_fi.fi,
     "fr": messages_fr.fr,
     "it": messages_it.it,
     "pt_PT": messages_pt_PT.pt_PT,
@@ -27,6 +30,7 @@ messages = {
     "tr": messages_tr.tr,
     "ru": messages_ru.ru,
     "zh_CN": messages_zh_CN.zh_CN,
+     "ko": messages_ko.ko,
     "CURRENT": None
 }
 

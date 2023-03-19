@@ -15,7 +15,7 @@ class BasePlayer(object):
     Display given message on player's OSD or similar means
     '''
     def displayMessage(
-        self, message, duration=(constants.OSD_DURATION*1000), secondaryOSD=False, mood=constants.MESSAGE_NEUTRAL
+        self, message, duration=(constants.OSD_DURATION*1000), OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL
     ):
         raise NotImplementedError()
 
