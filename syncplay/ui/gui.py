@@ -1902,8 +1902,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 timeDelta = currentDateTimeValue.toPython() - self.lastCheckedForUpdates.toPython()
                 if timeDelta.total_seconds() > constants.AUTOMATIC_UPDATE_CHECK_FREQUENCY:
                     self.checkForUpdates()
-        except:
-            self.showDebugMessage("Automatic check for updates failed. An update check was manually trigggered.")
+        except Exception as e:
+            self.showDebugMessage("Automatic check for updates failed. An update check was manually trigggered. Reason: {}".format(str(e)))
             self.checkForUpdates()
 
     def userCheckForUpdates(self):
