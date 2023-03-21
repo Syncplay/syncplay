@@ -96,7 +96,7 @@ DEFAULT_CHAT_FONT_WEIGHT = 1
 
 # Max numbers are used by server (and client pre-connection). Once connected client gets values from server featureList (or uses 'fallback' versions for old servers)
 MAX_CHAT_MESSAGE_LENGTH = 150  # Number of displayed characters
-MAX_USERNAME_LENGTH = 150  # Number of displayed characters
+MAX_USERNAME_LENGTH = 16  # Number of displayed characters
 MAX_ROOM_NAME_LENGTH = 35  # Number of displayed characters
 MAX_FILENAME_LENGTH = 250  # Number of displayed characters
 FALLBACK_MAX_CHAT_MESSAGE_LENGTH = 50  # Number of displayed characters
