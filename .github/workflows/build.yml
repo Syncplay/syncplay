@@ -104,6 +104,10 @@ jobs:
           pip3 download --platform macosx_10_10_universal2 --only-binary :all: --no-deps --dest . cryptography
           pip3 install --no-cache-dir --no-index --find-links . cryptography
 
+          pip3 uninstall charset-normalizer -y
+          pip3 download --platform macosx_10_9_universal2 --only-binary :all: --no-deps --dest . charset-normalizer
+          pip3 install --no-cache-dir --no-index --find-links . charset-normalizer
+
       - name: Check Python dependencies
         run: |
           python3 -c "from PySide6 import __version__; print(__version__)"

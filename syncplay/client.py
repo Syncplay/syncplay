@@ -1124,8 +1124,8 @@ class SyncplayClient(object):
                 publicServers = ast.literal_eval(publicServers)
             return response["version-status"], response["version-message"] if "version-message" in response\
                 else None, response["version-url"] if "version-url" in response else None, publicServers
-        except:
-            return "failed", getMessage("update-check-failed-notification").format(syncplay.version), constants.SYNCPLAY_DOWNLOAD_URL, None
+        except Exception as e:
+            return "failed", str(e)+"\n-----\n"+getMessage("update-check-failed-notification").format(syncplay.version), constants.SYNCPLAY_DOWNLOAD_URL, None
 
     class _WarningManager(object):
         def __init__(self, player, userlist, ui, client):

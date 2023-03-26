@@ -29,7 +29,7 @@ MPLAYER_OSD_LEVEL = 1
 UI_TIME_FORMAT = "[%X] "
 CONFIG_NAMES = [".syncplay", "syncplay.ini"]  # Syncplay searches first to last
 DEFAULT_CONFIG_NAME = "syncplay.ini"
-RECENT_CLIENT_THRESHOLD = "1.6.8"  # This and higher considered 'recent' clients (no warnings)
+RECENT_CLIENT_THRESHOLD = "1.7.0"  # This and higher considered 'recent' clients (no warnings)
 MUSIC_FORMATS = [".mp3", ".m4a", ".m4p", ".wav", ".aiff", ".r", ".ogg", ".flac"] # ALL LOWER CASE!
 WARN_OLD_CLIENTS = True  # Use MOTD to inform old clients to upgrade
 LIST_RELATIVE_CONFIGS = True  # Print list of relative configs loaded
@@ -96,7 +96,7 @@ DEFAULT_CHAT_FONT_WEIGHT = 1
 
 # Max numbers are used by server (and client pre-connection). Once connected client gets values from server featureList (or uses 'fallback' versions for old servers)
 MAX_CHAT_MESSAGE_LENGTH = 150  # Number of displayed characters
-MAX_USERNAME_LENGTH = 150  # Number of displayed characters
+MAX_USERNAME_LENGTH = 16  # Number of displayed characters
 MAX_ROOM_NAME_LENGTH = 35  # Number of displayed characters
 MAX_FILENAME_LENGTH = 250  # Number of displayed characters
 FALLBACK_MAX_CHAT_MESSAGE_LENGTH = 50  # Number of displayed characters
