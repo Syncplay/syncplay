@@ -2106,7 +2106,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if isMacOS():
             self.setWindowFlags(self.windowFlags())
         else:
-            self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
+            try:    
+            	self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
+            except TypeError:
+            	self.setWindowFlags(self.windowFlags())
         self.setWindowTitle("Syncplay v" + version + revision)
         self.mainLayout = QtWidgets.QVBoxLayout()
         self.addTopLayout(self)
