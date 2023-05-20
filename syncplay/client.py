@@ -1184,7 +1184,7 @@ class SyncplayClient(object):
         def checkReadyStates(self):
             if not self._client:
                 return
-            if self._client.getPlayerPaused() or not self._userlist.currentUser.isReady():
+            if self._client.getPlayerPaused() or not self._userlist.currentUser.isReady() or not self._userlist.areAllRelevantUsersInRoomReady():
                 self._warnings["not-all-ready"]["displayedFor"] = 0
             if self._userlist.areYouAloneInRoom():
                 if self._warnings["not-all-ready"]['timer'].running:
