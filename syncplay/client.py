@@ -1186,10 +1186,10 @@ class SyncplayClient(object):
                 return
             if self._client.getPlayerPaused() or not self._userlist.currentUser.isReady():
                 self._warnings["not-all-ready"]["displayedFor"] = 0
-            if self._userlist.areYouAloneInRoom() or not self._userlist.currentUser.canControl():
+            if self._userlist.areYouAloneInRoom():
                 if self._warnings["not-all-ready"]['timer'].running:
                     self._warnings["not-all-ready"]['timer'].stop()
-            elif not self._userlist.areAllUsersInRoomReady():
+            elif not self._userlist.areAllRelevantUsersInRoomReady():
                 self._displayReadySameWarning()
                 if constants.SHOW_OSD_WARNINGS and not self._warnings["not-all-ready"]['timer'].running:
                     self._warnings["not-all-ready"]['timer'].start(constants.WARNING_OSD_MESSAGES_LOOP_INTERVAL, True)
@@ -1450,9 +1450,28 @@ class SyncplayUserlist(object):
             user = self._users[username]
             user.setControllerStatus(True)
 
+    def areAllRelevantUsersInRoomReady(self, requireSameFilenames=False):
+        if not self.currentUser.isReady():
+            return False
+        if self.currentUser.canControl():
+            return self.areAllUsersInRoomReady(requireSameFilenames)
+        else:
+            for user in self._users.values():
+                if user.room == self.currentUser.room and user.canControl():
+                    if user.isReadyWithFile() == False:
+                        return False
+                    elif (
+                            requireSameFilenames and
+                            (
+                                    self.currentUser.file is None
+                                    or user.file is None
+                                    or not utils.sameFilename(self.currentUser.file['name'], user.file['name'])
+                            )
+                    ):
+                        return False
+        return True
+
     def areAllUsersInRoomReady(self, requireSameFilenames=False):
-        if not self.currentUser.canControl():
-            return True
         if not self.currentUser.isReady():
             return False
         for user in self._users.values():
@@ -1460,12 +1479,12 @@ class SyncplayUserlist(object):
                 if user.isReadyWithFile() == False:
                     return False
                 elif (
-                    requireSameFilenames and
-                    (
-                        self.currentUser.file is None
-                        or user.file is None
-                        or not utils.sameFilename(self.currentUser.file['name'], user.file['name'])
-                    )
+                        requireSameFilenames and
+                        (
+                                self.currentUser.file is None
+                                or user.file is None
+                                or not utils.sameFilename(self.currentUser.file['name'], user.file['name'])
+                        )
                 ):
                     return False
         return True
