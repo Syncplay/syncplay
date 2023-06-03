@@ -1956,6 +1956,11 @@ class SyncplayPlaylist():
             playlistFile.write(playlistToSave)
             self._ui.showMessage("Playlist saved as {}".format(path)) # TODO: Move to messages_en
 
+    def playlistNeedsRestoring(self, files, username):
+        if self._client.playlistMayNeedRestoring:
+            self._client.playlistMayNeedRestoring = False
+            return self._client.sharedPlaylistIsEnabled() and self._playlist != None and files == [] and username == None and not self._playlistBufferIsFromOldRoom(self._client.userlist.currentUser.room)
+
     def changePlaylist(self, files, username=None, resetIndex=False):
         if self.playlistNeedsRestoring(files, username):
             self._ui.showDebugMessage("Restoring playlist on reconnect...")
