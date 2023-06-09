@@ -502,6 +502,7 @@ function do_command ( command, argument)
     elseif command == "get-filepath"          then response           = "filepath"..msgseperator..errormerge(get_filepath())..msgterminator
     elseif command == "get-filename"          then response           = "filename"..msgseperator..errormerge(get_filename())..msgterminator
     elseif command == "get-title"             then response           = "title"..msgseperator..errormerge(get_var("title", 0))..msgterminator
+    elseif command == "chat"                  then response           = "chat"..msgseperator..argument..msgterminator
     elseif command == "set-position"          then           errormsg = set_time(radixsafe_tonumber(argument))
     elseif command == "seek-within-title"     then           errormsg = set_var("time", radixsafe_tonumber(argument))
     elseif command == "set-playstate"         then           errormsg = set_playstate(argument)
@@ -559,6 +560,7 @@ end
     -- main loop, which alternates between writing and reading
 
 while running == true do
+
     --accept new connections and select active clients
     local quitcheckcounter = 0
 	local fd = l:accept()
@@ -610,7 +612,17 @@ while running == true do
         if (responsebuffer and running == true) then
             vlc.net.send( fd, responsebuffer )
             responsebuffer = ""
-        end
+        else
+            local libvlc = vlc.object.libvlc()
+            if libvlc then 
+                local message = vlc.var.get(libvlc, "chat-message")
+                if message ~= nil and string.len(message) > 0 then 
+                    vlc.msg.warn(message)
+                    vlc.net.send(fd, do_command("chat", message))
+                    vlc.var.set(libvlc, "chat-message", "")
+                end
+            end
+        end 
         vlc.misc.mwait(vlc.misc.mdate() + loopsleepduration) -- Don't waste processor time
 
         -- check if VLC has been closed
