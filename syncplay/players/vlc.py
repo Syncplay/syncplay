@@ -460,7 +460,7 @@ class VlcPlayer(BasePlayer):
                 self.__playerController.vlcIntfUserPath = os.path.join(os.getenv('APPDATA', '.'), "VLC\\lua\\intf\\")
 
                 copyTo = os.path.join(os.path.dirname(playerPath) + "\\plugins\\control\\", "libsyncplay_chat_plugin.dll")
-                #if not os.path.exists(copyTo):
+            if not os.path.exists(copyTo):
                 copyForm = utils.findResourcePath("libsyncplay_chat_plugin.dll")
                 self.__playerController._client.ui.showDebugMessage("Copying VLC Syncplay Chat Plugin from '{}' to '{}'".format(copyForm, copyTo))
                 import ctypes

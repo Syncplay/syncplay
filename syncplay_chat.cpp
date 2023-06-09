@@ -24,8 +24,22 @@
 #include <vlc_config_cat.h>
 #include <vlc/vlc.h>
 
-const int64_t KEY_ACTION_MASK_ON  = 0x7FFFFFFFFFFFFFFF;
-const int64_t KEY_ACTION_MASK_OFF = 0;
+#include <string>
+#include <unordered_map>
+#include <regex>
+
+int64_t KEY_ACTION_MASK_ON  = 0x7FFFFFFFFFFFFFFF;
+int64_t KEY_ACTION_MASK_OFF = 0;
+
+std::unordered_map<std::string, std::string> emojies = {
+    { "joy", "\xF0\x9F\x98\x82" },
+    { "sob", "\xF0\x9F\x98\xAD" },
+    { "disappointed", "\xF0\x9F\x98\x9E" },
+    { "angry", "\xF0\x9F\x98\xA0" },
+    { "heart", "\xE2\x9D\xA4" },
+    { "smirking", "\xF0\x9F\x98\x8F" },
+    { "unamused", "\xF0\x9F\x98\x92" }
+};
 
 vlc_thread_t th;
 input_thread_t *input = NULL;
@@ -33,14 +47,13 @@ vlc_mutex_t lock;
 bool writing = false;
 int port = 0;
 
-char message[200];
-int message_size = 0;
+std::string message;
 
 static int GetPort(vlc_object_t* libvlc) {
     char* lua_config = var_GetNonEmptyString(libvlc, "lua-config");
     if (!lua_config) return 0;
     
-    char* config = malloc(strlen(lua_config) + 1);
+    char* config = (char*)malloc(strlen(lua_config) + 1);
     strcpy(config, lua_config);
 
     char* prt = strstr(config, "port=") + 6;
@@ -56,7 +69,7 @@ static int GetPort(vlc_object_t* libvlc) {
 // Changes the minimum and maximum value for the key-action thought simulating disabling the keyboard actions
 static void SetKeyActionMask(vlc_object_t* libvlc, int64_t *max) {
     int64_t min = 0;
-    var_Change( libvlc, "key-action", VLC_VAR_SETMINMAX, &min, max);
+    var_Change(libvlc, "key-action", VLC_VAR_SETMINMAX, (vlc_value_t*)&min, (vlc_value_t*)max);
 }
 
 
@@ -64,49 +77,48 @@ static void SetKeyActionMask(vlc_object_t* libvlc, int64_t *max) {
 static int PlaylistEvent( vlc_object_t *p_this, char const *psz_var,
                           vlc_value_t oldval, vlc_value_t val, void *p_data )
 {
-    input = val.p_address;
+    input = (input_thread_t*)val.p_address;
     msg_Info(p_this, "Playlist state changed");
-    port = GetPort(p_this->obj.libvlc);
+    port = GetPort((vlc_object_t*)p_this->obj.libvlc);
     return VLC_SUCCESS;
 }
 
 // Updates OSD indirectly to avoid an unknown bug
 static void ShowText(vlc_object_t* libvlc) {
-    var_SetInteger(libvlc, "syncplay-text", message_size);
+    var_SetInteger(libvlc, "syncplay-text", message.size());
 }
 
 // Hides the text
 static void HideText(vlc_object_t* libvlc) {
-    message_size = 0;
+    message="";
     ShowText(libvlc);
 }
 
 // Thread that currently draws the bliking cursor
 static void *RunIntf(void*data) {
-    vlc_object_t* libvlc = data;
+    vlc_object_t* libvlc = (vlc_object_t*)data;
     while(writing) {
         // SHOW CURSOR
-        message[message_size] = '|';
-        message[message_size + 1] = 0;
+        std::string displayMessage = message + '|';
         if (input != NULL) {
-            vout_OSDText(input_GetVout(input), 1, VOUT_ALIGN_TOP | VOUT_ALIGN_LEFT, 0xfffffffffff, message);
+            vout_OSDText(input_GetVout(input), 1, VOUT_ALIGN_TOP | VOUT_ALIGN_LEFT, 0xfffffffffff, displayMessage.c_str());
         }
 
         for (int i=0; i < 10; i++) {
-            if (!writing) return; // REMOVE LATENCY -- Don't forget this is a thread
+            if (!writing) return 0; // REMOVE LATENCY -- Don't forget this is a thread
             msleep(50000);
         }
 
         // HIDE CURSOR
-        message[message_size] = 0;
         if (input != NULL) {
-            vout_OSDText(input_GetVout(input), 1, VOUT_ALIGN_TOP | VOUT_ALIGN_LEFT, 0xfffffffffff, message);
+            vout_OSDText(input_GetVout(input), 1, VOUT_ALIGN_TOP | VOUT_ALIGN_LEFT, 0xfffffffffff, message.c_str());
         }
         for (int i=0; i < 10; i++) {
-            if (!writing) return; // REMOVE LATENCY -- Don't forget this is a thread
+            if (!writing) return 0; // REMOVE LATENCY -- Don't forget this is a thread
             msleep(50000);
         }
     }
+    return 0;
 }
 
 // Display OSD text
@@ -114,10 +126,26 @@ static int SynplayText( vlc_object_t *libvlc, char const *psz_var,
                         vlc_value_t oldval, vlc_value_t newval, void *p_data )
 {
     if (input != NULL) {
-        message[message_size] = 0;
-        vout_OSDText(input_GetVout(input), 1, VOUT_ALIGN_TOP | VOUT_ALIGN_LEFT, 0xfffffffffff, message);
+        vout_OSDText(input_GetVout(input), 1, VOUT_ALIGN_TOP | VOUT_ALIGN_LEFT, 0xfffffffffff, message.c_str());
     }
     return 0;
+}
+
+// Converts text to emojis using the discord format
+std::string parseEmojies(std::string msg) {
+    for(auto emoji : emojies)
+        msg = std::regex_replace(msg, std::regex(":"+emoji.first+":"), emoji.second);
+    return msg;
+}
+
+std::string removeLastChar(std::string msg) {
+    if (msg.size() > 3 && msg[msg.size() - 4] == '\xF0')
+        return msg.substr(0, msg.size() - 4);
+    if (msg.size() > 2 && msg[msg.size() - 3] == '\xE2')
+        return msg.substr(0, msg.size() - 3);
+    if (msg.size() > 0)
+        msg.pop_back();
+    return msg;
 }
 
 // Handle key events
@@ -135,16 +163,13 @@ static int KeyPressed( vlc_object_t *libvlc, char const *psz_var,
 
     // Some debug messages for ... debugging
 
-    msg_Info(intf, "key Code: %d", key_code);
     msg_Info(intf, "Key: %d", key);
     msg_Info(intf, "Sup key: %d", sup_key);
-    msg_Info(intf, "config: %s", var_GetNonEmptyString(libvlc, "lua-config"));
-    msg_Info(intf, "port: %d", port);
 
     if (writing) {
         switch(key) {
             case KEY_BACKSPACE:
-                message_size > 0 ? message_size-- : 0;
+                message = removeLastChar(message);
                 break;
 
             case KEY_ENTER:
@@ -154,12 +179,15 @@ static int KeyPressed( vlc_object_t *libvlc, char const *psz_var,
                 break;
 
             default:
-                if (key <= 127) {
-                    if (key == 32 && message_size > 0 && message[message_size - 1] != 32 || key != 32) {
-                        char ch = key;
-                        if (sup_key == 512 && isalpha(ch)) ch -= 0x20;
-                        message[message_size++] = ch;
-                    }
+                if (key == 32) {
+                    if (message.size() > 0 && message.back() != 32)
+                        message.push_back(char(32));
+                }
+                else if (isalpha(key) || key == ':') {
+                    char ch = key;
+                    if (sup_key == 512) ch -= 0x20;
+                    message.push_back(ch);
+                    message = parseEmojies(message);
                 }
                 break;
         }
@@ -171,7 +199,8 @@ static int KeyPressed( vlc_object_t *libvlc, char const *psz_var,
                 vlc_cancel(th);
 
                 msg_Info(intf, "message: %s", message);
-                var_SetString(intf->obj.libvlc, "chat-message", message);
+
+                var_SetString(intf->obj.libvlc, "chat-message", message.c_str());
                 
             }
             case KEY_ESC:
@@ -183,7 +212,7 @@ static int KeyPressed( vlc_object_t *libvlc, char const *psz_var,
     } else {
         switch(key) {
             case KEY_ENTER:
-                SetKeyActionMask(libvlc, &KEY_ACTION_MASK_OFF);
+                SetKeyActionMask(libvlc, (int64_t*)&KEY_ACTION_MASK_OFF);
                 writing = true;
                 // Starts the thread
                 vlc_clone(&th, RunIntf, intf->obj.libvlc, VLC_THREAD_PRIORITY_LOW);
