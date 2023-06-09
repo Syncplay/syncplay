@@ -1,4 +1,4 @@
-version = '1.7.0'
+version = '1.7.2'
 revision = ''
 milestone = 'Yoitsu'
 release_number = '107'

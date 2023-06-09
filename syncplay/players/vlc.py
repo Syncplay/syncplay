@@ -460,19 +460,19 @@ class VlcPlayer(BasePlayer):
                 self.__playerController.vlcIntfUserPath = os.path.join(os.getenv('APPDATA', '.'), "VLC\\lua\\intf\\")
 
                 copyTo = os.path.join(os.path.dirname(playerPath) + "\\plugins\\control\\", "libsyncplay_chat_plugin.dll")
-                if not os.path.exists(copyTo):
-                    copyForm = utils.findResourcePath("libsyncplay_chat_plugin.dll")
-                    self.__playerController._client.ui.showDebugMessage("Copying VLC Syncplay Chat Plugin from '{}' to '{}'".format(copyForm, copyTo))
-                    import ctypes
-                    commands = u'/k mklink /H "{}" "{}"'.format(copyTo, copyForm) 
-                    ctypes.windll.shell32.ShellExecuteW(
-                            None,
-                            u"runas",
-                            u"cmd.exe",
-                            commands,
-                            None,
-                            0
-                        )
+                #if not os.path.exists(copyTo):
+                copyForm = utils.findResourcePath("libsyncplay_chat_plugin.dll")
+                self.__playerController._client.ui.showDebugMessage("Copying VLC Syncplay Chat Plugin from '{}' to '{}'".format(copyForm, copyTo))
+                import ctypes
+                commands = u'/k mklink /H "{}" "{}"'.format(copyTo, copyForm) 
+                ctypes.windll.shell32.ShellExecuteW(
+                        None,
+                        u"runas",
+                        u"cmd.exe",
+                        commands,
+                        None,
+                        0
+                    )
             self.__playerController.vlcModulePath = self.__playerController.vlcIntfPath + "modules/?.luac"
             def _createIntfFolder(vlcSyncplayInterfaceDir):
                 self.__playerController._client.ui.showDebugMessage("Checking if syncplay.lua intf directory exists")
