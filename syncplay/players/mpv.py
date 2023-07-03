@@ -69,7 +69,7 @@ class MpvPlayer(BasePlayer):
                         argValue = argValue[1:-1]
                 else:
                     argName = argToAdd
-                    argValue = "yes"
+                    argValue = ""
                 args[argName] = argValue
         return args
 
