@@ -651,7 +651,8 @@ guiIcons = glob('syncplay/resources/*.ico') + glob('syncplay/resources/*.png') +
 resources = [
     "syncplay/resources/syncplayintf.lua",
     "syncplay/resources/license.rtf",
-    "syncplay/resources/third-party-notices.txt"
+    "syncplay/resources/third-party-notices.txt",
+    "syncplay/resources/plugins/win64/libsyncplay_chat_plugin.dll"
 ]
 resources.extend(guiIcons)
 intf_resources = ["syncplay/resources/lua/intf/syncplay.lua"]
