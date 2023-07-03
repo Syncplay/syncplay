@@ -2,9 +2,7 @@ import argparse
 import codecs
 import hashlib
 import os
-import random
 import time
-import json
 from string import Template
 
 from twisted.enterprise import adbapi
@@ -292,18 +290,18 @@ class StatsRecorder(object):
     def __init__(self, dbHandle, roomManager):
         self._dbHandle = dbHandle
         self._roomManagerHandle = roomManager
-        
+
     def startRecorder(self, delay):
         try:
             self._dbHandle.connect()
             reactor.callLater(delay, self._scheduleClientSnapshot)
         except:
             print("--- Error in initializing the stats database. Server Stats not enabled. ---")
-    
+
     def _scheduleClientSnapshot(self):
         self._clientSnapshotTimer = task.LoopingCall(self._runClientSnapshot)
-        self._clientSnapshotTimer.start(constants.SERVER_STATS_SNAPSHOT_INTERVAL)    
-    
+        self._clientSnapshotTimer.start(constants.SERVER_STATS_SNAPSHOT_INTERVAL)
+
     def _runClientSnapshot(self):
         try:
             snapshotTime = int(time.time())
@@ -499,7 +497,7 @@ class RoomManager(object):
         while username.lower() in allnames:
             username += '_'
         return username
-    
+
     def exportRooms(self):
         return self._rooms
 
@@ -891,3 +889,7 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('--max-username-length', metavar='maxUsernameLength', type=int, nargs='?', help=getMessage("server-maxusernamelength-argument").format(constants.MAX_USERNAME_LENGTH))
         self._argparser.add_argument('--stats-db-file', metavar='file', type=str, nargs='?', help=getMessage("server-stats-db-file-argument"))
         self._argparser.add_argument('--tls', metavar='path', type=str, nargs='?', help=getMessage("server-startTLS-argument"))
+        self._argparser.add_argument('--ipv4-only', action='store_true', help=getMessage("server-listen-only-on-ipv4"))
+        self._argparser.add_argument('--ipv6-only', action='store_true', help=getMessage("server-listen-only-on-ipv6"))
+        self._argparser.add_argument('--interface-ipv4', metavar='interfaceIPv4', type=str, nargs='?', help=getMessage("server-interface-ipv4"), default='')
+        self._argparser.add_argument('--interface-ipv6', metavar='interfaceIPv6', type=str, nargs='?', help=getMessage("server-interface-ipv6"), default='')

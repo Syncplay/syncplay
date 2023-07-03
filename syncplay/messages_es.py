@@ -499,6 +499,10 @@ es = {
     "server-startTLS-argument": "Habilitar conexiones TLS usando los archivos de certificado en la ruta provista",
     "server-messed-up-motd-unescaped-placeholders": "El mensaje del dia contiene marcadores de posición sin escapar. Todos los signos $ deberían ser dobles ($$).",
     "server-messed-up-motd-too-long": "El mensaje del día es muy largo - máximo de {} caracteres, se recibieron {}.",
+    "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
+    "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
+    "server-interface-ipv4": "The IP address to bind to for IPv4. Leaving it empty defaults to using all.",
+    "server-interface-ipv6": "The IP address to bind to for IPv6. Leaving it empty defaults to using all.",
 
     # Server errors
     "unknown-command-server-error": "Comando desconocido {}",  # message

@@ -500,6 +500,10 @@ en = {
     "server-startTLS-argument": "Enable TLS connections using the certificate files in the path provided",
     "server-messed-up-motd-unescaped-placeholders": "Message of the Day has unescaped placeholders. All $ signs should be doubled ($$).",
     "server-messed-up-motd-too-long": "Message of the Day is too long - maximum of {} chars, {} given.",
+    "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
+    "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
+    "server-interface-ipv4": "The IP address to bind to for IPv4. Leaving it empty defaults to using all.",
+    "server-interface-ipv6": "The IP address to bind to for IPv6. Leaving it empty defaults to using all.",
 
     # Server errors
     "unknown-command-server-error": "Unknown command {}",  # message

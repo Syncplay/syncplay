@@ -496,6 +496,10 @@ ru = {
     "server-startTLS-argument": "Включить TLS-соединения используя файлы сертификатов в указанном пути",
     "server-messed-up-motd-unescaped-placeholders": "MOTD-сообщение содержит неэкранированные спецсимволы. Все знаки $ должны быть продублированы ($$).",
     "server-messed-up-motd-too-long": "MOTD-сообщение слишком длинное: максимальная длина - {} символ(ов), текущая длина - {} символ(ов).",
+    "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
+    "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
+    "server-interface-ipv4": "The IP address to bind to for IPv4. Leaving it empty defaults to using all.",
+    "server-interface-ipv6": "The IP address to bind to for IPv6. Leaving it empty defaults to using all.",
 
     # Server errors
     "unknown-command-server-error": "Неизвестная команда: {}",  # message

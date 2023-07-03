@@ -499,6 +499,10 @@ de = {
     "server-startTLS-argument": "Erlaube TLS-Verbindungen mit den Zertifikatdateien im Angegebenen Pfad",
     "server-messed-up-motd-unescaped-placeholders": "Die Nachricht des Tages hat unmaskierte Platzhalter. Alle $-Zeichen sollten verdoppelt werden ($$).",
     "server-messed-up-motd-too-long": "Die Nachricht des Tages ist zu lang - Maximal {} Zeichen, aktuell {}.",
+    "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
+    "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
+    "server-interface-ipv4": "The IP address to bind to for IPv4. Leaving it empty defaults to using all.",
+    "server-interface-ipv6": "The IP address to bind to for IPv6. Leaving it empty defaults to using all.",
 
     # Server errors
     "unknown-command-server-error": "Unbekannter Befehl {}",  # message
