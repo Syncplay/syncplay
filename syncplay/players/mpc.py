@@ -407,7 +407,7 @@ class MPCHCAPIPlayer(BasePlayer):
     def openFile(self, filePath, resetPosition=False):
         self._mpcApi.openFile(filePath)
         if resetPosition:
-            self.setPosition(0)
+            self.setPosition(0, resetPosition=True)
 
     def displayMessage(
         self, message,
@@ -429,9 +429,11 @@ class MPCHCAPIPlayer(BasePlayer):
         pass
 
     @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)
-    def setPosition(self, value):
+    def setPosition(self, value, resetPosition=False):
         if self._mpcApi.filePlaying:
             self._mpcApi.seek(value)
+        elif resetPosition:
+            raise MpcHcApi.PlayerNotReadyException()
 
     def __getPosition(self):
         self.__positionUpdate.clear()
