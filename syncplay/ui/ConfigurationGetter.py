@@ -521,6 +521,7 @@ class ConfigurationGetter(object):
                     raise ImportError
                 if QCoreApplication.instance() is None:
                     self.app = QtWidgets.QApplication(sys.argv)
+                    self.app.setDesktopFileName("syncplay")
                     if isWindows():
                         try:
                             from syncplay.vendor import darkdetect
