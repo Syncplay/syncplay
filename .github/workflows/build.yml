@@ -137,40 +137,6 @@ jobs:
           path: |
             dist_actions/Syncplay_${{ env.VER }}.dmg
 
-  appimage:
-    name: Build AppImage
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get install --no-install-recommends \
-            libglib2.0-0 \
-            libxkbcommon-x11-0 \
-            libxcb1 \
-          ;
-
-      - name: Build
-        run: ci/appimage-script.sh
-
-      - name: Prepare for deployment
-        run: |
-          ls -al
-          export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
-          echo "VER=$VER" >> $GITHUB_ENV
-          mkdir dist_actions
-          ci/appimage-deploy.sh
-          ls -al dist_actions
-
-      - name: Deploy
-        uses: actions/upload-artifact@v2
-        with:
-          name: Syncplay-${{ env.VER }}-x86_64.AppImage
-          path: |
-            dist_actions/Syncplay-${{ env.VER }}-x86_64.AppImage
-
   deb:
     name: Build Debian package
     runs-on: ubuntu-20.04
