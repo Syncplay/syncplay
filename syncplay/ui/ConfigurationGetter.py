@@ -412,6 +412,8 @@ class ConfigurationGetter(object):
             if error:
                 print("{}!".format(error))
             print(getMessage("missing-arguments-error"))
+            if utils.isWindowsConsole():
+                input(getMessage("enter-to-exit-prompt"))
             sys.exit()
         else:
             from syncplay.ui.GuiConfiguration import GuiConfiguration
