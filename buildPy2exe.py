@@ -673,9 +673,7 @@ info = dict(
         "icon_resources": [(1, "syncplay\\resources\\icon.ico")],
         'dest_base': "Syncplay"},
     ],
-    console=['syncplayServer.py'],
-    # *** If you wish to make the Syncplay client use console mode (for --no-gui to work) then comment out the above two lines and uncomment the following line:
-    # console=['syncplayServer.py', {"script":"syncplayClient.py", "icon_resources":[(1, "resources\\icon.ico")], 'dest_base': "Syncplay"}],
+    console=['syncplayServer.py', {"script":"syncplayClient.py", "icon_resources":[(1, "syncplay\\resources\\icon.ico")], 'dest_base': "SyncplayConsole"}],
 
     options={
         'py2exe': {
