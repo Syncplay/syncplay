@@ -227,7 +227,7 @@ def blackholeStdoutForFrozenWindow():
         sys.stdout = Blackhole()
         del Blackhole
 
-    elif getattr(sys, 'frozen', '') == "console_exe":
+    elif isWindowsConsole():
         class Blackhole(object):
             softspace = 0
 
