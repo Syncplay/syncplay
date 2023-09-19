@@ -6,7 +6,7 @@ if "QT_PREFERRED_BINDING" not in os.environ:
         ["PySide6", "PySide2", "PySide", "PyQt5", "PyQt4"]
     )
 
-if not isWindowsConsole:
+if not isWindowsConsole():
     try:
         from syncplay.ui.gui import MainWindow as GraphicalUI
     except ImportError:
@@ -15,7 +15,7 @@ from syncplay.ui.consoleUI import ConsoleUI
 
 
 def getUi(graphical=True, passedBar=None):
-    if graphical and not isWindowsConsole:
+    if graphical and not isWindowsConsole():
         ui = GraphicalUI(passedBar=passedBar)
     else:
         ui = ConsoleUI()
