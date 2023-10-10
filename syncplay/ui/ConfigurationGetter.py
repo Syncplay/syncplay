@@ -5,7 +5,7 @@ import codecs
 import re
 import os
 import sys
-from configparser import SafeConfigParser, DEFAULTSECT
+from configparser import ConfigParser, DEFAULTSECT
 
 from syncplay import constants, utils, version, milestone
 from syncplay.messages import getMessage, setLanguage, isValidLanguage
@@ -389,7 +389,7 @@ class ConfigurationGetter(object):
                 open(iniPath, 'w').close()
             else:
                 return
-        parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
+        parser.read(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in list(self._iniStructure.items()):
             if parser.has_section(section):
                 for option in options:
@@ -432,7 +432,7 @@ class ConfigurationGetter(object):
         if self._config['noStore']:
             return
         parser = SafeConfigParserUnicode(strict=False)
-        parser.readfp(codecs.open(iniPath, "r", "utf_8_sig"))
+        parser.read(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in list(self._iniStructure.items()):
             if not parser.has_section(section):
                 parser.add_section(section)
@@ -593,7 +593,7 @@ class ConfigurationGetter(object):
         self._config = backup
 
 
-class SafeConfigParserUnicode(SafeConfigParser):
+class SafeConfigParserUnicode(ConfigParser):
     def write(self, fp):
         """Write an .ini-format representation of the configuration state."""
         if self._defaults:
