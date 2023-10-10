@@ -389,7 +389,7 @@ class ConfigurationGetter(object):
                 open(iniPath, 'w').close()
             else:
                 return
-        parser.read(codecs.open(iniPath, "r", "utf_8_sig"))
+        parser.read_file(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in list(self._iniStructure.items()):
             if parser.has_section(section):
                 for option in options:
@@ -432,7 +432,7 @@ class ConfigurationGetter(object):
         if self._config['noStore']:
             return
         parser = SafeConfigParserUnicode(strict=False)
-        parser.read(codecs.open(iniPath, "r", "utf_8_sig"))
+        parser.read_file(codecs.open(iniPath, "r", "utf_8_sig"))
         for section, options in list(self._iniStructure.items()):
             if not parser.has_section(section):
                 parser.add_section(section)
