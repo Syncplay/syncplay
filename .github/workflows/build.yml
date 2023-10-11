@@ -59,7 +59,7 @@ jobs:
         with:
           name: Syncplay-${{ env.VER }}-x86-Setup.exe
           path: |
-            Syncplay-${{ env.VER }}-x86-Setup.exe
+            Syncplay-${{ env.VER }}-Setup.exe
 
   windows64:
     name: Build for Windows (64-bit)
@@ -109,7 +109,7 @@ jobs:
       - name: Deploy portable
         uses: actions/upload-artifact@v2
         with:
-          name: Syncplay_${{ env.VER }}_Portable
+          name: Syncplay_${{ env.VER }}_x64_Portable
           path: |
             syncplay_v${{ env.VER }}
 
@@ -118,7 +118,7 @@ jobs:
         with:
           name: Syncplay-${{ env.VER }}-x64-Setup.exe
           path: |
-            Syncplay-${{ env.VER }}-x64-Setup.exe
+            Syncplay-${{ env.VER }}-Setup.exe
 
   macos:
     name: Build for macOS
