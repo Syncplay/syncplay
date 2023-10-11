@@ -59,7 +59,7 @@ jobs:
         with:
           name: Syncplay-${{ env.VER }}-x86-Setup.exe
           path: |
-            Syncplay-${{ env.VER }}-Setup.exe
+            Syncplay-${{ env.VER }}-x86-Setup.exe
 
   windows64:
     name: Build for Windows (64-bit)
