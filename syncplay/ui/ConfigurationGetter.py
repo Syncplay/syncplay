@@ -408,10 +408,12 @@ class ConfigurationGetter(object):
                 sys.exit()
 
     def _promptForMissingArguments(self, error=None):
-        if self._config['noGui']:
+        if self._config['noGui'] or utils.isWindowsConsole():
             if error:
                 print("{}!".format(error))
             print(getMessage("missing-arguments-error"))
+            if utils.isWindowsConsole():
+                input(getMessage("enter-to-exit-prompt"))
             sys.exit()
         else:
             from syncplay.ui.GuiConfiguration import GuiConfiguration
@@ -550,7 +552,7 @@ class ConfigurationGetter(object):
         # Arguments not validated yet - booleans are still text values
         if self._config['language']:
             setLanguage(self._config['language'])
-        if (self._config['forceGuiPrompt'] == "True" or not self._config['file']) and not self._config['noGui']:
+        if (self._config['forceGuiPrompt'] == "True" or not self._config['file']) and not self._config['noGui'] and not utils.isWindowsConsole():
             self._forceGuiPrompt()
         self._checkConfig()
         self._saveConfig(iniPath)

@@ -37,6 +37,8 @@ def isMacOS():
 def isBSD():
     return constants.OS_BSD in sys.platform or sys.platform.startswith(constants.OS_DRAGONFLY)
 
+def isWindowsConsole():
+    return os.path.basename(sys.executable) == "SyncplayConsole.exe"
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -223,6 +225,28 @@ def blackholeStdoutForFrozenWindow():
                 pass
 
         sys.stdout = Blackhole()
+        del Blackhole
+
+    elif isWindowsConsole():
+        class Blackhole(object):
+            softspace = 0
+
+            def write(self, text):
+                pass
+
+            def flush(self):
+                pass
+
+        class Stderr(object):
+            softspace = 0
+            _file = None
+            _error = None
+
+            def flush(self):
+                if self._file is not None:
+                    self._file.flush()
+
+        sys.stderr = Blackhole()
         del Blackhole
 
 
