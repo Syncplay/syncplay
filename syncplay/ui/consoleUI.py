@@ -4,6 +4,7 @@ import sys
 import threading
 import time
 import os
+import readline
 
 import syncplay
 from syncplay import constants
@@ -105,10 +106,15 @@ class ConsoleUI(threading.Thread):
             message = message.decode('utf-8')
         except UnicodeEncodeError:
             pass
+        sys.stdout.write('\33[2K\r')
         if noTimestamp:
             print(message)
         else:
             print(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message)
+        line = readline.get_line_buffer()
+        if line != '':
+            print(line, end='')
+            sys.stdout.flush()
 
     def showDebugMessage(self, message):
         print(message)
