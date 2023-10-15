@@ -4,7 +4,10 @@ import sys
 import threading
 import time
 import os
-import readline
+try:
+    import readline
+except ImportError:
+    pass
 
 import syncplay
 from syncplay import constants
@@ -15,6 +18,7 @@ from syncplay.utils import formatTime, isURL
 
 class ConsoleUI(threading.Thread):
     def __init__(self):
+        self.isWindows = sys.platform.startswith(constants.OS_WINDOWS)
         self.promptMode = threading.Event()
         self.PromptResult = ""
         self.promptMode.set()
@@ -106,15 +110,17 @@ class ConsoleUI(threading.Thread):
             message = message.decode('utf-8')
         except UnicodeEncodeError:
             pass
-        sys.stdout.write('\33[2K\r')
+        if not self.isWindows:
+            sys.stdout.write('\33[2K\r')
         if noTimestamp:
             print(message)
         else:
             print(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message)
-        line = readline.get_line_buffer()
-        if line != '':
-            print(line, end='')
-            sys.stdout.flush()
+        if not self.isWindows:
+            line = readline.get_line_buffer()
+            if line != '':
+                print(line, end='')
+                sys.stdout.flush()
 
     def showDebugMessage(self, message):
         print(message)
