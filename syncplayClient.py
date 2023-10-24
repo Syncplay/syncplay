@@ -24,7 +24,7 @@ if __name__ == '__main__':
         except OSError:
             ctypes.windll.user32.MessageBoxW(0, '''Syncplay relies on the Microsoft Visual C++ Redistributable which is not installed.
                  It can be downloaded at https://aka.ms/vs/17/release/vc_redist.x86.exe
-                 For more details see httsp://syncplay.pl/''', "Syncplay", 1)
+                 For more details see http://syncplay.pl/''', "Syncplay", 1)
         sys.exit()
 
     if isWindows():
