@@ -15,7 +15,7 @@ from syncplay import ep_client
 
 if __name__ == '__main__':
     def isWindows():
-        return sys.platform.startswith(constants.OS_WINDOWS)
+        return sys.platform.startswith("win")
 
     def doWindowsRedistCheck():
         import ctypes
