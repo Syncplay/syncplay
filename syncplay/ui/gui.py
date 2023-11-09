@@ -1355,9 +1355,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def setOffset(self):
+        oldoffset = str(self._syncplayClient.getUserOffset())
         newoffset, ok = QtWidgets.QInputDialog.getText(
             self, getMessage("setoffset-msgbox-label"),
-            getMessage("offsetinfo-msgbox-label"), QtWidgets.QLineEdit.Normal, "")
+            getMessage("offsetinfo-msgbox-label"), QtWidgets.QLineEdit.Normal, oldoffset)
         if ok and newoffset != '':
             o = re.match(constants.UI_OFFSET_REGEX, "o " + newoffset)
             if o:
