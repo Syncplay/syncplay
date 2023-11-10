@@ -660,7 +660,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.serverpassLabel = QLabel(getMessage("password-label"), self)
         self.roomsCombobox = QtWidgets.QComboBox(self)
         self.roomsCombobox.setEditable(True)
-        caseSensitiveCompleter = QtWidgets.QCompleter("", self)
+        caseSensitiveCompleter = QtWidgets.QCompleter(self)
         caseSensitiveCompleter.setCaseSensitivity(Qt.CaseSensitive)
         self.roomsCombobox.setCompleter(caseSensitiveCompleter)
         self.fillRoomsCombobox()
