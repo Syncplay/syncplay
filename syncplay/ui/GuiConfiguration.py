@@ -1194,7 +1194,6 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.displaySettingsGroup = QtWidgets.QGroupBox(getMessage("messages-other-title"))
         self.displaySettingsLayout = QtWidgets.QVBoxLayout()
-        self.displaySettingsLayout.setAlignment(Qt.AlignTop & Qt.AlignLeft)
         self.displaySettingsFrame = QtWidgets.QFrame()
 
         self.showDurationNotificationCheckbox = QCheckBox(getMessage("showdurationnotification-label"))
@@ -1206,7 +1205,6 @@ class ConfigDialog(QtWidgets.QDialog):
         self.languageLayout.setContentsMargins(0, 0, 0, 0)
         self.languageFrame.setLayout(self.languageLayout)
         self.languageFrame.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        self.languageLayout.setAlignment(Qt.AlignTop & Qt.AlignLeft)
         self.languageLabel = QLabel(getMessage("language-label"), self)
         self.languageCombobox = QtWidgets.QComboBox(self)
         self.languageCombobox.addItem(getMessage("automatic-language").format(getMessage("LANGUAGE", getInitialLanguage())))
@@ -1227,7 +1225,6 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.displaySettingsGroup.setLayout(self.displaySettingsLayout)
         self.displaySettingsGroup.setMaximumHeight(self.displaySettingsGroup.minimumSizeHint().height())
-        self.displaySettingsLayout.setAlignment(Qt.AlignTop & Qt.AlignLeft)
         self.messageLayout.addWidget(self.displaySettingsGroup)
 
         # messageFrame
