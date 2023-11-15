@@ -83,6 +83,8 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
 
 
 def parseTime(timeStr):
+    if ":" not in timeStr:
+        return float(timeStr)
     regex = re.compile(constants.PARSE_TIME_REGEX)
     parts = regex.match(timeStr)
     if not parts:
