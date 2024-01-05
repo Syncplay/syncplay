@@ -178,6 +178,7 @@ MPVNET_PATHS = [r"c:\program files\mpv.net\mpvnet.exe", r"c:\program Files (x86)
 try:
     import os
     MPVNET_PATHS.append(os.path.expandvars(r'%LOCALAPPDATA%\Microsoft\WindowsApps\mpvnet.exe'))
+    MPV_PATHS.append(os.path.expandvars(r'%LOCALAPPDATA%\Microsoft\WindowsApps\mpv.exe'))
 except:
     pass
 VLC_PATHS = [
