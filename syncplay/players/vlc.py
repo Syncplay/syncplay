@@ -487,10 +487,14 @@ class VlcPlayer(BasePlayer):
 
             call.extend(self.__playerController.SLAVE_ARGS)
             if args:
-                call.extend(args)
+                for arg in args:
+                    if "=" in arg and "\"" in arg:
+                        (argName, argValue) = arg.split("=", 1)
+                        if argValue.startswith("\"") and argValue.endswith("\""):
+                            arg = argName + "=" + argValue[1:-1]
+                    call.extend([arg])
 
             self._vlcVersion = None
-
             if isWindows() and getattr(sys, 'frozen', '') and getattr(sys, '_MEIPASS', '') is not None:  # Needed for pyinstaller --onefile bundle
                 self.__process = subprocess.Popen(
                     call, stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
