@@ -63,10 +63,6 @@ client:
 	cp syncplay/resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
 	gzip docs/syncplay.1 --stdout > $(SHARE_PATH)/man/man1/syncplay.1.gz
 
-ifeq ($(SINGLE_USER),false)
-	chmod 755 $(APP_SHORTCUT_PATH)/syncplay.desktop
-endif
-
 u-client:
 	-rm $(BIN_PATH)/syncplay
 	-rm $(LIB_PATH)/syncplay/syncplayClient.py
@@ -83,10 +79,6 @@ server:
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
 	cp syncplay/resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/
 	gzip docs/syncplay-server.1 --stdout > $(SHARE_PATH)/man/man1/syncplay-server.1.gz
-
-ifeq ($(SINGLE_USER),false)
-	chmod 755 $(APP_SHORTCUT_PATH)/syncplay-server.desktop
-endif
 
 u-server:
 	-rm $(BIN_PATH)/syncplay-server
