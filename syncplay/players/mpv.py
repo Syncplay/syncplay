@@ -420,6 +420,8 @@ class MpvPlayer(BasePlayer):
         options_string = ", ".join(options)
         self._listener.sendLine(["script-message-to", "syncplayintf", "set_syncplayintf_options",  options_string])
         self._setOSDPosition()
+        if self._listener.mpv_arguments.get("input-ipc-server"):
+            self._setProperty("input-ipc-server", self._listener.mpv_arguments.get("input-ipc-server"))
 
     def _handleUnknownLine(self, line):
         self.mpvErrorCheck(line)
