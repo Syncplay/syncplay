@@ -115,6 +115,7 @@ LAST_PAUSED_DIFF_THRESHOLD = 2
 FILENAME_STRIP_REGEX = "[-~_\.\[\](): ]"
 CONTROL_PASSWORD_STRIP_REGEX = "[^a-zA-Z0-9\-]"
 ROOM_NAME_STRIP_REGEX = "^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
+ARGUMENT_SPLIT_REGEX = r'(?:[^\s"]+|"[^"]*")+'
 COMMANDS_UNDO = ["u", "undo", "revert"]
 COMMANDS_CHAT = ["ch", "chat"]
 COMMANDS_LIST = ["l", "list", "users"]

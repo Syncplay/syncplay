@@ -191,6 +191,10 @@ def limitedPowerset(s, minLength):
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s), minLength, -1))
 
 
+def parseCommandLineString(s):
+    arsToReturn = re.findall(constants.ARGUMENT_SPLIT_REGEX, s)
+    return arsToReturn
+
 def blackholeStdoutForFrozenWindow():
     if getattr(sys, 'frozen', '') == "windows_exe":
         class Stderr(object):
