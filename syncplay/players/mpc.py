@@ -283,6 +283,7 @@ class MpcHcApi:
             pCDS = ctypes.cast(lparam, self.__PCOPYDATASTRUCT)
             # print "API:\tin>\t 0x%X\t" % int(pCDS.contents.dwData), ctypes.wstring_at(pCDS.contents.lpData)
             self.__mpcApi.handleCommand(pCDS.contents.dwData, ctypes.wstring_at(pCDS.contents.lpData))
+            return 0
 
         def SendCommand(self, cmd, message=''):
             # print "API:\t<out\t 0x%X\t" % int(cmd), message
