@@ -62,6 +62,9 @@ fi = {
      "authenticated-as-controller-notification": "{} tunnistautui huoneen operaattoriksi",
      "created-controlled-room-notification": "Luotiin hallittu huone '{}' salasanalla '{}'. Kirjoita tämä talteen tulevaisuudessa löydettäväksi!\n\nHallinnoiduissa huoneissa kaikkien osallistujien kohdat pidetään synkronoituneena huoneen operaattori(e)n kanssa ja vain he voivat tauottaa, jatkaa tai kelata ja muuttaa soittolistaa.\n\nSinun tulisi pyytää vakiokatsojia liittymään huoneeseen '{}' huoneen operaattorit taas voivat liittyä huoneeseen '{}' tunnistautuakseen automaattisesti.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
+    "other-set-as-ready-notification": "{} was set as ready by {}", # User set as ready, user who set them as ready # TODO: Translate
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+
      "file-different-notification": "Vaikutat toistavan eri tiedostoa verrattuna käyttäjään {}",  # User
      "file-differences-notification": "Tiedostosi poikkeaa seuraavasti: {}",  # Differences
      "room-file-differences": "Tiedostoerot: {}",  # File differences (filename, size, and/or duration)
@@ -98,6 +101,8 @@ fi = {
      "commandlist-notification/offset": "\to[+-]kesto - tee aikaero palvelimeen paikallisesti keston verran - tämä ominaisuus on deprekoitu",
      "commandlist-notification/help": "\th - tämä ohje",
      "commandlist-notification/toggle": "\tt - määrittää oletko valmis aloittamaan katselun vaiko et",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
      "commandlist-notification/create": "\tc [nimi] - tee tästä huoneesta hallittu",
      "commandlist-notification/auth": "\ta [salasana] - tunnistaudu operaattoriksi salasanalla",
      "commandlist-notification/chat": "\tch [viesti] - lähetä viesti huoneeseen",
@@ -158,6 +163,7 @@ fi = {
      "feature-chat": "keskustelu",  # used for not-supported-by-server-error
      "feature-readiness": "valmius",  # used for not-supported-by-server-error
      "feature-managedRooms": "hallinnoidut huoneet",  # used for not-supported-by-server-error
+     "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
      "not-supported-by-server-error": "Tämä {} ominaisuus ei ole tämän palvelimen tukema..",  # feature
      "shared-playlists-not-supported-by-server-error": "Jaetut toistoluettelot eivät välttämättä ole palvelimen tukemia. Varmistaaksesi että kaikki toimii oikein vaaditaan palvelin jossa ajetaan Syncplaytä  {}+, mutta palvelin ajaa Syncplayn versiota {}.",  # minVersion, serverVersion
@@ -474,6 +480,8 @@ fi = {
     # Server messages to client
     "new-syncplay-available-motd-message": "Käytät Syncplay:tä {} mutta uudempi julkaisu on tarjolla osoitteessa https://syncplay.pl",  # ClientVersion
     "persistent-rooms-notice": "HUOMIO: Tämä palvelin käyttää pysyviä huoneita, joka tarkoittaa, että toistoluettelojen tieto taltioidaan toistoistuntojen välillä. Mikäli halkuat luoda huoneen jossa tietoja ei tallenneta, laita vipu -temp huoneen nimen perään.", # NOTE: Do not translate the word -temp
+    "ready-chat-message": "I have set {} as ready.",  # User # TODO: Translate
+    "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
 
     # Server notifications
     "welcome-server-notification": "Tervetuloa Syncplay-palvelimelle, ver. {0}",  # version
@@ -533,6 +541,9 @@ fi = {
     "addotherusersstreamstoplaylist-menu-label": "Lisää {}'n suoratoisto toistoluetteloon",  # [Username]
     "openusersstream-menu-label": "Avaa {}'n suoratoisto",  # [username]'s
     "openusersfile-menu-label": "Avaa {}'n tiedosto",  # [username]'s
+
+    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
+    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
 
     "playlist-instruction-item-message": "Raahaa tiedosto tähän lisätäksesi sen jaettuun toistoluetteloon.",
     "sharedplaylistenabled-tooltip": "Huonevalvojat voivat lisätä tiedostoja yhdennettävään toistoluetteloon tehdäkseen kaikille helpoksi katsoa samaa asiaa. Määritä mediahakemistot kohteen 'Muut' alta.",

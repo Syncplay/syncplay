@@ -64,6 +64,9 @@ eo = {
     "authenticated-as-controller-notification": "{} identiĝis ĉambrestro",
     "created-controlled-room-notification": "Kreis estratan ĉambron «{}» kun pasvorto «{}». Bonvolu konservi tiujn informojn osen!\n\nEn estrataj ĉambroj, ĉiu spegulas la ĉambrestrojn, kiuj estas la solaj, kiuj povas paŭzigi, malpaŭzigi, iri, kaj ŝanĝi la ludliston.\n\nVi petu ordinarajn spektantojn aliĝi la ĉambron «{}», sed ĉambrestroj povas aliĝi la ĉambron «{}» por memage aŭtentikiĝi.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
+    "other-set-as-ready-notification": "{} was set as ready by {}",  # User set as ready, user who set them as ready # TODO: Translate
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+
     "file-different-notification": "La dosiero, kiun vi ludas, ŝajnas malsama de tiu de {}",  # User
     "file-differences-notification": "Via dosiero malsamas per ĉi tiuj manieroj: {}",  # Differences
     "room-file-differences": "Malsamoj inter dosieroj: {}",  # File differences (filename, size, and/or duration)
@@ -100,6 +103,8 @@ eo = {
     "commandlist-notification/offset": "\to[+-]daŭro - fruigi lokan ludadon je la donita daŭro (en sekundoj aŭ minutoj:sekundoj), kompare al la servila pozicio – ĉi tiu kapablo ne plu estos subtenata",
     "commandlist-notification/help": "\th – tiu ĉi helpilo",
     "commandlist-notification/toggle": "\tt – ŝanĝas ĉu vi pretas spekti aŭ ne",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
     "commandlist-notification/create": "\tc [nomo] – krei estratan ĉambron kun nomo de la nuna ĉambro",
     "commandlist-notification/auth": "\ta [pasvorto] – aŭtentikiĝi ĉambrestro per ĉambrestra pasvorto",
     "commandlist-notification/chat": "\tch [mesaĝo] – sendi babilan mesaĝon al ĉambro",
@@ -161,6 +166,7 @@ eo = {
     "feature-chat": "babilado",  # used for not-supported-by-server-error
     "feature-readiness": "preteco",  # used for not-supported-by-server-error
     "feature-managedRooms": "estrataj ĉambroj",  # used for not-supported-by-server-error
+    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
     "not-supported-by-server-error": "La kapablo «{}» ne estas subtenata de ĉi tiu servilo.",  # feature
     "shared-playlists-not-supported-by-server-error": "La servilo eble ne subtenas komunajn ludlistojn. Ĝusta funkciado postulas servilon kun Syncplay {}+, sed la servilo havas nur version {}.",  # minVersion, serverVersion
@@ -477,6 +483,8 @@ eo = {
     # Server messages to client
     "new-syncplay-available-motd-message": "Vi uzas version {} de Syncplay, sed pli nova versio estas disponebla per https://syncplay.pl",  # ClientVersion
     "persistent-rooms-notice": "AVIZO: Ĉi tiu servilo uzas persistajn ĉámbrojn, kio signifas, ke la informoj pri ludlistoj konserviĝas por venontaj kunspektoj. Se vi volas krei ĉambron kie la informoj ne konserviĝas, finu la nomon de la ĉambro per «-temp».", # NOTE: Do not translate the word -temp
+    "ready-chat-message": "I have set {} as ready.",  # User # TODO: Translate
+    "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
 
     # Server notifications
     "welcome-server-notification": "Bonvenu al servilo de Syncplay, versio {0}",  # version
@@ -540,6 +548,9 @@ eo = {
     "addotherusersstreamstoplaylist-menu-label": "Aldoni elsendon de {} al la ludlisto",  # [Username]
     "openusersstream-menu-label": "Malfermi elsendon de {}",  # [username]'s
     "openusersfile-menu-label": "Malfermi dosieron de {}",  # [username]'s
+
+    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
+    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
 
     "playlist-instruction-item-message": "Metu dosieron ĉi tien por aldoni ĝin al la komuna ludlisto.",
     "sharedplaylistenabled-tooltip": "Ĉambrestroj povas aldoni dosierojn al spegulata ludlisto, por ke ĉiuj povu facile spekti la saman filmon. Agordu vidaŭdaĵajn dosierojn sub «Diversaj».",

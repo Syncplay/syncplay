@@ -131,6 +131,8 @@ COMMANDS_PLAYLIST = ['playlist', 'ql', 'pl']
 COMMANDS_SELECT = ['select', 'qs']
 COMMANDS_DELETE = ['delete', 'd', 'qd']
 COMMANDS_NEXT = ["next", "qn"]
+COMMANDS_SETREADY = ['setready', 'sr']
+COMMANDS_SETNOTREADY = ['setready', 'snr']
 MPC_MIN_VER = "1.6.4"
 MPC_BE_MIN_VER = "1.5.2.3123"
 VLC_MIN_VERSION = "2.2.1"
@@ -142,6 +144,7 @@ USER_READY_MIN_VERSION = "1.3.0"
 SHARED_PLAYLIST_MIN_VERSION = "1.4.0"
 CHAT_MIN_VERSION = "1.5.0"
 FEATURE_LIST_MIN_VERSION = "1.5.0"
+SET_OTHERS_READINESS_MIN_VERSION = "1.7.2"
 
 IINA_PATHS = ['/Applications/IINA.app/Contents/MacOS/IINA']
 MPC_PATHS = [

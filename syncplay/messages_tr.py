@@ -62,6 +62,9 @@ tr = {
     "authenticated-as-controller-notification": "{}, oda operatörü olarak doğrulandı",
     "created-controlled-room-notification": "Yönetilen oda '{}' '{}' şifresiyle oluşturuldu. Lütfen bu bilgileri ileride başvurmak üzere kaydedin!\n\nYönetilen odalarda, oynatma listesini duraklatabilen, devam ettirebilen, arayabilen ve değiştirebilen tek kişi olan oda operatörleri ile herkes senkronize edilir.\n\nNormal izleyicilerden '{}' odasına katılmalarını istemelisiniz, ancak oda operatörleri kendilerini otomatik olarak doğrulamak için '{}' odasına katılabilir.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
+    "other-set-as-ready-notification": "{} was set as ready by {}",  # User set as ready, user who set them as ready # TODO: Translate
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+
     "file-different-notification": "Oynadığınız dosya, {} dosyasından farklı görünüyor",  # User
     "file-differences-notification": "Dosyanız aşağıdaki şekil(ler)de farklılık gösterir: {}",  # Differences
     "room-file-differences": "Dosya farklılıkları: {}",  # File differences (filename, size, and/or duration)
@@ -98,6 +101,8 @@ tr = {
     "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
     "commandlist-notification/help": "\th - yardım",
     "commandlist-notification/toggle": "\tt - izlemeye hazır olup olmadığınızı değiştirir",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
     "commandlist-notification/create": "\tc [name] - mevcut odanın adını kullanarak yönetilen oda oluştur",
     "commandlist-notification/auth": "\ta [password] - operatör şifresi ile oda operatörü olarak kimlik doğrular",
     "commandlist-notification/chat": "\tch [message] - bir odaya sohbet mesajı gönderir",
@@ -158,6 +163,7 @@ tr = {
     "feature-chat": "sohbet",  # used for not-supported-by-server-error
     "feature-readiness": "hazırlık",  # used for not-supported-by-server-error
     "feature-managedRooms": "yönetilen odalar",  # used for not-supported-by-server-error
+    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
     "not-supported-by-server-error": "{} özelliği bu sunucu tarafından desteklenmiyor ..",  # feature
     "shared-playlists-not-supported-by-server-error": "Paylaşılan çalma listeleri özelliği sunucu tarafından desteklenmeyebilir. Doğru çalıştığından emin olmak için Syncplay  {}+ çalıştıran bir sunucu gerektirir, ancak sunucu Syncplay {} çalıştırmaktadır.",  # minVersion, serverVersion
@@ -474,6 +480,8 @@ tr = {
     # Server messages to client
     "new-syncplay-available-motd-message": "Syncplay {} kullanıyorsunuz ancak daha yeni bir sürüm https://syncplay.pl adresinde mevcut",  # ClientVersion
     "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
+    "ready-chat-message": "I have set {} as ready.",  # User # TODO: Translate
+    "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
 
     # Server notifications
     "welcome-server-notification": "Syncplay sunucusuna hoş geldiniz, ver. {0}",  # version
@@ -537,6 +545,9 @@ tr = {
     "addotherusersstreamstoplaylist-menu-label": "Oynatma listesine {} kişisinin akışını ekleyin",  # [Username]
     "openusersstream-menu-label": "{} kişisinin akışını açın",  # [username]'s
     "openusersfile-menu-label": "{} kişisinin dosyasını açın",  # [username]'s
+
+    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
+    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
 
     "playlist-instruction-item-message": "Dosyayı paylaşılan çalma listesine eklemek için buraya sürükleyin.",
     "sharedplaylistenabled-tooltip": "Oda operatörleri, herkesin aynı şeyi izlemesini kolaylaştırmak için senkronize edilmiş bir çalma listesine dosya ekleyebilir. 'Misc' altında ortam dizinlerini yapılandırın.",

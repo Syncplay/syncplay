@@ -62,6 +62,9 @@ en = {
     "authenticated-as-controller-notification": "{} authenticated as a room operator",
     "created-controlled-room-notification": "Created managed room '{}' with password '{}'. Please save this information for future reference!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
+    "other-set-as-ready-notification": "{} was set as ready by {}", # User set as ready, user who set them as ready
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready
+
     "file-different-notification": "File you are playing appears to be different from {}'s",  # User
     "file-differences-notification": "Your file differs in the following way(s): {}",  # Differences
     "room-file-differences": "File differences: {}",  # File differences (filename, size, and/or duration)
@@ -98,6 +101,8 @@ en = {
     "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature",
     "commandlist-notification/help": "\th - this help",
     "commandlist-notification/toggle": "\tt - toggles whether you are ready to watch or not",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready",
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",
     "commandlist-notification/create": "\tc [name] - create managed room using name of current room",
     "commandlist-notification/auth": "\ta [password] - authenticate as room operator with operator password",
     "commandlist-notification/chat": "\tch [message] - send a chat message in a room",
@@ -158,6 +163,7 @@ en = {
     "feature-chat": "chat",  # used for not-supported-by-server-error
     "feature-readiness": "readiness",  # used for not-supported-by-server-error
     "feature-managedRooms": "managed rooms",  # used for not-supported-by-server-error
+    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error
 
     "not-supported-by-server-error": "The {} feature is not supported by this server..",  # feature
     "shared-playlists-not-supported-by-server-error": "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.",  # minVersion, serverVersion
@@ -474,6 +480,8 @@ en = {
     # Server messages to client
     "new-syncplay-available-motd-message": "You are using Syncplay {} but a newer version is available from https://syncplay.pl",  # ClientVersion
     "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # NOTE: Do not translate the word -temp
+    "ready-chat-message": "I have set {} as ready.", # User
+    "not-ready-chat-message": "I have set {} as not ready.", # User
 
     # Server notifications
     "welcome-server-notification": "Welcome to Syncplay server, ver. {0}",  # version
@@ -537,6 +545,9 @@ en = {
     "addotherusersstreamstoplaylist-menu-label": "Add {}' stream to playlist",  # [Username]
     "openusersstream-menu-label": "Open {}'s stream",  # [username]'s
     "openusersfile-menu-label": "Open {}'s file",  # [username]'s
+
+    "setasready-menu-label": "Set {} as ready", # [Username]
+    "setasnotready-menu-label": "Set {} as not ready", # [Username]
 
     "playlist-instruction-item-message": "Drag file here to add it to the shared playlist.",
     "sharedplaylistenabled-tooltip": "Room operators can add files to a synced playlist to make it easy for everyone to watching the same thing. Configure media directories under 'Misc'.",
