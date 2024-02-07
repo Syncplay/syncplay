@@ -407,7 +407,7 @@ class MPCHCAPIPlayer(BasePlayer):
 
     def openFile(self, filePath, resetPosition=False):
         self._mpcApi.openFile(filePath)
-        if resetPosition:
+        if resetPosition and self._mpcApi.filePlaying:
             self.setPosition(0, resetPosition=True)
 
     def displayMessage(
