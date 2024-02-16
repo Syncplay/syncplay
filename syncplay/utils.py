@@ -211,7 +211,7 @@ def blackholeStdoutForFrozenWindow():
                     self._file = open(path, 'a', encoding='utf-8')
                     # TODO: Handle errors.
                 if self._file is not None:
-                    if not text.startswith("<frozen zipimport>"):
+                    if not (text.startswith("<frozen zipimport>") and "UserWarning:" in text):
                         self._file.write(text)
                     self._file.flush()
 
