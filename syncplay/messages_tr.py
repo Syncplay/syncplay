@@ -133,7 +133,7 @@ tr = {
     "hostname-empty-error": "Ana bilgisayar adı boş olamaz",
     "empty-error": "{} boş olamaz",  # Configuration
     "media-player-error": "Medaya oynatıcısı hatası: \"{}\"",  # Error line
-    "unable-import-gui-error": "GUI kitaplıkları içe aktarılamadı. PySide kurulu değilse, GUI'nin çalışması için kurmanız gerekecektir.",
+    "unable-import-gui-error": "GUI kitaplıkları içe aktarılamadı. PySide kurulu değilse, GUI'nin çalışması için kurmanız gerekecektir. If you want to run Syncplay in console mode then run it with the --no-gui command line switch. See https://syncplay.pl/guide/ for more details.", # TODO: Translate end of message and update second sentence to be a translation of "You need to have the correct version of PySide installed for the GUI to work."
     "unable-import-twisted-error": "Twisted içe aktarılamadı. Lütfen Twisted v16.4.0 veya sonraki sürümünü yükleyin.",
 
     "arguments-missing-error": "Bazı gerekli argümanlar eksik, bakınız --help",

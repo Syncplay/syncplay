@@ -133,7 +133,7 @@ de = {
     "hostname-empty-error": "Hostname darf nicht leer sein",
     "empty-error": "{} darf nicht leer sein",  # Configuration
     "media-player-error": "Player-Fehler: \"{}\"",  # Error line
-    "unable-import-gui-error": "Konnte die GUI-Bibliotheken nicht importieren. PySide muss installiert sein, damit die grafische Oberfläche funktioniert.",
+    "unable-import-gui-error": "Konnte die GUI-Bibliotheken nicht importieren. PySide muss installiert sein, damit die grafische Oberfläche funktioniert. If you want to run Syncplay in console mode then run it with the --no-gui command line switch. See https://syncplay.pl/guide/ for more details.", # TODO: Translate end of message and update second sentence to be a translation of "You need to have the correct version of PySide installed for the GUI to work."
     "unable-import-twisted-error": "Twisted konnte nicht importiert werden. Bitte installiere Twisted v16.4.0 oder höher",
 
     "arguments-missing-error": "Notwendige Argumente fehlen, siehe --help",

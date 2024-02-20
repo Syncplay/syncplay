@@ -520,7 +520,7 @@ class ConfigurationGetter(object):
                 from syncplay.vendor.Qt.QtCore import QCoreApplication
                 from syncplay.vendor import qt5reactor
                 if not (IsPySide6 or IsPySide2 or IsPySide):
-                    raise ImportError
+                    raise ImportError("Failed to identify compatible version of PySide.")
                 if QCoreApplication.instance() is None:
                     self.app = QtWidgets.QApplication(sys.argv)
                     self.app.setDesktopFileName("syncplay")
@@ -537,13 +537,14 @@ class ConfigurationGetter(object):
                 if isMacOS():
                     import appnope
                     appnope.nope()
-            except ImportError:
+            except ImportError as e:
                 try:
                     from twisted.trial import unittest
-                except Exception as e:
-                    print(e)
+                except Exception as ee:
+                    print(ee)
                     print(getMessage("unable-import-twisted-error"))
                     sys.exit()
+                print(e)
                 print(getMessage("unable-import-gui-error"))
                 self._config['noGui'] = True
         if self._config['file'] and self._config['file'][:2] == "--":
