@@ -62,6 +62,9 @@ es = {
     "authenticated-as-controller-notification": "{} autentificado como operador de la sala",
     "created-controlled-room-notification": "Sala administrada '{}' creada con contraseña '{}'. Por favor guarda esta información para referencias futuras!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
+    "other-set-as-ready-notification": "{} was set as ready by {}", # User set as ready, user who set them as ready # TODO: Translate
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+
     "file-different-notification": "El archivo que reproduces parece ser diferente al archivo de {}",  # User
     "file-differences-notification": "Tu archivo difiere de la(s) siguiente(s) forma(s): {}",  # Differences
     "room-file-differences": "Diferencias de archivo: {}",  # File differences (filename, size, and/or duration)
@@ -98,6 +101,8 @@ es = {
     "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
     "commandlist-notification/help": "\th - esta ayuda",
     "commandlist-notification/toggle": "\tt - activa/inactiva señal que estás listo para ver",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
     "commandlist-notification/create": "\tc [nombre] - crear sala administrada usando el nombre de la sala actual",
     "commandlist-notification/auth": "\ta [contraseña] - autentificar como operador de la sala con la contraseña de operador",
     "commandlist-notification/chat": "\tch [mensaje] - enviar un mensaje en la sala",
@@ -158,6 +163,7 @@ es = {
     "feature-chat": "chat",  # used for not-supported-by-server-error
     "feature-readiness": "preparación",  # used for not-supported-by-server-error
     "feature-managedRooms": "salas administradas",  # used for not-supported-by-server-error
+    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
     "not-supported-by-server-error": "La característica {} no está soportada por este servidor..",  # feature
     "shared-playlists-not-supported-by-server-error": "El servidor no admite la función de listas de reproducción compartidas. Para asegurarse de que funciona correctamente, se requiere un servidor que ejecute Syncplay {}+, pero el servidor está ejecutando Syncplay {}.",  # minVersion, serverVersion
@@ -536,6 +542,9 @@ es = {
     "addotherusersstreamstoplaylist-menu-label": "Agregar el flujo de {} a la lista de reproducción",  # [Username]
     "openusersstream-menu-label": "Abrir el flujo de {}",  # [username]'s
     "openusersfile-menu-label": "Abrir el archivo de {}",  # [username]'s
+
+    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
+    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
 
     "playlist-instruction-item-message": "Desplazar aquí el archivo para agregarlo a la lista de reproducción compartida.",
     "sharedplaylistenabled-tooltip": "Los operadores de la sala pueden agregar archivos a una lista de reproducción sincronizada, para que visualizar la misma cosa sea más sencillo para todos. Configurar directorios multimedia en 'Misc'.",

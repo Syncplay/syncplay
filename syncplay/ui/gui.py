@@ -819,6 +819,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 path = self._syncplayClient.fileSwitch.findFilepath(filename)
                 if path:
                     menu.addAction(QtGui.QPixmap(resourcespath + "folder_film.png"), getMessage('open-containing-folder'), lambda: utils.open_system_file_browser(path))
+
+
+        if roomToJoin == self._syncplayClient.getRoom() and self._syncplayClient.userlist.currentUser.canControl() and self._syncplayClient.userlist.isReadinessSupported() and self._syncplayClient.serverFeatures["setOthersReadiness"]:
+            if self._syncplayClient.userlist.isReady(username):
+                addSetUserAsReadyText = getMessage("setasnotready-menu-label").format(shortUsername)
+                menu.addAction(QtGui.QPixmap(resourcespath + "cross.png"), addSetUserAsReadyText, lambda: self._syncplayClient.setOthersReadiness(username, False))
+            else:
+                addSetUserAsNotReadyText = getMessage("setasnotready-menu-label").format(shortUsername)
+                menu.addAction(QtGui.QPixmap(resourcespath + "tick.png"), addSetUserAsNotReadyText, lambda: self._syncplayClient.setOthersReadiness(username, True))
         else:
             return
         menu.exec_(self.listTreeView.viewport().mapToGlobal(position))

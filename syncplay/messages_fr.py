@@ -62,6 +62,9 @@ fr = {
     "authenticated-as-controller-notification": "{} authentifié en tant qu'opérateur de salle",
     "created-controlled-room-notification": "Salle gérée créée «{}» avec le mot de passe «{}». Veuillez conserver ces informations pour référence future !\n\nDans les salons gérés, tout le monde est synchronisé avec le ou les opérateurs de salon qui sont les seuls à pouvoir mettre en pause, reprendre, se déplacer dans la lecture et modifier la liste de lecture.\n\nVous devez demander aux spectateurs réguliers de rejoindre le salon '{}' mais les opérateurs de salon peuvent rejoindre le salon '{}' pour s'authentifier automatiquement.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
+    "other-set-as-ready-notification": "{} was set as ready by {}", # User set as ready, user who set them as ready # TODO: Translate
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+
     "file-different-notification": "Le fichier que vous lisez semble être différent de celui de {}",  # User
     "file-differences-notification": "Votre fichier diffère de la (des) manière(s) suivante(s): {}",  # Differences
     "room-file-differences": "Différences de fichiers: {}",  # File differences (filename, size, and/or duration)
@@ -98,6 +101,8 @@ fr = {
     "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
     "commandlist-notification/help": "\th - cette aide",
     "commandlist-notification/toggle": "\tt - bascule si vous êtes prêt à regarder ou non",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
     "commandlist-notification/create": "\tc [nom] - crée une salle gérée en utilisant le nom de la salle actuelle",
     "commandlist-notification/auth": "\tun [mot de passe] - s'authentifier en tant qu'opérateur de salle avec le mot de passe opérateur",
     "commandlist-notification/chat": "\tch [message] - envoyer un message de chat dans une pièce",
@@ -158,6 +163,7 @@ fr = {
     "feature-chat": "chat",  # used for not-supported-by-server-error
     "feature-readiness": "préparation",  # used for not-supported-by-server-error
     "feature-managedRooms": "salons gérés",  # used for not-supported-by-server-error
+    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
     "not-supported-by-server-error": "La fonctionnalité {} n'est pas prise en charge par ce serveur.",  # feature
     "shared-playlists-not-supported-by-server-error": "La fonctionnalité de listes de lecture partagées peut ne pas être prise en charge par le serveur. Pour s'assurer qu'il fonctionne correctement, il faut un serveur exécutant Syncplay {}+, mais le serveur exécute Syncplay {}.",  # minVersion, serverVersion
@@ -474,6 +480,8 @@ fr = {
     # Server messages to client
     "new-syncplay-available-motd-message": "Vous utilisez Syncplay {} mais une version plus récente est disponible sur https://syncplay.pl",  # ClientVersion
     "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # NOTE: Do not translate the word -temp # TODO: Translate
+    "ready-chat-message": "I have set {} as ready.",  # User # TODO: Translate
+    "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
 
     # Server notifications
     "welcome-server-notification": "Bienvenue sur le serveur Syncplay, ver.",  # version
@@ -537,6 +545,9 @@ fr = {
     "addotherusersstreamstoplaylist-menu-label": "Ajouter {}' stream à la playlist",  # [Username]
     "openusersstream-menu-label": "Ouvrir le flux de {}",  # [username]'s
     "openusersfile-menu-label": "Ouvrir le fichier de {}",  # [username]'s
+
+    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
+    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
 
     "playlist-instruction-item-message": "Faites glisser le fichier ici pour l'ajouter à la liste de lecture partagée.",
     "sharedplaylistenabled-tooltip": "Les opérateurs de salle peuvent ajouter des fichiers à une liste de lecture synchronisée pour permettre à tout le monde de regarder facilement la même chose. Configurez les répertoires multimédias sous «Divers».",
