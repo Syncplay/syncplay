@@ -50,9 +50,4 @@ class MpvnetPlayer(MpvPlayer):
     def getIconPath(path):
         return constants.MPVNET_ICONPATH
 
-    def sendMpvOptions(self):
-        for key in self._listener.mpv_arguments:
-            if key != "script" and key != "input-ipc-server":
-                self._setProperty(key, self._listener.mpv_arguments[key])
-        super().sendMpvOptions()
 
