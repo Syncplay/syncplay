@@ -375,7 +375,7 @@ class MpvPlayer(BasePlayer):
         self._listener.sendLine(['loadfile', filePath], notReadyAfterThis=True)
 
     def setFeatures(self, featureList):
-        self.sendMpvOptions()
+        self._sendMpvOptions()
 
     def setPosition(self, value):
         if value < constants.DO_NOT_RESET_POSITION_THRESHOLD and self._recentlyReset():
@@ -408,7 +408,7 @@ class MpvPlayer(BasePlayer):
             self._storePosition(0)
         # TO TRY: self._listener.setReadyToSend(False)
 
-    def sendMpvOptions(self):
+    def _sendMpvOptions(self):
         options = []
         for option in constants.MPV_SYNCPLAYINTF_OPTIONS_TO_SEND:
             options.append("{}={}".format(option, self._client._config[option]))
@@ -420,8 +420,9 @@ class MpvPlayer(BasePlayer):
         options_string = ", ".join(options)
         self._listener.sendLine(["script-message-to", "syncplayintf", "set_syncplayintf_options",  options_string])
         self._setOSDPosition()
-        publicIPCSocket = self._listener.mpv_arguments.get("input-ipc-server") if self._listener.mpv_arguments.get("input-ipc-server") else "mpvSyncplaySocket"
-        self._setProperty("input-ipc-server", publicIPCSocket)
+        socketPath = self._listener.mpv_arguments.get("input-ipc-server")
+        if socketPath is not None:
+            self._setProperty("input-ipc-server", socketPath)
 
     def _handleUnknownLine(self, line):
         self.mpvErrorCheck(line)
@@ -449,7 +450,7 @@ class MpvPlayer(BasePlayer):
             #self._client.ui.showDebugMessage("{} = {} / {}".format(update_string, paused_update, position_update))
 
         if "<get_syncplayintf_options>" in line:
-            self.sendMpvOptions()
+            self._sendMpvOptions()
 
         if line == "<SyncplayUpdateFile>" or "Playing:" in line:
             self._client.ui.showDebugMessage("Not ready to send due to <SyncplayUpdateFile>")
