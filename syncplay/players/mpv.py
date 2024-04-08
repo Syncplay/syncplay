@@ -1,5 +1,6 @@
 # coding:utf8
 import os
+import random
 import re
 import sys
 import time
@@ -10,7 +11,7 @@ import ast
 from syncplay import constants
 from syncplay.messages import getMessage
 from syncplay.players.basePlayer import BasePlayer
-from syncplay.utils import isURL, findResourcePath
+from syncplay.utils import getRuntimeDir, isURL, findResourcePath
 from syncplay.utils import isMacOS, isWindows, isASCII
 from syncplay.vendor.python_mpv_jsonipc.python_mpv_jsonipc import MPV
 
@@ -621,7 +622,15 @@ class MpvPlayer(BasePlayer):
                     env['PATH'] = python_executable + ':' + env['PATH']
                     env['PYTHONPATH'] = pythonPath
             try:
-                self.mpvpipe = self.playerIPCHandler(mpv_location=self.playerPath, loglevel="info", log_handler=self.__playerController.mpv_log_handler, quit_callback=self.stop_client, env=env, **self.mpv_arguments)
+                self.mpvpipe = self.playerIPCHandler(
+                    loglevel="info",
+                    ipc_socket=self._get_ipc_socket(),
+                    mpv_location=self.playerPath,
+                    log_handler=self.__playerController.mpv_log_handler,
+                    quit_callback=self.stop_client,
+                    env=env,
+                    **self.mpv_arguments
+                )
             except Exception as e:
                 self.quitReason = getMessage("media-player-error").format(str(e)) + " " + getMessage("mpv-failed-advice")
                 self.__playerController.reactor.callFromThread(self.__playerController._client.ui.showErrorMessage, self.quitReason, True)
@@ -629,6 +638,12 @@ class MpvPlayer(BasePlayer):
             self.__process = self.mpvpipe
             #self.mpvpipe.show_text("HELLO WORLD!", 1000)
             threading.Thread.__init__(self, name="MPV Listener")
+
+        def _get_ipc_socket(self):
+            if isWindows():
+                # On Windows, mpv expects a named pipe identifier (not a path)
+                return "syncplay-mpv-{0}".format(random.randint(0, 2**48))
+            return getRuntimeDir().joinpath("mpv-socket").as_posix()
 
         def __getCwd(self, filePath, env):
             if not filePath:
