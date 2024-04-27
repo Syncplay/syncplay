@@ -306,7 +306,7 @@ def stripfilename(filename, stripURL):
 def stripRoomName(RoomName):
     if RoomName:
         try:
-            return re.sub(constants.ROOM_NAME_STRIP_REGEX, "\g<roomnamebase>", RoomName)
+            return re.sub(constants.ROOM_NAME_STRIP_REGEX, r"\g<roomnamebase>", RoomName)
         except IndexError:
             return RoomName
     else:
@@ -484,8 +484,8 @@ def getListOfPublicServers():
 
 
 class RoomPasswordProvider(object):
-    CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
-    PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")
+    CONTROLLED_ROOM_REGEX = re.compile(r"^\+(.*):(\w{12})$")
+    PASSWORD_REGEX = re.compile(r"[A-Z]{2}-\d{3}-\d{3}")
 
     @staticmethod
     def isControlledRoom(roomName):

@@ -112,9 +112,9 @@ FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0  # Secs - Frequency of updating cache
 # Usually there's no need to adjust these
 DOUBLE_CHECK_REWIND = False
 LAST_PAUSED_DIFF_THRESHOLD = 2
-FILENAME_STRIP_REGEX = "[-~_\.\[\](): ]"
-CONTROL_PASSWORD_STRIP_REGEX = "[^a-zA-Z0-9\-]"
-ROOM_NAME_STRIP_REGEX = "^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
+FILENAME_STRIP_REGEX = r"[-~_\.\[\](): ]"
+CONTROL_PASSWORD_STRIP_REGEX = r"[^a-zA-Z0-9\-]"
+ROOM_NAME_STRIP_REGEX = r"^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
 ARGUMENT_SPLIT_REGEX = r'(?:[^\s"]+|"[^"]*")+'
 COMMANDS_UNDO = ["u", "undo", "revert"]
 COMMANDS_CHAT = ["ch", "chat"]
@@ -163,7 +163,7 @@ MPC_PATHS = [
 ]
 
 MPC_EXECUTABLES = ["mpc-hc.exe", "mpc-hc64.exe", "mpc-hcportable.exe", "mpc-hc_nvo.exe", "mpc-hc64_nvo.exe", "shoukaku.exe"]
-MPC64_EXECUTABLES = ["mpc-hc64.exe", "mpc-hc64_nvo.exe", "x64\mpc-hc\shoukaku.exe"]
+MPC64_EXECUTABLES = ["mpc-hc64.exe", "mpc-hc64_nvo.exe", r"x64\mpc-hc\shoukaku.exe"]
 
 MPC_BE_PATHS = [
     r"c:\program files\mpc-be x64\mpc-be64.exe",
@@ -302,7 +302,7 @@ VLC_SLAVE_EXTRA_ARGS = getValueForOS({
      OS_MACOS: ['--verbose=2', '--no-file-logging']})
 MPV_SUPERSEDE_IF_DUPLICATE_COMMANDS = ["set_property time-pos ", "loadfile "]
 MPV_REMOVE_BOTH_IF_DUPLICATE_COMMANDS = ["cycle pause"]
-MPLAYER_ANSWER_REGEX = "^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
+MPLAYER_ANSWER_REGEX = r"^ANS_([a-zA-Z_-]+)=(.+)$|^(Exiting)\.\.\. \((.+)\)$"
 VLC_ANSWER_REGEX = r"(?:^(?P<command>[a-zA-Z_-]+)(?:\: )?(?P<argument>.*))"
 UI_COMMAND_REGEX = r"^(?P<command>[^\ ]+)(?:\ (?P<parameter>.+))?"
 UI_OFFSET_REGEX = r"^(?:o|offset)\ ?(?P<sign>[/+-])?(?P<time>\d{1,9}(?:[^\d\.](?:\d{1,9})){0,2}(?:\.(?:\d{1,3}))?)$"
