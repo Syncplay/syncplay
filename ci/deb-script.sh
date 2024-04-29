@@ -16,7 +16,7 @@ Version: "$(
 )"
 Architecture: all
 Maintainer: <dev@syncplay.pl>
-Depends: python3 (>= 3.6), python3-pyside2.qtwidgets, python3-pyside2.qtcore, python3-twisted (>= 16.4.0), python3-certifi, mpv (>= 0.23) | vlc (>= 2.2.1)
+Depends: python3 (>= 3.6), python3-pyside2.qtwidgets, python3-pyside2.qtcore, python3-twisted (>= 16.4.0), python3-certifi, python3-pem, mpv (>= 0.23) | vlc (>= 2.2.1)
 Homepage: https://syncplay.pl
 Section: web
 Priority: optional

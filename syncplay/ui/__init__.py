@@ -9,7 +9,7 @@ if "QT_PREFERRED_BINDING" not in os.environ:
 if not isWindowsConsole():
     try:
         from syncplay.ui.gui import MainWindow as GraphicalUI
-    except ImportError:
+    except (ImportError, AttributeError) as e:
         pass
 from syncplay.ui.consoleUI import ConsoleUI
 

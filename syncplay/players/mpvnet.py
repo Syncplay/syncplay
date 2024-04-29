@@ -50,3 +50,4 @@ class MpvnetPlayer(MpvPlayer):
     def getIconPath(path):
         return constants.MPVNET_ICONPATH
 
+

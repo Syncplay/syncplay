@@ -101,12 +101,12 @@ de = {
     "commandlist-notification/create": "\tc [name] - erstelle zentral gesteuerten Raum mit dem aktuellen Raumnamen",
     "commandlist-notification/auth": "\ta [password] - authentifiziere als Raumleiter mit Passwort",
     "commandlist-notification/chat": "\tch [message] - Chatnachricht an einem Raum senden",
-    "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist", # TO DO: Translate
-    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
-    "commandList-notification/playlist": "\tql - show the current playlist", # TO DO: Translate
-    "commandList-notification/select": "\tqs [index] - select given entry in the playlist", # TO DO: Translate
-    "commandList-notification/next": "\tqn - select next entry in the playlist", # TODO: Translate
-    "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist", # TO DO: Translate
+    "commandList-notification/queue": "\tqa [file/url] - füge Datei oder URL ans Ende der Wiedergabeliste",
+    "commandList-notification/queueandselect": "\tqas [file/url] - füge Datei oder URL ans Ende der Wiedergabeliste und wähle diese aus",
+    "commandList-notification/playlist": "\tql - zeige aktuelle Wiedergabeliste",
+    "commandList-notification/select": "\tqs [index] - wähle den ausgewählten Eintrag in der Wiedergabeliste",
+    "commandList-notification/next": "\tqn - wähle den nächsten Eintrag in der Wiedergabeliste",
+    "commandList-notification/delete": "\tqd [index] - lösche den ausgewählten Eintrag in der Wiedergabeliste",
     "syncplay-version-notification": "Syncplay Version: {}",  # syncplay.version
     "more-info-notification": "Weitere Informationen auf: {}",  # projectURL
 
@@ -127,13 +127,13 @@ de = {
     "mpc-version-insufficient-error": "MPC-Version nicht ausreichend, bitte nutze `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "MPC-Version nicht ausreichend, bitte nutze `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay ist nicht kompatibel mit dieser Version von mpv.  Bitte benutze eine andere Version (z.B. Git HEAD).",
-    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
+    "mpv-failed-advice": "Der Grund dass mpv nicht gestartet werden kann, kann an der Verwendung nicht unterstützter Befehlszeilenargumente oder einer nicht unterstützten Version von mpv liegen.",
     "player-file-open-error": "Fehler beim Öffnen der Datei durch den Player",
     "player-path-error": "Ungültiger Player-Pfad. Unterstützte Player sind: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 und IINA",
     "hostname-empty-error": "Hostname darf nicht leer sein",
     "empty-error": "{} darf nicht leer sein",  # Configuration
     "media-player-error": "Player-Fehler: \"{}\"",  # Error line
-    "unable-import-gui-error": "Konnte die GUI-Bibliotheken nicht importieren. PySide muss installiert sein, damit die grafische Oberfläche funktioniert.",
+    "unable-import-gui-error": "Konnte die GUI-Bibliotheken nicht importieren. PySide muss installiert sein, damit die grafische Oberfläche funktioniert. If you want to run Syncplay in console mode then run it with the --no-gui command line switch. See https://syncplay.pl/guide/ for more details.", # TODO: Translate end of message and update second sentence to be a translation of "You need to have the correct version of PySide installed for the GUI to work."
     "unable-import-twisted-error": "Twisted konnte nicht importiert werden. Bitte installiere Twisted v16.4.0 oder höher",
 
     "arguments-missing-error": "Notwendige Argumente fehlen, siehe --help",
@@ -205,7 +205,7 @@ de = {
     "name-label":  "Benutzername (optional):",
     "password-label":  "Server-Passwort (falls nötig):",
     "room-label": "Standard-Raum:",
-    "roomlist-msgbox-label": "Edit room list (one per line)", # TODO: Translate
+    "roomlist-msgbox-label": "Bearbeite Raum Liste (eins pro Linie)",
 
     "media-setting-title": "Media-Player Einstellungen",
     "executable-path-label": "Pfad zum Media-Player:",
@@ -348,8 +348,8 @@ de = {
     "startTLS-initiated": "Sichere Verbindung wird versucht",
     "startTLS-secure-connection-ok": "Sichere Verbindung hergestellt ({})",
     "startTLS-server-certificate-invalid": 'Sichere Verbindung fehlgeschlagen. Der Server benutzt ein ungültiges Sicherheitszertifikat. Der Kanal könnte von Dritten abgehört werden. Für weitere Details und Problemlösung siehe <a href="https://syncplay.pl/trouble">hier</a> [Englisch].',
-    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay does not trust this server because it uses a certificate that is not valid for its hostname.", # TODO: Translate
-    "startTLS-not-supported-client": "Dieser Server unterstützt kein TLS",
+    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay vertraut diesem Server nicht, da er ein Zertifikat verwendet, das für seinen Hostnamen ungültig ist.",
+    "startTLS-not-supported-client": "Dieser Client unterstützt kein TLS",
     "startTLS-not-supported-server": "Dieser Server unterstützt kein TLS",
 
     # TLS certificate dialog
@@ -396,7 +396,7 @@ de = {
     "password-tooltip": "Passwörter sind nur bei Verbindung zu privaten Servern nötig.",
     "room-tooltip": "Der Raum, der betreten werden soll, kann ein x-beliebiger sein. Allerdings werden nur Clients im selben Raum synchronisiert.",
 
-    "edit-rooms-tooltip": "Edit room list.", # TO DO: Translate
+    "edit-rooms-tooltip": "Bearbeite Raum Liste.",
 
     "executable-path-tooltip": "Pfad zum ausgewählten, unterstützten Mediaplayer (mpv, mpv.net, VLC, MPC-HC/BE, mplayer2, oder IINA).",
     "media-path-tooltip": "Pfad zum wiederzugebenden Video oder Stream. Notwendig für mplayer2.",
@@ -540,6 +540,6 @@ de = {
     "playlist-instruction-item-message": "Zieh eine Datei hierher, um sie zur geteilten Playlist hinzuzufügen.",
     "sharedplaylistenabled-tooltip": "Raumleiter können Dateien zu einer geteilten Playlist hinzufügen und es so erleichtern, gemeinsam das Gleiche zu gucken. Konfiguriere Medienverzeichnisse unter „Diverse“",
 
-    "playlist-empty-error": "Playlist is currently empty.", # TO DO: Translate
-    "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
+    "playlist-empty-error": "Wiedergabeliste is aktuell leer.",
+    "playlist-invalid-index-error": "Ungültiger Wiedergabelisten-Index",
 }

@@ -279,7 +279,7 @@ class ConfigDialog(QtWidgets.QDialog):
         currentplayerpath = self.executablepathCombobox.currentText()
 
         if currentplayerpath:
-            NewPlayerArgs = self.playerargsTextbox.text().split(" ") if self.playerargsTextbox.text() else ""
+            NewPlayerArgs = utils.parseCommandLineString(self.playerargsTextbox.text()) if self.playerargsTextbox.text() else ""
             self.perPlayerArgs[self.executablepathCombobox.currentText()] = NewPlayerArgs
 
     def languageChanged(self):
