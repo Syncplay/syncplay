@@ -13,6 +13,7 @@ from syncplay.messages import getMessage
 from syncplay.players.basePlayer import BasePlayer
 from syncplay.utils import getRuntimeDir, isURL, findResourcePath
 from syncplay.utils import isMacOS, isWindows, isASCII
+from syncplay.utils import playerPathExists
 from syncplay.vendor.python_mpv_jsonipc.python_mpv_jsonipc import MPV
 
 class MpvPlayer(BasePlayer):
@@ -91,11 +92,11 @@ class MpvPlayer(BasePlayer):
 
     @staticmethod
     def getExpandedPath(playerPath):
-        if not os.path.isfile(playerPath):
-            if os.path.isfile(playerPath + "mpv.exe"):
+        if not playerPathExists(playerPath):
+            if playerPathExists(playerPath + "mpv.exe"):
                 playerPath += "mpv.exe"
                 return playerPath
-            elif os.path.isfile(playerPath + "\\mpv.exe"):
+            elif playerPathExists(playerPath + "\\mpv.exe"):
                 playerPath += "\\mpv.exe"
                 return playerPath
         if os.access(playerPath, os.X_OK):
