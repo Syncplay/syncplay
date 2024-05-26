@@ -71,6 +71,9 @@ class SyncplayClient(object):
         constants.SHOW_SAME_ROOM_OSD = config['showSameRoomOSD']
         constants.SHOW_DURATION_NOTIFICATION = config['showDurationNotification']
         constants.DEBUG_MODE = config['debug']
+        constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT = config['folderSearchFirstFileTimeout']
+        constants.FOLDER_SEARCH_TIMEOUT = config['folderSearchTimeout']
+        constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = config['folderSearchDoubleCheckInterval']
 
         self.controlpasswords = {}
         self.lastControlPasswordAttempt = None

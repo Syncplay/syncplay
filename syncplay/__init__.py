@@ -1,5 +1,5 @@
-version = '1.7.3'
-revision = ''
+version = '1.7.4'
+revision = ' development'
 milestone = 'Yoitsu'
-release_number = '112'
+release_number = '113'
 projectURL = 'https://syncplay.pl/'
