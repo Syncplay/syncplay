@@ -791,7 +791,7 @@ class Watcher(object):
     def sendControlledRoomAuthStatus(self, success, username, room):
         self._connector.sendControlledRoomAuthStatus(success, username, room)
 
-    def sendChatMessage(self, message, skipIfSupportsFeature):
+    def sendChatMessage(self, message, skipIfSupportsFeature=None):
         if self._connector.meetsMinVersion(constants.CHAT_MIN_VERSION):
             if skipIfSupportsFeature and self.supportsFeature(skipIfSupportsFeature):
                 return
