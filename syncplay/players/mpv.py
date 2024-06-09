@@ -183,6 +183,9 @@ class MpvPlayer(BasePlayer):
         self._listener.sendLine(["print_text", '"ANS_{}=${{{}}}"'.format(property_, propertyID)])
 
     def getCalculatedPosition(self):
+        if self._recentlyReset():
+            return 0
+
         if self.fileLoaded == False:
             self._client.ui.showDebugMessage(
                 "File not loaded so using GlobalPosition for getCalculatedPosition({})".format(
