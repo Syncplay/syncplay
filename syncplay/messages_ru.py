@@ -61,6 +61,10 @@ ru = {
     "failed-to-identify-as-controller-notification": "{} не прошел идентификацию в качестве оператора комнаты.",
     "authenticated-as-controller-notification": "{} вошёл как оператор комнаты.",
     "created-controlled-room-notification": "Создана управляемая комната '{}' с паролем '{}'. Сохраните эти данные!\n\nВ управляемых комнатах всех синхронизируют с оператором (-ами) комнаты, только у которых есть права ставить и снимать с паузы, перематывать и изменять список воспроизведения.\n\nПопросите обычных зрителей подключиться к комнате '{}', а операторы могут подключиться к комнате '{}', чтобы автоматически авторизироваться.", # RoomName, operatorPassword, roomName, roomName:operatorPassword
+
+    "other-set-as-ready-notification": "{} was set as ready by {}",  # User set as ready, user who set them as ready # TODO: Translate
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+
     "file-different-notification": "Вероятно, файл, который вы смотрите, отличается от того, который смотрит {}.",  # User
     "file-differences-notification": "Ваш файл отличается: {}",  # Differences
     "room-file-differences": "Несовпадения файла: {}",  # File differences (filename, size, and/or duration)
@@ -97,6 +101,8 @@ ru = {
     "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
     "commandlist-notification/help": "\th - помощь",
     "commandlist-notification/toggle": "\tt - переключить статус готов/не готов к просмотру",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
     "commandlist-notification/create": "\tc [имя комнаты] - создать управляемую комнату с таким же именем, как у текущей",
     "commandlist-notification/auth": "\ta [пароль] - авторизоваться как оператор комнаты с помощью пароля",
     "commandlist-notification/chat": "\tch [сообщение] - выслать сообщение в комнату",
@@ -157,6 +163,7 @@ ru = {
     "feature-chat": "чат",  # used for not-supported-by-server-error
     "feature-readiness": "готовность",  # used for not-supported-by-server-error
     "feature-managedRooms": "управляемые комнаты",  # used for not-supported-by-server-error
+    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
     "not-supported-by-server-error": "Возможность '{}' не поддерживается сервером.",  # feature
     "shared-playlists-not-supported-by-server-error": "Общие списки воспроизведения могут не поддерживаться сервером. Для корректной работы требуется сервер Syncplay {}+, вы подключены к серверу Syncplay {}.",  # minVersion, serverVersion
@@ -471,6 +478,8 @@ ru = {
     # Server messages to client
     "new-syncplay-available-motd-message": "Вы используете Syncplay версии {}. На https://syncplay.pl/ доступна более новая версия.",  # ClientVersion
     "persistent-rooms-notice": "ВНИМАНИЕ: Этот сервер использует постоянные комнаты, это означает что информация списка воспроизведения сохраняется между сеансами воспроизведения. Если вы хотите создать комнату, в которой информация не сохраняется, поставьте -temp в конце названия комнаты.",
+    "ready-chat-message": "I have set {} as ready.",  # User # TODO: Translate
+    "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
 
     # Server notifications
     "welcome-server-notification": "Добро пожаловать на сервер Syncplay версии {0}",  # version
@@ -532,6 +541,9 @@ ru = {
     "addotherusersstreamstoplaylist-menu-label": "Добавить поток {} в список воспроизведения",
     "openusersstream-menu-label": "Открыть поток {}",
     "openusersfile-menu-label": "Открыть файл {}",
+
+    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
+    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
 
     "playlist-instruction-item-message": "Перетащите сюда файлы, чтобы добавить их в общий список.",
     "sharedplaylistenabled-tooltip": "Оператор комнаты может добавлять файлы в список общего воспроизведения для удобного совместного просмотра. Папки воспроизведения настраиваются в меню 'Файл'.",

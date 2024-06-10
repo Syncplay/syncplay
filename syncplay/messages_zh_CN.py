@@ -62,6 +62,9 @@ zh_CN = {
     "authenticated-as-controller-notification": "{}成为了管理员",
     "created-controlled-room-notification": "已创建房间：'{}' ，密码是'{}'。请保存好以上信息以备用！\n\n只有房主或管理员可以暂停，继续播放，跳转播放，改变播放列表。每个人都与房主或管理员的播放进度同步。\n\n最近观看过的人都可加入'{}'房间，但只有房主或管理员在加入'{}'房间时才会自动认证为管理员。",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
+    "other-set-as-ready-notification": "{} was set as ready by {}",  # User set as ready, user who set them as ready # TODO: Translate
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+
     "file-different-notification": "您正在播放的视频与{}不一致",  # User
     "file-differences-notification": "你们播放的视频文件{}不一致",  # Differences
     "room-file-differences": "播放文件不同点：{}",  # File differences (filename, size, and/or duration)
@@ -98,6 +101,8 @@ zh_CN = {
     "commandlist-notification/offset": "\to[+-]duration - 将本地的播放偏移量设置为给定时长（输入格式可为秒或分：秒），您的本地播放进度将与服务器不一致，因此极不推荐使用该设置",
     "commandlist-notification/help": "\th - 帮助菜单",
     "commandlist-notification/toggle": "\tt - 准备/取消准备",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
     "commandlist-notification/create": "\tc [name] - 以给定房间名创建一个由您管理的房间",
     "commandlist-notification/auth": "\ta [password] - 用给定密码来认证为管理员",
     "commandlist-notification/chat": "\tch [message] - 发送聊天信息",
@@ -158,6 +163,7 @@ zh_CN = {
     "feature-chat": "聊天",  # used for not-supported-by-server-error
     "feature-readiness": "准备状态",  # used for not-supported-by-server-error
     "feature-managedRooms": "房间管理",  # used for not-supported-by-server-error
+    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
     "not-supported-by-server-error": "该服务器不支持{}功能",  # feature
     "shared-playlists-not-supported-by-server-error": "服务器可能不支持共享播放列表的功能。为确保其正常运行，需要一个运行Syncplay {}以上版本的服务器，但服务器是运行Syncplay {}的。",  # minVersion, serverVersion
@@ -474,6 +480,8 @@ zh_CN = {
     # Server messages to client
     "new-syncplay-available-motd-message": "您正在使用Syncplay {}版本，但已有较新的版本可从https://syncplay.pl下载。",  # ClientVersion
     "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # NOTE: Do not translate the word -temp
+    "ready-chat-message": "I have set {} as ready.",  # User # TODO: Translate
+    "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
 
     # Server notifications
     "welcome-server-notification": "欢迎使用Syncplay服务端，当前版本{0}",  # version
@@ -537,6 +545,9 @@ zh_CN = {
     "addotherusersstreamstoplaylist-menu-label": "添加{}的媒体流流到播放列表",  # [Username]
     "openusersstream-menu-label": "打开{}的媒体流",  # [username]'s
     "openusersfile-menu-label": "打开{}的文件",  # [username]'s
+
+    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
+    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
 
     "playlist-instruction-item-message": "把文件拖到这里，就可以把它添加到共享播放列表中。",
     "sharedplaylistenabled-tooltip": "房间管理员可以将文件添加到共享播放列表中，以方便大家观看同样的东西。可以在其他设置中配置媒体目录。",

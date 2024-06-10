@@ -62,6 +62,9 @@ ko = {
     "authenticated-as-controller-notification": "{}님이 방 운영자로 인증되었습니다",
     "created-controlled-room-notification": "'{}' 방을 '{}' 비밀번호로 관리되게 만들었습니다. 나중에 참조할 수 있도록 이 정보를 저장하세요!\n\n관리되는 방에서는 모든 사람이 재생목록을 일시 중지, 일시 중지 해제, 검색 및 변경할 수 있는 유일한 사람인 방 운영자와 동기화 상태를 유지합니다.\n\n일반 시청자에게 '{}' 방에 참여하도록 요청해야 하지만, 방 운영자는 '{}' 방에 참여하여 자동으로 자신을 인증할 수 있습니다.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
+    "other-set-as-ready-notification": "{} was set as ready by {}", # User set as ready, user who set them as ready # TODO: Translate
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+
     "file-different-notification": "재생 중인 파일이 {}님의 파일과 다른 것 같습니다",  # User
     "file-differences-notification": "다음과 같은 방식으로 당신의 파일이 다릅니다: {}",  # Differences
     "room-file-differences": "파일 차이점: {}",  # File differences (filename, size, and/or duration)
@@ -98,6 +101,8 @@ ko = {
     "commandlist-notification/offset": "\to[+-]duration - 서버 탐색 위치에서 지정된 시간(초 또는 분:초)만큼 로컬 재생을 오프셋합니다 - 이 기능은 사용되지 않습니다",
     "commandlist-notification/help": "\th - 이 도움말",
     "commandlist-notification/toggle": "\tt - 시청 준비 여부를 전환합니다",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
     "commandlist-notification/create": "\tc [name] - 현재 방의 이름을 사용하여 관리되는 방을 만듭니다",
     "commandlist-notification/auth": "\ta [password] - 운영자 비밀번호를 사용해 방 운영자로 인증합니다",
     "commandlist-notification/chat": "\tch [message] - 방에서 채팅 메시지를 전송합니다",
@@ -158,6 +163,7 @@ ko = {
     "feature-chat": "채팅",  # used for not-supported-by-server-error
     "feature-readiness": "준비",  # used for not-supported-by-server-error
     "feature-managedRooms": "관리되는 방",  # used for not-supported-by-server-error
+    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
     "not-supported-by-server-error": "{} 기능은 이 서버에서 지원되지 않습니다..",  # feature
     "shared-playlists-not-supported-by-server-error": "공유 재생목록 기능은 서버에서 지원하지 않을 수 있습니다. 올바르게 작동하려면 Syncplay {}+를 실행하는 서버가 필요하지만 서버는 Syncplay {}를 실행하고 있습니다.",  # minVersion, serverVersion
@@ -473,6 +479,8 @@ ko = {
     # Server messages to client
     "new-syncplay-available-motd-message": "Syncplay {}를 사용 중이지만 https://syncplay.pl에서 최신 버전을 사용할 수 있습니다",  # ClientVersion
     "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # NOTE: Do not translate the word -temp
+    "ready-chat-message": "I have set {} as ready.",  # User # TODO: Translate
+    "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
 
     # Server notifications
     "welcome-server-notification": "Syncplay 서버에 오신 것을 환영합니다. 버전 {0}",  # version
@@ -532,6 +540,9 @@ ko = {
     "addotherusersstreamstoplaylist-menu-label": "재생목록에 {}' 스트림 추가하기",  # [Username]
     "openusersstream-menu-label": "{}의 스트림 열기",  # [username]'s
     "openusersfile-menu-label": "{}의 파일 열기",  # [username]'s
+
+    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
+    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
 
     "playlist-instruction-item-message": "파일을 여기로 드래그하여 공유 재생목록에 추가하세요.",
     "sharedplaylistenabled-tooltip": "방 운영자는 동기화된 재생목록에 파일을 추가하여 모든 사람이 쉽게 같은 내용을 볼 수 있도록 할 수 있습니다. '기타'에서 미디어 디렉터리를 구성합니다.",

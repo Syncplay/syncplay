@@ -62,6 +62,9 @@ de = {
     "authenticated-as-controller-notification": "{} authentifizierte sich als Raumleiter",
     "created-controlled-room-notification": "Gesteuerten Raum „{}“ mit Passwort „{}“ erstellt. Bitte diese Informationen für die Zukunft aufheben! \n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
 
+    "other-set-as-ready-notification": "{} was set as ready by {}",  # User set as ready, user who set them as ready # TODO: Translate
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+
     "file-different-notification": "Deine Datei scheint sich von {}s zu unterscheiden",  # User
     "file-differences-notification": "Deine Datei unterscheidet sich auf folgende Art: {}",
     "room-file-differences": "Unterschiedlich in: {}",  # File differences (filename, size, and/or duration)
@@ -98,6 +101,8 @@ de = {
     "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature",
     "commandlist-notification/help": "\th - Diese Hilfe",
     "commandlist-notification/toggle": "\tt - Bereitschaftsanzeige umschalten",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready", # TODO: Translate
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready", # TODO: Translate
     "commandlist-notification/create": "\tc [name] - erstelle zentral gesteuerten Raum mit dem aktuellen Raumnamen",
     "commandlist-notification/auth": "\ta [password] - authentifiziere als Raumleiter mit Passwort",
     "commandlist-notification/chat": "\tch [message] - Chatnachricht an einem Raum senden",
@@ -158,6 +163,7 @@ de = {
     "feature-chat": "Chat",  # used for not-supported-by-server-error
     "feature-readiness": "Bereitschaftsstatus",  # used for not-supported-by-server-error
     "feature-managedRooms": "Zentral gesteuerte Räume",  # used for not-supported-by-server-error
+    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
     "not-supported-by-server-error": "Diese Funktion wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
     "shared-playlists-not-supported-by-server-error": "Die Geteilte-Playlists-Funktion wird von diesem Server eventuell nicht unterstützt. Um ein korrektes Funktionieren sicherzustellen wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
@@ -474,6 +480,8 @@ de = {
     # Server messages to client
     "new-syncplay-available-motd-message": "Du nutzt Syncplay Version {}, aber es gibt eine neuere Version auf https://syncplay.pl",  # ClientVersion
     "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
+    "ready-chat-message": "I have set {} as ready.",  # User # TODO: Translate
+    "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
 
     # Server notifications
     "welcome-server-notification": "Willkommen zum Syncplay-Server, v. {0}",  # version
@@ -536,6 +544,9 @@ de = {
     "addotherusersstreamstoplaylist-menu-label": "{}s Stream zur Playlist hinzufügen",  # [Username]
     "openusersstream-menu-label": "{}s Stream öffnen",  # [username]'s
     "openusersfile-menu-label": "{}s Datei öffnen",  # [username]'s
+
+    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
+    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
 
     "playlist-instruction-item-message": "Zieh eine Datei hierher, um sie zur geteilten Playlist hinzuzufügen.",
     "sharedplaylistenabled-tooltip": "Raumleiter können Dateien zu einer geteilten Playlist hinzufügen und es so erleichtern, gemeinsam das Gleiche zu gucken. Konfiguriere Medienverzeichnisse unter „Diverse“",
