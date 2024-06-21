@@ -998,8 +998,6 @@ class SyncplayClient(object):
         if self.seamlessMusicOveride():
             self.setPaused(False)
         recentlyAdvanced = self._recentlyAdvanced()
-        print (self.userlist.areAllUsersInRoomReady(requireSameFilenames=self._config["autoplayRequireSameFilenames"])
-            and ((self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold) or recentlyAdvanced))
         return (
             self._playerPaused and (self.autoPlay or recentlyAdvanced) and
             self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported()
