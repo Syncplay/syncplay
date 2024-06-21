@@ -84,6 +84,9 @@ class SyncplayClient(object):
         self.lastRewindTime = None
         self.lastUpdatedFileTime = None
         self.lastAdvanceTime = None
+        self.fileOpenBeforeChangingPlaylistIndex = None
+        self.waitingToLoadNewfile = False
+        self.waitingToLoadNewfileSince = None
         self.lastConnectTime = None
         self.lastSetRoomTime = None
         self.hadFirstPlaylistIndex = False
@@ -249,15 +252,24 @@ class SyncplayClient(object):
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
             if (pauseChange or seeked) and self._protocol:
+                if self.recentlyRewound() or self._recentlyAdvanced():
+                    self._protocol.sendState(self._globalPosition, self.getPlayerPaused(), False, None, True)
+                    return
                 if seeked:
                     self.playerPositionBeforeLastSeek = self.getGlobalPosition()
                 self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), seeked, None, True)
+
+    def prepareToChangeToNewPlaylistItemAndRewind(self):
+        self.ui.showDebugMessage("Preparing to change to new playlist index and rewind...")
+        self.fileOpenBeforeChangingPlaylistIndex = self.userlist.currentUser.file["path"] if self.userlist.currentUser.file else None
+        self.waitingToLoadNewfile = True
+        self.waitingToLoadNewfileSince = time.time()
 
     def prepareToAdvancePlaylist(self):
         if self.playlist.canSwitchToNextPlaylistIndex():
             self.ui.showDebugMessage("Preparing to advance playlist...")
             self.lastAdvanceTime = time.time()
-            self._protocol.sendState(0, True, True, None, True)
+            #self._protocol.sendState(0, True, True, None, True)
         else:
             self.ui.showDebugMessage("Not preparing to advance playlist because the next file cannot be switched to")
 
@@ -986,6 +998,8 @@ class SyncplayClient(object):
         if self.seamlessMusicOveride():
             self.setPaused(False)
         recentlyAdvanced = self._recentlyAdvanced()
+        print (self.userlist.areAllUsersInRoomReady(requireSameFilenames=self._config["autoplayRequireSameFilenames"])
+            and ((self.autoPlayThreshold and self.userlist.usersInRoomCount() >= self.autoPlayThreshold) or recentlyAdvanced))
         return (
             self._playerPaused and (self.autoPlay or recentlyAdvanced) and
             self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported()
@@ -1838,7 +1852,7 @@ class SyncplayPlaylist():
         if self._client.playerIsNotReady():
             if not self.addedChangeListCallback:
                 self.addedChangeListCallback = True
-                self._client.addPlayerReadyCallback(lambda x: self.changeToPlaylistIndex(index, username))
+                self._client.addPlayerReadyCallback(lambda x: self.changeToPlaylistIndex(index, username, resetPosition))
             return
         try:
             filename = self._playlist[index]
@@ -1854,10 +1868,24 @@ class SyncplayPlaylist():
         self._playlistIndex = index
         if username is None:
             if self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
-                if resetPosition:
-                    self._client.rewindFile()
+                '''if resetPosition:
+                    self._client.rewindFile()'''
                 self._client.setPlaylistIndex(index)
+                filename = self._playlist[index]
+                self._ui.setPlaylistIndexFilename(filename)
+                if resetPosition:
+                    self._ui.showDebugMessage("Pausing due to index change")
+                    state = {}
+                    state["playstate"] = {}
+                    state["playstate"]["position"] = 0
+                    state["playstate"]["paused"] = True
+                    self._client.lastAdvanceTime = time.time()
+                    self._client._protocol.sendMessage({"State": state})
+                    self._playerPaused = True
+                    self._client.autoplayCheck()
         elif index is not None:
+            filename = self._playlist[index]
+            self._ui.setPlaylistIndexFilename(filename)
             self._ui.showMessage(getMessage("playlist-selection-changed-notification").format(username))
             self.switchToNewPlaylistIndex(index, resetPosition=resetPosition)
 
@@ -1883,7 +1911,12 @@ class SyncplayPlaylist():
             self.queuedIndexFilename = self._playlist[index]
         except:
             self.queuedIndexFilename = None
-            self._ui.showDebugMessage("Failed to find index {} in plauylist".format(index))
+            self._ui.showDebugMessage("Failed to find index {} in playlist".format(index))
+        if resetPosition and index is not None:
+            filename = self._playlist[index]
+            if (not utils.isURL(filename)) or self._client.isURITrusted(filename):
+                self._client.prepareToChangeToNewPlaylistItemAndRewind()
+
         self._lastPlaylistIndexChange = time.time()
         if self._client.playerIsNotReady():
             self._client.addPlayerReadyCallback(lambda x: self.switchToNewPlaylistIndex(index, resetPosition))
@@ -1904,7 +1937,7 @@ class SyncplayPlaylist():
             else:
                 path = self._client.fileSwitch.findFilepath(filename, highPriority=True)
             if path:
-                self._client.openFile(path, resetPosition)
+                self._client.openFile(path, resetPosition=resetPosition)
             else:
                 self._ui.showErrorMessage(getMessage("cannot-find-file-for-playlist-switch-error").format(filename))
                 return
