@@ -28,7 +28,7 @@ pl_PL = {
     "disconnection-notification": "Rozłączono połączenie z serwerem",
     "connection-failed-notification": "Nie powiodło się połączenie z serwerem",
     "connected-successful-notification": "Pomyślne połączono się z serwerem",
-    "retrying-notification": "%s, ponowna próba za %d sekund...",  # Seconds
+    "retrying-notification": "%s, ponowna próba za %d sekund…",  # Seconds
     "reachout-successful-notification": "{} ({}) został pomyślnie zrealizowany",
 
     "rewind-notification": "Przewinięto z powodu różnicy czasu z {}",  # User
@@ -323,7 +323,7 @@ pl_PL = {
 
     "file-menu-label": "&Plik",  # & precedes shortcut key
     "openmedia-menu-label": "&Otwór plik multimedialny",
-    "openstreamurl-menu-label": "& Otwórz adres streamu URL",
+    "openstreamurl-menu-label": "&Otwórz adres streamu URL",
     "setmediadirectories-menu-label": "Ustaw multimedia i &ścieżki",
     "loadplaylistfromfile-menu-label": "&Załaduj playlistę z pliku",
     "saveplaylisttofile-menu-label": "&Zapisz playlistę do pliku",
@@ -365,7 +365,7 @@ pl_PL = {
     # About dialog
     "about-menu-label": "&O Syncplay",
     "about-dialog-title": "O Syncplay",
-    "about-dialog-release": "Wersja {} wydania {}",
+    "about-dialog-release": "Wersja {} wydana {}",
     "about-dialog-license-text": "Licencjonowane na podstawie Apache&nbsp;License,&nbsp;Version 2.0",
     "about-dialog-license-button": "Licencja",
     "about-dialog-dependencies": "Zależności",
@@ -477,7 +477,7 @@ pl_PL = {
 
     # Server notifications
     "welcome-server-notification": "Witamy na serwerze Syncplay, ver. {0}",  # version
-    "client-connected-room-server-notification": "{0}({2}) połączony z pokojem '{1}'",  # username, host, room
+    "client-connected-room-server-notification": "{0}({2}) jest połączony z pokojem '{1}'",  # username, host, room
     "client-left-server-notification": "{0} wyszedł z serwera",  # name
     "no-salt-notification": "UWAGA: Aby hasła operatora pokoju wygenerowane przez tę instancję serwera nadal działały po ponownym uruchomieniu serwera, należy dodać następujący argument wiersza poleceń podczas uruchamiania serwera Syncplay w przyszłości: --salt {}",  # Salt
 
@@ -532,11 +532,11 @@ pl_PL = {
 
     "open-containing-folder": "Otwórz folder zawierający ten plik",
     "addyourfiletoplaylist-menu-label": "Dodaj plik do playlisty",
-    "addotherusersfiletoplaylist-menu-label": "Dodaj plik {} do playlisty",  # [Username]
+    "addotherusersfiletoplaylist-menu-label": "Dodaj plik użytkownika {} do playlisty",  # [Username]
     "addyourstreamstoplaylist-menu-label": "Dodaj swój strumień do playlisty",
-    "addotherusersstreamstoplaylist-menu-label": "Dodaj strumień {} do playlisty",  # [Username]
-    "openusersstream-menu-label": "Otwórz strumień {}",  # [username]'s
-    "openusersfile-menu-label": "Otwórz plik {}",  # [username]'s
+    "addotherusersstreamstoplaylist-menu-label": "Dodaj strumień użytkownika {} do playlisty",  # [Username]
+    "openusersstream-menu-label": "Otwórz strumień użytkownika {}",  # [username]'s
+    "openusersfile-menu-label": "Otwórz plik użytkownika {}",  # [username]'s
 
     "playlist-instruction-item-message": "Przeciągnij plik tutaj, aby dodać go do udostępnionej playlisty.",
     "sharedplaylistenabled-tooltip": "Operatorzy pokoi mogą dodawać pliki do zsynchronizowanej listy odtwarzania, aby ułatwić wszystkim oglądanie tego samego. Skonfiguruj foldery multimediów w sekcji „Różne”.",
