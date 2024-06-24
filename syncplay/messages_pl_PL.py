@@ -28,7 +28,7 @@ pl_PL = {
     "disconnection-notification": "Rozłączono połączenie z serwerem",
     "connection-failed-notification": "Nie powiodło się połączenie z serwerem",
     "connected-successful-notification": "Pomyślne połączono się z serwerem",
-    "retrying-notification": "%s, ponowna próba za %d sekund…",  # Seconds
+    "retrying-notification": "%s, ponowna próba za %d sekund...",  # Seconds
     "reachout-successful-notification": "{} ({}) został pomyślnie zrealizowany",
 
     "rewind-notification": "Przewinięto z powodu różnicy czasu z {}",  # User
@@ -252,8 +252,8 @@ pl_PL = {
     "syncplay-mediasearchdirectories-title": "Folder do wyszukiwania multimediów",
     "syncplay-mediasearchdirectories-label": "Foldery do wyszukiwania multimediów (jedna ścieżka na linię)",
     "sync-label": "Synchronizacja",
-    "sync-otherslagging-title": "Jeśli inni są z tyle przez opóżnienia…",
-    "sync-youlaggging-title": "Jeśli ty jesteś w tyle przez opóżnienia…",
+    "sync-otherslagging-title": "Jeśli inni są z tyle przez opóżnienia...",
+    "sync-youlaggging-title": "Jeśli ty jesteś w tyle przez opóżnienia...",
     "messages-label": "Wiadomości",
     "messages-osd-title": "Ustawienia wyświetlacza",
     "messages-other-title": "Inne ustawienia wyświetlacza",
