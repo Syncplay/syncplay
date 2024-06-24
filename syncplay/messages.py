@@ -8,6 +8,7 @@ from . import messages_eo
 from . import messages_fi
 from . import messages_fr
 from . import messages_it
+from . import messages_pl_PL
 from . import messages_pt_PT
 from . import messages_pt_BR
 from . import messages_tr
@@ -25,6 +26,7 @@ messages = {
     "fi": messages_fi.fi,
     "fr": messages_fr.fr,
     "it": messages_it.it,
+    "pl_PL": messages_pl_PL.pl_PL,
     "pt_PT": messages_pt_PT.pt_PT,
     "pt_BR": messages_pt_BR.pt_BR,
     "tr": messages_tr.tr,
