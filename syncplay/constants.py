@@ -269,6 +269,7 @@ MPV_ARGS = {'force-window': 'yes',
             'term-playing-msg': '<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=duration:${=length:0}}\nANS_path=${path}\n</SyncplayUpdateFile>',
             'keep-open-pause': 'yes'
             }
+MPV_NET_EXTRA_ARGS = { 'auto-load-folder': 'no' }
 
 IINA_PROPERTIES = {'geometry': '25%+100+100', 
                    'idle': 'yes',
