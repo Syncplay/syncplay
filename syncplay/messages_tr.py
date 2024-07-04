@@ -95,7 +95,7 @@ tr = {
     "commandlist-notification/undo": "\tu - son isteği geri alır",
     "commandlist-notification/pause": "\tp - duraklatmayı değiştirir",
     "commandlist-notification/seek": "\t[s][+-]time - verilen zaman değerine atlar, eğer + veya - belirtilmezse, saniye:dakika cinsinden mutlak zamandır.",
-    "commandlist-notification/offset": "\to[+-]süre - yerel oynatmayı sunucu arama konumundan verilen süreye göre (saniye veya dakika:saniye cinsinden) dengeleme - bu, kullanımdan kaldırılmış bir özelliktir"
+    "commandlist-notification/offset": "\to[+-]süre - yerel oynatmayı sunucu arama konumundan verilen süreye göre (saniye veya dakika:saniye cinsinden) dengeleme - bu, kullanımdan kaldırılmış bir özelliktir",
     "commandlist-notification/help": "\th - yardım",
     "commandlist-notification/toggle": "\tt - izlemeye hazır olup olmadığınızı değiştirir",
     "commandlist-notification/create": "\tc [name] - mevcut odanın adını kullanarak yönetilen oda oluştur",
