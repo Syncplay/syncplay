@@ -5,7 +5,7 @@
 # Filename, dictionary name and LANGUAGE-TAG value based on ISO country code. Language tag listed at https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN
 
 pl_PL = {
-    "LANGUAGE": "Polish",
+    "LANGUAGE": "Polski",
     "LANGUAGE-TAG": "pl_PL",
 
     # Strings for Windows NSIS installer
@@ -269,7 +269,7 @@ pl_PL = {
 
     "chat-title": "Wprowadzenie wiadomości do czatu",
     "chatinputenabled-label": "Włącz wprowadzanie wiadomości czatu przez mpv",
-    "chatdirectinput-label": "Zezwalaj na natychmiastowe wprowadzanie wiadomości do czatu (omiń konieczność naciskania klawisza Enter, aby czatować)",
+    "chatdirectinput-label": "Zezwalaj na natychmiastowe wprowadź wiadomość do czatu (omiń wciskanie klawisza Enter)",
     "chatinputfont-label": "Czcionka wprowadzania wiadomości czatu",
     "chatfont-label": "Ustaw czcionkę czatu",
     "chatcolour-label": "Ustaw kolor",
