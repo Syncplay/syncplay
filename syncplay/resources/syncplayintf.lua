@@ -50,7 +50,6 @@ local FONT_SIZE_MULTIPLIER = 2
 
 local chat_log = {}
 
-local assdraw = require "mp.assdraw"
 
 local opt = require 'mp.options'
 
@@ -101,6 +100,10 @@ function clear_chat()
 	chat_log = {}
 end
 
+local osd_overlay = mp.create_osd_overlay("ass-events")
+osd_overlay.res_x = CANVAS_WIDTH
+osd_overlay.res_y = CANVAS_HEIGHT
+
 local alert_osd = ""
 local last_alert_osd_time = nil
 local alert_osd_mood = MOOD_NEUTRAL
@@ -140,9 +143,7 @@ function add_chat(chat_message, mood)
 	chat_log[entry] = { xpos=CANVAS_WIDTH, timecreated=mp.get_time(), text=tostring(chat_message), row=row }
 end
 
-local old_ass_text = ''
 function chat_update()
-    local ass = assdraw.ass_new()
 	local chat_ass = ''
     local rowsAdded = 0
     local to_add = ''
@@ -176,25 +177,23 @@ function chat_update()
     local ypos = opts['chatTopMargin']
     chat_ass = "\n".."{\\pos("..xpos..","..ypos..")}".. chat_ass
 
+	local ass = ''
     if use_alpha_rows_for_chat == false and opts['chatDirectInput'] == true then
-        local alphawarning_ass = assdraw.ass_new()
-        alphawarning_ass = "{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-first-line'].."\n{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-second-line']
-        ass:append(alphawarning_ass)
+        local alphawarning_ass = "{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-first-line'].."\n{\\a6}{\\1c&H"..ALPHA_WARNING_TEXT_COLOUR.."}"..opts['alphakey-mode-warning-second-line']
+        ass = alphawarning_ass
     elseif opts['chatOutputMode'] == CHAT_MODE_CHATROOM and opts['chatInputPosition'] == "Top" then
-        ass:append(chat_ass)
-        ass:append(input_ass())
+        ass = chat_ass .. input_ass()
     else
-        ass:append(input_ass())
-        ass:append(chat_ass)
+    	ass = input_ass() .. chat_ass
     end
 
     -- The commit that introduced the new API removed the internal heuristics on whether a refresh is required,
     -- so we check for changed text manually to not cause excessive GPU load
     -- https://github.com/mpv-player/mpv/commit/07287262513c0d1ea46b7beaf100e73f2008295f#diff-d88d582039dea993b6229da9f61ba76cL530
-    if ass.text ~= old_ass_text then
-		mp.set_osd_ass(CANVAS_WIDTH,CANVAS_HEIGHT, ass.text)
-		old_ass_text = ass.text
-	end
+    if ass ~= osd_overlay.data then
+    	osd_overlay.data = ass
+    	osd_overlay:update()
+    end
 end
 
 function process_alert_osd()
@@ -212,7 +211,6 @@ function process_alert_osd()
         local messageString = wordwrapify_string(alert_osd)
         local startRow = 0
         if messageString ~= '' and messageString ~= nil then
-            local toDisplay
             rowsCreated = rowsCreated + 1
             messageString = messageColour..messageString
 			if stringToAdd ~= "" then
@@ -230,10 +228,8 @@ function process_notification_osd(startRow)
     local startRow = startRow
     local stringToAdd = ""
     if notification_osd ~= "" and mp.get_time() - last_notification_osd_time < opts['alertTimeout'] and last_notification_osd_time ~= nil then
-        local messageColour
-        messageColour = "{\\1c&H"..NOTIFICATION_TEXT_COLOUR.."}"
-        local messageString
-        messageString = wordwrapify_string(notification_osd)
+        local messageColour = "{\\1c&H"..NOTIFICATION_TEXT_COLOUR.."}"
+        local messageString = wordwrapify_string(notification_osd)
         messageString = messageColour..messageString
         messageString = format_chatroom(messageString)
         stringToAdd = messageString
