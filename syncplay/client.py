@@ -1332,10 +1332,10 @@ class SyncplayUserlist(object):
         self._client = client
         self._roomUsersChanged = True
 
-    def isReadinessSupported(self):
+    def isReadinessSupported(self, requiresOtherUsers=True):
         if not utils.meetsMinVersion(self._client.serverVersion, constants.USER_READY_MIN_VERSION):
             return False
-        elif self.onlyUserInRoomWhoSupportsReadiness():
+        elif self.onlyUserInRoomWhoSupportsReadiness() and requiresOtherUsers:
             return False
         else:
             return self._client.serverFeatures["readiness"]
