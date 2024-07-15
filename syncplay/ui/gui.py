@@ -1436,7 +1436,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if not isMacOS(): window.outputbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
         window.outputlabel = QtWidgets.QLabel(getMessage("notifications-heading-label"))
-        window.outputlabel.setMinimumHeight(27)
+        if isMacOS():
+            window.outputlabel.setMinimumHeight(21)
+        else:
+            window.outputlabel.setMinimumHeight(27)
         window.chatInput = QtWidgets.QLineEdit()
         window.chatInput.setMaxLength(constants.MAX_CHAT_MESSAGE_LENGTH)
         window.chatInput.returnPressed.connect(self.sendChatMessage)
@@ -1474,7 +1477,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.listTreeView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.listTreeView.customContextMenuRequested.connect(self.openRoomMenu)
         window.listlabel = QtWidgets.QLabel(getMessage("userlist-heading-label"))
-        if isMacOS:
+        if isMacOS():
             window.listlabel.setMinimumHeight(21)
             window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'lock_green.png').scaled(14, 14),"")
             window.sslButton.setVisible(False)
