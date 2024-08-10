@@ -84,7 +84,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip3 install -U pip setuptools wheel
+          pip3 install -U pip setuptools==70.3.0 wheel
           pip3 install -r requirements.txt
           pip3 install -r requirements_gui.txt
           pip3 install py2app
