@@ -97,6 +97,7 @@ class SyncFactory(Factory):
         features["maxUsernameLength"] = self.maxUsernameLength
         features["maxRoomNameLength"] = constants.MAX_ROOM_NAME_LENGTH
         features["maxFilenameLength"] = constants.MAX_FILENAME_LENGTH
+        features["setOthersReadiness"] = True
 
         return features
 
@@ -213,9 +214,22 @@ class SyncFactory(Factory):
         messageDict = {"message": message, "username": watcher.getName()}
         self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(messageDict))
 
-    def setReady(self, watcher, isReady, manuallyInitiated=True):
-        watcher.setReady(isReady)
-        self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), manuallyInitiated))
+    def setReady(self, watcher, isReady, manuallyInitiated=True, username=None):
+        if username and username != watcher.getName():
+            room = watcher.getRoom()
+            if room.canControl(watcher):
+                for watcherToSet in room.getWatchers():
+                    if watcherToSet.getName() == username:
+                        watcherToSet.setReady(isReady)
+                        self._roomManager.broadcastRoom(watcherToSet, lambda w: w.sendSetReady(watcherToSet.getName(), watcherToSet.isReady(),  manuallyInitiated, watcher.getName()))
+                        if isReady:
+                            messageDict = { "message": getMessage("ready-chat-message").format(username, watcherToSet.getName()), "username": watcher.getName()}
+                        else:
+                            messageDict = {"message": getMessage("not-ready-chat-message").format(username, watcherToSet.getName()), "username": watcher.getName()}
+                        self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(messageDict, "setOthersReadiness"))
+        else:
+            watcher.setReady(isReady)
+            self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcher.getName(), watcher.isReady(), manuallyInitiated))
 
     def setPlaylist(self, watcher, files):
         room = watcher.getRoom()
@@ -777,8 +791,10 @@ class Watcher(object):
     def sendControlledRoomAuthStatus(self, success, username, room):
         self._connector.sendControlledRoomAuthStatus(success, username, room)
 
-    def sendChatMessage(self, message):
+    def sendChatMessage(self, message, skipIfSupportsFeature=None):
         if self._connector.meetsMinVersion(constants.CHAT_MIN_VERSION):
+            if skipIfSupportsFeature and self.supportsFeature(skipIfSupportsFeature):
+                return
             self._connector.sendMessage({"Chat": message})
 
     def sendList(self, toGUIOnly=False):
@@ -798,8 +814,12 @@ class Watcher(object):
             uiMode = constants.FALLBACK_ASSUMED_UI_MODE
         return uiMode == constants.GRAPHICAL_UI_MODE
 
-    def sendSetReady(self, username, isReady, manuallyInitiated=True):
-        self._connector.sendSetReady(username, isReady, manuallyInitiated)
+    def supportsFeature(self, clientFeature):
+        clientFeatures = self._connector.getFeatures()
+        return clientFeatures[clientFeature] if clientFeature in clientFeatures else False
+
+    def sendSetReady(self, username, isReady, manuallyInitiated=True, setByUsername=None):
+        self._connector.sendSetReady(username, isReady, manuallyInitiated, setByUsername)
 
     def setPlaylistIndex(self, username, index):
         self._connector.setPlaylistIndex(username, index)
