@@ -48,14 +48,14 @@ jobs:
         run: dir
 
       - name: Deploy portable
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Syncplay_${{ env.VER }}_Portable
           path: |
             syncplay_v${{ env.VER }}
 
       - name: Deploy installer
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Syncplay-${{ env.VER }}-Setup.exe
           path: |
@@ -131,7 +131,7 @@ jobs:
           ls -al dist_actions
 
       - name: Deploy
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Syncplay_${{ env.VER }}.dmg
           path: |
@@ -164,14 +164,14 @@ jobs:
           ls -al dist_actions
 
       - name: Deploy full deb
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: syncplay.deb
           path: |
             dist_actions/syncplay_*.deb
 
       - name: Deploy server deb
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: syncplay-server.deb
           path: |
