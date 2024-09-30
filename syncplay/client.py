@@ -672,9 +672,9 @@ class SyncplayClient(object):
             "maxChatMessageLength": constants.FALLBACK_MAX_CHAT_MESSAGE_LENGTH,
             "maxUsernameLength": constants.FALLBACK_MAX_USERNAME_LENGTH,
             "maxRoomNameLength": constants.FALLBACK_MAX_ROOM_NAME_LENGTH,
-            "maxFilenameLength": constants.FALLBACK_MAX_FILENAME_LENGTH
+            "maxFilenameLength": constants.FALLBACK_MAX_FILENAME_LENGTH,
+            "setOthersReadiness": utils.meetsMinVersion(self.serverVersion, constants.SET_OTHERS_READINESS_MIN_VERSION)
         }
-
         if featureList:
             self.serverFeatures.update(featureList)
         if not utils.meetsMinVersion(self.serverVersion, constants.SHARED_PLAYLIST_MIN_VERSION):
@@ -745,6 +745,7 @@ class SyncplayClient(object):
         features["readiness"] = True
         features["managedRooms"] = True
         features["persistentRooms"] = True
+        features["setOthersReadiness"] = True
 
         return features
 
@@ -947,6 +948,10 @@ class SyncplayClient(object):
             message = utils.truncateText(message, constants.MAX_CHAT_MESSAGE_LENGTH)
             self._protocol.sendChatMessage(message)
 
+    @requireServerFeature("setOthersReadiness")
+    def setOthersReadiness(self, username, newReadyStatus):
+        self._protocol.setReady(newReadyStatus, True, username)
+
     def sendFeaturesUpdate(self, features):
         self._protocol.sendFeaturesUpdate(features)
 
@@ -1047,7 +1052,7 @@ class SyncplayClient(object):
         if newState != oldState:
             self.toggleReady(manuallyInitiated)
 
-    def setReady(self, username, isReady, manuallyInitiated=True):
+    def setReady(self, username, isReady, manuallyInitiated=True, setBy=None):
         oldReadyState = self.userlist.isReady(username)
         if oldReadyState is None:
             oldReadyState = False
@@ -1055,6 +1060,11 @@ class SyncplayClient(object):
         self.ui.userListChange()
         if oldReadyState != isReady:
             self._warnings.checkReadyStates()
+        if setBy:
+            if isReady:
+                self.ui.showMessage(getMessage("other-set-as-ready-notification").format(username, setBy))
+            else:
+                self.ui.showMessage(getMessage("other-set-as-not-ready-notification").format(username, setBy))
 
     @requireServerFeature("managedRooms")
     def setUserFeatures(self, username, features):
@@ -1337,10 +1347,10 @@ class SyncplayUserlist(object):
         self._client = client
         self._roomUsersChanged = True
 
-    def isReadinessSupported(self):
+    def isReadinessSupported(self, requiresOtherUsers=True):
         if not utils.meetsMinVersion(self._client.serverVersion, constants.USER_READY_MIN_VERSION):
             return False
-        elif self.onlyUserInRoomWhoSupportsReadiness():
+        elif self.onlyUserInRoomWhoSupportsReadiness() and requiresOtherUsers:
             return False
         else:
             return self._client.serverFeatures["readiness"]

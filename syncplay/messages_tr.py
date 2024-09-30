@@ -62,6 +62,9 @@ tr = {
     "authenticated-as-controller-notification": "{}, oda operatörü olarak doğrulandı",
     "created-controlled-room-notification": "Yönetilen oda '{}' '{}' şifresiyle oluşturuldu. Lütfen bu bilgileri ileride başvurmak üzere kaydedin!\n\nYönetilen odalarda, oynatma listesini duraklatabilen, devam ettirebilen, arayabilen ve değiştirebilen tek kişi olan oda operatörleri ile herkes senkronize edilir.\n\nNormal izleyicilerden '{}' odasına katılmalarını istemelisiniz, ancak oda operatörleri kendilerini otomatik olarak doğrulamak için '{}' odasına katılabilir.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
+    "other-set-as-ready-notification": "{} was set as ready by {}",  # User set as ready, user who set them as ready # TODO: Translate
+    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+
     "file-different-notification": "Oynadığınız dosya, {} dosyasından farklı görünüyor",  # User
     "file-differences-notification": "Dosyanız aşağıdaki şekil(ler)de farklılık gösterir: {}",  # Differences
     "room-file-differences": "Dosya farklılıkları: {}",  # File differences (filename, size, and/or duration)
@@ -95,17 +98,19 @@ tr = {
     "commandlist-notification/undo": "\tu - son isteği geri alır",
     "commandlist-notification/pause": "\tp - duraklatmayı değiştirir",
     "commandlist-notification/seek": "\t[s][+-]time - verilen zaman değerine atlar, eğer + veya - belirtilmezse, saniye:dakika cinsinden mutlak zamandır.",
-    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
+    "commandlist-notification/offset": "\to[+-]süre - yerel oynatmayı sunucu arama konumundan verilen süreye göre (saniye veya dakika:saniye cinsinden) dengeleme - bu, kullanımdan kaldırılmış bir özelliktir",
     "commandlist-notification/help": "\th - yardım",
     "commandlist-notification/toggle": "\tt - izlemeye hazır olup olmadığınızı değiştirir",
+    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
+    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
     "commandlist-notification/create": "\tc [name] - mevcut odanın adını kullanarak yönetilen oda oluştur",
     "commandlist-notification/auth": "\ta [password] - operatör şifresi ile oda operatörü olarak kimlik doğrular",
     "commandlist-notification/chat": "\tch [message] - bir odaya sohbet mesajı gönderir",
     "commandList-notification/queue": "\tqa [file/url] - oynatma listesinin altına dosya veya bağlantı ekler",
-    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
+    "commandList-notification/queueandselect": "\tqas [dosya/url] - oynatma listesinin en altına dosya veya URL ekler ve onu seçer",
     "commandList-notification/playlist": "\tql - mevcut oynatma listesini gösterir",
     "commandList-notification/select": "\tqs [index] - oynatma listesinde verilen girişi seçer",
-    "commandList-notification/next": "\tqn - select next entry in the playlist", # TODO: Translate
+    "commandList-notification/next": "\tqn - oynatma listesindeki sonraki girişi seçer",
     "commandList-notification/delete": "\tqd [index] - verilen girişi oynatma listesinden siler",
     "syncplay-version-notification": "Syncplay sürümü: {}",  # syncplay.version
     "more-info-notification": "Daha fazla bilgiye şu adresten ulaşabilirsiniz: {}",  # projectURL
@@ -133,7 +138,7 @@ tr = {
     "hostname-empty-error": "Ana bilgisayar adı boş olamaz",
     "empty-error": "{} boş olamaz",  # Configuration
     "media-player-error": "Medaya oynatıcısı hatası: \"{}\"",  # Error line
-    "unable-import-gui-error": "GUI kitaplıkları içe aktarılamadı. PySide kurulu değilse, GUI'nin çalışması için kurmanız gerekecektir. If you want to run Syncplay in console mode then run it with the --no-gui command line switch. See https://syncplay.pl/guide/ for more details.", # TODO: Translate end of message and update second sentence to be a translation of "You need to have the correct version of PySide installed for the GUI to work."
+    "unable-import-gui-error": "GUI kitaplıkları içe aktarılamadı. GUI'nin çalışması için PySide'ın doğru sürümünün kurulu olması gerekir. Syncplay'i terminal modunda çalıştırmak istiyorsanız --no-gui komut satırı anahtarıyla çalıştırın. Daha fazla ayrıntı için https://syncplay.pl/guide/ adresine bakın.",
     "unable-import-twisted-error": "Twisted içe aktarılamadı. Lütfen Twisted v16.4.0 veya sonraki sürümünü yükleyin.",
 
     "arguments-missing-error": "Bazı gerekli argümanlar eksik, bakınız --help",
@@ -158,6 +163,7 @@ tr = {
     "feature-chat": "sohbet",  # used for not-supported-by-server-error
     "feature-readiness": "hazırlık",  # used for not-supported-by-server-error
     "feature-managedRooms": "yönetilen odalar",  # used for not-supported-by-server-error
+    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
     "not-supported-by-server-error": "{} özelliği bu sunucu tarafından desteklenmiyor ..",  # feature
     "shared-playlists-not-supported-by-server-error": "Paylaşılan çalma listeleri özelliği sunucu tarafından desteklenmeyebilir. Doğru çalıştığından emin olmak için Syncplay  {}+ çalıştıran bir sunucu gerektirir, ancak sunucu Syncplay {} çalıştırmaktadır.",  # minVersion, serverVersion
@@ -306,7 +312,7 @@ tr = {
     "autoplay-menu-label": "Otomatik oynat düğmesini göster",
     "autoplay-guipushbuttonlabel": "Her şey hazır olduğunda oynat",
     "autoplay-minimum-label": "Asgari kullanıcı:",
-    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
+    "hideemptyrooms-menu-label": "Boş kalıcı odaları gizle",
 
     "sendmessage-label": "Gönder",
 
@@ -473,7 +479,9 @@ tr = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Syncplay {} kullanıyorsunuz ancak daha yeni bir sürüm https://syncplay.pl adresinde mevcut",  # ClientVersion
-    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
+    "persistent-rooms-notice": "DİKKAT: Bu sunucu kalıcı odalar kullanır; bu, oynatma oturumları arasında oynatma listesi bilgilerinin saklandığı anlamına gelir. Bilgilerin kaydedilmediği bir oda oluşturmak istiyorsanız oda adının sonuna -temp koyun.",
+    "ready-chat-message": "I have set {} as ready.",  # User # TODO: Translate
+    "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
 
     # Server notifications
     "welcome-server-notification": "Syncplay sunucusuna hoş geldiniz, ver. {0}",  # version
@@ -491,8 +499,8 @@ tr = {
     "server-salt-argument": "yönetilen oda şifreleri oluşturmak için kullanılan rastgele dize",
     "server-disable-ready-argument": "hazır olma özelliğini devre dışı bırak",
     "server-motd-argument": "motd alınacak dosyanın yolu",
-    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
-    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
+    "server-rooms-argument": "kalıcı oda verilerini depolamak için kullanılacak ve/veya oluşturulacak veritabanı dosyasının yolu. Odaların gözlemciler olmadan ve yeniden başlatmalar yoluyla varlığını sürdürmesini sağlar",
+    "server-permanent-rooms-argument": "oda boş olsa bile listelenecek kalıcı odaları listeleyen dosyanın yolu (satır başına bir odayı listeleyen bir metin dosyası biçiminde) - kalıcı odaların etkinleştirilmesini gerektirir",
     "server-chat-argument": "Sohbet devre dışı bırakılmalı mı?",
     "server-chat-maxchars-argument": "Bir sohbet mesajındaki maksimum karakter sayısı (varsayılan: {})", # Default number of characters
     "server-maxusernamelength-argument": "Bir kullanıcı adındaki maksimum karakter sayısı (varsayılan {})",
@@ -537,6 +545,9 @@ tr = {
     "addotherusersstreamstoplaylist-menu-label": "Oynatma listesine {} kişisinin akışını ekleyin",  # [Username]
     "openusersstream-menu-label": "{} kişisinin akışını açın",  # [username]'s
     "openusersfile-menu-label": "{} kişisinin dosyasını açın",  # [username]'s
+
+    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
+    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
 
     "playlist-instruction-item-message": "Dosyayı paylaşılan çalma listesine eklemek için buraya sürükleyin.",
     "sharedplaylistenabled-tooltip": "Oda operatörleri, herkesin aynı şeyi izlemesini kolaylaştırmak için senkronize edilmiş bir çalma listesine dosya ekleyebilir. 'Misc' altında ortam dizinlerini yapılandırın.",

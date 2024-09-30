@@ -819,8 +819,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 path = self._syncplayClient.fileSwitch.findFilepath(filename)
                 if path:
                     menu.addAction(QtGui.QPixmap(resourcespath + "folder_film.png"), getMessage('open-containing-folder'), lambda: utils.open_system_file_browser(path))
-        else:
-            return
+
+        if roomToJoin == self._syncplayClient.getRoom() and self._syncplayClient.userlist.currentUser.canControl() and self._syncplayClient.userlist.isReadinessSupported(requiresOtherUsers=False) and self._syncplayClient.serverFeatures["setOthersReadiness"]:
+            if self._syncplayClient.userlist.isReady(username):
+                addSetUserAsReadyText = getMessage("setasnotready-menu-label").format(shortUsername)
+                menu.addAction(QtGui.QPixmap(resourcespath + "cross.png"), addSetUserAsReadyText, lambda: self._syncplayClient.setOthersReadiness(username, False))
+            else:
+                addSetUserAsNotReadyText = getMessage("setasnotready-menu-label").format(shortUsername)
+                menu.addAction(QtGui.QPixmap(resourcespath + "tick.png"), addSetUserAsNotReadyText, lambda: self._syncplayClient.setOthersReadiness(username, True))
         menu.exec_(self.listTreeView.viewport().mapToGlobal(position))
 
     def updateListGeometry(self):
@@ -1474,7 +1480,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.listTreeView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.listTreeView.customContextMenuRequested.connect(self.openRoomMenu)
         window.listlabel = QtWidgets.QLabel(getMessage("userlist-heading-label"))
-        if isMacOS:
+        if isMacOS():
             window.listlabel.setMinimumHeight(21)
             window.sslButton = QtWidgets.QPushButton(QtGui.QPixmap(resourcespath + 'lock_green.png').scaled(14, 14),"")
             window.sslButton.setVisible(False)
@@ -1510,6 +1516,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if isMacOS(): window.userlistLayout.setContentsMargins(3, 0, 3, 0)
 
         window.listSplit = QtWidgets.QSplitter(Qt.Vertical, self)
+        window.listSplit.setHandleWidth(6)
+        window.listSplit.setStyle(QtWidgets.QStyleFactory.create("fusion"))
         window.listSplit.addWidget(window.userlistFrame)
         window.listLayout.addWidget(window.listSplit)
         window.roomsCombobox = QtWidgets.QComboBox(self)
@@ -1544,8 +1552,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         window.topSplit.addWidget(window.outputFrame)
         window.topSplit.addWidget(window.listFrame)
+        window.topSplit.setHandleWidth(6)
         window.topSplit.setStretchFactor(0, 4)
         window.topSplit.setStretchFactor(1, 5)
+        window.topSplit.setStyle(QtWidgets.QStyleFactory.create("fusion"))
         window.mainLayout.addWidget(window.topSplit)
         window.topSplit.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
 
