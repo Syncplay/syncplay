@@ -138,7 +138,7 @@ fi = {
      "hostname-empty-error": "Palvelinnimi ei voi olla tyhjä",
      "empty-error": "{} ei voi jättää tyhjäksi",  # Configuration
      "media-player-error": "Mediasoitin kohtasi virheen: \"{}\"",  # Error line
-     "unable-import-gui-error": "Käyttöliittymäkirjastoja ei saatu tuotua. Mikäli sinulla ei ole PySide asennettuna, tulee sinun asentaa se jotta käyttöliittymä toimisi.",
+     "unable-import-gui-error": "Käyttöliittymäkirjastoja ei saatu tuotua. Mikäli sinulla ei ole PySide asennettuna, tulee sinun asentaa se jotta käyttöliittymä toimisi. If you want to run Syncplay in console mode then run it with the --no-gui command line switch. See https://syncplay.pl/guide/ for more details.", # TODO: Translate end of message and update second sentence to be a translation of "You need to have the correct version of PySide installed for the GUI to work."
      "unable-import-twisted-error": "Twisted:iä ei onnistuttu tuomaan. Asenna Twisted v16.4.0 tai myöhäisempi.",
 
      "arguments-missing-error": "Joitakin vipuja uupuu, katso apua --help",

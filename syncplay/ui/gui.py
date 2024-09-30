@@ -1516,6 +1516,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if isMacOS(): window.userlistLayout.setContentsMargins(3, 0, 3, 0)
 
         window.listSplit = QtWidgets.QSplitter(Qt.Vertical, self)
+        window.listSplit.setHandleWidth(6)
+        window.listSplit.setStyle(QtWidgets.QStyleFactory.create("fusion"))
         window.listSplit.addWidget(window.userlistFrame)
         window.listLayout.addWidget(window.listSplit)
         window.roomsCombobox = QtWidgets.QComboBox(self)
@@ -1550,8 +1552,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         window.topSplit.addWidget(window.outputFrame)
         window.topSplit.addWidget(window.listFrame)
+        window.topSplit.setHandleWidth(6)
         window.topSplit.setStretchFactor(0, 4)
         window.topSplit.setStretchFactor(1, 5)
+        window.topSplit.setStyle(QtWidgets.QStyleFactory.create("fusion"))
         window.mainLayout.addWidget(window.topSplit)
         window.topSplit.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
 

@@ -1,5 +1,5 @@
-
 import ast
+import atexit
 import datetime
 import hashlib
 import itertools
@@ -10,11 +10,13 @@ import re
 import string
 import subprocess
 import sys
+import tempfile
 import time
 import traceback
 import urllib.error
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
 from syncplay import constants
 from syncplay.messages import getMessage
@@ -37,8 +39,27 @@ def isMacOS():
 def isBSD():
     return constants.OS_BSD in sys.platform or sys.platform.startswith(constants.OS_DRAGONFLY)
 
+
 def isWindowsConsole():
     return os.path.basename(sys.executable) == "SyncplayConsole.exe"
+
+
+def getRuntimeDir():
+    cachedPath = getattr(getRuntimeDir, "cachedPath", None)
+    if cachedPath is not None:
+        return cachedPath
+
+    baseDir = None
+    if not isWindows() and not isMacOS():
+        baseDir = os.getenv("XDG_RUNTIME_DIR", None)
+
+    tmp = tempfile.TemporaryDirectory(prefix="syncplay-", dir=baseDir)
+    atexit.register(tmp.cleanup)
+
+    o = Path(tmp.name)
+    setattr(getRuntimeDir, "cachedPath", o)
+    return o
+
 
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
@@ -211,7 +232,8 @@ def blackholeStdoutForFrozenWindow():
                     self._file = open(path, 'a', encoding='utf-8')
                     # TODO: Handle errors.
                 if self._file is not None:
-                    self._file.write(text)
+                    if not (text.startswith("<frozen zipimport>") and "UserWarning:" in text):
+                        self._file.write(text)
                     self._file.flush()
 
             def flush(self):
@@ -305,7 +327,7 @@ def stripfilename(filename, stripURL):
 def stripRoomName(RoomName):
     if RoomName:
         try:
-            return re.sub(constants.ROOM_NAME_STRIP_REGEX, "\g<roomnamebase>", RoomName)
+            return re.sub(constants.ROOM_NAME_STRIP_REGEX, r"\g<roomnamebase>", RoomName)
         except IndexError:
             return RoomName
     else:
@@ -483,8 +505,8 @@ def getListOfPublicServers():
 
 
 class RoomPasswordProvider(object):
-    CONTROLLED_ROOM_REGEX = re.compile("^\+(.*):(\w{12})$")
-    PASSWORD_REGEX = re.compile("[A-Z]{2}-\d{3}-\d{3}")
+    CONTROLLED_ROOM_REGEX = re.compile(r"^\+(.*):(\w{12})$")
+    PASSWORD_REGEX = re.compile(r"[A-Z]{2}-\d{3}-\d{3}")
 
     @staticmethod
     def isControlledRoom(roomName):

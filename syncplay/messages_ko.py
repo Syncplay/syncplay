@@ -138,7 +138,7 @@ ko = {
     "hostname-empty-error": "호스트이름은 비워둘 수 없습니다",
     "empty-error": "{}은(는) 비워 둘 수 없습니다",  # Configuration
     "media-player-error": "미디어 플레이어 오류: \"{}\"",  # Error line
-    "unable-import-gui-error": "GUI 라이브러리를 가져올 수 없습니다. PySide가 설치되어 있지 않은 경우 GUI가 작동하려면 설치해야 합니다.",
+    "unable-import-gui-error": "GUI 라이브러리를 가져올 수 없습니다. PySide가 설치되어 있지 않은 경우 GUI가 작동하려면 설치해야 합니다. If you want to run Syncplay in console mode then run it with the --no-gui command line switch. See https://syncplay.pl/guide/ for more details.", # TODO: Translate end of message and update second sentence to be a translation of "You need to have the correct version of PySide installed for the GUI to work."
     "unable-import-twisted-error": "Twisted를 가져올 수 없습니다. Twisted v16.4.0 이상을 설치하세요.",
 
     "arguments-missing-error": "일부 필요한 인수가 누락되었습니다. --help를 참조하세요.",

@@ -50,6 +50,9 @@ class ConfigurationGetter(object):
             "slowOnDesync": True,
             "fastforwardOnDesync": True,
             "dontSlowDownWithMe": False,
+            "folderSearchFirstFileTimeout": constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT,
+            "folderSearchTimeout": constants.FOLDER_SEARCH_TIMEOUT,
+            "folderSearchDoubleCheckInterval": constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL,
             "filenamePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
             "filesizePrivacyMode": constants.PRIVACY_SENDRAW_MODE,
             "pauseOnLeave": False,
@@ -163,6 +166,9 @@ class ConfigurationGetter(object):
             "slowdownThreshold",
             "rewindThreshold",
             "fastforwardThreshold",
+            "folderSearchFirstFileTimeout",
+            "folderSearchTimeout",
+            "folderSearchDoubleCheckInterval",
             "autoplayMinUsers",
             "chatInputRelativeFontSize",
             "chatInputFontWeight",
@@ -188,6 +194,7 @@ class ConfigurationGetter(object):
                 "name", "room", "roomList", "playerPath",
                 "perPlayerArguments", "slowdownThreshold",
                 "rewindThreshold", "fastforwardThreshold",
+                "folderSearchFirstFileTimeout", "folderSearchTimeout", "folderSearchDoubleCheckInterval",
                 "slowOnDesync", "rewindOnDesync",
                 "fastforwardOnDesync", "dontSlowDownWithMe",
                 "forceGuiPrompt", "filenamePrivacyMode",
@@ -520,7 +527,7 @@ class ConfigurationGetter(object):
                 from syncplay.vendor.Qt.QtCore import QCoreApplication
                 from syncplay.vendor import qt5reactor
                 if not (IsPySide6 or IsPySide2 or IsPySide):
-                    raise ImportError
+                    raise ImportError("Failed to identify compatible version of PySide.")
                 if QCoreApplication.instance() is None:
                     self.app = QtWidgets.QApplication(sys.argv)
                     self.app.setDesktopFileName("syncplay")
@@ -537,13 +544,14 @@ class ConfigurationGetter(object):
                 if isMacOS():
                     import appnope
                     appnope.nope()
-            except ImportError:
+            except ImportError as e:
                 try:
                     from twisted.trial import unittest
-                except Exception as e:
-                    print(e)
+                except Exception as ee:
+                    print(ee)
                     print(getMessage("unable-import-twisted-error"))
                     sys.exit()
+                print(e)
                 print(getMessage("unable-import-gui-error"))
                 self._config['noGui'] = True
         if self._config['file'] and self._config['file'][:2] == "--":

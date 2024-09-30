@@ -138,7 +138,7 @@ zh_CN = {
     "hostname-empty-error": "主机名不能是空的",
     "empty-error": "{}不能是空的",  # Configuration
     "media-player-error": "媒体播放器错误：\"{}\"",  # Error line
-    "unable-import-gui-error": "无法导入GUI库。如果你没有安装PySide，GUI则无法工作，请安装PySide。",
+    "unable-import-gui-error": "无法导入GUI库。如果你没有安装PySide，GUI则无法工作，请安装PySide。 If you want to run Syncplay in console mode then run it with the --no-gui command line switch. See https://syncplay.pl/guide/ for more details.", # TODO: Translate end of message and update second sentence to be a translation of "You need to have the correct version of PySide installed for the GUI to work."
     "unable-import-twisted-error": "无法导入Twisted。请安装Twisted v16.4.0或更高版本。",
 
     "arguments-missing-error": "缺少一些必要的参数，使用--help命令查看详细信息",

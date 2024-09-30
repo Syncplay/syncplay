@@ -1,5 +1,6 @@
 # coding:utf8
 import os
+import random
 import re
 import sys
 import time
@@ -10,8 +11,9 @@ import ast
 from syncplay import constants
 from syncplay.messages import getMessage
 from syncplay.players.basePlayer import BasePlayer
-from syncplay.utils import isURL, findResourcePath
+from syncplay.utils import getRuntimeDir, isURL, findResourcePath
 from syncplay.utils import isMacOS, isWindows, isASCII
+from syncplay.utils import playerPathExists
 from syncplay.vendor.python_mpv_jsonipc.python_mpv_jsonipc import MPV
 
 class MpvPlayer(BasePlayer):
@@ -90,11 +92,11 @@ class MpvPlayer(BasePlayer):
 
     @staticmethod
     def getExpandedPath(playerPath):
-        if not os.path.isfile(playerPath):
-            if os.path.isfile(playerPath + "mpv.exe"):
+        if not playerPathExists(playerPath):
+            if playerPathExists(playerPath + "mpv.exe"):
                 playerPath += "mpv.exe"
                 return playerPath
-            elif os.path.isfile(playerPath + "\\mpv.exe"):
+            elif playerPathExists(playerPath + "\\mpv.exe"):
                 playerPath += "\\mpv.exe"
                 return playerPath
         if os.access(playerPath, os.X_OK):
@@ -181,6 +183,9 @@ class MpvPlayer(BasePlayer):
         self._listener.sendLine(["print_text", '"ANS_{}=${{{}}}"'.format(property_, propertyID)])
 
     def getCalculatedPosition(self):
+        if self._recentlyReset():
+            return 0
+
         if self.fileLoaded == False:
             self._client.ui.showDebugMessage(
                 "File not loaded so using GlobalPosition for getCalculatedPosition({})".format(
@@ -375,7 +380,7 @@ class MpvPlayer(BasePlayer):
         self._listener.sendLine(['loadfile', filePath], notReadyAfterThis=True)
 
     def setFeatures(self, featureList):
-        self.sendMpvOptions()
+        self._sendMpvOptions()
 
     def setPosition(self, value):
         if value < constants.DO_NOT_RESET_POSITION_THRESHOLD and self._recentlyReset():
@@ -408,7 +413,7 @@ class MpvPlayer(BasePlayer):
             self._storePosition(0)
         # TO TRY: self._listener.setReadyToSend(False)
 
-    def sendMpvOptions(self):
+    def _sendMpvOptions(self):
         options = []
         for option in constants.MPV_SYNCPLAYINTF_OPTIONS_TO_SEND:
             options.append("{}={}".format(option, self._client._config[option]))
@@ -420,6 +425,9 @@ class MpvPlayer(BasePlayer):
         options_string = ", ".join(options)
         self._listener.sendLine(["script-message-to", "syncplayintf", "set_syncplayintf_options",  options_string])
         self._setOSDPosition()
+        socketPath = self._listener.mpv_arguments.get("input-ipc-server")
+        if socketPath is not None:
+            self._setProperty("input-ipc-server", socketPath)
 
     def _handleUnknownLine(self, line):
         self.mpvErrorCheck(line)
@@ -447,7 +455,7 @@ class MpvPlayer(BasePlayer):
             #self._client.ui.showDebugMessage("{} = {} / {}".format(update_string, paused_update, position_update))
 
         if "<get_syncplayintf_options>" in line:
-            self.sendMpvOptions()
+            self._sendMpvOptions()
 
         if line == "<SyncplayUpdateFile>" or "Playing:" in line:
             self._client.ui.showDebugMessage("Not ready to send due to <SyncplayUpdateFile>")
@@ -618,8 +626,15 @@ class MpvPlayer(BasePlayer):
                     env['PATH'] = python_executable + ':' + env['PATH']
                     env['PYTHONPATH'] = pythonPath
             try:
-                socket = self.mpv_arguments.get('input-ipc-server')
-                self.mpvpipe = self.playerIPCHandler(mpv_location=self.playerPath, ipc_socket=socket, loglevel="info", log_handler=self.__playerController.mpv_log_handler, quit_callback=self.stop_client, env=env, **self.mpv_arguments)
+                self.mpvpipe = self.playerIPCHandler(
+                    loglevel="info",
+                    ipc_socket=self._get_ipc_socket(),
+                    mpv_location=self.playerPath,
+                    log_handler=self.__playerController.mpv_log_handler,
+                    quit_callback=self.stop_client,
+                    env=env,
+                    **self.mpv_arguments
+                )
             except Exception as e:
                 self.quitReason = getMessage("media-player-error").format(str(e)) + " " + getMessage("mpv-failed-advice")
                 self.__playerController.reactor.callFromThread(self.__playerController._client.ui.showErrorMessage, self.quitReason, True)
@@ -627,6 +642,12 @@ class MpvPlayer(BasePlayer):
             self.__process = self.mpvpipe
             #self.mpvpipe.show_text("HELLO WORLD!", 1000)
             threading.Thread.__init__(self, name="MPV Listener")
+
+        def _get_ipc_socket(self):
+            if isWindows():
+                # On Windows, mpv expects a named pipe identifier (not a path)
+                return "syncplay-mpv-{0}".format(random.randint(0, 2**48))
+            return getRuntimeDir().joinpath("mpv-socket").as_posix()
 
         def __getCwd(self, filePath, env):
             if not filePath:
