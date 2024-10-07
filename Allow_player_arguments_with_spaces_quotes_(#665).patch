@@ -1,0 +1,79 @@
+Subject: [PATCH] Allow player arguments with spaces/quotes (#665)
+---
+Index: syncplay/utils.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/syncplay/utils.py b/syncplay/utils.py
+--- a/syncplay/utils.py	(revision b22c9ab72148ef4c94fd8cb55803dc49a1b32fa5)
++++ b/syncplay/utils.py	(date 1706291957961)
+@@ -191,6 +191,10 @@
+     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s), minLength, -1))
+ 
+ 
++def parseCommandLineString(s):
++    arsToReturn = re.findall(constants.ARGUMENT_SPLIT_REGEX, s)
++    return arsToReturn
++
+ def blackholeStdoutForFrozenWindow():
+     if getattr(sys, 'frozen', '') == "windows_exe":
+         class Stderr(object):
+Index: syncplay/ui/GuiConfiguration.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/syncplay/ui/GuiConfiguration.py b/syncplay/ui/GuiConfiguration.py
+--- a/syncplay/ui/GuiConfiguration.py	(revision b22c9ab72148ef4c94fd8cb55803dc49a1b32fa5)
++++ b/syncplay/ui/GuiConfiguration.py	(date 1706289487195)
+@@ -279,7 +279,7 @@
+         currentplayerpath = self.executablepathCombobox.currentText()
+ 
+         if currentplayerpath:
+-            NewPlayerArgs = self.playerargsTextbox.text().split(" ") if self.playerargsTextbox.text() else ""
++            NewPlayerArgs = utils.parseCommandLineString(self.playerargsTextbox.text()) if self.playerargsTextbox.text() else ""
+             self.perPlayerArgs[self.executablepathCombobox.currentText()] = NewPlayerArgs
+ 
+     def languageChanged(self):
+Index: syncplay/players/vlc.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/syncplay/players/vlc.py b/syncplay/players/vlc.py
+--- a/syncplay/players/vlc.py	(revision b22c9ab72148ef4c94fd8cb55803dc49a1b32fa5)
++++ b/syncplay/players/vlc.py	(date 1706291938733)
+@@ -487,10 +487,14 @@
+ 
+             call.extend(self.__playerController.SLAVE_ARGS)
+             if args:
+-                call.extend(args)
++                for arg in args:
++                    if "=" in arg and "\"" in arg:
++                        (argName, argValue) = arg.split("=", 1)
++                        if argValue.startswith("\"") and argValue.endswith("\""):
++                            arg = argName + "=" + argValue[1:-1]
++                    call.extend([arg])
+ 
+             self._vlcVersion = None
+-
+             if isWindows() and getattr(sys, 'frozen', '') and getattr(sys, '_MEIPASS', '') is not None:  # Needed for pyinstaller --onefile bundle
+                 self.__process = subprocess.Popen(
+                     call, stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
+Index: syncplay/constants.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/syncplay/constants.py b/syncplay/constants.py
+--- a/syncplay/constants.py	(revision b22c9ab72148ef4c94fd8cb55803dc49a1b32fa5)
++++ b/syncplay/constants.py	(date 1706289344189)
+@@ -115,6 +115,7 @@
+ FILENAME_STRIP_REGEX = "[-~_\.\[\](): ]"
+ CONTROL_PASSWORD_STRIP_REGEX = "[^a-zA-Z0-9\-]"
+ ROOM_NAME_STRIP_REGEX = "^(\+)(?P<roomnamebase>.*)(:)(\w{12})$"
++ARGUMENT_SPLIT_REGEX = r'(?:[^\s"]+|"[^"]*")+'
+ COMMANDS_UNDO = ["u", "undo", "revert"]
+ COMMANDS_CHAT = ["ch", "chat"]
+ COMMANDS_LIST = ["l", "list", "users"]
