@@ -825,7 +825,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 addSetUserAsReadyText = getMessage("setasnotready-menu-label").format(shortUsername)
                 menu.addAction(QtGui.QPixmap(resourcespath + "cross.png"), addSetUserAsReadyText, lambda: self._syncplayClient.setOthersReadiness(username, False))
             else:
-                addSetUserAsNotReadyText = getMessage("setasnotready-menu-label").format(shortUsername)
+                addSetUserAsNotReadyText = getMessage("setasready-menu-label").format(shortUsername)
                 menu.addAction(QtGui.QPixmap(resourcespath + "tick.png"), addSetUserAsNotReadyText, lambda: self._syncplayClient.setOthersReadiness(username, True))
         menu.exec_(self.listTreeView.viewport().mapToGlobal(position))
 
