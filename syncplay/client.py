@@ -269,7 +269,6 @@ class SyncplayClient(object):
         if self.playlist.canSwitchToNextPlaylistIndex():
             self.ui.showDebugMessage("Preparing to advance playlist...")
             self.lastAdvanceTime = time.time()
-            #self._protocol.sendState(0, True, True, None, True)
         else:
             self.ui.showDebugMessage("Not preparing to advance playlist because the next file cannot be switched to")
 
@@ -1876,8 +1875,6 @@ class SyncplayPlaylist():
         self._playlistIndex = index
         if username is None:
             if self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
-                '''if resetPosition:
-                    self._client.rewindFile()'''
                 self._client.setPlaylistIndex(index)
                 filename = self._playlist[index]
                 self._ui.setPlaylistIndexFilename(filename)
