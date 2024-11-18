@@ -111,7 +111,7 @@ FOLDER_SEARCH_WARNING_THRESHOLD = 2.0 # Secs - how long until a warning saying h
 FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0  # Secs - Frequency of updating cache
 
 # Usually there's no need to adjust these
-DOUBLE_CHECK_REWIND = False
+DOUBLE_CHECK_REWIND = True
 LAST_PAUSED_DIFF_THRESHOLD = 2
 FILENAME_STRIP_REGEX = r"[-~_\.\[\](): ]"
 CONTROL_PASSWORD_STRIP_REGEX = r"[^a-zA-Z0-9\-]"
@@ -273,6 +273,7 @@ MPV_ARGS = {'force-window': 'yes',
             'term-playing-msg': '<SyncplayUpdateFile>\nANS_filename=${filename}\nANS_length=${=duration:${=length:0}}\nANS_path=${path}\n</SyncplayUpdateFile>',
             'keep-open-pause': 'yes'
             }
+MPV_NET_EXTRA_ARGS = { 'auto-load-folder': 'no' }
 
 IINA_PROPERTIES = {'geometry': '25%+100+100', 
                    'idle': 'yes',
