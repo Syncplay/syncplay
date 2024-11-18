@@ -44,8 +44,6 @@ from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
 from syncplay.messages import getMissingStrings, getMessage, isNoOSDMessage
 from syncplay.protocols import SyncClientProtocol
 from syncplay.utils import isMacOS
-
-
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry=constants.RECONNECT_RETRIES):
         self._client = client
@@ -74,6 +72,7 @@ class SyncplayClient(object):
         constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT = config['folderSearchFirstFileTimeout']
         constants.FOLDER_SEARCH_TIMEOUT = config['folderSearchTimeout']
         constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = config['folderSearchDoubleCheckInterval']
+        constants.FOLDER_SEARCH_WARNING_THRESHOLD = config['folderSearchWarningThreshold']
 
         self.controlpasswords = {}
         self.lastControlPasswordAttempt = None
@@ -2197,6 +2196,9 @@ class FileSwitchManager(object):
                 self.currentlyUpdating = True
                 dirsToSearch = self.mediaDirectories
 
+                if not self.folderSearchEnabled:
+                    return
+
                 if dirsToSearch:
                     # Spin up hard drives to prevent premature timeout
                     randomFilename = "RandomFile"+str(random.randrange(10000, 99999))+".txt"
@@ -2216,13 +2218,21 @@ class FileSwitchManager(object):
                     # Actual directory search
                     newMediaFilesCache = {}
                     startTime = time.time()
+                    fileCount = 0
+                    lastWarningTime = None
                     for directory in dirsToSearch:
                         for root, dirs, files in os.walk(directory):
+                            fileCount += 1
                             newMediaFilesCache[root] = files
-                            if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
-                                self.directorySearchError = getMessage("folder-search-timeout-error").format(directory)
+                            timeTakenSoFar = time.time() - startTime
+                            if timeTakenSoFar > constants.FOLDER_SEARCH_TIMEOUT:
+                                reactor.callLater(0.1, self._client.ui.showErrorMessage, getMessage("folder-search-timeout-error").format(directory, fileCount),False)
                                 self.folderSearchEnabled = False
                                 return
+                            if timeTakenSoFar > constants.FOLDER_SEARCH_WARNING_THRESHOLD:
+                                if not lastWarningTime or timeTakenSoFar - lastWarningTime >= 1:
+                                    reactor.callLater(0.1, self._client.ui.showErrorMessage, getMessage("folder-search-timeout-warning").format(int(timeTakenSoFar), fileCount, directory),False)
+                                    lastWarningTime = timeTakenSoFar
 
                     if self.mediaFilesCache != newMediaFilesCache:
                         self.mediaFilesCache = newMediaFilesCache
@@ -2250,33 +2260,12 @@ class FileSwitchManager(object):
                     if os.path.isfile(filepath):
                         return filepath
 
-        if highPriority and self.folderSearchEnabled and self.mediaDirectories is not None:
+        if self.folderSearchEnabled and self.mediaDirectories is not None:
             directoryList = self.mediaDirectories
-            # Spin up hard drives to prevent premature timeout
-            randomFilename = "RandomFile"+str(random.randrange(10000, 99999))+".txt"
             for directory in directoryList:
-                startTime = time.time()
-                if os.path.isfile(os.path.join(directory, randomFilename)):
-                    randomFilename = "RandomFile"+str(random.randrange(10000, 99999))+".txt"
-                    print("Found random file (?)")
-                if not self.folderSearchEnabled:
-                    return
-                if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
-                    self.folderSearchEnabled = False
-                    self.directorySearchError = getMessage("folder-search-first-file-timeout-error").format(directory)
-                    return
-
-            startTime = time.time()
-            if filename and directoryList:
-                for directory in directoryList:
-                    for root, dirs, files in os.walk(directory):
-                        if filename in files:
-                            return os.path.join(root, filename)
-                        if time.time() - startTime > constants.FOLDER_SEARCH_TIMEOUT:
-                            self.folderSearchEnabled = False
-                            self.directorySearchError = getMessage("folder-search-timeout-error").format(directory)
-                            return None
-            return None
+                filepath = os.path.join(directory, filename)
+                if os.path.isfile(filepath):
+                    return filepath
 
     def areWatchedFilenamesInCache(self):
         if self.filenameWatchlist is not None:

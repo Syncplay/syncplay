@@ -173,7 +173,8 @@ zh_CN = {
     "invalid-offset-value": "无效的偏移值",
 
     "switch-file-not-found-error": "无法切换到视频文件'{0}'。Syncplay只在指定的媒体目录中查找文件。",  # File not found
-    "folder-search-timeout-error": "在媒体目录中搜索媒体文件时，由于在'{}'中搜索时间过长而中止。如果你在要搜索的媒体文件夹列表中选择了一个子文件夹过多的文件夹，就会出现这种情况。为了使自动文件切换再次工作，请在菜单栏中选择\"文件->设置媒体目录\"，并删除这个目录或用一个适当的子文件夹替换它。如果这个文件夹实际上是适当的，那么你可以通过选择\"文件->设置媒体目录\"并按\"确定\"来重新启用它。",  # Folder
+    "folder-search-timeout-error": "在媒体目录中搜索媒体文件时，由于在'{}'中搜索时间过长而中止 (after having processed the first {} files)。如果你在要搜索的媒体文件夹列表中选择了一个子文件夹过多的文件夹，就会出现这种情况。为了使自动文件切换再次工作，请在菜单栏中选择\"文件->设置媒体目录\"，并删除这个目录或用一个适当的子文件夹替换它。如果这个文件夹实际上是适当的，那么你可以通过选择\"文件->设置媒体目录\"并按\"确定\"来重新启用它。",  # Folder, Files processed - TODO: Update translation (refer back to original English text)
+    "folder-search-timeout-warning": "Warning: It has taken {} seconds to scan {:,} files in the folder '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through or if there are too many files to process.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators. TODO: Translate
     "folder-search-first-file-timeout-error": "搜索'{}'中的媒体文件时，由于访问该目录的时间太长而被中止。如果该目录位于网络驱动器，或者如果你配置了你的驱动器在一段时间不活动后停止工作，就会发生这种情况。为了能够自动切换播放文件，请进入\"文件->设置媒体目录\"，并删除该目录或解决这个问题（还可尝试其他解决方式，例如，改变省电设置）。",  # Folder
     "added-file-not-in-media-directory-error": "你在'{}'中加载了一个文件，该媒体目录尚未保存。你可以通过选择菜单栏中的\"文件->设置媒体目录\"将其保存为指定媒体目录。",  # Folder
     "no-media-directories-error": "没有设置媒体目录。为了使共享播放列表和文件切换功能正常工作，请选择\"文件->设置媒体目录\"，并指定Syncplay应该在哪里寻找媒体文件。",

@@ -173,7 +173,8 @@ ko = {
     "invalid-offset-value": "잘못된 오프셋 값",
 
     "switch-file-not-found-error": "'{0}' 파일로 전환할 수 없습니다. Syncplay는 지정된 미디어 디렉터리를 찾습니다.",  # File not found
-    "folder-search-timeout-error": "'{}'을(를) 검색하는 데 너무 오래 걸리기 때문에 미디어 디렉터리에서 미디어 검색이 중단되었습니다. 미디어 폴더 목록에서 검색할 하위 폴더가 너무 많은 폴더를 선택하면 이 문제가 발생합니다. 자동 파일 전환이 다시 작동하도록 하려면 메뉴 표시줄에서 파일->미디어 디렉터리 설정을 선택하고 이 디렉터리를 제거하거나 적절한 하위 폴더로 바꾸세요. 폴더가 실제로 괜찮다면 파일->미디어 디렉터리 설정을 선택하고 '확인'을 눌러 폴더를 다시 활성화할 수 있습니다.",  # Folder
+    "folder-search-timeout-error": "'{}'을(를) 검색하는 데 너무 오래 걸리기 때문에 미디어 디렉터리에서 미디어 검색이 중단되었습니다 (after having processed the first {:,} files). 미디어 폴더 목록에서 검색할 하위 폴더가 너무 많은 폴더를 선택하면 이 문제가 발생합니다. 자동 파일 전환이 다시 작동하도록 하려면 메뉴 표시줄에서 파일->미디어 디렉터리 설정을 선택하고 이 디렉터리를 제거하거나 적절한 하위 폴더로 바꾸세요. 폴더가 실제로 괜찮다면 파일->미디어 디렉터리 설정을 선택하고 '확인'을 눌러 폴더를 다시 활성화할 수 있습니다.", # Folder, Files processed - Note: {:,} is {} but with added commas seprators - TODO: Translate
+    "folder-search-timeout-warning": "Warning: It has taken {} seconds to scan {:,} files in the folder '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through or if there are too many files to process.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators. TODO: Translate
     "folder-search-first-file-timeout-error": "디렉터리에 액세스하는 데 시간이 너무 오래 걸려 '{}'의 미디어 검색이 중단되었습니다. 이는 네트워크 드라이브이거나 일정 시간 동안 사용하지 않으면 스핀다운하도록 드라이브를 구성한 경우에 발생할 수 있습니다. 자동 파일 전환이 다시 작동하려면 파일->미디어 디렉터리 설정으로 이동하여 디렉터리를 제거하거나 이슈를 해결하세요(예: 절전 설정 변경).",  # Folder
     "added-file-not-in-media-directory-error": "알려진 미디어 디렉터리가 아닌 '{}'에 파일을 로드했습니다. 메뉴 표시줄에서 파일->미디어 디렉터리 설정을 선택하여 이 파일을 미디어 디렉터리로 추가할 수 있습니다.",  # Folder
     "no-media-directories-error": "미디어 디렉터리가 설정되지 않았습니다. 공유 재생목록 및 파일 전환 기능이 제대로 작동하려면 파일->미디어 디렉터리 설정을 선택하고 Syncplay가 미디어 파일을 찾을 위치를 지정하세요.",
