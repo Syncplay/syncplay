@@ -965,7 +965,6 @@ add_alpharowbinding('[',']')
 add_alpharowbinding('#','#')
 add_alpharowbinding('~','~')
 add_alpharowbinding('\'','\'')
-add_alpharowbinding('@','@')
 
 add_specialalphabindings(non_us_chars)
 add_repl_bindings(bindings)
