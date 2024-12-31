@@ -145,7 +145,7 @@ class SyncClientProtocol(JSONCommandProtocol):
                 motd += "\n\n"
             motd += getMessage("persistent-rooms-notice")
         if motd:
-            self._client.ui.showMessage(motd, True, True)
+            self._client.ui.showMessage(motd, noPlayer=True, noTimestamp=True, isMotd=True)
         self._client.ui.showMessage(getMessage("connected-successful-notification"))
         self._client.connected()
         self._client.sendFile()

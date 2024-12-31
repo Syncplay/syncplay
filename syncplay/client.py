@@ -1687,10 +1687,10 @@ class UiManager(object):
     def setSSLMode(self, sslMode, sslInformation=""):
         self.__ui.setSSLMode(sslMode, sslInformation)
 
-    def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL):
+    def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL, isMotd=False):
         if not noPlayer:
             self.showOSDMessage(message, duration=constants.OSD_DURATION, OSDType=OSDType, mood=mood)
-        self.__ui.showMessage(message, noTimestamp)
+        self.__ui.showMessage(message, noTimestamp=noTimestamp, isMotd=isMotd)
 
     def updateAutoPlayState(self, newState):
         self.__ui.updateAutoPlayState(newState)
