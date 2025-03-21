@@ -49,8 +49,8 @@ else:
 
 
 class ConsoleInGUI(ConsoleUI):
-    def showMessage(self, message, noTimestamp=False):
-        self._syncplayClient.ui.showMessage(message, True)
+    def showMessage(self, message, noTimestamp=False, isMotd=False):
+        self._syncplayClient.ui.showMessage(message, noTimestamp=True, isMotd=isMotd)
 
     def showDebugMessage(self, message):
         self._syncplayClient.ui.showDebugMessage(message)
@@ -542,7 +542,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def getSSLInformation(self):
         return self.sslInformation
 
-    def showMessage(self, message, noTimestamp=False):
+    def showMessage(self, message, noTimestamp=False, isMotd=False):
         message = str(message)
         username = None
         messageWithUsername = re.match(constants.MESSAGE_WITH_USERNAME_REGEX, message, re.UNICODE)
@@ -552,6 +552,10 @@ class MainWindow(QtWidgets.QMainWindow):
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         if username:
             message = constants.STYLE_USER_MESSAGE.format(constants.STYLE_USERNAME, username, message)
+        # When showing a MOTD, escape spaces and use a monospace font to preserve the look of ASCII art.
+        if isMotd:
+            message = message.replace(" ", "&nbsp;")
+            message = "<code>{}</code>".format(message)
         message = message.replace("\n", "<br />")
         if noTimestamp:
             self.newMessage("{}<br />".format(message))
