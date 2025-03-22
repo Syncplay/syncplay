@@ -43,9 +43,9 @@ if isMacOS() and IsPySide:
 lastCheckedForUpdates = None
 from syncplay.vendor import darkdetect
 if isMacOS() or isWindows():
-	isDarkMode = darkdetect.isDark()
+    isDarkMode = darkdetect.isDark()
 else:
-	isDarkMode = None
+    isDarkMode = None
 
 
 class ConsoleInGUI(ConsoleUI):
@@ -2118,9 +2118,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setWindowFlags(self.windowFlags())
         else:
             try:    
-            	self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
+                self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
             except TypeError:
-            	self.setWindowFlags(self.windowFlags())
+                self.setWindowFlags(self.windowFlags())
         self.setWindowTitle("Syncplay v" + version + revision)
         self.mainLayout = QtWidgets.QVBoxLayout()
         self.addTopLayout(self)
