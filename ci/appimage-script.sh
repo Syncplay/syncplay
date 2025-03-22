@@ -63,9 +63,9 @@ export LD_LIBRARY_PATH="$APPDIR"/usr/lib
 export PATH="$PATH":"$APPDIR"/usr/bin
 
 if [ "$1" == "--server" ]; then
-	exec "$APPDIR"/usr/bin/python "$APPDIR"/usr/bin/syncplay-server "${@:2}"
+    exec "$APPDIR"/usr/bin/python "$APPDIR"/usr/bin/syncplay-server "${@:2}"
 else
-	exec "$APPDIR"/usr/bin/python "$APPDIR"/usr/bin/syncplay "$@"
+    exec "$APPDIR"/usr/bin/python "$APPDIR"/usr/bin/syncplay "$@"
 fi
 EAT
 chmod +x AppRun.sh
@@ -75,24 +75,24 @@ mkdir -p AppDir/usr/share/metainfo/
 cat > pl.syncplay.syncplay.appdata.xml <<\EAT
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-	<id>pl.syncplay.syncplay</id>
-	<metadata_license>MIT</metadata_license>
-	<project_license>Apache-2.0</project_license>
-	<name>Syncplay</name>
-	<summary>Client/server to synchronize media playback on mpv/VLC/MPC-HC/MPC-BE on many computers</summary>
-	<description>
-		<p>Syncplay synchronises the position and play state of multiple media players so that the viewers can watch the same thing at the same time. This means that when one person pauses/unpauses playback or seeks (jumps position) within their media player then this will be replicated across all media players connected to the same server and in the same 'room' (viewing session). When a new person joins they will also be synchronised. Syncplay also includes text-based chat so you can discuss a video as you watch it (or you could use third-party Voice over IP software to talk over a video).</p>
-	</description>
-	<launchable type="desktop-id">pl.syncplay.syncplay.desktop</launchable>
-	<url type="homepage">https://syncplay.pl/</url>
-	<screenshots>
-		<screenshot type="default">
-			<image>https://syncplay.pl/2019-05-26.png</image>
-		</screenshot>
-	</screenshots>
-	<provides>
-		<id>pl.syncplay.syncplay.desktop</id>
-	</provides>
+    <id>pl.syncplay.syncplay</id>
+    <metadata_license>MIT</metadata_license>
+    <project_license>Apache-2.0</project_license>
+    <name>Syncplay</name>
+    <summary>Client/server to synchronize media playback on mpv/VLC/MPC-HC/MPC-BE on many computers</summary>
+    <description>
+        <p>Syncplay synchronises the position and play state of multiple media players so that the viewers can watch the same thing at the same time. This means that when one person pauses/unpauses playback or seeks (jumps position) within their media player then this will be replicated across all media players connected to the same server and in the same 'room' (viewing session). When a new person joins they will also be synchronised. Syncplay also includes text-based chat so you can discuss a video as you watch it (or you could use third-party Voice over IP software to talk over a video).</p>
+    </description>
+    <launchable type="desktop-id">pl.syncplay.syncplay.desktop</launchable>
+    <url type="homepage">https://syncplay.pl/</url>
+    <screenshots>
+        <screenshot type="default">
+            <image>https://syncplay.pl/2019-05-26.png</image>
+        </screenshot>
+    </screenshots>
+    <provides>
+        <id>pl.syncplay.syncplay.desktop</id>
+    </provides>
 </component>
 EAT
 mv pl.syncplay.syncplay.appdata.xml AppDir/usr/share/metainfo/
@@ -110,9 +110,9 @@ export OUTPUT=Syncplay-$VERSION-x86_64.AppImage
     -e $(which readelf) \
     -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
     --output appimage --custom-apprun AppRun.sh \
-	-l /usr/lib/x86_64-linux-gnu/libgthread-2.0.so.0 \
-	-l /usr/lib/x86_64-linux-gnu/libxkbcommon-x11.so.0 \
-	-l /usr/lib/x86_64-linux-gnu/libxcb.so.1 \
+    -l /usr/lib/x86_64-linux-gnu/libgthread-2.0.so.0 \
+    -l /usr/lib/x86_64-linux-gnu/libxkbcommon-x11.so.0 \
+    -l /usr/lib/x86_64-linux-gnu/libxcb.so.1 \
 ;
 
 mv Syncplay*.AppImage "$OLD_CWD"
