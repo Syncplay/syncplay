@@ -1,7 +1,9 @@
 from syncplay.players.mplayer import MplayerPlayer
 from syncplay.players.mpv import MpvPlayer
 from syncplay.players.mpvnet import MpvnetPlayer
+from syncplay.players.memento import MementoPlayer
 from syncplay.players.vlc import VlcPlayer
+
 try:
     from syncplay.players.mpc import MPCHCAPIPlayer
 except ImportError:
@@ -20,4 +22,4 @@ except ImportError:
 
 
 def getAvailablePlayers():
-    return [MPCHCAPIPlayer, MpvPlayer, MpvnetPlayer, VlcPlayer, MpcBePlayer, MplayerPlayer, IinaPlayer]
+    return [MPCHCAPIPlayer, MpvPlayer, MpvnetPlayer, MementoPlayer, VlcPlayer, MpcBePlayer, MplayerPlayer, IinaPlayer]

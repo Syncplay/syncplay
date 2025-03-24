@@ -180,6 +180,8 @@ MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"c:\program files\mpv\mpv.exe", r"c:\progra
              r"c:\program Files (x86)\mpv\mpv.exe", r"c:\program Files (x86)\mpv-player\mpv.exe",
              "/Applications/mpv.app/Contents/MacOS/mpv"]
 MPVNET_PATHS = [r"c:\program files\mpv.net\mpvnet.exe", r"c:\program Files (x86)\mpv.net\mpvnet.exe"]
+MEMENTO_PATHS = ["memento", "/usr/bin/memento", "/usr/local/bin/memento"]
+
 try:
     import os
     MPVNET_PATHS.append(os.path.expandvars(r'%LOCALAPPDATA%\Microsoft\WindowsApps\mpvnet.exe'))
@@ -203,6 +205,7 @@ IINA_ICONPATH = "iina.png"
 MPLAYER_ICONPATH = "mplayer.png"
 MPV_ICONPATH = "mpv.png"
 MPVNET_ICONPATH = "mpvnet.png"
+MEMENTO_ICONPATH = "memento.png"
 MPC_ICONPATH = "mpc-hc.png"
 MPC64_ICONPATH = "mpc-hc64.png"
 MPC_BE_ICONPATH = "mpc-be.png"
