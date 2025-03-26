@@ -61,81 +61,81 @@ jobs:
           path: |
             Syncplay-${{ env.VER }}-Setup.exe
 
-  macos:
-    name: Build for macOS
-    runs-on: macos-12
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Python
-        run: |
-          wget https://www.python.org/ftp/python/3.10.6/python-3.10.6-macos11.pkg
-          sudo installer -verbose -pkg ./python-3.10.6-macos11.pkg -target /
-          echo "/Library/Frameworks/Python.framework/Versions/3.10/bin" >> $GITHUB_PATH
-
-      - name: Check Python install
-        run: |
-          which python3
-          python3 --version
-          which pip3
-          pip3 --version
-          file $(which python3)
-
-      - name: Install Python dependencies
-        run: |
-          pip3 install -U pip setuptools wheel
-          pip3 install -r requirements.txt
-          pip3 install -r requirements_gui.txt
-          pip3 install py2app
-
-      - name: Install universal2 dependencies
-        env:
-          CFLAGS: -arch x86_64 -arch arm64
-          ARCHFLAGS: -arch x86_64 -arch arm64
-        run: |
-          pip3 uninstall zope.interface -y
-          pip3 install --no-binary :all: zope.interface
-
-          pip3 uninstall cffi -y
-          pip3 install --no-binary :all: cffi
-
-          pip3 uninstall cryptography -y
-          pip3 download --platform macosx_10_10_universal2 --only-binary :all: --no-deps --dest . cryptography
-          pip3 install --no-cache-dir --no-index --find-links . cryptography
-
-          pip3 uninstall charset-normalizer -y
-          pip3 download --platform macosx_10_9_universal2 --only-binary :all: --no-deps --dest . charset-normalizer
-          pip3 install --no-cache-dir --no-index --find-links . charset-normalizer
-
-      - name: Check Python dependencies
-        run: |
-          python3 -c "from PySide6 import __version__; print(__version__)"
-          python3 -c "from PySide6.QtCore import __version__; print(__version__)"
-          python3 -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))"
-          python3 -c "import ssl; print(ssl)"
-          python3 -c "from py2app.recipes import pyside6"
-          python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LDLIBRARY"))'
-
-      - name: Build
-        run: |
-          python3 buildPy2app.py py2app
-
-      - name: Prepare for deployment
-        run: |
-          ls -al
-          export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
-          echo "VER=$VER" >> $GITHUB_ENV
-          mkdir dist_actions
-          ci/macos-deploy.sh
-          ls -al dist_actions
-
-      - name: Deploy
-        uses: actions/upload-artifact@v4
-        with:
-          name: Syncplay_${{ env.VER }}.dmg
-          path: |
-            dist_actions/Syncplay_${{ env.VER }}.dmg
+#  macos:
+#    name: Build for macOS
+#    runs-on: macos-12
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Python
+#        run: |
+#          wget https://www.python.org/ftp/python/3.10.6/python-3.10.6-macos11.pkg
+#          sudo installer -verbose -pkg ./python-3.10.6-macos11.pkg -target /
+#          echo "/Library/Frameworks/Python.framework/Versions/3.10/bin" >> $GITHUB_PATH
+#
+#      - name: Check Python install
+#        run: |
+#          which python3
+#          python3 --version
+#          which pip3
+#          pip3 --version
+#          file $(which python3)
+#
+#      - name: Install Python dependencies
+#        run: |
+#          pip3 install -U pip setuptools wheel
+#          pip3 install -r requirements.txt
+#          pip3 install -r requirements_gui.txt
+#          pip3 install py2app
+#
+#      - name: Install universal2 dependencies
+#        env:
+#          CFLAGS: -arch x86_64 -arch arm64
+#          ARCHFLAGS: -arch x86_64 -arch arm64
+#        run: |
+#          pip3 uninstall zope.interface -y
+#          pip3 install --no-binary :all: zope.interface
+#
+#          pip3 uninstall cffi -y
+#          pip3 install --no-binary :all: cffi
+#
+#          pip3 uninstall cryptography -y
+#          pip3 download --platform macosx_10_10_universal2 --only-binary :all: --no-deps --dest . cryptography
+#          pip3 install --no-cache-dir --no-index --find-links . cryptography
+#
+#          pip3 uninstall charset-normalizer -y
+#          pip3 download --platform macosx_10_9_universal2 --only-binary :all: --no-deps --dest . charset-normalizer
+#          pip3 install --no-cache-dir --no-index --find-links . charset-normalizer
+#
+#      - name: Check Python dependencies
+#        run: |
+#          python3 -c "from PySide6 import __version__; print(__version__)"
+#          python3 -c "from PySide6.QtCore import __version__; print(__version__)"
+#          python3 -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))"
+#          python3 -c "import ssl; print(ssl)"
+#          python3 -c "from py2app.recipes import pyside6"
+#          python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LDLIBRARY"))'
+#
+#      - name: Build
+#        run: |
+#          python3 buildPy2app.py py2app
+#
+#      - name: Prepare for deployment
+#        run: |
+#          ls -al
+#          export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+#          echo "VER=$VER" >> $GITHUB_ENV
+#          mkdir dist_actions
+#          ci/macos-deploy.sh
+#          ls -al dist_actions
+#
+#      - name: Deploy
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: Syncplay_${{ env.VER }}.dmg
+#          path: |
+#            dist_actions/Syncplay_${{ env.VER }}.dmg
 
   deb:
     name: Build Debian package
