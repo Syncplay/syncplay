@@ -99,7 +99,7 @@ class ConsoleUI(threading.Thread):
     def setFeatures(self, featureList):
         pass
 
-    def showMessage(self, message, noTimestamp=False):
+    def showMessage(self, message, noTimestamp=False, isMotd=False):
         message = message.encode(sys.stdout.encoding, 'replace')
         try:
             message = message.decode('utf-8')
