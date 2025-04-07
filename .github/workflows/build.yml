@@ -112,7 +112,7 @@ jobs:
         run: |
           python3 -c "from PySide6 import __version__; print(__version__)"
           python3 -c "from PySide6.QtCore import __version__; print(__version__)"
-          python3 -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))"
+          python3 -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.path(QLibraryInfo.LibrariesPath))"
           python3 -c "import ssl; print(ssl)"
           python3 -c "from py2app.recipes import pyside6"
           python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LDLIBRARY"))'
