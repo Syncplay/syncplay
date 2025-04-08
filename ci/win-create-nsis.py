@@ -7,77 +7,12 @@
 # 2) It is expected that you will have NSIS 3 NSIS from http://nsis.sourceforge.net installed.
 
 import codecs
-import sys
-# try:
-#     if (sys.version_info.major != 2) or (sys.version_info.minor < 7):
-#         raise Exception("You must build Syncplay with Python 2.7!")
-# except AttributeError:
-#     import warnings
-#     warnings.warn("You must build Syncplay with Python 2.7!")
-
-from glob import glob
 import os
 import subprocess
 from string import Template
 
-from distutils.core import setup
-try:
-    from py2exe.build_exe import py2exe
-except ImportError:
-    from py2exe.distutils_buildexe import py2exe
-
 import syncplay
 from syncplay.messages import getMissingStrings, getMessage, getLanguages
-
-try:
-    import PySide6
-    from PySide6 import QtCore as BuildQtCore
-    QT_BINDING = 'PySide6'
-    QT_PACKAGES = 'PySide6, shiboken6'
-except ImportError:
-    from PySide2 import QtCore as BuildQtCore
-    QT_BINDING = 'PySide2'
-    QT_PACKAGES = 'PySide2'
-
-
-def installPySide6Py2exeHook():
-    if QT_BINDING != 'PySide6':
-        return
-
-    import ast
-    from py2exe import hooks as py2exeHooks
-
-    qtModules = list(PySide6.__all__)
-
-    def hookPySide6(finder, module):
-        tree = ast.parse(module.__source__)
-        foundModuleFinder = [False]
-        foundDirectorySetup = [False]
-
-        class ChangeDef(ast.NodeTransformer):
-            def visit_FunctionDef(self, node):
-                if node.name == '_find_all_qt_modules':
-                    node.body = ast.parse('return {!r}'.format(qtModules)).body
-                    foundModuleFinder[0] = True
-                elif node.name == '_setupQtDirectories':
-                    node.body = ast.parse(
-                        'global Shiboken\nfrom shiboken6 import Shiboken'
-                    ).body
-                    foundDirectorySetup[0] = True
-                return node
-
-        patchedTree = ast.fix_missing_locations(ChangeDef().visit(tree))
-        if not foundModuleFinder[0] or not foundDirectorySetup[0]:
-            raise RuntimeError('PySide6 package layout is not compatible with the py2exe build workaround')
-        module.__code_object__ = compile(
-            patchedTree, module.__file__, 'exec', optimize=module.__optimize__
-        )
-        finder.import_hook('shiboken6')
-
-    py2exeHooks.hook_PySide6 = hookPySide6
-
-
-installPySide6Py2exeHook()
 
 missingStrings = getMissingStrings()
 if missingStrings is not None and missingStrings != "":
@@ -100,9 +35,8 @@ def get_nsis_path():
 
 NSIS_COMPILE = get_nsis_path()
 
-OUT_DIR = "syncplay_v{}".format(syncplay.version)
+OUT_DIR = "dist/syncplay" #"syncplay_v{}".format(syncplay.version)
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
-DEFAULT_INSTALL_DIR = "$PROGRAMFILES64\\Syncplay" if sys.maxsize > 2**32 else "$PROGRAMFILES\\Syncplay"
 
 languages = getLanguages()
 
@@ -168,21 +102,20 @@ NSIS_SCRIPT_TEMPLATE = r"""
   !include FileFunc.nsh
 
 """ + loadLanguageFileString + r"""
- 
+
   Unicode true
 
   Name "Syncplay $version"
   OutFile "Syncplay-$version-Setup.exe"
-  InstallDir "$installDir"
-  InstallDirRegKey HKLM SOFTWARE\Syncplay "Install_Dir"
+  InstallDir $$PROGRAMFILES\Syncplay
   RequestExecutionLevel admin
-  ManifestDPIAware true
+  ManifestDPIAware false
   XPStyle on
   Icon syncplay\resources\icon.ico ;Change DIR
   SetCompressor /SOLID lzma
 
   VIProductVersion "$version.0"
-  
+
   """ + versionKeysString + languageString + r"""
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "
@@ -600,7 +533,6 @@ class NSISScript(object):
             raise RuntimeError("Cannot create setup script, file exists at {}".format(SETUP_SCRIPT_PATH))
         contents = Template(NSIS_SCRIPT_TEMPLATE).substitute(
             version=syncplay.version,
-            installDir=DEFAULT_INSTALL_DIR,
             uninstallFiles=uninstallFiles,
             installFiles=installFiles,
             totalSize=totalSize,
@@ -643,7 +575,7 @@ class NSISScript(object):
         for dir_ in fileList.keys():
             for file_ in fileList[dir_]:
                 delete.append('DELETE "$INSTDIR\\{}\\{}"'.format(dir_, file_))
-            delete.append('RMdir "$INSTDIR\\{}"'.format(dir_))
+            delete.append('RMdir "$INSTDIR\\{}"'.format(file_))
         return "\n".join(delete)
 
 def pruneUnneededLibraries():
@@ -666,102 +598,21 @@ def pruneUnneededLibraries():
                     'Qt5WebEngineCore.dll', 'Qt5WebEngineWidgets.dll', 'Qt5WebSockets.dll', 'Qt5WinExtras.dll', 'Qt5Xml.dll',
                     'Qt5XmlPatterns.dll']
     windowsDLL = ['MSVCP140.dll', 'VCRUNTIME140.dll']
-    if QT_BINDING == 'PySide6':
-        unneededModules = ['PySide6.QtConcurrent.pyd', 'PySide6.QtDesigner.pyd', 'PySide6.QtHelp.pyd',
-                           'PySide6.QtOpenGL.pyd', 'PySide6.QtOpenGLWidgets.pyd', 'PySide6.QtPrintSupport.pyd',
-                           'PySide6.QtQml.pyd', 'PySide6.QtQuick.pyd', 'PySide6.QtQuickControls2.pyd',
-                           'PySide6.QtQuickTest.pyd', 'PySide6.QtQuickWidgets.pyd', 'PySide6.QtSql.pyd',
-                           'PySide6.QtSvg.pyd', 'PySide6.QtSvgWidgets.pyd', 'PySide6.QtTest.pyd',
-                           'PySide6.QtUiTools.pyd', 'PySide6.QtXml.pyd']
-        unneededLibs = ['Qt6Concurrent.dll', 'Qt6Designer.dll', 'Qt6Help.dll', 'Qt6OpenGL.dll', 'Qt6OpenGLWidgets.dll',
-                        'Qt6PrintSupport.dll', 'Qt6Qml.dll', 'Qt6Quick.dll', 'Qt6QuickControls2.dll', 'Qt6QuickTest.dll',
-                        'Qt6QuickWidgets.dll', 'Qt6Sql.dll', 'Qt6Svg.dll', 'Qt6SvgWidgets.dll', 'Qt6Test.dll',
-                        'Qt6UiTools.dll', 'Qt6Xml.dll']
-        windowsDLL = []
     deleteList = unneededModules + unneededLibs + windowsDLL
-    if QT_BINDING == 'PySide2':
-        deleteList.append('api-*')
+    deleteList.append('api-*')
     for filename in deleteList:
         for p in Path(libDir).glob(filename):
             p.unlink()
 
-def copyQtPlugins(paths):
-    import shutil
-    if QT_BINDING == 'PySide6':
-        basePath = BuildQtCore.QLibraryInfo.path(BuildQtCore.QLibraryInfo.PluginsPath)
-    else:
-        basePath = BuildQtCore.QLibraryInfo.location(BuildQtCore.QLibraryInfo.PluginsPath)
-    basePath = basePath.replace('/', '\\')
-    destBase = os.getcwd() + '\\' + OUT_DIR
-    for elem in paths:
-        elemDir, elemName = os.path.split(elem)
-        source = basePath + '\\' + elem
-        dest = destBase + '\\' + elem
-        destDir = destBase + '\\' + elemDir
-        os.makedirs(destDir, exist_ok=True)
-        shutil.copy(source, dest)
 
-class build_installer(py2exe):
-    def run(self):
-        py2exe.run(self)
-        print('*** deleting unnecessary libraries and modules ***')
-        pruneUnneededLibraries()
-        print('*** copying qt plugins ***')
-        copyQtPlugins(qt_plugins)
-        script = NSISScript()
-        script.create()
-        print("*** compiling the NSIS setup script ***")
-        script.compile()
-        print("*** DONE ***")
+def run():
+    print('*** deleting unnecessary libraries and modules ***')
+    pruneUnneededLibraries()
+    script = NSISScript()
+    script.create()
+    print("*** compiling the NSIS setup script ***")
+    script.compile()
+    print("*** DONE ***")
 
-guiIcons = glob('syncplay/resources/*.ico') + glob('syncplay/resources/*.png') +  ['syncplay/resources/spinner.mng']
-
-resources = [
-    "syncplay/resources/syncplayintf.lua",
-    "syncplay/resources/license.rtf",
-    "syncplay/resources/third-party-notices.txt"
-]
-resources.extend(guiIcons)
-intf_resources = ["syncplay/resources/lua/intf/syncplay.lua"]
-
-if QT_BINDING == 'PySide6':
-    qt_plugins = ['platforms\\qwindows.dll', 'styles\\qmodernwindowsstyle.dll']
-else:
-    qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
-
-
-common_info = dict(
-    name='Syncplay',
-    version=syncplay.version,
-    author='Uriziel',
-    author_email='dev@syncplay.pl',
-    description='Syncplay',
-)
-
-info = dict(
-    common_info,
-    windows=[{
-        "script": "syncplayClient.py",
-        "icon_resources": [(1, "syncplay\\resources\\icon.ico")],
-        'dest_base': "Syncplay"},
-    ],
-    console=['syncplayServer.py', {"script":"syncplayClient.py", "icon_resources":[(1, "syncplay\\resources\\icon.ico")], 'dest_base': "SyncplayConsole"}],
-
-    options={
-        'py2exe': {
-            'dist_dir': OUT_DIR,
-            'packages': '{}, cffi, OpenSSL, certifi'.format(QT_PACKAGES),
-            'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file, sqlite3',
-            'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, tcl, tkinter',
-            'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
-            'optimize': 2,
-            'compressed': 1
-        }
-    },
-    data_files=[("resources", resources), ("resources/lua/intf", intf_resources)],
-    zipfile="lib/libsync.zip",
-    cmdclass={"py2exe": build_installer},
-)
-
-sys.argv.extend(['py2exe'])
-setup(**info)
+if __name__ == "__main__":
+    run()

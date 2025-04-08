@@ -2,142 +2,50 @@ name: Build
 on: [push, pull_request]
 
 jobs:
-  windows32:
-    name: Build for Windows (32-bit legacy)
-    runs-on: windows-2022
+  windows:
+    name: Build for Windows
+    runs-on: windows-2019
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v2
 
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.8'
-          architecture: x86
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
-      - name: Check Python install
-        run: |
-          which python
-          python --version
-          python -c "import struct; print(struct.calcsize('P') * 8)"
-          which pip
-          pip --version
-
-      - name: Install Python dependencies
-        run: |
-          pip3 install -U setuptools wheel pip
-          pip3 install -r requirements.txt
-          pip3 install -r requirements_gui.txt
-          pip3 install pyinstaller
-
-      - name: Check Python dependencies
-        run: |
-          python3 -c "from PySide2 import __version__; print(__version__)"
-          python3 -c "from PySide2.QtCore import __version__; print(__version__)"
-          python3 -c "from PySide2.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))"
+      - name: Install the project
+        run: uv sync --all-extras --dev
 
       - name: Build
-        run: |
-          $ver = (findstr version .\syncplay\__init__.py).split("'")[1]
-          echo $ver
-          echo "VER=$ver" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          python -m pyinstaller build.spec
-          New-Item -Path syncplay_v$ver -Name "syncplay.ini" -Value " "
+        run: uv run pyinstaller build.spec
+
+      - name: Create installer
+        run: uv run ./ci/win-create-nsis.py
 
       - name: Prepare for deployment
-        run: dir
+        run: |
+          $version = (Get-Content syncplay/__init__.py | Select-String -Pattern "version\s*=\s*'(.+?)'" | ForEach-Object { $_.Matches.Groups[1].Value })
+          echo "VER=$version" >> $env:GITHUB_ENV
 
       - name: Deploy portable
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
-          name: Syncplay_${{ env.VER }}_x86_Portable
+          name: Syncplay_${{ env.VER }}_Portable
           path: |
             syncplay_v${{ env.VER }}
 
       - name: Deploy installer
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
-          name: Syncplay-${{ env.VER }}-x86-Setup.exe
-          path: |
-            Syncplay-${{ env.VER }}-Setup.exe
-
-  windows64:
-    name: Build for Windows (64-bit PySide6)
-    runs-on: windows-2022
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.11'
-          architecture: x64
-
-      - name: Check Python install
-        run: |
-          which python
-          python --version
-          python -c "import struct; print(struct.calcsize('P') * 8)"
-          which pip
-          pip --version
-
-      - name: Install Python dependencies
-        run: |
-          pip3 install -U setuptools wheel pip
-          pip3 install -r requirements.txt
-          pip3 install "PySide6-Essentials>=6.11,<6.12"
-          pip3 install "py2exe==0.14.0.0"
-
-      - name: Check Python dependencies
-        run: |
-          python3 -c "from PySide6 import __version__; print(__version__)"
-          python3 -c "from PySide6.QtCore import __version__; print(__version__)"
-          python3 -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.path(QLibraryInfo.LibrariesPath))"
-          python3 -c "import py2exe; print(py2exe.__version__)"
-          
-
-      - name: Build
-        run: |
-          $ver = (findstr version .\syncplay\__init__.py).split("'")[1]
-          echo $ver
-          echo "VER=$ver" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          python buildPy2exe.py
-          New-Item -Path syncplay_v$ver -Name "syncplay.ini" -Value " "
-
-      - name: Test packaged GUI startup
-        shell: pwsh
-        run: |
-          $process = Start-Process -FilePath ".\syncplay_v${{ env.VER }}\Syncplay.exe" -PassThru
-          Start-Sleep -Seconds 5
-          if ($process.HasExited) {
-            throw "Packaged Syncplay.exe exited during startup with code $($process.ExitCode)"
-          }
-          Stop-Process -Id $process.Id -Force
-
-      - name: Prepare for deployment
-        run: dir
-
-      - name: Deploy portable
-        uses: actions/upload-artifact@v6
-        with:
-          name: Syncplay_${{ env.VER }}_x64_Portable
-          path: |
-            syncplay_v${{ env.VER }}
-
-      - name: Deploy installer
-        uses: actions/upload-artifact@v6
-        with:
-          name: Syncplay-${{ env.VER }}-x64-Setup.exe
+          name: Syncplay-${{ env.VER }}-Setup.exe
           path: |
             Syncplay-${{ env.VER }}-Setup.exe
 
   macos:
     name: Build for macOS
-    runs-on: macos-15-intel
+    runs-on: macos-13
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v2
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -158,7 +66,7 @@ jobs:
           ls -al dist_actions
 
       - name: Deploy
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: Syncplay_${{ env.VER }}.dmg
           path: |
@@ -169,7 +77,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v2
 
       - name: Build
         run: ci/deb-script.sh
@@ -191,14 +99,14 @@ jobs:
           ls -al dist_actions
 
       - name: Deploy full deb
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: syncplay.deb
           path: |
             dist_actions/syncplay_*.deb
 
       - name: Deploy server deb
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: syncplay-server.deb
           path: |
