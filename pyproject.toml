@@ -1,0 +1,67 @@
+[project]
+name = "syncplay"
+version = "1.7.4"
+description = "Client/server to synchronize media playback on mpv/VLC/MPC-HC/MPC-BE on many computers"
+readme = "README.md"
+urls = { Project-URL = "https://syncplay.pl/" }
+requires-python = ">=3.6"
+license = { file = "LICENSE" }
+authors = []
+dependencies = [
+    "certifi>=2018.11.29",
+    "pem>=21.2.0",
+    "twisted[tls]>=16.4.0",
+    "appnope>=0.1.0; sys_platform == 'darwin'",
+    "pypiwin32>=223; sys_platform == 'win32'",
+    "zope.interface>=4.4.0; sys_platform == 'win32'",
+    "importlib-metadata; python_version<'3.10'",
+]
+classifiers=[
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: MacOS X :: Cocoa",
+    "Environment :: Win32 (MS Windows)",
+    "Environment :: X11 Applications :: Qt",
+    "Framework :: Twisted",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Natural Language :: English",
+    "Natural Language :: German",
+    "Natural Language :: Italian",
+    "Natural Language :: Russian",
+    "Natural Language :: Spanish",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Internet",
+    "Topic :: Multimedia :: Video"
+]
+
+[project.optional-dependencies]
+gui = [
+    "pyside2>=5.11.0; sys_platform != 'darwin' and (sys_platform == 'win32' or python_version < '3.12')",
+    "pyside6; sys_platform == 'darwin' or (sys_platform != 'win32' and python_version >= '3.12')",
+    "requests>=2.20.0; sys_platform == 'darwin'"
+]
+
+[project.scripts]
+syncplay-server = "syncplay.ep_server:main"
+
+[project.gui-scripts]
+syncplay = "syncplay.ep_client:main"
+
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "dmgbuild>=1.5.2",
+    "py2app>=0.28.8",
+    "pyinstaller",
+]
