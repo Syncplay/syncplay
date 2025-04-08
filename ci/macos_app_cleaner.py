@@ -41,7 +41,6 @@ for f in glob(f'{PATH}/Qt*'):
 for a in glob(f'{PATH}/*.app'):
     to_be_deleted.append(a)
 
-to_be_deleted.remove(f'{PATH}/Qt')
 to_be_deleted.extend([f'{PATH}/lupdate', f'{PATH}/qmllint', f'{PATH}/lrelease'])
 
 for p in to_be_deleted:
@@ -104,8 +103,8 @@ for p in to_be_deleted:
 
 cwd = os.getcwd()
 
-FROM = f'dist/Syncplay.app/Contents/Resources/lib/python{pyver}/shiboken6'
-TO = f'dist/Syncplay.app/Contents/Resources/lib/python{pyver}/PySide6'
+FROM = 'dist/Syncplay.app/Contents/Resources/shiboken6'
+TO = 'dist/Syncplay.app/Contents/Resources/PySide6'
 
 fn = os.path.basename(glob(f'{FROM}/libshiboken6*.dylib')[0])
 

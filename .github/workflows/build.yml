@@ -68,58 +68,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Python
-        run: |
-          wget https://www.python.org/ftp/python/3.10.6/python-3.10.6-macos11.pkg
-          sudo installer -verbose -pkg ./python-3.10.6-macos11.pkg -target /
-          echo "/Library/Frameworks/Python.framework/Versions/3.10/bin" >> $GITHUB_PATH
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
-      - name: Check Python install
-        run: |
-          which python3
-          python3 --version
-          which pip3
-          pip3 --version
-          file $(which python3)
-
-      - name: Install Python dependencies
-        run: |
-          pip3 install -U pip setuptools==70.3.0 wheel
-          pip3 install -r requirements.txt
-          pip3 install -r requirements_gui.txt
-          pip3 install pyinstaller
-
-      - name: Install universal2 dependencies
-        env:
-          CFLAGS: -arch x86_64 -arch arm64
-          ARCHFLAGS: -arch x86_64 -arch arm64
-        run: |
-          pip3 uninstall zope.interface -y
-          pip3 install --no-binary :all: zope.interface
-
-          pip3 uninstall cffi -y
-          pip3 install --no-binary :all: cffi
-
-          pip3 uninstall cryptography -y
-          pip3 download --platform macosx_10_10_universal2 --only-binary :all: --no-deps --dest . cryptography
-          pip3 install --no-cache-dir --no-index --find-links . cryptography
-
-          pip3 uninstall charset-normalizer -y
-          pip3 download --platform macosx_10_9_universal2 --only-binary :all: --no-deps --dest . charset-normalizer
-          pip3 install --no-cache-dir --no-index --find-links . charset-normalizer
-
-      - name: Check Python dependencies
-        run: |
-          python3 -c "from PySide6 import __version__; print(__version__)"
-          python3 -c "from PySide6.QtCore import __version__; print(__version__)"
-          python3 -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.path(QLibraryInfo.LibrariesPath))"
-          python3 -c "import ssl; print(ssl)"
-          python3 -c "from py2app.recipes import pyside6"
-          python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LDLIBRARY"))'
+      - name: Install the project
+        run: uv sync --all-extras --dev
 
       - name: Build
-        run: |
-          python3 -m pyinstaller build.spec
+        run: uv run pyinstaller build.spec
 
       - name: Prepare for deployment
         run: |
@@ -139,7 +95,7 @@ jobs:
 
   deb:
     name: Build Debian package
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
