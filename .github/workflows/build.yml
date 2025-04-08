@@ -63,7 +63,7 @@ jobs:
 
   macos:
     name: Build for macOS
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -84,7 +84,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip3 install -U pip setuptools wheel
+          pip3 install -U pip setuptools==70.3.0 wheel
           pip3 install -r requirements.txt
           pip3 install -r requirements_gui.txt
           pip3 install py2app
@@ -112,7 +112,7 @@ jobs:
         run: |
           python3 -c "from PySide6 import __version__; print(__version__)"
           python3 -c "from PySide6.QtCore import __version__; print(__version__)"
-          python3 -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.location(QLibraryInfo.LibrariesPath))"
+          python3 -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.path(QLibraryInfo.LibrariesPath))"
           python3 -c "import ssl; print(ssl)"
           python3 -c "from py2app.recipes import pyside6"
           python3 -c 'from distutils.sysconfig import get_config_var; print(get_config_var("LDLIBRARY"))'
