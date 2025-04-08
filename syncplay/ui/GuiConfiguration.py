@@ -11,10 +11,10 @@ from syncplay.players.playerFactory import PlayerFactory
 from syncplay.utils import isBSD, isLinux, isMacOS, isWindows
 from syncplay.utils import resourcespath, posixresourcespath, playerPathExists
 
-from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, IsPySide, IsPySide2, IsPySide6
-from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine, QEventLoop, Signal
-from syncplay.vendor.Qt.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
-from syncplay.vendor.Qt.QtGui import QCursor, QIcon, QImage, QDesktopServices
+from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, IsPySide, IsPySide2, IsPySide6
+from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QUrl, QEventLoop, Signal, QStandardPaths
+from syncplay.vendor.Qt.QtWidgets import QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QPlainTextEdit
+from syncplay.vendor.Qt.QtGui import QDesktopServices
 try:
     if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
         QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -22,10 +22,6 @@ except AttributeError:
     pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
-if IsPySide6:
-    from PySide6.QtCore import QStandardPaths
-elif IsPySide2:
-    from PySide2.QtCore import QStandardPaths
 
 
 class GuiConfiguration:
@@ -353,7 +349,7 @@ class ConfigDialog(QtWidgets.QDialog):
         try:
             self.lastCheckedForUpdates = settings.value("lastCheckedQt", None)
             if self.lastCheckedForUpdates:
-                if self.config["lastCheckedForUpdates"] != None and self.config["lastCheckedForUpdates"] != "":
+                if self.config["lastCheckedForUpdates"] is not None and self.config["lastCheckedForUpdates"] != "":
                     if self.lastCheckedForUpdates.toPython() > datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f"):
                         self.config["lastCheckedForUpdates"] = self.lastCheckedForUpdates.toString("yyyy-MM-d HH:mm:ss.z")
                 else:

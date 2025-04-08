@@ -1,11 +1,8 @@
 
 import os
 import re
-import sys
 import time
-import urllib.error
 import urllib.parse
-import urllib.request
 from datetime import datetime
 from functools import wraps
 from platform import python_version
@@ -18,10 +15,11 @@ from syncplay.ui.consoleUI import ConsoleUI
 from syncplay.utils import resourcespath
 from syncplay.utils import isLinux, isWindows, isMacOS
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
-from syncplay.vendor import Qt
 from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2, IsPySide6
-from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
+from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime, QStandardPaths
+
 applyDPIScaling = True
+
 if isLinux():
     applyDPIScaling = False
 else:
@@ -33,10 +31,7 @@ except AttributeError:
     pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, applyDPIScaling)
-if IsPySide6:
-    from PySide6.QtCore import QStandardPaths
-elif IsPySide2:
-    from PySide2.QtCore import QStandardPaths
+
 if isMacOS() and IsPySide:
     from Foundation import NSURL
     from Cocoa import NSString, NSUTF8StringEncoding
@@ -2121,7 +2116,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if isMacOS():
             self.setWindowFlags(self.windowFlags())
         else:
-            try:    
+            try:
                 self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
             except TypeError:
                 self.setWindowFlags(self.windowFlags())
