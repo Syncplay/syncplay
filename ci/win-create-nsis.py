@@ -7,24 +7,9 @@
 # 2) It is expected that you will have NSIS 3 NSIS from http://nsis.sourceforge.net installed.
 
 import codecs
-import sys
-# try:
-#     if (sys.version_info.major != 2) or (sys.version_info.minor < 7):
-#         raise Exception("You must build Syncplay with Python 2.7!")
-# except AttributeError:
-#     import warnings
-#     warnings.warn("You must build Syncplay with Python 2.7!")
-
-from glob import glob
 import os
 import subprocess
 from string import Template
-
-from distutils.core import setup
-try:
-    from py2exe.build_exe import py2exe
-except ImportError:
-    from py2exe.distutils_buildexe import py2exe
 
 import syncplay
 from syncplay.messages import getMissingStrings, getMessage, getLanguages
@@ -50,7 +35,7 @@ def get_nsis_path():
 
 NSIS_COMPILE = get_nsis_path()
 
-OUT_DIR = "syncplay_v{}".format(syncplay.version)
+OUT_DIR = "dist/syncplay" #"syncplay_v{}".format(syncplay.version)
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
 
 languages = getLanguages()
@@ -117,7 +102,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   !include FileFunc.nsh
 
 """ + loadLanguageFileString + r"""
- 
+
   Unicode true
 
   Name "Syncplay $version"
@@ -130,7 +115,7 @@ NSIS_SCRIPT_TEMPLATE = r"""
   SetCompressor /SOLID lzma
 
   VIProductVersion "$version.0"
-  
+
   """ + versionKeysString + languageString + r"""
   ; Remove text to save space
   LangString ^ClickInstall $${LANG_GERMAN} " "
@@ -619,77 +604,15 @@ def pruneUnneededLibraries():
         for p in Path(libDir).glob(filename):
             p.unlink()
 
-def copyQtPlugins(paths):
-    import shutil
-    from PySide2 import QtCore
-    basePath = QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)
-    basePath = basePath.replace('/', '\\')
-    destBase = os.getcwd() + '\\' + OUT_DIR
-    for elem in paths:
-        elemDir, elemName = os.path.split(elem)
-        source = basePath + '\\' + elem
-        dest = destBase + '\\' + elem
-        destDir = destBase + '\\' + elemDir
-        os.makedirs(destDir, exist_ok=True)
-        shutil.copy(source, dest)
 
-class build_installer(py2exe):
-    def run(self):
-        py2exe.run(self)
-        print('*** deleting unnecessary libraries and modules ***')
-        pruneUnneededLibraries()
-        print('*** copying qt plugins ***')
-        copyQtPlugins(qt_plugins)
-        script = NSISScript()
-        script.create()
-        print("*** compiling the NSIS setup script ***")
-        script.compile()
-        print("*** DONE ***")
+def run():
+    print('*** deleting unnecessary libraries and modules ***')
+    pruneUnneededLibraries()
+    script = NSISScript()
+    script.create()
+    print("*** compiling the NSIS setup script ***")
+    script.compile()
+    print("*** DONE ***")
 
-guiIcons = glob('syncplay/resources/*.ico') + glob('syncplay/resources/*.png') +  ['syncplay/resources/spinner.mng']
-
-resources = [
-    "syncplay/resources/syncplayintf.lua",
-    "syncplay/resources/license.rtf",
-    "syncplay/resources/third-party-notices.txt"
-]
-resources.extend(guiIcons)
-intf_resources = ["syncplay/resources/lua/intf/syncplay.lua"]
-
-qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
-
-common_info = dict(
-    name='Syncplay',
-    version=syncplay.version,
-    author='Uriziel',
-    author_email='dev@syncplay.pl',
-    description='Syncplay',
-)
-
-info = dict(
-    common_info,
-    windows=[{
-        "script": "syncplayClient.py",
-        "icon_resources": [(1, "syncplay\\resources\\icon.ico")],
-        'dest_base': "Syncplay"},
-    ],
-    console=['syncplayServer.py', {"script":"syncplayClient.py", "icon_resources":[(1, "syncplay\\resources\\icon.ico")], 'dest_base': "SyncplayConsole"}],
-
-    options={
-        'py2exe': {
-            'dist_dir': OUT_DIR,
-            'packages': 'PySide2, cffi, OpenSSL, certifi',
-            'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file, sqlite3',
-            'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, tcl, tkinter',
-            'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
-            'optimize': 2,
-            'compressed': 1
-        }
-    },
-    data_files=[("resources", resources), ("resources/lua/intf", intf_resources)],
-    zipfile="lib/libsync.zip",
-    cmdclass={"py2exe": build_installer},
-)
-
-sys.argv.extend(['py2exe'])
-setup(**info)
+if __name__ == "__main__":
+    run()

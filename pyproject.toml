@@ -44,8 +44,8 @@ classifiers=[
 
 [project.optional-dependencies]
 gui = [
-    "pyside2>=5.11.0; sys_platform != 'darwin' and (sys_platform == 'win32' or python_version < '3.12')",
-    "pyside6; sys_platform == 'darwin' or (sys_platform != 'win32' and python_version >= '3.12')",
+    "pyside2>=5.11.0; sys_platform != 'darwin' and (python_version < '3.12')",
+    "pyside6; sys_platform == 'darwin' or (python_version >= '3.12')",
     "requests>=2.20.0; sys_platform == 'darwin'"
 ]
 
