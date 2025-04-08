@@ -83,7 +83,7 @@ def getInitialLanguage():
         import sys
         frozen = getattr(sys, 'frozen', '')
         if frozen and frozen in 'macosx_app':
-            from PySide2.QtCore import QLocale
+            from syncplay.vendor.Qt.QtCore import QLocale
             initialLanguage = QLocale.system().uiLanguages()[0].split('-')[0]
         else:
             import locale
@@ -100,7 +100,7 @@ def isValidLanguage(language):
 
 
 def getMessage(type_, locale=None):
-    if constants.SHOW_TOOLTIPS == False:
+    if constants.SHOW_TOOLTIPS is False:
         if "-tooltip" in type_:
             return ""
 
