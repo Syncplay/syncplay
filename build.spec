@@ -37,8 +37,6 @@ MERGE((a, "client", "client"), (b, "server", "server"))
 pyz = PYZ(a.pure)
 pyzb = PYZ(b.pure)
 
-
-
 # Main executable for the client
 exe_client = EXE(
     pyz,
@@ -80,7 +78,7 @@ exe_server = EXE(
 
 coll = COLLECT(
     exe_client,
-    exe_server
+    exe_server,
     a.binaries,
     a.datas,
     strip=False,
