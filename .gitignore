@@ -11,6 +11,7 @@ venv
 /syncplay_v*
 syncplay_setup.nsi
 dist.7z
+uv.lock
 .*
 !.appveyor.yml
 !.github
