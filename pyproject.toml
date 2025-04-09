@@ -62,6 +62,5 @@ build-backend = "setuptools.build_meta"
 [dependency-groups]
 dev = [
     "dmgbuild>=1.5.2",
-    "py2app>=0.28.8",
     "pyinstaller",
 ]
