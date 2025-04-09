@@ -697,40 +697,6 @@ wheels = [
 ]
 
 [[package]]
-name = "modulegraph"
-version = "0.19.6"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "altgraph" },
-    { name = "setuptools", version = "59.6.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.7'" },
-    { name = "setuptools", version = "68.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.7.*'" },
-    { name = "setuptools", version = "75.3.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.8.*'" },
-    { name = "setuptools", version = "78.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/12/7a/7d1ef5824553c960b441b937dd26a0f99ea04a8c29a5ed099b7c06e9ef61/modulegraph-0.19.6.tar.gz", hash = "sha256:c914c8c95a0e10fe88505d4e9c2284b4e3dbc70943e306cc6567e36cc541bf4b", size = 88145 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ce/e2/f4e1bb5b49ca5521f86309554cebb1ce61290e2d813cd397946b3b354c13/modulegraph-0.19.6-py2.py3-none-any.whl", hash = "sha256:5443e6d93c0b263f4ea309e2ff01312eef7c424dd51981a1e78e960c90e572b8", size = 34898 },
-]
-
-[[package]]
-name = "packaging"
-version = "21.3"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.6.8' and python_full_version < '3.7'",
-    "python_full_version >= '3.6.7' and python_full_version < '3.6.8'",
-    "python_full_version < '3.6.7'",
-]
-dependencies = [
-    { name = "pyparsing", version = "3.0.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.6.8'" },
-    { name = "pyparsing", version = "3.1.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.6.8' and python_full_version < '3.7'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/df/9e/d1a7217f69310c1db8fdf8ab396229f55a699ce34a203691794c5d1cad0c/packaging-21.3.tar.gz", hash = "sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb", size = 84848 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/05/8e/8de486cbd03baba4deef4142bd643a3e7bbe954a784dc1bb17142572d127/packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522", size = 40750 },
-]
-
-[[package]]
 name = "packaging"
 version = "24.0"
 source = { registry = "https://pypi.org/simple" }
@@ -792,23 +758,6 @@ resolution-markers = [
 sdist = { url = "https://files.pythonhosted.org/packages/05/86/16c0b6789816f8d53f2f208b5a090c9197da8a6dae4d490554bb1bedbb09/pem-23.1.0.tar.gz", hash = "sha256:06503ff2441a111f853ce4e8b9eb9d5fedb488ebdbf560115d3dd53a1b4afc73", size = 43796 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c9/97/8299a481ae6c08494b5d53511e6a4746775d8a354c685c69d8796b2ed482/pem-23.1.0-py3-none-any.whl", hash = "sha256:78bbb1e75b737891350cb9499cbba31da5d59545f360f44163c0bc751cad55d3", size = 9195 },
-]
-
-[[package]]
-name = "py2app"
-version = "0.28.8"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "altgraph" },
-    { name = "macholib" },
-    { name = "modulegraph" },
-    { name = "packaging", version = "21.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.7'" },
-    { name = "packaging", version = "24.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.7.*'" },
-    { name = "packaging", version = "24.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.8'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/d1/d8/a81d296560df958e496a03e4373615db5157dacb388945110404cbd0879b/py2app-0.28.8.tar.gz", hash = "sha256:cab7aec752a8b83e7c6cef7c15271dc720155275e44cbf610e3162e0807313ec", size = 1173004 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/83/12/a0932851fe222d9cf9193e192f01d7f62c89d9690b17d731ef5385df4360/py2app-0.28.8-py2.py3-none-any.whl", hash = "sha256:38b80f0c91f8d2dddb6396e6bbff8a84875f073c510f4f1a307e8ae44c7d73d8", size = 835661 },
 ]
 
 [[package]]
@@ -1089,31 +1038,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/9f/26/e25b4a374b4639e0c235527bbe31c0524f26eda701d79456a7e1877f4cc5/pyopenssl-25.0.0.tar.gz", hash = "sha256:cd2cef799efa3936bb08e8ccb9433a575722b9dd986023f1cabc4ae64e9dac16", size = 179573 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ca/d7/eb76863d2060dcbe7c7e6cccfd95ac02ea0b9acc37745a0d99ff6457aefb/pyOpenSSL-25.0.0-py3-none-any.whl", hash = "sha256:424c247065e46e76a37411b9ab1782541c23bb658bf003772c3405fbaa128e90", size = 56453 },
-]
-
-[[package]]
-name = "pyparsing"
-version = "3.0.7"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.6.7' and python_full_version < '3.6.8'",
-    "python_full_version < '3.6.7'",
-]
-sdist = { url = "https://files.pythonhosted.org/packages/d6/60/9bed18f43275b34198eb9720d4c1238c68b3755620d20df0afd89424d32b/pyparsing-3.0.7.tar.gz", hash = "sha256:18ee9022775d270c55187733956460083db60b37d0d0fb357445f3094eed3eea", size = 884709 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/80/c1/23fd82ad3121656b585351aba6c19761926bb0db2ebed9e4ff09a43a3fcc/pyparsing-3.0.7-py3-none-any.whl", hash = "sha256:a6c06a88f252e6c322f65faf8f418b16213b51bdfaece0524c1c1bc30c63c484", size = 98049 },
-]
-
-[[package]]
-name = "pyparsing"
-version = "3.1.4"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.6.8' and python_full_version < '3.7'",
-]
-sdist = { url = "https://files.pythonhosted.org/packages/83/08/13f3bce01b2061f2bbd582c9df82723de943784cf719a35ac886c652043a/pyparsing-3.1.4.tar.gz", hash = "sha256:f86ec8d1a83f11977c9a6ea7598e8c27fc5cddfa5b07ea2241edbbde1d7bc032", size = 900231 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e5/0c/0e3c05b1c87bb6a1c76d281b0f35e78d2d80ac91b5f8f524cebf77f51049/pyparsing-3.1.4-py3-none-any.whl", hash = "sha256:a6a7ee4235a3f944aa1fa2249307708f893fe5717dc603503c6c7969c070fb7c", size = 104100 },
 ]
 
 [[package]]
@@ -1639,7 +1563,6 @@ dev = [
     { name = "dmgbuild", version = "1.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.7.*'" },
     { name = "dmgbuild", version = "1.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.8.*'" },
     { name = "dmgbuild", version = "1.6.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
-    { name = "py2app" },
     { name = "pyinstaller", version = "4.10", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.7'" },
     { name = "pyinstaller", version = "5.13.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.7.*'" },
     { name = "pyinstaller", version = "6.12.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.8'" },
@@ -1663,7 +1586,6 @@ provides-extras = ["gui"]
 [package.metadata.requires-dev]
 dev = [
     { name = "dmgbuild", specifier = ">=1.5.2" },
-    { name = "py2app", specifier = ">=0.28.8" },
     { name = "pyinstaller" },
 ]
 
