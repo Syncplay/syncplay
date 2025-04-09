@@ -14,7 +14,7 @@ dependencies = [
     "appnope>=0.1.0; sys_platform == 'darwin'",
     "pypiwin32>=223; sys_platform == 'win32'",
     "zope.interface>=4.4.0; sys_platform == 'win32'",
-    "importlib-metadata; python_version<'3.10'",
+    "importlib-metadata; python_version<'3.10'"
 ]
 classifiers=[
     "Development Status :: 5 - Production/Stable",
@@ -61,6 +61,7 @@ build-backend = "setuptools.build_meta"
 
 [dependency-groups]
 dev = [
-    "dmgbuild>=1.5.2",
+    "dmgbuild",
     "pyinstaller",
+    "toml",
 ]
