@@ -141,9 +141,8 @@ class SyncClientProtocol(JSONCommandProtocol):
             self._client.setRoom(roomName)
         self.logged = True
         if self.persistentRoomWarning(featureList):
-            if len(motd) > 0:
-                motd += "\n\n"
-            motd += getMessage("persistent-rooms-notice")
+            span = "\n\n" if motd else ""
+            motd = getMessage("persistent-rooms-notice") + span + motd
         if motd:
             self._client.ui.showMessage(motd, noPlayer=True, noTimestamp=True, isMotd=True)
         self._client.ui.showMessage(getMessage("connected-successful-notification"))
@@ -556,9 +555,8 @@ class SyncServerProtocol(JSONCommandProtocol):
         hello["features"] = self._factory.getFeatures()
         hello["motd"] = self._factory.getMotd(userIp, username, room, clientVersion)
         if self.persistentRoomWarning(clientFeatures=self._features, serverFeatures=hello["features"]):
-            if len(hello["motd"]) > 0:
-                hello["motd"] += "\n\n"
-            hello["motd"] += getMessage("persistent-rooms-notice")
+            span = "\n\n" if hello["motd"] else ""
+            hello["motd"] = getMessage("persistent-rooms-notice") + span + hello["motd"]
         self.sendMessage({"Hello": hello})
 
     @requireLogged
