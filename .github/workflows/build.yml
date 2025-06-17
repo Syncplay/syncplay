@@ -4,7 +4,7 @@ on: [push, pull_request]
 jobs:
   windows:
     name: Build for Windows
-    runs-on: windows-2025
+    runs-on: windows-2022
     steps:
       - name: Checkout
         uses: actions/checkout@v2
