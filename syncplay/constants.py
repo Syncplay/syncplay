@@ -180,7 +180,7 @@ MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"c:\program files\mpv\mpv.exe", r"c:\progra
              r"c:\program Files (x86)\mpv\mpv.exe", r"c:\program Files (x86)\mpv-player\mpv.exe",
              "/Applications/mpv.app/Contents/MacOS/mpv"]
 MPVNET_PATHS = [r"c:\program files\mpv.net\mpvnet.exe", r"c:\program Files (x86)\mpv.net\mpvnet.exe"]
-MEMENTO_PATHS = ["memento", "/usr/bin/memento", "/usr/local/bin/memento"]
+MEMENTO_PATHS = ["memento", "/usr/bin/memento", "/usr/local/bin/memento", r"C:\Program Files\Memento\memento.exe"]
 
 try:
     import os
