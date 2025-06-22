@@ -159,7 +159,7 @@ class AboutDialog(QtWidgets.QDialog):
             "<br />Python " + python_version() + " - " + __binding__ + " " + __binding_version__ +
             " - Qt " + __qt_version__ + "</center></p>")
         licenseLabel = QtWidgets.QLabel(
-            "<center><p>Copyright &copy; 2012&ndash;2019 Syncplay</p><p>" +
+            "<center><p>Copyright &copy; 2012&ndash;2025 Syncplay</p><p>" +
             getMessage("about-dialog-license-text") + "</p></center>")
         aboutIcon = QtGui.QIcon()
         aboutIcon.addFile(resourcespath + "syncplayAbout.png")
