@@ -554,4 +554,20 @@ pt_BR = {
 
     "playlist-empty-error": "A playlist está atualemnte vazia.",
     "playlist-invalid-index-error": "Índice inválido na playlist.",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "Pastas",
+    "syncplay-watchedfiles-title": "Arquivos assistidos",
+    "syncplay-watchedautomove-label": "Mover automaticamente os arquivos assistidos para a subpasta (se a subpasta existir)",
+    "syncplay-watchedmovesubfolder-label": "Subpasta para arquivos assistidos",
+    "syncplay-watchedsubfolderautocreate-label": "Criar automaticamente a subpasta de assistidos quando necessário",
+    "mark-as-watched-menu-label": "Marcar como assistido",
+    "mark-as-unwatched-menu-label": "Marcar como não assistido",
+    "watchedautomove-tooltip": "Move automaticamente o arquivo para a subpasta de assistidos quando o final do arquivo é alcançado. Funciona apenas se a pasta pai for uma pasta de mídia.",
+    "watchedsubfolder-tooltip": "Subpasta (relativa à pasta do arquivo) para onde mover os arquivos assistidos (a subpasta precisa existir para que o arquivo seja movido). Funciona apenas se a pasta pai for uma pasta de mídia.",
+    "watchedsubfolderautocreate-tooltip": "Cria automaticamente a subpasta de assistidos ao mover o arquivo, se ela ainda não existir. Funciona apenas se a pasta pai for uma pasta de mídia.",
+    "cannot-move-file-due-to-name-conflict-error": "Não foi possível mover '{}' para a subpasta '{}' porque já existe um arquivo com esse nome.", # Path, subfolder
+    "moved-file-to-subfolder-notification": "Movido '{}' para a subpasta '{}'.", # Path, subfolder
+
 }

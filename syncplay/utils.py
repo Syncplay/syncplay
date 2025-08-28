@@ -10,6 +10,7 @@ import re
 import string
 import subprocess
 import sys
+import shutil
 import tempfile
 import time
 import traceback
@@ -22,7 +23,6 @@ from syncplay import constants
 from syncplay.messages import getMessage
 
 folderSearchEnabled = True
-
 
 def isWindows():
     return sys.platform.startswith(constants.OS_WINDOWS)
@@ -102,6 +102,8 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
         return f_retry  # true decorator
     return deco_retry
 
+if isWindows():
+    import win32file
 
 def parseTime(timeStr):
     if ":" not in timeStr:
@@ -461,7 +463,7 @@ def getDomainFromURL(URL):
 def open_system_file_browser(path):
     if isURL(path):
         return
-    path = os.path.dirname(path)
+    path = getCorrectedDirectoryForFile(path)
     if platform.system() == "Windows":
         os.startfile(path)
     elif platform.system() == "Darwin":
@@ -503,6 +505,83 @@ def getListOfPublicServers():
         else:
             raise IOError(getMessage("failed-to-load-server-list-error"))
 
+def isWatchedFile(filePath):
+    directoryPath = getCorrectedDirectoryForFile(filePath)
+    return isWatchedSubfolder(directoryPath) and os.path.exists(filePath)
+
+def canMarkAsUnwatched(filePath):
+    directory = getCorrectedDirectoryForFile(filePath)
+    if isWatchedSubfolder(directory):
+        return False
+    watchedDirectory = getWatchedSubfolder(directory)
+    return len(constants.WATCHED_SUBFOLDER) > 0 and ((watchedDirectory and os.path.isdir(watchedDirectory)) or constants.WATCHED_AUTOCREATESUBFOLDERS)
+
+def getUnwatchedParentfolder(watchedDirectoryPath):
+    if not watchedDirectoryPath:
+        return None
+    if not os.path.isdir(watchedDirectoryPath):
+        return None
+    unwatchedDirectory = os.path.abspath(os.path.join(watchedDirectoryPath, os.pardir))
+    return(unwatchedDirectory)
+
+def getCorrectedDirectoryForFile(filePath):
+    if not filePath:
+        return
+    directory = os.path.dirname(filePath)
+    if os.path.exists(filePath):
+        return directory
+    else:
+        filename = os.path.basename(filePath)
+        seenDirectory = getWatchedSubfolder(directory)
+        unwatchedParentfolder = getUnwatchedParentfolder(directory)
+        seenPath = os.path.join(seenDirectory, filename) if seenDirectory else None
+        unseenPath = os.path.join(unwatchedParentfolder, filename) if unwatchedParentfolder else None
+        if seenPath and os.path.exists(seenPath):
+            directory = os.path.dirname(seenPath)
+        elif unseenPath and os.path.exists(unseenPath):
+            directory = os.path.dirname(unseenPath)
+        return directory
+def getCorrectedPathForFile(filePath):
+    if len(constants.WATCHED_SUBFOLDER) == 0:
+        return filePath
+
+    if os.path.isfile(filePath):
+        return filePath
+    else:
+        correctedDirectory = getCorrectedDirectoryForFile(filePath)
+        filename = os.path.basename(filePath)
+        correctedPath = os.path.join(correctedDirectory, filename)
+        return correctedPath
+
+def isWatchedSubfolder(directoryPath):
+    if not directoryPath:
+        return False
+    normDirectory = os.path.normcase(os.path.basename(os.path.normpath(directoryPath)))
+    if len(constants.WATCHED_SUBFOLDER) == 0:
+        return False
+    return normDirectory == os.path.normcase(constants.WATCHED_SUBFOLDER)
+
+def getWatchedSubfolder(parentDirectoryPath):
+    if not parentDirectoryPath:
+        return None
+    if not os.path.isdir(parentDirectoryPath):
+        return None
+    watchedSubfolder = os.path.join(parentDirectoryPath, constants.WATCHED_SUBFOLDER)
+    return(watchedSubfolder)
+
+def createWatchedSubdirIfNeeded(subfolderPath):
+    if not subfolderPath:
+        return
+    if not constants.WATCHED_AUTOCREATESUBFOLDERS:
+        return
+    if not os.path.isdir(subfolderPath):
+        os.makedirs(subfolderPath)
+
+def moveFile(sourcePath, destinatonPath):
+    if isWindows():
+        win32file.MoveFile(sourcePath, destinatonPath)
+    else:
+        shutil.move(sourcePath, destinatonPath)
 
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile(r"^\+(.*):(\w{12})$")

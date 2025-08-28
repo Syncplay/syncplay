@@ -110,6 +110,11 @@ FOLDER_SEARCH_TIMEOUT = 20.0  # Secs - How long to wait until searches in folder
 FOLDER_SEARCH_WARNING_THRESHOLD = 2.0 # Secs - how long until a warning saying how many files have been scanned
 FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0  # Secs - Frequency of updating cache
 
+# Changable values for watched features (you usually don't need to change these)
+WATCHED_CHECKQUEUE_INTERVAL = 1.0 # Secs
+WATCHED_PLAYERWAIT_INTERVAL = 0.1 # Secs
+WATCHED_PLAYERWAIT_MAXRETRIES = 80
+
 # Usually there's no need to adjust these
 DOUBLE_CHECK_REWIND = True
 LAST_PAUSED_DIFF_THRESHOLD = 2
@@ -331,6 +336,10 @@ INPUT_POSITION_MIDDLE = "Middle"
 INPUT_POSITION_BOTTOM = "Bottom"
 
 VLC_EOF_DURATION_THRESHOLD = 2.0
+
+WATCHED_SUBFOLDER = "Watched"
+WATCHED_AUTOMOVE = False
+WATCHED_AUTOCREATESUBFOLDERS = False
 
 PRIVACY_HIDDENFILENAME = "**Hidden filename**"
 INVERTED_STATE_MARKER = "*"

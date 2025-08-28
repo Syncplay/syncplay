@@ -550,4 +550,20 @@ ko = {
 
     "playlist-empty-error": "현재 재생목록이 비어 있습니다.",
     "playlist-invalid-index-error": "잘못된 재생목록 색인",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "폴더",
+    "syncplay-watchedfiles-title": "시청한 파일",
+    "syncplay-watchedautomove-label": "시청한 파일을 하위 폴더로 자동 이동(하위 폴더가 있으면)",
+    "syncplay-watchedmovesubfolder-label": "시청한 파일용 하위 폴더",
+    "syncplay-watchedsubfolderautocreate-label": "필요 시 시청한 파일 하위 폴더 자동 생성",
+    "mark-as-watched-menu-label": "시청함으로 표시",
+    "mark-as-unwatched-menu-label": "미시청으로 표시",
+    "watchedautomove-tooltip": "파일 끝에 도달하면 파일을 시청한 파일 하위 폴더로 자동 이동합니다. 이는 상위 폴더가 미디어 폴더인 경우에만 작동합니다.",
+    "watchedsubfolder-tooltip": "파일의 폴더 기준 상대 경로의 하위 폴더로 시청한 파일을 이동합니다(파일을 이동하려면 해당 하위 폴더가 존재해야 합니다). 이는 상위 폴더가 미디어 폴더인 경우에만 작동합니다.",
+    "watchedsubfolderautocreate-tooltip": "파일을 하위 폴더로 이동할 때 해당 하위 폴더가 없으면 시청한 파일 하위 폴더를 자동으로 생성합니다. 이는 상위 폴더가 미디어 폴더인 경우에만 작동합니다.",
+    "cannot-move-file-due-to-name-conflict-error": "같은 이름의 파일이 이미 존재하므로 '{}'을(를) '{}' 하위 폴더로 이동할 수 없습니다.", # Path, subfolder
+    "moved-file-to-subfolder-notification": "'{}'을(를) '{}' 하위 폴더로 이동했습니다.", # Path, subfolder
+
 }

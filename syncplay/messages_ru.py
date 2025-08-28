@@ -551,4 +551,20 @@ ru = {
 
     "playlist-empty-error": "Список воспроизведения пуст.",
     "playlist-invalid-index-error": "Неверный индекс в списке воспроизведения",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "Папки",
+    "syncplay-watchedfiles-title": "Просмотренные файлы",
+    "syncplay-watchedautomove-label": "Автоматически перемещать просмотренные файлы в подпапку (если подпапка существует)",
+    "syncplay-watchedmovesubfolder-label": "Подпапка для просмотренных файлов",
+    "syncplay-watchedsubfolderautocreate-label": "Автоматически создавать подпапку для просмотренных файлов при необходимости",
+    "mark-as-watched-menu-label": "Отметить как просмотрено",
+    "mark-as-unwatched-menu-label": "Отметить как не просмотрено",
+    "watchedautomove-tooltip": "Автоматически перемещает файл в подпапку для просмотренных файлов при достижении конца файла. Работает только, если родительская папка является медиа-папкой.",
+    "watchedsubfolder-tooltip": "Подпапка (относительно папки файла), в которую перемещаются просмотренные файлы (подпапка должна существовать, чтобы файл был перемещён). Работает только, если родительская папка является медиа-папкой.",
+    "watchedsubfolderautocreate-tooltip": "Автоматически создаёт подпапку для просмотренных файлов при перемещении, если она ещё не существует. Работает только, если родительская папка является медиа-папкой.",
+    "cannot-move-file-due-to-name-conflict-error": "Не удалось переместить '{}' в подпапку '{}', потому что файл с таким именем уже существует.", # Path, subfolder
+    "moved-file-to-subfolder-notification": "Перемещено '{}' в подпапку '{}'.", # Path, subfolder
+
 }
