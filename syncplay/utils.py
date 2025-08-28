@@ -506,15 +506,19 @@ def getListOfPublicServers():
             raise IOError(getMessage("failed-to-load-server-list-error"))
 
 def isWatchedFile(filePath):
+    if len(constants.WATCHED_SUBFOLDER) == 0:
+        return False
     directoryPath = getCorrectedDirectoryForFile(filePath)
     return isWatchedSubfolder(directoryPath) and os.path.exists(filePath)
 
-def canMarkAsUnwatched(filePath):
+def canMarkAsWatched(filePath):
+    if len(constants.WATCHED_SUBFOLDER) == 0:
+        return False
     directory = getCorrectedDirectoryForFile(filePath)
     if isWatchedSubfolder(directory):
         return False
     watchedDirectory = getWatchedSubfolder(directory)
-    return len(constants.WATCHED_SUBFOLDER) > 0 and ((watchedDirectory and os.path.isdir(watchedDirectory)) or constants.WATCHED_AUTOCREATESUBFOLDERS)
+    return bool((watchedDirectory and os.path.isdir(watchedDirectory)) or constants.WATCHED_AUTOCREATESUBFOLDERS)
 
 def getUnwatchedParentfolder(watchedDirectoryPath):
     if not watchedDirectoryPath:

@@ -18,7 +18,7 @@ from syncplay.ui.consoleUI import ConsoleUI
 from syncplay.utils import resourcespath
 from syncplay.utils import isLinux, isWindows, isMacOS
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
-from syncplay.utils import isWatchedFile, getWatchedSubfolder, getCorrectedDirectoryForFile, getCorrectedPathForFile, canMarkAsUnwatched
+from syncplay.utils import isWatchedFile, getCorrectedPathForFile, canMarkAsWatched
 from syncplay.vendor import Qt
 from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2, IsPySide6
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
@@ -754,10 +754,10 @@ class MainWindow(QtWidgets.QMainWindow):
             filename = os.path.basename(pathFound)
             if len(constants.WATCHED_SUBFOLDER) > 0:
                 pathFound = getCorrectedPathForFile(pathFound)
-                if canMarkAsUnwatched(pathFound):
-                    menu.addAction(QtGui.QPixmap(resourcespath + "yes_eye.png"), getMessage("mark-as-watched-menu-label"), lambda p=pathFound: self._markFileWatchedViaContext(p))  # TODO: Move to language
-                elif isWatchedFile(pathFound):
+                if isWatchedFile(pathFound):
                     menu.addAction(QtGui.QPixmap(resourcespath + "no_eye.png"), getMessage("mark-as-unwatched-menu-label"), lambda p=pathFound: self._markFileUnwatchedViaContext(p))  # TODO: Move to language
+                elif canMarkAsWatched(pathFound):
+                    menu.addAction(QtGui.QPixmap(resourcespath + "yes_eye.png"), getMessage("mark-as-watched-menu-label"), lambda p=pathFound: self._markFileWatchedViaContext(p))  # TODO: Move to language
 
         indexes = self.playlist.selectedIndexes()
         if len(indexes) > 0:

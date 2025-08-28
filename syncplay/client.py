@@ -556,11 +556,11 @@ class SyncplayClient(object):
             watchedDirectoryFilepath = os.path.join(watchedDirectory, filename)
             watchedDirectoryName = os.path.basename(os.path.dirname(watchedDirectoryFilepath))
             if os.path.isfile(watchedDirectoryFilepath):
-                self.ui.showErrorMessage("A file with the same name already exists in '{}' subfolder.".format(watchedDirectoryName)) # TODO: Move to Language
+                self.ui.showErrorMessage(getMessage("cannot-move-file-due-to-name-conflict-error").format(watchedDirectoryName)) # TODO: Move to Language
                 return
             utils.moveFile(fileSourcePath, watchedDirectoryFilepath)
             self.fileSwitch.updateInfo()
-            self.ui.showMessage("Moved file '{}' to '\{}\\'".format(fileSourcePath, watchedDirectoryName))
+            self.ui.showMessage(getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, watchedDirectoryName))
         except Exception as e:
             self.ui.showErrorMessage("Could not mark as watched: {}".format(e)) # TODO: Move to language
 
@@ -579,7 +579,7 @@ class SyncplayClient(object):
                 return
             utils.moveFile(fileSourcePath, unwatchedFilePath)
             self.fileSwitch.updateInfo()
-            self.ui.showMessage("Moved file '{}' to '\{}\\'".format(fileSourcePath, unwatchedDirectoryPathName))  # TODO: Move to Language
+            self.ui.showMessage(getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, unwatchedDirectoryPathName))
         except Exception as e:
             self.ui.showErrorMessage("Could not mark as unwatched: {}".format(e)) # TODO: Move to Language
 
@@ -610,7 +610,7 @@ class SyncplayClient(object):
                 utils.moveFile(pendingWatchedMove, destFilepath)
                 self.fileSwitch.updateInfo()
                 try:
-                    self.ui.showMessage("Moved '{}' to '{}' sub-folder".format(pendingWatchedMove, constants.WATCHED_SUBFOLDER))
+                    self.ui.showMessage(getMessage("moved-file-to-subfolder-notification").format(pendingWatchedMove, constants.WATCHED_SUBFOLDER))
                     self._pendingWatchedMoves.remove(pendingWatchedMove)
                 except Exception:
                     pass
