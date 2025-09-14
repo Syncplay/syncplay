@@ -815,6 +815,9 @@ class ConfigDialog(QtWidgets.QDialog):
         self.pauseonleaveCheckbox = QCheckBox(getMessage("pauseonleave-label"))
         self.pauseonleaveCheckbox.setObjectName("pauseOnLeave")
         self.readyPauseLayout.addWidget(self.pauseonleaveCheckbox)
+        self.preventAutoplayWhenAloneInRoomCheckbox = QCheckBox(getMessage("preventautoplaywhenaloneinroom-label"))
+        self.preventAutoplayWhenAloneInRoomCheckbox.setObjectName("preventAutoplayWhenAloneInRoom")
+        self.readyPauseLayout.addWidget(self.preventAutoplayWhenAloneInRoomCheckbox)
         self.readyLayout.addWidget(self.readyPauseGroup)
 
         # Unpausing

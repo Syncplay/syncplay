@@ -238,6 +238,7 @@ en = {
     "dontslowdownwithme-label": "Never slow down or rewind others (experimental)",
     "pausing-title": "Pausing",
     "pauseonleave-label": "Pause when user leaves (e.g. if they are disconnected)",
+    "preventautoplaywhenaloneinroom-label": "Don't auto-play videos before others join",
     "readiness-title": "Initial readiness state",
     "readyatstart-label": "Set me as 'ready to watch' by default",
     "forceguiprompt-label": "Don't always show the Syncplay configuration window",  # (Inverted)
@@ -424,6 +425,7 @@ en = {
     "slowondesync-tooltip": "Reduce playback rate temporarily when needed to bring you back in sync with other viewers. Not supported on MPC-HC/BE.",
     "dontslowdownwithme-tooltip": "Means others do not get slowed down or rewinded if your playback is lagging. Useful for room operators.",
     "pauseonleave-tooltip": "Pause playback if you get disconnected or someone leaves from your room.",
+    "preventautoplaywhenaloneinroom-tooltip": "Don't auto-play videos before others have joined the room.",
     "readyatstart-tooltip": "Set yourself as 'ready' at start (otherwise you are set as 'not ready' until you change your readiness state)",
     "forceguiprompt-tooltip": "Configuration dialogue is not shown when opening a file with Syncplay.",  # (Inverted)
     "nostore-tooltip": "Run Syncplay with the given configuration, but do not permanently store the changes.",  # (Inverted)

@@ -986,6 +986,10 @@ class SyncplayClient(object):
         if not self.userlist.currentUser.canControl():
             return False
 
+        # Check if user is alone in the room and preventAutoplayWhenAloneInRoom is enabled
+        if self._config["preventAutoplayWhenAloneInRoom"] and self.userlist.areYouAloneInRoom() and not self._recentlyAdvanced():
+            return False
+
         unpauseAction = self._config['unpauseAction']
         if self.userlist.currentUser.isReady() or unpauseAction == constants.UNPAUSE_ALWAYS_MODE:
             return True
@@ -998,9 +1002,15 @@ class SyncplayClient(object):
             return False
 
     def autoplayConditionsMet(self):
+        recentlyAdvanced = self._recentlyAdvanced()
+
+        # Check if user is alone in the room and preventAutoplayWhenAloneInRoom is enabled
+        if self._config["preventAutoplayWhenAloneInRoom"] and self.userlist.areYouAloneInRoom() and not recentlyAdvanced:
+            return False
+
         if self.seamlessMusicOveride():
             self.setPaused(False)
-        recentlyAdvanced = self._recentlyAdvanced()
+
         return (
             self._playerPaused and (self.autoPlay or recentlyAdvanced) and
             self.userlist.currentUser.canControl() and self.userlist.isReadinessSupported()
