@@ -596,6 +596,9 @@ class SyncplayClient(object):
                 if not os.path.exists(pendingWatchedMove):
                     self._pendingWatchedMoves.remove(pendingWatchedMove)
                     continue
+                if not utils.canMarkAsWatched(pendingWatchedMove):
+                    self._pendingWatchedMoves.remove(pendingWatchedMove)
+                    continue
                 originalDir = os.path.dirname(pendingWatchedMove)
                 watchedDir = utils.getWatchedSubfolder(originalDir)
                 utils.createWatchedSubdirIfNeeded(watchedDir)

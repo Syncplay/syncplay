@@ -555,7 +555,10 @@ def getCorrectedPathForFile(filePath):
         correctedDirectory = getCorrectedDirectoryForFile(filePath)
         filename = os.path.basename(filePath)
         correctedPath = os.path.join(correctedDirectory, filename)
-        return correctedPath
+        if os.path.isfile(correctedPath):
+            return correctedPath
+        else:
+            return filePath
 
 def isWatchedSubfolder(directoryPath):
     if not directoryPath:
