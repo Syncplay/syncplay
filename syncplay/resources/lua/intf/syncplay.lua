@@ -90,7 +90,7 @@ local durationdelay = 500000 -- Pause for get_duration command etc for increased
 local loopsleepduration = 2500 -- Pause for every event loop (uses microseconds)
 local quitcheckfrequency = 20 -- Check whether VLC has closed every X loops
 
-local host = "localhost"
+local host = "127.0.0.1"
 local port
 
 local titlemultiplier = 604800 -- One week
