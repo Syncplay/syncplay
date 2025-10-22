@@ -528,7 +528,7 @@ class VlcPlayer(BasePlayer):
                 vlcoutputthread.start()
             self.__playerController._vlcready.clear()
             self._factory = VLCClientFactory(self.__playerController, self.vlcHasResponded, self.timeVLCLaunched, self.__process)
-            self.reactor.connectTCP('localhost', self.__playerController.vlcport, self._factory)
+            self.reactor.connectTCP('127.0.0.1', self.__playerController.vlcport, self._factory)
 
         def _shouldListenForSTDOUT(self):
             return not isWindows()
