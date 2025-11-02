@@ -508,6 +508,8 @@ class RoomManager(object):
         for room in self._rooms.values():
             for watcher in room.getWatchers():
                 allnames.append(watcher.getName().lower())
+        if username.lower() in allnames and username.endswith('_'):
+            username = username.rstrip('_') or '_'
         while username.lower() in allnames:
             username += '_'
         return username
