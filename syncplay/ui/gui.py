@@ -1007,6 +1007,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self._syncplayClient.setPaused(True)
 
     @needsClient
+    def reconnectToServer(self):
+        """
+        Trigger a manual reconnection using the client's built-in retry mechanism.
+        This is simpler and more reliable than doing a complete restart.
+        """
+        try:
+            if self._syncplayClient:
+                self._syncplayClient.manualReconnect()
+            else:
+                self.showErrorMessage(getMessage("connection-failed-notification"))
+        except Exception as e:
+            self.showErrorMessage(getMessage("reconnect-failed-error").format(str(e)))
+
     def exitSyncplay(self):
         self._syncplayClient.stop()
 
@@ -1714,6 +1727,9 @@ class MainWindow(QtWidgets.QMainWindow):
         window.openAction = window.fileMenu.addAction(QtGui.QPixmap(resourcespath + 'film_folder_edit.png'),
                                                       getMessage("setmediadirectories-menu-label"))
         window.openAction.triggered.connect(self.openSetMediaDirectoriesDialog)
+
+        window.reconnectAction = window.fileMenu.addAction(getMessage("reconnect-menu-label"))
+        window.reconnectAction.triggered.connect(self.reconnectToServer)
 
         window.exitAction = window.fileMenu.addAction(getMessage("exit-menu-label"))
         if isMacOS():

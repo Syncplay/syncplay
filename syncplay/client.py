@@ -871,9 +871,8 @@ class SyncplayClient(object):
             self._clientSupportsTLS = False
 
         def retry(retries):
-            self._lastGlobalUpdate = None
-            self.ui.setSSLMode(False)
-            self.playlistMayNeedRestoring = True
+            # Use shared state reset method
+            self._performRetryStateReset()
             if retries == 0:
                 self.onDisconnect()
             if retries > constants.RECONNECT_RETRIES:
@@ -882,8 +881,6 @@ class SyncplayClient(object):
                 reactor.callLater(0.1, self.stop, True)
                 return None
 
-            self.ui.showMessage(getMessage("reconnection-attempt-notification"))
-            self.reconnecting = True
             return(0.1 * (2 ** min(retries, 5)))
 
         self._reconnectingService = ClientService(self._endpoint, self.protocolFactory, retryPolicy=retry)
@@ -919,6 +916,42 @@ class SyncplayClient(object):
         reactor.callLater(0.1, reactor.stop)
         if promptForAction:
             self.ui.promptFor(getMessage("enter-to-exit-prompt"))
+
+    def _performRetryStateReset(self):
+        """
+        Shared method to reset connection state for both automatic and manual retries.
+        This contains the common logic from the original retry function.
+        """
+        self._lastGlobalUpdate = None
+        self.ui.setSSLMode(False)
+        self.playlistMayNeedRestoring = True
+        self.ui.showMessage(getMessage("reconnection-attempt-notification"))
+        self.reconnecting = True
+
+    def manualReconnect(self):
+        """
+        Trigger a manual reconnection by forcing the retry mechanism.
+        This performs the same steps as the automatic retry function.
+        """
+        if not self._running or not hasattr(self, '_reconnectingService'):
+            self.ui.showErrorMessage(getMessage("connection-failed-notification"))
+            return
+
+        from twisted.internet import reactor
+
+        def performReconnect():
+            # Apply the shared state reset logic
+            self._performRetryStateReset()
+
+            # Stop current service and restart it to trigger reconnection
+            if self._reconnectingService and self._reconnectingService.running:
+                self._reconnectingService.stopService()
+
+            # Restart the service to trigger a reconnection attempt
+            self._reconnectingService.startService()
+
+        # Use callLater for threading purposes as suggested
+        reactor.callLater(0.1, performReconnect)
 
     def requireServerFeature(featureRequired):
         def requireServerFeatureDecorator(f):

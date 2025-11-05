@@ -25,6 +25,10 @@ en = {
 
     "connection-attempt-notification": "Attempting to connect to {}:{}",  # Port, IP
     "reconnection-attempt-notification": "Connection with server lost, attempting to reconnect",
+    "reconnect-menu-triggered-notification": "Manual reconnect initiated - will attempt fresh connection to {}:{} in 2 seconds...",
+    "reconnect-failed-no-host-error": "Cannot reconnect: no server information available",
+    "reconnect-failed-no-port-error": "Cannot reconnect: invalid server configuration",
+    "reconnect-failed-error": "Reconnection failed: {}",
     "disconnection-notification": "Disconnected from server",
     "connection-failed-notification": "Connection with server failed",
     "connected-successful-notification": "Successfully connected to server",
@@ -334,6 +338,7 @@ en = {
     "setmediadirectories-menu-label": "Set media &directories",
     "loadplaylistfromfile-menu-label": "&Load playlist from file",
     "saveplaylisttofile-menu-label": "&Save playlist to file",
+    "reconnect-menu-label": "&Reconnect to server",
     "exit-menu-label": "E&xit",
     "advanced-menu-label": "&Advanced",
     "window-menu-label": "&Window",
