@@ -259,6 +259,10 @@ class SyncplayClient(object):
                 self._tryMovePendingWatchedFiles()
             except Exception:
                 pass
+        self.currentlyPlayingFilename = self.userlist.currentUser.file["name"] if self.userlist.currentUser.file else None
+        playingCurrentIndex = not self.playlist._notPlayingCurrentIndex()
+        if playingCurrentIndex:
+            self.playlist.recordPlayedNearEOF(paused, position)
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
             if (pauseChange or seeked) and self._protocol:
@@ -534,10 +538,16 @@ class SyncplayClient(object):
             return True
         return self._globalPaused
 
-    def markWatchedFilePendingMove(self):
+    def markWatchedFilePendingMove(self, oldFilePath=None):
+        self.playlist.lastNearEOFName = None
+        self.playlist.lastNearEOFPath = None
+
         try:
-            currentFile = self.userlist.currentUser.file if self.userlist and self.userlist.currentUser else None
-            currentFilePath = currentFile.get("path") if currentFile else None
+            if oldFilePath:
+                currentFilePath = oldFilePath
+            else:
+                currentFile = self.userlist.currentUser.file if self.userlist and self.userlist.currentUser else None
+                currentFilePath = currentFile.get("path") if currentFile else None
             if currentFilePath and not utils.isURL(currentFilePath) and currentFilePath not in self._pendingWatchedMoves:
                 self._pendingWatchedMoves.append(currentFilePath)
                 self.ui.showDebugMessage("Marked for watched move: {}".format(currentFilePath))
@@ -645,6 +655,7 @@ class SyncplayClient(object):
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
         self.playlist.changeToPlaylistIndexFromFilename(filename)
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def setTrustedDomains(self, newTrustedDomains):
         from syncplay.ui.ConfigurationGetter import ConfigurationGetter
@@ -727,6 +738,7 @@ class SyncplayClient(object):
             self.establishRewindDoubleCheck()
             self.lastRewindTime = time.time()
             self.autoplayCheck()
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def fileSwitchFoundFiles(self):
         self.ui.fileSwitchFoundFiles()
@@ -734,9 +746,11 @@ class SyncplayClient(object):
 
     def setPlaylistIndex(self, index):
         self._protocol.setPlaylistIndex(index)
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def changeToPlaylistIndex(self, *args, **kwargs):
         self.playlist.changeToPlaylistIndex(*args, **kwargs)
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def loopSingleFiles(self):
         return self._config["loopSingleFiles"] or self.isPlayingMusic()
@@ -1879,6 +1893,10 @@ class SyncplayPlaylist():
         self.addedChangeListCallback = False
         self.switchToNewPlaylistItem = False
         self._lastPlaylistIndexChange = time.time()
+        self.lastNearEOFName = None
+        self.lastNearEOFPath = None
+        self.lastNearEOFFirstTime = 0.0
+        self.lastNearEOFLastTime = 0.0
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
         @wraps(f)
@@ -2000,6 +2018,7 @@ class SyncplayPlaylist():
                     self._client._protocol.sendMessage({"State": state})
                     self._playerPaused = True
                     self._client.autoplayCheck()
+                    self.doubleCheckForWatchedPreviousFile()
         elif index is not None:
             filename = self._playlist[index]
             self._ui.setPlaylistIndexFilename(filename)
@@ -2150,6 +2169,7 @@ class SyncplayPlaylist():
         else:
             self._ui.setPlaylist(self._playlist)
             self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
+        self.doubleCheckForWatchedPreviousFile()
 
     def addToPlaylist(self, file):
         self.changePlaylist([*self._playlist, file])
@@ -2207,6 +2227,48 @@ class SyncplayPlaylist():
             self._client.markWatchedFilePendingMove()
             self.loadNextFileInPlaylist()
 
+    @needsSharedPlaylistsEnabled
+    def recordPlayedNearEOF(self, paused, position):
+        if not self._client.userlist.currentUser.file:
+            return
+        if position == None:
+            return
+        currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
+        isPlaying = paused is False
+        remainingTime = currentLength - position
+
+        if (
+            isPlaying and
+            remainingTime < constants.PLAYLIST_NEAR_EOF_WINDOW and
+            currentLength > (constants.PLAYLIST_NEAR_EOF_WINDOW * 2) and  # The EOF window must represent at least the last half of the video to avoid misdetection when playing start of a short file
+            currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
+            self.notJustChangedPlaylist()
+        ):
+            now_monotime = time.monotonic()
+            if self.lastNearEOFName != self._client.userlist.currentUser.file['name']:
+                self.lastNearEOFName = self._client.userlist.currentUser.file['name']
+                self.lastNearEOFPath = self._client.userlist.currentUser.file['path']
+                self.lastNearEOFFirstTime = now_monotime
+            self.lastNearEOFLastTime = now_monotime
+
+    @needsSharedPlaylistsEnabled
+    def doubleCheckForWatchedPreviousFile(self):
+        if not self.lastNearEOFName or not self.lastNearEOFPath:
+            return False
+
+        if self._playingSpecificFilename(self.lastNearEOFName):
+            return False
+
+        now_monotime = time.monotonic()
+        dwell = max(0.0, self.lastNearEOFLastTime - self.lastNearEOFFirstTime)
+        if dwell < constants.PLAYLIST_NEAR_EOF_MIN_DWELL:
+            return False
+
+        age = now_monotime - self.lastNearEOFLastTime
+        if age > constants.PLAYLIST_NEAR_EOF_LATCH_TTL:
+            return False
+        self._client.markWatchedFilePendingMove(self.lastNearEOFPath)
+
     def notJustChangedPlaylist(self):
         secondsSinceLastChange = time.time() - self._lastPlaylistIndexChange
         return secondsSinceLastChange > constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
@@ -2245,6 +2307,12 @@ class SyncplayPlaylist():
         else:
             self._ui.showDebugMessage("Not playing current index - Filename mismatch or no file")
             return True
+
+    def _playingSpecificFilename(self, filenameToCompare):
+        if self._client.userlist.currentUser.file:
+            return self._client.userlist.currentUser.file['name'] == filenameToCompare
+        else:
+            return False
 
     def _thereIsNextPlaylistIndex(self):
         if self._playlistIndex is None:
@@ -2324,6 +2392,7 @@ class FileSwitchManager(object):
         if self.directorySearchError:
             self._client.ui.showErrorMessage(self.directorySearchError)
             self.directorySearchError = None
+        self._client.playlist.doubleCheckForWatchedPreviousFile()
 
     def updateInfo(self):
         if not self.currentlyUpdating and self.mediaDirectories:

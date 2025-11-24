@@ -45,6 +45,9 @@ FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [
     ['syncplay.pl:8999 (France)', 'syncplay.pl:8999']]
 PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH = 10  # Seconds
 PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD = 5  # Seconds (only triggered if file is paused, e.g. due to EOF)
+PLAYLIST_NEAR_EOF_WINDOW = 270  # seconds
+PLAYLIST_NEAR_EOF_MIN_DWELL = 120  # seconds
+PLAYLIST_NEAR_EOF_LATCH_TTL = 60  # seconds
 EXECUTABLE_COMBOBOX_MINIMUM_LENGTH = 30 # Minimum number of characters that the combobox will make visible
 
 # Overriden by config
