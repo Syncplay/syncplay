@@ -396,8 +396,19 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def handshakeCompleted(self):
         self._serverCertificateTLS = self.transport.getPeerCertificate()
-        self._subjectTLS = self._serverCertificateTLS.get_subject().CN
-        self._issuerTLS = self._serverCertificateTLS.get_issuer().CN
+        if not self._serverCertificateTLS:
+            self._client.ui.showErrorMessage("TLS enabled but no peer certificate was provided by the server.")
+            self.sendHello()
+            return
+        
+        subject = self._serverCertificateTLS.get_subject()
+        issuer = self._serverCertificateTLS.get_issuer()
+        self._subjectTLS = getattr(subject, "CN", "") or ""
+        self._issuerTLS = getattr(issuer, "CN", "") or ""
+
+        if not self._subjectTLS:
+            self._subjectTLS = self._client._config.get("host", "") or ""
+        
         self._expiredTLS =self._serverCertificateTLS.has_expired()
         self._expireDateTLS = datetime.strptime(self._serverCertificateTLS.get_notAfter().decode('ascii'), '%Y%m%d%H%M%SZ')
 
