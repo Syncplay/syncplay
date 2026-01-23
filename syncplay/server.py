@@ -250,15 +250,18 @@ class SyncFactory(Factory):
 
     def _allowTLSconnections(self, path):
         try:
-            privKey = open(path+'/privkey.pem', 'rt').read()
-            certif = open(path+'/cert.pem', 'rt').read()
-            chain = open(path+'/chain.pem', 'rt').read()
+            privKey = open(path+'/privkey.pem', 'rb').read()
+            certif = open(path+'/cert.pem', 'rb').read()
+            chain = open(path+'/chain.pem', 'rb').read()
 
             self.lastEditCertTime = os.path.getmtime(path+'/cert.pem')
 
             privKeyPySSL = crypto.load_privatekey(crypto.FILETYPE_PEM, privKey)
             certifPySSL = crypto.load_certificate(crypto.FILETYPE_PEM, certif)
-            chainPySSL = [crypto.load_certificate(crypto.FILETYPE_PEM, chain)]
+
+            sentinel = b'-----BEGIN CERTIFICATE-----'
+            chainPySSL = [crypto.load_certificate(crypto.FILETYPE_PEM, sentinel + chain_cert) for chain_cert in
+                          chain.split(sentinel)[1:]]
 
             cipherListString = "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:"\
                                "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:"\
