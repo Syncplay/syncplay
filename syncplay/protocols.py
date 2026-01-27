@@ -400,15 +400,15 @@ class SyncClientProtocol(JSONCommandProtocol):
             self._client.ui.showErrorMessage("TLS enabled but no peer certificate was provided by the server.")
             self.sendHello()
             return
-        
-        subject = self._serverCertificateTLS.get_subject()
-        issuer = self._serverCertificateTLS.get_issuer()
-        self._subjectTLS = getattr(subject, "CN", "") or ""
-        self._issuerTLS = getattr(issuer, "CN", "") or ""
+
+        for x in range(0,self._serverCertificateTLS.get_extension_count()):
+            if (self._serverCertificateTLS.get_extension(x).get_short_name() == b'subjectAltName'):
+                self._subjectTLS = self._serverCertificateTLS.get_extension(x).__str__().replace("DNS:", "")
 
         if not self._subjectTLS:
             self._subjectTLS = self._client._config.get("host", "") or ""
-        
+
+        self._issuerTLS = self._serverCertificateTLS.get_issuer().CN
         self._expiredTLS =self._serverCertificateTLS.has_expired()
         self._expireDateTLS = datetime.strptime(self._serverCertificateTLS.get_notAfter().decode('ascii'), '%Y%m%d%H%M%SZ')
 
