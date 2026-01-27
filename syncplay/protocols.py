@@ -397,7 +397,7 @@ class SyncClientProtocol(JSONCommandProtocol):
     def handshakeCompleted(self):
         self._serverCertificateTLS = self.transport.getPeerCertificate()
         if not self._serverCertificateTLS:
-            self._client.ui.showErrorMessage("TLS enabled but no peer certificate was provided by the server.")
+            self._client.ui.showErrorMessage(getMessage("startTLS-server-certificate-invalid"))
             self.sendHello()
             return
 
