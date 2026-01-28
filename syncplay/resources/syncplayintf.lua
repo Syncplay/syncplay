@@ -85,6 +85,7 @@ non_us_chars = {
     '~', 'ẽ', 'ĩ', 'ũ',
     '¨',
     'ő', 'ű', 'Ő', 'Ű',
+    'Ґ', 'ґ', 'Є', 'є', 'І', 'і', 'Ї', 'ї',
 }
 
 function format_scrolling(xpos, ypos, text)
