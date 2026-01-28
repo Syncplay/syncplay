@@ -555,4 +555,20 @@ zh_CN = {
 
     "playlist-empty-error": "播放列表目前是空的。",
     "playlist-invalid-index-error": "无效的播放列表索引",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "文件夹",
+    "syncplay-watchedfiles-title": "已观看的文件",
+    "syncplay-watchedautomove-label": "自动将已观看的文件移动到子文件夹（若子文件夹存在）",
+    "syncplay-watchedmovesubfolder-label": "用于已观看文件的子文件夹",
+    "syncplay-watchedsubfolderautocreate-label": "需要时自动创建已观看文件的子文件夹",
+    "mark-as-watched-menu-label": "标记为已观看",
+    "mark-as-unwatched-menu-label": "标记为未观看",
+    "watchedautomove-tooltip": "当到达文件末尾时，自动将文件移动到已观看子文件夹。仅当父文件夹是媒体文件夹时才有效。",
+    "watchedsubfolder-tooltip": "用于将已观看文件移动到（相对于文件所在文件夹的）子文件夹（必须存在该子文件夹才能移动文件）。仅当父文件夹是媒体文件夹时才有效。",
+    "watchedsubfolderautocreate-tooltip": "在将文件移动到子文件夹时，如尚不存在，则自动创建已观看子文件夹。仅当父文件夹是媒体文件夹时才有效。",
+    "cannot-move-file-due-to-name-conflict-error": "无法将 '{}' 移动到 '{}' 子文件夹，因为已存在同名文件。", # Path, subfolder
+    "moved-file-to-subfolder-notification": "已将 '{}' 移动到 '{}' 子文件夹。", # Path, subfolder
+
 }

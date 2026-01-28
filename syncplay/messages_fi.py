@@ -551,4 +551,21 @@ fi = {
 
     "playlist-empty-error": "Toistoluettelo on tällä hetkellä tyhjä.",
     "playlist-invalid-index-error": "Epäkelpo toistoluettelohakemisto",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "Kansiot",
+    "syncplay-watchedfiles-title": "Katsotut tiedostot",
+    "syncplay-watchedautomove-label": "Siirrä katsotut tiedostot automaattisesti alikansioon (jos alikansio on olemassa)",
+    "syncplay-watchedmovesubfolder-label": "Alikansio katsotuille tiedostoille",
+    "syncplay-watchedsubfolderautocreate-label": "Luo katsottujen tiedostojen alikansio automaattisesti tarvittaessa",
+    "mark-as-watched-menu-label": "Merkitse katsotuksi",
+    "mark-as-unwatched-menu-label": "Merkitse katsomattomaksi",
+    "watchedautomove-tooltip": "Siirtää tiedoston automaattisesti katsottujen tiedostojen alikansioon, kun tiedoston loppu saavutetaan. Toimii vain, jos yläkansio on mediakansio.",
+    "watchedsubfolder-tooltip": "Alikansio, johon katsotut tiedostot siirretään suhteessa tiedoston kansioon (alikansion on oltava olemassa, jotta tiedosto voidaan siirtää). Toimii vain, jos yläkansio on mediakansio.",
+    "watchedsubfolderautocreate-tooltip": "Luo katsottujen tiedostojen alikansion automaattisesti siirron yhteydessä, jos sitä ei vielä ole. Toimii vain, jos yläkansio on mediakansio.",
+    "cannot-move-file-due-to-name-conflict-error": "Tiedostoa '{}' ei voitu siirtää alikansioon '{}', koska samanniminen tiedosto on jo olemassa.", # Path, subfolder
+    "moved-file-to-subfolder-notification": "Siirrettiin '{}' alikansioon '{}'.", # Path, subfolder
+
+
 }

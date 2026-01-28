@@ -555,4 +555,20 @@ fr = {
 
     "playlist-empty-error": "La liste de lecture est actuellement vide.",
     "playlist-invalid-index-error": "Index de liste de lecture non valide",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "Dossiers",
+    "syncplay-watchedfiles-title": "Fichiers vus",
+    "syncplay-watchedautomove-label": "Déplacer automatiquement les fichiers vus vers un sous-dossier (si le sous-dossier existe)",
+    "syncplay-watchedmovesubfolder-label": "Sous-dossier pour les fichiers vus",
+    "syncplay-watchedsubfolderautocreate-label": "Créer automatiquement le sous-dossier des fichiers vus si nécessaire",
+    "mark-as-watched-menu-label": "Marquer comme vu",
+    "mark-as-unwatched-menu-label": "Marquer comme non vu",
+    "watchedautomove-tooltip": "Déplace automatiquement le fichier vers le sous-dossier des fichiers vus lorsque la fin du fichier est atteinte. Fonctionne uniquement si le dossier parent est un dossier multimédia.",
+    "watchedsubfolder-tooltip": "Sous-dossier (par rapport au dossier du fichier) vers lequel déplacer les fichiers vus (le sous-dossier doit exister pour que le fichier soit déplacé). Fonctionne uniquement si le dossier parent est un dossier multimédia.",
+    "watchedsubfolderautocreate-tooltip": "Crée automatiquement le sous-dossier des fichiers vus lors du déplacement s’il n’existe pas encore. Fonctionne uniquement si le dossier parent est un dossier multimédia.",
+    "cannot-move-file-due-to-name-conflict-error": "Impossible de déplacer '{}' vers le sous-dossier '{}' car un fichier portant ce nom existe déjà.", # Path, subfolder
+    "moved-file-to-subfolder-notification": "Déplacé '{}' vers le sous-dossier '{}'.", # Path, subfolder
+
 }

@@ -18,6 +18,7 @@ from syncplay.ui.consoleUI import ConsoleUI
 from syncplay.utils import resourcespath
 from syncplay.utils import isLinux, isWindows, isMacOS
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
+from syncplay.utils import isWatchedFile, getCorrectedPathForFile, canMarkAsWatched
 from syncplay.vendor import Qt
 from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2, IsPySide6
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
@@ -349,15 +350,25 @@ class MainWindow(QtWidgets.QMainWindow):
                 if fileIsUntrusted:
                     if isDarkMode:
                         self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DARK_UNTRUSTEDITEM_COLOR)))
+                        self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
                     else:
                         self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_UNTRUSTEDITEM_COLOR)))
+                        self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
                 elif fileIsAvailable:
-                    self.item(item).setForeground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Text)))
+                    directory = self.selfWindow._syncplayClient.fileSwitch.getDirectoryOfFilenameInCache(itemFilename)
+                    if (directory and os.path.basename(os.path.normpath(directory)) == constants.WATCHED_SUBFOLDER) or isWindows() and (directory.lower() and os.path.basename(os.path.normpath(directory).lower()) == constants.WATCHED_SUBFOLDER.lower()):
+                        self.item(item).setBackground(QtGui.QBrush(QtGui.QColor("grey")))
+                        self.item(item).setForeground(QtGui.QBrush(QtGui.QColor("black")))
+                    else:
+                        self.item(item).setForeground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Text)))
+                        self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
                 else:
                     if isDarkMode:
                         self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DARK_DIFFERENTITEM_COLOR)))
+                        self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
                     else:
                         self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                        self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
             self.selfWindow._syncplayClient.fileSwitch.setFilenameWatchlist(self.selfWindow.newWatchlist)
             self.forceUpdate()
 
@@ -729,8 +740,25 @@ class MainWindow(QtWidgets.QMainWindow):
     def shuffleEntirePlaylist(self):
         self._syncplayClient.playlist.shuffleEntirePlaylist()
 
+    def _markFileWatchedViaContext(self, filePath: str) -> None:
+        self._syncplayClient.userInitiatedMarkWatched(filePath)
+        self.playlist.updatePlaylistIndexIcon()
+
+    def _markFileUnwatchedViaContext(self, filePath: str) -> None:
+        self._syncplayClient.userInitiatedMarkUnwatched(filePath)
+        self.playlist.updatePlaylistIndexIcon()
+
     @needsClient
     def openPlaylistMenu(self, position):
+        def addSeenUnseenItems(pathFound, menu):
+            filename = os.path.basename(pathFound)
+            if len(constants.WATCHED_SUBFOLDER) > 0:
+                pathFound = getCorrectedPathForFile(pathFound)
+                if isWatchedFile(pathFound):
+                    menu.addAction(QtGui.QPixmap(resourcespath + "no_eye.png"), getMessage("mark-as-unwatched-menu-label"), lambda p=pathFound: self._markFileUnwatchedViaContext(p))  # TODO: Move to language
+                elif canMarkAsWatched(pathFound):
+                    menu.addAction(QtGui.QPixmap(resourcespath + "yes_eye.png"), getMessage("mark-as-watched-menu-label"), lambda p=pathFound: self._markFileWatchedViaContext(p))  # TODO: Move to language
+
         indexes = self.playlist.selectedIndexes()
         if len(indexes) > 0:
             item = self.playlist.selectedIndexes()[0]
@@ -750,6 +778,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 menu.addAction(QtGui.QPixmap(resourcespath + "folder_film.png"),
                                getMessage('open-containing-folder'),
                                lambda: utils.open_system_file_browser(pathFound))
+                addSeenUnseenItems(pathFound, menu)
             if self._syncplayClient.isUntrustedTrustableURI(firstFile):
                 domain = utils.getDomainFromURL(firstFile)
                 if domain:

@@ -552,4 +552,19 @@ es = {
 
     "playlist-empty-error": "Playlist is currently empty.", # TO DO: Translate
     "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
+
+    # Watchlist terms
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "Dosierujoj",
+    "syncplay-watchedfiles-title": "Spektitaj dosieroj",
+    "syncplay-watchedautomove-label": "Aŭtomate movi spektitajn dosierojn al subdosierujo (se la subdosierujo ekzistas)",
+    "syncplay-watchedmovesubfolder-label": "Subdosierujo por spektitaj dosieroj",
+    "syncplay-watchedsubfolderautocreate-label": "Aŭtomate krei subdosierujon por spektitaj dosieroj laŭbezone",
+    "mark-as-watched-menu-label": "Marki kiel spektita",
+    "mark-as-unwatched-menu-label": "Marki kiel nespektita",
+    "watchedautomove-tooltip": "Aŭtomate movas la dosieron al la subdosierujo por spektitaj dosieroj kiam la fino de la dosiero estas atingita. Ĉi tio funkcias nur se la patra dosierujo estas aŭdvidaĵa dosierujo.",
+    "watchedsubfolder-tooltip": "Subdosierujo por movi spektitajn dosierojn, rilate al la dosierujo de la dosiero (la subdosierujo devas ekzisti por ke la dosiero estu movita). Ĉi tio funkcias nur se la patra dosierujo estas aŭdvidaĵa dosierujo.",
+    "watchedsubfolderautocreate-tooltip": "Aŭtomate kreas la subdosierujon por spektitaj dosieroj dum la movo, se ĝi ankoraŭ ne ekzistas. Ĉi tio funkcias nur se la patra dosierujo estas aŭdvidaĵa dosierujo.",
+    "Could not move '{}' to '{}' subfolder because a file with that name already exists": "Ne eblis movi '{}' al la subdosierujo '{}' ĉar dosiero kun tiu nomo jam ekzistas",
+    "moved-file-to-subfolder-notification": "Movis '{}' al la subdosierujo '{}'."
 }

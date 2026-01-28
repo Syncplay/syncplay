@@ -126,6 +126,8 @@ en = {
     "media-player-latency-warning": "Warning: The media player took {} seconds to respond. If you experience syncing issues then close applications to free up system resources, and if that doesn't work then try a different media player.",  # Seconds to respond
     "mpv-unresponsive-error": "mpv has not responded for {} seconds so appears to have malfunctioned. Please restart Syncplay.",  # Seconds to respond
 
+    "moved-file-to-subfolder-notification": "Moved '{}' to '{}' subfolder.", # Path, subfolder
+
     # Client prompts
     "enter-to-exit-prompt": "Press enter to exit\n",
 
@@ -165,7 +167,7 @@ en = {
 
     "feature-sharedPlaylists": "shared playlists",  # used for not-supported-by-server-error
     "feature-chat": "chat",  # used for not-supported-by-server-error
-    "feature-readiness": "readiness",  # used for not-supported-by-server-error
+    "feature-readiness": "readiness",  # used for not-supported-by-server-error"
     "feature-managedRooms": "managed rooms",  # used for not-supported-by-server-error
     "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error
 
@@ -177,14 +179,16 @@ en = {
     "invalid-offset-value": "Invalid offset value",
 
     "switch-file-not-found-error": "Could not switch to file '{0}'. Syncplay looks in specified media directories.",  # File not found
-    "folder-search-timeout-error": "The search for media in media directories was aborted as it took too long to search through '{}' after having processed the first {:,} files. This will occur if you select a folder with too many sub-folders in your list of media folders to search through or if there are too many files to process. For automatic file switching to work again please select File->Set Media Directories in the menu bar and remove this directory or replace it with an appropriate sub-folder. If the folder is actually fine then you can re-enable it by selecting File->Set Media Directories and pressing 'OK'.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
-    "folder-search-timeout-warning": "Warning: It has taken {} seconds to scan {:,} files in the folder '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through or if there are too many files to process.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
+    "folder-search-timeout-error": "The search for media in media directories was aborted as it took too long to search through '{}' after having processed the first {:,} files. This will occur if you select a folder with too many subfolders in your list of media folders to search through or if there are too many files to process. For automatic file switching to work again please select File->Set Media Directories in the menu bar and remove this directory or replace it with an appropriate subfolder. If the folder is actually fine then you can re-enable it by selecting File->Set Media Directories and pressing 'OK'.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
+    "folder-search-timeout-warning": "Warning: It has taken {} seconds to scan {:,} files in the folder '{}'. This will occur if you select a folder with too many subfolders in your list of media folders to search through or if there are too many files to process.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
     "folder-search-first-file-timeout-error": "The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please go to File->Set Media Directories and either remove the directory or resolve the issue (e.g. by changing power saving settings).",  # Folder
     "added-file-not-in-media-directory-error": "You loaded a file in '{}' which is not a known media directory. You can add this as a media directory by selecting File->Set Media Directories in the menu bar.",  # Folder
     "no-media-directories-error": "No media directories have been set. For shared playlist and file switching features to work properly please select File->Set Media Directories and specify where Syncplay should look to find media files.",
     "cannot-find-directory-error": "Could not find media directory '{}'. To update your list of media directories please select File->Set Media Directories from the menu bar and specify where Syncplay should look to find media files.",
 
     "failed-to-load-server-list-error": "Failed to load public server list. Please visit https://www.syncplay.pl/ in your browser.",
+
+    "cannot-move-file-due-to-name-conflict-error": "Could not move '{}' to '{}' subfolder because a file with that name already exists.", # Path, folder
 
     # Client arguments
     "argument-description": 'Solution to synchronize playback of multiple media player instances over the network.',
@@ -256,12 +260,19 @@ en = {
     "automatic-language": "Default ({})",  # Default language
     "showdurationnotification-label": "Warn about media duration mismatches",
     "basics-label": "Basics",
+    "folders-label": "Folders", # Directories
     "readiness-label": "Play/Pause",
     "misc-label": "Misc",
     "core-behaviour-title": "Core room behaviour",
     "syncplay-internals-title": "Syncplay internals",
     "syncplay-mediasearchdirectories-title": "Directories to search for media",
     "syncplay-mediasearchdirectories-label": "Directories to search for media (one path per line)",
+    "syncplay-watchedfiles-title": "Watched files",
+    "syncplay-watchedautomove-label": "Automatically move watched files to subfolder (if subfolder exists)",
+    "syncplay-watchedmovesubfolder-label": "Subfolder for watched files",
+    "syncplay-watchedsubfolderautocreate-label": "Automatically create watched subfolder when needed",
+    "mark-as-watched-menu-label": "Mark as watched",
+    "mark-as-unwatched-menu-label": "Mark as unwatched",
     "sync-label": "Sync",
     "sync-otherslagging-title": "If others are lagging behind...",
     "sync-youlaggging-title": "If you are lagging behind...",
@@ -416,7 +427,7 @@ en = {
     "executable-path-tooltip": "Location of your chosen supported media player (mpv, mpv.net, VLC, MPC-HC/BE, mplayer2 or IINA).",
     "media-path-tooltip": "Location of video or stream to be opened. Necessary for mplayer2.",
     "player-arguments-tooltip": "Additional command line arguments / switches to pass on to this media player.",
-    "mediasearcdirectories-arguments-tooltip": "Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.",
+    "mediasearcdirectories-arguments-tooltip": "Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through subfolders.",
 
     "more-tooltip": "Display less frequently used settings.",
     "filename-privacy-tooltip": "Privacy mode for sending currently playing filename to server.",
@@ -476,6 +487,10 @@ en = {
     "autoplay-tooltip": "Auto-play when all users who have readiness indicator are ready and minimum user threshold met.",
     "switch-to-file-tooltip": "Double click to switch to {}",  # Filename
     "sendmessage-tooltip": "Send message to room",
+
+    "watchedautomove-tooltip": "Automatically move file into watched subfolder when end of file is reached. This only works if the parent directory is a media directory.",
+    "watchedsubfolder-tooltip": "Subfolder for watched files to be moved into relative to file directory (subfolder needs to exist for file to be moved). This only works if the parent directory is a media directory.",
+    "watchedsubfolderautocreate-tooltip": "Automatically create watched subfolder when moving file to subfolder if it does not already exist. This only works if the parent directory is a media directory.",
 
     # In-userlist notes (GUI)
     "differentsize-note": "Different size!",

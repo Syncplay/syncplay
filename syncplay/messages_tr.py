@@ -555,4 +555,20 @@ tr = {
 
     "playlist-empty-error": "Oynatma listesi şu anda boş.",
     "playlist-invalid-index-error": "Geçersiz oynatma listesi dizini",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "Klasörler",
+    "syncplay-watchedfiles-title": "İzlenen dosyalar",
+    "syncplay-watchedautomove-label": "İzlenen dosyaları otomatik olarak alt klasöre taşı (alt klasör varsa)",
+    "syncplay-watchedmovesubfolder-label": "İzlenen dosyalar için alt klasör",
+    "syncplay-watchedsubfolderautocreate-label": "Gerektiğinde izlenenler alt klasörünü otomatik oluştur",
+    "mark-as-watched-menu-label": "İzlenmiş olarak işaretle",
+    "mark-as-unwatched-menu-label": "İzlenmemiş olarak işaretle",
+    "watchedautomove-tooltip": "Dosyanın sonuna ulaşıldığında dosyayı otomatik olarak izlenenler alt klasörüne taşır. Bu yalnızca üst klasör bir medya klasörü ise çalışır.",
+    "watchedsubfolder-tooltip": "İzlenen dosyaların, dosyanın klasörüne göre göreli olarak taşınacağı alt klasör (dosyanın taşınabilmesi için alt klasörün var olması gerekir). Bu yalnızca üst klasör bir medya klasörü ise çalışır.",
+    "watchedsubfolderautocreate-tooltip": "Dosya alt klasöre taşınırken, yoksa izlenenler alt klasörünü otomatik olarak oluşturur. Bu yalnızca üst klasör bir medya klasörü ise çalışır.",
+    "cannot-move-file-due-to-name-conflict-error": "'{}' '{}' alt klasörüne taşınamadı çünkü bu ada sahip bir dosya zaten var.", # Path, subfolder
+    "moved-file-to-subfolder-notification": "'{}' '{}' alt klasörüne taşındı.", # Path, subfolder
+
 }

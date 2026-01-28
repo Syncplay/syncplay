@@ -793,6 +793,60 @@ class ConfigDialog(QtWidgets.QDialog):
         self.basicOptionsFrame.setLayout(self.basicOptionsLayout)
         self.stackedLayout.addWidget(self.basicOptionsFrame)
 
+    def addFolderTab(self):
+        self.folderFrame = QtWidgets.QFrame()
+        self.folderLayout = QtWidgets.QVBoxLayout()
+        self.folderLayout.setAlignment(Qt.AlignTop)
+        self.folderFrame.setLayout(self.folderLayout)
+
+        ## Media path directories
+
+        self.mediasearchSettingsGroup = QtWidgets.QGroupBox(getMessage("syncplay-mediasearchdirectories-title"))
+        self.mediasearchSettingsLayout = QtWidgets.QVBoxLayout()
+        self.mediasearchSettingsGroup.setLayout(self.mediasearchSettingsLayout)
+
+        self.mediasearchTextEdit = QPlainTextEdit(utils.getListAsMultilineString(self.mediaSearchDirectories))
+        self.mediasearchTextEdit.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "mediasearcdirectories-arguments")
+        self.mediasearchTextEdit.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
+        self.mediasearchSettingsLayout.addWidget(self.mediasearchTextEdit)
+        self.mediasearchSettingsGroup.setMaximumHeight(self.mediasearchSettingsGroup.minimumSizeHint().height())
+
+        # Move folder
+
+        self.watchedVideosSettingsGroup = QtWidgets.QGroupBox(getMessage("syncplay-watchedfiles-title"))
+        self.watchedVideosSettingsLayout = QtWidgets.QVBoxLayout()
+        self.watchedVideosSettingsGroup.setLayout(self.watchedVideosSettingsLayout)
+
+        self.moveWatchedVideoFolderWidget = QtWidgets.QWidget()
+        self.moveWatchedVideoFolderLayout = QtWidgets.QHBoxLayout()
+        self.moveWatchedVideoFolderWidget.setLayout(self.moveWatchedVideoFolderLayout)
+        self.moveWatchedVideoFolderLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.watchedSubfolderLabel = QtWidgets.QLabel(getMessage("syncplay-watchedmovesubfolder-label"))
+
+        self.watchedSubfolderEdit = QtWidgets.QLineEdit("")
+        self.watchedSubfolderEdit.setObjectName("watchedSubfolder")
+
+        self.moveWatchedVideoFolderLayout.addWidget(self.watchedSubfolderLabel)
+        self.moveWatchedVideoFolderLayout.addWidget(self.watchedSubfolderEdit)
+
+        self.watchedVideosSettingsLayout.addWidget(self.moveWatchedVideoFolderWidget)
+
+        self.autoMoveWatchedCheck = QtWidgets.QCheckBox(getMessage("syncplay-watchedautomove-label"))
+        self.autoMoveWatchedCheck.setObjectName("watchedAutoMove")
+        self.watchedVideosSettingsLayout.addWidget(self.autoMoveWatchedCheck)
+
+        self.autoCreateSubfolderCheck = QtWidgets.QCheckBox(getMessage("syncplay-watchedsubfolderautocreate-label"))
+        self.autoCreateSubfolderCheck.setObjectName("watchedSubfolderAutocreate")
+        self.watchedVideosSettingsLayout.addWidget(self.autoCreateSubfolderCheck)
+
+        self.watchedVideosSettingsGroup.setMaximumHeight(self.watchedVideosSettingsGroup.minimumSizeHint().height())
+
+        # Bring it all together
+        self.folderLayout.addWidget(self.mediasearchSettingsGroup)
+        self.folderLayout.addWidget(self.watchedVideosSettingsGroup)
+        self.stackedLayout.addWidget(self.folderFrame)
+
     def addReadinessTab(self):
         self.readyFrame = QtWidgets.QFrame()
         self.readyLayout = QtWidgets.QVBoxLayout()
@@ -912,21 +966,8 @@ class ConfigDialog(QtWidgets.QDialog):
         self.autosaveJoinsToListCheckbox.setObjectName("autosaveJoinsToList")
         self.internalSettingsLayout.addWidget(self.autosaveJoinsToListCheckbox)
 
-        ## Media path directories
-
-        self.mediasearchSettingsGroup = QtWidgets.QGroupBox(getMessage("syncplay-mediasearchdirectories-title"))
-        self.mediasearchSettingsLayout = QtWidgets.QVBoxLayout()
-        self.mediasearchSettingsGroup.setLayout(self.mediasearchSettingsLayout)
-
-        self.mediasearchTextEdit = QPlainTextEdit(utils.getListAsMultilineString(self.mediaSearchDirectories))
-        self.mediasearchTextEdit.setObjectName(constants.LOAD_SAVE_MANUALLY_MARKER + "mediasearcdirectories-arguments")
-        self.mediasearchTextEdit.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
-        self.mediasearchSettingsLayout.addWidget(self.mediasearchTextEdit)
-        self.mediasearchSettingsGroup.setMaximumHeight(self.mediasearchSettingsGroup.minimumSizeHint().height())
-
         self.miscLayout.addWidget(self.coreSettingsGroup)
         self.miscLayout.addWidget(self.internalSettingsGroup)
-        self.miscLayout.addWidget(self.mediasearchSettingsGroup)
         self.miscLayout.setAlignment(Qt.AlignTop)
         self.stackedLayout.addWidget(self.miscFrame)
 
@@ -1286,6 +1327,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.tabListFrame = QtWidgets.QFrame()
         self.tabListWidget = QtWidgets.QListWidget()
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "house.png"), getMessage("basics-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "folder_film.png"), getMessage("folders-label")))
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "control_pause_blue.png"), getMessage("readiness-label")))
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "film_link.png"), getMessage("sync-label")))
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "user_comment.png"), getMessage("chat-label")))
@@ -1437,6 +1479,7 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.storedPassword = self.config['password']
         self.addBasicTab()
+        self.addFolderTab()
         self.addReadinessTab()
         self.addSyncTab()
         self.addChatTab()

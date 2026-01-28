@@ -554,4 +554,20 @@ pt_PT = {
 
     "playlist-empty-error": "Playlist is currently empty.",  # TO DO: Translate
     "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "Pastas",
+    "syncplay-watchedfiles-title": "Ficheiros vistos",
+    "syncplay-watchedautomove-label": "Mover automaticamente os ficheiros vistos para a subpasta (se a subpasta existir)",
+    "syncplay-watchedmovesubfolder-label": "Subpasta para ficheiros vistos",
+    "syncplay-watchedsubfolderautocreate-label": "Criar automaticamente a subpasta de ficheiros vistos quando necessário",
+    "mark-as-watched-menu-label": "Marcar como visto",
+    "mark-as-unwatched-menu-label": "Marcar como não visto",
+    "watchedautomove-tooltip": "Move automaticamente o ficheiro para a subpasta de ficheiros vistos quando o fim do ficheiro é alcançado. Funciona apenas se a pasta principal for uma pasta multimédia.",
+    "watchedsubfolder-tooltip": "Subpasta (relativa à pasta do ficheiro) para onde mover os ficheiros vistos (a subpasta tem de existir para que o ficheiro seja movido). Funciona apenas se a pasta principal for uma pasta multimédia.",
+    "watchedsubfolderautocreate-tooltip": "Cria automaticamente a subpasta de ficheiros vistos ao mover o ficheiro, se ainda não existir. Funciona apenas se a pasta principal for uma pasta multimédia.",
+    "cannot-move-file-due-to-name-conflict-error": "Não foi possível mover '{}' para a subpasta '{}' porque já existe um ficheiro com esse nome.", # Path, subfolder
+    "moved-file-to-subfolder-notification": "Movido '{}' para a subpasta '{}'.", # Path, subfolder
+
 }
