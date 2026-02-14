@@ -126,6 +126,7 @@ class VlcPlayer(BasePlayer):
         self._filename = None
         self._filepath = None
         self._filechanged = False
+        self._detectedSpeed = None
         self._lastVLCPositionUpdate = None
         self.shownVLCLatencyError = False
         self._previousPreviousPosition = -2
@@ -192,6 +193,8 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine(".")
         if self._filename and not self._filechanged:
             self._positionAsk.wait(constants.PLAYER_ASK_DELAY)
+            if self._detectedSpeed is not None and self._detectedSpeed != self._client.getGlobalSpeed():
+                self._client.setSpeed(self._detectedSpeed)
             self._client.updatePlayerStatus(self._paused, self.getCalculatedPosition())
         else:
             self._client.updatePlayerStatus(self._client.getGlobalPaused(), self._client.getGlobalPosition())
@@ -343,6 +346,12 @@ class VlcPlayer(BasePlayer):
                 self.drop(getMessage("vlc-failed-versioncheck"))
             self._lastVLCPositionUpdate = time.time()
             self._positionAsk.set()
+        elif name == "rate":
+            if value != "no-input":
+                try:
+                    self._detectedSpeed = float(value.replace(",", "."))
+                except (ValueError, AttributeError):
+                    pass
         elif name == "filename":
             self._filechanged = True
             self._filename = value

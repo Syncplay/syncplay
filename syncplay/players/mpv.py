@@ -314,6 +314,8 @@ class MpvPlayer(BasePlayer):
         self._getPausedAndPosition()
         self._positionAsk.wait(constants.MPV_LOCK_WAIT_TIME)
         self._pausedAsk.wait(constants.MPV_LOCK_WAIT_TIME)
+        if self._detectedSpeed is not None and self._detectedSpeed != self._client.getGlobalSpeed():
+            self._client.setSpeed(self._detectedSpeed)
         self._client.updatePlayerStatus(
             self._paused if self.fileLoaded else self._client.getGlobalPaused(), self.getCalculatedPosition())
 
@@ -456,9 +458,7 @@ class MpvPlayer(BasePlayer):
                 speed_update = update_string[6]
                 if speed_update != "nil":
                     try:
-                        newSpeed = float(speed_update)
-                        if newSpeed != self._client.getGlobalSpeed():
-                            self._client.setSpeed(newSpeed)
+                        self._detectedSpeed = float(speed_update)
                     except ValueError:
                         pass
 
@@ -537,6 +537,7 @@ class MpvPlayer(BasePlayer):
         self._duration = None
         self._filename = None
         self._filepath = None
+        self._detectedSpeed = None
         self.quitReason = None
         self.lastLoadedTime = None
         self.fileLoaded = False

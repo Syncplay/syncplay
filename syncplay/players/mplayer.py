@@ -34,6 +34,7 @@ class MplayerPlayer(BasePlayer):
         self._duration = None
         self._filename = None
         self._filepath = None
+        self._detectedSpeed = None
         self.quitReason = None
         self.lastLoadedTime = None
         self.fileLoaded = False
@@ -80,13 +81,19 @@ class MplayerPlayer(BasePlayer):
         self.reactor.callLater(0, self._client.initPlayer, self)
         self._onFileUpdate()
 
+    def _getSpeed(self):
+        self._getProperty('speed')
+
     def askForStatus(self):
         self._positionAsk.clear()
         self._pausedAsk.clear()
         self._getPaused()
         self._getPosition()
+        self._getSpeed()
         self._positionAsk.wait()
         self._pausedAsk.wait()
+        if self._detectedSpeed is not None and self._detectedSpeed != self._client.getGlobalSpeed():
+            self._client.setSpeed(self._detectedSpeed)
         self._client.updatePlayerStatus(self._paused, self._position)
 
     def _setProperty(self, property_, value):
@@ -219,6 +226,11 @@ class MplayerPlayer(BasePlayer):
         elif name == "pause":
             self._storePauseState(bool(value == 'yes'))
             self._pausedAsk.set()
+        elif name == "speed":
+            try:
+                self._detectedSpeed = float(value)
+            except (ValueError, TypeError):
+                pass
         elif name == "length":
             try:
                 self._duration = float(value)
