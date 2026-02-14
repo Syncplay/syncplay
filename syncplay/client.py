@@ -127,6 +127,8 @@ class SyncplayClient(object):
         self._lastGlobalUpdate = None
         self._globalPosition = 0.0
         self._globalPaused = 0.0
+        self._globalSpeed = constants.DEFAULT_PLAYBACK_SPEED
+        self._pendingSpeed = None
         self._userOffset = 0.0
         self._speedChanged = False
         self.behindFirstDetected = None
@@ -400,18 +402,18 @@ class SyncplayClient(object):
             if self.getUsername() == setBy:
                 self.ui.showDebugMessage("Caught attempt to slow down due to time difference with self")
             else:
-                self._player.setSpeed(constants.SLOWDOWN_RATE)
+                self._player.setSpeed(self._globalSpeed * constants.SLOWDOWN_RATE)
                 self._speedChanged = True
                 self.ui.showMessage(getMessage("slowdown-notification").format(setBy), hideFromOSD)
                 madeChangeOnPlayer = True
         elif self._speedChanged and diff < constants.SLOWDOWN_RESET_THRESHOLD:
-            self._player.setSpeed(1.00)
+            self._player.setSpeed(self._globalSpeed)
             self._speedChanged = False
             self.ui.showMessage(getMessage("revert-notification"), hideFromOSD)
             madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
-    def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy):
+    def _changePlayerStateAccordingToGlobalState(self, position, paused, doSeek, setBy, speed=None):
         madeChangeOnPlayer = False
         pauseChanged = paused != self.getGlobalPaused() or paused != self.getPlayerPaused()
         diff = self.getPlayerPosition() - position
@@ -420,6 +422,13 @@ class SyncplayClient(object):
         self._globalPaused = paused
         self._globalPosition = position
         self._lastGlobalUpdate = time.time()
+        if speed is not None and speed != self._globalSpeed:
+            self._globalSpeed = speed
+            if self._player.speedSupported and not self._speedChanged:
+                self._player.setSpeed(speed)
+            madeChangeOnPlayer = True
+            hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
+            self.ui.showMessage(getMessage("speed-change-notification").format(setBy, speed), hideFromOSD)
         if doSeek:
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
         if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindOnDesync'] == False:
@@ -449,7 +458,7 @@ class SyncplayClient(object):
             self._warnings.checkWarnings()
             self.userlist.roomStateConfirmed()
 
-    def updateGlobalState(self, position, paused, doSeek, setBy, messageAge):
+    def updateGlobalState(self, position, paused, doSeek, setBy, messageAge, speed=None):
         if self.__getUserlistOnLogon:
             self.__getUserlistOnLogon = False
             self.getUserList()
@@ -457,7 +466,7 @@ class SyncplayClient(object):
         if not paused:
             position += messageAge
         if self._player:
-            madeChangeOnPlayer = self._changePlayerStateAccordingToGlobalState(position, paused, doSeek, setBy)
+            madeChangeOnPlayer = self._changePlayerStateAccordingToGlobalState(position, paused, doSeek, setBy, speed)
         if madeChangeOnPlayer:
             self.askPlayer()
         self._executePlaystateHooks(position, paused, doSeek, setBy, messageAge)
@@ -489,7 +498,7 @@ class SyncplayClient(object):
         position = self._playerPosition
         if not self._playerPaused:
             diff = time.time() - self._lastPlayerUpdate
-            position += diff
+            position += diff * self._globalSpeed
         return position
 
     def getStoredPlayerPosition(self):
@@ -508,13 +517,23 @@ class SyncplayClient(object):
             return 0.0
         position = self._globalPosition
         if not self._globalPaused:
-            position += time.time() - self._lastGlobalUpdate
+            position += (time.time() - self._lastGlobalUpdate) * self._globalSpeed
         return position
 
     def getGlobalPaused(self):
         if not self._lastGlobalUpdate:
             return True
         return self._globalPaused
+
+    def getGlobalSpeed(self):
+        return self._globalSpeed
+
+    def setSpeed(self, speed):
+        self._globalSpeed = speed
+        if self._player and self._player.speedSupported:
+            self._player.setSpeed(speed)
+        if self._protocol and self._protocol.logged:
+            self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), False, None, True)
 
     def eofReportedByPlayer(self):
         if self.playlist.notJustChangedPlaylist() and self.userlist.currentUser.file:

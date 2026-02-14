@@ -452,7 +452,15 @@ class MpvPlayer(BasePlayer):
             else:
                 self._storePosition(float(position_update))
             self._positionAsk.set()
-            #self._client.ui.showDebugMessage("{} = {} / {}".format(update_string, paused_update, position_update))
+            if len(update_string) > 6 and update_string[5] == "speed":
+                speed_update = update_string[6]
+                if speed_update != "nil":
+                    try:
+                        newSpeed = float(speed_update)
+                        if newSpeed != self._client.getGlobalSpeed():
+                            self._client.setSpeed(newSpeed)
+                    except ValueError:
+                        pass
 
         if "<get_syncplayintf_options>" in line:
             self._sendMpvOptions()
