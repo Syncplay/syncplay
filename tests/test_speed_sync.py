@@ -201,6 +201,7 @@ class TestClientSpeedState(unittest.TestCase):
 
     def test_set_speed_updates_global_and_sends_to_server(self):
         client = self._make_client()
+        client.serverFeatures = {"speedSync": True}
         client.setSpeed(1.5)
         self.assertEqual(client._globalSpeed, 1.5)
         # setSpeed should NOT call player.setSpeed (player already has the speed)
@@ -891,6 +892,110 @@ class TestSetSpeedGracePeriod(unittest.TestCase):
                          and abs(rounded - globalSpeed) > constants.SPEED_TOLERANCE)
         self.assertTrue(would_trigger,
             "Real speed change must propagate after grace period")
+
+
+class TestFeatureGating(unittest.TestCase):
+    """Test that speed sync uses the features system for inter-version compatibility."""
+
+    def _make_client(self, speed_sync_supported=True):
+        from syncplay.client import SyncplayClient
+        client = SyncplayClient.__new__(SyncplayClient)
+        client._globalSpeed = constants.DEFAULT_PLAYBACK_SPEED
+        client._globalPosition = 0.0
+        client._globalPaused = False
+        client._lastGlobalUpdate = time.time()
+        client._lastPlayerUpdate = None
+        client._playerPosition = 0.0
+        client._playerPaused = False
+        client._speedChanged = False
+        client._config = {'slowdownThreshold': 1.5}
+        client.ui = MagicMock()
+        client._player = MagicMock()
+        client._player.speedSupported = True
+        client._protocol = MagicMock()
+        client._protocol.logged = True
+        client.userlist = MagicMock()
+        client.userlist.currentUser.file = {"name": "test.mkv", "duration": 100}
+        client.serverVersion = "1.7.3" if speed_sync_supported else "1.7.2"
+        client.serverFeatures = {"speedSync": speed_sync_supported}
+        return client
+
+    def test_setSpeed_sends_state_when_server_supports(self):
+        client = self._make_client(speed_sync_supported=True)
+        client.setSpeed(1.5)
+        self.assertEqual(client._globalSpeed, 1.5)
+        client._protocol.sendState.assert_called_once()
+
+    def test_setSpeed_skips_send_when_server_unsupported(self):
+        client = self._make_client(speed_sync_supported=False)
+        client.setSpeed(1.5)
+        # Global speed is still updated locally
+        self.assertEqual(client._globalSpeed, 1.5)
+        # But state is NOT sent to server
+        client._protocol.sendState.assert_not_called()
+
+    def test_server_features_include_speed_sync(self):
+        from syncplay.server import SyncFactory
+        factory = SyncFactory.__new__(SyncFactory)
+        factory.isolateRooms = False
+        factory.disableReady = False
+        factory.disableChat = False
+        factory.maxChatMessageLength = 150
+        factory.maxUsernameLength = 150
+        factory.roomsDbFile = None
+        features = factory.getFeatures()
+        self.assertTrue(features["speedSync"])
+
+    def test_client_features_include_speed_sync(self):
+        from syncplay.client import SyncplayClient
+        client = SyncplayClient.__new__(SyncplayClient)
+        client.ui = MagicMock()
+        client.ui.getUIMode.return_value = "GUI"
+        client._config = {'sharedPlaylistEnabled': True}
+        client.serverFeatures = {"sharedPlaylists": True}
+        features = client.getFeatures()
+        self.assertTrue(features["speedSync"])
+
+    def test_check_feature_support_defaults_false_for_old_server(self):
+        """Old server (< 1.7.3) should default speedSync to False."""
+        from syncplay.client import SyncplayClient
+        from syncplay import utils
+        client = SyncplayClient.__new__(SyncplayClient)
+        client.serverVersion = "1.7.2"
+        client.ui = MagicMock()
+        client._player = MagicMock()
+        client._config = {'sharedPlaylistEnabled': True}
+        # Build defaults
+        defaults = {
+            "speedSync": utils.meetsMinVersion("1.7.2", constants.SPEED_SYNC_MIN_VERSION)
+        }
+        self.assertFalse(defaults["speedSync"])
+
+    def test_check_feature_support_true_for_new_server(self):
+        """New server (>= 1.7.3) should default speedSync to True."""
+        from syncplay import utils
+        defaults = {
+            "speedSync": utils.meetsMinVersion("1.7.3", constants.SPEED_SYNC_MIN_VERSION)
+        }
+        self.assertTrue(defaults["speedSync"])
+
+
+class TestMpcSpeedSupport(unittest.TestCase):
+    """Test MPC-HC/MPC-BE speed support (receive-only)."""
+
+    def test_mpc_speed_supported_is_true(self):
+        """MPC-HC should have speedSupported = True."""
+        from syncplay.players.mpc import MPCHCAPIPlayer
+        self.assertTrue(MPCHCAPIPlayer.speedSupported)
+
+    def test_mpc_setspeed_tracks_grace_period(self):
+        """MPC-HC setSpeed should track _lastSpeedSetTime."""
+        from syncplay.players.mpc import MPCHCAPIPlayer
+        player = MPCHCAPIPlayer.__new__(MPCHCAPIPlayer)
+        player._mpcApi = MagicMock()
+        player.setSpeed(1.5)
+        self.assertAlmostEqual(player._lastSpeedSetTime, time.time(), delta=0.1)
+        player._mpcApi.setSpeed.assert_called_with(1.5)
 
 
 class TestSpeedRounding(unittest.TestCase):

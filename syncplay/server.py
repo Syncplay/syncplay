@@ -99,6 +99,7 @@ class SyncFactory(Factory):
         features["maxRoomNameLength"] = constants.MAX_ROOM_NAME_LENGTH
         features["maxFilenameLength"] = constants.MAX_FILENAME_LENGTH
         features["setOthersReadiness"] = True
+        features["speedSync"] = True
 
         return features
 

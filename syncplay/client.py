@@ -530,6 +530,8 @@ class SyncplayClient(object):
     def setSpeed(self, speed):
         self._globalSpeed = speed
         if self._protocol and self._protocol.logged:
+            if not self.serverFeatures.get("speedSync"):
+                return
             self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), False, None, True)
 
     def eofReportedByPlayer(self):
@@ -687,7 +689,8 @@ class SyncplayClient(object):
             "maxUsernameLength": constants.FALLBACK_MAX_USERNAME_LENGTH,
             "maxRoomNameLength": constants.FALLBACK_MAX_ROOM_NAME_LENGTH,
             "maxFilenameLength": constants.FALLBACK_MAX_FILENAME_LENGTH,
-            "setOthersReadiness": utils.meetsMinVersion(self.serverVersion, constants.SET_OTHERS_READINESS_MIN_VERSION)
+            "setOthersReadiness": utils.meetsMinVersion(self.serverVersion, constants.SET_OTHERS_READINESS_MIN_VERSION),
+            "speedSync": utils.meetsMinVersion(self.serverVersion, constants.SPEED_SYNC_MIN_VERSION)
         }
         if featureList:
             self.serverFeatures.update(featureList)
@@ -695,6 +698,8 @@ class SyncplayClient(object):
             self.ui.showErrorMessage(getMessage("shared-playlists-not-supported-by-server-error").format(constants.SHARED_PLAYLIST_MIN_VERSION, self.serverVersion))
         elif not self.serverFeatures["sharedPlaylists"]:
             self.ui.showErrorMessage(getMessage("shared-playlists-disabled-by-server-error"))
+        if not self.serverFeatures["speedSync"]:
+            self.ui.showErrorMessage(getMessage("speed-sync-not-supported-by-server-error").format(constants.SPEED_SYNC_MIN_VERSION, self.serverVersion))
         # TODO: Have messages for all unsupported & disabled features
         if self.serverFeatures["maxChatMessageLength"] is not None:
             constants.MAX_CHAT_MESSAGE_LENGTH = self.serverFeatures["maxChatMessageLength"]
@@ -760,6 +765,7 @@ class SyncplayClient(object):
         features["managedRooms"] = True
         features["persistentRooms"] = True
         features["setOthersReadiness"] = True
+        features["speedSync"] = True
 
         return features
 
