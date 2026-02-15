@@ -151,6 +151,7 @@ class MpvPlayer(BasePlayer):
         self._listener.sendLine(["script-message-to", "syncplayintf", "chat", messageString])
 
     def setSpeed(self, value):
+        self._lastSpeedSetTime = time.time()
         self._setProperty('speed', "{:.2f}".format(value))
 
     def setPaused(self, value):
@@ -314,8 +315,11 @@ class MpvPlayer(BasePlayer):
         self._getPausedAndPosition()
         self._positionAsk.wait(constants.MPV_LOCK_WAIT_TIME)
         self._pausedAsk.wait(constants.MPV_LOCK_WAIT_TIME)
-        if self._detectedSpeed is not None and self._detectedSpeed != self._client.getGlobalSpeed():
-            self._client.setSpeed(self._detectedSpeed)
+        if self._detectedSpeed is not None and not self._client._speedChanged:
+            detectedSpeed = round(self._detectedSpeed, 2)
+            gracePeriodActive = time.time() - getattr(self, '_lastSpeedSetTime', 0) < constants.SPEED_SET_GRACE_PERIOD
+            if not gracePeriodActive and abs(detectedSpeed - self._client.getGlobalSpeed()) > constants.SPEED_TOLERANCE:
+                self._client.setSpeed(detectedSpeed)
         self._client.updatePlayerStatus(
             self._paused if self.fileLoaded else self._client.getGlobalPaused(), self.getCalculatedPosition())
 

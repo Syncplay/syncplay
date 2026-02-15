@@ -193,8 +193,11 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine(".")
         if self._filename and not self._filechanged:
             self._positionAsk.wait(constants.PLAYER_ASK_DELAY)
-            if self._detectedSpeed is not None and self._detectedSpeed != self._client.getGlobalSpeed():
-                self._client.setSpeed(self._detectedSpeed)
+            if self._detectedSpeed is not None and not self._client._speedChanged:
+                detectedSpeed = round(self._detectedSpeed, 2)
+                gracePeriodActive = time.time() - getattr(self, '_lastSpeedSetTime', 0) < constants.SPEED_SET_GRACE_PERIOD
+                if not gracePeriodActive and abs(detectedSpeed - self._client.getGlobalSpeed()) > constants.SPEED_TOLERANCE:
+                    self._client.setSpeed(detectedSpeed)
             self._client.updatePlayerStatus(self._paused, self.getCalculatedPosition())
         else:
             self._client.updatePlayerStatus(self._client.getGlobalPaused(), self._client.getGlobalPosition())
@@ -225,7 +228,8 @@ class VlcPlayer(BasePlayer):
             self._listener.sendLine('display-secondary-osd: {}, {}, {}'.format('center', duration, message))
 
     def setSpeed(self, value):
-        self._listener.sendLine("set-rate: {:.2n}".format(value))
+        self._lastSpeedSetTime = time.time()
+        self._listener.sendLine("set-rate: {:.2f}".format(value))
 
     def setFeatures(self, featureList):
         pass

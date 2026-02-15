@@ -128,7 +128,6 @@ class SyncplayClient(object):
         self._globalPosition = 0.0
         self._globalPaused = 0.0
         self._globalSpeed = constants.DEFAULT_PLAYBACK_SPEED
-        self._pendingSpeed = None
         self._userOffset = 0.0
         self._speedChanged = False
         self.behindFirstDetected = None
@@ -422,7 +421,7 @@ class SyncplayClient(object):
         self._globalPaused = paused
         self._globalPosition = position
         self._lastGlobalUpdate = time.time()
-        if speed is not None and speed != self._globalSpeed:
+        if speed is not None and abs(speed - self._globalSpeed) > constants.SPEED_TOLERANCE:
             self._globalSpeed = speed
             if self._player.speedSupported and not self._speedChanged:
                 self._player.setSpeed(speed)
@@ -530,8 +529,6 @@ class SyncplayClient(object):
 
     def setSpeed(self, speed):
         self._globalSpeed = speed
-        if self._player and self._player.speedSupported:
-            self._player.setSpeed(speed)
         if self._protocol and self._protocol.logged:
             self._protocol.sendState(self.getPlayerPosition(), self.getPlayerPaused(), False, None, True)
 

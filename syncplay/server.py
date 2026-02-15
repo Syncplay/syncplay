@@ -890,7 +890,7 @@ class Watcher(object):
 
     def updateState(self, position, paused, doSeek, messageAge, speed=None):
         pauseChanged = self.__hasPauseChanged(paused)
-        speedChanged = speed is not None and speed != self._room.getSpeed()
+        speedChanged = speed is not None and abs(speed - self._room.getSpeed()) > constants.SPEED_TOLERANCE
         self._lastUpdatedOn = time.time()
         if pauseChanged:
             self.getRoom().setPaused(Room.STATE_PAUSED if paused else Room.STATE_PLAYING, self)
