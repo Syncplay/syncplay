@@ -25,6 +25,10 @@ pt_BR = {
 
     "connection-attempt-notification": "Tentando se conectar a {}:{}",  # Port, IP
     "reconnection-attempt-notification": "Conexão com o servidor perdida, tentando reconectar",
+    "reconnect-menu-triggered-notification": "Reconexão manual iniciada - será tentada uma nova conexão a {}:{} em 2 segundos...",
+    "reconnect-failed-no-host-error": "Não é possível reconectar: nenhuma informação do servidor disponível",
+    "reconnect-failed-no-port-error": "Não é possível reconectar: configuração do servidor inválida",
+    "reconnect-failed-error": "Reconexão falhou: {}",
     "disconnection-notification": "Desconectado do servidor",
     "connection-failed-notification": "Conexão com o servidor falhou",
     "connected-successful-notification": "Conectado com sucesso ao servidor",
@@ -333,6 +337,7 @@ pt_BR = {
     "setmediadirectories-menu-label": "Definir &diretórios de mídias",
     "loadplaylistfromfile-menu-label": "&Carregar playlist de arquivo",
     "saveplaylisttofile-menu-label": "&Salvar playlist em arquivo",
+    "reconnect-menu-label": "&Reconectar ao servidor",
     "exit-menu-label": "&Sair",
     "advanced-menu-label": "A&vançado",
     "window-menu-label": "&Janela",
