@@ -1728,7 +1728,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                                       getMessage("setmediadirectories-menu-label"))
         window.openAction.triggered.connect(self.openSetMediaDirectoriesDialog)
 
-        window.reconnectAction = window.fileMenu.addAction(getMessage("reconnect-menu-label"))
+        window.reconnectAction = window.fileMenu.addAction(QtGui.QPixmap(resourcespath + "reconnect.png"), getMessage("reconnect-menu-label"))
         window.reconnectAction.triggered.connect(self.reconnectToServer)
 
         window.exitAction = window.fileMenu.addAction(getMessage("exit-menu-label"))
