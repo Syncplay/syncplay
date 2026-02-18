@@ -192,7 +192,7 @@ class ConsoleUI(threading.Thread):
         elif command.group('command') in constants.COMMANDS_QUEUE:
             filename = command.group('parameter')
             if filename is None:
-                self.showErrorMessage("No file/url given")
+                self.showErrorMessage(getMessage("no-file-or-url-given-error"))
                 return
             self._syncplayClient.ui.addFileToPlaylist(filename)
         elif command.group('command') in constants.COMMANDS_QUEUEANDSELECT:
@@ -201,7 +201,7 @@ class ConsoleUI(threading.Thread):
         elif command.group('command') in constants.COMMANDS_QUEUENEXT:
             filename = command.group('parameter')
             if filename is None:
-                self.showErrorMessage("No file/url given")
+                self.showErrorMessage(getMessage("no-file-or-url-given-error"))
                 return
             self._syncplayClient.playlist.addToPlaylistNext(filename)
         elif command.group('command') in constants.COMMANDS_QUEUENEXTANDSELECT:
