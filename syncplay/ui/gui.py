@@ -1007,6 +1007,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if ok and newSpeed != '':
             self._applySpeed(newSpeed)
 
+    def updateSpeed(self, speed):
+        if hasattr(self, 'speedInput'):
+            self.speedInput.setText(str(speed))
+
     def setSpeedFromButton(self):
         self._applySpeed(self.speedInput.text())
 

@@ -116,6 +116,9 @@ class ConsoleUI(threading.Thread):
     def showErrorMessage(self, message, criticalerror=False):
         print("ERROR:\t" + message)
 
+    def updateSpeed(self, speed):
+        pass
+
     def setSSLMode(self, sslMode, sslInformation):
         pass
 
@@ -248,7 +251,7 @@ class ConsoleUI(threading.Thread):
         elif command.group('command') in constants.COMMANDS_SPEED:
             parameter = command.group('parameter')
             if parameter is None:
-                self.showMessage("Current speed: {}x".format(self._syncplayClient.getGlobalSpeed()), True)
+                self.showMessage(getMessage("current-speed-notification").format(self._syncplayClient.getGlobalSpeed()), True)
             else:
                 try:
                     speed = round(float(parameter.strip()), 2)

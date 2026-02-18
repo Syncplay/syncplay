@@ -40,6 +40,7 @@ en = {
     "slowdown-notification": "Slowing down due to time difference with {}",  # User
     "revert-notification": "Reverting speed back to normal",
     "speed-change-notification": "{} changed playback speed to {}x",  # Username, Speed
+    "current-speed-notification": "Current speed: {}x",
 
     "pause-notification": "{} paused at {}",  # User, Time
     "unpause-notification": "{} unpaused",  # User

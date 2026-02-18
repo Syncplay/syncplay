@@ -972,10 +972,10 @@ class TestFeatureGating(unittest.TestCase):
         self.assertFalse(defaults["speedSync"])
 
     def test_check_feature_support_true_for_new_server(self):
-        """New server (>= 1.7.3) should default speedSync to True."""
+        """New server (>= 1.7.5) should default speedSync to True."""
         from syncplay import utils
         defaults = {
-            "speedSync": utils.meetsMinVersion("1.7.3", constants.SPEED_SYNC_MIN_VERSION)
+            "speedSync": utils.meetsMinVersion("1.7.5", constants.SPEED_SYNC_MIN_VERSION)
         }
         self.assertTrue(defaults["speedSync"])
 

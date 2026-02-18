@@ -428,6 +428,7 @@ class SyncplayClient(object):
             madeChangeOnPlayer = True
             hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
             self.ui.showMessage(getMessage("speed-change-notification").format(setBy, speed), hideFromOSD)
+            self.ui.updateSpeed(speed)
         if doSeek:
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
         if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindOnDesync'] == False:
@@ -529,6 +530,7 @@ class SyncplayClient(object):
 
     def setSpeed(self, speed):
         self._globalSpeed = speed
+        self.ui.updateSpeed(speed)
         if self._protocol and self._protocol.logged:
             if not self.serverFeatures.get("speedSync"):
                 return
@@ -699,7 +701,7 @@ class SyncplayClient(object):
         elif not self.serverFeatures["sharedPlaylists"]:
             self.ui.showErrorMessage(getMessage("shared-playlists-disabled-by-server-error"))
         if not self.serverFeatures["speedSync"]:
-            self.ui.showErrorMessage(getMessage("speed-sync-not-supported-by-server-error").format(constants.SPEED_SYNC_MIN_VERSION, self.serverVersion))
+            self.ui.showDebugMessage(getMessage("speed-sync-not-supported-by-server-error").format(constants.SPEED_SYNC_MIN_VERSION, self.serverVersion))
         # TODO: Have messages for all unsupported & disabled features
         if self.serverFeatures["maxChatMessageLength"] is not None:
             constants.MAX_CHAT_MESSAGE_LENGTH = self.serverFeatures["maxChatMessageLength"]
