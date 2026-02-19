@@ -39,6 +39,8 @@ en = {
     "fastforward-notification": "Fast-forwarded due to time difference with {}",  # User
     "slowdown-notification": "Slowing down due to time difference with {}",  # User
     "revert-notification": "Reverting speed back to normal",
+    "speed-change-notification": "{} changed playback speed to {}x",  # Username, Speed
+    "current-speed-notification": "Current speed: {}x",
 
     "pause-notification": "{} paused at {}",  # User, Time
     "unpause-notification": "{} unpaused",  # User
@@ -110,6 +112,7 @@ en = {
     "commandlist-notification/create": "\tc [name] - create managed room using name of current room",
     "commandlist-notification/auth": "\ta [password] - authenticate as room operator with operator password",
     "commandlist-notification/chat": "\tch [message] - send a chat message in a room",
+    "commandlist-notification/speed": "\tsp [speed] - set playback speed (e.g. sp 1.5). Without argument, shows current speed",
     "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",
     "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",
     "commandList-notification/playlist": "\tql - show the current playlist",
@@ -168,13 +171,16 @@ en = {
     "feature-readiness": "readiness",  # used for not-supported-by-server-error
     "feature-managedRooms": "managed rooms",  # used for not-supported-by-server-error
     "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error
+    "feature-speedSync": "speed sync",  # used for not-supported-by-server-error
 
     "not-supported-by-server-error": "The {} feature is not supported by this server..",  # feature
     "shared-playlists-not-supported-by-server-error": "The shared playlists feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay  {}+, but the server is running Syncplay {}.",  # minVersion, serverVersion
     "shared-playlists-disabled-by-server-error": "The shared playlist feature has been disabled in the server configuration. To use this feature you will need to connect to a different server.",
+    "speed-sync-not-supported-by-server-error": "The speed sync feature may not be supported by the server. To ensure that it works correctly requires a server running Syncplay {}+, but the server is running Syncplay {}.",  # minVersion, serverVersion
 
     "invalid-seek-value": "Invalid seek value",
     "invalid-offset-value": "Invalid offset value",
+    "invalid-speed-value": "Invalid speed value",
 
     "switch-file-not-found-error": "Could not switch to file '{0}'. Syncplay looks in specified media directories.",  # File not found
     "folder-search-timeout-error": "The search for media in media directories was aborted as it took too long to search through '{}' after having processed the first {:,} files. This will occur if you select a folder with too many sub-folders in your list of media folders to search through or if there are too many files to process. For automatic file switching to work again please select File->Set Media Directories in the menu bar and remove this directory or replace it with an appropriate sub-folder. If the folder is actually fine then you can re-enable it by selecting File->Set Media Directories and pressing 'OK'.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
@@ -311,6 +317,8 @@ en = {
     "joinroom-menu-label": "Join room {}",
     "seektime-menu-label": "Seek to time",
     "undoseek-menu-label": "Undo seek",
+    "setspeed-menu-label": "Set speed",
+    "setspeed-msgbox-label": "Set playback speed (e.g. 1.0, 1.5, 0.75).",
     "play-menu-label": "Play",
     "pause-menu-label": "Pause",
     "playbackbuttons-menu-label": "Show playback buttons",

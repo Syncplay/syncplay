@@ -126,6 +126,7 @@ class VlcPlayer(BasePlayer):
         self._filename = None
         self._filepath = None
         self._filechanged = False
+        self._detectedSpeed = None
         self._lastVLCPositionUpdate = None
         self.shownVLCLatencyError = False
         self._previousPreviousPosition = -2
@@ -192,6 +193,11 @@ class VlcPlayer(BasePlayer):
         self._listener.sendLine(".")
         if self._filename and not self._filechanged:
             self._positionAsk.wait(constants.PLAYER_ASK_DELAY)
+            if self._detectedSpeed is not None and not self._client._speedChanged:
+                detectedSpeed = round(self._detectedSpeed, 2)
+                gracePeriodActive = time.time() - getattr(self, '_lastSpeedSetTime', 0) < constants.SPEED_SET_GRACE_PERIOD
+                if not gracePeriodActive and abs(detectedSpeed - self._client.getGlobalSpeed()) > constants.SPEED_TOLERANCE:
+                    self._client.setSpeed(detectedSpeed)
             self._client.updatePlayerStatus(self._paused, self.getCalculatedPosition())
         else:
             self._client.updatePlayerStatus(self._client.getGlobalPaused(), self._client.getGlobalPosition())
@@ -222,7 +228,8 @@ class VlcPlayer(BasePlayer):
             self._listener.sendLine('display-secondary-osd: {}, {}, {}'.format('center', duration, message))
 
     def setSpeed(self, value):
-        self._listener.sendLine("set-rate: {:.2n}".format(value))
+        self._lastSpeedSetTime = time.time()
+        self._listener.sendLine("set-rate: {:.2f}".format(value))
 
     def setFeatures(self, featureList):
         pass
@@ -343,6 +350,12 @@ class VlcPlayer(BasePlayer):
                 self.drop(getMessage("vlc-failed-versioncheck"))
             self._lastVLCPositionUpdate = time.time()
             self._positionAsk.set()
+        elif name == "rate":
+            if value != "no-input":
+                try:
+                    self._detectedSpeed = float(value.replace(",", "."))
+                except (ValueError, AttributeError):
+                    pass
         elif name == "filename":
             self._filechanged = True
             self._filename = value

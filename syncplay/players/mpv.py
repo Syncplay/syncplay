@@ -151,6 +151,7 @@ class MpvPlayer(BasePlayer):
         self._listener.sendLine(["script-message-to", "syncplayintf", "chat", messageString])
 
     def setSpeed(self, value):
+        self._lastSpeedSetTime = time.time()
         self._setProperty('speed', "{:.2f}".format(value))
 
     def setPaused(self, value):
@@ -314,6 +315,11 @@ class MpvPlayer(BasePlayer):
         self._getPausedAndPosition()
         self._positionAsk.wait(constants.MPV_LOCK_WAIT_TIME)
         self._pausedAsk.wait(constants.MPV_LOCK_WAIT_TIME)
+        if self._detectedSpeed is not None and not self._client._speedChanged:
+            detectedSpeed = round(self._detectedSpeed, 2)
+            gracePeriodActive = time.time() - getattr(self, '_lastSpeedSetTime', 0) < constants.SPEED_SET_GRACE_PERIOD
+            if not gracePeriodActive and abs(detectedSpeed - self._client.getGlobalSpeed()) > constants.SPEED_TOLERANCE:
+                self._client.setSpeed(detectedSpeed)
         self._client.updatePlayerStatus(
             self._paused if self.fileLoaded else self._client.getGlobalPaused(), self.getCalculatedPosition())
 
@@ -452,7 +458,13 @@ class MpvPlayer(BasePlayer):
             else:
                 self._storePosition(float(position_update))
             self._positionAsk.set()
-            #self._client.ui.showDebugMessage("{} = {} / {}".format(update_string, paused_update, position_update))
+            if len(update_string) > 6 and update_string[5] == "speed":
+                speed_update = update_string[6]
+                if speed_update != "nil":
+                    try:
+                        self._detectedSpeed = float(speed_update)
+                    except ValueError:
+                        pass
 
         if "<get_syncplayintf_options>" in line:
             self._sendMpvOptions()
@@ -529,6 +541,7 @@ class MpvPlayer(BasePlayer):
         self._duration = None
         self._filename = None
         self._filepath = None
+        self._detectedSpeed = None
         self.quitReason = None
         self.lastLoadedTime = None
         self.fileLoaded = False
