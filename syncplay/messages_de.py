@@ -25,6 +25,10 @@ de = {
 
     "connection-attempt-notification": "Verbinde mit {}:{}",  # Port, IP
     "reconnection-attempt-notification": "Verbindung zum Server verloren, versuche erneut",
+    "reconnect-menu-triggered-notification": "Manuelle Neuverbindung eingeleitet - neuer Verbindungsversuch zu {}:{} in 2 Sekunden...",
+    "reconnect-failed-no-host-error": "Neuverbindung nicht möglich: keine Serverinformationen verfügbar",
+    "reconnect-failed-no-port-error": "Neuverbindung nicht möglich: ungültige Serverkonfiguration",
+    "reconnect-failed-error": "Neuverbindung fehlgeschlagen: {}",
     "disconnection-notification": "Verbindung zum Server beendet",
     "connection-failed-notification": "Verbindung zum Server fehlgeschlagen",
     "connected-successful-notification": "Erfolgreich mit Server verbunden",
@@ -330,6 +334,7 @@ de = {
     "setmediadirectories-menu-label": "Medienverzeichnisse &auswählen",
     "loadplaylistfromfile-menu-label": "&Lade Playlist aus Datei",
     "saveplaylisttofile-menu-label": "&Speichere Playlist in Datei",
+    "reconnect-menu-label": "&Erneut mit Server verbinden",
     "exit-menu-label": "&Beenden",
     "advanced-menu-label": "&Erweitert",
     "window-menu-label": "&Fenster",

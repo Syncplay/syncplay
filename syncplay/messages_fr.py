@@ -25,6 +25,10 @@ fr = {
 
     "connection-attempt-notification": "Tentative de connexion à {}:{}",  # Port, IP
     "reconnection-attempt-notification": "Connexion avec le serveur perdue, tentative de reconnexion",
+    "reconnect-menu-triggered-notification": "Reconnexion manuelle initiée - tentative de nouvelle connexion à {}:{} dans 2 secondes...",
+    "reconnect-failed-no-host-error": "Impossible de se reconnecter : aucune information de serveur disponible",
+    "reconnect-failed-no-port-error": "Impossible de se reconnecter : configuration du serveur invalide",
+    "reconnect-failed-error": "Reconnexion échouée : {}",
     "disconnection-notification": "Déconnecté du serveur",
     "connection-failed-notification": "Échec de la connexion avec le serveur",
     "connected-successful-notification": "Connexion réussie au serveur",
@@ -334,6 +338,7 @@ fr = {
     "setmediadirectories-menu-label": "Définir les &répertoires multimédias",
     "loadplaylistfromfile-menu-label": "&Charger la liste de lecture à partir du fichier",
     "saveplaylisttofile-menu-label": "&Enregistrer la liste de lecture dans un fichier",
+    "reconnect-menu-label": "&Reconnecter au serveur",
     "exit-menu-label": "Sortir",
     "advanced-menu-label": "&Avancée",
     "window-menu-label": "&Fenêtre",

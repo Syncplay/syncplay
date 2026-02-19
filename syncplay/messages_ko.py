@@ -25,6 +25,10 @@ ko = {
 
     "connection-attempt-notification": "{}:{}에 연결을 시도 중입니다",  # Port, IP
     "reconnection-attempt-notification": "서버와의 연결이 끊어져 다시 연결을 시도 중입니다.",
+    "reconnect-menu-triggered-notification": "수동 재연결이 시작되었습니다 - 2초 후 {}:{}에 새로운 연결을 시도합니다...",
+    "reconnect-failed-no-host-error": "재연결할 수 없습니다: 서버 정보를 사용할 수 없습니다",
+    "reconnect-failed-no-port-error": "재연결할 수 없습니다: 잘못된 서버 구성입니다",
+    "reconnect-failed-error": "재연결 실패: {}",
     "disconnection-notification": "서버에서 연결이 끊어졌습니다",
     "connection-failed-notification": "서버 연결에 실패했습니다.",
     "connected-successful-notification": "서버에 성공적으로 연결했습니다",
@@ -333,6 +337,7 @@ ko = {
     "setmediadirectories-menu-label": "미디어 디렉터리 설정(&D)",
     "loadplaylistfromfile-menu-label": "파일에서 재생목록 불러오기(&L)",
     "saveplaylisttofile-menu-label": "재생목록을 파일로 저장(&S)",
+    "reconnect-menu-label": "서버에 재연결(&R)",
     "exit-menu-label": "종료(&X)",
     "advanced-menu-label": "고급(&A)",
     "window-menu-label": "창(&W)",
@@ -508,6 +513,10 @@ ko = {
     "server-startTLS-argument": "제공된 경로의 인증서 파일을 사용하여 TLS 연결 활성화",
     "server-messed-up-motd-unescaped-placeholders": "오늘의 메시지에는 이스케이프 처리되지 않은 자리 표시자가 있습니다. 모든 $ 기호는 이중($$)이어야 합니다.",
     "server-messed-up-motd-too-long": "오늘의 메시지가 너무 깁니다 - 최대 {}자, {}개까지만 허용됩니다.",
+    "server-listen-only-on-ipv4": "서버 시작 시 IPv4에서만 수신합니다.",
+    "server-listen-only-on-ipv6": "서버 시작 시 IPv6에서만 수신합니다.",
+    "server-interface-ipv4": "IPv4에 바인딩할 IP 주소입니다. 비워두면 기본적으로 모든 주소를 사용합니다.",
+    "server-interface-ipv6": "IPv6에 바인딩할 IP 주소입니다. 비워두면 기본적으로 모든 주소를 사용합니다.",
 
     # Server errors
     "unknown-command-server-error": "알 수 없는 명령 {}",  # message
