@@ -2044,6 +2044,13 @@ class SyncplayPlaylist():
             self._client._protocol.setPlaylist(files)
             self._client._protocol.setPlaylistIndex(self._playlistIndex)
             return
+        if username is None:
+            if len(files) > constants.PLAYLIST_MAX_ITEMS:
+                self._ui.showErrorMessage(getMessage("playlist-too-many-items-error").format(constants.PLAYLIST_MAX_ITEMS))
+                return
+            if sum(map(len, files)) > constants.PLAYLIST_MAX_CHARACTERS:
+                self._ui.showErrorMessage(getMessage("playlist-too-many-characters-error").format(constants.PLAYLIST_MAX_CHARACTERS))
+                return
         self.queuedIndexFilename = None
         self._client.playlistMayNeedRestoring = False
         if self._playlist == files:
