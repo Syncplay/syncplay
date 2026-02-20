@@ -2074,6 +2074,14 @@ class SyncplayPlaylist():
     def addToPlaylist(self, file):
         self.changePlaylist([*self._playlist, file])
 
+    def addToPlaylistNext(self, file):
+        if self._playlistIndex is not None:
+            insert_pos = self._playlistIndex + 1
+            new_playlist = self._playlist[:insert_pos] + [file] + self._playlist[insert_pos:]
+        else:
+            new_playlist = [file] + self._playlist
+        self.changePlaylist(new_playlist)
+
     def deleteAtIndex(self, index):
         new_playlist = self._playlist.copy()
         if index >= 0 and index < len(new_playlist):

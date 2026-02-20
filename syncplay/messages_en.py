@@ -112,6 +112,8 @@ en = {
     "commandlist-notification/chat": "\tch [message] - send a chat message in a room",
     "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",
     "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",
+    "commandList-notification/queuenext": "\tqan [file/url] - add file or url after the currently playing item",
+    "commandList-notification/queuenextandselect": "\tqans [file/url] - add file or url after the currently playing item and select it",
     "commandList-notification/playlist": "\tql - show the current playlist",
     "commandList-notification/select": "\tqs [index] - select given entry in the playlist",
     "commandList-notification/next": "\tqn - select next entry in the playlist",
@@ -175,6 +177,7 @@ en = {
 
     "invalid-seek-value": "Invalid seek value",
     "invalid-offset-value": "Invalid offset value",
+    "no-file-or-url-given-error": "No file/url given",
 
     "switch-file-not-found-error": "Could not switch to file '{0}'. Syncplay looks in specified media directories.",  # File not found
     "folder-search-timeout-error": "The search for media in media directories was aborted as it took too long to search through '{}' after having processed the first {:,} files. This will occur if you select a folder with too many sub-folders in your list of media folders to search through or if there are too many files to process. For automatic file switching to work again please select File->Set Media Directories in the menu bar and remove this directory or replace it with an appropriate sub-folder. If the folder is actually fine then you can re-enable it by selecting File->Set Media Directories and pressing 'OK'.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
