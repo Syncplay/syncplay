@@ -11,6 +11,7 @@ from . import messages_it
 from . import messages_pt_PT
 from . import messages_pt_BR
 from . import messages_tr
+from . import messages_ro
 from . import messages_ru
 from . import messages_zh_CN
 from . import messages_ko
@@ -27,8 +28,9 @@ messages = {
     "it": messages_it.it,
     "pt_PT": messages_pt_PT.pt_PT,
     "pt_BR": messages_pt_BR.pt_BR,
-    "tr": messages_tr.tr,
+    "ro": messages_ro.ro,
     "ru": messages_ru.ru,
+    "tr": messages_tr.tr,
     "zh_CN": messages_zh_CN.zh_CN,
      "ko": messages_ko.ko,
     "CURRENT": None
