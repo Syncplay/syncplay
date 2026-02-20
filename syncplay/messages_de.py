@@ -554,4 +554,20 @@ de = {
 
     "playlist-empty-error": "Wiedergabeliste is aktuell leer.",
     "playlist-invalid-index-error": "Ungültiger Wiedergabelisten-Index",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "Ordner",
+    "syncplay-watchedfiles-title": "Gesehene Dateien",
+    "syncplay-watchedautomove-label": "Gesehene Dateien automatisch in Unterordner verschieben (falls vorhanden)",
+    "syncplay-watchedmovesubfolder-label": "Unterordner für gesehene Dateien",
+    "syncplay-watchedsubfolderautocreate-label": "Unterordner für gesehene Dateien bei Bedarf automatisch erstellen",
+    "mark-as-watched-menu-label": "Als gesehen markieren",
+    "mark-as-unwatched-menu-label": "Als ungesehen markieren",
+    "watchedautomove-tooltip": "Verschiebt die Datei automatisch in den Unterordner für gesehene Dateien, wenn das Ende der Datei erreicht ist. Dies funktioniert nur, wenn der übergeordnete Ordner ein Medienordner ist.",
+    "watchedsubfolder-tooltip": "Unterordner (relativ zum Ordner der Datei), in den gesehene Dateien verschoben werden (der Unterordner muss existieren, damit die Datei verschoben werden kann). Dies funktioniert nur, wenn der übergeordnete Ordner ein Medienordner ist.",
+    "watchedsubfolderautocreate-tooltip": "Erstellt den Unterordner für gesehene Dateien beim Verschieben automatisch, falls er noch nicht existiert. Dies funktioniert nur, wenn der übergeordnete Ordner ein Medienordner ist.",
+    "cannot-move-file-due-to-name-conflict-error": "Konnte '{}' nicht in den Unterordner '{}' verschieben, da bereits eine Datei mit diesem Namen existiert.", # Path, subfolder
+    "moved-file-to-subfolder-notification": "Verschoben: '{}' in den Unterordner '{}'.", # Path, subfolder
+
 }

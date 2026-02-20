@@ -554,4 +554,20 @@ it = {
 
     "playlist-empty-error": "Playlist is currently empty.",  # TO DO: Translate
     "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "folders-label": "Cartelle",
+    "syncplay-watchedfiles-title": "File guardati",
+    "syncplay-watchedautomove-label": "Sposta automaticamente i file guardati nella sottocartella (se esiste)",
+    "syncplay-watchedmovesubfolder-label": "Sottocartella per i file guardati",
+    "syncplay-watchedsubfolderautocreate-label": "Crea automaticamente la sottocartella dei file guardati quando necessario",
+    "mark-as-watched-menu-label": "Segna come guardato",
+    "mark-as-unwatched-menu-label": "Segna come non guardato",
+    "watchedautomove-tooltip": "Sposta automaticamente il file nella sottocartella dei file guardati quando si raggiunge la fine del file. Funziona solo se la cartella principale è una cartella multimediale.",
+    "watchedsubfolder-tooltip": "Sottocartella (relativa alla cartella del file) in cui spostare i file guardati (la sottocartella deve esistere per poter spostare il file). Funziona solo se la cartella principale è una cartella multimediale.",
+    "watchedsubfolderautocreate-tooltip": "Crea automaticamente la sottocartella dei file guardati durante lo spostamento se non esiste ancora. Funziona solo se la cartella principale è una cartella multimediale.",
+    "cannot-move-file-due-to-name-conflict-error": "Impossibile spostare '{}' nella sottocartella '{}' perché esiste già un file con lo stesso nome.", # Path, subfolder
+    "moved-file-to-subfolder-notification": "Spostato '{}' nella sottocartella '{}'.", # Path, subfolder
+
 }

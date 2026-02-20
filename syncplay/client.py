@@ -73,6 +73,9 @@ class SyncplayClient(object):
         constants.FOLDER_SEARCH_TIMEOUT = config['folderSearchTimeout']
         constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = config['folderSearchDoubleCheckInterval']
         constants.FOLDER_SEARCH_WARNING_THRESHOLD = config['folderSearchWarningThreshold']
+        constants.WATCHED_SUBFOLDER = config['watchedSubfolder']
+        constants.WATCHED_AUTOMOVE = config['watchedAutoMove'] if len(constants.WATCHED_SUBFOLDER) > 0 else False
+        constants.WATCHED_AUTOCREATESUBFOLDERS = config['watchedSubfolderAutocreate'] if len(constants.WATCHED_SUBFOLDER) > 0 else False
 
         self.controlpasswords = {}
         self.lastControlPasswordAttempt = None
@@ -81,7 +84,9 @@ class SyncplayClient(object):
         self.serverFeatures = {}
 
         self.lastRewindTime = None
+        self._pendingWatchedMoves = []
         self.lastUpdatedFileTime = None
+        self._lastWatchedMoveAttempt = 0.0 #Secs
         self.lastAdvanceTime = None
         self.fileOpenBeforeChangingPlaylistIndex = None
         self.waitingToLoadNewfile = False
@@ -248,6 +253,16 @@ class SyncplayClient(object):
             ):
                 pauseChange = self._toggleReady(pauseChange, paused)
 
+        if self._pendingWatchedMoves and (time.time() - (self._lastWatchedMoveAttempt or 0.0)) >= constants.WATCHED_CHECKQUEUE_INTERVAL:
+            self._lastWatchedMoveAttempt = time.time()
+            try:
+                self._tryMovePendingWatchedFiles()
+            except Exception:
+                pass
+        self.currentlyPlayingFilename = self.userlist.currentUser.file["name"] if self.userlist.currentUser.file else None
+        playingCurrentIndex = not self.playlist._notPlayingCurrentIndex()
+        if playingCurrentIndex:
+            self.playlist.recordPlayedNearEOF(paused, position)
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
             if (pauseChange or seeked) and self._protocol:
@@ -263,6 +278,13 @@ class SyncplayClient(object):
         self.fileOpenBeforeChangingPlaylistIndex = self.userlist.currentUser.file["path"] if self.userlist.currentUser.file else None
         self.waitingToLoadNewfile = True
         self.waitingToLoadNewfileSince = time.time()
+        position = self.getStoredPlayerPosition()
+        currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
+        if (
+                currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
+                abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
+        ):
+            self.markWatchedFilePendingMove()
 
     def prepareToAdvancePlaylist(self):
         if self.playlist.canSwitchToNextPlaylistIndex():
@@ -516,6 +538,97 @@ class SyncplayClient(object):
             return True
         return self._globalPaused
 
+    def markWatchedFilePendingMove(self, oldFilePath=None):
+        self.playlist.lastNearEOFName = None
+        self.playlist.lastNearEOFPath = None
+
+        try:
+            if oldFilePath:
+                currentFilePath = oldFilePath
+            else:
+                currentFile = self.userlist.currentUser.file if self.userlist and self.userlist.currentUser else None
+                currentFilePath = currentFile.get("path") if currentFile else None
+            if currentFilePath and not utils.isURL(currentFilePath) and currentFilePath not in self._pendingWatchedMoves:
+                self._pendingWatchedMoves.append(currentFilePath)
+                self.ui.showDebugMessage("Marked for watched move: {}".format(currentFilePath))
+        except Exception as e:
+            self.ui.showDebugMessage("Could not mark watched file: {}".format(e))
+
+    def userInitiatedMarkWatched(self, fileSourcePath):
+        try:
+            directory = os.path.dirname(fileSourcePath)
+            filename = os.path.basename(fileSourcePath)
+            watchedDirectory = utils.getWatchedSubfolder(directory)
+            utils.createWatchedSubdirIfNeeded(watchedDirectory)
+            if not os.path.isdir(watchedDirectory):
+                self.ui.showErrorMessage("'{}' subfolder not found for this file.".format(constants.WATCHED_SUBFOLDER)) # TODO: Move to Language
+                return
+            watchedDirectoryFilepath = os.path.join(watchedDirectory, filename)
+            watchedDirectoryName = os.path.basename(os.path.dirname(watchedDirectoryFilepath))
+            if os.path.isfile(watchedDirectoryFilepath):
+                self.ui.showErrorMessage(getMessage("cannot-move-file-due-to-name-conflict-error").format(watchedDirectoryName)) # TODO: Move to Language
+                return
+            utils.moveFile(fileSourcePath, watchedDirectoryFilepath)
+            self.fileSwitch.updateInfo()
+            self.ui.showMessage(getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, watchedDirectoryName))
+        except Exception as e:
+            self.ui.showErrorMessage("Could not mark as watched: {}".format(e)) # TODO: Move to language
+
+    def userInitiatedMarkUnwatched(self, fileSourcePath):
+        try:
+            watchedDirectoryPath = os.path.dirname(fileSourcePath)
+            filename = os.path.basename(fileSourcePath)
+            if not utils.isWatchedSubfolder(watchedDirectoryPath):
+                self.ui.showErrorMessage("This file is not in a '{}' subfolder.".format(constants.WATCHED_SUBFOLDER))
+                return
+            unwatchedDirectoryPath = utils.getUnwatchedParentfolder(watchedDirectoryPath)
+            unwatchedDirectoryPathName = os.path.basename(unwatchedDirectoryPath)
+            unwatchedFilePath = os.path.join(unwatchedDirectoryPath, filename)
+            if os.path.isfile(unwatchedFilePath):
+                self.ui.showErrorMessage("A file with the same name already exists in the parent folder.")
+                return
+            utils.moveFile(fileSourcePath, unwatchedFilePath)
+            self.fileSwitch.updateInfo()
+            self.ui.showMessage(getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, unwatchedDirectoryPathName))
+        except Exception as e:
+            self.ui.showErrorMessage("Could not mark as unwatched: {}".format(e)) # TODO: Move to Language
+
+    def _tryMovePendingWatchedFiles(self):
+        if not constants.WATCHED_AUTOMOVE:
+            self._pendingWatchedMoves = []
+            return
+
+        if not self._pendingWatchedMoves:
+            return
+
+        for pendingWatchedMove in list(self._pendingWatchedMoves):
+            try:
+                if not os.path.exists(pendingWatchedMove):
+                    self._pendingWatchedMoves.remove(pendingWatchedMove)
+                    continue
+                if not utils.canMarkAsWatched(pendingWatchedMove):
+                    self._pendingWatchedMoves.remove(pendingWatchedMove)
+                    continue
+                originalDir = os.path.dirname(pendingWatchedMove)
+                watchedDir = utils.getWatchedSubfolder(originalDir)
+                utils.createWatchedSubdirIfNeeded(watchedDir)
+                if not os.path.isdir(watchedDir):
+                    self._pendingWatchedMoves.remove(pendingWatchedMove)
+                    continue
+                destFilepath = os.path.join(watchedDir, os.path.basename(pendingWatchedMove))
+                if os.path.exists(destFilepath):
+                    self.ui.showErrorMessage(getMessage("cannot-move-file-due-to-name-conflict-error").format(pendingWatchedMove, constants.WATCHED_SUBFOLDER))
+                    self._pendingWatchedMoves.remove(pendingWatchedMove)
+                    continue
+                utils.moveFile(pendingWatchedMove, destFilepath)
+                self.fileSwitch.updateInfo()
+                try:
+                    self.ui.showMessage(getMessage("moved-file-to-subfolder-notification").format(pendingWatchedMove, constants.WATCHED_SUBFOLDER))
+                    self._pendingWatchedMoves.remove(pendingWatchedMove)
+                except Exception:
+                    pass
+            except Exception as e:
+                self.ui.showDebugMessage("Deferring watched move for '{}': {}".format(pendingWatchedMove, e))
     def eofReportedByPlayer(self):
         if self.playlist.notJustChangedPlaylist() and self.userlist.currentUser.file:
             self.ui.showDebugMessage("Fixing file duration to allow for playlist advancement")
@@ -542,6 +655,7 @@ class SyncplayClient(object):
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
         self.playlist.changeToPlaylistIndexFromFilename(filename)
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def setTrustedDomains(self, newTrustedDomains):
         from syncplay.ui.ConfigurationGetter import ConfigurationGetter
@@ -624,6 +738,7 @@ class SyncplayClient(object):
             self.establishRewindDoubleCheck()
             self.lastRewindTime = time.time()
             self.autoplayCheck()
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def fileSwitchFoundFiles(self):
         self.ui.fileSwitchFoundFiles()
@@ -631,9 +746,11 @@ class SyncplayClient(object):
 
     def setPlaylistIndex(self, index):
         self._protocol.setPlaylistIndex(index)
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def changeToPlaylistIndex(self, *args, **kwargs):
         self.playlist.changeToPlaylistIndex(*args, **kwargs)
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def loopSingleFiles(self):
         return self._config["loopSingleFiles"] or self.isPlayingMusic()
@@ -911,6 +1028,16 @@ class SyncplayClient(object):
         self.destroyProtocol()
         if self._player:
             self._player.drop()
+
+        if self._pendingWatchedMoves:
+            for _ in range(constants.WATCHED_PLAYERWAIT_MAXRETRIES):
+                try:
+                    self._tryMovePendingWatchedFiles()
+                    if not self._pendingWatchedMoves:
+                        break
+                except Exception:
+                    pass
+                time.sleep(constants.WATCHED_PLAYERWAIT_INTERVAL)
         if self.ui:
             self.ui.drop()
         reactor.callLater(0.1, reactor.stop)
@@ -1799,6 +1926,10 @@ class SyncplayPlaylist():
         self.addedChangeListCallback = False
         self.switchToNewPlaylistItem = False
         self._lastPlaylistIndexChange = time.time()
+        self.lastNearEOFName = None
+        self.lastNearEOFPath = None
+        self.lastNearEOFFirstTime = 0.0
+        self.lastNearEOFLastTime = 0.0
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
         @wraps(f)
@@ -1920,6 +2051,7 @@ class SyncplayPlaylist():
                     self._client._protocol.sendMessage({"State": state})
                     self._playerPaused = True
                     self._client.autoplayCheck()
+                    self.doubleCheckForWatchedPreviousFile()
         elif index is not None:
             filename = self._playlist[index]
             self._ui.setPlaylistIndexFilename(filename)
@@ -2070,6 +2202,7 @@ class SyncplayPlaylist():
         else:
             self._ui.setPlaylist(self._playlist)
             self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
+        self.doubleCheckForWatchedPreviousFile()
 
     def addToPlaylist(self, file):
         self.changePlaylist([*self._playlist, file])
@@ -2124,7 +2257,50 @@ class SyncplayPlaylist():
             abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD and
             self.notJustChangedPlaylist()
         ):
-                self.loadNextFileInPlaylist()
+            self._client.markWatchedFilePendingMove()
+            self.loadNextFileInPlaylist()
+
+    @needsSharedPlaylistsEnabled
+    def recordPlayedNearEOF(self, paused, position):
+        if not self._client.userlist.currentUser.file:
+            return
+        if position == None:
+            return
+        currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
+        isPlaying = paused is False
+        remainingTime = currentLength - position
+
+        if (
+            isPlaying and
+            remainingTime < constants.PLAYLIST_NEAR_EOF_WINDOW and
+            currentLength > (constants.PLAYLIST_NEAR_EOF_WINDOW * 2) and  # The EOF window must represent at least the last half of the video to avoid misdetection when playing start of a short file
+            currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
+            self.notJustChangedPlaylist()
+        ):
+            now_monotime = time.monotonic()
+            if self.lastNearEOFName != self._client.userlist.currentUser.file['name']:
+                self.lastNearEOFName = self._client.userlist.currentUser.file['name']
+                self.lastNearEOFPath = self._client.userlist.currentUser.file['path']
+                self.lastNearEOFFirstTime = now_monotime
+            self.lastNearEOFLastTime = now_monotime
+
+    @needsSharedPlaylistsEnabled
+    def doubleCheckForWatchedPreviousFile(self):
+        if not self.lastNearEOFName or not self.lastNearEOFPath:
+            return False
+
+        if self._playingSpecificFilename(self.lastNearEOFName):
+            return False
+
+        now_monotime = time.monotonic()
+        dwell = max(0.0, self.lastNearEOFLastTime - self.lastNearEOFFirstTime)
+        if dwell < constants.PLAYLIST_NEAR_EOF_MIN_DWELL:
+            return False
+
+        age = now_monotime - self.lastNearEOFLastTime
+        if age > constants.PLAYLIST_NEAR_EOF_LATCH_TTL:
+            return False
+        self._client.markWatchedFilePendingMove(self.lastNearEOFPath)
 
     def notJustChangedPlaylist(self):
         secondsSinceLastChange = time.time() - self._lastPlaylistIndexChange
@@ -2164,6 +2340,12 @@ class SyncplayPlaylist():
         else:
             self._ui.showDebugMessage("Not playing current index - Filename mismatch or no file")
             return True
+
+    def _playingSpecificFilename(self, filenameToCompare):
+        if self._client.userlist.currentUser.file:
+            return self._client.userlist.currentUser.file['name'] == filenameToCompare
+        else:
+            return False
 
     def _thereIsNextPlaylistIndex(self):
         if self._playlistIndex is None:
@@ -2243,6 +2425,7 @@ class FileSwitchManager(object):
         if self.directorySearchError:
             self._client.ui.showErrorMessage(self.directorySearchError)
             self.directorySearchError = None
+        self._client.playlist.doubleCheckForWatchedPreviousFile()
 
     def updateInfo(self):
         if not self.currentlyUpdating and self.mediaDirectories:
@@ -2311,13 +2494,14 @@ class FileSwitchManager(object):
             return
 
         if self._client.userlist.currentUser.file and utils.sameFilename(filename, self._client.userlist.currentUser.file['name']):
-            return self._client.userlist.currentUser.file['path']
+            return utils.getCorrectedPathForFile(self._client.userlist.currentUser.file['path'])
 
         if self.mediaFilesCache is not None:
             for directory in self.mediaFilesCache:
                 files = self.mediaFilesCache[directory]
                 if len(files) > 0 and filename in files:
                     filepath = os.path.join(directory, filename)
+                    filepath = utils.getCorrectedPathForFile(filepath)
                     if os.path.isfile(filepath):
                         return filepath
 
@@ -2325,6 +2509,7 @@ class FileSwitchManager(object):
             directoryList = self.mediaDirectories
             for directory in directoryList:
                 filepath = os.path.join(directory, filename)
+                filepath = utils.getCorrectedPathForFile(filepath)
                 if os.path.isfile(filepath):
                     return filepath
 
@@ -2346,7 +2531,13 @@ class FileSwitchManager(object):
             for directory in self.mediaFilesCache:
                 files = self.mediaFilesCache[directory]
                 if filename in files:
-                    return directory
+                    filepath = os.path.join(directory, filename)
+                    if os.path.isfile(filepath):
+                        return directory
+                    watched_directory = os.path.join(directory, constants.WATCHED_SUBFOLDER)
+                    watched_filepath = os.path.join(directory, constants.WATCHED_SUBFOLDER, filename)
+                    if os.path.isfile(watched_filepath):
+                        return watched_directory
         return None
 
     def isDirectoryInList(self, directoryToFind, folderList):

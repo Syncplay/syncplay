@@ -45,6 +45,9 @@ FALLBACK_PUBLIC_SYNCPLAY_SERVERS = [
     ['syncplay.pl:8999 (France)', 'syncplay.pl:8999']]
 PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH = 10  # Seconds
 PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD = 5  # Seconds (only triggered if file is paused, e.g. due to EOF)
+PLAYLIST_NEAR_EOF_WINDOW = 270  # seconds
+PLAYLIST_NEAR_EOF_MIN_DWELL = 120  # seconds
+PLAYLIST_NEAR_EOF_LATCH_TTL = 60  # seconds
 EXECUTABLE_COMBOBOX_MINIMUM_LENGTH = 30 # Minimum number of characters that the combobox will make visible
 
 # Overriden by config
@@ -109,6 +112,11 @@ FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 25.0  # Secs - How long to wait to find the f
 FOLDER_SEARCH_TIMEOUT = 20.0  # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)
 FOLDER_SEARCH_WARNING_THRESHOLD = 2.0 # Secs - how long until a warning saying how many files have been scanned
 FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0  # Secs - Frequency of updating cache
+
+# Changable values for watched features (you usually don't need to change these)
+WATCHED_CHECKQUEUE_INTERVAL = 1.0 # Secs
+WATCHED_PLAYERWAIT_INTERVAL = 0.1 # Secs
+WATCHED_PLAYERWAIT_MAXRETRIES = 80
 
 # Usually there's no need to adjust these
 DOUBLE_CHECK_REWIND = True
@@ -331,6 +339,10 @@ INPUT_POSITION_MIDDLE = "Middle"
 INPUT_POSITION_BOTTOM = "Bottom"
 
 VLC_EOF_DURATION_THRESHOLD = 2.0
+
+WATCHED_SUBFOLDER = "Watched"
+WATCHED_AUTOMOVE = False
+WATCHED_AUTOCREATESUBFOLDERS = False
 
 PRIVACY_HIDDENFILENAME = "**Hidden filename**"
 INVERTED_STATE_MARKER = "*"
