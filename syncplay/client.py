@@ -2021,6 +2021,10 @@ class SyncplayPlaylist():
 
         with open(path) as f:
             newPlaylist = f.read().splitlines()
+            if path.lower().endswith(".m3u8"):
+                newPlaylist = [
+                    line for line in newPlaylist if line.strip() and not line.startswith("#")
+                ]
             if shuffle:
                 random.shuffle(newPlaylist)
             if newPlaylist:
