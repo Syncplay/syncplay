@@ -1,3 +1,4 @@
+import hashlib
 import os
 import re
 import sys
@@ -757,6 +758,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def getSSLInformation(self):
         return self.sslInformation
 
+    @staticmethod
+    def _usernameColorStyle(username):
+        digest = hashlib.md5(username.encode("utf-8")).digest()
+        hue = int.from_bytes(digest[:2], "big") % 360
+        if isDarkMode:
+            return "color: hsl({}, 75%, 68%);".format(hue)
+        else:
+            return "color: hsl({}, 65%, 38%);".format(hue)
+
     def showMessage(self, message, noTimestamp=False, isMotd=False):
         message = str(message)
         username = None
@@ -770,7 +780,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         if username:
-            message = constants.STYLE_USER_MESSAGE.format(constants.STYLE_USERNAME, username, message)
+            message = constants.STYLE_USER_MESSAGE.format(self._usernameColorStyle(username), username, message)
         # When showing a MOTD, escape spaces and use a monospace font to preserve the look of ASCII art.
         if isMotd:
             message = message.replace(" ", "&nbsp;")
@@ -2084,7 +2094,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not noTimestamp:
             header += html_escape(time.strftime(constants.UI_TIME_FORMAT, time.localtime()))
         if username:
-            header += "<span style=\"{}\">&lt;{}&gt;</span>".format(constants.STYLE_USERNAME, html_escape(username))
+            header += "<span style=\"{}\">&lt;{}&gt;</span>".format(self._usernameColorStyle(username), html_escape(username))
         return header
 
     def resetList(self):
