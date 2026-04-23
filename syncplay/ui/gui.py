@@ -1,4 +1,4 @@
-
+import hashlib
 import os
 import re
 import sys
@@ -6,6 +6,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from html import escape as html_escape
 from datetime import datetime
 from functools import wraps
 from platform import python_version
@@ -19,7 +20,7 @@ from syncplay.utils import resourcespath
 from syncplay.utils import isLinux, isWindows, isMacOS
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
 from syncplay.vendor import Qt
-from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2, IsPySide6
+from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, QtNetwork, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2, IsPySide6
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
 applyDPIScaling = True
 if isLinux():
@@ -239,6 +240,221 @@ class CertificateDialog(QtWidgets.QDialog):
 
     def closeDialog(self):
         self.close()
+
+
+class MessageTextView(QtWidgets.QTextBrowser):
+    def __init__(self, text="", parent=None):
+        super(MessageTextView, self).__init__(parent)
+        if isDarkMode:
+            self.document().setDefaultStyleSheet(constants.STYLE_DARK_LINKS_COLOR)
+        self.setReadOnly(True)
+        self.setOpenExternalLinks(True)
+        self.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setTextInteractionFlags(self.textInteractionFlags() | Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse)
+        self.setAutoFillBackground(False)
+        self.setViewportMargins(0, 0, 0, 0)
+        self.document().setDocumentMargin(0)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        self.setStyleSheet("QTextBrowser { background: transparent; border: none; padding: 0px; margin: 0px; }")
+        self.document().documentLayout().documentSizeChanged.connect(self._updateHeight)
+        self.setHtml(text)
+        self._updateHeight()
+
+    def setHtml(self, text):
+        super(MessageTextView, self).setHtml(text)
+        self._updateHeight()
+
+    def _updateHeight(self, *_args):
+        documentHeight = self.document().size().height()
+        self.setFixedHeight(max(1, int(documentHeight + 2)))
+
+
+class ClickableMediaLabel(QtWidgets.QLabel):
+    def __init__(self, mediaUrl, parent=None):
+        super(ClickableMediaLabel, self).__init__(parent)
+        self._mediaUrl = mediaUrl
+        self.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.setCursor(Qt.PointingHandCursor)
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            QtGui.QDesktopServices.openUrl(QUrl(self._mediaUrl))
+        super(ClickableMediaLabel, self).mouseReleaseEvent(event)
+
+
+class ChatOutputArea(QtWidgets.QScrollArea):
+    def __init__(self, parent=None):
+        super(ChatOutputArea, self).__init__(parent)
+        self.setWidgetResizable(True)
+        self.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.setLineWidth(1)
+        self.setMidLineWidth(0)
+        self.setBackgroundRole(QtGui.QPalette.Base)
+        self.setAutoFillBackground(True)
+        self._container = QtWidgets.QWidget()
+        self._container.setBackgroundRole(QtGui.QPalette.Base)
+        self._container.setAutoFillBackground(True)
+        self._layout = QtWidgets.QVBoxLayout()
+        self._layout.setContentsMargins(2, 2, 2, 2)
+        self._layout.setSpacing(0)
+        self._layout.addStretch(1)
+        self._container.setLayout(self._layout)
+        self.setWidget(self._container)
+        self.viewport().setBackgroundRole(QtGui.QPalette.Base)
+        self.viewport().setAutoFillBackground(True)
+
+    def addOutputWidget(self, widget):
+        self._layout.insertWidget(self._layout.count() - 1, widget)
+        QtCore.QTimer.singleShot(0, self.scrollToBottom)
+
+    def scrollToBottom(self):
+        scrollbar = self.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
+
+
+class InlineMediaWidget(QtWidgets.QFrame):
+    MAX_MEDIA_WIDTH = 480
+    MAX_MEDIA_HEIGHT = 320
+    FALLBACK_MEDIA_WIDTH = 220
+    FALLBACK_MEDIA_HEIGHT = 140
+
+    def __init__(self, mediaUrl, networkManager, fallbackText, headerHtml="", parent=None):
+        super(InlineMediaWidget, self).__init__(parent)
+        self._mediaUrl = mediaUrl
+        self._networkManager = networkManager
+        self._fallbackText = fallbackText
+        self._reply = None
+        self._movie = None
+        self._movieBuffer = None
+        self._movieData = None
+        self._movieOriginalSize = QSize()
+        self._pixmap = None
+        self._isGif = urllib.parse.urlsplit(mediaUrl).path.lower().endswith(".gif")
+
+        self.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self._layout = QtWidgets.QVBoxLayout()
+        self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        if headerHtml:
+            self._headerLabel = MessageTextView(headerHtml)
+            self._layout.addWidget(self._headerLabel)
+        else:
+            self._headerLabel = None
+
+        self._mediaLabel = ClickableMediaLabel(mediaUrl)
+        self._mediaLabel.setText("Loading media...")
+        self._mediaLabel.setStyleSheet("QLabel { border: 1px solid palette(mid); border-radius: 6px; padding: 6px; }")
+        self._layout.addWidget(self._mediaLabel, 0, Qt.AlignLeft)
+
+        self._fallbackLabel = MessageTextView(html_escape(fallbackText))
+        self._fallbackLabel.hide()
+        self._layout.addWidget(self._fallbackLabel)
+
+        self._startRequest()
+
+    def _startRequest(self):
+        request = QtNetwork.QNetworkRequest(QUrl(self._mediaUrl))
+        if hasattr(QtNetwork.QNetworkRequest, "FollowRedirectsAttribute"):
+            request.setAttribute(QtNetwork.QNetworkRequest.FollowRedirectsAttribute, True)
+        self._reply = self._networkManager.get(request)
+        self._reply.finished.connect(self._handleReplyFinished)
+
+    def _handleReplyFinished(self):
+        reply = self._reply
+        self._reply = None
+        if reply is None:
+            return
+        try:
+            if reply.error() != QtNetwork.QNetworkReply.NoError:
+                self._showFallback()
+                return
+            mediaBytes = reply.readAll()
+            if self._isGif:
+                self._setMovie(mediaBytes)
+            else:
+                self._setPixmap(mediaBytes)
+        finally:
+            reply.deleteLater()
+
+    def _setMovie(self, mediaBytes):
+        self._movieData = mediaBytes
+        self._movieBuffer = QtCore.QBuffer(self)
+        self._movieBuffer.setData(self._movieData)
+        self._movieBuffer.open(QtCore.QIODevice.ReadOnly)
+        self._movie = QtGui.QMovie(self._movieBuffer, b"gif", self)
+        if not self._movie.isValid():
+            self._showFallback()
+            return
+        self._movie.setCacheMode(QtGui.QMovie.CacheAll)
+        self._movie.frameChanged.connect(self._updateMovieScale)
+        if hasattr(self._movie, "updated"):
+            self._movie.updated.connect(self._updateMovieScale)
+        self._mediaLabel.setText("")
+        self._mediaLabel.setMovie(self._movie)
+        self._mediaLabel.setStyleSheet("QLabel { border: none; padding: 0px; }")
+        self._movie.start()
+        self._updateMovieScale()
+
+    def _setPixmap(self, mediaBytes):
+        pixmap = QtGui.QPixmap()
+        if not pixmap.loadFromData(mediaBytes):
+            self._showFallback()
+            return
+        self._pixmap = pixmap
+        self._mediaLabel.setText("")
+        self._mediaLabel.setStyleSheet("QLabel { border: none; padding: 0px; }")
+        self._updatePixmapScale()
+
+    def _showFallback(self):
+        self._mediaLabel.hide()
+        self._fallbackLabel.show()
+
+    def _availableMediaSize(self, originalSize):
+        width = self.FALLBACK_MEDIA_WIDTH
+        parent = self.parentWidget()
+        while parent and not isinstance(parent, QtWidgets.QAbstractScrollArea):
+            parent = parent.parentWidget()
+        if parent:
+            width = max(160, min(self.MAX_MEDIA_WIDTH, parent.viewport().width() - 32))
+        if not originalSize or not originalSize.isValid() or originalSize.width() <= 0 or originalSize.height() <= 0:
+            return QSize(width, self.FALLBACK_MEDIA_HEIGHT)
+        maxSize = QSize(width, self.MAX_MEDIA_HEIGHT)
+        return originalSize.scaled(maxSize, Qt.KeepAspectRatio)
+
+    def _updateMovieScale(self, *_args):
+        if not self._movie:
+            return
+        if not self._movieOriginalSize.isValid():
+            currentPixmap = self._movie.currentPixmap()
+            if not currentPixmap.isNull():
+                self._movieOriginalSize = currentPixmap.size()
+            else:
+                frameRect = self._movie.frameRect()
+                if frameRect.isValid():
+                    self._movieOriginalSize = frameRect.size()
+        scaledSize = self._availableMediaSize(self._movieOriginalSize)
+        self._movie.setScaledSize(scaledSize)
+        self._mediaLabel.setFixedSize(scaledSize)
+
+    def _updatePixmapScale(self):
+        if not self._pixmap:
+            return
+        scaledSize = self._availableMediaSize(self._pixmap.size())
+        scaledPixmap = self._pixmap.scaled(scaledSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._mediaLabel.setPixmap(scaledPixmap)
+        self._mediaLabel.setFixedSize(scaledPixmap.size())
+
+    def resizeEvent(self, event):
+        super(InlineMediaWidget, self).resizeEvent(event)
+        if self._movie:
+            self._updateMovieScale()
+        elif self._pixmap:
+            self._updatePixmapScale()
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -542,6 +758,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def getSSLInformation(self):
         return self.sslInformation
 
+    @staticmethod
+    def _usernameColorStyle(username):
+        digest = hashlib.md5(username.encode("utf-8")).digest()
+        hue = int.from_bytes(digest[:2], "big") % 360
+        if isDarkMode:
+            return "color: hsl({}, 75%, 68%);".format(hue)
+        else:
+            return "color: hsl({}, 65%, 38%);".format(hue)
+
     def showMessage(self, message, noTimestamp=False, isMotd=False):
         message = str(message)
         username = None
@@ -549,18 +774,22 @@ class MainWindow(QtWidgets.QMainWindow):
         if messageWithUsername:
             username = messageWithUsername.group("username")
             message = messageWithUsername.group("message")
+        inlineMediaUrl = self._getInlineMediaUrl(message)
+        if inlineMediaUrl and not isMotd:
+            self.newMediaMessage(inlineMediaUrl, username=username, noTimestamp=noTimestamp)
+            return
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         if username:
-            message = constants.STYLE_USER_MESSAGE.format(constants.STYLE_USERNAME, username, message)
+            message = constants.STYLE_USER_MESSAGE.format(self._usernameColorStyle(username), username, message)
         # When showing a MOTD, escape spaces and use a monospace font to preserve the look of ASCII art.
         if isMotd:
             message = message.replace(" ", "&nbsp;")
             message = "<code>{}</code>".format(message)
         message = message.replace("\n", "<br />")
         if noTimestamp:
-            self.newMessage("{}<br />".format(message))
+            self.newMessage("{}".format(message))
         else:
-            self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
+            self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message)
 
     @needsClient
     def getFileSwitchState(self, filename):
@@ -945,7 +1174,7 @@ class MainWindow(QtWidgets.QMainWindow):
             message = "<span style=\"{}\">".format(constants.STYLE_DARK_ERRORNOTIFICATION) + message + "</span>"
         else:
             message = "<span style=\"{}\">".format(constants.STYLE_ERRORNOTIFICATION) + message + "</span>"
-        self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + "<br />")
+        self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message)
 
     @needsClient
     def joinRoom(self, room=None):
@@ -1446,17 +1675,9 @@ class MainWindow(QtWidgets.QMainWindow):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)
 
         window.outputLayout = QtWidgets.QVBoxLayout()
-        window.outputbox = QtWidgets.QTextBrowser()
-        if isDarkMode: window.outputbox.document().setDefaultStyleSheet(constants.STYLE_DARK_LINKS_COLOR);
-        window.outputbox.setReadOnly(True)
-        window.outputbox.setTextInteractionFlags(window.outputbox.textInteractionFlags() | Qt.TextSelectableByKeyboard)
-        window.outputbox.setOpenExternalLinks(True)
-        window.outputbox.unsetCursor()
-        window.outputbox.moveCursor(QtGui.QTextCursor.End)
-        window.outputbox.insertHtml(constants.STYLE_CONTACT_INFO.format(getMessage("contact-label")))
-        window.outputbox.moveCursor(QtGui.QTextCursor.End)
-        window.outputbox.setCursorWidth(0)
+        window.outputbox = ChatOutputArea()
         if not isMacOS(): window.outputbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.newMessage(constants.STYLE_CONTACT_INFO.format(getMessage("contact-label")))
 
         window.outputlabel = QtWidgets.QLabel(getMessage("notifications-heading-label"))
         window.outputlabel.setMinimumHeight(27)
@@ -1851,9 +2072,30 @@ class MainWindow(QtWidgets.QMainWindow):
         window.setCentralWidget(window.mainFrame)
 
     def newMessage(self, message):
-        self.outputbox.moveCursor(QtGui.QTextCursor.End)
-        self.outputbox.insertHtml(message)
-        self.outputbox.moveCursor(QtGui.QTextCursor.End)
+        self.outputbox.addOutputWidget(MessageTextView(message))
+
+    def newMediaMessage(self, mediaUrl, username=None, noTimestamp=False):
+        header = self._formatMessageHeader(username=username, noTimestamp=noTimestamp)
+        self.outputbox.addOutputWidget(InlineMediaWidget(mediaUrl, self._chatMediaNetworkManager, mediaUrl, headerHtml=header))
+
+    def _getInlineMediaUrl(self, message):
+        mediaUrl = str(message).strip()
+        if not mediaUrl or re.match(r"^https?://\S+$", mediaUrl, re.IGNORECASE) is None:
+            return None
+        parsedUrl = urllib.parse.urlsplit(mediaUrl)
+        if parsedUrl.scheme.lower() not in ("http", "https"):
+            return None
+        if parsedUrl.path.lower().endswith((".gif", ".png", ".jpg", ".jpeg", ".webp")):
+            return mediaUrl
+        return None
+
+    def _formatMessageHeader(self, username=None, noTimestamp=False):
+        header = ""
+        if not noTimestamp:
+            header += html_escape(time.strftime(constants.UI_TIME_FORMAT, time.localtime()))
+        if username:
+            header += "<span style=\"{}\">&lt;{}&gt;</span>".format(self._usernameColorStyle(username), html_escape(username))
+        return header
 
     def resetList(self):
         self.listbox.setText("")
@@ -2130,6 +2372,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.publicServerList = []
         self.lastCheckedForUpdates = None
         self._syncplayClient = None
+        self._chatMediaNetworkManager = QtNetwork.QNetworkAccessManager(self)
         self.folderSearchEnabled = True
         self.hideEmptyRooms = False
         self.currentRooms = []
