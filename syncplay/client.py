@@ -191,6 +191,7 @@ class SyncplayClient(object):
             self._lastGlobalUpdate = None
             self.ui.showErrorMessage(getMessage("server-timeout-error"))
             self._protocol.drop()
+            self.manualReconnect()
             return False
         return True
 
