@@ -1,7 +1,8 @@
-
 import ast
 import collections
+import datetime
 import hashlib
+import json
 import os
 import os.path
 import random
@@ -73,9 +74,19 @@ class SyncplayClient(object):
         constants.FOLDER_SEARCH_TIMEOUT = config['folderSearchTimeout']
         constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = config['folderSearchDoubleCheckInterval']
         constants.FOLDER_SEARCH_WARNING_THRESHOLD = config['folderSearchWarningThreshold']
-        constants.WATCHED_SUBFOLDER = config['watchedSubfolder']
+
+        watchedName = config['watchedSubfolder'] or ""
+        watchedName = watchedName.strip()
+        if watchedName:
+            if os.path.sep in watchedName or (os.path.altsep and os.path.altsep in watchedName):
+                watchedName = os.path.basename(watchedName)
+
+        constants.WATCHED_SUBFOLDER = watchedName
         constants.WATCHED_AUTOMOVE = config['watchedAutoMove'] if len(constants.WATCHED_SUBFOLDER) > 0 else False
         constants.WATCHED_AUTOCREATESUBFOLDERS = config['watchedSubfolderAutocreate'] if len(constants.WATCHED_SUBFOLDER) > 0 else False
+
+        constants.WATCHED_HISTORY_ENABLED = config['watchedHistoryEnabled']
+        constants.WATCHED_HISTORY_FILENAME = constants.WATCHED_HISTORY_FILENAME_DEFAULT
 
         self.controlpasswords = {}
         self.lastControlPasswordAttempt = None
@@ -84,9 +95,7 @@ class SyncplayClient(object):
         self.serverFeatures = {}
 
         self.lastRewindTime = None
-        self._pendingWatchedMoves = []
         self.lastUpdatedFileTime = None
-        self._lastWatchedMoveAttempt = 0.0 #Secs
         self.lastAdvanceTime = None
         self.fileOpenBeforeChangingPlaylistIndex = None
         self.waitingToLoadNewfile = False
@@ -146,6 +155,7 @@ class SyncplayClient(object):
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         self.fileSwitch = FileSwitchManager(self)
         self.playlist = SyncplayPlaylist(self)
+        self.watched = WatchedManager(self)
         self.playlistMayNeedRestoring = False
 
         self._serverSupportsTLS = True
@@ -253,12 +263,7 @@ class SyncplayClient(object):
             ):
                 pauseChange = self._toggleReady(pauseChange, paused)
 
-        if self._pendingWatchedMoves and (time.time() - (self._lastWatchedMoveAttempt or 0.0)) >= constants.WATCHED_CHECKQUEUE_INTERVAL:
-            self._lastWatchedMoveAttempt = time.time()
-            try:
-                self._tryMovePendingWatchedFiles()
-            except Exception:
-                pass
+        self.watched.processQueue()
         self.currentlyPlayingFilename = self.userlist.currentUser.file["name"] if self.userlist.currentUser.file else None
         playingCurrentIndex = not self.playlist._notPlayingCurrentIndex()
         if playingCurrentIndex:
@@ -541,94 +546,22 @@ class SyncplayClient(object):
     def markWatchedFilePendingMove(self, oldFilePath=None):
         self.playlist.lastNearEOFName = None
         self.playlist.lastNearEOFPath = None
-
         try:
             if oldFilePath:
                 currentFilePath = oldFilePath
             else:
                 currentFile = self.userlist.currentUser.file if self.userlist and self.userlist.currentUser else None
                 currentFilePath = currentFile.get("path") if currentFile else None
-            if currentFilePath and not utils.isURL(currentFilePath) and currentFilePath not in self._pendingWatchedMoves:
-                self._pendingWatchedMoves.append(currentFilePath)
-                self.ui.showDebugMessage("Marked for watched move: {}".format(currentFilePath))
+            self.watched.markWatched(currentFilePath)
         except Exception as e:
             self.ui.showDebugMessage("Could not mark watched file: {}".format(e))
 
     def userInitiatedMarkWatched(self, fileSourcePath):
-        try:
-            directory = os.path.dirname(fileSourcePath)
-            filename = os.path.basename(fileSourcePath)
-            watchedDirectory = utils.getWatchedSubfolder(directory)
-            utils.createWatchedSubdirIfNeeded(watchedDirectory)
-            if not os.path.isdir(watchedDirectory):
-                self.ui.showErrorMessage("'{}' subfolder not found for this file.".format(constants.WATCHED_SUBFOLDER)) # TODO: Move to Language
-                return
-            watchedDirectoryFilepath = os.path.join(watchedDirectory, filename)
-            watchedDirectoryName = os.path.basename(os.path.dirname(watchedDirectoryFilepath))
-            if os.path.isfile(watchedDirectoryFilepath):
-                self.ui.showErrorMessage(getMessage("cannot-move-file-due-to-name-conflict-error").format(watchedDirectoryName)) # TODO: Move to Language
-                return
-            utils.moveFile(fileSourcePath, watchedDirectoryFilepath)
-            self.fileSwitch.updateInfo()
-            self.ui.showMessage(getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, watchedDirectoryName))
-        except Exception as e:
-            self.ui.showErrorMessage("Could not mark as watched: {}".format(e)) # TODO: Move to language
+        self.watched.userMarkWatched(fileSourcePath)
 
     def userInitiatedMarkUnwatched(self, fileSourcePath):
-        try:
-            watchedDirectoryPath = os.path.dirname(fileSourcePath)
-            filename = os.path.basename(fileSourcePath)
-            if not utils.isWatchedSubfolder(watchedDirectoryPath):
-                self.ui.showErrorMessage("This file is not in a '{}' subfolder.".format(constants.WATCHED_SUBFOLDER))
-                return
-            unwatchedDirectoryPath = utils.getUnwatchedParentfolder(watchedDirectoryPath)
-            unwatchedDirectoryPathName = os.path.basename(unwatchedDirectoryPath)
-            unwatchedFilePath = os.path.join(unwatchedDirectoryPath, filename)
-            if os.path.isfile(unwatchedFilePath):
-                self.ui.showErrorMessage("A file with the same name already exists in the parent folder.")
-                return
-            utils.moveFile(fileSourcePath, unwatchedFilePath)
-            self.fileSwitch.updateInfo()
-            self.ui.showMessage(getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, unwatchedDirectoryPathName))
-        except Exception as e:
-            self.ui.showErrorMessage("Could not mark as unwatched: {}".format(e)) # TODO: Move to Language
+        self.watched.userMarkUnwatched(fileSourcePath)
 
-    def _tryMovePendingWatchedFiles(self):
-        if not constants.WATCHED_AUTOMOVE:
-            self._pendingWatchedMoves = []
-            return
-
-        if not self._pendingWatchedMoves:
-            return
-
-        for pendingWatchedMove in list(self._pendingWatchedMoves):
-            try:
-                if not os.path.exists(pendingWatchedMove):
-                    self._pendingWatchedMoves.remove(pendingWatchedMove)
-                    continue
-                if not utils.canMarkAsWatched(pendingWatchedMove):
-                    self._pendingWatchedMoves.remove(pendingWatchedMove)
-                    continue
-                originalDir = os.path.dirname(pendingWatchedMove)
-                watchedDir = utils.getWatchedSubfolder(originalDir)
-                utils.createWatchedSubdirIfNeeded(watchedDir)
-                if not os.path.isdir(watchedDir):
-                    self._pendingWatchedMoves.remove(pendingWatchedMove)
-                    continue
-                destFilepath = os.path.join(watchedDir, os.path.basename(pendingWatchedMove))
-                if os.path.exists(destFilepath):
-                    self.ui.showErrorMessage(getMessage("cannot-move-file-due-to-name-conflict-error").format(pendingWatchedMove, constants.WATCHED_SUBFOLDER))
-                    self._pendingWatchedMoves.remove(pendingWatchedMove)
-                    continue
-                utils.moveFile(pendingWatchedMove, destFilepath)
-                self.fileSwitch.updateInfo()
-                try:
-                    self.ui.showMessage(getMessage("moved-file-to-subfolder-notification").format(pendingWatchedMove, constants.WATCHED_SUBFOLDER))
-                    self._pendingWatchedMoves.remove(pendingWatchedMove)
-                except Exception:
-                    pass
-            except Exception as e:
-                self.ui.showDebugMessage("Deferring watched move for '{}': {}".format(pendingWatchedMove, e))
     def eofReportedByPlayer(self):
         if self.playlist.notJustChangedPlaylist() and self.userlist.currentUser.file:
             self.ui.showDebugMessage("Fixing file duration to allow for playlist advancement")
@@ -678,7 +611,7 @@ class SyncplayClient(object):
 
     def _isURITrustableAndTrusted(self, URIToTest):
         """Returns a tuple of booleans: (trustable, trusted).
-        
+
         A given URI is "trustable" if it uses HTTP or HTTPS (constants.TRUSTABLE_WEB_PROTOCOLS).
         A given URI is "trusted" if it matches an entry in the trustedDomains config.
         Such an entry is considered matching if the domain is the same and the path
@@ -1029,15 +962,7 @@ class SyncplayClient(object):
         if self._player:
             self._player.drop()
 
-        if self._pendingWatchedMoves:
-            for _ in range(constants.WATCHED_PLAYERWAIT_MAXRETRIES):
-                try:
-                    self._tryMovePendingWatchedFiles()
-                    if not self._pendingWatchedMoves:
-                        break
-                except Exception:
-                    pass
-                time.sleep(constants.WATCHED_PLAYERWAIT_INTERVAL)
+        self.watched.flushQueueOnShutdown()
         if self.ui:
             self.ui.drop()
         reactor.callLater(0.1, reactor.stop)
@@ -1537,6 +1462,8 @@ class SyncplayUserlist(object):
                 if self.currentUser.room != room or self.currentUser.username == username:
                     message += getMessage("playing-notification/room-addendum").format(room)
                 self.ui.showMessage(message, hideFromOSD)
+                if username == self.currentUser.username:
+                    self._client.playlist.maybeShowPlaylistWarningNotificationForFilename(file_['name'])
                 if self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room:
                     fileDifferences = self.getFileDifferencesForUser(self.currentUser.file, file_)
                     if fileDifferences is not None:
@@ -1930,6 +1857,7 @@ class SyncplayPlaylist():
         self.lastNearEOFPath = None
         self.lastNearEOFFirstTime = 0.0
         self.lastNearEOFLastTime = 0.0
+        self._shownPlaylistWarningNotificationKeys = set()
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
         @wraps(f)
@@ -2057,6 +1985,76 @@ class SyncplayPlaylist():
             self._ui.setPlaylistIndexFilename(filename)
             self._ui.showMessage(getMessage("playlist-selection-changed-notification").format(username))
             self.switchToNewPlaylistIndex(index, resetPosition=resetPosition)
+
+    def maybeShowPlaylistWarningNotificationForFilename(self, filename):
+        index = self.getPlaylistIndexFromPath(filename)
+        if index is None:
+            return
+        self._maybeShowPlaylistWarningNotification(index)
+
+    def _maybeShowPlaylistWarningNotification(self, index):
+        warningText = self._getPlaylistWarningText(index)
+        if not warningText:
+            return
+        try:
+            filename = self._playlist[index]
+        except (IndexError, TypeError):
+            return
+        warningKey = (filename, warningText)
+        if warningKey in self._shownPlaylistWarningNotificationKeys:
+            return
+        self._shownPlaylistWarningNotificationKeys.add(warningKey)
+        self._ui.showMessage(
+            warningText,
+            OSDType=constants.OSD_ALERT,
+            mood=constants.MESSAGE_BADNEWS)
+
+    def _getPlaylistWarningText(self, index):
+        if self._playlist is None:
+            return None
+        try:
+            filename = self._playlist[index]
+        except (IndexError, TypeError):
+            return None
+        warningParts = []
+        playlistOrderWarnings = self._client.watched.getPlaylistOrderWarnings(self._playlist)
+        orderWarning = playlistOrderWarnings.get(index)
+        if orderWarning:
+            warningParts.append(
+                getMessage("playlist-out-of-order-warning-tooltip").format(
+                    orderWarning["episode"], orderWarning["previousEpisode"], orderWarning["expectedEpisode"]))
+
+        playlistSkipWarnings = self._client.watched.getPlaylistSkipWarnings(self._playlist)
+        skipWarning = playlistSkipWarnings.get(index)
+        if skipWarning:
+            warningParts.append(
+                getMessage("playlist-skip-warning-tooltip").format(skipWarning["missingEpisode"]))
+            previousWatchedTooltip = self._getWatchedTooltipForMetadata(skipWarning.get("previousWatchedMeta"))
+            previousWatchedFilename = skipWarning.get("previousWatchedFilename")
+            if previousWatchedTooltip and previousWatchedFilename:
+                warningParts.append("'{}': {}".format(previousWatchedFilename, previousWatchedTooltip))
+
+        return "\n".join(warningParts) if warningParts else None
+
+    def _getWatchedTooltipForMetadata(self, meta):
+        if not meta or not meta.get("lastWatchedAt"):
+            return None
+        try:
+            dtUtc = datetime.datetime.strptime(meta["lastWatchedAt"], "%Y-%m-%dT%H:%M:%SZ").replace(
+                tzinfo=datetime.timezone.utc)
+            delta = datetime.datetime.now(datetime.timezone.utc) - dtUtc
+            seconds = int(delta.total_seconds())
+            if seconds < 3600:
+                age = getMessage("watched-ago-minutes").format(max(1, seconds // 60))
+            elif seconds < 86400:
+                age = getMessage("watched-ago-hours").format(seconds // 3600)
+            else:
+                age = getMessage("watched-ago-days").format(delta.days)
+            room = meta.get("lastRoom") or meta.get("lastWatchedRoom") or ""
+            return getMessage("watched-last-watched-tooltip").format(
+                age, room, dtUtc.astimezone().strftime(getMessage("watched-datetime-format")))
+        except Exception:
+            return None
 
     def canSwitchToNextPlaylistIndex(self):
         if self._thereIsNextPlaylistIndex() and self._client.sharedPlaylistIsEnabled():
@@ -2252,6 +2250,8 @@ class SyncplayPlaylist():
     def advancePlaylistCheck(self):
         position = self._client.getStoredPlayerPosition()
         currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
+        if currentLength <= 0:
+            return
         if (
             currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
             abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD and
@@ -2267,6 +2267,8 @@ class SyncplayPlaylist():
         if position == None:
             return
         currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
+        if currentLength <= 0:
+            return
         isPlaying = paused is False
         remainingTime = currentLength - position
 
@@ -2375,6 +2377,807 @@ class SyncplayPlaylist():
 
     def _playlistBufferNeedsUpdating(self, newPlaylist):
         return self._previousPlaylist != self._playlist and self._playlist != newPlaylist
+
+
+class WatchedManager(object):
+    """
+    Coordinator for the watched-file features:
+    - Auto-move queue: pending moves to the watched subfolder, with retry/robustness logic.
+    - Manual mark watched / unwatched actions.
+    - JSON watched index: single config-adjacent .syncplay-watched.json (optional, disabled by default).
+
+    SyncplayClient calls into this class only at:
+      - updatePlayerStatus  -> processQueue()
+      - markWatchedFilePendingMove (wrapper) -> queueAutoMove()
+      - userInitiatedMarkWatched (wrapper)   -> userMarkWatched()
+      - userInitiatedMarkUnwatched (wrapper) -> userMarkUnwatched()
+      - stop()                               -> flushQueueOnShutdown()
+    """
+
+    def __init__(self, client):
+        self._client = client
+        self._pendingMoves = []        # list of normalised source paths
+        self._attempts = {}            # path -> attempt count
+        self._lastAttemptTime = 0.0
+        # JSON index cache: jsonPath -> {"data": {filename: {...}}, "mtime": float}
+        self._jsonCache = {}
+
+    def _shouldUseWatchedHistoryInfo(self):
+        return constants.WATCHED_HISTORY_ENABLED
+
+    def _shouldUseWatchedSubfolderInfo(self):
+        return constants.WATCHED_AUTOMOVE and len(constants.WATCHED_SUBFOLDER) > 0
+
+    def _shouldUseWatchedFileInfo(self):
+        return self._shouldUseWatchedHistoryInfo() or self._shouldUseWatchedSubfolderInfo()
+
+    # ------------------------------------------------------------------
+    # Public API called by SyncplayClient / GUI
+    # ------------------------------------------------------------------
+
+    def queueAutoMove(self, filePath):
+        """Queue a file for auto-move to the watched subfolder."""
+        if not filePath:
+            return
+        try:
+            if utils.isURL(filePath):
+                return
+        except Exception:
+            return
+
+        try:
+            pendingPath = os.path.normpath(os.path.abspath(filePath))
+        except Exception:
+            pendingPath = filePath
+
+        try:
+            pendingKey = os.path.normcase(pendingPath)
+        except Exception:
+            pendingKey = pendingPath
+
+        existingKeys = []
+        for existingPath in self._pendingMoves:
+            try:
+                existingKeys.append(os.path.normcase(os.path.normpath(os.path.abspath(existingPath))))
+            except Exception:
+                existingKeys.append(existingPath)
+
+        if pendingKey not in existingKeys:
+            self._pendingMoves.append(pendingPath)
+            self._client.ui.showDebugMessage("Marked for watched move: {}".format(pendingPath))
+
+    def markWatched(self, filePath):
+        """Record a watched event immediately; queue a move only if auto-move is enabled."""
+        if not filePath:
+            return
+        try:
+            if utils.isURL(filePath):
+                return
+        except Exception:
+            return
+        correctedPath = utils.getCorrectedPathForFile(filePath)
+        filename = os.path.basename(correctedPath)
+        if constants.WATCHED_HISTORY_ENABLED:
+            try:
+                self._recordHistory("watched", filename)
+            except Exception as e:
+                self._client.ui.showDebugMessage(getMessage("watched-record-history-error").format(filename, e))
+        if constants.WATCHED_AUTOMOVE:
+            self.queueAutoMove(correctedPath)
+
+    def processQueue(self):
+        """Called periodically from updatePlayerStatus."""
+        if not self._pendingMoves:
+            return
+        now = time.time()
+        if (now - self._lastAttemptTime) < constants.WATCHED_CHECKQUEUE_INTERVAL:
+            return
+        self._lastAttemptTime = now
+        self._tryMovePending()
+
+    def flushQueueOnShutdown(self):
+        """Called from stop(). Tries multiple times to handle file-in-use locks."""
+        if not self._pendingMoves:
+            return
+        for _ in range(constants.WATCHED_PLAYERWAIT_MAXRETRIES):
+            self._tryMovePending()
+            if not self._pendingMoves:
+                break
+            time.sleep(constants.WATCHED_PLAYERWAIT_INTERVAL)
+
+    def userMarkWatched(self, fileSourcePath):
+        """Manual 'Mark as watched' context-menu action."""
+        self._userInitiatedMoveToWatched(fileSourcePath)
+
+    def userMarkUnwatched(self, fileSourcePath):
+        """Manual 'Mark as unwatched' context-menu action."""
+        self._userInitiatedMoveToParent(fileSourcePath)
+
+    # ------------------------------------------------------------------
+    # Auto-move queue processing
+    # ------------------------------------------------------------------
+
+    def _tryMovePending(self):
+        if not constants.WATCHED_AUTOMOVE:
+            if self._pendingMoves:
+                self._client.ui.showDebugMessage(
+                    "Auto-move to watched subfolder disabled; clearing {} pending move(s).".format(
+                        len(self._pendingMoves)))
+            self._pendingMoves = []
+            self._attempts = {}
+            return
+
+        for srcPath in list(self._pendingMoves):
+            try:
+                if not os.path.exists(srcPath):
+                    self._drop(srcPath, "Skipping watched move for '{}' because file no longer exists.".format(srcPath))
+                    continue
+
+                if not utils.canMarkAsWatched(srcPath):
+                    self._drop(srcPath, "Skipping watched move for '{}' because it can no longer be auto-moved.".format(srcPath))
+                    continue
+
+                originalDir = os.path.dirname(srcPath)
+                watchedDir = utils.getWatchedSubfolder(originalDir)
+                if not watchedDir:
+                    self._drop(srcPath, "Skipping watched move for '{}' because watched subfolder is not defined.".format(srcPath))
+                    continue
+
+                utils.createWatchedSubdirIfNeeded(watchedDir)
+                if not os.path.isdir(watchedDir):
+                    self._drop(srcPath, "Skipping watched move for '{}' because watched subfolder '{}' is not a directory.".format(srcPath, watchedDir))
+                    continue
+
+                destPath = os.path.join(watchedDir, os.path.basename(srcPath))
+
+                if os.path.exists(destPath):
+                    self._client.ui.showErrorMessage(
+                        getMessage("cannot-move-file-due-to-name-conflict-error").format(srcPath, constants.WATCHED_SUBFOLDER))
+                    self._drop(srcPath, None)
+                    continue
+
+                try:
+                    utils.moveFile(srcPath, destPath)
+                except FileExistsError:
+                    self._client.ui.showErrorMessage(
+                        getMessage("cannot-move-file-due-to-name-conflict-error").format(srcPath, constants.WATCHED_SUBFOLDER))
+                    self._drop(srcPath, None)
+                    continue
+
+                # Successful move — dequeue unconditionally before notification
+                self._drop(srcPath, None)
+                self._client.fileSwitch.updateInfo()
+                try:
+                    self._client.ui.showMessage(
+                        getMessage("moved-file-to-subfolder-notification").format(srcPath, constants.WATCHED_SUBFOLDER))
+                except Exception as e:
+                    self._client.ui.showDebugMessage("Moved watched file but could not notify: {}".format(e))
+
+            except PermissionError:
+                self._client.ui.showErrorMessage(
+                    getMessage("watched-move-permission-error").format(srcPath))
+                self._drop(srcPath, None)
+
+            except Exception as e:
+                msg = str(e).lower()
+                retryable = ("in use" in msg) or ("being used" in msg) or ("sharing" in msg)
+                if retryable:
+                    self._noteAttempt(srcPath)
+                    self._client.ui.showDebugMessage(
+                        "Deferring watched move for '{}': {}".format(srcPath, e))
+                else:
+                    self._client.ui.showErrorMessage(
+                        getMessage("watched-move-failed-error").format(srcPath, e))
+                    self._drop(srcPath, None)
+
+    def _noteAttempt(self, srcPath):
+        self._attempts[srcPath] = self._attempts.get(srcPath, 0) + 1
+        maxAttempts = getattr(constants, "WATCHED_MAX_MOVE_ATTEMPTS", None)
+        if maxAttempts and self._attempts[srcPath] > maxAttempts:
+            self._client.ui.showErrorMessage(
+                getMessage("watched-move-too-many-retries-error").format(srcPath))
+            self._drop(srcPath, None)
+
+    def _drop(self, srcPath, debugMessage):
+        if debugMessage:
+            self._client.ui.showDebugMessage(debugMessage)
+        try:
+            self._pendingMoves.remove(srcPath)
+        except ValueError:
+            pass
+        self._attempts.pop(srcPath, None)
+
+    # ------------------------------------------------------------------
+    # Manual mark watched / unwatched
+    # ------------------------------------------------------------------
+
+    def _userInitiatedMoveToWatched(self, fileSourcePath):
+        try:
+            directory = os.path.dirname(fileSourcePath)
+            filename = os.path.basename(fileSourcePath)
+
+            if not self._shouldUseWatchedFileInfo():
+                self._client.ui.showErrorMessage(
+                    getMessage("file-not-in-watched-subfolder-error").format(constants.WATCHED_SUBFOLDER))
+                return
+
+            if not self._shouldUseWatchedSubfolderInfo():
+                if self._shouldUseWatchedHistoryInfo():
+                    self._recordHistory("watched", filename)
+                self._client.fileSwitch.updateInfo()
+                self._client.ui.showMessage(
+                    getMessage("marked-file-as-watched-notification").format(filename))
+                return
+
+            watchedDirectory = utils.getWatchedSubfolder(directory)
+            utils.createWatchedSubdirIfNeeded(watchedDirectory)
+            if not os.path.isdir(watchedDirectory):
+                self._client.ui.showErrorMessage(
+                    getMessage("file-not-in-watched-subfolder-error").format(constants.WATCHED_SUBFOLDER))
+                return
+            destPath = os.path.join(watchedDirectory, filename)
+            watchedDirectoryName = os.path.basename(watchedDirectory) or constants.WATCHED_SUBFOLDER
+            if os.path.exists(destPath):
+                self._client.ui.showErrorMessage(
+                    getMessage("cannot-move-file-due-to-name-conflict-error").format(fileSourcePath, watchedDirectoryName))
+                return
+            utils.moveFile(fileSourcePath, destPath)
+            if self._shouldUseWatchedHistoryInfo():
+                self._recordHistory("watched", filename)
+            self._client.fileSwitch.updateInfo()
+            self._client.ui.showMessage(
+                getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, watchedDirectoryName))
+        except Exception as e:
+            self._client.ui.showErrorMessage(getMessage("watched-mark-watched-error").format(os.path.basename(fileSourcePath), e))
+            self._client.ui.showDebugMessage(getMessage("watched-mark-watched-error").format(os.path.basename(fileSourcePath), e))
+
+    def _userInitiatedMoveToParent(self, fileSourcePath):
+        try:
+            watchedDirectoryPath = os.path.dirname(fileSourcePath)
+            filename = os.path.basename(fileSourcePath)
+
+            # JSON-only mode: no watched subfolder configured, just remove from the index
+            if len(constants.WATCHED_SUBFOLDER) == 0:
+                if not constants.WATCHED_HISTORY_ENABLED:
+                    self._client.ui.showErrorMessage(
+                        getMessage("file-not-in-watched-subfolder-error").format(constants.WATCHED_SUBFOLDER))
+                    return
+                self._recordHistory("unwatched", filename)
+                self._client.fileSwitch.updateInfo()
+                self._client.ui.showMessage(
+                    getMessage("marked-file-as-unwatched-notification").format(filename))
+                return
+
+            # Mixed mode: a file can be watched via JSON without physically being inside the watched subfolder.
+            if constants.WATCHED_HISTORY_ENABLED and not utils.isWatchedSubfolder(watchedDirectoryPath):
+                correctedPath = utils.getCorrectedPathForFile(fileSourcePath)
+                if self.isWatchedFile(correctedPath):
+                    self._recordHistory("unwatched", filename)
+                    self._client.fileSwitch.updateInfo()
+                    self._client.ui.showMessage(
+                        getMessage("marked-file-as-unwatched-notification").format(filename))
+                    return
+
+            if not utils.isWatchedSubfolder(watchedDirectoryPath):
+                self._client.ui.showErrorMessage(
+                    getMessage("file-not-in-watched-subfolder-error").format(constants.WATCHED_SUBFOLDER))
+                return
+            parentDir = utils.getUnwatchedParentfolder(watchedDirectoryPath)
+            if not parentDir:
+                self._client.ui.showErrorMessage(
+                    getMessage("file-not-in-watched-subfolder-error").format(constants.WATCHED_SUBFOLDER))
+                return
+            parentName = os.path.basename(parentDir)
+            destPath = os.path.join(parentDir, filename)
+            if os.path.exists(destPath):
+                self._client.ui.showErrorMessage(
+                    getMessage("cannot-move-file-due-to-parent-name-conflict-error").format(fileSourcePath, parentName))
+                return
+            utils.moveFile(fileSourcePath, destPath)
+            try:
+                self._recordHistory("unwatched", filename)
+            except Exception as e:
+                self._client.ui.showDebugMessage(getMessage("watched-record-history-error").format(filename, e))
+            self._client.fileSwitch.updateInfo()
+            self._client.ui.showMessage(
+                getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, parentName))
+        except Exception as e:
+            self._client.ui.showErrorMessage(getMessage("watched-mark-unwatched-error").format(os.path.basename(fileSourcePath), e))
+            self._client.ui.showDebugMessage(getMessage("watched-mark-unwatched-error").format(os.path.basename(fileSourcePath), e))
+
+    def getSkippedEpisodeInfo(self, filename):
+        """Return metadata about a likely skipped episode for the given playlist filename, or None."""
+        if not self._shouldUseWatchedFileInfo():
+            return None
+        targetInfo = self._parseEpisodeFilename(filename)
+        if not targetInfo:
+            return None
+        watchedEpisodeDetails = self._getWatchedEpisodeDetailsBySeries()
+        watchedEpisodes = self._getWatchedEpisodesFromDetails(watchedEpisodeDetails)
+        skipInfo = self._getSkippedEpisodeInfoFromParsed(targetInfo, watchedEpisodes)
+        if skipInfo:
+            self._addPreviousWatchedDetails(skipInfo, watchedEpisodeDetails)
+        return skipInfo
+
+    def getPlaylistSkipWarnings(self, playlist):
+        """Return a dict mapping playlist indexes to likely skipped-episode warnings."""
+        warnings = {}
+        if not self._shouldUseWatchedFileInfo():
+            return warnings
+
+        watchedEpisodeDetails = self._getWatchedEpisodeDetailsBySeries()
+        watchedEpisodes = self._getWatchedEpisodesFromDetails(watchedEpisodeDetails)
+        playlistEpisodes = {}
+        for index, filename in enumerate(playlist):
+            targetInfo = self._parseEpisodeFilename(filename)
+            if not targetInfo:
+                continue
+
+            seriesKey = (targetInfo["seriesKey"], targetInfo["season"])
+            coveredEpisodes = set(watchedEpisodes.get(seriesKey, set()))
+            coveredEpisodes.update(playlistEpisodes.get(seriesKey, set()))
+            skipInfo = self._getSkippedEpisodeInfoFromParsed(
+                targetInfo, watchedEpisodes, {seriesKey: coveredEpisodes})
+            if skipInfo:
+                self._addPreviousWatchedDetails(skipInfo, watchedEpisodeDetails)
+                warnings[index] = skipInfo
+
+            episodeStart = targetInfo.get("episodeStart")
+            if episodeStart is not None:
+                episodeEnd = targetInfo.get("episodeEnd") or episodeStart
+                episodes = playlistEpisodes.setdefault(seriesKey, set())
+                for episodeNumber in range(episodeStart, episodeEnd + 1):
+                    episodes.add(episodeNumber)
+        return warnings
+
+    def _getSkippedEpisodeInfoFromParsed(self, targetInfo, watchedEpisodes, coveredEpisodes=None):
+        seriesKey = (targetInfo["seriesKey"], targetInfo["season"])
+        watchedSeriesEpisodes = watchedEpisodes.get(seriesKey, set())
+        if coveredEpisodes is None:
+            coveredEpisodes = watchedEpisodes
+        coveredSeriesEpisodes = coveredEpisodes.get(seriesKey, set())
+
+        targetStart = targetInfo["episodeStart"]
+        if targetStart is None or targetStart < 3:
+            return None
+        if targetStart in coveredSeriesEpisodes:
+            return None
+
+        missingEpisode = targetStart - 1
+        previousEpisode = targetStart - 2
+        if missingEpisode in coveredSeriesEpisodes:
+            return None
+        if previousEpisode not in watchedSeriesEpisodes:
+            return None
+
+        return {
+            "missingEpisode": missingEpisode,
+            "previousEpisode": previousEpisode,
+            "seriesKey": targetInfo["seriesKey"],
+            "season": targetInfo["season"],
+        }
+
+    def getPlaylistOrderWarnings(self, playlist):
+        """Return a dict mapping playlist indexes to first out-of-order warnings per show and season."""
+        warnings = {}
+        lastEpisodeByKey = {}
+        flaggedKeys = set()
+
+        for index, filename in enumerate(playlist):
+            info = self._parseEpisodeFilename(filename)
+            if not info:
+                continue
+
+            episodeStart = info.get("episodeStart")
+            if episodeStart is None:
+                continue
+
+            key = (info["seriesKey"], info["season"])
+            if key in flaggedKeys:
+                lastEpisode = lastEpisodeByKey.get(key)
+                episodeEnd = info.get("episodeEnd") or episodeStart
+                if lastEpisode is None or episodeEnd > lastEpisode:
+                    lastEpisodeByKey[key] = episodeEnd
+                continue
+
+            lastEpisode = lastEpisodeByKey.get(key)
+            if lastEpisode is None:
+                lastEpisodeByKey[key] = info.get("episodeEnd") or episodeStart
+                continue
+
+            expectedEpisode = lastEpisode + 1
+            if episodeStart != expectedEpisode:
+                warnings[index] = {
+                    "expectedEpisode": expectedEpisode,
+                    "previousEpisode": lastEpisode,
+                    "episode": episodeStart,
+                    "seriesKey": info["seriesKey"],
+                    "season": info["season"],
+                }
+                flaggedKeys.add(key)
+
+            episodeEnd = info.get("episodeEnd") or episodeStart
+            if episodeEnd > lastEpisode:
+                lastEpisodeByKey[key] = episodeEnd
+
+        return warnings
+
+    def _getWatchedEpisodesBySeries(self):
+        return self._getWatchedEpisodesFromDetails(self._getWatchedEpisodeDetailsBySeries())
+
+    def _getWatchedEpisodesFromDetails(self, watchedEpisodeDetails):
+        watchedEpisodes = {}
+        for seriesKey, episodeDetails in watchedEpisodeDetails.items():
+            watchedEpisodes[seriesKey] = set(episodeDetails.keys())
+        return watchedEpisodes
+
+    def _addPreviousWatchedDetails(self, skipInfo, watchedEpisodeDetails):
+        seriesKey = (skipInfo["seriesKey"], skipInfo["season"])
+        episodeDetails = watchedEpisodeDetails.get(seriesKey, {})
+        previousEpisodeDetails = episodeDetails.get(skipInfo.get("previousEpisode"))
+        if not previousEpisodeDetails:
+            return
+        skipInfo["previousWatchedFilename"] = previousEpisodeDetails.get("filename")
+        skipInfo["previousWatchedMeta"] = previousEpisodeDetails.get("meta")
+
+    def findSkippedFilePath(self, skipInfo):
+        if not skipInfo:
+            return None
+        missingEpisode = skipInfo.get("missingEpisode")
+        if missingEpisode is None:
+            return None
+        mediaFilesCache = getattr(self._client.fileSwitch, "mediaFilesCache", None)
+        if not mediaFilesCache:
+            return None
+
+        matchingRangePath = None
+        for directory, files in mediaFilesCache.items():
+            for filename in files:
+                info = self._parseEpisodeFilename(filename)
+                if not info:
+                    continue
+                if info.get("seriesKey") != skipInfo.get("seriesKey"):
+                    continue
+                if info.get("season") != skipInfo.get("season"):
+                    continue
+
+                episodeStart = info.get("episodeStart")
+                episodeEnd = info.get("episodeEnd") or episodeStart
+                if episodeStart is None or episodeEnd is None:
+                    continue
+                if episodeStart <= missingEpisode <= episodeEnd:
+                    filepath = utils.getCorrectedPathForFile(os.path.join(directory, filename))
+                    if not os.path.isfile(filepath):
+                        continue
+                    if episodeStart == missingEpisode:
+                        return filepath
+                    matchingRangePath = matchingRangePath or filepath
+
+        return matchingRangePath
+
+    def playlistContainsSkippedFile(self, playlist, skipInfo):
+        if not skipInfo:
+            return False
+        missingEpisode = skipInfo.get("missingEpisode")
+        if missingEpisode is None:
+            return False
+
+        for filename in playlist:
+            info = self._parseEpisodeFilename(filename)
+            if not info:
+                continue
+            if info.get("seriesKey") != skipInfo.get("seriesKey"):
+                continue
+            if info.get("season") != skipInfo.get("season"):
+                continue
+
+            episodeStart = info.get("episodeStart")
+            episodeEnd = info.get("episodeEnd") or episodeStart
+            if episodeStart is None or episodeEnd is None:
+                continue
+            if episodeStart <= missingEpisode <= episodeEnd:
+                return True
+        return False
+
+    def _getWatchedEpisodeDetailsBySeries(self):
+        watchedEpisodes = {}
+        watchedItems = []
+
+        if not self._shouldUseWatchedFileInfo():
+            return watchedEpisodes
+
+        if self._shouldUseWatchedHistoryInfo():
+            jsonPath = self._getJsonPath()
+            watchedData = self._loadJson(jsonPath)
+            for filename, meta in watchedData.items():
+                watchedItems.append((filename, meta))
+
+        if self._shouldUseWatchedSubfolderInfo():
+            mediaFilesCache = getattr(self._client.fileSwitch, "mediaFilesCache", None)
+            if mediaFilesCache:
+                for directory, files in mediaFilesCache.items():
+                    if utils.isWatchedSubfolder(directory):
+                        for filename in files:
+                            watchedItems.append((filename, None))
+
+        for filename, meta in watchedItems:
+            info = self._parseEpisodeFilename(filename)
+            if not info:
+                continue
+            seriesKey = (info["seriesKey"], info["season"])
+            episodes = watchedEpisodes.setdefault(seriesKey, {})
+            episodeEnd = info.get("episodeEnd") or info["episodeStart"]
+            for episodeNumber in range(info["episodeStart"], episodeEnd + 1):
+                existingDetails = episodes.get(episodeNumber)
+                if existingDetails and existingDetails.get("meta") and not meta:
+                    continue
+                episodes[episodeNumber] = {
+                    "filename": filename,
+                    "meta": meta,
+                }
+
+        return watchedEpisodes
+
+    def _parseEpisodeFilename(self, filename):
+        if not filename:
+            return None
+
+        baseName = os.path.basename(filename)
+        cleanedName = self._normaliseEpisodeFilename(baseName)
+        if not cleanedName:
+            return None
+
+        patterns = [
+            re.compile(r'(?i)^(?P<prefix>.*?)[\s._-]*S(?P<season>\d{1,2})[\s._-]*E(?P<episode>\d{1,3})(?:\s*(?:-|\+)\s*E?(?P<episodeEnd>\d{1,3}))?(?:[\s._-].*)?$'),
+            re.compile(r'(?i)^(?P<prefix>.*?)[\s._-]+(?P<season>\d{1,2})x(?P<episode>\d{1,3})(?:\s*(?:-|\+)\s*(?P<episodeEnd>\d{1,3}))?(?:[\s._-].*)?$'),
+            re.compile(r'(?i)^(?P<prefix>.*?)[\s._-]+(?:episode|ep|e)[\s._-]*(?P<episode>\d{1,3})(?:\s*(?:-|\+)\s*(?P<episodeEnd>\d{1,3}))?(?:[\s._-].*)?$'),
+            re.compile(r'(?i)^(?P<prefix>.*?)[\s._-]+(?P<episode>\d{1,3})(?:\s*(?:-|\+)\s*(?P<episodeEnd>\d{1,3}))?(?:[\s._-]+.*)?$'),
+        ]
+
+        for pattern in patterns:
+            match = pattern.match(cleanedName)
+            if not match:
+                continue
+            prefix = self._normaliseEpisodePrefix(match.group('prefix'))
+            if not prefix:
+                continue
+            episode = int(match.group('episode'))
+            episodeEnd = match.groupdict().get('episodeEnd')
+            season = match.groupdict().get('season')
+            return {
+                "seriesKey": prefix,
+                "season": int(season) if season else None,
+                "episodeStart": episode,
+                "episodeEnd": int(episodeEnd) if episodeEnd else None,
+            }
+
+        return None
+
+    def _normaliseEpisodeFilename(self, filename):
+        filename = os.path.splitext(os.path.basename(filename))[0]
+        filename = self._stripLeadingEpisodeBracketTags(filename)
+        filename = re.sub(r'(?i)(\[[0-9a-f]{8}\]|\bv[2-7]\b)', ' ', filename)
+        filename = filename.replace('_', ' ')
+        filename = filename.replace('.', ' ')
+        filename = re.sub(r'\s+', ' ', filename)
+        return filename.strip()
+
+    def _stripLeadingEpisodeBracketTags(self, filename):
+        while filename.startswith('['):
+            end = filename.find(']')
+            if end == -1:
+                break
+            filename = filename[end + 1:].lstrip()
+        return filename
+
+    def _normaliseEpisodePrefix(self, prefix):
+        prefix = re.sub(r'\s+', ' ', prefix)
+        prefix = prefix.strip(' -._')
+        return prefix.lower()
+
+    # ------------------------------------------------------------------
+    # JSON watched index
+    # ------------------------------------------------------------------
+
+    def canMarkAsWatched(self, filePath):
+        if not filePath:
+            return False
+        if utils.isURL(filePath):
+            return False
+        if not self._shouldUseWatchedFileInfo():
+            return False
+        if self.canMarkAsUnwatched(filePath):
+            return False
+        if self._shouldUseWatchedHistoryInfo():
+            return True
+        return utils.canMarkAsWatched(filePath)
+
+    def canMarkAsUnwatched(self, filePath):
+        if not filePath:
+            return False
+        if utils.isURL(filePath):
+            return False
+        return self.isWatchedFile(filePath) or self.isFileInWatchedSubfolder(filePath)
+
+    def isFileInWatchedSubfolder(self, filePath):
+        if not filePath:
+            return False
+        if utils.isURL(filePath):
+            return False
+        correctedPath = utils.getCorrectedPathForFile(filePath)
+        if not correctedPath:
+            return False
+        directoryPath = os.path.dirname(correctedPath)
+        return utils.isWatchedSubfolder(directoryPath) and os.path.exists(correctedPath)
+
+    def isWatchedFile(self, filePath):
+        if not filePath:
+            return False
+        if utils.isURL(filePath):
+            return False
+
+        correctedPath = utils.getCorrectedPathForFile(filePath)
+        if not correctedPath:
+            return False
+
+        directoryPath = os.path.dirname(correctedPath)
+        if self._shouldUseWatchedSubfolderInfo() and utils.isWatchedSubfolder(directoryPath) and os.path.exists(correctedPath):
+            return True
+
+        if not self._shouldUseWatchedHistoryInfo():
+            return False
+
+        filename = self._normaliseHistoryFilename(os.path.basename(correctedPath))
+        if not filename:
+            return False
+
+        jsonPath = self._getJsonPath()
+        watchedData = self._loadJson(jsonPath)
+        return filename in watchedData
+
+    def getWatchedMetadata(self, filePath):
+        """Return the JSON metadata dict for filePath, or None if not in the index."""
+        if not filePath or not constants.WATCHED_HISTORY_ENABLED or utils.isURL(filePath):
+            return None
+        correctedPath = utils.getCorrectedPathForFile(filePath)
+        if not correctedPath:
+            return None
+        filename = self._normaliseHistoryFilename(os.path.basename(correctedPath))
+        if not filename:
+            return None
+        jsonPath = self._getJsonPath()
+        watchedData = self._loadJson(jsonPath)
+        return watchedData.get(filename)
+
+    def _normaliseHistoryFilename(self, filename):
+        if not filename:
+            return None
+        filename = os.path.basename(filename)
+        filename = os.path.normcase(filename)
+        return filename
+
+    def _getJsonPath(self):
+        """Return the path to the single JSON index stored alongside the config file."""
+        configDir = self._client._config["configDir"] or ""
+        if not configDir:
+            configPath = self._client._config["configPath"] or ""
+            if configPath:
+                configDir = os.path.dirname(os.path.abspath(configPath))
+        if not configDir:
+            if os.name == 'nt':
+                configDir = os.getenv('APPDATA', '')
+            else:
+                configDir = os.getenv('XDG_CONFIG_HOME', '') or os.path.join(os.path.expanduser("~"), ".config")
+        if not configDir:
+            configDir = utils.findWorkingDir()
+        return os.path.join(configDir, constants.WATCHED_HISTORY_FILENAME)
+
+    def _loadJson(self, jsonPath):
+        """Load (or reload) the single config-adjacent JSON watched index into cache."""
+        try:
+            mtime = os.path.getmtime(jsonPath)
+        except OSError:
+            mtime = None
+
+        cached = self._jsonCache.get(jsonPath)
+        if cached is not None and cached["mtime"] == mtime:
+            return cached["data"]
+
+        data = {}
+        if mtime is not None:
+            try:
+                with open(jsonPath, "r", encoding="utf-8") as fh:
+                    raw = fh.read()
+                parsed = json.loads(raw)
+                watched = parsed.get("watched", {})
+                if isinstance(watched, dict):
+                    for filename, metadata in watched.items():
+                        normalisedFilename = self._normaliseHistoryFilename(filename)
+                        if not normalisedFilename or not isinstance(metadata, dict):
+                            continue
+                        data[normalisedFilename] = metadata
+            except Exception as e:
+                self._client.ui.showDebugMessage(
+                    getMessage("watched-json-read-error").format(jsonPath, e))
+                data = {}
+        self._jsonCache[jsonPath] = {"data": data, "mtime": mtime}
+        return data
+
+    def _writeJson(self, jsonPath, watchedData, expectedMtime=None):
+        """Write the watched index to disk atomically (tmp + rename)."""
+        tmpPath = jsonPath + ".tmp"
+        try:
+            directory = os.path.dirname(jsonPath)
+            if directory and not os.path.isdir(directory):
+                os.makedirs(directory, exist_ok=True)
+
+            try:
+                currentMtime = os.path.getmtime(jsonPath)
+            except OSError:
+                currentMtime = None
+            if currentMtime != expectedMtime:
+                return False
+
+            payload = {"version": 1, "watched": watchedData}
+            content = json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True)
+            with open(tmpPath, "w", encoding="utf-8") as fh:
+                fh.write(content)
+            os.replace(tmpPath, jsonPath)
+            try:
+                newMtime = os.path.getmtime(jsonPath)
+            except OSError:
+                newMtime = None
+            self._jsonCache[jsonPath] = {"data": dict(watchedData), "mtime": newMtime}
+            return True
+        except Exception as e:
+            self._client.ui.showErrorMessage(
+                getMessage("watched-json-write-error").format(jsonPath, e))
+            self._client.ui.showDebugMessage(
+                getMessage("watched-json-write-error").format(jsonPath, e))
+            try:
+                os.remove(tmpPath)
+            except OSError:
+                pass
+            return False
+
+    def _recordHistory(self, action, filename):
+        """Record or remove a watched entry in the single filename-keyed JSON index."""
+        if not constants.WATCHED_HISTORY_ENABLED:
+            return
+        if not filename:
+            return
+
+        filename = self._normaliseHistoryFilename(filename)
+        if not filename:
+            return
+
+        jsonPath = self._getJsonPath()
+        retries = 3
+        for _ in range(retries):
+            watchedData = self._loadJson(jsonPath)
+            cached = self._jsonCache.get(jsonPath, {})
+            expectedMtime = cached.get("mtime")
+            watchedData = dict(watchedData)
+
+            if action == "unwatched":
+                watchedData.pop(filename, None)
+            else:
+                now_str = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+                room = ""
+                try:
+                    room = self._client.getRoom() or ""
+                except Exception:
+                    pass
+                watchedData[filename] = {
+                    "lastWatchedAt": now_str,
+                    "lastRoom": room,
+                }
+
+            if self._writeJson(jsonPath, watchedData, expectedMtime=expectedMtime):
+                return
+
+        self._client.ui.showDebugMessage(
+            getMessage("watched-json-concurrent-update-error").format(jsonPath))
 
 
 class FileSwitchManager(object):

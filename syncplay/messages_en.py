@@ -126,7 +126,6 @@ en = {
     "media-player-latency-warning": "Warning: The media player took {} seconds to respond. If you experience syncing issues then close applications to free up system resources, and if that doesn't work then try a different media player.",  # Seconds to respond
     "mpv-unresponsive-error": "mpv has not responded for {} seconds so appears to have malfunctioned. Please restart Syncplay.",  # Seconds to respond
 
-    "moved-file-to-subfolder-notification": "Moved '{}' to '{}' subfolder.", # Path, subfolder
 
     # Client prompts
     "enter-to-exit-prompt": "Press enter to exit\n",
@@ -188,7 +187,6 @@ en = {
 
     "failed-to-load-server-list-error": "Failed to load public server list. Please visit https://www.syncplay.pl/ in your browser.",
 
-    "cannot-move-file-due-to-name-conflict-error": "Could not move '{}' to '{}' subfolder because a file with that name already exists.", # Path, folder
 
     # Client arguments
     "argument-description": 'Solution to synchronize playback of multiple media player instances over the network.',
@@ -273,6 +271,9 @@ en = {
     "syncplay-watchedsubfolderautocreate-label": "Automatically create watched subfolder when needed",
     "mark-as-watched-menu-label": "Mark as watched",
     "mark-as-unwatched-menu-label": "Mark as unwatched",
+    "previous-file-menu-section-label": "Previous file: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Mark as watched",
+    "add-previous-file-to-playlist-menu-label": "Add to playlist",
     "sync-label": "Sync",
     "sync-otherslagging-title": "If others are lagging behind...",
     "sync-youlaggging-title": "If you are lagging behind...",
@@ -575,4 +576,34 @@ en = {
 
     "playlist-empty-error": "Playlist is currently empty.",
     "playlist-invalid-index-error": "Invalid playlist index",
+    "cannot-move-file-due-to-name-conflict-error": "Could not move '{}' to '{}' subfolder because a file with that name already exists.",  # Path, subfolder
+    "cannot-move-file-due-to-parent-name-conflict-error": "Could not move '{}' back to '{}' because a file with that name already exists in that folder.",  # Path, parent folder
+    "moved-file-to-subfolder-notification": "Moved '{}' to '{}' subfolder.",
+
+    # Watched file functionality
+    "syncplay-watchedhistory-title": "Watched history",
+    "syncplay-watchedhistoryenabled-label": "Enable watched history (JSON index)",
+    "watchedhistoryenabled-tooltip": "Record watched files alongside the Syncplay config file as '.syncplay-watched.json'. Watched state is preserved even if files are moved or deleted.",
+    "watched-json-read-error": "Could not read watched history file '{}': {}",  # path, error
+    "watched-json-write-error": "Could not write watched history file '{}': {}",  # path, error
+    "watched-json-concurrent-update-error": "Could not update watched history file due to concurrent changes: {}",  # path
+    "watched-history-delete-dialog-title": "Delete watched history file?",
+    "watched-history-delete-dialog-message": "Watched history has been disabled. Do you want to delete this watched history file?\n\n{}",  # path
+    "watched-history-delete-error-title": "Could not delete watched history file",
+    "watched-history-delete-error-message": "Could not delete watched history file '{}': {}",  # path, error
+    "watched-move-permission-error": "Could not move '{}' to watched subfolder due to a permissions error.",  # filename
+    "watched-move-failed-error": "Could not move '{}' to watched subfolder: {}",  # filename, error
+    "watched-move-too-many-retries-error": "Giving up on moving '{}' to watched subfolder after too many retries.",  # filename
+    "watched-mark-watched-error": "Could not mark '{}' as watched: {}",  # filename, error
+    "watched-mark-unwatched-error": "Could not mark '{}' as unwatched: {}",  # filename, error
+    "watched-record-history-error": "Could not record watched history for '{}': {}",  # filename, error
+    "marked-file-as-watched-notification": "Marked '{}' as watched.",  # filename
+    "marked-file-as-unwatched-notification": "Marked '{}' as unwatched.",  # filename
+    "watched-last-watched-tooltip": "Last watched {} in room '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "{} minute(s) ago", # minutes
+    "watched-ago-hours": "{} hour(s) ago", # hours
+    "watched-ago-days": "{} day(s) ago", # dates
+    "playlist-skip-warning-tooltip": "Warning: This appears to skip unwatched file {}.", # missing file number
+    "playlist-out-of-order-warning-tooltip": "Warning: File {} appears out of order after file {}. File {} was expected instead." # actual file number, previous file number, expected file number
 }

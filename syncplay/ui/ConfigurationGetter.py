@@ -70,6 +70,8 @@ class ConfigurationGetter(object):
             "watchedSubfolder": "Watched",
             "watchedSubfolderAutocreate": False,
             "watchedAutoMove": False,
+            "watchedHistoryEnabled": False,
+            "configDir": "",
             "showOSD": True,
             "showOSDWarnings": True,
             "showSlowdownOSD": True,
@@ -143,6 +145,7 @@ class ConfigurationGetter(object):
             "showDurationNotification",
             "watchedSubfolderAutocreate",
             "watchedAutoMove",
+            "watchedHistoryEnabled",
             "sharedPlaylistEnabled",
             "loopAtEndOfPlaylist",
             "loopSingleFiles",
@@ -209,6 +212,7 @@ class ConfigurationGetter(object):
                 "pauseOnLeave", "readyAtStart", "autoplayMinUsers",
                 "autoplayInitialState", "mediaSearchDirectories",
                 "watchedSubfolder", "watchedSubfolderAutocreate", "watchedAutoMove",
+                "watchedHistoryEnabled",
                 "sharedPlaylistEnabled", "loopAtEndOfPlaylist",
                 "loopSingleFiles",
                 "autoplayRequireSameFilenames",
@@ -381,6 +385,12 @@ class ConfigurationGetter(object):
                 return configFile
         return self._expandConfigPath()
 
+    def getConfigDir(self):
+        iniPath = self._config.get("configPath")
+        if not iniPath:
+            iniPath = self._getConfigurationFilePath()
+        return os.path.dirname(os.path.abspath(iniPath))
+
     def _expandConfigPath(self, name=None, xdg=True):
         if os.name != 'nt':
             if xdg:
@@ -498,6 +508,8 @@ class ConfigurationGetter(object):
 
     def getConfiguration(self):
         iniPath = self._getConfigurationFilePath()
+        self._config['configPath'] = iniPath
+        self._config['configDir'] = os.path.dirname(os.path.abspath(iniPath))
         self._parseConfigFile(iniPath)
         #
         # Watch out for the method self._overrideConfigWithArgs when you're adding custom multi-word command line arguments
@@ -571,6 +583,8 @@ class ConfigurationGetter(object):
         if (self._config['forceGuiPrompt'] == "True" or not self._config['file']) and not self._config['noGui'] and not utils.isWindowsConsole():
             self._forceGuiPrompt()
         self._checkConfig()
+        self._config['configPath'] = iniPath
+        self._config['configDir'] = os.path.dirname(os.path.abspath(iniPath))
         self._saveConfig(iniPath)
         if self._config['file']:
             self._config['loadedRelativePaths'] = self._loadRelativeConfiguration()

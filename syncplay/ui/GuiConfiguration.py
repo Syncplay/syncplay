@@ -13,7 +13,7 @@ from syncplay.utils import resourcespath, posixresourcespath, playerPathExists
 
 from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, IsPySide, IsPySide2, IsPySide6
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine, QEventLoop, Signal
-from syncplay.vendor.Qt.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
+from syncplay.vendor.Qt.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QSpinBox, QPlainTextEdit
 from syncplay.vendor.Qt.QtGui import QCursor, QIcon, QImage, QDesktopServices
 try:
     if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
@@ -582,6 +582,11 @@ class ConfigDialog(QtWidgets.QDialog):
                 widget.setChecked(True)
         elif isinstance(widget, QLineEdit):
             widget.setText(self.config[valueName])
+        elif isinstance(widget, QSpinBox):
+            try:
+                widget.setValue(int(self.config[valueName]))
+            except (KeyError, TypeError, ValueError):
+                pass
 
     def saveValues(self, widget):
         valueName = str(widget.objectName())
@@ -604,6 +609,11 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.config[radioName] = radioValue
         elif isinstance(widget, QLineEdit):
             self.config[valueName] = widget.text()
+        elif isinstance(widget, QSpinBox):
+            try:
+                self.config[valueName] = widget.value()
+            except (KeyError, AttributeError):
+                pass
 
     def connectChildren(self, widget):
         widgetName = str(widget.objectName())
@@ -842,9 +852,22 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.watchedVideosSettingsGroup.setMaximumHeight(self.watchedVideosSettingsGroup.minimumSizeHint().height())
 
+        # Watched history (JSON index)
+
+        self.watchedHistorySettingsGroup = QtWidgets.QGroupBox(getMessage("syncplay-watchedhistory-title"))
+        self.watchedHistorySettingsLayout = QtWidgets.QVBoxLayout()
+        self.watchedHistorySettingsGroup.setLayout(self.watchedHistorySettingsLayout)
+
+        self.watchedHistoryEnabledCheck = QtWidgets.QCheckBox(getMessage("syncplay-watchedhistoryenabled-label"))
+        self.watchedHistoryEnabledCheck.setObjectName("watchedHistoryEnabled")
+        self.watchedHistorySettingsLayout.addWidget(self.watchedHistoryEnabledCheck)
+
+        self.watchedHistorySettingsGroup.setMaximumHeight(self.watchedHistorySettingsGroup.minimumSizeHint().height())
+
         # Bring it all together
         self.folderLayout.addWidget(self.mediasearchSettingsGroup)
         self.folderLayout.addWidget(self.watchedVideosSettingsGroup)
+        self.folderLayout.addWidget(self.watchedHistorySettingsGroup)
         self.stackedLayout.addWidget(self.folderFrame)
 
     def addReadinessTab(self):

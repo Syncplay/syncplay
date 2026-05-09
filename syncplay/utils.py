@@ -102,9 +102,6 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
         return f_retry  # true decorator
     return deco_retry
 
-if isWindows():
-    import win32file
-
 def parseTime(timeStr):
     if ":" not in timeStr:
         return float(timeStr)
@@ -505,13 +502,34 @@ def getListOfPublicServers():
         else:
             raise IOError(getMessage("failed-to-load-server-list-error"))
 
+
 def isWatchedFile(filePath):
+    if not filePath:
+        return False
+
+    # utils.isWatchedFile only reflects physical watched-subfolder state.
+    # JSON-backed watched state is owned by WatchedManager in client.py.
     if len(constants.WATCHED_SUBFOLDER) == 0:
         return False
-    directoryPath = getCorrectedDirectoryForFile(filePath)
-    return isWatchedSubfolder(directoryPath) and os.path.exists(filePath)
+
+    correctedPath = getCorrectedPathForFile(filePath)
+    if not correctedPath:
+        return False
+
+    directoryPath = os.path.dirname(correctedPath)
+    return isWatchedSubfolder(directoryPath) and os.path.exists(correctedPath)
 
 def canMarkAsWatched(filePath):
+    if not filePath:
+        return False
+    if isURL(filePath):
+        return False
+
+    # In JSON-only mode, any non-URL file can be marked watched; current
+    # watched state is resolved by WatchedManager, not utils.
+    if constants.WATCHED_HISTORY_ENABLED and len(constants.WATCHED_SUBFOLDER) == 0:
+        return True
+
     if len(constants.WATCHED_SUBFOLDER) == 0:
         return False
     directory = getCorrectedDirectoryForFile(filePath)
@@ -530,7 +548,7 @@ def getUnwatchedParentfolder(watchedDirectoryPath):
 
 def getCorrectedDirectoryForFile(filePath):
     if not filePath:
-        return
+        return None
     directory = os.path.dirname(filePath)
     if os.path.exists(filePath):
         return directory
@@ -546,6 +564,8 @@ def getCorrectedDirectoryForFile(filePath):
             directory = os.path.dirname(unseenPath)
         return directory
 def getCorrectedPathForFile(filePath):
+    if not filePath:
+        return filePath
     if len(constants.WATCHED_SUBFOLDER) == 0:
         return filePath
 
@@ -553,6 +573,8 @@ def getCorrectedPathForFile(filePath):
         return filePath
     else:
         correctedDirectory = getCorrectedDirectoryForFile(filePath)
+        if not correctedDirectory:
+            return filePath
         filename = os.path.basename(filePath)
         correctedPath = os.path.join(correctedDirectory, filename)
         if os.path.isfile(correctedPath):
@@ -584,11 +606,10 @@ def createWatchedSubdirIfNeeded(subfolderPath):
     if not os.path.isdir(subfolderPath):
         os.makedirs(subfolderPath)
 
-def moveFile(sourcePath, destinatonPath):
-    if isWindows():
-        win32file.MoveFile(sourcePath, destinatonPath)
-    else:
-        shutil.move(sourcePath, destinatonPath)
+def moveFile(sourcePath, destinationPath):
+    if os.path.exists(destinationPath):
+        raise FileExistsError("Destination already exists: {}".format(destinationPath))
+    shutil.move(sourcePath, destinationPath)
 
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile(r"^\+(.*):(\w{12})$")
