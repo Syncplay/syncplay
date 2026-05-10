@@ -10,7 +10,6 @@ import re
 import string
 import subprocess
 import sys
-import shutil
 import tempfile
 import time
 import traceback
@@ -503,40 +502,6 @@ def getListOfPublicServers():
             raise IOError(getMessage("failed-to-load-server-list-error"))
 
 
-def isWatchedFile(filePath):
-    if not filePath:
-        return False
-
-    # utils.isWatchedFile only reflects physical watched-subfolder state.
-    # JSON-backed watched state is owned by WatchedManager in client.py.
-    if len(constants.WATCHED_SUBFOLDER) == 0:
-        return False
-
-    correctedPath = getCorrectedPathForFile(filePath)
-    if not correctedPath:
-        return False
-
-    directoryPath = os.path.dirname(correctedPath)
-    return isWatchedSubfolder(directoryPath) and os.path.exists(correctedPath)
-
-def canMarkAsWatched(filePath):
-    if not filePath:
-        return False
-    if isURL(filePath):
-        return False
-
-    # In JSON-only mode, any non-URL file can be marked watched; current
-    # watched state is resolved by WatchedManager, not utils.
-    if constants.WATCHED_HISTORY_ENABLED and len(constants.WATCHED_SUBFOLDER) == 0:
-        return True
-
-    if len(constants.WATCHED_SUBFOLDER) == 0:
-        return False
-    directory = getCorrectedDirectoryForFile(filePath)
-    if isWatchedSubfolder(directory):
-        return False
-    watchedDirectory = getWatchedSubfolder(directory)
-    return bool((watchedDirectory and os.path.isdir(watchedDirectory)) or constants.WATCHED_AUTOCREATESUBFOLDERS)
 
 def getUnwatchedParentfolder(watchedDirectoryPath):
     if not watchedDirectoryPath:
@@ -597,19 +562,6 @@ def getWatchedSubfolder(parentDirectoryPath):
         return None
     watchedSubfolder = os.path.join(parentDirectoryPath, constants.WATCHED_SUBFOLDER)
     return(watchedSubfolder)
-
-def createWatchedSubdirIfNeeded(subfolderPath):
-    if not subfolderPath:
-        return
-    if not constants.WATCHED_AUTOCREATESUBFOLDERS:
-        return
-    if not os.path.isdir(subfolderPath):
-        os.makedirs(subfolderPath)
-
-def moveFile(sourcePath, destinationPath):
-    if os.path.exists(destinationPath):
-        raise FileExistsError("Destination already exists: {}".format(destinationPath))
-    shutil.move(sourcePath, destinationPath)
 
 class RoomPasswordProvider(object):
     CONTROLLED_ROOM_REGEX = re.compile(r"^\+(.*):(\w{12})$")
