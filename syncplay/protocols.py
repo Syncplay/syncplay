@@ -62,6 +62,12 @@ class JSONCommandProtocol(LineReceiver):
     def drop(self):
         self.transport.loseConnection()
 
+    def abort(self):
+        if hasattr(self.transport, "abortConnection"):
+            self.transport.abortConnection()
+        else:
+            self.drop()
+    
     def dropWithError(self, error):
         raise NotImplementedError()
 
