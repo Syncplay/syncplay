@@ -952,6 +952,7 @@ class MainWindow(QtWidgets.QMainWindow):
             addUsersStreamToPlaylistLabelText = getMessage("addotherusersstreamstoplaylist-menu-label").format(shortUsername)
 
         filename = item.sibling(item.row(), 3).data()
+        isUserRow = item.parent().row() != -1
         while item.parent().row() != -1:
             item = item.parent()
         roomToJoin = item.sibling(item.row(), 0).data()
@@ -981,7 +982,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if path:
                     menu.addAction(QtGui.QPixmap(resourcespath + "folder_film.png"), getMessage('open-containing-folder'), lambda: utils.open_system_file_browser(path))
 
-        if roomToJoin == self._syncplayClient.getRoom() and self._syncplayClient.userlist.currentUser.canControl() and self._syncplayClient.userlist.isReadinessSupported(requiresOtherUsers=False) and self._syncplayClient.serverFeatures["setOthersReadiness"]:
+        if isUserRow and roomToJoin == self._syncplayClient.getRoom() and self._syncplayClient.userlist.currentUser.canControl() and self._syncplayClient.userlist.isReadinessSupported(requiresOtherUsers=False) and self._syncplayClient.serverFeatures["setOthersReadiness"]:
             if self._syncplayClient.userlist.isReady(username):
                 addSetUserAsReadyText = getMessage("setasnotready-menu-label").format(shortUsername)
                 menu.addAction(QtGui.QPixmap(resourcespath + "cross.png"), addSetUserAsReadyText, lambda: self._syncplayClient.setOthersReadiness(username, False))
