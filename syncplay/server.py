@@ -221,11 +221,11 @@ class SyncFactory(Factory):
                 for watcherToSet in room.getWatchers():
                     if watcherToSet.getName() == username:
                         watcherToSet.setReady(isReady)
-                        self._roomManager.broadcastRoom(watcherToSet, lambda w: w.sendSetReady(watcherToSet.getName(), watcherToSet.isReady(),  manuallyInitiated, watcher.getName()))
+                        self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcherToSet.getName(), watcherToSet.isReady(), manuallyInitiated, watcher.getName()))
                         if isReady:
-                            messageDict = { "message": getMessage("ready-chat-message").format(username, watcherToSet.getName()), "username": watcher.getName()}
+                            messageDict = { "message": getMessage("ready-chat-message").format(username), "username": watcher.getName()}
                         else:
-                            messageDict = {"message": getMessage("not-ready-chat-message").format(username, watcherToSet.getName()), "username": watcher.getName()}
+                            messageDict = {"message": getMessage("not-ready-chat-message").format(username), "username": watcher.getName()}
                         self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(messageDict, "setOthersReadiness"))
         else:
             watcher.setReady(isReady)
