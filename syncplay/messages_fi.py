@@ -561,7 +561,9 @@ fi = {
     # TODO: Please double-check these translations and remove this message if they are fine
     "syncplay-watchedhistory-title": "Katsottujen tiedostojen historia",
     "syncplay-watchedhistoryenabled-label": "Ota katsottujen tiedostojen historia käyttöön (JSON-indeksi)",
+    "syncplay-autoremovefromplaylist-label": "Poista katsotut tiedostot automaattisesti toistoluettelosta",
     "watchedhistoryenabled-tooltip": "Tallenna katsotut tiedostot Syncplayn asetustiedoston viereen tiedostoon '.syncplay-watched.json'. Katsottu-tila säilyy vaikka tiedosto siirretään tai poistetaan.",
+    "autoremovewatchedfromplaylist-tooltip": "Poistaa kohteen jaetusta toistoluettelosta, kun Syncplay merkitsee sen katsotuksi toiston saavutettua lopun.",
     "watched-json-read-error": "Katsottujen tiedostojen historiatiedostoa '{}' ei voitu lukea: {}",
     "watched-json-write-error": "Katsottujen tiedostojen historiatiedostoa '{}' ei voitu kirjoittaa: {}",
     "watched-json-concurrent-update-error": "Katsottujen tiedostojen historiatiedostoa ei voitu päivittää samanaikaisten muutosten vuoksi: {}",

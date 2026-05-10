@@ -565,7 +565,9 @@ zh_CN = {
     "files-label": "文件",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "syncplay-watchedhistory-title": "观看历史",
     "syncplay-watchedhistoryenabled-label": "启用观看历史（JSON 索引）",
+    "syncplay-autoremovefromplaylist-label": "自动从播放列表中移除已观看文件",
     "watchedhistoryenabled-tooltip": "将观看过的文件记录在 Syncplay 配置文件旁的 '.syncplay-watched.json' 文件中。即使文件被移动或删除，观看状态仍会保留。",
+    "autoremovewatchedfromplaylist-tooltip": "当播放到结尾后 Syncplay 将项目标记为已观看时，从共享播放列表中移除该项目。",
     "watched-json-read-error": "无法读取观看历史文件 '{}'：{}",
     "watched-json-write-error": "无法写入观看历史文件 '{}'：{}",
     "watched-json-concurrent-update-error": "由于存在并发修改，无法更新观看历史文件：{}",

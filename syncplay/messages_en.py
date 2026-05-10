@@ -592,7 +592,9 @@ en = {
     # Watched file functionality
     "syncplay-watchedhistory-title": "Watched history",
     "syncplay-watchedhistoryenabled-label": "Enable watched history (JSON index)",
+    "syncplay-autoremovefromplaylist-label": "Automatically remove watched files from playlist",
     "watchedhistoryenabled-tooltip": "Record watched files alongside the Syncplay config file as '.syncplay-watched.json'. Watched state is preserved even if files are moved or deleted.",
+    "autoremovewatchedfromplaylist-tooltip": "Remove a playlist item from the shared playlist when Syncplay marks it as watched after playback reaches the end.",
     "watched-json-read-error": "Could not read watched history file '{}': {}",  # path, error
     "watched-json-write-error": "Could not write watched history file '{}': {}",  # path, error
     "watched-json-concurrent-update-error": "Could not update watched history file due to concurrent changes: {}",  # path

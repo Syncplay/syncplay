@@ -561,7 +561,9 @@ ru = {
     "files-label": "Файлы",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "syncplay-watchedhistory-title": "История просмотренных файлов",
     "syncplay-watchedhistoryenabled-label": "Включить историю просмотренных файлов (JSON-индекс)",
+    "syncplay-autoremovefromplaylist-label": "Автоматически убирать просмотренные файлы из плейлиста",
     "watchedhistoryenabled-tooltip": "Сохраняет просмотренные файлы рядом с файлом конфигурации Syncplay в '.syncplay-watched.json'. Статус просмотра сохраняется даже если файл перемещён или удалён.",
+    "autoremovewatchedfromplaylist-tooltip": "Убирает элемент из общего плейлиста, когда Syncplay помечает его как просмотренный после достижения конца воспроизведения.",
     "watched-json-read-error": "Не удалось прочитать файл истории просмотренных файлов '{}': {}",
     "watched-json-write-error": "Не удалось записать файл истории просмотренных файлов '{}': {}",
     "watched-json-concurrent-update-error": "Не удалось обновить файл истории просмотренных файлов из-за одновременных изменений: {}",

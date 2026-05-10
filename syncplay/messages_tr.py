@@ -582,7 +582,9 @@ tr = {
     "moved-file-from-watched-subfolder-notification": "'{}' tekrar '{}' konumuna taşındı.",  # path, parent folder
     "syncplay-watchedhistory-title": "İzlenen dosya geçmişi",
     "syncplay-watchedhistoryenabled-label": "İzlenen dosya geçmişini etkinleştir (JSON dizini)",
+    "syncplay-autoremovefromplaylist-label": "İzlenmiş dosyaları oynatma listesinden otomatik olarak kaldır",
     "watchedhistoryenabled-tooltip": "İzlenen dosyaları Syncplay yapılandırma dosyasının yanında '.syncplay-watched.json' dosyasında kaydeder. Dosyalar taşınsa veya silinse bile izlenmiş durumu korunur.",
+    "autoremovewatchedfromplaylist-tooltip": "Oynatma sona ulaştıktan sonra Syncplay öğeyi izlenmiş olarak işaretlediğinde, öğeyi paylaşılan oynatma listesinden kaldırır.",
     "watchedautomove-tooltip": "Dosya sonuna ulaşıldığında dosyayı otomatik olarak izlenenler alt klasörüne taşır. Bu yalnızca üst klasör bir medya klasörü ise çalışır.",
     "watchedsubfolder-tooltip": "İzlenen dosyaların, dosya klasörüne göre taşınacağı alt klasör (dosyanın taşınması için alt klasörün var olması gerekir). Bu yalnızca üst klasör bir medya klasörü ise çalışır.",
     "watchedsubfolderautocreate-tooltip": "Dosya taşınırken izlenenler alt klasörü yoksa otomatik olarak oluşturur. Bu yalnızca üst klasör bir medya klasörü ise çalışır.",

@@ -560,7 +560,9 @@ ko = {
     "files-label": "파일",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "syncplay-watchedhistory-title": "시청 기록",
     "syncplay-watchedhistoryenabled-label": "시청 기록 사용 (JSON 인덱스)",
+    "syncplay-autoremovefromplaylist-label": "시청한 파일을 재생목록에서 자동으로 제거",
     "watchedhistoryenabled-tooltip": "시청한 파일을 Syncplay 설정 파일 옆의 '.syncplay-watched.json' 파일에 기록합니다. 파일이 이동되거나 삭제되어도 시청 상태는 유지됩니다.",
+    "autoremovewatchedfromplaylist-tooltip": "재생이 끝에 도달한 후 Syncplay가 항목을 시청 완료로 표시하면 공유 재생목록에서 해당 항목을 제거합니다.",
     "watched-json-read-error": "시청 기록 파일 '{}' 을(를) 읽을 수 없습니다: {}",
     "watched-json-write-error": "시청 기록 파일 '{}' 을(를) 쓸 수 없습니다: {}",
     "watched-json-concurrent-update-error": "동시 변경으로 인해 시청 기록 파일을 업데이트할 수 없습니다: {}",

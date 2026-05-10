@@ -821,11 +821,23 @@ class ConfigDialog(QtWidgets.QDialog):
         self.mediasearchSettingsLayout.addWidget(self.mediasearchTextEdit)
         self.mediasearchSettingsGroup.setMaximumHeight(self.mediasearchSettingsGroup.minimumSizeHint().height())
 
-        # Move folder
+        # Watched files
 
         self.watchedVideosSettingsGroup = QtWidgets.QGroupBox(getMessage("syncplay-watchedfiles-title"))
         self.watchedVideosSettingsLayout = QtWidgets.QVBoxLayout()
         self.watchedVideosSettingsGroup.setLayout(self.watchedVideosSettingsLayout)
+
+        self.watchedHistoryEnabledCheck = QtWidgets.QCheckBox(getMessage("syncplay-watchedhistoryenabled-label"))
+        self.watchedHistoryEnabledCheck.setObjectName("watchedHistoryEnabled")
+        self.watchedVideosSettingsLayout.addWidget(self.watchedHistoryEnabledCheck)
+
+        self.autoRemoveWatchedFromPlaylistCheck = QtWidgets.QCheckBox(getMessage("syncplay-autoremovefromplaylist-label"))
+        self.autoRemoveWatchedFromPlaylistCheck.setObjectName("autoRemoveWatchedFromPlaylist")
+        self.watchedVideosSettingsLayout.addWidget(self.autoRemoveWatchedFromPlaylistCheck)
+
+        self.autoMoveWatchedCheck = QtWidgets.QCheckBox(getMessage("syncplay-watchedautomove-label"))
+        self.autoMoveWatchedCheck.setObjectName("watchedAutoMove")
+        self.watchedVideosSettingsLayout.addWidget(self.autoMoveWatchedCheck)
 
         self.moveWatchedVideoFolderWidget = QtWidgets.QWidget()
         self.moveWatchedVideoFolderLayout = QtWidgets.QHBoxLayout()
@@ -842,32 +854,15 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.watchedVideosSettingsLayout.addWidget(self.moveWatchedVideoFolderWidget)
 
-        self.autoMoveWatchedCheck = QtWidgets.QCheckBox(getMessage("syncplay-watchedautomove-label"))
-        self.autoMoveWatchedCheck.setObjectName("watchedAutoMove")
-        self.watchedVideosSettingsLayout.addWidget(self.autoMoveWatchedCheck)
-
         self.autoCreateSubfolderCheck = QtWidgets.QCheckBox(getMessage("syncplay-watchedsubfolderautocreate-label"))
         self.autoCreateSubfolderCheck.setObjectName("watchedSubfolderAutocreate")
         self.watchedVideosSettingsLayout.addWidget(self.autoCreateSubfolderCheck)
 
         self.watchedVideosSettingsGroup.setMaximumHeight(self.watchedVideosSettingsGroup.minimumSizeHint().height())
 
-        # Watched history (JSON index)
-
-        self.watchedHistorySettingsGroup = QtWidgets.QGroupBox(getMessage("syncplay-watchedhistory-title"))
-        self.watchedHistorySettingsLayout = QtWidgets.QVBoxLayout()
-        self.watchedHistorySettingsGroup.setLayout(self.watchedHistorySettingsLayout)
-
-        self.watchedHistoryEnabledCheck = QtWidgets.QCheckBox(getMessage("syncplay-watchedhistoryenabled-label"))
-        self.watchedHistoryEnabledCheck.setObjectName("watchedHistoryEnabled")
-        self.watchedHistorySettingsLayout.addWidget(self.watchedHistoryEnabledCheck)
-
-        self.watchedHistorySettingsGroup.setMaximumHeight(self.watchedHistorySettingsGroup.minimumSizeHint().height())
-
         # Bring it all together
         self.folderLayout.addWidget(self.mediasearchSettingsGroup)
         self.folderLayout.addWidget(self.watchedVideosSettingsGroup)
-        self.folderLayout.addWidget(self.watchedHistorySettingsGroup)
         self.stackedLayout.addWidget(self.folderFrame)
 
     def addReadinessTab(self):

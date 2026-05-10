@@ -87,6 +87,7 @@ class SyncplayClient(object):
         constants.WATCHED_AUTOCREATESUBFOLDERS = config['watchedSubfolderAutocreate'] if len(constants.WATCHED_SUBFOLDER) > 0 else False
 
         constants.WATCHED_HISTORY_ENABLED = config['watchedHistoryEnabled']
+        constants.AUTO_REMOVE_WATCHED_FROM_PLAYLIST = config['autoRemoveWatchedFromPlaylist']
         constants.WATCHED_HISTORY_FILENAME = constants.WATCHED_HISTORY_FILENAME_DEFAULT
 
         self.controlpasswords = {}
@@ -1838,12 +1839,16 @@ class SyncplayPlaylist():
         self._lastPlaylistIndexChange = time.time()
         self.lastNearEOFName = None
         self.lastNearEOFPath = None
+        self.lastNearEOFIndex = None
         self.lastNearEOFFirstTime = 0.0
         self.lastNearEOFLastTime = 0.0
 
     def clearNearEOFMarker(self):
         self.lastNearEOFName = None
         self.lastNearEOFPath = None
+        self.lastNearEOFIndex = None
+        self.lastNearEOFFirstTime = 0.0
+        self.lastNearEOFLastTime = 0.0
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
         @wraps(f)
@@ -2177,9 +2182,15 @@ class SyncplayPlaylist():
             abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD and
             self.notJustChangedPlaylist()
         ):
+            watchedIndex = self._playlistIndex
+            watchedFilename = None
+            if watchedIndex is not None and self._playlist and watchedIndex >= 0 and watchedIndex < len(self._playlist):
+                watchedFilename = self._playlist[watchedIndex]
             self.clearNearEOFMarker()
             self._client.watched.markCurrentFileWatched()
             self.loadNextFileInPlaylist()
+            if watchedFilename:
+                self.scheduleAutoRemoveWatchedPlaylistItem(watchedFilename, watchedIndex)
 
     @needsSharedPlaylistsEnabled
     def recordPlayedNearEOF(self, paused, position):
@@ -2204,6 +2215,7 @@ class SyncplayPlaylist():
             if self.lastNearEOFName != self._client.userlist.currentUser.file['name']:
                 self.lastNearEOFName = self._client.userlist.currentUser.file['name']
                 self.lastNearEOFPath = self._client.userlist.currentUser.file['path']
+                self.lastNearEOFIndex = self._playlistIndex
                 self.lastNearEOFFirstTime = now_monotime
             self.lastNearEOFLastTime = now_monotime
 
@@ -2224,8 +2236,108 @@ class SyncplayPlaylist():
         if age > constants.PLAYLIST_NEAR_EOF_LATCH_TTL:
             return False
         filePath = self.lastNearEOFPath
+        filename = self.lastNearEOFName
+        expectedIndex = self.lastNearEOFIndex
         self.clearNearEOFMarker()
         self._client.watched.markFileWatched(filePath)
+        self.scheduleAutoRemoveWatchedPlaylistItem(filename, expectedIndex)
+
+    def _getIndexOfFilenameInPlaylist(self, playlist, filename, expectedIndex=None):
+        if not playlist:
+            return None
+
+        if (
+            expectedIndex is not None and
+            expectedIndex >= 0 and
+            expectedIndex < len(playlist) and
+            utils.sameFilename(playlist[expectedIndex], filename)
+        ):
+            return expectedIndex
+
+        for index, playlistFilename in enumerate(playlist):
+            if utils.sameFilename(playlistFilename, filename):
+                return index
+
+        return None
+
+    def scheduleAutoRemoveWatchedPlaylistItem(self, filename, expectedIndex=None):
+        if not constants.AUTO_REMOVE_WATCHED_FROM_PLAYLIST:
+            return
+        if not filename:
+            return
+        deadline = time.time() + constants.PLAYLIST_AUTO_REMOVE_WATCHED_TIMEOUT
+        reactor.callLater(
+            constants.PLAYLIST_AUTO_REMOVE_WATCHED_RECHECK_INTERVAL,
+            self._autoRemoveWatchedPlaylistItemWhenSafe,
+            filename,
+            deadline,
+            expectedIndex)
+
+    def _autoRemoveWatchedPlaylistItemWhenSafe(self, filename, deadline, expectedIndex=None):
+        if not constants.AUTO_REMOVE_WATCHED_FROM_PLAYLIST:
+            return
+        if not filename:
+            return
+        if self._getIndexOfFilenameInPlaylist(self._playlist, filename, expectedIndex) is None:
+            return
+
+        if self._roomStillHasUserPlayingFilename(filename):
+            if time.time() < deadline:
+                reactor.callLater(
+                    constants.PLAYLIST_AUTO_REMOVE_WATCHED_RECHECK_INTERVAL,
+                    self._autoRemoveWatchedPlaylistItemWhenSafe,
+                    filename,
+                    deadline,
+                    expectedIndex)
+            else:
+                self._ui.showDebugMessage(
+                    "Not auto-removing watched playlist item '{}' because a user still appears to be playing it.".format(filename))
+            return
+
+        self.autoRemoveWatchedPlaylistItem(filename, expectedIndex)
+
+    def _roomStillHasUserPlayingFilename(self, filename):
+        currentUser = self._client.userlist.currentUser
+        currentRoom = currentUser.room
+
+        if currentUser.file and utils.sameFilename(currentUser.file.get("name"), filename):
+            return True
+
+        for user in self._client.userlist._users.values():
+            if user.room != currentRoom:
+                continue
+            if not user.file:
+                continue
+            if utils.sameFilename(user.file.get("name"), filename):
+                return True
+
+        return False
+
+    def autoRemoveWatchedPlaylistItem(self, filename, expectedIndex=None):
+        if not constants.AUTO_REMOVE_WATCHED_FROM_PLAYLIST:
+            return False
+        if not filename:
+            return False
+        if not self._client.sharedPlaylistIsEnabled():
+            return False
+        if not self._client.isConnectedAndInARoom():
+            return False
+        if not self._client.userlist.currentUser.canControl():
+            return False
+        if not self._playlist:
+            return False
+
+        playlist = self._playlist.copy()
+        removeIndex = self._getIndexOfFilenameInPlaylist(playlist, filename, expectedIndex)
+
+        if removeIndex is None:
+            self._ui.showDebugMessage(
+                "Not auto-removing watched playlist item '{}' because it is no longer in the playlist.".format(filename))
+            return False
+
+        del playlist[removeIndex]
+        self.changePlaylist(playlist, username=None, resetIndex=False)
+        return True
 
     def notJustChangedPlaylist(self):
         secondsSinceLastChange = time.time() - self._lastPlaylistIndexChange
