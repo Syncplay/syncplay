@@ -479,10 +479,8 @@ class WatchedManager(object):
 
     SyncplayClient calls into this class only at:
       - updatePlayerStatus  -> processQueue()
-      - markWatchedFilePendingMove (wrapper) -> queueAutoMove()
-      - userInitiatedMarkWatched (wrapper)   -> userMarkWatched()
-      - userInitiatedMarkUnwatched (wrapper) -> userMarkUnwatched()
-      - stop()                               -> flushQueueOnShutdown()
+      - playlist EOF/change hooks -> markCurrentFileWatched() / markFileWatched()
+      - stop()               -> flushQueueOnShutdown()
     """
 
     def __init__(self, client):
@@ -557,6 +555,20 @@ class WatchedManager(object):
                 self._client.ui.showDebugMessage(getMessage("watched-record-history-error").format(filename, e))
         if constants.WATCHED_AUTOMOVE:
             self.queueAutoMove(correctedPath)
+
+    def markFileWatched(self, filePath):
+        try:
+            self.markWatched(filePath)
+        except Exception as e:
+            self._client.ui.showDebugMessage("Could not mark watched file: {}".format(e))
+
+    def markCurrentFileWatched(self):
+        try:
+            currentFile = self._client.userlist.currentUser.file if self._client.userlist and self._client.userlist.currentUser else None
+            currentFilePath = currentFile.get("path") if currentFile else None
+            self.markWatched(currentFilePath)
+        except Exception as e:
+            self._client.ui.showDebugMessage("Could not mark watched file: {}".format(e))
 
     def processQueue(self):
         """Called periodically from updatePlayerStatus."""
@@ -705,7 +717,7 @@ class WatchedManager(object):
 
     def _moveFile(self, sourcePath, destinationPath):
         if os.path.exists(destinationPath):
-            raise FileExistsError("Destination already exists: {}".format(destinationPath))
+            raise FileExistsError(destinationPath)
         shutil.move(sourcePath, destinationPath)
 
     # ------------------------------------------------------------------
@@ -719,7 +731,7 @@ class WatchedManager(object):
 
             if not self._shouldUseWatchedFileInfo():
                 self._client.ui.showErrorMessage(
-                    getMessage("file-not-in-watched-subfolder-error").format(constants.WATCHED_SUBFOLDER))
+                    getMessage("watched-file-tracking-disabled-error"))
                 return
 
             if not self._shouldUseWatchedSubfolderInfo():
@@ -734,7 +746,8 @@ class WatchedManager(object):
             self._createWatchedSubdirIfNeeded(watchedDirectory)
             if not os.path.isdir(watchedDirectory):
                 self._client.ui.showErrorMessage(
-                    getMessage("file-not-in-watched-subfolder-error").format(constants.WATCHED_SUBFOLDER))
+                    getMessage("watched-subfolder-unavailable-error").format(
+                        fileSourcePath, constants.WATCHED_SUBFOLDER))
                 return
             destPath = os.path.join(watchedDirectory, filename)
             watchedDirectoryName = os.path.basename(watchedDirectory) or constants.WATCHED_SUBFOLDER
@@ -742,7 +755,12 @@ class WatchedManager(object):
                 self._client.ui.showErrorMessage(
                     getMessage("cannot-move-file-due-to-name-conflict-error").format(fileSourcePath, watchedDirectoryName))
                 return
-            self._moveFile(fileSourcePath, destPath)
+            try:
+                self._moveFile(fileSourcePath, destPath)
+            except FileExistsError:
+                self._client.ui.showErrorMessage(
+                    getMessage("cannot-move-file-due-to-name-conflict-error").format(fileSourcePath, watchedDirectoryName))
+                return
             if self._shouldUseWatchedHistoryInfo():
                 self._recordHistory("watched", filename)
             self._client.fileSwitch.updateInfo()
@@ -761,7 +779,7 @@ class WatchedManager(object):
             if len(constants.WATCHED_SUBFOLDER) == 0:
                 if not constants.WATCHED_HISTORY_ENABLED:
                     self._client.ui.showErrorMessage(
-                        getMessage("file-not-in-watched-subfolder-error").format(constants.WATCHED_SUBFOLDER))
+                        getMessage("watched-file-tracking-disabled-error"))
                     return
                 self._recordHistory("unwatched", filename)
                 self._client.fileSwitch.updateInfo()
@@ -781,12 +799,12 @@ class WatchedManager(object):
 
             if not utils.isWatchedSubfolder(watchedDirectoryPath):
                 self._client.ui.showErrorMessage(
-                    getMessage("file-not-in-watched-subfolder-error").format(constants.WATCHED_SUBFOLDER))
+                    getMessage("file-not-in-watched-subfolder-error").format(fileSourcePath))
                 return
             parentDir = utils.getUnwatchedParentfolder(watchedDirectoryPath)
             if not parentDir:
                 self._client.ui.showErrorMessage(
-                    getMessage("file-not-in-watched-subfolder-error").format(constants.WATCHED_SUBFOLDER))
+                    getMessage("watched-parent-folder-unavailable-error").format(fileSourcePath))
                 return
             parentName = os.path.basename(parentDir)
             destPath = os.path.join(parentDir, filename)
@@ -794,14 +812,19 @@ class WatchedManager(object):
                 self._client.ui.showErrorMessage(
                     getMessage("cannot-move-file-due-to-parent-name-conflict-error").format(fileSourcePath, parentName))
                 return
-            self._moveFile(fileSourcePath, destPath)
+            try:
+                self._moveFile(fileSourcePath, destPath)
+            except FileExistsError:
+                self._client.ui.showErrorMessage(
+                    getMessage("cannot-move-file-due-to-parent-name-conflict-error").format(fileSourcePath, parentName))
+                return
             try:
                 self._recordHistory("unwatched", filename)
             except Exception as e:
                 self._client.ui.showDebugMessage(getMessage("watched-record-history-error").format(filename, e))
             self._client.fileSwitch.updateInfo()
             self._client.ui.showMessage(
-                getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, parentName))
+                getMessage("moved-file-from-watched-subfolder-notification").format(fileSourcePath, parentName))
         except Exception as e:
             self._client.ui.showErrorMessage(getMessage("watched-mark-unwatched-error").format(os.path.basename(fileSourcePath), e))
             self._client.ui.showDebugMessage(getMessage("watched-mark-unwatched-error").format(os.path.basename(fileSourcePath), e))
@@ -851,16 +874,22 @@ class WatchedManager(object):
         except (IndexError, TypeError):
             return None
         warningParts = []
-        playlistOrderWarnings = self.getPlaylistOrderWarnings(playlist)
+        if constants.SHOW_PLAYLIST_ORDER_WARNINGS:
+            playlistOrderWarnings = self.getPlaylistOrderWarnings(playlist)
+        else:
+            playlistOrderWarnings = {}
         orderWarning = playlistOrderWarnings.get(index)
-        if orderWarning:
+        if constants.SHOW_PLAYLIST_ORDER_WARNINGS and orderWarning:
             warningParts.append(
                 getMessage("playlist-out-of-order-warning-tooltip").format(
                     orderWarning["episode"], orderWarning["previousEpisode"], orderWarning["expectedEpisode"]))
 
-        playlistSkipWarnings = self.getPlaylistSkipWarnings(playlist)
+        if constants.SHOW_PLAYLIST_SKIP_WARNINGS:
+            playlistSkipWarnings = self.getPlaylistSkipWarnings(playlist)
+        else:
+            playlistSkipWarnings = {}
         skipWarning = playlistSkipWarnings.get(index)
-        if skipWarning:
+        if constants.SHOW_PLAYLIST_SKIP_WARNINGS and skipWarning:
             warningParts.append(
                 getMessage("playlist-skip-warning-tooltip").format(skipWarning["missingEpisode"]))
             previousWatchedTooltip = self._getWatchedTooltipForMetadata(skipWarning.get("previousWatchedMeta"))

@@ -342,8 +342,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         def updatePlaylistIndexIcon(self):
             playlistItems = [self.item(i).text() for i in range(self.count())]
-            playlistSkipWarnings = self.selfWindow._syncplayClient.watched.getPlaylistSkipWarnings(playlistItems)
-            playlistOrderWarnings = self.selfWindow._syncplayClient.watched.getPlaylistOrderWarnings(playlistItems)
+            if constants.SHOW_PLAYLIST_SKIP_WARNINGS:
+                playlistSkipWarnings = self.selfWindow._syncplayClient.watched.getPlaylistSkipWarnings(playlistItems)
+            else:
+                playlistSkipWarnings = {}
+            if constants.SHOW_PLAYLIST_ORDER_WARNINGS:
+                playlistOrderWarnings = self.selfWindow._syncplayClient.watched.getPlaylistOrderWarnings(playlistItems)
+            else:
+                playlistOrderWarnings = {}
             for item in range(self.count()):
                 itemFilename = self.item(item).text()
                 isPlayingFilename = itemFilename == self.playlistIndexFilename
@@ -405,17 +411,23 @@ class MainWindow(QtWidgets.QMainWindow):
 
             if playlistSkipWarnings is None or playlistOrderWarnings is None:
                 playlistItems = [self.item(i).text() for i in range(self.count())]
-                playlistSkipWarnings = self.selfWindow._syncplayClient.watched.getPlaylistSkipWarnings(playlistItems)
-                playlistOrderWarnings = self.selfWindow._syncplayClient.watched.getPlaylistOrderWarnings(playlistItems)
+                if constants.SHOW_PLAYLIST_SKIP_WARNINGS:
+                    playlistSkipWarnings = self.selfWindow._syncplayClient.watched.getPlaylistSkipWarnings(playlistItems)
+                else:
+                    playlistSkipWarnings = {}
+                if constants.SHOW_PLAYLIST_ORDER_WARNINGS:
+                    playlistOrderWarnings = self.selfWindow._syncplayClient.watched.getPlaylistOrderWarnings(playlistItems)
+                else:
+                    playlistOrderWarnings = {}
 
             orderWarning = playlistOrderWarnings.get(itemIndex)
-            if orderWarning:
+            if constants.SHOW_PLAYLIST_ORDER_WARNINGS and orderWarning:
                 tooltipParts.append(
                     getMessage("playlist-out-of-order-warning-tooltip").format(
                         orderWarning["episode"], orderWarning["previousEpisode"], orderWarning["expectedEpisode"]))
 
             skipWarning = playlistSkipWarnings.get(itemIndex)
-            if skipWarning:
+            if constants.SHOW_PLAYLIST_SKIP_WARNINGS and skipWarning:
                 tooltipParts.append(
                     getMessage("playlist-skip-warning-tooltip").format(skipWarning["missingEpisode"]))
                 previousWatchedTooltip = self._getWatchedTooltipForMetadata(skipWarning.get("previousWatchedMeta"))
@@ -819,11 +831,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._syncplayClient.playlist.shuffleEntirePlaylist()
 
     def _markFileWatchedViaContext(self, filePath: str) -> None:
-        self._syncplayClient.userInitiatedMarkWatched(filePath)
+        self._syncplayClient.watched.userMarkWatched(filePath)
         self.playlist.updatePlaylistIndexIcon()
 
     def _markFileUnwatchedViaContext(self, filePath: str) -> None:
-        self._syncplayClient.userInitiatedMarkUnwatched(filePath)
+        self._syncplayClient.watched.userMarkUnwatched(filePath)
         self.playlist.updatePlaylistIndexIcon()
 
     def _addFileToPlaylistAtIndexViaContext(self, filePath: str, index: int) -> None:

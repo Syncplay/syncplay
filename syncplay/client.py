@@ -68,6 +68,8 @@ class SyncplayClient(object):
         constants.SHOW_DIFFERENT_ROOM_OSD = config['showDifferentRoomOSD']
         constants.SHOW_SAME_ROOM_OSD = config['showSameRoomOSD']
         constants.SHOW_DURATION_NOTIFICATION = config['showDurationNotification']
+        constants.SHOW_PLAYLIST_SKIP_WARNINGS = config['showPlaylistSkipWarnings']
+        constants.SHOW_PLAYLIST_ORDER_WARNINGS = config['showPlaylistOrderWarnings']
         constants.DEBUG_MODE = config['debug']
         constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT = config['folderSearchFirstFileTimeout']
         constants.FOLDER_SEARCH_TIMEOUT = config['folderSearchTimeout']
@@ -288,7 +290,8 @@ class SyncplayClient(object):
                 currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
                 abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
         ):
-            self.markWatchedFilePendingMove()
+            self.playlist.clearNearEOFMarker()
+            self.watched.markCurrentFileWatched()
 
     def prepareToAdvancePlaylist(self):
         if self.playlist.canSwitchToNextPlaylistIndex():
@@ -541,25 +544,6 @@ class SyncplayClient(object):
         if not self._lastGlobalUpdate:
             return True
         return self._globalPaused
-
-    def markWatchedFilePendingMove(self, oldFilePath=None):
-        self.playlist.lastNearEOFName = None
-        self.playlist.lastNearEOFPath = None
-        try:
-            if oldFilePath:
-                currentFilePath = oldFilePath
-            else:
-                currentFile = self.userlist.currentUser.file if self.userlist and self.userlist.currentUser else None
-                currentFilePath = currentFile.get("path") if currentFile else None
-            self.watched.markWatched(currentFilePath)
-        except Exception as e:
-            self.ui.showDebugMessage("Could not mark watched file: {}".format(e))
-
-    def userInitiatedMarkWatched(self, fileSourcePath):
-        self.watched.userMarkWatched(fileSourcePath)
-
-    def userInitiatedMarkUnwatched(self, fileSourcePath):
-        self.watched.userMarkUnwatched(fileSourcePath)
 
     def eofReportedByPlayer(self):
         if self.playlist.notJustChangedPlaylist() and self.userlist.currentUser.file:
@@ -1857,6 +1841,10 @@ class SyncplayPlaylist():
         self.lastNearEOFFirstTime = 0.0
         self.lastNearEOFLastTime = 0.0
 
+    def clearNearEOFMarker(self):
+        self.lastNearEOFName = None
+        self.lastNearEOFPath = None
+
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
         @wraps(f)
         def wrapper(self, *args, **kwds):
@@ -2189,7 +2177,8 @@ class SyncplayPlaylist():
             abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD and
             self.notJustChangedPlaylist()
         ):
-            self._client.markWatchedFilePendingMove()
+            self.clearNearEOFMarker()
+            self._client.watched.markCurrentFileWatched()
             self.loadNextFileInPlaylist()
 
     @needsSharedPlaylistsEnabled
@@ -2234,7 +2223,9 @@ class SyncplayPlaylist():
         age = now_monotime - self.lastNearEOFLastTime
         if age > constants.PLAYLIST_NEAR_EOF_LATCH_TTL:
             return False
-        self._client.markWatchedFilePendingMove(self.lastNearEOFPath)
+        filePath = self.lastNearEOFPath
+        self.clearNearEOFMarker()
+        self._client.watched.markFileWatched(filePath)
 
     def notJustChangedPlaylist(self):
         secondsSinceLastChange = time.time() - self._lastPlaylistIndexChange

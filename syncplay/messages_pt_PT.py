@@ -249,9 +249,13 @@ pt_PT = {
     "language-label": "Idioma:",
     "automatic-language": "Padrão ({})",  # Default language
     "showdurationnotification-label": "Avisar sobre discrepância nas durações dos arquivos de mídia",
+    "showplaylistskipwarnings-label": "Avisar quando a lista de reprodução possa saltar ficheiros não vistos",
+    "showplaylistskipwarnings-tooltip": "Mostrar avisos quando o Syncplay considerar que a lista de reprodução salta ficheiros que ainda não foram vistos.",
+    "showplaylistorderwarnings-label": "Avisar quando os ficheiros da lista de reprodução parecerem estar fora de ordem",
+    "showplaylistorderwarnings-tooltip": "Mostrar avisos quando o Syncplay considerar que os ficheiros da lista de reprodução podem estar na ordem errada.",
     "basics-label": "Básicos",
     "readiness-label": "Play/Pause",
-    "misc-label": "Miscelânea",
+    "misc-label": "Privacidade/Miscelânea",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "Comportamento da sala padrão",
     "syncplay-internals-title": "Syncplay internals",
     "syncplay-mediasearchdirectories-title": "pastas a buscar por mídias",
@@ -557,17 +561,47 @@ pt_PT = {
 
     # Watched file functionality
     # TODO: Please double-check these translations and remove this message if they are fine
-    "folders-label": "Pastas",
+    "files-label": "Ficheiros",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "syncplay-watchedfiles-title": "Ficheiros vistos",
     "syncplay-watchedautomove-label": "Mover automaticamente os ficheiros vistos para a subpasta (se a subpasta existir)",
     "syncplay-watchedmovesubfolder-label": "Subpasta para ficheiros vistos",
-    "syncplay-watchedsubfolderautocreate-label": "Criar automaticamente a subpasta de ficheiros vistos quando necessário",
+    "syncplay-watchedsubfolderautocreate-label": "Criar automaticamente a subpasta de vistos quando necessário",
     "mark-as-watched-menu-label": "Marcar como visto",
     "mark-as-unwatched-menu-label": "Marcar como não visto",
-    "watchedautomove-tooltip": "Move automaticamente o ficheiro para a subpasta de ficheiros vistos quando o fim do ficheiro é alcançado. Funciona apenas se a pasta principal for uma pasta multimédia.",
-    "watchedsubfolder-tooltip": "Subpasta (relativa à pasta do ficheiro) para onde mover os ficheiros vistos (a subpasta tem de existir para que o ficheiro seja movido). Funciona apenas se a pasta principal for uma pasta multimédia.",
-    "watchedsubfolderautocreate-tooltip": "Cria automaticamente a subpasta de ficheiros vistos ao mover o ficheiro, se ainda não existir. Funciona apenas se a pasta principal for uma pasta multimédia.",
-    "cannot-move-file-due-to-name-conflict-error": "Não foi possível mover '{}' para a subpasta '{}' porque já existe um ficheiro com esse nome.", # Path, subfolder
-    "moved-file-to-subfolder-notification": "Movido '{}' para a subpasta '{}'.", # Path, subfolder
+    "previous-file-menu-section-label": "Ficheiro anterior: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Marcar como visto",
+    "add-previous-file-to-playlist-menu-label": "Adicionar à lista de reprodução",
+    "syncplay-watchedhistory-title": "Histórico de ficheiros vistos",
+    "syncplay-watchedhistoryenabled-label": "Ativar histórico de ficheiros vistos",
+    "watchedhistoryenabled-tooltip": "Regista os ficheiros vistos junto ao ficheiro de configuração do Syncplay como '.syncplay-watched.json'. O estado de visto é preservado mesmo que os ficheiros sejam movidos ou apagados.",
+    "watchedautomove-tooltip": "Move automaticamente o ficheiro para a subpasta de vistos quando o fim do ficheiro é atingido. Isto só funciona se a pasta principal for uma pasta de multimédia.",
+    "watchedsubfolder-tooltip": "Subpasta para onde os ficheiros vistos serão movidos relativamente à pasta do ficheiro (a subpasta tem de existir para que o ficheiro seja movido). Isto só funciona se a pasta principal for uma pasta de multimédia.",
+    "watchedsubfolderautocreate-tooltip": "Cria automaticamente a subpasta de vistos ao mover o ficheiro se ainda não existir. Isto só funciona se a pasta principal for uma pasta de multimédia.",
+    "watched-json-read-error": "Não foi possível ler o ficheiro de histórico de vistos '{}': {}",  # path, error
+    "watched-json-write-error": "Não foi possível escrever o ficheiro de histórico de vistos '{}': {}",  # path, error
+    "watched-json-concurrent-update-error": "Não foi possível atualizar o histórico de vistos devido a alterações concorrentes: {}",  # path
+    "watched-move-permission-error": "Não foi possível mover '{}' para a subpasta devido a um erro de permissões.",  # filename
+    "watched-move-failed-error": "Não foi possível mover '{}' para a subpasta: {}",  # filename, error
+    "watched-move-too-many-retries-error": "A desistir de mover '{}' após demasiadas tentativas.",  # filename
+    "watched-mark-watched-error": "Não foi possível marcar '{}' como visto: {}",  # filename, error
+    "watched-mark-unwatched-error": "Não foi possível marcar '{}' como não visto: {}",  # filename, error
+    "watched-record-history-error": "Não foi possível registar o histórico de vistos para '{}': {}",  # filename, error
+    "marked-file-as-watched-notification": "'{}' marcado como visto.",  # filename
+    "marked-file-as-unwatched-notification": "'{}' marcado como não visto.",  # filename
+    "file-not-in-watched-subfolder-error": "'{}' não está na subpasta de vistos.",  # path
+    "cannot-move-file-due-to-name-conflict-error": "Não foi possível mover '{}' para a subpasta '{}' porque já existe um ficheiro com esse nome.",  # path, subfolder
+    "cannot-move-file-due-to-parent-name-conflict-error": "Não foi possível mover '{}' para a pasta principal '{}' porque já existe um ficheiro com esse nome.",  # path, parent
+    "watched-file-tracking-disabled-error": "O acompanhamento de ficheiros vistos está desativado.",
+    "watched-subfolder-unavailable-error": "Não foi possível mover '{}' para a subpasta '{}' porque a subpasta não foi encontrada ou criada.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "Não foi possível mover '{}' para fora da subpasta de vistos porque a pasta principal não foi encontrada.",  # path
+    "moved-file-to-subfolder-notification": "'{}' movido para a subpasta '{}'.",  # path, subfolder
+    "moved-file-from-watched-subfolder-notification": "'{}' movido de volta para '{}'.",  # path, parent folder
+    "watched-last-watched-tooltip": "Última visualização {} na sala '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "há {} minuto(s)",  # minutes
+    "watched-ago-hours": "há {} hora(s)",  # hours
+    "watched-ago-days": "há {} dia(s)",  # dates
 
+    "playlist-skip-warning-tooltip": "Aviso: isto parece saltar o ficheiro não visto {}.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "Aviso: o ficheiro {} parece estar fora de ordem depois do ficheiro {}. Era esperado o ficheiro {} em vez disso."  # actual file number, previous file number, expected file number
 }

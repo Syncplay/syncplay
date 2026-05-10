@@ -250,9 +250,13 @@ pt_BR = {
     "language-label": "Idioma:",
     "automatic-language": "Padrão ({})",  # Default language
     "showdurationnotification-label": "Avisar sobre discrepância nas durações dos arquivos de mídia",
+    "showplaylistskipwarnings-label": "Avisar quando a playlist puder pular arquivos não assistidos",
+    "showplaylistskipwarnings-tooltip": "Mostrar avisos quando o Syncplay achar que a playlist pula arquivos que ainda não foram assistidos.",
+    "showplaylistorderwarnings-label": "Avisar quando os arquivos da playlist parecerem estar fora de ordem",
+    "showplaylistorderwarnings-tooltip": "Mostrar avisos quando o Syncplay achar que os arquivos da playlist podem estar na ordem errada.",
     "basics-label": "Básicos",
     "readiness-label": "Tocar/Pausar",
-    "misc-label": "Miscelânea",
+    "misc-label": "Privacidade/Miscelânea",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "Comportamento principal da sala",
     "syncplay-internals-title": "Configurações internas do Syncplay",
     "syncplay-mediasearchdirectories-title": "Diretórios a buscar por mídias",
@@ -557,17 +561,47 @@ pt_BR = {
 
     # Watched file functionality
     # TODO: Please double-check these translations and remove this message if they are fine
-    "folders-label": "Pastas",
+    "files-label": "Arquivos",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "syncplay-watchedfiles-title": "Arquivos assistidos",
     "syncplay-watchedautomove-label": "Mover automaticamente os arquivos assistidos para a subpasta (se a subpasta existir)",
     "syncplay-watchedmovesubfolder-label": "Subpasta para arquivos assistidos",
     "syncplay-watchedsubfolderautocreate-label": "Criar automaticamente a subpasta de assistidos quando necessário",
     "mark-as-watched-menu-label": "Marcar como assistido",
     "mark-as-unwatched-menu-label": "Marcar como não assistido",
-    "watchedautomove-tooltip": "Move automaticamente o arquivo para a subpasta de assistidos quando o final do arquivo é alcançado. Funciona apenas se a pasta pai for uma pasta de mídia.",
-    "watchedsubfolder-tooltip": "Subpasta (relativa à pasta do arquivo) para onde mover os arquivos assistidos (a subpasta precisa existir para que o arquivo seja movido). Funciona apenas se a pasta pai for uma pasta de mídia.",
-    "watchedsubfolderautocreate-tooltip": "Cria automaticamente a subpasta de assistidos ao mover o arquivo, se ela ainda não existir. Funciona apenas se a pasta pai for uma pasta de mídia.",
-    "cannot-move-file-due-to-name-conflict-error": "Não foi possível mover '{}' para a subpasta '{}' porque já existe um arquivo com esse nome.", # Path, subfolder
-    "moved-file-to-subfolder-notification": "Movido '{}' para a subpasta '{}'.", # Path, subfolder
+    "previous-file-menu-section-label": "Arquivo anterior: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Marcar como assistido",
+    "add-previous-file-to-playlist-menu-label": "Adicionar à playlist",
+    "syncplay-watchedhistory-title": "Histórico de arquivos assistidos",
+    "syncplay-watchedhistoryenabled-label": "Ativar histórico de arquivos assistidos",
+    "watchedhistoryenabled-tooltip": "Registra os arquivos assistidos junto ao arquivo de configuração do Syncplay como '.syncplay-watched.json'. O estado de assistido é preservado mesmo que os arquivos sejam movidos ou excluídos.",
+    "watchedautomove-tooltip": "Move automaticamente o arquivo para a subpasta de assistidos quando o fim do arquivo é alcançado. Isso só funciona se a pasta pai for uma pasta de mídia.",
+    "watchedsubfolder-tooltip": "Subpasta para onde os arquivos assistidos serão movidos em relação à pasta do arquivo (a subpasta precisa existir para que o arquivo seja movido). Isso só funciona se a pasta pai for uma pasta de mídia.",
+    "watchedsubfolderautocreate-tooltip": "Cria automaticamente a subpasta de assistidos ao mover o arquivo se ela ainda não existir. Isso só funciona se a pasta pai for uma pasta de mídia.",
+    "watched-json-read-error": "Não foi possível ler o arquivo de histórico de assistidos '{}': {}",  # path, error
+    "watched-json-write-error": "Não foi possível escrever o arquivo de histórico de assistidos '{}': {}",  # path, error
+    "watched-json-concurrent-update-error": "Não foi possível atualizar o histórico de assistidos devido a alterações simultâneas: {}",  # path
+    "watched-move-permission-error": "Não foi possível mover '{}' para a subpasta devido a um erro de permissões.",  # filename
+    "watched-move-failed-error": "Não foi possível mover '{}' para a subpasta: {}",  # filename, error
+    "watched-move-too-many-retries-error": "Desistindo de mover '{}' após muitas tentativas.",  # filename
+    "watched-mark-watched-error": "Não foi possível marcar '{}' como assistido: {}",  # filename, error
+    "watched-mark-unwatched-error": "Não foi possível marcar '{}' como não assistido: {}",  # filename, error
+    "watched-record-history-error": "Não foi possível registrar o histórico de assistidos para '{}': {}",  # filename, error
+    "marked-file-as-watched-notification": "'{}' marcado como assistido.",  # filename
+    "marked-file-as-unwatched-notification": "'{}' marcado como não assistido.",  # filename
+    "file-not-in-watched-subfolder-error": "'{}' não está na subpasta de assistidos.",  # path
+    "cannot-move-file-due-to-name-conflict-error": "Não foi possível mover '{}' para a subpasta '{}' porque já existe um arquivo com esse nome.",  # path, subfolder
+    "cannot-move-file-due-to-parent-name-conflict-error": "Não foi possível mover '{}' para a pasta principal '{}' porque já existe um arquivo com esse nome.",  # path, parent
+    "watched-file-tracking-disabled-error": "O rastreamento de arquivos assistidos está desativado.",
+    "watched-subfolder-unavailable-error": "Não foi possível mover '{}' para a subpasta '{}' porque a subpasta não pôde ser encontrada ou criada.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "Não foi possível mover '{}' para fora da subpasta de assistidos porque a pasta principal não pôde ser encontrada.",  # path
+    "moved-file-to-subfolder-notification": "'{}' movido para a subpasta '{}'.",  # path, subfolder
+    "moved-file-from-watched-subfolder-notification": "'{}' movido de volta para '{}'.",  # path, parent folder
+    "watched-last-watched-tooltip": "Última visualização {} na sala '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "há {} minuto(s)",  # minutes
+    "watched-ago-hours": "há {} hora(s)",  # hours
+    "watched-ago-days": "há {} dia(s)",  # dates
 
+    "playlist-skip-warning-tooltip": "Aviso: isto parece pular o arquivo não assistido {}.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "Aviso: o arquivo {} parece estar fora de ordem após o arquivo {}. O arquivo {} era esperado em vez disso."  # actual file number, previous file number, expected file number
 }

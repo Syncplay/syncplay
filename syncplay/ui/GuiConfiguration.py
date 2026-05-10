@@ -1264,6 +1264,14 @@ class ConfigDialog(QtWidgets.QDialog):
         self.showDurationNotificationCheckbox.setObjectName("showDurationNotification")
         self.displaySettingsLayout.addWidget(self.showDurationNotificationCheckbox)
 
+        self.showPlaylistSkipWarningsCheckbox = QCheckBox(getMessage("showplaylistskipwarnings-label"))
+        self.showPlaylistSkipWarningsCheckbox.setObjectName("showPlaylistSkipWarnings")
+        self.displaySettingsLayout.addWidget(self.showPlaylistSkipWarningsCheckbox)
+
+        self.showPlaylistOrderWarningsCheckbox = QCheckBox(getMessage("showplaylistorderwarnings-label"))
+        self.showPlaylistOrderWarningsCheckbox.setObjectName("showPlaylistOrderWarnings")
+        self.displaySettingsLayout.addWidget(self.showPlaylistOrderWarningsCheckbox)
+
         self.languageFrame = QtWidgets.QFrame()
         self.languageLayout = QtWidgets.QHBoxLayout()
         self.languageLayout.setContentsMargins(0, 0, 0, 0)
@@ -1350,7 +1358,7 @@ class ConfigDialog(QtWidgets.QDialog):
         self.tabListFrame = QtWidgets.QFrame()
         self.tabListWidget = QtWidgets.QListWidget()
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "house.png"), getMessage("basics-label")))
-        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "folder_film.png"), getMessage("folders-label")))
+        self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "folder_film.png"), getMessage("files-label")))
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "control_pause_blue.png"), getMessage("readiness-label")))
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "film_link.png"), getMessage("sync-label")))
         self.tabListWidget.addItem(QtWidgets.QListWidgetItem(QtGui.QIcon(resourcespath + "user_comment.png"), getMessage("chat-label")))

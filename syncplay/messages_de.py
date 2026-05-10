@@ -247,9 +247,13 @@ de = {
     "language-label": "Sprache:",
     "automatic-language": "Automatisch ({})",  # Default language
     "showdurationnotification-label": "Zeige Warnung wegen unterschiedlicher Dauer",
+    "showplaylistskipwarnings-label": "Warnen, wenn die Wiedergabeliste möglicherweise ungesehene Dateien überspringt",
+    "showplaylistskipwarnings-tooltip": "Warnungen anzeigen, wenn Syncplay vermutet, dass die Wiedergabeliste Dateien überspringt, die noch nicht angesehen wurden.",
+    "showplaylistorderwarnings-label": "Warnen, wenn Dateien in der Wiedergabeliste in falscher Reihenfolge erscheinen",
+    "showplaylistorderwarnings-tooltip": "Warnungen anzeigen, wenn Syncplay vermutet, dass Dateien in der Wiedergabeliste in der falschen Reihenfolge stehen.",
     "basics-label": "Grundlagen",
     "readiness-label": "Play/Pause",
-    "misc-label": "Diverse",
+    "misc-label": "Privatsphäre/Diverse",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "Verhalten des Raumes",
     "syncplay-internals-title": "Syncplay intern",
     "syncplay-mediasearchdirectories-title": "In diesen Verzeichnissen nach Medien suchen",  # needs to be checked
@@ -557,17 +561,46 @@ de = {
 
     # Watched file functionality
     # TODO: Please double-check these translations and remove this message if they are fine
-    "folders-label": "Ordner",
+    "files-label": "Dateien",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "syncplay-watchedfiles-title": "Gesehene Dateien",
-    "syncplay-watchedautomove-label": "Gesehene Dateien automatisch in Unterordner verschieben (falls vorhanden)",
+    "syncplay-watchedautomove-label": "Gesehene Dateien automatisch in Unterordner verschieben (falls Unterordner existiert)",
     "syncplay-watchedmovesubfolder-label": "Unterordner für gesehene Dateien",
-    "syncplay-watchedsubfolderautocreate-label": "Unterordner für gesehene Dateien bei Bedarf automatisch erstellen",
+    "syncplay-watchedsubfolderautocreate-label": "Unterordner für gesehene Dateien automatisch erstellen, wenn nötig",
     "mark-as-watched-menu-label": "Als gesehen markieren",
     "mark-as-unwatched-menu-label": "Als ungesehen markieren",
-    "watchedautomove-tooltip": "Verschiebt die Datei automatisch in den Unterordner für gesehene Dateien, wenn das Ende der Datei erreicht ist. Dies funktioniert nur, wenn der übergeordnete Ordner ein Medienordner ist.",
-    "watchedsubfolder-tooltip": "Unterordner (relativ zum Ordner der Datei), in den gesehene Dateien verschoben werden (der Unterordner muss existieren, damit die Datei verschoben werden kann). Dies funktioniert nur, wenn der übergeordnete Ordner ein Medienordner ist.",
-    "watchedsubfolderautocreate-tooltip": "Erstellt den Unterordner für gesehene Dateien beim Verschieben automatisch, falls er noch nicht existiert. Dies funktioniert nur, wenn der übergeordnete Ordner ein Medienordner ist.",
-    "cannot-move-file-due-to-name-conflict-error": "Konnte '{}' nicht in den Unterordner '{}' verschieben, da bereits eine Datei mit diesem Namen existiert.", # Path, subfolder
-    "moved-file-to-subfolder-notification": "Verschoben: '{}' in den Unterordner '{}'.", # Path, subfolder
-
+    "previous-file-menu-section-label": "Vorherige Datei: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Als gesehen markieren",
+    "add-previous-file-to-playlist-menu-label": "Zur Wiedergabeliste hinzufügen",
+    "syncplay-watchedhistory-title": "Verlauf gesehener Dateien",
+    "syncplay-watchedhistoryenabled-label": "Verlauf gesehener Dateien aktivieren",
+    "watchedhistoryenabled-tooltip": "Speichert gesehene Dateien neben der Syncplay-Konfigurationsdatei als '.syncplay-watched.json'. Der Status bleibt erhalten, auch wenn Dateien verschoben oder gelöscht werden.",
+    "watchedautomove-tooltip": "Verschiebt die Datei automatisch in den Unterordner für gesehene Dateien, wenn das Dateiende erreicht wird. Dies funktioniert nur, wenn der übergeordnete Ordner ein Medienordner ist.",
+    "watchedsubfolder-tooltip": "Unterordner, in den gesehene Dateien relativ zum Dateiordner verschoben werden (der Unterordner muss existieren, damit die Datei verschoben werden kann). Dies funktioniert nur, wenn der übergeordnete Ordner ein Medienordner ist.",
+    "watchedsubfolderautocreate-tooltip": "Erstellt den Unterordner für gesehene Dateien automatisch beim Verschieben, falls er noch nicht existiert. Dies funktioniert nur, wenn der übergeordnete Ordner ein Medienordner ist.",
+    "watched-json-read-error": "Verlauf gesehener Dateien konnte nicht gelesen werden '{}': {}",  # path, error
+    "watched-json-write-error": "Verlauf gesehener Dateien konnte nicht geschrieben werden '{}': {}",  # path, error
+    "watched-json-concurrent-update-error": "Verlauf gesehener Dateien konnte wegen gleichzeitiger Änderungen nicht aktualisiert werden: {}",  # path
+    "watched-move-permission-error": "'{}' konnte wegen fehlender Berechtigung nicht in den Unterordner verschoben werden.",  # filename
+    "watched-move-failed-error": "'{}' konnte nicht in den Unterordner verschoben werden: {}",  # filename, error
+    "watched-move-too-many-retries-error": "Verschieben von '{}' nach zu vielen Versuchen abgebrochen.",  # filename
+    "watched-mark-watched-error": "'{}' konnte nicht als gesehen markiert werden: {}",  # filename, error
+    "watched-mark-unwatched-error": "'{}' konnte nicht als ungesehen markiert werden: {}",  # filename, error
+    "watched-record-history-error": "Verlauf für '{}' konnte nicht gespeichert werden: {}",  # filename, error
+    "marked-file-as-watched-notification": "'{}' als gesehen markiert.",  # filename
+    "marked-file-as-unwatched-notification": "'{}' als ungesehen markiert.",  # filename
+    "file-not-in-watched-subfolder-error": "'{}' befindet sich nicht im Unterordner für gesehene Dateien.",  # path
+    "cannot-move-file-due-to-name-conflict-error": "'{}' konnte nicht in den Unterordner '{}' verschoben werden, da dort bereits eine Datei mit diesem Namen existiert.",  # path, subfolder
+    "cannot-move-file-due-to-parent-name-conflict-error": "'{}' konnte nicht in den übergeordneten Ordner '{}' verschoben werden, da dort bereits eine Datei mit diesem Namen existiert.",  # path, parent
+    "watched-file-tracking-disabled-error": "Die Erfassung gesehener Dateien ist deaktiviert.",
+    "watched-subfolder-unavailable-error": "'{}' konnte nicht in den Unterordner '{}' verschoben werden, da der Unterordner nicht gefunden oder erstellt werden konnte.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "'{}' konnte nicht aus dem Unterordner für gesehene Dateien verschoben werden, da der übergeordnete Ordner nicht gefunden werden konnte.",  # path
+    "moved-file-to-subfolder-notification": "'{}' in den Unterordner '{}' verschoben.",  # path, subfolder
+    "moved-file-from-watched-subfolder-notification": "'{}' zurück nach '{}' verschoben.",  # path, parent folder
+    "watched-last-watched-tooltip": "Zuletzt gesehen {} in Raum '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "vor {} Minute(n)",  # minutes
+    "watched-ago-hours": "vor {} Stunde(n)",  # hours
+    "watched-ago-days": "vor {} Tag(en)",  # dates
+    "playlist-skip-warning-tooltip": "Warnung: Dies scheint die ungesehene Datei {} zu überspringen.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "Warnung: Datei {} scheint nach Datei {} in der falschen Reihenfolge zu sein. Stattdessen wurde Datei {} erwartet."  # actual file number, previous file number, expected file number
 }

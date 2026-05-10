@@ -58,6 +58,8 @@ SHOW_SAME_ROOM_OSD = True  # Show OSD notifications for events relating to room 
 SHOW_NONCONTROLLER_OSD = False  # Show OSD notifications for non-controllers in controlled rooms
 SHOW_DIFFERENT_ROOM_OSD = False  # Show OSD notifications for events relating to room user is not in
 SHOW_DURATION_NOTIFICATION = True
+SHOW_PLAYLIST_SKIP_WARNINGS = True
+SHOW_PLAYLIST_ORDER_WARNINGS = True
 DEBUG_MODE = False
 
 # Changing these might be ok

@@ -250,9 +250,14 @@ es = {
     "language-label": "Lenguaje:",
     "automatic-language": "Predeterminado ({})",  # Default language
     "showdurationnotification-label": "Advertir sobre discrepancias en la duración de los medios",
+    "showplaylistskipwarnings-label": "Advertir cuando la lista de reproducción pueda saltarse archivos no vistos",
+    "showplaylistskipwarnings-tooltip": "Mostrar advertencias cuando Syncplay crea que la lista de reproducción omite archivos que no se han visto.",
+    "showplaylistorderwarnings-label": "Advertir cuando los archivos de la lista de reproducción parezcan estar fuera de orden",
+    "showplaylistorderwarnings-tooltip": "Mostrar advertencias cuando Syncplay crea que los archivos de la lista de reproducción pueden estar en el orden incorrecto.",
     "basics-label": "Básicos",
+    "files-label": "Archivos",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "readiness-label": "Reproducir/Pausar",
-    "misc-label": "Misc.",
+    "misc-label": "Privacidad/Misc.",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "Comportamiento de la sala central",
     "syncplay-internals-title": "Internos de Syncplay",
     "syncplay-mediasearchdirectories-title": "Directorios para buscar medios",
@@ -555,16 +560,45 @@ es = {
 
     # Watchlist terms
     # TODO: Please double-check these translations and remove this message if they are fine
-    "folders-label": "Dosierujoj",
-    "syncplay-watchedfiles-title": "Spektitaj dosieroj",
-    "syncplay-watchedautomove-label": "Aŭtomate movi spektitajn dosierojn al subdosierujo (se la subdosierujo ekzistas)",
-    "syncplay-watchedmovesubfolder-label": "Subdosierujo por spektitaj dosieroj",
-    "syncplay-watchedsubfolderautocreate-label": "Aŭtomate krei subdosierujon por spektitaj dosieroj laŭbezone",
-    "mark-as-watched-menu-label": "Marki kiel spektita",
-    "mark-as-unwatched-menu-label": "Marki kiel nespektita",
-    "watchedautomove-tooltip": "Aŭtomate movas la dosieron al la subdosierujo por spektitaj dosieroj kiam la fino de la dosiero estas atingita. Ĉi tio funkcias nur se la patra dosierujo estas aŭdvidaĵa dosierujo.",
-    "watchedsubfolder-tooltip": "Subdosierujo por movi spektitajn dosierojn, rilate al la dosierujo de la dosiero (la subdosierujo devas ekzisti por ke la dosiero estu movita). Ĉi tio funkcias nur se la patra dosierujo estas aŭdvidaĵa dosierujo.",
-    "watchedsubfolderautocreate-tooltip": "Aŭtomate kreas la subdosierujon por spektitaj dosieroj dum la movo, se ĝi ankoraŭ ne ekzistas. Ĉi tio funkcias nur se la patra dosierujo estas aŭdvidaĵa dosierujo.",
-    "Could not move '{}' to '{}' subfolder because a file with that name already exists": "Ne eblis movi '{}' al la subdosierujo '{}' ĉar dosiero kun tiu nomo jam ekzistas",
-    "moved-file-to-subfolder-notification": "Movis '{}' al la subdosierujo '{}'."
+    "syncplay-watchedfiles-title": "Archivos vistos",
+    "syncplay-watchedautomove-label": "Mover automáticamente los archivos vistos a la subcarpeta (si la subcarpeta existe)",
+    "syncplay-watchedmovesubfolder-label": "Subcarpeta para archivos vistos",
+    "syncplay-watchedsubfolderautocreate-label": "Crear automáticamente la subcarpeta de vistos cuando sea necesario",
+    "mark-as-watched-menu-label": "Marcar como visto",
+    "mark-as-unwatched-menu-label": "Marcar como no visto",
+    "previous-file-menu-section-label": "Archivo anterior: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Marcar como visto",
+    "add-previous-file-to-playlist-menu-label": "Agregar a la lista de reproducción",
+    "syncplay-watchedhistory-title": "Historial de archivos vistos",
+    "syncplay-watchedhistoryenabled-label": "Activar historial de vistos",
+    "watchedhistoryenabled-tooltip": "Registra los archivos vistos junto al archivo de configuración de Syncplay como '.syncplay-watched.json'. El estado de visto se conserva incluso si los archivos se mueven o eliminan.",
+    "watchedautomove-tooltip": "Mueve automáticamente el archivo a la subcarpeta de archivos vistos al llegar al final del archivo. Esto solo funciona si la carpeta principal es una carpeta de medios.",
+    "watchedsubfolder-tooltip": "Subcarpeta a la que se moverán los archivos vistos, relativa a la carpeta del archivo (la subcarpeta debe existir para mover el archivo). Esto solo funciona si la carpeta principal es una carpeta de medios.",
+    "watchedsubfolderautocreate-tooltip": "Crea automáticamente la subcarpeta de archivos vistos al mover el archivo si aún no existe. Esto solo funciona si la carpeta principal es una carpeta de medios.",
+    "watched-json-read-error": "No se pudo leer el archivo de historial de vistos '{}': {}",  # path, error
+    "watched-json-write-error": "No se pudo escribir el archivo de historial de vistos '{}': {}",  # path, error
+    "watched-json-concurrent-update-error": "No se pudo actualizar el historial de vistos debido a cambios concurrentes: {}",  # path
+    "watched-move-permission-error": "No se pudo mover '{}' a la subcarpeta debido a un error de permisos.",  # filename
+    "watched-move-failed-error": "No se pudo mover '{}' a la subcarpeta: {}",  # filename, error
+    "watched-move-too-many-retries-error": "Se abandonó mover '{}' después de demasiados intentos.",  # filename
+    "watched-mark-watched-error": "No se pudo marcar '{}' como visto: {}",  # filename, error
+    "watched-mark-unwatched-error": "No se pudo marcar '{}' como no visto: {}",  # filename, error
+    "watched-record-history-error": "No se pudo registrar el historial de vistos para '{}': {}",  # filename, error
+    "marked-file-as-watched-notification": "'{}' marcado como visto.",  # filename
+    "marked-file-as-unwatched-notification": "'{}' marcado como no visto.",  # filename
+    "file-not-in-watched-subfolder-error": "'{}' no está en la subcarpeta de vistos.",  # path
+    "cannot-move-file-due-to-name-conflict-error": "No se pudo mover '{}' a la subcarpeta '{}' porque ya existe un archivo con ese nombre.",  # path, subfolder
+    "cannot-move-file-due-to-parent-name-conflict-error": "No se pudo mover '{}' al directorio padre '{}' porque ya existe un archivo con ese nombre.",  # path, parent
+    "watched-file-tracking-disabled-error": "El seguimiento de archivos vistos está desactivado.",
+    "watched-subfolder-unavailable-error": "No se pudo mover '{}' a la subcarpeta '{}' porque la subcarpeta no se pudo encontrar ni crear.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "No se pudo sacar '{}' de la subcarpeta de vistos porque no se pudo encontrar el directorio padre.",  # path
+    "moved-file-to-subfolder-notification": "'{}' movido a la subcarpeta '{}'.",  # path, subfolder
+    "moved-file-from-watched-subfolder-notification": "'{}' movido de vuelta a '{}'.",  # path, parent folder
+    "watched-last-watched-tooltip": "Última visualización {} en la sala '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "hace {} minuto(s)",  # minutes
+    "watched-ago-hours": "hace {} hora(s)",  # hours
+    "watched-ago-days": "hace {} día(s)",  # dates
+    "playlist-skip-warning-tooltip": "Advertencia: Esto parece omitir el archivo no visto {}.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "Advertencia: El archivo {} parece estar fuera de orden después del archivo {}. Se esperaba el archivo {}."  # actual file number, previous file number, expected file number
 }

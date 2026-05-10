@@ -251,9 +251,13 @@ zh_CN = {
     "language-label": "语言设置",
     "automatic-language": "默认（{}）",  # Default language
     "showdurationnotification-label": "时长不匹配时警告",
+    "showplaylistskipwarnings-label": "当播放列表可能跳过未观看文件时发出警告",
+    "showplaylistskipwarnings-tooltip": "当 Syncplay 认为播放列表跳过了尚未观看的文件时显示警告。",
+    "showplaylistorderwarnings-label": "当播放列表文件看起来顺序错误时发出警告",
+    "showplaylistorderwarnings-tooltip": "当 Syncplay 认为播放列表中的文件可能顺序错误时显示警告。",
     "basics-label": "基本设置",
     "readiness-label": "播放/暂停设置",
-    "misc-label": "其他设置",
+    "misc-label": "隐私设置/其他设置",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "主房间行为设置",
     "syncplay-internals-title": "Syncplay内部设置",
     "syncplay-mediasearchdirectories-title": "检索媒体文件的目录",
@@ -558,17 +562,46 @@ zh_CN = {
 
     # Watched file functionality
     # TODO: Please double-check these translations and remove this message if they are fine
-    "folders-label": "文件夹",
+    "files-label": "文件",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
+    "syncplay-watchedhistory-title": "观看历史",
+    "syncplay-watchedhistoryenabled-label": "启用观看历史（JSON 索引）",
+    "watchedhistoryenabled-tooltip": "将观看过的文件记录在 Syncplay 配置文件旁的 '.syncplay-watched.json' 文件中。即使文件被移动或删除，观看状态仍会保留。",
+    "watched-json-read-error": "无法读取观看历史文件 '{}'：{}",
+    "watched-json-write-error": "无法写入观看历史文件 '{}'：{}",
+    "watched-json-concurrent-update-error": "由于存在并发修改，无法更新观看历史文件：{}",
+    "watched-move-permission-error": "由于权限错误，无法将 '{}' 移动到已观看子文件夹。",
+    "watched-move-failed-error": "无法将 '{}' 移动到已观看子文件夹：{}",
+    "watched-move-too-many-retries-error": "多次尝试后仍无法将 '{}' 移动到已观看子文件夹，操作已放弃。",
+    "watched-mark-watched-error": "无法将 '{}' 标记为已观看：{}",
+    "watched-mark-unwatched-error": "无法将 '{}' 标记为未观看：{}",
+    "watched-record-history-error": "无法记录 '{}' 的观看历史：{}",
+    "marked-file-as-watched-notification": "已将 '{}' 标记为已观看。",
+    "marked-file-as-unwatched-notification": "已将 '{}' 标记为未观看。",
+    "watched-last-watched-tooltip": "上次观看：{}，房间“{}”（{}）",  # how long, room, date and time
+    "watched-datetime-format": "%Y年%m月%d日 %H:%M",
+    "watched-ago-minutes": "{} 分钟前",
+    "watched-ago-hours": "{} 小时前",
+    "watched-ago-days": "{} 天前",
     "syncplay-watchedfiles-title": "已观看的文件",
     "syncplay-watchedautomove-label": "自动将已观看的文件移动到子文件夹（若子文件夹存在）",
-    "syncplay-watchedmovesubfolder-label": "用于已观看文件的子文件夹",
-    "syncplay-watchedsubfolderautocreate-label": "需要时自动创建已观看文件的子文件夹",
+    "syncplay-watchedmovesubfolder-label": "已观看文件的子文件夹",
+    "syncplay-watchedsubfolderautocreate-label": "需要时自动创建已观看子文件夹",
     "mark-as-watched-menu-label": "标记为已观看",
     "mark-as-unwatched-menu-label": "标记为未观看",
-    "watchedautomove-tooltip": "当到达文件末尾时，自动将文件移动到已观看子文件夹。仅当父文件夹是媒体文件夹时才有效。",
-    "watchedsubfolder-tooltip": "用于将已观看文件移动到（相对于文件所在文件夹的）子文件夹（必须存在该子文件夹才能移动文件）。仅当父文件夹是媒体文件夹时才有效。",
-    "watchedsubfolderautocreate-tooltip": "在将文件移动到子文件夹时，如尚不存在，则自动创建已观看子文件夹。仅当父文件夹是媒体文件夹时才有效。",
-    "cannot-move-file-due-to-name-conflict-error": "无法将 '{}' 移动到 '{}' 子文件夹，因为已存在同名文件。", # Path, subfolder
-    "moved-file-to-subfolder-notification": "已将 '{}' 移动到 '{}' 子文件夹。", # Path, subfolder
-
+    "previous-file-menu-section-label": "上一个文件：'{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "标记为已观看",
+    "add-previous-file-to-playlist-menu-label": "添加到播放列表",
+    "watchedautomove-tooltip": "当文件播放结束时自动将其移动到已观看子文件夹。仅当父文件夹是媒体目录时有效。",
+    "watchedsubfolder-tooltip": "用于存放已观看文件的子文件夹（相对于文件所在目录）。必须存在该子文件夹才能移动文件。仅当父文件夹是媒体目录时有效。",
+    "watchedsubfolderautocreate-tooltip": "如果在移动文件时子文件夹不存在，则自动创建已观看子文件夹。仅当父文件夹是媒体目录时有效。",
+    "cannot-move-file-due-to-name-conflict-error": "无法将 '{}' 移动到子文件夹 '{}'，因为已存在同名文件。",
+    "watched-file-tracking-disabled-error": "已观看文件跟踪已禁用。",
+    "watched-subfolder-unavailable-error": "无法将 '{}' 移动到子文件夹 '{}'，因为无法找到或创建该子文件夹。",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "无法将 '{}' 移出已观看子文件夹，因为无法找到父文件夹。",  # path
+    "moved-file-to-subfolder-notification": "已将 '{}' 移动到子文件夹 '{}'。",
+    "moved-file-from-watched-subfolder-notification": "已将 '{}' 移回到 '{}'。",  # path, parent folder
+    "file-not-in-watched-subfolder-error": "'{}' 不在已观看子文件夹中。",  # path
+    "cannot-move-file-due-to-parent-name-conflict-error": "无法将 '{}' 移动到父文件夹 '{}'，因为已存在同名文件。",  # path, parent
+    "playlist-skip-warning-tooltip": "警告：这似乎会跳过未观看的文件 {}。",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "警告：文件 {} 在文件 {} 之后似乎顺序错误。应为文件 {}。"  # actual file number, previous file number, expected file number
 }

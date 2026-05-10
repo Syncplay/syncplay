@@ -257,10 +257,14 @@ en = {
     "language-label": "Language:",
     "automatic-language": "Default ({})",  # Default language
     "showdurationnotification-label": "Warn about media duration mismatches",
+    "showplaylistskipwarnings-label": "Warn when playlist may skip unwatched files",
+    "showplaylistskipwarnings-tooltip": "Show warnings when Syncplay thinks the playlist skips files that have not been watched.",
+    "showplaylistorderwarnings-label": "Warn when playlist files appear out of order",
+    "showplaylistorderwarnings-tooltip": "Show warnings when Syncplay thinks playlist files may be in the wrong order.",
     "basics-label": "Basics",
-    "folders-label": "Folders", # Directories
+    "files-label": "Files",  # Media folders and watched-file settings
     "readiness-label": "Play/Pause",
-    "misc-label": "Misc",
+    "misc-label": "Privacy/Misc",
     "core-behaviour-title": "Core room behaviour",
     "syncplay-internals-title": "Syncplay internals",
     "syncplay-mediasearchdirectories-title": "Directories to search for media",
@@ -578,7 +582,12 @@ en = {
     "playlist-invalid-index-error": "Invalid playlist index",
     "cannot-move-file-due-to-name-conflict-error": "Could not move '{}' to '{}' subfolder because a file with that name already exists.",  # Path, subfolder
     "cannot-move-file-due-to-parent-name-conflict-error": "Could not move '{}' back to '{}' because a file with that name already exists in that folder.",  # Path, parent folder
+    "file-not-in-watched-subfolder-error": "'{}' is not in the watched files subfolder.",  # path
+    "watched-file-tracking-disabled-error": "Watched file tracking is disabled.",
+    "watched-subfolder-unavailable-error": "Could not move '{}' to '{}' subfolder because the subfolder could not be found or created.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "Could not move '{}' out of the watched files subfolder because the parent folder could not be found.",  # path
     "moved-file-to-subfolder-notification": "Moved '{}' to '{}' subfolder.",
+    "moved-file-from-watched-subfolder-notification": "Moved '{}' back to '{}'.",  # path, parent folder
 
     # Watched file functionality
     "syncplay-watchedhistory-title": "Watched history",
@@ -587,10 +596,6 @@ en = {
     "watched-json-read-error": "Could not read watched history file '{}': {}",  # path, error
     "watched-json-write-error": "Could not write watched history file '{}': {}",  # path, error
     "watched-json-concurrent-update-error": "Could not update watched history file due to concurrent changes: {}",  # path
-    "watched-history-delete-dialog-title": "Delete watched history file?",
-    "watched-history-delete-dialog-message": "Watched history has been disabled. Do you want to delete this watched history file?\n\n{}",  # path
-    "watched-history-delete-error-title": "Could not delete watched history file",
-    "watched-history-delete-error-message": "Could not delete watched history file '{}': {}",  # path, error
     "watched-move-permission-error": "Could not move '{}' to watched subfolder due to a permissions error.",  # filename
     "watched-move-failed-error": "Could not move '{}' to watched subfolder: {}",  # filename, error
     "watched-move-too-many-retries-error": "Giving up on moving '{}' to watched subfolder after too many retries.",  # filename

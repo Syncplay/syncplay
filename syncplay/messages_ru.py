@@ -250,9 +250,13 @@ ru = {
     "language-label": "Язык:",
     "automatic-language": "По умолчанию ({})",  # Automatic language
     "showdurationnotification-label": "Предупреждать о несовпадении продолжительности видео",
+    "showplaylistskipwarnings-label": "Предупреждать, если плейлист может пропускать непросмотренные файлы",
+    "showplaylistskipwarnings-tooltip": "Показывать предупреждения, когда Syncplay считает, что плейлист пропускает файлы, которые ещё не были просмотрены.",
+    "showplaylistorderwarnings-label": "Предупреждать, если файлы в плейлисте выглядят расположенными не по порядку",
+    "showplaylistorderwarnings-tooltip": "Показывать предупреждения, когда Syncplay считает, что файлы в плейлисте могут быть в неправильном порядке.",
     "basics-label": "Основное",
     "readiness-label": "Поведение",
-    "misc-label": "Прочее",
+    "misc-label": "Приватность/Прочее",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "Информация о файлах",
     "syncplay-internals-title": "Системные настройки",
     "syncplay-mediasearchdirectories-title": "Папки воспроизведения",  # needs to be checked
@@ -554,17 +558,47 @@ ru = {
 
     # Watched file functionality
     # TODO: Please double-check these translations and remove this message if they are fine
-    "folders-label": "Папки",
+    "files-label": "Файлы",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
+    "syncplay-watchedhistory-title": "История просмотренных файлов",
+    "syncplay-watchedhistoryenabled-label": "Включить историю просмотренных файлов (JSON-индекс)",
+    "watchedhistoryenabled-tooltip": "Сохраняет просмотренные файлы рядом с файлом конфигурации Syncplay в '.syncplay-watched.json'. Статус просмотра сохраняется даже если файл перемещён или удалён.",
+    "watched-json-read-error": "Не удалось прочитать файл истории просмотренных файлов '{}': {}",
+    "watched-json-write-error": "Не удалось записать файл истории просмотренных файлов '{}': {}",
+    "watched-json-concurrent-update-error": "Не удалось обновить файл истории просмотренных файлов из-за одновременных изменений: {}",
+    "watched-move-permission-error": "Не удалось переместить '{}' в подпапку просмотренных из-за ошибки доступа.",
+    "watched-move-failed-error": "Не удалось переместить '{}' в подпапку просмотренных: {}",
+    "watched-move-too-many-retries-error": "Слишком много попыток перемещения '{}' в подпапку просмотренных. Операция отменена.",
+    "watched-mark-watched-error": "Не удалось отметить '{}' как просмотренный: {}",
+    "watched-mark-unwatched-error": "Не удалось отметить '{}' как непросмотренный: {}",
+    "watched-record-history-error": "Не удалось записать историю просмотра для '{}': {}",
+    "marked-file-as-watched-notification": "'{}' отмечен как просмотренный.",
+    "marked-file-as-unwatched-notification": "'{}' отмечен как непросмотренный.",
+    "watched-last-watched-tooltip": "Последний просмотр: {} в комнате '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "{} минут назад",
+    "watched-ago-hours": "{} часов назад",
+    "watched-ago-days": "{} дней назад",
     "syncplay-watchedfiles-title": "Просмотренные файлы",
-    "syncplay-watchedautomove-label": "Автоматически перемещать просмотренные файлы в подпапку (если подпапка существует)",
+    "syncplay-watchedautomove-label": "Автоматически перемещать просмотренные файлы в подпапку (если она существует)",
     "syncplay-watchedmovesubfolder-label": "Подпапка для просмотренных файлов",
     "syncplay-watchedsubfolderautocreate-label": "Автоматически создавать подпапку для просмотренных файлов при необходимости",
-    "mark-as-watched-menu-label": "Отметить как просмотрено",
-    "mark-as-unwatched-menu-label": "Отметить как не просмотрено",
-    "watchedautomove-tooltip": "Автоматически перемещает файл в подпапку для просмотренных файлов при достижении конца файла. Работает только, если родительская папка является медиа-папкой.",
-    "watchedsubfolder-tooltip": "Подпапка (относительно папки файла), в которую перемещаются просмотренные файлы (подпапка должна существовать, чтобы файл был перемещён). Работает только, если родительская папка является медиа-папкой.",
-    "watchedsubfolderautocreate-tooltip": "Автоматически создаёт подпапку для просмотренных файлов при перемещении, если она ещё не существует. Работает только, если родительская папка является медиа-папкой.",
-    "cannot-move-file-due-to-name-conflict-error": "Не удалось переместить '{}' в подпапку '{}', потому что файл с таким именем уже существует.", # Path, subfolder
-    "moved-file-to-subfolder-notification": "Перемещено '{}' в подпапку '{}'.", # Path, subfolder
+    "mark-as-watched-menu-label": "Отметить как просмотренный",
+    "mark-as-unwatched-menu-label": "Отметить как непросмотренный",
+    "previous-file-menu-section-label": "Предыдущий файл: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Отметить как просмотренный",
+    "add-previous-file-to-playlist-menu-label": "Добавить в плейлист",
+    "watchedautomove-tooltip": "Автоматически перемещает файл в подпапку просмотренных при достижении конца файла. Работает только если родительская папка является медиапапкой.",
+    "watchedsubfolder-tooltip": "Подпапка, в которую перемещаются просмотренные файлы относительно папки файла (подпапка должна существовать). Работает только если родительская папка является медиапапкой.",
+    "watchedsubfolderautocreate-tooltip": "Автоматически создаёт подпапку просмотренных, если её нет во время перемещения файла. Работает только если родительская папка является медиапапкой.",
+    "cannot-move-file-due-to-name-conflict-error": "Не удалось переместить '{}' в подпапку '{}' потому что файл с таким именем уже существует.",
+    "cannot-move-file-due-to-parent-name-conflict-error": "Не удалось переместить '{}' обратно в родительскую папку '{}' потому что файл с таким именем уже существует.",
+    "file-not-in-watched-subfolder-error": "'{}' не находится в подпапке просмотренных файлов.",  # path
+    "watched-file-tracking-disabled-error": "Отслеживание просмотренных файлов отключено.",
+    "watched-subfolder-unavailable-error": "Не удалось переместить '{}' в подпапку '{}', потому что подпапку не удалось найти или создать.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "Не удалось переместить '{}' из подпапки просмотренных файлов, потому что родительскую папку не удалось найти.",  # path
+    "moved-file-to-subfolder-notification": "'{}' перемещён в подпапку '{}'.",
+    "moved-file-from-watched-subfolder-notification": "'{}' перемещён обратно в '{}'.",  # path, parent folder
 
+    "playlist-skip-warning-tooltip": "Предупреждение: похоже, это пропускает непросмотренный файл {}.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "Предупреждение: файл {} находится не по порядку после файла {}. Вместо него ожидался файл {}."  # actual file number, previous file number, expected file number
 }

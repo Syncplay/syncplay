@@ -250,9 +250,14 @@ it = {
     "language-label": "Lingua:",
     "automatic-language": "Predefinita ({})",  # Default language
     "showdurationnotification-label": "Avvisa in caso di mancata corrispondenza della durata del file",
+    "showplaylistskipwarnings-label": "Avvisa quando la playlist potrebbe saltare file non visti",
+    "showplaylistskipwarnings-tooltip": "Mostra avvisi quando Syncplay ritiene che la playlist salti file che non sono stati guardati.",
+    "showplaylistorderwarnings-label": "Avvisa quando i file della playlist sembrano fuori ordine",
+    "showplaylistorderwarnings-tooltip": "Mostra avvisi quando Syncplay ritiene che i file della playlist potrebbero essere nell'ordine sbagliato.",
     "basics-label": "Generali",
+    "files-label": "File",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "readiness-label": "Play/Pausa",
-    "misc-label": "Varie",
+    "misc-label": "Privacy/Varie",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "Comportamento principale della stanza",
     "syncplay-internals-title": "Funzionamento di Syncplay",
     "syncplay-mediasearchdirectories-title": "Cartelle contenenti i file multimediali",
@@ -557,17 +562,45 @@ it = {
 
     # Watched file functionality
     # TODO: Please double-check these translations and remove this message if they are fine
-    "folders-label": "Cartelle",
-    "syncplay-watchedfiles-title": "File guardati",
-    "syncplay-watchedautomove-label": "Sposta automaticamente i file guardati nella sottocartella (se esiste)",
-    "syncplay-watchedmovesubfolder-label": "Sottocartella per i file guardati",
-    "syncplay-watchedsubfolderautocreate-label": "Crea automaticamente la sottocartella dei file guardati quando necessario",
-    "mark-as-watched-menu-label": "Segna come guardato",
-    "mark-as-unwatched-menu-label": "Segna come non guardato",
-    "watchedautomove-tooltip": "Sposta automaticamente il file nella sottocartella dei file guardati quando si raggiunge la fine del file. Funziona solo se la cartella principale è una cartella multimediale.",
-    "watchedsubfolder-tooltip": "Sottocartella (relativa alla cartella del file) in cui spostare i file guardati (la sottocartella deve esistere per poter spostare il file). Funziona solo se la cartella principale è una cartella multimediale.",
-    "watchedsubfolderautocreate-tooltip": "Crea automaticamente la sottocartella dei file guardati durante lo spostamento se non esiste ancora. Funziona solo se la cartella principale è una cartella multimediale.",
-    "cannot-move-file-due-to-name-conflict-error": "Impossibile spostare '{}' nella sottocartella '{}' perché esiste già un file con lo stesso nome.", # Path, subfolder
-    "moved-file-to-subfolder-notification": "Spostato '{}' nella sottocartella '{}'.", # Path, subfolder
-
+    "syncplay-watchedfiles-title": "File già visti",
+    "syncplay-watchedautomove-label": "Sposta automaticamente i file già visti nella sottocartella (se la sottocartella esiste)",
+    "syncplay-watchedmovesubfolder-label": "Sottocartella per i file già visti",
+    "syncplay-watchedsubfolderautocreate-label": "Crea automaticamente la sottocartella dei file già visti quando necessario",
+    "mark-as-watched-menu-label": "Segna come già visto",
+    "mark-as-unwatched-menu-label": "Segna come non visto",
+    "previous-file-menu-section-label": "File precedente: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Segna come visto",
+    "add-previous-file-to-playlist-menu-label": "Aggiungi alla playlist",
+    "syncplay-watchedhistory-title": "Cronologia dei file già visti",
+    "syncplay-watchedhistoryenabled-label": "Abilita cronologia dei file già visti",
+    "watchedhistoryenabled-tooltip": "Registra i file già visti accanto al file di configurazione di Syncplay come '.syncplay-watched.json'. Lo stato di visione viene mantenuto anche se i file vengono spostati o eliminati.",
+    "watchedautomove-tooltip": "Sposta automaticamente il file nella sottocartella dei file già visti quando si raggiunge la fine del file. Funziona solo se la cartella principale è una cartella multimediale.",
+    "watchedsubfolder-tooltip": "Sottocartella in cui spostare i file già visti, relativa alla cartella del file (la sottocartella deve esistere affinché il file venga spostato). Funziona solo se la cartella principale è una cartella multimediale.",
+    "watchedsubfolderautocreate-tooltip": "Crea automaticamente la sottocartella dei file già visti durante lo spostamento del file se non esiste già. Funziona solo se la cartella principale è una cartella multimediale.",
+    "watched-json-read-error": "Impossibile leggere il file della cronologia dei file già visti '{}': {}",  # path, error
+    "watched-json-write-error": "Impossibile scrivere il file della cronologia dei file già visti '{}': {}",  # path, error
+    "watched-json-concurrent-update-error": "Impossibile aggiornare la cronologia dei file già visti a causa di modifiche concorrenti: {}",  # path
+    "watched-move-permission-error": "Impossibile spostare '{}' nella sottocartella a causa di un errore di autorizzazioni.",  # filename
+    "watched-move-failed-error": "Impossibile spostare '{}' nella sottocartella: {}",  # filename, error
+    "watched-move-too-many-retries-error": "Interrotto lo spostamento di '{}' dopo troppi tentativi.",  # filename
+    "watched-mark-watched-error": "Impossibile segnare '{}' come già visto: {}",  # filename, error
+    "watched-mark-unwatched-error": "Impossibile segnare '{}' come non visto: {}",  # filename, error
+    "watched-record-history-error": "Impossibile registrare la cronologia per '{}': {}",  # filename, error
+    "marked-file-as-watched-notification": "'{}' segnato come già visto.",  # filename
+    "marked-file-as-unwatched-notification": "'{}' segnato come non visto.",  # filename
+    "file-not-in-watched-subfolder-error": "'{}' non si trova nella sottocartella dei file già visti.",  # path
+    "cannot-move-file-due-to-name-conflict-error": "Impossibile spostare '{}' nella sottocartella '{}' perché esiste già un file con quel nome.",  # path, subfolder
+    "cannot-move-file-due-to-parent-name-conflict-error": "Impossibile spostare '{}' nella cartella padre '{}' perché esiste già un file con quel nome.",  # path, parent
+    "watched-file-tracking-disabled-error": "Il tracciamento dei file già visti è disattivato.",
+    "watched-subfolder-unavailable-error": "Impossibile spostare '{}' nella sottocartella '{}' perché la sottocartella non è stata trovata o creata.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "Impossibile spostare '{}' fuori dalla sottocartella dei file già visti perché la cartella superiore non è stata trovata.",  # path
+    "moved-file-to-subfolder-notification": "'{}' spostato nella sottocartella '{}'.",  # path, subfolder
+    "moved-file-from-watched-subfolder-notification": "'{}' spostato di nuovo in '{}'.",  # path, parent folder
+    "watched-last-watched-tooltip": "Ultima visione {} nella stanza '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "{} minuto/i fa",  # minutes
+    "watched-ago-hours": "{} ora/e fa",  # hours
+    "watched-ago-days": "{} giorno/i fa",  # dates
+    "playlist-skip-warning-tooltip": "Attenzione: sembra che venga saltato il file non visto {}.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "Attenzione: il file {} sembra fuori ordine dopo il file {}. Era invece previsto il file {}."  # actual file number, previous file number, expected file number
 }
