@@ -408,6 +408,8 @@ class EpisodeFilenameParser(object):
         filename = re.sub(r'(?i)\b(?:h\.?26[45]|x26[45])\b', ' ', filename)
         filename = re.sub(r'(?i)\b(?:480p|576p|720p|1080p|2160p|4320p)\b', ' ', filename)
         filename = re.sub(r'(?i)\b(?:8bit|10bit|hi10p)\b', ' ', filename)
+        filename = re.sub(r'(?i)[\[\(](?:v|version[\s._-]*)[2-7][\]\)]', ' ', filename)
+        filename = re.sub(r'(?i)(?<=\d)(?:v|version[\s._-]*)[2-7](?=$|[\s._-])', ' ', filename)
         return filename
 
     def _stripEpisodeFilenameReleaseMetadata(self, filename):
