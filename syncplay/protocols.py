@@ -396,7 +396,36 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def handshakeCompleted(self):
         self._serverCertificateTLS = self.transport.getPeerCertificate()
-        self._subjectTLS = self._serverCertificateTLS.get_subject().CN
+        if not self._serverCertificateTLS:
+            self._client.ui.showErrorMessage(getMessage("startTLS-server-certificate-invalid"))
+            self.sendHello()
+            return
+
+        self._subjectTLS = ""
+        try:
+            from cryptography import x509
+            cryptographyCertificate = self._serverCertificateTLS.to_cryptography()
+            subjectAltName = cryptographyCertificate.extensions.get_extension_for_class(x509.SubjectAlternativeName).value
+            names = subjectAltName.get_values_for_type(x509.DNSName)
+            names = names + ["IP Address:{}".format(ipAddress) for ipAddress in subjectAltName.get_values_for_type(x509.IPAddress)]
+            self._subjectTLS = ", ".join([str(name) for name in names])
+        except Exception:
+            pass
+
+        if not self._subjectTLS:
+            try:
+                if hasattr(self._serverCertificateTLS, "get_extension_count") and hasattr(self._serverCertificateTLS, "get_extension"):
+                    for x in range(0,self._serverCertificateTLS.get_extension_count()):
+                        extension = self._serverCertificateTLS.get_extension(x)
+                        if extension.get_short_name() == b'subjectAltName':
+                            self._subjectTLS = str(extension).replace("DNS:", "")
+                            break
+            except Exception:
+                pass
+
+        if not self._subjectTLS:
+            self._subjectTLS = self._client._config.get("host", "") or ""
+
         self._issuerTLS = self._serverCertificateTLS.get_issuer().CN
         self._expiredTLS =self._serverCertificateTLS.has_expired()
         self._expireDateTLS = datetime.strptime(self._serverCertificateTLS.get_notAfter().decode('ascii'), '%Y%m%d%H%M%SZ')

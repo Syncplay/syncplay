@@ -221,11 +221,11 @@ class SyncFactory(Factory):
                 for watcherToSet in room.getWatchers():
                     if watcherToSet.getName() == username:
                         watcherToSet.setReady(isReady)
-                        self._roomManager.broadcastRoom(watcherToSet, lambda w: w.sendSetReady(watcherToSet.getName(), watcherToSet.isReady(),  manuallyInitiated, watcher.getName()))
+                        self._roomManager.broadcastRoom(watcher, lambda w: w.sendSetReady(watcherToSet.getName(), watcherToSet.isReady(), manuallyInitiated, watcher.getName()))
                         if isReady:
-                            messageDict = { "message": getMessage("ready-chat-message").format(username, watcherToSet.getName()), "username": watcher.getName()}
+                            messageDict = { "message": getMessage("ready-chat-message").format(username), "username": watcher.getName()}
                         else:
-                            messageDict = {"message": getMessage("not-ready-chat-message").format(username, watcherToSet.getName()), "username": watcher.getName()}
+                            messageDict = {"message": getMessage("not-ready-chat-message").format(username), "username": watcher.getName()}
                         self._roomManager.broadcastRoom(watcher, lambda w: w.sendChatMessage(messageDict, "setOthersReadiness"))
         else:
             watcher.setReady(isReady)
@@ -489,20 +489,16 @@ class RoomManager(object):
             if RoomPasswordProvider.isControlledRoom(roomName):
                 room = ControlledRoom(roomName, self._roomsDbHandle)
             else:
-                if roomName in self._rooms:
-                    self._deleteRoomIfEmpty(self._rooms[roomName])
                 room = Room(roomName, self._roomsDbHandle)
             self._rooms[roomName] = room
             return room
 
     def _deleteRoomIfEmpty(self, room):
+        if room.isPermanent():
+            return
+        if room.isPersistent() and not room.isPlaylistEmpty():
+            return
         if room.isEmpty() and room.getName():
-            if self._roomsDbHandle and room.isPermanent():
-                return
-            if self._roomsDbHandle and room.isNotPermanent():
-                if room.isPersistent() and not room.isPlaylistEmpty():
-                    return
-                self._roomsDbHandle.deleteRoom(room.getName())
             del self._rooms[room.getName()]
 
     def findFreeUsername(self, username, maxUsernameLength=constants.MAX_USERNAME_LENGTH):
@@ -581,8 +577,11 @@ class Room(object):
     def writeToDb(self):
         if not self.isPersistent():
             return
-        processed_playlist = getListAsMultilineString(self._playlist)
-        self._roomsDbHandle.saveRoom(self._name, processed_playlist, self._playlistIndex, self._position, self._lastSavedUpdate)
+        if self.isPlaylistEmpty():
+            self._roomsDbHandle.deleteRoom(self._name)
+        else:
+            processed_playlist = getListAsMultilineString(self._playlist)
+            self._roomsDbHandle.saveRoom(self._name, processed_playlist, self._playlistIndex, self._position, self._lastSavedUpdate)
 
     def loadRoom(self, room):
         name, playlist, playlistindex, position, lastupdate = room
