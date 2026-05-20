@@ -25,6 +25,10 @@ it = {
 
     "connection-attempt-notification": "Tentativo di connessione a {}:{}",  # Port, IP
     "reconnection-attempt-notification": "Connessione col server persa, tentativo di riconnesione in corso",
+    "reconnect-menu-triggered-notification": "Riconnessione manuale avviata - tentativo di nuova connessione a {}:{} tra 2 secondi...",
+    "reconnect-failed-no-host-error": "Impossibile riconnettersi: nessuna informazione sul server disponibile",
+    "reconnect-failed-no-port-error": "Impossibile riconnettersi: configurazione del server non valida",
+    "reconnect-failed-error": "Riconnessione fallita: {}",
     "disconnection-notification": "Disconnesso dal server",
     "connection-failed-notification": "Connessione col server fallita",
     "connected-successful-notification": "Connessione al server effettuata con successo",
@@ -333,6 +337,7 @@ it = {
     "setmediadirectories-menu-label": "Imposta &cartelle multimediali",
     "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
     "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
+    "reconnect-menu-label": "&Riconnetti al server",
     "exit-menu-label": "&Esci",
     "advanced-menu-label": "&Avanzate",
     "window-menu-label": "&Finestra",

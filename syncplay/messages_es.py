@@ -25,6 +25,10 @@ es = {
 
     "connection-attempt-notification": "Intentando conectarse a {}:{}",  # Port, IP
     "reconnection-attempt-notification": "Se perdió la conexión con el servidor, intentando reconectar",
+    "reconnect-menu-triggered-notification": "Reconexión manual iniciada - se intentará una nueva conexión a {}:{} en 2 segundos...",
+    "reconnect-failed-no-host-error": "No se puede reconectar: no hay información del servidor disponible",
+    "reconnect-failed-no-port-error": "No se puede reconectar: configuración del servidor inválida",
+    "reconnect-failed-error": "Reconexión fallida: {}",
     "disconnection-notification": "Desconectado del servidor",
     "connection-failed-notification": "La conexión con el servidor falló",
     "connected-successful-notification": "Conectado al servidor exitosamente",
@@ -333,6 +337,7 @@ es = {
     "setmediadirectories-menu-label": "&Establecer directorios de medios",
     "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
     "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
+    "reconnect-menu-label": "&Reconectar al servidor",
     "exit-menu-label": "&Salir",
     "advanced-menu-label": "A&vanzado",
     "window-menu-label": "&Ventana",
@@ -480,6 +485,8 @@ es = {
     # Server messages to client
     "new-syncplay-available-motd-message": "Estás usando Syncplay {} pero hay una versión más nueva disponible en https://syncplay.pl",  # ClientVersion
     "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
+    "ready-chat-message": "He marcado a {} como listo.",  # User
+    "not-ready-chat-message": "He marcado a {} como no listo.",  # User
 
     # Server notifications
     "welcome-server-notification": "Bienvenido al servidor de Syncplay, ver. {0}",  # version

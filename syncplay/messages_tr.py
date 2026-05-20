@@ -25,6 +25,10 @@ tr = {
 
     "connection-attempt-notification": "{} İle bağlantı kurulmaya çalışılıyor: {}",  # Port, IP
     "reconnection-attempt-notification": "Sunucuyla bağlantı kesildi, yeniden bağlanılmaya çalışılıyor",
+    "reconnect-menu-triggered-notification": "Manuel yeniden bağlantı başlatıldı - {}:{} adresine 2 saniye içinde yeni bağlantı denenecek...",
+    "reconnect-failed-no-host-error": "Yeniden bağlanılamıyor: sunucu bilgisi mevcut değil",
+    "reconnect-failed-no-port-error": "Yeniden bağlanılamıyor: geçersiz sunucu yapılandırması",
+    "reconnect-failed-error": "Yeniden bağlantı başarısız: {}",
     "disconnection-notification": "Sunucuyla bağlantısı kesildi",
     "connection-failed-notification": "Sunucuyla bağlantı başarısız oldu",
     "connected-successful-notification": "Sunucuya başarıyla bağlandı",
@@ -334,6 +338,7 @@ tr = {
     "setmediadirectories-menu-label": "Medya di&zinlerini ayarlayın",
     "loadplaylistfromfile-menu-label": "Dosyadan oynatma &listesi yükle",
     "saveplaylisttofile-menu-label": "Oynatma listesini dosyaya kay&dedin",
+    "reconnect-menu-label": "Sunucuya &yeniden bağlan",
     "exit-menu-label": "Çı&kış",
     "advanced-menu-label": "&Gelişmiş",
     "window-menu-label": "&Pencere",

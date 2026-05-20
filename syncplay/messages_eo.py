@@ -27,6 +27,10 @@ eo = {
 
     "connection-attempt-notification": "Provas konektiĝi al {}:{}",  # Port, IP
     "reconnection-attempt-notification": "Konekto al servilo perdiĝis; provas rekonektiĝi",
+    "reconnect-menu-triggered-notification": "Mana rekonekto iniciatita - provos novan konekton al {}:{} post 2 sekundoj...",
+    "reconnect-failed-no-host-error": "Ne eblas rekonektiĝi: neniu servila informo disponebla",
+    "reconnect-failed-no-port-error": "Ne eblas rekonektiĝi: nevalida servila agordo",
+    "reconnect-failed-error": "Rekonekto malsukcesis: {}",
     "disconnection-notification": "Malkonektiĝis de servilo",
     "connection-failed-notification": "Konekto al servilo malsukcesis",
     "connected-successful-notification": "Sukcese konektiĝis al servilo",
@@ -337,6 +341,7 @@ eo = {
     "setmediadirectories-menu-label": "Agordi vidaŭdajn dosier&ujojn",
     "loadplaylistfromfile-menu-label": "&Enlegi ludliston de dosiero",
     "saveplaylisttofile-menu-label": "&Konservi ludliston al dosiero",
+    "reconnect-menu-label": "&Rekonektiĝi al servilo",
     "exit-menu-label": "Ĉesi&gi la programon",
     "advanced-menu-label": "&Altnivelaj",
     "window-menu-label": "&Fenestro",

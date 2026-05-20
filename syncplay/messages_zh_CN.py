@@ -25,6 +25,10 @@ zh_CN = {
 
     "connection-attempt-notification": "正在尝试连接{}:{}",  # Port, IP
     "reconnection-attempt-notification": "服务器连接中断，正在尝试重连",
+    "reconnect-menu-triggered-notification": "已发起手动重连 - 将在2秒后尝试连接到{}:{}...",
+    "reconnect-failed-no-host-error": "无法重连：没有可用的服务器信息",
+    "reconnect-failed-no-port-error": "无法重连：服务器配置无效",
+    "reconnect-failed-error": "重连失败：{}",
     "disconnection-notification": "与服务器连接中断",
     "connection-failed-notification": "服务器连接失败",
     "connected-successful-notification": "服务器连接成功",
@@ -334,6 +338,7 @@ zh_CN = {
     "setmediadirectories-menu-label": "设置媒体 &目录",
     "loadplaylistfromfile-menu-label": "&从文件加载播放列表",
     "saveplaylisttofile-menu-label": "&保存播放列表到文件",
+    "reconnect-menu-label": "&重新连接到服务器",
     "exit-menu-label": "退&出",
     "advanced-menu-label": "&高级",
     "window-menu-label": "&窗口",

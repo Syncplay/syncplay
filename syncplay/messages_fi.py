@@ -25,6 +25,10 @@ fi = {
 
      "connection-attempt-notification": "Yritetään yhdistää kohteeseen {}:{}",  # Port, IP
      "reconnection-attempt-notification": "Yhteys palvelimeen menetettiin, yritetään uudelleenyhdistämistä",
+    "reconnect-menu-triggered-notification": "Manuaalinen uudelleenyhdistäminen aloitettu - yritetään uutta yhteyttä osoitteeseen {}:{} 2 sekunnin kuluttua...",
+    "reconnect-failed-no-host-error": "Uudelleenyhdistäminen epäonnistui: palvelintietoja ei saatavilla",
+    "reconnect-failed-no-port-error": "Uudelleenyhdistäminen epäonnistui: virheellinen palvelinmääritys",
+    "reconnect-failed-error": "Uudelleenyhdistäminen epäonnistui: {}",
      "disconnection-notification": "Yhteys palvelimeen katkaistu",
      "connection-failed-notification": "Palvelimeen yhdistäminen epäonnistui",
      "connected-successful-notification": "Yhteys muodostettu palvelimeen onnistuneesti",
@@ -334,6 +338,7 @@ fi = {
      "setmediadirectories-menu-label": "Aseta median &hakemistot",
      "loadplaylistfromfile-menu-label": "&Lataa toistoluettelo tiedostosta",
      "saveplaylisttofile-menu-label": "&Tallenna toistoluettelo tiedostoon",
+     "reconnect-menu-label": "&Yhdistä palvelimeen uudelleen",
      "exit-menu-label": "P&oistu",
      "advanced-menu-label": "&Edistyneet",
      "window-menu-label": "&Ikkuna",
@@ -509,6 +514,10 @@ fi = {
     "server-startTLS-argument": "Kytke päälle TLS-yhteydet käyttäen varmennetiedostoja annetun tiedostopolkun kautta",
     "server-messed-up-motd-unescaped-placeholders": "Päivän viestissä on epäkelvot paikkamerkit. Kaikki $ merkit tulisi kaksinaistaa ($$).",
     "server-messed-up-motd-too-long": "Päivän viesti on liian pitkä - enimmäispituus on {} merkkiä, {} annettu.",
+    "server-listen-only-on-ipv4": "Kuuntele vain IPv4-osoitteilla palvelinta käynnistettäessä.",
+    "server-listen-only-on-ipv6": "Kuuntele vain IPv6-osoitteilla palvelinta käynnistettäessä.",
+    "server-interface-ipv4": "IPv4:n sidontaosoite. Tyhjäksi jättäminen käyttää oletusarvoisesti kaikkia.",
+    "server-interface-ipv6": "IPv6:n sidontaosoite. Tyhjäksi jättäminen käyttää oletusarvoisesti kaikkia.",
 
     # Server errors
     "unknown-command-server-error": "Tuntematon käsky {}",  # message
