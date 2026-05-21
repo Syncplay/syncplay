@@ -31,5 +31,5 @@ py3clean -p syncplay-server
 > /tmp/syncplay-server/DEBIAN/prerm
 chmod 555 /tmp/syncplay-server/DEBIAN/prerm
 
-make install-server DESTDIR=/tmp/syncplay-server
-dpkg -b /tmp/syncplay-server/
+fakeroot make install-server DESTDIR=/tmp/syncplay-server
+fakeroot dpkg -b /tmp/syncplay-server/

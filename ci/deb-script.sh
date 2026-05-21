@@ -29,6 +29,6 @@ py3clean -p syncplay
 > /tmp/syncplay/DEBIAN/prerm
 chmod 555 /tmp/syncplay/DEBIAN/prerm
 
-make install DESTDIR=/tmp/syncplay
-dpkg -b /tmp/syncplay/
+fakeroot make install DESTDIR=/tmp/syncplay
+fakeroot dpkg -b /tmp/syncplay/
 
