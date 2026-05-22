@@ -254,9 +254,14 @@ eo = {
     "language-label": "Lingvo:",
     "automatic-language": "Implicita ({})",  # Default language
     "showdurationnotification-label": "Averti pri malakordo inter daŭroj de vidaŭdaĵoj",
+    "showplaylistskipwarnings-label": "Averti kiam ludlisto eble preterpasas nespektitajn dosierojn",
+    "showplaylistskipwarnings-tooltip": "Montri avertojn kiam Syncplay opinias, ke la ludlisto preterpasas dosierojn, kiuj ankoraŭ ne estis spektitaj.",
+    "showplaylistorderwarnings-label": "Averti kiam dosieroj en ludlisto ŝajnas esti en malĝusta ordo",
+    "showplaylistorderwarnings-tooltip": "Montri avertojn kiam Syncplay opinias, ke dosieroj en la ludlisto eble estas en malĝusta ordo.",
     "basics-label": "Bazaj",
+    "files-label": "Dosieroj",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "readiness-label": "Ludi/Paŭzigi",
-    "misc-label": "Diversaj",
+    "misc-label": "Privateco/Diversaj",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "Baza konduto en ĉambroj",
     "syncplay-internals-title": "Internaĵoj de Syncplay",
     "syncplay-mediasearchdirectories-title": "Dosierujoj kun serĉotaj vidaŭdaĵoj",
@@ -558,4 +563,50 @@ eo = {
 
     "playlist-empty-error": "Ludlisto nun estas malplena.",
     "playlist-invalid-index-error": "Nevalida indico de ludlisto",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "syncplay-watchedfiles-title": "Viditaj dosieroj",
+    "syncplay-watchedautomove-label": "Aŭtomate movi viditajn dosierojn al subdosierujo (se subdosierujo ekzistas)",
+    "syncplay-watchedmovesubfolder-label": "Subdosierujo por viditaj dosieroj",
+    "syncplay-watchedsubfolderautocreate-label": "Aŭtomate krei subdosierujon por viditaj dosieroj kiam necese",
+    "mark-as-watched-menu-label": "Marki kiel vidita",
+    "mark-as-unwatched-menu-label": "Marki kiel nevidita",
+    "previous-file-menu-section-label": "Antaŭa dosiero: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Marki kiel vidita",
+    "add-previous-file-to-playlist-menu-label": "Aldoni al ludlisto",
+    "syncplay-watchedhistory-title": "Historio de viditaj dosieroj",
+    "syncplay-watchedhistoryenabled-label": "Ebligi historion de viditaj dosieroj",
+    "syncplay-autoremovefromplaylist-label": "Aŭtomate forigi viditajn dosierojn el la ludlisto",
+    "watchedhistoryenabled-tooltip": "Registras viditajn dosierojn apud la agorda dosiero de Syncplay kiel '.syncplay-watched.json'. La stato restas konservita eĉ se dosieroj estas movitaj aŭ forigitaj.",
+    "autoremovewatchedfromplaylist-tooltip": "Forigas eron el la komuna ludlisto kiam Syncplay markas ĝin kiel vidita post kiam la ludado atingas la finon.",
+    "watchedautomove-tooltip": "Automate movas la dosieron al la subdosierujo por viditaj dosieroj kiam la dosiero finiĝas. Tio funkcias nur se la gepatra dosierujo estas amaskomunikila dosierujo.",
+    "watchedsubfolder-tooltip": "Subdosierujo al kiu viditaj dosieroj estas movataj relative al la dosierujo de la dosiero (la subdosierujo devas ekzisti por ke la dosiero estu movita). Tio funkcias nur se la gepatra dosierujo estas amaskomunikila dosierujo.",
+    "watchedsubfolderautocreate-tooltip": "Aŭtomate kreas la subdosierujon por viditaj dosieroj dum movado de dosiero, se ĝi ankoraŭ ne ekzistas. Tio funkcias nur se la gepatra dosierujo estas amaskomunikila dosierujo.",
+    "watched-json-read-error": "Ne eblis legi la historiodosieron '{}': {}",  # path, error
+    "watched-json-write-error": "Ne eblis skribi la historiodosieron '{}': {}",  # path, error
+    "watched-json-concurrent-update-error": "Ne eblis ĝisdatigi la historion pro samtempaj ŝanĝoj: {}",  # path
+    "watched-move-permission-error": "Ne eblis movi '{}' al la subdosierujo pro permesa eraro.",  # filename
+    "watched-move-failed-error": "Ne eblis movi '{}' al la subdosierujo: {}",  # filename, error
+    "watched-move-too-many-retries-error": "Rezignas pri movo de '{}' post tro multaj provoj.",  # filename
+    "watched-mark-watched-error": "Ne eblis marki '{}' kiel viditan: {}",  # filename, error
+    "watched-mark-unwatched-error": "Ne eblis marki '{}' kiel neviditan: {}",  # filename, error
+    "watched-record-history-error": "Ne eblis registri historion por '{}': {}",  # filename, error
+    "marked-file-as-watched-notification": "'{}' markita kiel vidita.",  # filename
+    "marked-file-as-unwatched-notification": "'{}' markita kiel nevidita.",  # filename
+    "file-not-in-watched-subfolder-error": "'{}' ne estas en la subdosierujo de viditaj dosieroj.",  # path
+    "cannot-move-file-due-to-name-conflict-error": "Ne eblis movi '{}' al la subdosierujo '{}' ĉar dosiero kun tiu nomo jam ekzistas.",  # path, subfolder
+    "cannot-move-file-due-to-parent-name-conflict-error": "Ne eblis movi '{}' al la gepatra dosierujo '{}' ĉar dosiero kun tiu nomo jam ekzistas.",  # path, parent
+    "watched-file-tracking-disabled-error": "Spurado de viditaj dosieroj estas malŝaltita.",
+    "watched-subfolder-unavailable-error": "Ne eblis movi '{}' al la subdosierujo '{}' ĉar la subdosierujo ne estis trovita aŭ kreita.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "Ne eblis movi '{}' el la subdosierujo de viditaj dosieroj ĉar la gepatra dosierujo ne estis trovita.",  # path
+    "moved-file-to-subfolder-notification": "'{}' movita al la subdosierujo '{}'.",  # path, subfolder
+    "moved-file-from-watched-subfolder-notification": "'{}' movita reen al '{}'.",  # path, parent folder
+    "watched-last-watched-tooltip": "Laste vidita {} en ĉambro '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "antaŭ {} minuto(j)",  # minutes
+    "watched-ago-hours": "antaŭ {} horo(j)",  # hours
+    "watched-ago-days": "antaŭ {} tago(j)",  # dates
+    "playlist-skip-warning-tooltip": "Averto: Ŝajnas ke tio preterlasas neviditan dosieron {}.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "Averto: Dosiero {} ŝajnas esti malĝuste ordigita post dosiero {}. Anstataŭe atendata estis dosiero {}."  # actual file number, previous file number, expected file number
 }

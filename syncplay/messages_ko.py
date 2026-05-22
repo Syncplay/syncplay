@@ -250,9 +250,13 @@ ko = {
     "language-label": "언어:",
     "automatic-language": "기본값 ({})",  # Default language
     "showdurationnotification-label": "미디어 재생 시간 불일치에 대해 경고하기",
+    "showplaylistskipwarnings-label": "재생 목록이 시청하지 않은 파일을 건너뛸 수 있으면 경고",
+    "showplaylistskipwarnings-tooltip": "Syncplay가 재생 목록이 아직 시청하지 않은 파일을 건너뛴다고 판단하면 경고를 표시합니다.",
+    "showplaylistorderwarnings-label": "재생 목록 파일의 순서가 잘못된 것처럼 보이면 경고",
+    "showplaylistorderwarnings-tooltip": "Syncplay가 재생 목록 파일의 순서가 잘못되었을 수 있다고 판단하면 경고를 표시합니다.",
     "basics-label": "기본사항",
     "readiness-label": "재생/일시정지",
-    "misc-label": "기타",
+    "misc-label": "비공개/기타",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "핵심 방 행동",
     "syncplay-internals-title": "Syncplay 내부",
     "syncplay-mediasearchdirectories-title": "미디어 검색을 위한 디렉터리",
@@ -550,4 +554,51 @@ ko = {
 
     "playlist-empty-error": "현재 재생목록이 비어 있습니다.",
     "playlist-invalid-index-error": "잘못된 재생목록 색인",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "files-label": "파일",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
+    "syncplay-watchedhistory-title": "시청 기록",
+    "syncplay-watchedhistoryenabled-label": "시청 기록 사용 (JSON 인덱스)",
+    "syncplay-autoremovefromplaylist-label": "시청한 파일을 재생목록에서 자동으로 제거",
+    "watchedhistoryenabled-tooltip": "시청한 파일을 Syncplay 설정 파일 옆의 '.syncplay-watched.json' 파일에 기록합니다. 파일이 이동되거나 삭제되어도 시청 상태는 유지됩니다.",
+    "autoremovewatchedfromplaylist-tooltip": "재생이 끝에 도달한 후 Syncplay가 항목을 시청 완료로 표시하면 공유 재생목록에서 해당 항목을 제거합니다.",
+    "watched-json-read-error": "시청 기록 파일 '{}' 을(를) 읽을 수 없습니다: {}",
+    "watched-json-write-error": "시청 기록 파일 '{}' 을(를) 쓸 수 없습니다: {}",
+    "watched-json-concurrent-update-error": "동시 변경으로 인해 시청 기록 파일을 업데이트할 수 없습니다: {}",
+    "watched-move-permission-error": "권한 오류로 인해 '{}' 을(를) 시청 완료 하위 폴더로 이동할 수 없습니다.",
+    "watched-move-failed-error": "'{}' 을(를) 시청 완료 하위 폴더로 이동할 수 없습니다: {}",
+    "watched-move-too-many-retries-error": "여러 번 시도했지만 '{}' 을(를) 시청 완료 하위 폴더로 이동하지 못해 중단했습니다.",
+    "watched-mark-watched-error": "'{}' 을(를) 시청 완료로 표시할 수 없습니다: {}",
+    "watched-mark-unwatched-error": "'{}' 을(를) 미시청으로 표시할 수 없습니다: {}",
+    "watched-record-history-error": "'{}' 의 시청 기록을 기록할 수 없습니다: {}",
+    "marked-file-as-watched-notification": "'{}' 을(를) 시청 완료로 표시했습니다.",
+    "marked-file-as-unwatched-notification": "'{}' 을(를) 미시청으로 표시했습니다.",
+    "watched-last-watched-tooltip": "마지막 시청: {} (방 '{}', {})",  # how long, room, date and time
+    "watched-datetime-format": "%Y-%m-%d %H:%M",
+    "watched-ago-minutes": "{}분 전",
+    "watched-ago-hours": "{}시간 전",
+    "watched-ago-days": "{}일 전",
+    "syncplay-watchedfiles-title": "시청한 파일",
+    "syncplay-watchedautomove-label": "시청한 파일을 자동으로 하위 폴더로 이동 (하위 폴더가 있는 경우)",
+    "syncplay-watchedmovesubfolder-label": "시청한 파일용 하위 폴더",
+    "syncplay-watchedsubfolderautocreate-label": "필요할 때 시청한 파일 하위 폴더 자동 생성",
+    "mark-as-watched-menu-label": "시청 완료로 표시",
+    "mark-as-unwatched-menu-label": "미시청으로 표시",
+    "previous-file-menu-section-label": "이전 파일: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "시청한 것으로 표시",
+    "add-previous-file-to-playlist-menu-label": "재생목록에 추가",
+    "watchedautomove-tooltip": "파일 재생이 끝나면 자동으로 시청한 파일 하위 폴더로 이동합니다. 상위 폴더가 미디어 폴더일 때만 동작합니다.",
+    "watchedsubfolder-tooltip": "시청한 파일을 이동할 하위 폴더 (파일 폴더 기준). 이동하려면 해당 하위 폴더가 존재해야 합니다. 상위 폴더가 미디어 폴더일 때만 동작합니다.",
+    "watchedsubfolderautocreate-tooltip": "파일 이동 시 하위 폴더가 없으면 자동으로 시청한 파일 하위 폴더를 생성합니다. 상위 폴더가 미디어 폴더일 때만 동작합니다.",
+    "cannot-move-file-due-to-name-conflict-error": "같은 이름의 파일이 이미 존재하므로 '{}' 을(를) '{}' 하위 폴더로 이동할 수 없습니다.",
+    "watched-file-tracking-disabled-error": "시청한 파일 추적이 비활성화되어 있습니다.",
+    "watched-subfolder-unavailable-error": "하위 폴더를 찾거나 만들 수 없어서 '{}' 을(를) '{}' 하위 폴더로 이동할 수 없습니다.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "상위 폴더를 찾을 수 없어서 '{}' 을(를) 시청한 파일 하위 폴더 밖으로 이동할 수 없습니다.",  # path
+    "moved-file-to-subfolder-notification": "'{}' 을(를) '{}' 하위 폴더로 이동했습니다.",
+    "moved-file-from-watched-subfolder-notification": "'{}' 을(를) '{}'(으)로 다시 이동했습니다.",  # path, parent folder
+    "file-not-in-watched-subfolder-error": "'{}' 파일이 시청한 파일 하위 폴더에 없습니다.",  # path
+    "cannot-move-file-due-to-parent-name-conflict-error": "같은 이름의 파일이 이미 존재하므로 '{}' 을(를) 상위 폴더 '{}'로 이동할 수 없습니다.",  # path, parent
+    "playlist-skip-warning-tooltip": "경고: 시청하지 않은 파일 {}을(를) 건너뛰는 것 같습니다.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "경고: 파일 {}이(가) 파일 {} 뒤에서 순서가 맞지 않는 것 같습니다. 대신 파일 {}이(가) 예상되었습니다."  # actual file number, previous file number, expected file number
 }

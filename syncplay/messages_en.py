@@ -126,6 +126,7 @@ en = {
     "media-player-latency-warning": "Warning: The media player took {} seconds to respond. If you experience syncing issues then close applications to free up system resources, and if that doesn't work then try a different media player.",  # Seconds to respond
     "mpv-unresponsive-error": "mpv has not responded for {} seconds so appears to have malfunctioned. Please restart Syncplay.",  # Seconds to respond
 
+
     # Client prompts
     "enter-to-exit-prompt": "Press enter to exit\n",
 
@@ -165,7 +166,7 @@ en = {
 
     "feature-sharedPlaylists": "shared playlists",  # used for not-supported-by-server-error
     "feature-chat": "chat",  # used for not-supported-by-server-error
-    "feature-readiness": "readiness",  # used for not-supported-by-server-error
+    "feature-readiness": "readiness",  # used for not-supported-by-server-error"
     "feature-managedRooms": "managed rooms",  # used for not-supported-by-server-error
     "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error
 
@@ -177,14 +178,15 @@ en = {
     "invalid-offset-value": "Invalid offset value",
 
     "switch-file-not-found-error": "Could not switch to file '{0}'. Syncplay looks in specified media directories.",  # File not found
-    "folder-search-timeout-error": "The search for media in media directories was aborted as it took too long to search through '{}' after having processed the first {:,} files. This will occur if you select a folder with too many sub-folders in your list of media folders to search through or if there are too many files to process. For automatic file switching to work again please select File->Set Media Directories in the menu bar and remove this directory or replace it with an appropriate sub-folder. If the folder is actually fine then you can re-enable it by selecting File->Set Media Directories and pressing 'OK'.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
-    "folder-search-timeout-warning": "Warning: It has taken {} seconds to scan {:,} files in the folder '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through or if there are too many files to process.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
+    "folder-search-timeout-error": "The search for media in media directories was aborted as it took too long to search through '{}' after having processed the first {:,} files. This will occur if you select a folder with too many subfolders in your list of media folders to search through or if there are too many files to process. For automatic file switching to work again please select File->Set Media Directories in the menu bar and remove this directory or replace it with an appropriate subfolder. If the folder is actually fine then you can re-enable it by selecting File->Set Media Directories and pressing 'OK'.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
+    "folder-search-timeout-warning": "Warning: It has taken {} seconds to scan {:,} files in the folder '{}'. This will occur if you select a folder with too many subfolders in your list of media folders to search through or if there are too many files to process.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
     "folder-search-first-file-timeout-error": "The search for media in '{}' was aborted as it took too long to access the directory. This could happen if it is a network drive or if you configure your drive to spin down after a period of inactivity. For automatic file switching to work again please go to File->Set Media Directories and either remove the directory or resolve the issue (e.g. by changing power saving settings).",  # Folder
     "added-file-not-in-media-directory-error": "You loaded a file in '{}' which is not a known media directory. You can add this as a media directory by selecting File->Set Media Directories in the menu bar.",  # Folder
     "no-media-directories-error": "No media directories have been set. For shared playlist and file switching features to work properly please select File->Set Media Directories and specify where Syncplay should look to find media files.",
     "cannot-find-directory-error": "Could not find media directory '{}'. To update your list of media directories please select File->Set Media Directories from the menu bar and specify where Syncplay should look to find media files.",
 
     "failed-to-load-server-list-error": "Failed to load public server list. Please visit https://www.syncplay.pl/ in your browser.",
+
 
     # Client arguments
     "argument-description": 'Solution to synchronize playback of multiple media player instances over the network.',
@@ -255,13 +257,27 @@ en = {
     "language-label": "Language:",
     "automatic-language": "Default ({})",  # Default language
     "showdurationnotification-label": "Warn about media duration mismatches",
+    "showplaylistskipwarnings-label": "Warn when playlist may skip unwatched files",
+    "showplaylistskipwarnings-tooltip": "Show warnings when Syncplay thinks the playlist skips files that have not been watched.",
+    "showplaylistorderwarnings-label": "Warn when playlist files appear out of order",
+    "showplaylistorderwarnings-tooltip": "Show warnings when Syncplay thinks playlist files may be in the wrong order.",
     "basics-label": "Basics",
+    "files-label": "Files",  # Media folders and watched-file settings
     "readiness-label": "Play/Pause",
-    "misc-label": "Misc",
+    "misc-label": "Privacy/Misc",
     "core-behaviour-title": "Core room behaviour",
     "syncplay-internals-title": "Syncplay internals",
     "syncplay-mediasearchdirectories-title": "Directories to search for media",
     "syncplay-mediasearchdirectories-label": "Directories to search for media (one path per line)",
+    "syncplay-watchedfiles-title": "Watched files",
+    "syncplay-watchedautomove-label": "Automatically move watched files to subfolder (if subfolder exists)",
+    "syncplay-watchedmovesubfolder-label": "Subfolder for watched files",
+    "syncplay-watchedsubfolderautocreate-label": "Automatically create watched subfolder when needed",
+    "mark-as-watched-menu-label": "Mark as watched",
+    "mark-as-unwatched-menu-label": "Mark as unwatched",
+    "previous-file-menu-section-label": "Previous file: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Mark as watched",
+    "add-previous-file-to-playlist-menu-label": "Add to playlist",
     "sync-label": "Sync",
     "sync-otherslagging-title": "If others are lagging behind...",
     "sync-youlaggging-title": "If you are lagging behind...",
@@ -416,7 +432,7 @@ en = {
     "executable-path-tooltip": "Location of your chosen supported media player (mpv, mpv.net, VLC, MPC-HC/BE, mplayer2 or IINA).",
     "media-path-tooltip": "Location of video or stream to be opened. Necessary for mplayer2.",
     "player-arguments-tooltip": "Additional command line arguments / switches to pass on to this media player.",
-    "mediasearcdirectories-arguments-tooltip": "Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through sub-folders.",
+    "mediasearcdirectories-arguments-tooltip": "Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through subfolders.",
 
     "more-tooltip": "Display less frequently used settings.",
     "filename-privacy-tooltip": "Privacy mode for sending currently playing filename to server.",
@@ -476,6 +492,10 @@ en = {
     "autoplay-tooltip": "Auto-play when all users who have readiness indicator are ready and minimum user threshold met.",
     "switch-to-file-tooltip": "Double click to switch to {}",  # Filename
     "sendmessage-tooltip": "Send message to room",
+
+    "watchedautomove-tooltip": "Automatically move file into watched subfolder when end of file is reached. This only works if the parent directory is a media directory.",
+    "watchedsubfolder-tooltip": "Subfolder for watched files to be moved into relative to file directory (subfolder needs to exist for file to be moved). This only works if the parent directory is a media directory.",
+    "watchedsubfolderautocreate-tooltip": "Automatically create watched subfolder when moving file to subfolder if it does not already exist. This only works if the parent directory is a media directory.",
 
     # In-userlist notes (GUI)
     "differentsize-note": "Different size!",
@@ -560,4 +580,37 @@ en = {
 
     "playlist-empty-error": "Playlist is currently empty.",
     "playlist-invalid-index-error": "Invalid playlist index",
+    "cannot-move-file-due-to-name-conflict-error": "Could not move '{}' to '{}' subfolder because a file with that name already exists.",  # Path, subfolder
+    "cannot-move-file-due-to-parent-name-conflict-error": "Could not move '{}' back to '{}' because a file with that name already exists in that folder.",  # Path, parent folder
+    "file-not-in-watched-subfolder-error": "'{}' is not in the watched files subfolder.",  # path
+    "watched-file-tracking-disabled-error": "Watched file tracking is disabled.",
+    "watched-subfolder-unavailable-error": "Could not move '{}' to '{}' subfolder because the subfolder could not be found or created.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "Could not move '{}' out of the watched files subfolder because the parent folder could not be found.",  # path
+    "moved-file-to-subfolder-notification": "Moved '{}' to '{}' subfolder.",
+    "moved-file-from-watched-subfolder-notification": "Moved '{}' back to '{}'.",  # path, parent folder
+
+    # Watched file functionality
+    "syncplay-watchedhistory-title": "Watched history",
+    "syncplay-watchedhistoryenabled-label": "Enable watched history (JSON index)",
+    "syncplay-autoremovefromplaylist-label": "Automatically remove watched files from playlist",
+    "watchedhistoryenabled-tooltip": "Record watched files alongside the Syncplay config file as '.syncplay-watched.json'. Watched state is preserved even if files are moved or deleted.",
+    "autoremovewatchedfromplaylist-tooltip": "Remove a playlist item from the shared playlist when Syncplay marks it as watched after playback reaches the end.",
+    "watched-json-read-error": "Could not read watched history file '{}': {}",  # path, error
+    "watched-json-write-error": "Could not write watched history file '{}': {}",  # path, error
+    "watched-json-concurrent-update-error": "Could not update watched history file due to concurrent changes: {}",  # path
+    "watched-move-permission-error": "Could not move '{}' to watched subfolder due to a permissions error.",  # filename
+    "watched-move-failed-error": "Could not move '{}' to watched subfolder: {}",  # filename, error
+    "watched-move-too-many-retries-error": "Giving up on moving '{}' to watched subfolder after too many retries.",  # filename
+    "watched-mark-watched-error": "Could not mark '{}' as watched: {}",  # filename, error
+    "watched-mark-unwatched-error": "Could not mark '{}' as unwatched: {}",  # filename, error
+    "watched-record-history-error": "Could not record watched history for '{}': {}",  # filename, error
+    "marked-file-as-watched-notification": "Marked '{}' as watched.",  # filename
+    "marked-file-as-unwatched-notification": "Marked '{}' as unwatched.",  # filename
+    "watched-last-watched-tooltip": "Last watched {} in room '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "{} minute(s) ago", # minutes
+    "watched-ago-hours": "{} hour(s) ago", # hours
+    "watched-ago-days": "{} day(s) ago", # dates
+    "playlist-skip-warning-tooltip": "Warning: This appears to skip unwatched file {}.", # missing file number
+    "playlist-out-of-order-warning-tooltip": "Warning: File {} appears out of order after file {}. File {} was expected instead." # actual file number, previous file number, expected file number
 }

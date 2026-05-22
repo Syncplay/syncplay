@@ -251,13 +251,20 @@ tr = {
     "language-label": "Dil:",
     "automatic-language": "Varsayılan ({})",  # Default language
     "showdurationnotification-label": "Medya süresi uyuşmazlıkları konusunda uyarın",
+    "showplaylistskipwarnings-label": "İzlenmemiş dosyaları atlıyor olabilecek oynatma listeleri için uyar",
+    "showplaylistskipwarnings-tooltip": "Syncplay, oynatma listesinin henüz izlenmemiş dosyaları atladığını düşündüğünde uyarıları göster.",
+    "showplaylistorderwarnings-label": "Oynatma listesi dosyaları sıra dışı göründüğünde uyar",
+    "showplaylistorderwarnings-tooltip": "Syncplay, oynatma listesindeki dosyaların yanlış sırada olabileceğini düşündüğünde uyarıları göster.",
     "basics-label": "Temeller",
     "readiness-label": "Oynat/Duraklat",
-    "misc-label": "Misc",
+    "misc-label": "Gizlilik/Misc",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "Çekirdek oda davranışı",
     "syncplay-internals-title": "Syncplay dahili bileşenleri",
     "syncplay-mediasearchdirectories-title": "Medya aramak için dizinler",
     "syncplay-mediasearchdirectories-label": "Medya aramak için dizinler (satır başına bir yol)",
+    "previous-file-menu-section-label": "Önceki dosya: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "İzlenmiş olarak işaretle",
+    "add-previous-file-to-playlist-menu-label": "Oynatma listesine ekle",
     "sync-label": "Sync",
     "sync-otherslagging-title": "Başkaları geride kalıyorsa ...",
     "sync-youlaggging-title": "Geride kalıyorsan ...",
@@ -555,4 +562,48 @@ tr = {
 
     "playlist-empty-error": "Oynatma listesi şu anda boş.",
     "playlist-invalid-index-error": "Geçersiz oynatma listesi dizini",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "files-label": "Dosyalar",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
+    "syncplay-watchedfiles-title": "İzlenen dosyalar",
+    "syncplay-watchedautomove-label": "İzlenen dosyaları otomatik olarak alt klasöre taşı (alt klasör varsa)",
+    "syncplay-watchedmovesubfolder-label": "İzlenen dosyalar için alt klasör",
+    "syncplay-watchedsubfolderautocreate-label": "Gerektiğinde izlenenler alt klasörünü otomatik oluştur",
+    "mark-as-watched-menu-label": "İzlenmiş olarak işaretle",
+    "mark-as-unwatched-menu-label": "İzlenmemiş olarak işaretle",
+    "cannot-move-file-due-to-name-conflict-error": "'{}' '{}' alt klasörüne taşınamadı çünkü bu ada sahip bir dosya zaten var.",  # path, subfolder
+    "cannot-move-file-due-to-parent-name-conflict-error": "'{}' '{}' klasörüne geri taşınamadı çünkü bu klasörde bu ada sahip bir dosya zaten var.",  # path, parent folder
+    "file-not-in-watched-subfolder-error": "'{}' izlenen dosyalar alt klasöründe değil.",  # path
+    "watched-file-tracking-disabled-error": "İzlenen dosya takibi devre dışı.",
+    "watched-subfolder-unavailable-error": "Alt klasör bulunamadığı veya oluşturulamadığı için '{}' '{}' alt klasörüne taşınamadı.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "Üst klasör bulunamadığı için '{}' izlenen dosyalar alt klasöründen çıkarılamadı.",  # path
+    "moved-file-to-subfolder-notification": "'{}' '{}' alt klasörüne taşındı.",
+    "moved-file-from-watched-subfolder-notification": "'{}' tekrar '{}' konumuna taşındı.",  # path, parent folder
+    "syncplay-watchedhistory-title": "İzlenen dosya geçmişi",
+    "syncplay-watchedhistoryenabled-label": "İzlenen dosya geçmişini etkinleştir (JSON dizini)",
+    "syncplay-autoremovefromplaylist-label": "İzlenmiş dosyaları oynatma listesinden otomatik olarak kaldır",
+    "watchedhistoryenabled-tooltip": "İzlenen dosyaları Syncplay yapılandırma dosyasının yanında '.syncplay-watched.json' dosyasında kaydeder. Dosyalar taşınsa veya silinse bile izlenmiş durumu korunur.",
+    "autoremovewatchedfromplaylist-tooltip": "Oynatma sona ulaştıktan sonra Syncplay öğeyi izlenmiş olarak işaretlediğinde, öğeyi paylaşılan oynatma listesinden kaldırır.",
+    "watchedautomove-tooltip": "Dosya sonuna ulaşıldığında dosyayı otomatik olarak izlenenler alt klasörüne taşır. Bu yalnızca üst klasör bir medya klasörü ise çalışır.",
+    "watchedsubfolder-tooltip": "İzlenen dosyaların, dosya klasörüne göre taşınacağı alt klasör (dosyanın taşınması için alt klasörün var olması gerekir). Bu yalnızca üst klasör bir medya klasörü ise çalışır.",
+    "watchedsubfolderautocreate-tooltip": "Dosya taşınırken izlenenler alt klasörü yoksa otomatik olarak oluşturur. Bu yalnızca üst klasör bir medya klasörü ise çalışır.",
+    "watched-json-read-error": "'{}' izlenen dosya geçmişi dosyası okunamadı: {}",
+    "watched-json-write-error": "'{}' izlenen dosya geçmişi dosyası yazılamadı: {}",
+    "watched-json-concurrent-update-error": "Eşzamanlı değişiklikler nedeniyle izlenen dosya geçmişi güncellenemedi: {}",
+    "watched-move-permission-error": "'{}' izin hatası nedeniyle izlenenler alt klasörüne taşınamadı.",
+    "watched-move-failed-error": "'{}' izlenenler alt klasörüne taşınamadı: {}",
+    "watched-move-too-many-retries-error": "'{}' izlenenler alt klasörüne taşınırken çok fazla deneme yapıldığı için vazgeçildi.",
+    "watched-mark-watched-error": "'{}' izlenmiş olarak işaretlenemedi: {}",
+    "watched-mark-unwatched-error": "'{}' izlenmemiş olarak işaretlenemedi: {}",
+    "watched-record-history-error": "'{}' için izleme geçmişi kaydedilemedi: {}",
+    "marked-file-as-watched-notification": "'{}' izlenmiş olarak işaretlendi.",
+    "marked-file-as-unwatched-notification": "'{}' izlenmemiş olarak işaretlendi.",
+    "watched-last-watched-tooltip": "Son izlenme: {} '{}' odasında ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "{} dakika önce",
+    "watched-ago-hours": "{} saat önce",
+    "watched-ago-days": "{} gün önce",
+    "playlist-skip-warning-tooltip": "Uyarı: Bu, izlenmemiş dosya {} öğesini atlıyor gibi görünüyor.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "Uyarı: Dosya {} dosya {} sonrasında sırasız görünüyor. Bunun yerine dosya {} bekleniyordu."  # actual file number, previous file number, expected file number
 }
