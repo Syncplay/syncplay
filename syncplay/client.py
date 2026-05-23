@@ -1898,7 +1898,7 @@ class SyncplayPlaylist():
             self._client.addPlayerReadyCallback(lambda x: self.loadDelayedPath(changeToIndex))
             return
 
-        if self._client._protocol.hadFirstPlaylistIndex and self._client.delayedLoadPath:
+        if self._client._protocol and self._client._protocol.hadFirstPlaylistIndex and self._client.delayedLoadPath:
             delayedLoadPath = str(self._client.delayedLoadPath)
             self._client.delayedLoadPath = None
             if self._client.sharedPlaylistIsEnabled():
@@ -1967,7 +1967,7 @@ class SyncplayPlaylist():
                     state["playstate"]["position"] = 0
                     state["playstate"]["paused"] = True
                     self._client.lastAdvanceTime = time.time()
-                    self._client._protocol.sendMessage({"State": state})
+                    self._client._protocol and self._client._protocol.sendMessage({"State": state})
                     self._playerPaused = True
                     self._client.autoplayCheck()
                     self.doubleCheckForWatchedPreviousFile()
@@ -2096,8 +2096,8 @@ class SyncplayPlaylist():
         if self.playlistNeedsRestoring(files, username):
             self._ui.showDebugMessage("Restoring playlist on reconnect...")
             files = self._playlist.copy()
-            self._client._protocol.setPlaylist(files)
-            self._client._protocol.setPlaylistIndex(self._playlistIndex)
+            self._client._protocol and self._client._protocol.setPlaylist(files)
+            self._client._protocol and self._client._protocol.setPlaylistIndex(self._playlistIndex)
             return
         self.queuedIndexFilename = None
         self._client.playlistMayNeedRestoring = False
@@ -2118,7 +2118,7 @@ class SyncplayPlaylist():
 
         if username is None:
             if self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
-                self._client._protocol.setPlaylist(files)
+                self._client._protocol and self._client._protocol.setPlaylist(files)
                 self.changeToPlaylistIndex(newIndex)
                 self._ui.setPlaylist(self._playlist, filename)
                 self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(self._client.getUsername()))
