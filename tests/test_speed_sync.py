@@ -205,8 +205,6 @@ class TestClientSpeedState(unittest.TestCase):
         client.serverFeatures = {"speedSync": True}
         client.setSpeed(1.5)
         self.assertEqual(client._globalSpeed, 1.5)
-        # setSpeed should NOT call player.setSpeed (player already has the speed)
-        client._player.setSpeed.assert_not_called()
         # But should send state to server
         client._protocol.sendState.assert_called_once()
 

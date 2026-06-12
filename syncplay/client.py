@@ -428,7 +428,6 @@ class SyncplayClient(object):
             madeChangeOnPlayer = True
             hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
             self.ui.showMessage(getMessage("speed-change-notification").format(setBy, speed), hideFromOSD)
-            self.ui.updateSpeed(speed)
         if doSeek:
             madeChangeOnPlayer = self._serverSeeked(position, setBy)
         if diff > self._config['rewindThreshold'] and not doSeek and not self._config['rewindOnDesync'] == False:
@@ -530,7 +529,9 @@ class SyncplayClient(object):
 
     def setSpeed(self, speed):
         self._globalSpeed = speed
-        self.ui.updateSpeed(speed)
+        self._player.setSpeed(speed)
+        hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
+        self.ui.showMessage(getMessage("speed-change-notification").format(self.getUsername(), speed), hideFromOSD)
         if self._protocol and self._protocol.logged:
             if not self.serverFeatures.get("speedSync"):
                 return
