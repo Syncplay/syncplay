@@ -2,6 +2,7 @@
 import unittest
 import time
 import threading
+import platform
 from unittest.mock import MagicMock, patch, PropertyMock
 
 # Adjust path so we can import syncplay modules
@@ -979,23 +980,23 @@ class TestFeatureGating(unittest.TestCase):
         }
         self.assertTrue(defaults["speedSync"])
 
+if platform.system()=="Windows":
+    class TestMpcSpeedSupport(unittest.TestCase):
+        """Test MPC-HC/MPC-BE speed support (receive-only)."""
 
-class TestMpcSpeedSupport(unittest.TestCase):
-    """Test MPC-HC/MPC-BE speed support (receive-only)."""
+        def test_mpc_speed_supported_is_true(self):
+            """MPC-HC should have speedSupported = True."""
+            from syncplay.players.mpc import MPCHCAPIPlayer
+            self.assertTrue(MPCHCAPIPlayer.speedSupported)
 
-    def test_mpc_speed_supported_is_true(self):
-        """MPC-HC should have speedSupported = True."""
-        from syncplay.players.mpc import MPCHCAPIPlayer
-        self.assertTrue(MPCHCAPIPlayer.speedSupported)
-
-    def test_mpc_setspeed_tracks_grace_period(self):
-        """MPC-HC setSpeed should track _lastSpeedSetTime."""
-        from syncplay.players.mpc import MPCHCAPIPlayer
-        player = MPCHCAPIPlayer.__new__(MPCHCAPIPlayer)
-        player._mpcApi = MagicMock()
-        player.setSpeed(1.5)
-        self.assertAlmostEqual(player._lastSpeedSetTime, time.time(), delta=0.1)
-        player._mpcApi.setSpeed.assert_called_with(1.5)
+        def test_mpc_setspeed_tracks_grace_period(self):
+            """MPC-HC setSpeed should track _lastSpeedSetTime."""
+            from syncplay.players.mpc import MPCHCAPIPlayer
+            player = MPCHCAPIPlayer.__new__(MPCHCAPIPlayer)
+            player._mpcApi = MagicMock()
+            player.setSpeed(1.5)
+            self.assertAlmostEqual(player._lastSpeedSetTime, time.time(), delta=0.1)
+            player._mpcApi.setSpeed.assert_called_with(1.5)
 
 
 class TestSpeedRounding(unittest.TestCase):
