@@ -1951,9 +1951,13 @@ class SyncplayPlaylist():
                 self.lastOwnPlaylistIndexEchoTime = time.time()
             if not self._client.sharedPlaylistIsEnabled():
                 self._playlistIndex = index
-            if username is not None and self._client.userlist.currentUser.file and filename == self._client.userlist.currentUser.file['name']:
-                self._playlistIndex = index
-                return
+            if username is not None and self._client.userlist.currentUser.file and utils.sameFilename(filename, self._client.userlist.currentUser.file['name']):
+                if not self.queuedIndexFilename or utils.sameFilename(self.queuedIndexFilename, filename):
+                    self._playlistIndex = index
+                    return
+                self._ui.showDebugMessage(
+                    "Not treating '{}' as already loaded because '{}' is still queued to load.".format(
+                        filename, self.queuedIndexFilename))
         except IndexError:
             pass
 
