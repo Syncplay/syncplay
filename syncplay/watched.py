@@ -19,6 +19,251 @@ from syncplay import constants, utils
 from syncplay.messages import getMessage
 
 
+def getDefaultWatchedHistoryExportFilename():
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
+    return "syncplay-watched-{}.json".format(timestamp)
+
+
+def getWatchedHistoryJsonPath(config):
+    """Return the single watched-history JSON path for a config dictionary."""
+    config = config or {}
+    configDir = config.get("configDir") or ""
+    if not configDir:
+        configPath = config.get("configPath") or ""
+        if configPath:
+            configDir = os.path.dirname(os.path.abspath(configPath))
+    if not configDir:
+        if os.name == 'nt':
+            configDir = os.getenv('APPDATA', '')
+        else:
+            configDir = os.getenv('XDG_CONFIG_HOME', '') or os.path.join(os.path.expanduser("~"), ".config")
+    if not configDir:
+        configDir = utils.findWorkingDir()
+    return os.path.join(configDir, constants.WATCHED_HISTORY_FILENAME)
+
+
+class WatchedHistoryError(Exception):
+    pass
+
+
+class WatchedHistoryInvalidImportError(WatchedHistoryError):
+    pass
+
+
+class WatchedHistoryImportExportHelper(object):
+    """Import/export helper for the config-adjacent watched-history JSON file."""
+
+    def __init__(self, config, mediaSearchDirectories=None, watchedSubfolderName=None):
+        self._config = config or {}
+        self._mediaSearchDirectories = mediaSearchDirectories or []
+        self._watchedSubfolderName = watchedSubfolderName if watchedSubfolderName is not None else self._config.get("watchedSubfolder")
+        if self._watchedSubfolderName is None:
+            self._watchedSubfolderName = constants.WATCHED_SUBFOLDER
+        self._jsonPath = getWatchedHistoryJsonPath(self._config)
+
+    def getUnindexedWatchedSubfolderFiles(self):
+        watchedData = self._loadLocalWatchedData()
+        missingFiles = self._getUnindexedWatchedSubfolderFiles(watchedData)
+        return sorted(missingFiles.values())
+
+    def exportWatchedHistory(self, exportPath, addMissingFiles=False):
+        if not exportPath:
+            raise WatchedHistoryError("No export path specified.")
+
+        localExists = os.path.exists(self._jsonPath)
+        watchedData = self._loadLocalWatchedData()
+        addedCount = 0
+        backupPath = None
+
+        if addMissingFiles:
+            missingFiles = self._getUnindexedWatchedSubfolderFiles(watchedData)
+            if missingFiles:
+                backupPath = self._createBackupIfLocalFileExists()
+                now = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+                watchedData = dict(watchedData)
+                for filename in missingFiles.values():
+                    normalisedFilename = self._normaliseHistoryFilename(filename)
+                    if normalisedFilename and normalisedFilename not in watchedData:
+                        watchedData[normalisedFilename] = {
+                            "lastWatchedAt": now,
+                            "lastRoom": "",
+                        }
+                        addedCount += 1
+                self._writeLocalWatchedData(watchedData)
+                localExists = True
+
+        if not localExists:
+            self._writeLocalWatchedData(watchedData)
+
+        self._copyFile(self._jsonPath, exportPath)
+        return {
+            "added": addedCount,
+            "backupPath": backupPath,
+        }
+
+    def importAndMergeWatchedHistory(self, importPath):
+        importedData = self._loadWatchedDataFromFile(importPath, requireSyncplaySchema=True)
+        localExists = os.path.exists(self._jsonPath)
+        localData = self._loadLocalWatchedData()
+        mergedData = dict(localData)
+        added = 0
+        updated = 0
+        unchanged = 0
+        skipped = 0
+
+        for filename, metadata in importedData.items():
+            if not isinstance(metadata, dict):
+                skipped += 1
+                continue
+            normalisedFilename = self._normaliseHistoryFilename(filename)
+            if not normalisedFilename:
+                skipped += 1
+                continue
+            metadata = dict(metadata)
+            if normalisedFilename not in mergedData:
+                mergedData[normalisedFilename] = metadata
+                added += 1
+                continue
+
+            importedTimestamp = self._parseWatchedTimestamp(metadata.get("lastWatchedAt"))
+            if not importedTimestamp:
+                skipped += 1
+                continue
+            localTimestamp = self._parseWatchedTimestamp(mergedData[normalisedFilename].get("lastWatchedAt"))
+            if not localTimestamp or importedTimestamp > localTimestamp:
+                mergedData[normalisedFilename] = metadata
+                updated += 1
+            else:
+                unchanged += 1
+
+        backupPath = None
+        changed = mergedData != localData
+        if changed:
+            if localExists:
+                backupPath = self._createBackupIfLocalFileExists()
+            self._writeLocalWatchedData(mergedData)
+
+        return {
+            "changed": changed,
+            "added": added,
+            "updated": updated,
+            "unchanged": unchanged,
+            "skipped": skipped,
+            "backupPath": backupPath,
+        }
+
+    def _getUnindexedWatchedSubfolderFiles(self, watchedData):
+        missingFiles = {}
+        watchedSubfolderName = self._normaliseDirectoryName(self._watchedSubfolderName)
+        if not watchedSubfolderName:
+            return missingFiles
+        for mediaDirectory in self._mediaSearchDirectories:
+            if not mediaDirectory or not os.path.isdir(mediaDirectory):
+                continue
+            for root, dirs, files in os.walk(mediaDirectory):
+                if self._normaliseDirectoryName(os.path.basename(os.path.normpath(root))) == watchedSubfolderName:
+                    for filename in files:
+                        normalisedFilename = self._normaliseHistoryFilename(filename)
+                        if normalisedFilename and normalisedFilename not in watchedData:
+                            missingFiles.setdefault(normalisedFilename, os.path.basename(filename))
+                    dirs[:] = []
+        return missingFiles
+
+    def _loadLocalWatchedData(self):
+        if not os.path.exists(self._jsonPath):
+            return {}
+        return self._loadWatchedDataFromFile(self._jsonPath, requireSyncplaySchema=False)
+
+    def _loadWatchedDataFromFile(self, jsonPath, requireSyncplaySchema):
+        try:
+            with open(jsonPath, "r", encoding="utf-8") as fh:
+                parsed = json.load(fh)
+        except Exception as e:
+            if requireSyncplaySchema:
+                raise WatchedHistoryInvalidImportError()
+            raise WatchedHistoryError(str(e))
+
+        if not isinstance(parsed, dict):
+            self._raiseInvalidJson(requireSyncplaySchema)
+        if requireSyncplaySchema and parsed.get("version") != 1:
+            raise WatchedHistoryInvalidImportError()
+        watched = parsed.get("watched")
+        if not isinstance(watched, dict):
+            self._raiseInvalidJson(requireSyncplaySchema)
+        return watched
+
+    def _raiseInvalidJson(self, requireSyncplaySchema):
+        if requireSyncplaySchema:
+            raise WatchedHistoryInvalidImportError()
+        raise WatchedHistoryError("Invalid watched history file.")
+
+    def _writeLocalWatchedData(self, watchedData):
+        tmpPath = self._jsonPath + ".tmp"
+        try:
+            directory = os.path.dirname(self._jsonPath)
+            if directory and not os.path.isdir(directory):
+                os.makedirs(directory, exist_ok=True)
+            payload = {"version": 1, "watched": watchedData}
+            content = json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True)
+            with open(tmpPath, "w", encoding="utf-8") as fh:
+                fh.write(content)
+            os.replace(tmpPath, self._jsonPath)
+        except Exception as e:
+            try:
+                os.remove(tmpPath)
+            except OSError:
+                pass
+            raise WatchedHistoryError(str(e))
+
+    def _createBackupIfLocalFileExists(self):
+        if not os.path.exists(self._jsonPath):
+            return None
+        backupPath = self._getBackupPath()
+        self._copyFile(self._jsonPath, backupPath)
+        return backupPath
+
+    def _getBackupPath(self):
+        directory = os.path.dirname(self._jsonPath)
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
+        backupPath = os.path.join(directory, ".syncplay-watched.backup-{}.json".format(timestamp))
+        counter = 2
+        while os.path.exists(backupPath):
+            backupPath = os.path.join(directory, ".syncplay-watched.backup-{}-{}.json".format(timestamp, counter))
+            counter += 1
+        return backupPath
+
+    def _copyFile(self, sourcePath, destinationPath):
+        sourcePath = os.path.abspath(sourcePath)
+        destinationPath = os.path.abspath(destinationPath)
+        if sourcePath == destinationPath:
+            return
+        directory = os.path.dirname(destinationPath)
+        if directory and not os.path.isdir(directory):
+            os.makedirs(directory, exist_ok=True)
+        shutil.copyfile(sourcePath, destinationPath)
+
+    def _normaliseHistoryFilename(self, filename):
+        if not filename:
+            return None
+        filename = str(filename).replace("\\", "/")
+        filename = os.path.basename(filename)
+        filename = os.path.normcase(filename)
+        return filename
+
+    def _normaliseDirectoryName(self, directoryName):
+        if not directoryName:
+            return None
+        return os.path.normcase(os.path.basename(os.path.normpath(directoryName)))
+
+    def _parseWatchedTimestamp(self, timestamp):
+        if not timestamp:
+            return None
+        try:
+            return datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
+        except Exception:
+            return None
+
+
 class EpisodeFilenameParser(object):
     """Parse episode numbers from filenames using single-file and contextual heuristics."""
 
@@ -1268,19 +1513,7 @@ class WatchedManager(object):
 
     def _getJsonPath(self):
         """Return the path to the single JSON index stored alongside the config file."""
-        configDir = self._client._config["configDir"] or ""
-        if not configDir:
-            configPath = self._client._config["configPath"] or ""
-            if configPath:
-                configDir = os.path.dirname(os.path.abspath(configPath))
-        if not configDir:
-            if os.name == 'nt':
-                configDir = os.getenv('APPDATA', '')
-            else:
-                configDir = os.getenv('XDG_CONFIG_HOME', '') or os.path.join(os.path.expanduser("~"), ".config")
-        if not configDir:
-            configDir = utils.findWorkingDir()
-        return os.path.join(configDir, constants.WATCHED_HISTORY_FILENAME)
+        return getWatchedHistoryJsonPath(self._client._config)
 
     def _loadJson(self, jsonPath):
         """Load (or reload) the single config-adjacent JSON watched index into cache."""

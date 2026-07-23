@@ -7,6 +7,7 @@ from datetime import datetime
 from syncplay import constants
 from syncplay import utils
 from syncplay.messages import getMessage, getLanguages, setLanguage, getInitialLanguage
+from syncplay.watched import getDefaultWatchedHistoryExportFilename, WatchedHistoryError, WatchedHistoryImportExportHelper, WatchedHistoryInvalidImportError
 from syncplay.players.playerFactory import PlayerFactory
 from syncplay.utils import isBSD, isLinux, isMacOS, isWindows
 from syncplay.utils import resourcespath, posixresourcespath, playerPathExists
@@ -439,6 +440,88 @@ class ConfigDialog(QtWidgets.QDialog):
     def showErrorMessage(self, errorMessage):
         QtWidgets.QMessageBox.warning(self, "Syncplay", errorMessage)
 
+    def _getWatchedHistoryDefaultDirectory(self):
+        return QStandardPaths.standardLocations(QStandardPaths.DocumentsLocation)[0]
+
+    def _exportWatchedHistory(self):
+        options = QtWidgets.QFileDialog.Options()
+        exportPath, filtr = QtWidgets.QFileDialog.getSaveFileName(
+            self,
+            getMessage("watched-history-export-title"),
+            os.path.join(self._getWatchedHistoryDefaultDirectory(), getDefaultWatchedHistoryExportFilename()),
+            getMessage("watched-history-json-filter"), "", options)
+        if not exportPath:
+            return
+
+        helper = WatchedHistoryImportExportHelper(
+            self.config,
+            utils.convertMultilineStringToList(self.mediasearchTextEdit.toPlainText()),
+            self.watchedSubfolderEdit.text())
+        addMissingFiles = False
+        try:
+            missingFiles = helper.getUnindexedWatchedSubfolderFiles()
+            if missingFiles:
+                examples = missingFiles[:10]
+                messageBox = QtWidgets.QMessageBox(self)
+                messageBox.setWindowTitle(getMessage("watched-history-export-title"))
+                messageBox.setText(getMessage("watched-history-reconcile-prompt").format(len(missingFiles), "\n".join(examples)))
+                addButton = messageBox.addButton(getMessage("watched-history-add-and-export"), QtWidgets.QMessageBox.AcceptRole)
+                exportOnlyButton = messageBox.addButton(getMessage("watched-history-export-without-adding"), QtWidgets.QMessageBox.ActionRole)
+                messageBox.addButton(QtWidgets.QMessageBox.Cancel)
+                messageBox.exec_()
+                clickedButton = messageBox.clickedButton()
+                if clickedButton == addButton:
+                    addMissingFiles = True
+                elif clickedButton == exportOnlyButton:
+                    addMissingFiles = False
+                else:
+                    return
+
+            result = helper.exportWatchedHistory(exportPath, addMissingFiles)
+            message = getMessage("watched-history-export-success").format(exportPath)
+            if result.get("added"):
+                message += "\n\n" + getMessage("watched-history-export-added").format(result.get("added"))
+            if result.get("backupPath"):
+                message += "\n\n" + getMessage("watched-history-backup-created").format(result.get("backupPath"))
+            QtWidgets.QMessageBox.information(self, "Syncplay", message)
+        except WatchedHistoryInvalidImportError:
+            self.showErrorMessage(getMessage("watched-history-invalid-error"))
+        except WatchedHistoryError as e:
+            self.showErrorMessage(getMessage("watched-history-operation-error").format(e))
+        except Exception as e:
+            self.showErrorMessage(getMessage("watched-history-operation-error").format(e))
+
+    def _importWatchedHistory(self):
+        options = QtWidgets.QFileDialog.Options()
+        importPath, filtr = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            getMessage("watched-history-import-title"),
+            self._getWatchedHistoryDefaultDirectory(),
+            getMessage("watched-history-json-filter"), "", options)
+        if not importPath:
+            return
+
+        helper = WatchedHistoryImportExportHelper(
+            self.config,
+            utils.convertMultilineStringToList(self.mediasearchTextEdit.toPlainText()),
+            self.watchedSubfolderEdit.text())
+        try:
+            result = helper.importAndMergeWatchedHistory(importPath)
+            if result.get("changed"):
+                message = getMessage("watched-history-import-success").format(
+                    result.get("added"), result.get("updated"), result.get("unchanged"), result.get("skipped"))
+                if result.get("backupPath"):
+                    message += "\n" + getMessage("watched-history-backup-created").format(result.get("backupPath"))
+            else:
+                message = getMessage("watched-history-no-import-changes")
+            QtWidgets.QMessageBox.information(self, "Syncplay", message)
+        except WatchedHistoryInvalidImportError:
+            self.showErrorMessage(getMessage("watched-history-invalid-error"))
+        except WatchedHistoryError as e:
+            self.showErrorMessage(getMessage("watched-history-operation-error").format(e))
+        except Exception as e:
+            self.showErrorMessage(getMessage("watched-history-operation-error").format(e))
+
     def browseMediapath(self):
         self.loadMediaBrowseSettings()
         options = QtWidgets.QFileDialog.Options()
@@ -857,6 +940,18 @@ class ConfigDialog(QtWidgets.QDialog):
         self.autoCreateSubfolderCheck = QtWidgets.QCheckBox(getMessage("syncplay-watchedsubfolderautocreate-label"))
         self.autoCreateSubfolderCheck.setObjectName("watchedSubfolderAutocreate")
         self.watchedVideosSettingsLayout.addWidget(self.autoCreateSubfolderCheck)
+
+        self.watchedHistoryImportExportWidget = QtWidgets.QWidget()
+        self.watchedHistoryImportExportLayout = QtWidgets.QHBoxLayout()
+        self.watchedHistoryImportExportLayout.setContentsMargins(0, 0, 0, 0)
+        self.watchedHistoryImportExportWidget.setLayout(self.watchedHistoryImportExportLayout)
+        self.exportWatchedHistoryButton = QtWidgets.QPushButton(getMessage("syncplay-watchedhistory-export-label"))
+        self.exportWatchedHistoryButton.clicked.connect(self._exportWatchedHistory)
+        self.importWatchedHistoryButton = QtWidgets.QPushButton(getMessage("syncplay-watchedhistory-import-label"))
+        self.importWatchedHistoryButton.clicked.connect(self._importWatchedHistory)
+        self.watchedHistoryImportExportLayout.addWidget(self.exportWatchedHistoryButton)
+        self.watchedHistoryImportExportLayout.addWidget(self.importWatchedHistoryButton)
+        self.watchedVideosSettingsLayout.addWidget(self.watchedHistoryImportExportWidget)
 
         self.watchedVideosSettingsGroup.setMaximumHeight(self.watchedVideosSettingsGroup.minimumSizeHint().height())
 

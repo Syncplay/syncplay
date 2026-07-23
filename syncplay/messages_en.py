@@ -592,12 +592,27 @@ en = {
     # Watched file functionality
     "syncplay-watchedhistory-title": "Watched history",
     "syncplay-watchedhistoryenabled-label": "Enable watched history (JSON index)",
+    "syncplay-watchedhistory-export-label": "Export watched history",
+    "syncplay-watchedhistory-import-label": "Import and merge watched history",
     "syncplay-autoremovefromplaylist-label": "Automatically remove watched files from playlist",
     "watchedhistoryenabled-tooltip": "Record watched files alongside the Syncplay config file as '.syncplay-watched.json'. Watched state is preserved even if files are moved or deleted.",
     "autoremovewatchedfromplaylist-tooltip": "Remove a playlist item from the shared playlist when Syncplay marks it as watched after playback reaches the end.",
     "watched-json-read-error": "Could not read watched history file '{}': {}",  # path, error
     "watched-json-write-error": "Could not write watched history file '{}': {}",  # path, error
     "watched-json-concurrent-update-error": "Could not update watched history file due to concurrent changes: {}",  # path
+    "watched-history-export-title": "Export watched history",
+    "watched-history-import-title": "Import watched history",
+    "watched-history-json-filter": "JSON files (*.json);;All files (*)",
+    "watched-history-reconcile-prompt": "{} file(s) are in watched subfolders but are not recorded in watched history. Add them before exporting?\n\nExamples:\n{}",
+    "watched-history-add-and-export": "Add and export",
+    "watched-history-export-without-adding": "Export without adding",
+    "watched-history-export-success": "Watched history exported to '{}'.",  # path
+    "watched-history-export-added": "Added {} file(s) from watched subfolders before exporting.",  # count
+    "watched-history-import-success": "Watched history imported. Added: {}; updated: {}; unchanged: {}; skipped: {}.",  # counts
+    "watched-history-no-import-changes": "The selected watched history file did not contain any new or newer entries.",
+    "watched-history-backup-created": "Backup created at '{}'.",  # path
+    "watched-history-invalid-error": "The selected file is not a valid Syncplay watched history file.",
+    "watched-history-operation-error": "Watched history operation failed: {}",  # error
     "watched-move-permission-error": "Could not move '{}' to watched subfolder due to a permissions error.",  # filename
     "watched-move-failed-error": "Could not move '{}' to watched subfolder: {}",  # filename, error
     "watched-move-too-many-retries-error": "Giving up on moving '{}' to watched subfolder after too many retries.",  # filename
