@@ -62,6 +62,12 @@ class JSONCommandProtocol(LineReceiver):
     def drop(self):
         self.transport.loseConnection()
 
+    def abort(self):
+        if hasattr(self.transport, "abortConnection"):
+            self.transport.abortConnection()
+        else:
+            self.drop()
+    
     def dropWithError(self, error):
         raise NotImplementedError()
 
@@ -260,6 +266,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         return position, paused, doSeek, setBy
 
     def _handleStatePing(self, state):
+        latencyCalculation = None
         if "latencyCalculation" in state["ping"]:
             latencyCalculation = state["ping"]["latencyCalculation"]
         if "clientLatencyCalculation" in state["ping"]:
