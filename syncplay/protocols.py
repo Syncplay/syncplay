@@ -260,6 +260,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         return position, paused, doSeek, setBy
 
     def _handleStatePing(self, state):
+        latencyCalculation = None
         if "latencyCalculation" in state["ping"]:
             latencyCalculation = state["ping"]["latencyCalculation"]
         if "clientLatencyCalculation" in state["ping"]:
