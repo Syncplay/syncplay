@@ -156,6 +156,7 @@ class SyncplayClient(object):
 
     def initProtocol(self, protocol):
         self._protocol = protocol
+        self._lastGlobalUpdate = time.time()
 
     def destroyProtocol(self):
         if self._protocol:
@@ -188,9 +189,10 @@ class SyncplayClient(object):
 
     def checkIfConnected(self):
         if self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > constants.PROTOCOL_TIMEOUT:
+            protocol = self._protocol
             self._lastGlobalUpdate = None
             self.ui.showErrorMessage(getMessage("server-timeout-error"))
-            self._protocol.drop()
+            protocol.abort()
             return False
         return True
 
@@ -2021,6 +2023,10 @@ class SyncplayPlaylist():
 
         with open(path) as f:
             newPlaylist = f.read().splitlines()
+            if path.lower().endswith(".m3u8"):
+                newPlaylist = [
+                    line for line in newPlaylist if line.strip() and not line.startswith("#")
+                ]
             if shuffle:
                 random.shuffle(newPlaylist)
             if newPlaylist:
