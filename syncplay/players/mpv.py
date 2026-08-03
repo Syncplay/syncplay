@@ -2,17 +2,15 @@
 import os
 import random
 import re
-import sys
 import time
 import subprocess
 import threading
-import ast
 
 from syncplay import constants
 from syncplay.messages import getMessage
 from syncplay.players.basePlayer import BasePlayer
 from syncplay.utils import getRuntimeDir, isURL, findResourcePath
-from syncplay.utils import isMacOS, isWindows, isASCII
+from syncplay.utils import isMacOS, isWindows
 from syncplay.utils import playerPathExists
 from syncplay.vendor.python_mpv_jsonipc.python_mpv_jsonipc import MPV
 
@@ -601,30 +599,14 @@ class MpvPlayer(BasePlayer):
             env = os.environ.copy()
             if 'TERM' in env:
                 del env['TERM']
-            # On macOS, youtube-dl requires system python to run. Set the environment
-            # to allow that version of python to be executed in the mpv subprocess.
+            # On macOS, the .app bundle sets PYTHONHOME and PYTHONPATH
+            # to the bundled Python. If inherited by mpv subprocesses
+            # (e.g. yt-dlp), this overrides where Python looks for its
+            # standard library, causing "No module named 'encodings'".
+            # Clear these so yt-dlp uses its own Python correctly
             if isMacOS():
-                try:
-                    env['PATH'] = '/opt/homebrew/bin:/usr/local/bin:/usr/bin'
-                    ytdl_path = subprocess.check_output(['which', 'youtube-dl'], text=True, env=env).rstrip('\n')
-                    with open(ytdl_path, 'rb') as f:
-                        ytdl_shebang = f.readline()
-                    ytdl_python = ytdl_shebang.decode('utf-8').lstrip('!#').rstrip('\n')
-                    if '/usr/bin/env' in ytdl_python:
-                        python_name = ytdl_python.split(' ')[1]
-                        python_executable = subprocess.check_output(['which', python_name], text=True, env=env).rstrip('\n')
-                    else:
-                        python_executable = ytdl_python
-                    pythonLibs = subprocess.check_output([python_executable, '-E', '-c',
-                                                          'import sys; print(sys.path)'],
-                                                          text=True, env=dict())
-                    pythonLibs = ast.literal_eval(pythonLibs)
-                    pythonPath = ':'.join(pythonLibs[1:])
-                except Exception as e:
-                    pythonPath = None
-                if pythonPath is not None:
-                    env['PATH'] = python_executable + ':' + env['PATH']
-                    env['PYTHONPATH'] = pythonPath
+                env.pop('PYTHONHOME', None)
+                env.pop('PYTHONPATH', None)
             try:
                 self.mpvpipe = self.playerIPCHandler(
                     loglevel="info",
