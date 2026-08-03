@@ -25,6 +25,10 @@ ru = {
 
     "connection-attempt-notification": "Подключение к {}:{}",  # Port, IP
     "reconnection-attempt-notification": "Соединение с сервером потеряно, переподключение",
+    "reconnect-menu-triggered-notification": "Ручное переподключение инициировано - попытка нового подключения к {}:{} через 2 секунды...",
+    "reconnect-failed-no-host-error": "Невозможно переподключиться: информация о сервере недоступна",
+    "reconnect-failed-no-port-error": "Невозможно переподключиться: недопустимая конфигурация сервера",
+    "reconnect-failed-error": "Переподключение не удалось: {}",
     "disconnection-notification": "Отключились от сервера",
     "connection-failed-notification": "Не удалось подключиться к серверу",
     "connected-successful-notification": "Соединение с сервером установлено",
@@ -334,6 +338,7 @@ ru = {
     "setmediadirectories-menu-label": "&Папки воспроизведения",
     "loadplaylistfromfile-menu-label": "&Загрузить список воспроизведения из файла",
     "saveplaylisttofile-menu-label": "&Сохранить список воспроизведения в файл",
+    "reconnect-menu-label": "&Переподключиться к серверу",
     "exit-menu-label": "&Выход",
     "advanced-menu-label": "&Дополнительно",
     "window-menu-label": "&Вид",
