@@ -54,6 +54,9 @@ local assdraw = require "mp.assdraw"
 
 local opt = require 'mp.options'
 
+local has_mp_input = (mp.input ~= nil)
+local using_native_input = false
+
 local repl_active = false
 local insert_mode = false
 local line = ''
@@ -459,7 +462,7 @@ function update()
 end
 
 function input_ass()
-    if not repl_active then
+    if using_native_input or not repl_active then
         return ""
     end
     last_chat_time = mp.get_time() -- to keep chat messages showing while entering input
@@ -765,8 +768,42 @@ function maybe_exit()
     end
 end
 
+-- Send a chat line to the Python client via print-text
+function send_chat_line(text)
+    if text == nil or text == '' then
+        return
+    end
+    text = string.gsub(text, "\\", "\\\\")
+    text = string.gsub(text, "\"", "\\\"")
+    mp.command('print-text "<chat>'..text..'</chat>"')
+end
+
+-- Open native text input using mp.input.get() (mpv 0.39+)
+-- Supports IME composition for CJK and other input methods
+function open_native_input()
+    using_native_input = true
+    last_chat_time = mp.get_time()
+    mp.input.get({
+        prompt = opts['inputPromptStartCharacter'] .. " ",
+        submit = function(text)
+            send_chat_line(text)
+            using_native_input = false
+        end,
+        closed = function()
+            using_native_input = false
+        end,
+    })
+end
+
 -- Run the current command and clear the line (Enter)
 function handle_enter()
+    if has_mp_input then
+        if not using_native_input then
+            open_native_input()
+        end
+        return
+    end
+
     if not repl_active then
         set_active(true)
         return
@@ -777,9 +814,7 @@ function handle_enter()
         return
     end
     key_hints_enabled = false
-    line = string.gsub(line,"\\", "\\\\")
-    line = string.gsub(line,"\"", "\\\"")
-    mp.command('print-text "<chat>'..line..'</chat>"')
+    send_chat_line(line)
     clear()
 end
 
