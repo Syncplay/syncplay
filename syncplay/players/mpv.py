@@ -17,7 +17,7 @@ from syncplay.utils import playerPathExists
 from syncplay.vendor.python_mpv_jsonipc.python_mpv_jsonipc import MPV
 
 class MpvPlayer(BasePlayer):
-    RE_VERSION = re.compile(r'.*mpv (\d+)\.(\d+)\.\d+.*')
+    RE_VERSION = re.compile(r'.*mpv v?(\d+)\.(\d+)\.\d+.*')
     osdMessageSeparator = "\\n"
     osdMessageSeparator = "; "  # TODO: Make conditional
     POSITION_QUERY = 'time-pos'
