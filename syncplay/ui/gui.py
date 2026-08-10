@@ -144,7 +144,10 @@ class AboutDialog(QtWidgets.QDialog):
         else:
             self.setWindowTitle(getMessage("about-dialog-title"))
             if isWindows():
-                self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+                if IsPySide6:
+                    self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint  | Qt.CustomizeWindowHint                        )
+                else:
+                    self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QPixmap(resourcespath + 'syncplay.png'))
         nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
         nameLabel.setFont(QtGui.QFont("Helvetica", 18))
@@ -207,7 +210,10 @@ class CertificateDialog(QtWidgets.QDialog):
         else:
             self.setWindowTitle(getMessage("tls-information-title"))
             if isWindows():
-                self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+                if IsPySide6:
+                    self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint  | Qt.CustomizeWindowHint                        )
+                else:
+                    self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QPixmap(resourcespath + 'syncplay.png'))
         statusLabel = QtWidgets.QLabel(getMessage("tls-dialog-status-label").format(tlsData["subject"]))
         descLabel = QtWidgets.QLabel(getMessage("tls-dialog-desc-label").format(tlsData["subject"]))
