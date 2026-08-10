@@ -1193,7 +1193,10 @@ class MainWindow(QtWidgets.QMainWindow):
         URIsLayout.addWidget(URIsButtonBox, 2, 0, 1, 1)
         URIsDialog.setLayout(URIsLayout)
         URIsDialog.setModal(True)
-        URIsDialog.setWindowFlags(URIsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            URIsDialog.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            URIsDialog.setWindowFlags(URIsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         URIsDialog.show()
         result = URIsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1224,7 +1227,10 @@ class MainWindow(QtWidgets.QMainWindow):
         RoomsLayout.addWidget(RoomsButtonBox, 2, 0, 1, 1)
         RoomsDialog.setLayout(RoomsLayout)
         RoomsDialog.setModal(True)
-        RoomsDialog.setWindowFlags(RoomsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            RoomsDialog.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            RoomsDialog.setWindowFlags(RoomsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         RoomsDialog.show()
         result = RoomsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1259,7 +1265,10 @@ class MainWindow(QtWidgets.QMainWindow):
         editPlaylistDialog.setModal(True)
         editPlaylistDialog.setMinimumWidth(600)
         editPlaylistDialog.setMinimumHeight(500)
-        editPlaylistDialog.setWindowFlags(editPlaylistDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            editPlaylistDialog.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            editPlaylistDialog.setWindowFlags(editPlaylistDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         editPlaylistDialog.show()
         result = editPlaylistDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1290,7 +1299,10 @@ class MainWindow(QtWidgets.QMainWindow):
         MediaDirectoriesAddFolderButton.pressed.connect(lambda: self.openAddMediaDirectoryDialog(MediaDirectoriesTextbox, MediaDirectoriesDialog))
         MediaDirectoriesLayout.addWidget(MediaDirectoriesAddFolderButton, 1, 1, 1, 1, Qt.AlignTop)
         MediaDirectoriesDialog.setLayout(MediaDirectoriesLayout)
-        MediaDirectoriesDialog.setWindowFlags(MediaDirectoriesDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            MediaDirectoriesDialog.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            MediaDirectoriesDialog.setWindowFlags(MediaDirectoriesDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         MediaDirectoriesDialog.setModal(True)
         MediaDirectoriesDialog.show()
         result = MediaDirectoriesDialog.exec_()
@@ -1316,7 +1328,10 @@ class MainWindow(QtWidgets.QMainWindow):
         TrustedDomainsButtonBox.rejected.connect(TrustedDomainsDialog.reject)
         TrustedDomainsLayout.addWidget(TrustedDomainsButtonBox, 2, 0, 1, 1)
         TrustedDomainsDialog.setLayout(TrustedDomainsLayout)
-        TrustedDomainsDialog.setWindowFlags(TrustedDomainsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            TrustedDomainsDialog.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            TrustedDomainsDialog.setWindowFlags(TrustedDomainsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         TrustedDomainsDialog.setModal(True)
         TrustedDomainsDialog.show()
         result = TrustedDomainsDialog.exec_()
@@ -2144,7 +2159,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.QtGui = QtGui
         if isMacOS():
             self.setWindowFlags(self.windowFlags())
-        else:
+        elif not (isWindows() and IsPySide6):
             try:    
                 self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
             except TypeError:
@@ -2158,7 +2173,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addMainFrame(self)
         self.loadSettings()
         self.setWindowIcon(QtGui.QPixmap(resourcespath + "syncplay.png"))
-        self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        else:
+            self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.show()
         self.setAcceptDrops(True)
         self.clearedPlaylistNote = False
