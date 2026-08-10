@@ -712,7 +712,11 @@ resources = [
 resources.extend(guiIcons)
 intf_resources = ["syncplay/resources/lua/intf/syncplay.lua"]
 
-qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
+if QT_BINDING == 'PySide6':
+    qt_plugins = ['platforms\\qwindows.dll']
+else:
+    qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
+
 
 common_info = dict(
     name='Syncplay',
