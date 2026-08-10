@@ -1128,13 +1128,19 @@ class ConfigDialog(QtWidgets.QDialog):
             font = QtGui.QFont()
             font.setFamily(self.config[configName + "FontFamily"])
             font.setPointSize(self.config[configName + "RelativeFontSize"])
-            font.setWeight(self.config[configName + "FontWeight"])
+            if IsPySide6:
+                font.setLegacyWeight(int(self.config[configName + "FontWeight"]))
+            else:
+                font.setWeight(self.config[configName + "FontWeight"])
             font.setUnderline(self.config[configName + "FontUnderline"])
             ok, value = QtWidgets.QFontDialog.getFont(font)
             if ok:
                 self.config[configName + "FontFamily"] = value.family()
                 self.config[configName + "RelativeFontSize"] = value.pointSize()
-                self.config[configName + "FontWeight"] = value.weight()
+                if IsPySide6:
+                    self.config[configName + "FontWeight"] = value.legacyWeight()
+                else:
+                    self.config[configName + "FontWeight"] = value.weight()
                 self.config[configName + "FontUnderline"] = value.underline()
 
     def colourDialog(self, configName):
