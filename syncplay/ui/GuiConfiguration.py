@@ -15,13 +15,14 @@ from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, IsPySide, 
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QSize, QPoint, QUrl, QLine, QEventLoop, Signal
 from syncplay.vendor.Qt.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
 from syncplay.vendor.Qt.QtGui import QCursor, QIcon, QImage, QDesktopServices
-try:
-    if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-except AttributeError:
-    pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
-if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+if not IsPySide6:
+    try:
+        if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+            QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+    except AttributeError:
+        pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
+    if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 if IsPySide6:
     from PySide6.QtCore import QStandardPaths
 elif IsPySide2:
