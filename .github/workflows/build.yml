@@ -95,6 +95,13 @@ jobs:
           python3 -c "from PySide6.QtCore import __version__; print(__version__)"
           python3 -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.path(QLibraryInfo.LibrariesPath))"
           python3 -c "import py2exe; print(py2exe.__version__)"
+          
+      - name: Check PySide6 Windows plugins
+        shell: pwsh
+        run: |
+          $plugins = python -c "from PySide6.QtCore import QLibraryInfo; print(QLibraryInfo.path(QLibraryInfo.PluginsPath))"
+          Write-Host "PySide6 plugin directory: $plugins"
+          Get-ChildItem "$plugins\styles"
 
       - name: Build
         run: |
