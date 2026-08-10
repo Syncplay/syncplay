@@ -2174,7 +2174,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.loadSettings()
         self.setWindowIcon(QtGui.QPixmap(resourcespath + "syncplay.png"))
         if isWindows() and IsPySide6:
-            self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+            self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
         else:
             self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.show()
