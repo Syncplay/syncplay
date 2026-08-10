@@ -644,10 +644,6 @@ class NSISScript(object):
         return "\n".join(delete)
 
 def pruneUnneededLibraries():
-    if QT_BINDING != 'PySide2':
-        print('*** skipping Qt library pruning for PySide6 build ***')
-        return
-
     from pathlib import Path
     cwd = os.getcwd()
     libDir = cwd + '\\' + OUT_DIR + '\\lib\\'
@@ -667,8 +663,21 @@ def pruneUnneededLibraries():
                     'Qt5WebEngineCore.dll', 'Qt5WebEngineWidgets.dll', 'Qt5WebSockets.dll', 'Qt5WinExtras.dll', 'Qt5Xml.dll',
                     'Qt5XmlPatterns.dll']
     windowsDLL = ['MSVCP140.dll', 'VCRUNTIME140.dll']
+    if QT_BINDING == 'PySide6':
+        unneededModules = ['PySide6.QtConcurrent.pyd', 'PySide6.QtDesigner.pyd', 'PySide6.QtHelp.pyd',
+                           'PySide6.QtOpenGL.pyd', 'PySide6.QtOpenGLWidgets.pyd', 'PySide6.QtPrintSupport.pyd',
+                           'PySide6.QtQml.pyd', 'PySide6.QtQuick.pyd', 'PySide6.QtQuickControls2.pyd',
+                           'PySide6.QtQuickTest.pyd', 'PySide6.QtQuickWidgets.pyd', 'PySide6.QtSql.pyd',
+                           'PySide6.QtSvg.pyd', 'PySide6.QtSvgWidgets.pyd', 'PySide6.QtTest.pyd',
+                           'PySide6.QtUiTools.pyd', 'PySide6.QtXml.pyd']
+        unneededLibs = ['Qt6Concurrent.dll', 'Qt6Designer.dll', 'Qt6Help.dll', 'Qt6OpenGL.dll', 'Qt6OpenGLWidgets.dll',
+                        'Qt6PrintSupport.dll', 'Qt6Qml.dll', 'Qt6Quick.dll', 'Qt6QuickControls2.dll', 'Qt6QuickTest.dll',
+                        'Qt6QuickWidgets.dll', 'Qt6Sql.dll', 'Qt6Svg.dll', 'Qt6SvgWidgets.dll', 'Qt6Test.dll',
+                        'Qt6UiTools.dll', 'Qt6Xml.dll']
+        windowsDLL = []
     deleteList = unneededModules + unneededLibs + windowsDLL
-    deleteList.append('api-*')
+    if QT_BINDING == 'PySide2':
+        deleteList.append('api-*')
     for filename in deleteList:
         for p in Path(libDir).glob(filename):
             p.unlink()
