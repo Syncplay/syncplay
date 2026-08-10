@@ -29,6 +29,56 @@ except ImportError:
 import syncplay
 from syncplay.messages import getMissingStrings, getMessage, getLanguages
 
+try:
+    import PySide6
+    from PySide6 import QtCore as BuildQtCore
+    QT_BINDING = 'PySide6'
+    QT_PACKAGES = 'PySide6, shiboken6'
+except ImportError:
+    from PySide2 import QtCore as BuildQtCore
+    QT_BINDING = 'PySide2'
+    QT_PACKAGES = 'PySide2'
+
+
+def installPySide6Py2exeHook():
+    if QT_BINDING != 'PySide6':
+        return
+
+    import ast
+    from py2exe import hooks as py2exeHooks
+
+    qtModules = list(PySide6.__all__)
+
+    def hookPySide6(finder, module):
+        tree = ast.parse(module.__source__)
+        foundModuleFinder = [False]
+        foundDirectorySetup = [False]
+
+        class ChangeDef(ast.NodeTransformer):
+            def visit_FunctionDef(self, node):
+                if node.name == '_find_all_qt_modules':
+                    node.body = ast.parse('return {!r}'.format(qtModules)).body
+                    foundModuleFinder[0] = True
+                elif node.name == '_setupQtDirectories':
+                    node.body = ast.parse(
+                        'global Shiboken\nfrom shiboken6 import Shiboken'
+                    ).body
+                    foundDirectorySetup[0] = True
+                return node
+
+        patchedTree = ast.fix_missing_locations(ChangeDef().visit(tree))
+        if not foundModuleFinder[0] or not foundDirectorySetup[0]:
+            raise RuntimeError('PySide6 package layout is not compatible with the py2exe build workaround')
+        module.__code_object__ = compile(
+            patchedTree, module.__file__, 'exec', optimize=module.__optimize__
+        )
+        finder.import_hook('shiboken6')
+
+    py2exeHooks.hook_PySide6 = hookPySide6
+
+
+installPySide6Py2exeHook()
+
 missingStrings = getMissingStrings()
 if missingStrings is not None and missingStrings != "":
     import warnings
@@ -594,6 +644,10 @@ class NSISScript(object):
         return "\n".join(delete)
 
 def pruneUnneededLibraries():
+    if QT_BINDING != 'PySide2':
+        print('*** skipping Qt library pruning for PySide6 build ***')
+        return
+
     from pathlib import Path
     cwd = os.getcwd()
     libDir = cwd + '\\' + OUT_DIR + '\\lib\\'
@@ -621,8 +675,10 @@ def pruneUnneededLibraries():
 
 def copyQtPlugins(paths):
     import shutil
-    from PySide2 import QtCore
-    basePath = QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)
+    if QT_BINDING == 'PySide6':
+        basePath = BuildQtCore.QLibraryInfo.path(BuildQtCore.QLibraryInfo.PluginsPath)
+    else:
+        basePath = BuildQtCore.QLibraryInfo.location(BuildQtCore.QLibraryInfo.PluginsPath)
     basePath = basePath.replace('/', '\\')
     destBase = os.getcwd() + '\\' + OUT_DIR
     for elem in paths:
@@ -678,7 +734,7 @@ info = dict(
     options={
         'py2exe': {
             'dist_dir': OUT_DIR,
-            'packages': 'PySide2, cffi, OpenSSL, certifi',
+            'packages': '{}, cffi, OpenSSL, certifi'.format(QT_PACKAGES),
             'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file, sqlite3',
             'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, tcl, tkinter',
             'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
