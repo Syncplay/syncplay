@@ -713,7 +713,7 @@ resources.extend(guiIcons)
 intf_resources = ["syncplay/resources/lua/intf/syncplay.lua"]
 
 if QT_BINDING == 'PySide6':
-    qt_plugins = ['platforms\\qwindows.dll']
+    qt_plugins = ['platforms\\qwindows.dll', 'styles\\qmodernwindowsstyle.dll']
 else:
     qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
 
