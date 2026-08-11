@@ -640,7 +640,7 @@ class NSISScript(object):
         for dir_ in fileList.keys():
             for file_ in fileList[dir_]:
                 delete.append('DELETE "$INSTDIR\\{}\\{}"'.format(dir_, file_))
-            delete.append('RMdir "$INSTDIR\\{}"'.format(file_))
+            delete.append('RMdir "$INSTDIR\\{}"'.format(dir_))
         return "\n".join(delete)
 
 def pruneUnneededLibraries():
