@@ -102,6 +102,7 @@ NSIS_COMPILE = get_nsis_path()
 
 OUT_DIR = "syncplay_v{}".format(syncplay.version)
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
+DEFAULT_INSTALL_DIR = "$PROGRAMFILES64\\Syncplay" if sys.maxsize > 2**32 else "$PROGRAMFILES\\Syncplay"
 
 languages = getLanguages()
 
@@ -172,7 +173,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
   Name "Syncplay $version"
   OutFile "Syncplay-$version-Setup.exe"
-  InstallDir $$PROGRAMFILES\Syncplay
+  InstallDir "$installDir"
+  InstallDirRegKey HKLM SOFTWARE\Syncplay "Install_Dir"
   RequestExecutionLevel admin
   ManifestDPIAware true
   XPStyle on
@@ -598,6 +600,7 @@ class NSISScript(object):
             raise RuntimeError("Cannot create setup script, file exists at {}".format(SETUP_SCRIPT_PATH))
         contents = Template(NSIS_SCRIPT_TEMPLATE).substitute(
             version=syncplay.version,
+            installDir=DEFAULT_INSTALL_DIR,
             uninstallFiles=uninstallFiles,
             installFiles=installFiles,
             totalSize=totalSize,
