@@ -1067,6 +1067,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def browseMediapath(self):
+        if self._syncplayClient.playerIsNotReady():
+            self.showErrorMessage(getMessage("player-not-ready-error"))
+            return
         if self._syncplayClient._player.customOpenDialog == True:
             self._syncplayClient._player.openCustomOpenDialog()
             return
@@ -1096,6 +1099,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def OpenAddFilesToPlaylistDialog(self):
+        if self._syncplayClient.playerIsNotReady():
+            self.showErrorMessage(getMessage("player-not-ready-error"))
+            return
         if self._syncplayClient._player.customOpenDialog == True:
             self._syncplayClient._player.openCustomOpenDialog()
             return

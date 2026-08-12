@@ -619,6 +619,10 @@ class SyncplayClient(object):
             self.playlist.loadPlaylistFromFile(filePath, resetPosition)
             return
 
+        if self.playerIsNotReady():
+            self.ui.showErrorMessage(getMessage("player-not-ready-error"))
+            return
+
         self.playlist.openedFile()
         self._player.openFile(filePath, resetPosition)
         if resetPosition:
