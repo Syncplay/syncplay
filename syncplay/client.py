@@ -119,6 +119,7 @@ class SyncplayClient(object):
 
         self._running = False
         self._askPlayerTimer = None
+        self._fileSizeRecheckTimer = None
 
         self._lastPlayerUpdate = None
         self._playerPosition = 0.0
@@ -168,6 +169,7 @@ class SyncplayClient(object):
         if not self._player.alertOSDSupported:
             constants.OSD_WARNING_MESSAGE_DURATION = constants.NO_ALERT_OSD_WARNING_DURATION
         self.scheduleAskPlayer()
+        self.scheduleFileSizeRecheck()
         self.__playerReady.callback(player)
 
     def addPlayerReadyCallback(self, lambdaToCall):
@@ -186,6 +188,30 @@ class SyncplayClient(object):
         if self._player:
             self._player.askForStatus()
         self.checkIfConnected()
+
+    def scheduleFileSizeRecheck(self, when=constants.FILESIZE_RECHECK_DELAY):
+        self._fileSizeRecheckTimer = task.LoopingCall(self.recheckFileSize)
+        self._fileSizeRecheckTimer.start(when, now=False)
+
+    def recheckFileSize(self):
+        if not self._running:
+            return
+        file_ = self.userlist.currentUser.file
+        if not file_ or not file_.get('path'):
+            return
+        path = file_['path']
+        if utils.isURL(path):
+            return
+        if self._config['filesizePrivacyMode'] == PRIVACY_DONTSEND_MODE:
+            return
+        try:
+            size = os.path.getsize(path)
+        except OSError:
+            return
+        size = self.__executeFilesizePrivacySettings(size)
+        if size != file_['size']:
+            file_['size'] = size
+            self.sendFile()
 
     def checkIfConnected(self):
         if self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > constants.PROTOCOL_TIMEOUT:
@@ -648,11 +674,15 @@ class SyncplayClient(object):
             filename = utils.hashFilename(filename)
         elif self._config['filenamePrivacyMode'] == PRIVACY_DONTSEND_MODE:
             filename = PRIVACY_HIDDENFILENAME
+        size = self.__executeFilesizePrivacySettings(size)
+        return filename, size
+
+    def __executeFilesizePrivacySettings(self, size):
         if self._config['filesizePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
             size = utils.hashFilesize(size)
         elif self._config['filesizePrivacyMode'] == PRIVACY_DONTSEND_MODE:
             size = 0
-        return filename, size
+        return size
 
     def setServerVersion(self, version, featureList):
         self.serverVersion = version
