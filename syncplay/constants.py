@@ -214,7 +214,8 @@ MPV_ERROR_MESSAGES_TO_REPEAT = ['[ytdl_hook] Your version of youtube-dl is too o
 
 # Changing these is usually not something you're looking for
 PLAYER_ASK_DELAY = 0.1
-FILESIZE_RECHECK_DELAY = 5  # How often to re-check the size of the currently playing local file, in seconds (for files that grow while playing, e.g. an in-progress download)
+FILESIZE_RECHECK_DELAY = 10
+FILESIZE_STABLE_THRESHOLD = 60
 PING_MOVING_AVERAGE_WEIGHT = 0.85
 MPC_OPEN_MAX_WAIT_TIME = 10
 MPC_LOCK_WAIT_TIME = 0.2
