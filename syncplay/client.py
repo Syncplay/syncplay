@@ -290,6 +290,10 @@ class SyncplayClient(object):
         position = self.getStoredPlayerPosition()
         currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
         if (
+                position is not None and
+                self.lastUpdatedFileTime is not None and
+                time.time() - self.lastUpdatedFileTime >= constants.WATCHED_NEAR_EOF_MINIMUM_TIME and
+                self.playlist.lastNearEOFPlayedTime >= constants.WATCHED_NEAR_EOF_MINIMUM_PLAYED_TIME and
                 currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
                 abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
         ):
@@ -1841,16 +1845,18 @@ class SyncplayPlaylist():
         self._lastPlaylistIndexChange = time.time()
         self.lastNearEOFName = None
         self.lastNearEOFPath = None
-        self.lastNearEOFFirstTime = 0.0
+        self.lastNearEOFPlayedTime = 0.0
         self.lastNearEOFLastTime = 0.0
+        self.lastNearEOFWasPlaying = False
         self.lastOwnPlaylistIndexEchoName = None
         self.lastOwnPlaylistIndexEchoTime = 0.0
 
     def clearNearEOFMarker(self):
         self.lastNearEOFName = None
         self.lastNearEOFPath = None
-        self.lastNearEOFFirstTime = 0.0
+        self.lastNearEOFPlayedTime = 0.0
         self.lastNearEOFLastTime = 0.0
+        self.lastNearEOFWasPlaying = False
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
         @wraps(f)
@@ -2209,19 +2215,22 @@ class SyncplayPlaylist():
     @needsSharedPlaylistsEnabled
     def recordPlayedNearEOF(self, paused, position):
         if not self._client.userlist.currentUser.file:
+            self.lastNearEOFWasPlaying = False
             return
         if position == None:
+            self.lastNearEOFWasPlaying = False
             return
         currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
         if currentLength <= 0:
+            self.lastNearEOFWasPlaying = False
             return
         isPlaying = paused is False
         remainingTime = currentLength - position
+        nearEOFWindow = min(constants.PLAYLIST_NEAR_EOF_WINDOW, currentLength / 2)
 
         if (
             isPlaying and
-            remainingTime < constants.PLAYLIST_NEAR_EOF_WINDOW and
-            currentLength > (constants.PLAYLIST_NEAR_EOF_WINDOW * 2) and  # The EOF window must represent at least the last half of the video to avoid misdetection when playing start of a short file
+            remainingTime < nearEOFWindow and
             currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
             self.notJustChangedPlaylist()
         ):
@@ -2229,8 +2238,16 @@ class SyncplayPlaylist():
             if self.lastNearEOFName != self._client.userlist.currentUser.file['name']:
                 self.lastNearEOFName = self._client.userlist.currentUser.file['name']
                 self.lastNearEOFPath = self._client.userlist.currentUser.file['path']
-                self.lastNearEOFFirstTime = now_monotime
+                self.lastNearEOFPlayedTime = 0.0
+                self.lastNearEOFWasPlaying = False
+            if self.lastNearEOFWasPlaying:
+                elapsed = now_monotime - self.lastNearEOFLastTime
+                if elapsed <= constants.PLAYLIST_NEAR_EOF_LATCH_TTL:
+                    self.lastNearEOFPlayedTime += max(0.0, elapsed)
             self.lastNearEOFLastTime = now_monotime
+            self.lastNearEOFWasPlaying = True
+        else:
+            self.lastNearEOFWasPlaying = False
 
     @needsSharedPlaylistsEnabled
     def doubleCheckForWatchedPreviousFile(self):
@@ -2241,12 +2258,13 @@ class SyncplayPlaylist():
             return False
 
         now_monotime = time.monotonic()
-        dwell = max(0.0, self.lastNearEOFLastTime - self.lastNearEOFFirstTime)
-        if dwell < constants.PLAYLIST_NEAR_EOF_MIN_DWELL:
+        if self.lastNearEOFPlayedTime < constants.WATCHED_NEAR_EOF_MINIMUM_TIME:
+            self.clearNearEOFMarker()
             return False
 
         age = now_monotime - self.lastNearEOFLastTime
         if age > constants.PLAYLIST_NEAR_EOF_LATCH_TTL:
+            self.clearNearEOFMarker()
             return False
         filePath = self.lastNearEOFPath
         self.clearNearEOFMarker()
