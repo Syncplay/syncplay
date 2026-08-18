@@ -905,10 +905,10 @@ class WatchedManager(object):
                 except Exception as e:
                     self._client.ui.showDebugMessage("Moved watched file but could not notify: {}".format(e))
 
-            except PermissionError:
-                self._client.ui.showErrorMessage(
-                    getMessage("watched-move-permission-error").format(srcPath))
-                self._drop(srcPath, None)
+            except PermissionError as e:
+                self._noteAttempt(srcPath)
+                self._client.ui.showDebugMessage(
+                    "Deferring watched move for '{}': {}".format(srcPath, e))
 
             except Exception as e:
                 msg = str(e).lower()
