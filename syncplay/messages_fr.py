@@ -251,9 +251,14 @@ fr = {
     "language-label": "Langue:",
     "automatic-language": "Défaut ({})",  # Default language
     "showdurationnotification-label": "Avertir des incohérences de durée de média",
+    "showplaylistskipwarnings-label": "Avertir lorsque la liste de lecture risque de sauter des fichiers non visionnés",
+    "showplaylistskipwarnings-tooltip": "Afficher des avertissements lorsque Syncplay pense que la liste de lecture saute des fichiers qui n'ont pas encore été visionnés.",
+    "showplaylistorderwarnings-label": "Avertir lorsque les fichiers de la liste de lecture semblent être dans le désordre",
+    "showplaylistorderwarnings-tooltip": "Afficher des avertissements lorsque Syncplay pense que les fichiers de la liste de lecture peuvent être dans le mauvais ordre.",
     "basics-label": "Réglages de base",
+    "files-label": "Fichiers",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "readiness-label": "Jouer pause",
-    "misc-label": "Divers",
+    "misc-label": "Confidentialité/Divers",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
     "core-behaviour-title": "Comportement du salon principal",
     "syncplay-internals-title": "procédures internes",
     "syncplay-mediasearchdirectories-title": "Répertoires pour rechercher des médias",
@@ -555,4 +560,50 @@ fr = {
 
     "playlist-empty-error": "La liste de lecture est actuellement vide.",
     "playlist-invalid-index-error": "Index de liste de lecture non valide",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "syncplay-watchedfiles-title": "Fichiers vus",
+    "syncplay-watchedautomove-label": "Déplacer automatiquement les fichiers vus vers le sous-dossier (si le sous-dossier existe)",
+    "syncplay-watchedmovesubfolder-label": "Sous-dossier pour les fichiers vus",
+    "syncplay-watchedsubfolderautocreate-label": "Créer automatiquement le sous-dossier des fichiers vus si nécessaire",
+    "mark-as-watched-menu-label": "Marquer comme vu",
+    "mark-as-unwatched-menu-label": "Marquer comme non vu",
+    "previous-file-menu-section-label": "Fichier précédent : '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Marquer comme vu",
+    "add-previous-file-to-playlist-menu-label": "Ajouter à la liste de lecture",
+    "syncplay-watchedhistory-title": "Historique des fichiers vus",
+    "syncplay-watchedhistoryenabled-label": "Activer l’historique des fichiers vus",
+    "syncplay-autoremovefromplaylist-label": "Retirer automatiquement les fichiers vus de la liste de lecture",
+    "watchedhistoryenabled-tooltip": "Enregistre les fichiers vus à côté du fichier de configuration Syncplay sous '.syncplay-watched.json'. L'état vu est conservé même si les fichiers sont déplacés ou supprimés.",
+    "autoremovewatchedfromplaylist-tooltip": "Retire un élément de la liste de lecture partagée lorsque Syncplay le marque comme vu après que la lecture atteint la fin.",
+    "watchedautomove-tooltip": "Déplace automatiquement le fichier dans le sous-dossier des fichiers vus lorsque la fin du fichier est atteinte. Cela ne fonctionne que si le dossier parent est un dossier de médias.",
+    "watchedsubfolder-tooltip": "Sous-dossier dans lequel les fichiers vus seront déplacés, relatif au dossier du fichier (le sous-dossier doit exister pour que le fichier soit déplacé). Cela ne fonctionne que si le dossier parent est un dossier de médias.",
+    "watchedsubfolderautocreate-tooltip": "Crée automatiquement le sous-dossier des fichiers vus lors du déplacement du fichier s'il n'existe pas déjà. Cela ne fonctionne que si le dossier parent est un dossier de médias.",
+    "watched-json-read-error": "Impossible de lire le fichier d’historique des fichiers vus '{}': {}",  # path, error
+    "watched-json-write-error": "Impossible d’écrire le fichier d’historique des fichiers vus '{}': {}",  # path, error
+    "watched-json-concurrent-update-error": "Impossible de mettre à jour l’historique des fichiers vus en raison de modifications simultanées : {}",  # path
+    "watched-move-permission-error": "Impossible de déplacer '{}' vers le sous-dossier en raison d’une erreur d’autorisation.",  # filename
+    "watched-move-failed-error": "Impossible de déplacer '{}' vers le sous-dossier : {}",  # filename, error
+    "watched-move-too-many-retries-error": "Abandon du déplacement de '{}' après trop de tentatives.",  # filename
+    "watched-mark-watched-error": "Impossible de marquer '{}' comme vu : {}",  # filename, error
+    "watched-mark-unwatched-error": "Impossible de marquer '{}' comme non vu : {}",  # filename, error
+    "watched-record-history-error": "Impossible d’enregistrer l’historique pour '{}' : {}",  # filename, error
+    "marked-file-as-watched-notification": "'{}' marqué comme vu.",  # filename
+    "marked-file-as-unwatched-notification": "'{}' marqué comme non vu.",  # filename
+    "file-not-in-watched-subfolder-error": "'{}' n'est pas dans le sous-dossier des fichiers vus.",  # path
+    "cannot-move-file-due-to-name-conflict-error": "Impossible de déplacer '{}' vers le sous-dossier '{}' car un fichier portant ce nom existe déjà.",  # path, subfolder
+    "cannot-move-file-due-to-parent-name-conflict-error": "Impossible de déplacer '{}' vers le dossier parent '{}' car un fichier portant ce nom existe déjà.",  # path, parent
+    "watched-file-tracking-disabled-error": "Le suivi des fichiers vus est désactivé.",
+    "watched-subfolder-unavailable-error": "Impossible de déplacer '{}' vers le sous-dossier '{}' car celui-ci est introuvable ou n'a pas pu être créé.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "Impossible de déplacer '{}' hors du sous-dossier des fichiers vus car le dossier parent est introuvable.",  # path
+    "moved-file-to-subfolder-notification": "'{}' déplacé vers le sous-dossier '{}'.",  # path, subfolder
+    "moved-file-from-watched-subfolder-notification": "'{}' replacé dans '{}'.",  # path, parent folder
+    "watched-last-watched-tooltip": "Dernier visionnage {} dans la salle '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "il y a {} minute(s)",  # minutes
+    "watched-ago-hours": "il y a {} heure(s)",  # hours
+    "watched-ago-days": "il y a {} jour(s)",  # dates
+    "playlist-skip-warning-tooltip": "Avertissement : cela semble ignorer le fichier non vu {}.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "Avertissement : le fichier {} semble hors ordre après le fichier {}. Le fichier {} était attendu à la place."  # actual file number, previous file number, expected file number
 }
