@@ -78,7 +78,9 @@ class SyncplayClient(object):
 
         watchedName = config['watchedSubfolder'] or ""
         watchedName = watchedName.strip()
-        if watchedName:
+        if watchedName in (".", ".."):
+            watchedName = ""
+        elif watchedName:
             if os.path.sep in watchedName or (os.path.altsep and os.path.altsep in watchedName):
                 watchedName = os.path.basename(watchedName)
 
