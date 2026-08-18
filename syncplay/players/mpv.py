@@ -6,7 +6,6 @@ import sys
 import time
 import subprocess
 import threading
-import ast
 
 from syncplay import constants
 from syncplay.messages import getMessage
@@ -601,30 +600,25 @@ class MpvPlayer(BasePlayer):
             env = os.environ.copy()
             if 'TERM' in env:
                 del env['TERM']
-            # On macOS, youtube-dl requires system python to run. Set the environment
-            # to allow that version of python to be executed in the mpv subprocess.
             if isMacOS():
-                try:
-                    env['PATH'] = '/opt/homebrew/bin:/usr/local/bin:/usr/bin'
-                    ytdl_path = subprocess.check_output(['which', 'youtube-dl'], text=True, env=env).rstrip('\n')
-                    with open(ytdl_path, 'rb') as f:
-                        ytdl_shebang = f.readline()
-                    ytdl_python = ytdl_shebang.decode('utf-8').lstrip('!#').rstrip('\n')
-                    if '/usr/bin/env' in ytdl_python:
-                        python_name = ytdl_python.split(' ')[1]
-                        python_executable = subprocess.check_output(['which', python_name], text=True, env=env).rstrip('\n')
-                    else:
-                        python_executable = ytdl_python
-                    pythonLibs = subprocess.check_output([python_executable, '-E', '-c',
-                                                          'import sys; print(sys.path)'],
-                                                          text=True, env=dict())
-                    pythonLibs = ast.literal_eval(pythonLibs)
-                    pythonPath = ':'.join(pythonLibs[1:])
-                except Exception as e:
-                    pythonPath = None
-                if pythonPath is not None:
-                    env['PATH'] = python_executable + ':' + env['PATH']
-                    env['PYTHONPATH'] = pythonPath
+                # Remove py2app's bundled Python environment from mpv subprocesses.
+                env.pop('PYTHONHOME', None)
+                env.pop('PYTHONPATH', None)
+            
+                # Add common executable locations while preserving inherited PATH entries.
+                macPaths = [
+                    '/opt/homebrew/bin',
+                    '/usr/local/bin',
+                    '/usr/bin',
+                    '/bin',
+                    '/usr/sbin',
+                    '/sbin',
+                ]
+                pathEntries = [path for path in env.get('PATH', '').split(os.pathsep) if path]
+                for path in macPaths:
+                    if path not in pathEntries:
+                        pathEntries.append(path)
+                env['PATH'] = os.pathsep.join(pathEntries)
             try:
                 self.mpvpipe = self.playerIPCHandler(
                     loglevel="info",
