@@ -716,6 +716,49 @@ class EpisodeFilenameParser(object):
         return episodeNumber
 
 
+def getRelatedEpisodeDirectories(filenames, mediaFilesCache):
+    """Directories in mediaFilesCache holding the same series/season as any of the
+    target filenames, using the existing episode parser. Ranking hint only: it does
+    no filesystem access, must not affect playlist behaviour, and a false positive
+    is harmless. When a match lives in a Watched subfolder, the parent (the likely
+    location for a newly-arriving unwatched episode) is returned instead.
+    """
+    if not filenames or not mediaFilesCache:
+        return []
+    parser = EpisodeFilenameParser()
+    targetKeys = set()
+    targetContext = parser.getContext(filenames)
+    for filename in filenames:
+        info = parser.parse(filename, context=targetContext)
+        if info and info.get("seriesKey") is not None:
+            targetKeys.add((info.get("seriesKey"), info.get("season")))
+    if not targetKeys:
+        return []
+
+    related = []
+    seen = set()
+    watchedName = constants.WATCHED_SUBFOLDER.lower() if constants.WATCHED_SUBFOLDER else None
+    for directory, files in mediaFilesCache.items():
+        if not files:
+            continue
+        directoryContext = parser.getContext(files)
+        matched = False
+        for filename in files:
+            info = parser.parse(filename, context=directoryContext)
+            if info and (info.get("seriesKey"), info.get("season")) in targetKeys:
+                matched = True
+                break
+        if not matched:
+            continue
+        resultDirectory = directory
+        if watchedName and os.path.basename(os.path.normpath(directory)).lower() == watchedName:
+            resultDirectory = os.path.dirname(os.path.normpath(directory))
+        key = os.path.normcase(os.path.normpath(resultDirectory))
+        if key not in seen:
+            seen.add(key)
+            related.append(resultDirectory)
+    return related
+
 
 class WatchedManager(object):
     """
