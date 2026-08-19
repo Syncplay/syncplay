@@ -42,8 +42,9 @@ from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME
 from syncplay.messages import getMissingStrings, getMessage, isNoOSDMessage
 from syncplay.protocols import SyncClientProtocol
-from syncplay.watched import WatchedManager
-from syncplay.utils import isMacOS
+from syncplay.watched import WatchedManager, getRelatedEpisodeDirectories
+from syncplay.filemonitor import FileMonitor, isWindowsNetworkPath
+from syncplay.utils import isMacOS, isURL
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry=constants.RECONNECT_RETRIES):
         self._client = client
@@ -2497,15 +2498,47 @@ class FileSwitchManager(object):
         self.filenameWatchlist = []
         self.currentDirectory = None
         self.mediaDirectories = client.getConfig().get('mediaSearchDirectories')
-        self.lock = threading.Lock()
         self.folderSearchEnabled = True
         self.directorySearchError = None
         self.newInfo = False
-        self.currentlyUpdating = False
         self.newWatchlist = []
-        self.fileSwitchTimer = task.LoopingCall(self.updateInfo)
-        self.fileSwitchTimer.start(constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL, True)
         self.mediaDirectoriesNotFound = []
+
+        # Scan concurrency: only one full/targeted worker in flight; further
+        # requests while it runs collapse into a single pending reconciliation.
+        self._scanInFlight = False
+        self._pendingReconciliation = False
+        self.currentlyUpdating = False  # external-compat mirror of _scanInFlight
+
+        # Operational degraded state (cleared after N consecutive clean full
+        # scans) is kept separate from the once-per-configuration user warning.
+        self._degraded = False
+        self._consecutiveSuccessfulScans = 0
+        self._slowWarningShown = False
+        self._missingDirectoryNotified = False
+
+        # Coalescing of the downstream "new local file info" notification and of
+        # the adaptive reconciliation timer.
+        self._infoNotifyCall = None
+        self._reconciliationCall = None
+
+        # Filesystem notifications (playlist-blind helper). Polling/reconciliation
+        # remains the correctness authority; notifications only accelerate it.
+        self._fileMonitor = FileMonitor(self._onFileMonitorEvent, self._debug)
+        self._priorityDirectories = []
+
+        reactor.addSystemEventTrigger("before", "shutdown", self._shutdown)
+        self._fileMonitor.setMediaDirectories(self.mediaDirectories or [])
+        self.updateInfo()
+        self._scheduleReconciliation()
+
+    # -- small helpers ----------------------------------------------------
+
+    def _debug(self, message):
+        try:
+            self._client.ui.showDebugMessage(message)
+        except Exception:
+            pass
 
     def setClient(self, newClient):
         self._client = newClient
@@ -2520,6 +2553,12 @@ class FileSwitchManager(object):
         self._client.ui.showMessage(getMessage("media-directory-list-updated-notification"))
         self.mediaDirectoriesNotFound = []
         self.folderSearchEnabled = True
+        # Reaffirming media directories resets the once-per-configuration warning
+        # latch and clears any degraded state.
+        self._slowWarningShown = False
+        self._missingDirectoryNotified = False
+        self._degraded = False
+        self._consecutiveSuccessfulScans = 0
         self.setMediaDirectories(mediaDirs)
         if mediaDirs == "":
             self._client.ui.showErrorMessage(getMessage("no-media-directories-error"))
@@ -2529,7 +2568,11 @@ class FileSwitchManager(object):
 
     def setMediaDirectories(self, mediaDirs):
         self.mediaDirectories = mediaDirs
+        self._fileMonitor.setMediaDirectories(mediaDirs or [])
         self.updateInfo()
+
+    def setFilenameWatchlist(self, unfoundFilenames):
+        self.filenameWatchlist = unfoundFilenames
 
     def checkForFileSwitchUpdate(self):
         if self.newInfo:
@@ -2540,67 +2583,442 @@ class FileSwitchManager(object):
             self.directorySearchError = None
         self._client.playlist.doubleCheckForWatchedPreviousFile()
 
-    def updateInfo(self):
-        if not self.currentlyUpdating and self.mediaDirectories:
-            threads.deferToThread(self._updateInfoThread).addCallback(lambda x: self.checkForFileSwitchUpdate())
-
-    def setFilenameWatchlist(self, unfoundFilenames):
-        self.filenameWatchlist = unfoundFilenames
-
-    def _updateInfoThread(self):
-        with self.lock:
-            try:
-                self.currentlyUpdating = True
-                dirsToSearch = self.mediaDirectories
-
-                if not self.folderSearchEnabled:
-                    return
-
-                if dirsToSearch:
-                    # Spin up hard drives to prevent premature timeout
-                    randomFilename = "RandomFile"+str(random.randrange(10000, 99999))+".txt"
-                    for directory in dirsToSearch:
-                        if not os.path.isdir(directory):
-                            self.directorySearchError = getMessage("cannot-find-directory-error").format(directory)
-
-                        startTime = time.time()
-                        if os.path.isfile(os.path.join(directory, randomFilename)):
-                            randomFilename = "RandomFile"+str(random.randrange(10000, 99999))+".txt"
-                            print("Found random file (?)")
-                        if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
-                            self.folderSearchEnabled = False
-                            self.directorySearchError = getMessage("folder-search-first-file-timeout-error").format(directory)
-                            return
-
-                    # Actual directory search
-                    newMediaFilesCache = {}
-                    startTime = time.time()
-                    fileCount = 0
-                    lastWarningTime = None
-                    for directory in dirsToSearch:
-                        for root, dirs, files in os.walk(directory):
-                            fileCount += 1
-                            newMediaFilesCache[root] = files
-                            timeTakenSoFar = time.time() - startTime
-                            if timeTakenSoFar > constants.FOLDER_SEARCH_TIMEOUT:
-                                reactor.callLater(0.1, self._client.ui.showErrorMessage, getMessage("folder-search-timeout-error").format(directory, fileCount),False)
-                                self.folderSearchEnabled = False
-                                return
-                            if timeTakenSoFar > constants.FOLDER_SEARCH_WARNING_THRESHOLD:
-                                if not lastWarningTime or timeTakenSoFar - lastWarningTime >= 1:
-                                    reactor.callLater(0.1, self._client.ui.showErrorMessage, getMessage("folder-search-timeout-warning").format(int(timeTakenSoFar), fileCount, directory),False)
-                                    lastWarningTime = timeTakenSoFar
-
-                    if self.mediaFilesCache != newMediaFilesCache:
-                        self.mediaFilesCache = newMediaFilesCache
-                        self.newInfo = True
-            except Exception as e:
-                self._client.ui.showDebugMessage(str(e))
-            finally:
-                self.currentlyUpdating = False
-
     def infoUpdated(self):
         self._client.fileSwitchFoundFiles()
+
+    # -- authoritative full reconciliation scan ---------------------------
+
+    def updateInfo(self):
+        # Request an authoritative full reconciliation scan. Single-flight: if a
+        # scan is already running, record one pending reconciliation instead of
+        # dispatching a second worker.
+        if not self.mediaDirectories:
+            return
+        if self._scanInFlight:
+            self._pendingReconciliation = True
+            return
+        self._startFullReconciliation()
+
+    def _startFullReconciliation(self):
+        self._scanInFlight = True
+        self.currentlyUpdating = True
+        deferred = threads.deferToThread(self._fullReconciliationWorker)
+        deferred.addCallback(self._commitFullReconciliation)
+        deferred.addErrback(self._scanErrback)
+
+    def _fullReconciliationWorker(self):
+        # Worker thread: read the filesystem and return a complete result. It must
+        # not mutate mediaFilesCache; the reactor thread commits the result.
+        dirsToSearch = self.mediaDirectories
+        result = {"cache": {}, "fileCount": 0, "timedOut": False, "firstFileTimedOut": False,
+                  "missingDirectory": None, "timedOutDirectory": None}
+        if not dirsToSearch:
+            return result
+        randomFilename = "RandomFile" + str(random.randrange(10000, 99999)) + ".txt"
+        for directory in dirsToSearch:
+            if not os.path.isdir(directory):
+                result["missingDirectory"] = directory
+            startTime = time.time()
+            try:
+                if os.path.isfile(os.path.join(directory, randomFilename)):
+                    randomFilename = "RandomFile" + str(random.randrange(10000, 99999)) + ".txt"
+            except OSError:
+                pass
+            if time.time() - startTime > constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT:
+                result["firstFileTimedOut"] = True
+                result["timedOutDirectory"] = directory
+                return result
+
+        newCache = {}
+        startTime = time.time()
+        fileCount = 0
+        effectiveWarningDelay = self._effectiveWarningDelay()
+        for directory in dirsToSearch:
+            for root, dirs, files in os.walk(directory):
+                fileCount += 1
+                newCache[root] = files
+                elapsed = time.time() - startTime
+                if elapsed > constants.FOLDER_SEARCH_TIMEOUT:
+                    result["cache"] = newCache
+                    result["fileCount"] = fileCount
+                    result["timedOut"] = True
+                    result["timedOutDirectory"] = directory
+                    return result
+                if elapsed > effectiveWarningDelay:
+                    reactor.callFromThread(self._maybeShowSlowWarning, int(elapsed), fileCount, directory)
+        result["cache"] = newCache
+        result["fileCount"] = fileCount
+        return result
+
+    def _commitFullReconciliation(self, result):
+        self._scanInFlight = False
+        self.currentlyUpdating = False
+        try:
+            if result.get("missingDirectory") and not self._missingDirectoryNotified:
+                self._missingDirectoryNotified = True
+                self.directorySearchError = getMessage("cannot-find-directory-error").format(result["missingDirectory"])
+
+            failed = result.get("timedOut") or result.get("firstFileTimedOut")
+            if failed:
+                self._enterDegraded()
+                self._maybeShowSlowWarning(
+                    int(constants.FOLDER_SEARCH_TIMEOUT),
+                    result.get("fileCount", 0),
+                    result.get("timedOutDirectory") or "")
+            else:
+                newCache = result.get("cache", {})
+                if newCache != self.mediaFilesCache:
+                    self.mediaFilesCache = newCache
+                    self.newInfo = True
+                    self._scheduleInfoNotify()
+                self._registerSuccessfulScan()
+                self._refreshPriorityDirectories()
+            self.checkForFileSwitchUpdate()
+        finally:
+            self._afterScan()
+
+    def _scanErrback(self, failure):
+        self._scanInFlight = False
+        self.currentlyUpdating = False
+        self._debug("Media folder reconciliation scan failed: {}".format(failure.getErrorMessage()))
+        self._enterDegraded()
+        self._afterScan()
+
+    def _afterScan(self):
+        # Consume a pending reconciliation, otherwise reschedule the adaptive timer.
+        if self._pendingReconciliation and not self._scanInFlight:
+            self._pendingReconciliation = False
+            self._startFullReconciliation()
+        else:
+            self._scheduleReconciliation()
+
+    # -- degraded state and warning latch (spec 14) -----------------------
+
+    def _effectiveWarningDelay(self):
+        return constants.FOLDER_SEARCH_WARNING_BASE_DELAY + constants.FOLDER_SEARCH_WARNING_THRESHOLD
+
+    def _maybeShowSlowWarning(self, seconds, fileCount, directory):
+        # Reactor thread. At most one slow/failure warning per media-directory
+        # configuration per session; successful scans do not clear the latch.
+        if self._slowWarningShown:
+            return
+        self._slowWarningShown = True
+        self._client.ui.showErrorMessage(
+            getMessage("folder-search-timeout-warning").format(int(seconds), fileCount, directory))
+
+    def _enterDegraded(self):
+        self._degraded = True
+        self._consecutiveSuccessfulScans = 0
+
+    def _registerSuccessfulScan(self):
+        if not self._degraded:
+            return
+        self._consecutiveSuccessfulScans += 1
+        if self._consecutiveSuccessfulScans >= constants.FOLDER_SEARCH_DEGRADED_RECOVERY_SCANS:
+            self._degraded = False
+            self._consecutiveSuccessfulScans = 0
+
+    # -- adaptive reconciliation cadence (spec 10) ------------------------
+
+    def _scheduleReconciliation(self):
+        self._cancelReconciliation()
+        if self._degraded or self._isUrgent():
+            interval = constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL
+        else:
+            interval = constants.FOLDER_SEARCH_RECONCILIATION_INTERVAL
+        try:
+            self._reconciliationCall = reactor.callLater(interval, self._reconciliationTick)
+        except Exception:
+            self._reconciliationCall = None
+
+    def _cancelReconciliation(self):
+        if self._reconciliationCall is not None:
+            try:
+                if self._reconciliationCall.active():
+                    self._reconciliationCall.cancel()
+            except Exception:
+                pass
+            self._reconciliationCall = None
+
+    def _reconciliationTick(self):
+        self._reconciliationCall = None
+        self.updateInfo()
+
+    def _isUrgent(self):
+        # Urgent while a needed current/next local playlist file cannot be
+        # resolved. URLs and absent targets do not force urgent local polling.
+        for filename in self._neededLocalFilenames():
+            if filename and self._resolveExistingPath(filename) is None:
+                return True
+        return False
+
+    def _neededLocalFilenames(self):
+        filenames = []
+        try:
+            playlist = self._client.playlist
+            entries = playlist._playlist
+            index = playlist._playlistIndex
+        except Exception:
+            return filenames
+        if not entries or index is None:
+            return filenames
+        for candidateIndex in (index, index + 1):
+            if 0 <= candidateIndex < len(entries):
+                candidate = entries[candidateIndex]
+                if candidate and not isURL(candidate):
+                    filenames.append(candidate)
+        return filenames
+
+    def _resolveExistingPath(self, filename):
+        # Non-mutating check that a filename currently resolves to a real file,
+        # using the same semantics as findFilepath (cache path + on-disk check).
+        if filename is None:
+            return None
+        currentFile = self._client.userlist.currentUser.file
+        if currentFile and utils.sameFilename(filename, currentFile['name']):
+            return utils.getCorrectedPathForFile(currentFile['path'])
+        if self.mediaFilesCache is not None:
+            for directory in self.mediaFilesCache:
+                files = self.mediaFilesCache[directory]
+                if files and filename in files:
+                    filepath = utils.getCorrectedPathForFile(os.path.join(directory, filename))
+                    if os.path.isfile(filepath):
+                        return filepath
+        return None
+
+    # -- filesystem-event driven cache updates (spec 11, 12, 13) ----------
+
+    def _onFileMonitorEvent(self, event):
+        # Reactor thread (marshalled by FileMonitor). Apply clear events directly;
+        # never confirm a clear event with a blocking scan.
+        if self._scanInFlight:
+            # Do not mutate the cache while a scan result is pending; collapse into
+            # a single follow-up reconciliation.
+            self._pendingReconciliation = True
+            return
+        try:
+            if event.isDirectory:
+                self._applyDirectoryEvent(event)
+            else:
+                self._applyFileEvent(event)
+        except Exception as e:
+            self._debug("Error applying filesystem event {}: {}".format(event, e))
+
+    def _cacheDirKey(self, path):
+        # Return the existing cache key matching path (component/case aware), else
+        # the normalised path itself.
+        target = os.path.normcase(os.path.normpath(path))
+        for directory in self.mediaFilesCache:
+            if os.path.normcase(os.path.normpath(directory)) == target:
+                return directory
+        return path
+
+    def _applyFileEvent(self, event):
+        eventType = event.eventType
+        if eventType == "moved":
+            self._removeFileFromCache(event.sourcePath)
+            if event.destinationPath and self._isInsideMediaRoots(event.destinationPath):
+                self._addFileToCache(event.destinationPath)
+        elif eventType == "deleted":
+            self._removeFileFromCache(event.sourcePath)
+        elif eventType in ("created", "modified"):
+            if self._isInsideMediaRoots(event.sourcePath):
+                self._addFileToCache(event.sourcePath)
+        # other activity-only event types (opened/closed) do not affect membership
+
+    def _addFileToCache(self, path):
+        directory = self._cacheDirKey(os.path.dirname(path))
+        basename = os.path.basename(path)
+        files = self.mediaFilesCache.get(directory)
+        if files is None:
+            self.mediaFilesCache[directory] = [basename]
+            self._markCacheChanged()
+        elif basename not in files:
+            files.append(basename)
+            self._markCacheChanged()
+
+    def _removeFileFromCache(self, path):
+        directory = self._cacheDirKey(os.path.dirname(path))
+        basename = os.path.basename(path)
+        files = self.mediaFilesCache.get(directory)
+        if files is not None and basename in files:
+            files.remove(basename)
+            self._markCacheChanged()
+
+    def _applyDirectoryEvent(self, event):
+        eventType = event.eventType
+        if eventType == "deleted":
+            self._removeSubtreeFromCache(event.sourcePath)
+        elif eventType == "created":
+            if self._isInsideMediaRoots(event.sourcePath):
+                self._requestTargetedScan(event.sourcePath)
+        elif eventType == "moved":
+            self._removeSubtreeFromCache(event.sourcePath)
+            if event.destinationPath and self._isInsideMediaRoots(event.destinationPath):
+                self._requestTargetedScan(event.destinationPath)
+
+    def _removeSubtreeFromCache(self, path):
+        target = os.path.normcase(os.path.normpath(path))
+        removed = False
+        for directory in list(self.mediaFilesCache.keys()):
+            normed = os.path.normcase(os.path.normpath(directory))
+            if normed == target or normed.startswith(target + os.sep):
+                del self.mediaFilesCache[directory]
+                removed = True
+        if removed:
+            self._markCacheChanged()
+
+    def _isInsideMediaRoots(self, path):
+        if not path or not self.mediaDirectories:
+            return False
+        normed = os.path.normcase(os.path.normpath(path))
+        for root in self.mediaDirectories:
+            normedRoot = os.path.normcase(os.path.normpath(root))
+            if normed == normedRoot or normed.startswith(normedRoot + os.sep):
+                return True
+        return False
+
+    def _markCacheChanged(self):
+        self.newInfo = True
+        self._scheduleInfoNotify()
+
+    def _scheduleInfoNotify(self):
+        # Coalesce the downstream fileSwitchFoundFiles() notification so a burst of
+        # events does not invoke file-switch discovery once per low-level event.
+        if self._infoNotifyCall is not None and self._infoNotifyCall.active():
+            return
+        try:
+            self._infoNotifyCall = reactor.callLater(constants.FOLDER_SEARCH_EVENT_COALESCE_INTERVAL, self._flushInfoNotify)
+        except Exception:
+            self._infoNotifyCall = None
+            self.checkForFileSwitchUpdate()
+
+    def _flushInfoNotify(self):
+        self._infoNotifyCall = None
+        self.checkForFileSwitchUpdate()
+
+    # -- targeted subtree scan (spec 11, 12) ------------------------------
+
+    def _requestTargetedScan(self, directory):
+        if self._scanInFlight:
+            self._pendingReconciliation = True
+            return
+        self._scanInFlight = True
+        self.currentlyUpdating = True
+        deferred = threads.deferToThread(self._targetedScanWorker, directory)
+        deferred.addCallback(self._commitTargetedScan)
+        deferred.addErrback(self._scanErrback)
+
+    def _targetedScanWorker(self, directory):
+        result = {"directory": directory, "entries": {}, "missing": False}
+        if not os.path.isdir(directory):
+            result["missing"] = True
+            return result
+        entries = {}
+        try:
+            for root, dirs, files in os.walk(directory):
+                entries[root] = files
+        except OSError:
+            result["missing"] = True
+            return result
+        result["entries"] = entries
+        return result
+
+    def _commitTargetedScan(self, result):
+        self._scanInFlight = False
+        self.currentlyUpdating = False
+        try:
+            directory = result.get("directory")
+            self._removeSubtreeFromCache(directory)
+            entries = result.get("entries") or {}
+            if entries:
+                self.mediaFilesCache.update(entries)
+                self._markCacheChanged()
+            elif not result.get("missing"):
+                self._markCacheChanged()
+            if entries:
+                self._refreshPriorityDirectories()
+            self.checkForFileSwitchUpdate()
+        finally:
+            self._afterScan()
+
+    # -- priority directory selection (spec 7, 8) -------------------------
+
+    def _refreshPriorityDirectories(self):
+        # Only Windows network roots benefit from supplemental direct watches; skip
+        # the work entirely when no configured root is a network path.
+        if not self.mediaDirectories or not any(isWindowsNetworkPath(root) for root in self.mediaDirectories):
+            if self._priorityDirectories:
+                self._priorityDirectories = []
+                self._fileMonitor.setPriorityDirectories([])
+            return
+        ranked = self._rankPriorityDirectories()
+        if ranked != self._priorityDirectories:
+            self._priorityDirectories = ranked
+            self._fileMonitor.setPriorityDirectories(ranked)
+
+    def _rankPriorityDirectories(self):
+        ordered = []
+        seen = set()
+
+        def add(directory):
+            if not directory:
+                return
+            normed = os.path.normcase(os.path.normpath(directory))
+            if normed in seen:
+                return
+            if not self._isInsideMediaRoots(directory):
+                return
+            if not isWindowsNetworkPath(directory):
+                return
+            seen.add(normed)
+            ordered.append(directory)
+
+        # 1. Directory of the currently open local file.
+        currentFile = self._client.userlist.currentUser.file
+        if currentFile and currentFile.get('path'):
+            add(os.path.dirname(currentFile['path']))
+
+        # 2-3. Cached directories of the current and next playlist filenames.
+        neededFilenames = self._neededLocalFilenames()
+        for filename in neededFilenames:
+            directory = self.getDirectoryOfFilenameInCache(filename)
+            add(directory)
+
+        # 4. Same-series/season directories for the current/next entries (Phase 6
+        #    episode-parser hook; a false positive only affects watch ranking).
+        for directory in self._relatedEpisodeDirectories(neededFilenames):
+            add(directory)
+
+        # 5-7. Exact matches for other playlist entries, then remaining known
+        #      directories, so small trees end up fully watched within budget.
+        for filename in self._allPlaylistFilenames():
+            add(self.getDirectoryOfFilenameInCache(filename))
+        for directory in self.mediaFilesCache:
+            add(directory)
+
+        return ordered
+
+    def _relatedEpisodeDirectories(self, filenames):
+        # Reuse the watched EpisodeFilenameParser to spot same-series/season
+        # directories. Ranking hint only; a false positive cannot affect switching.
+        try:
+            return getRelatedEpisodeDirectories(filenames, self.mediaFilesCache)
+        except Exception:
+            return []
+
+    def _allPlaylistFilenames(self):
+        try:
+            entries = self._client.playlist._playlist
+            index = self._client.playlist._playlistIndex or 0
+        except Exception:
+            return []
+        if not entries:
+            return []
+        ordered = entries[index:] + entries[:index]
+        return [entry for entry in ordered if entry and not isURL(entry)]
+
+    # -- resolution and lookup helpers ------------------------------------
 
     def findFilepath(self, filename, highPriority=False):
         if filename is None:
@@ -2625,6 +3043,11 @@ class FileSwitchManager(object):
                 filepath = utils.getCorrectedPathForFile(filepath)
                 if os.path.isfile(filepath):
                     return filepath
+
+        # A needed file that cannot currently be resolved should hurry the next
+        # authoritative scan rather than waiting for the slow timer.
+        if highPriority:
+            self.updateInfo()
 
     def areWatchedFilenamesInCache(self):
         if self.filenameWatchlist is not None:
@@ -2680,3 +3103,19 @@ class FileSwitchManager(object):
         directoryToFind = str(directoryToFind)
         self._client.ui.showErrorMessage(getMessage("added-file-not-in-media-directory-error").format(directoryToFind))
         self.mediaDirectoriesNotFound.append(directoryToFind)
+
+    # -- shutdown ---------------------------------------------------------
+
+    def _shutdown(self):
+        self._cancelReconciliation()
+        if self._infoNotifyCall is not None:
+            try:
+                if self._infoNotifyCall.active():
+                    self._infoNotifyCall.cancel()
+            except Exception:
+                pass
+            self._infoNotifyCall = None
+        try:
+            self._fileMonitor.stop()
+        except Exception:
+            pass
