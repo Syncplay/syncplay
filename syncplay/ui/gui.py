@@ -6,7 +6,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import wraps
 from platform import python_version
 
@@ -18,6 +18,7 @@ from syncplay.ui.consoleUI import ConsoleUI
 from syncplay.utils import resourcespath
 from syncplay.utils import isLinux, isWindows, isMacOS
 from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
+from syncplay.utils import getCorrectedPathForFile
 from syncplay.vendor import Qt
 from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2, IsPySide6
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
@@ -26,13 +27,14 @@ if isLinux():
     applyDPIScaling = False
 else:
     applyDPIScaling = True
-try:
-    if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, applyDPIScaling)
-except AttributeError:
-    pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
-if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, applyDPIScaling)
+if not IsPySide6:
+    try:
+        if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+            QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, applyDPIScaling)
+    except AttributeError:
+        pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
+    if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, applyDPIScaling)
 if IsPySide6:
     from PySide6.QtCore import QStandardPaths
 elif IsPySide2:
@@ -143,7 +145,10 @@ class AboutDialog(QtWidgets.QDialog):
         else:
             self.setWindowTitle(getMessage("about-dialog-title"))
             if isWindows():
-                self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+                if IsPySide6:
+                    self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint  | Qt.CustomizeWindowHint                        )
+                else:
+                    self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QPixmap(resourcespath + 'syncplay.png'))
         nameLabel = QtWidgets.QLabel("<center><strong>Syncplay</strong></center>")
         nameLabel.setFont(QtGui.QFont("Helvetica", 18))
@@ -206,7 +211,10 @@ class CertificateDialog(QtWidgets.QDialog):
         else:
             self.setWindowTitle(getMessage("tls-information-title"))
             if isWindows():
-                self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+                if IsPySide6:
+                    self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint  | Qt.CustomizeWindowHint                        )
+                else:
+                    self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QPixmap(resourcespath + 'syncplay.png'))
         statusLabel = QtWidgets.QLabel(getMessage("tls-dialog-status-label").format(tlsData["subject"]))
         descLabel = QtWidgets.QLabel(getMessage("tls-dialog-desc-label").format(tlsData["subject"]))
@@ -340,6 +348,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self.updatePlaylistIndexIcon()
 
         def updatePlaylistIndexIcon(self):
+            playlistItems = [self.item(i).text() for i in range(self.count())]
+            if constants.SHOW_PLAYLIST_SKIP_WARNINGS:
+                playlistSkipWarnings = self.selfWindow._syncplayClient.watched.getPlaylistSkipWarnings(playlistItems)
+            else:
+                playlistSkipWarnings = {}
+            if constants.SHOW_PLAYLIST_ORDER_WARNINGS:
+                playlistOrderWarnings = self.selfWindow._syncplayClient.watched.getPlaylistOrderWarnings(playlistItems)
+            else:
+                playlistOrderWarnings = {}
             for item in range(self.count()):
                 itemFilename = self.item(item).text()
                 isPlayingFilename = itemFilename == self.playlistIndexFilename
@@ -349,17 +366,108 @@ class MainWindow(QtWidgets.QMainWindow):
                 if fileIsUntrusted:
                     if isDarkMode:
                         self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DARK_UNTRUSTEDITEM_COLOR)))
+                        self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
                     else:
                         self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_UNTRUSTEDITEM_COLOR)))
+                        self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
                 elif fileIsAvailable:
-                    self.item(item).setForeground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Text)))
+                    filePath = self.selfWindow._syncplayClient.fileSwitch.findFilepath(itemFilename)
+                    if self.selfWindow._syncplayClient.watched.isWatchedFile(filePath):
+                        self.item(item).setBackground(QtGui.QBrush(QtGui.QColor("grey")))
+                        self.item(item).setForeground(QtGui.QBrush(QtGui.QColor("black")))
+                        pass
+                    else:
+                        self.item(item).setForeground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Text)))
+                        self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
                 else:
                     if isDarkMode:
                         self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DARK_DIFFERENTITEM_COLOR)))
+                        self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
                     else:
                         self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
+                        self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
+
+                tooltip = self._getPlaylistItemTooltip(item, itemFilename, playlistSkipWarnings, playlistOrderWarnings)
+                self.item(item).setToolTip(tooltip or "")
+                if item in playlistSkipWarnings or item in playlistOrderWarnings:
+                    self.item(item).setIcon(self._getPlaylistWarningIcon())
+                else:
+                    self.item(item).setIcon(QtGui.QIcon())
             self.selfWindow._syncplayClient.fileSwitch.setFilenameWatchlist(self.selfWindow.newWatchlist)
             self.forceUpdate()
+
+        def _getPlaylistWarningIcon(self):
+            if not hasattr(self, "_playlistWarningIcon"):
+                self._playlistWarningIcon = self.style().standardIcon(QtWidgets.QStyle.SP_MessageBoxWarning)
+            return self._playlistWarningIcon
+
+        def viewportEvent(self, event):
+            if event.type() == QtCore.QEvent.ToolTip:
+                item = self.itemAt(event.pos())
+                if item:
+                    tooltip = self._getPlaylistItemTooltip(self.row(item), item.text())
+                    item.setToolTip(tooltip or "")
+            return super(MainWindow.PlaylistWidget, self).viewportEvent(event)
+
+        def _getPlaylistItemTooltip(self, itemIndex, itemFilename, playlistSkipWarnings=None, playlistOrderWarnings=None):
+            tooltipParts = []
+            filePath = self.selfWindow._syncplayClient.fileSwitch.findFilepath(itemFilename)
+            watchedTooltip = self._getWatchedTooltipForFilePath(filePath)
+            if watchedTooltip:
+                tooltipParts.append(watchedTooltip)
+
+            if playlistSkipWarnings is None or playlistOrderWarnings is None:
+                playlistItems = [self.item(i).text() for i in range(self.count())]
+                if constants.SHOW_PLAYLIST_SKIP_WARNINGS:
+                    playlistSkipWarnings = self.selfWindow._syncplayClient.watched.getPlaylistSkipWarnings(playlistItems)
+                else:
+                    playlistSkipWarnings = {}
+                if constants.SHOW_PLAYLIST_ORDER_WARNINGS:
+                    playlistOrderWarnings = self.selfWindow._syncplayClient.watched.getPlaylistOrderWarnings(playlistItems)
+                else:
+                    playlistOrderWarnings = {}
+
+            orderWarning = playlistOrderWarnings.get(itemIndex)
+            if constants.SHOW_PLAYLIST_ORDER_WARNINGS and orderWarning:
+                tooltipParts.append(
+                    getMessage("playlist-out-of-order-warning-tooltip").format(
+                        orderWarning["episode"], orderWarning["previousEpisode"], orderWarning["expectedEpisode"]))
+
+            skipWarning = playlistSkipWarnings.get(itemIndex)
+            if constants.SHOW_PLAYLIST_SKIP_WARNINGS and skipWarning:
+                tooltipParts.append(
+                    getMessage("playlist-skip-warning-tooltip").format(skipWarning["missingEpisode"]))
+                previousWatchedTooltip = self._getWatchedTooltipForMetadata(skipWarning.get("previousWatchedMeta"))
+                previousWatchedFilename = skipWarning.get("previousWatchedFilename")
+                if previousWatchedTooltip and previousWatchedFilename:
+                    tooltipParts.append("'{}': {}".format(previousWatchedFilename, previousWatchedTooltip))
+
+            return "\n".join(tooltipParts)
+
+        def _getWatchedTooltipForFilePath(self, filePath):
+            if not filePath:
+                return None
+            meta = self.selfWindow._syncplayClient.watched.getWatchedMetadata(filePath)
+            return self._getWatchedTooltipForMetadata(meta)
+
+        def _getWatchedTooltipForMetadata(self, meta):
+            if not meta or not meta.get("lastWatchedAt"):
+                return None
+            try:
+                dtUtc = datetime.strptime(meta["lastWatchedAt"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+                delta = datetime.now(timezone.utc) - dtUtc
+                seconds = int(delta.total_seconds())
+                if seconds < 3600:
+                    age = getMessage("watched-ago-minutes").format(max(1, seconds // 60))
+                elif seconds < 86400:
+                    age = getMessage("watched-ago-hours").format(seconds // 3600)
+                else:
+                    age = getMessage("watched-ago-days").format(delta.days)
+                room = meta.get("lastRoom") or meta.get("lastWatchedRoom") or ""
+                return getMessage("watched-last-watched-tooltip").format(
+                    age, room, dtUtc.astimezone().strftime(getMessage("watched-datetime-format")))
+            except Exception:
+                return None
 
         def setWindow(self, window):
             self.selfWindow = window
@@ -729,11 +837,72 @@ class MainWindow(QtWidgets.QMainWindow):
     def shuffleEntirePlaylist(self):
         self._syncplayClient.playlist.shuffleEntirePlaylist()
 
+    def _markFileWatchedViaContext(self, filePath: str) -> None:
+        self._markFilesWatchedViaContext([filePath])
+
+    def _markFileUnwatchedViaContext(self, filePath: str) -> None:
+        self._markFilesUnwatchedViaContext([filePath])
+
+    def _markFilesWatchedViaContext(self, filePaths) -> None:
+        self._syncplayClient.watched.userMarkFilesWatched(filePaths)
+        self.playlist.updatePlaylistIndexIcon()
+
+    def _markFilesUnwatchedViaContext(self, filePaths) -> None:
+        self._syncplayClient.watched.userMarkFilesUnwatched(filePaths)
+        self.playlist.updatePlaylistIndexIcon()
+
+    def _addFileToPlaylistAtIndexViaContext(self, filePath: str, index: int) -> None:
+        self.addFileToPlaylist(filePath, index=index)
+        self.playlistChangeCheck()
+        self.playlist.updatePlaylistIndexIcon()
+
+    def _getPreviousFileMenuFilenameLabel(self, menu, filename):
+        try:
+            return menu.fontMetrics().elidedText(filename, Qt.ElideMiddle, 320)
+        except Exception:
+            if len(filename) <= 70:
+                return filename
+            return "{}...{}".format(filename[:40], filename[-27:])
+
+    def _getPreviousFileSubmenu(self, menu, filenameLabel):
+        return menu.addMenu(getMessage("previous-file-menu-section-label").format(filenameLabel))
+
     @needsClient
     def openPlaylistMenu(self, position):
+        def addSeenUnseenItems(pathFound, menu):
+            pathFound = getCorrectedPathForFile(pathFound)
+            if self._syncplayClient.watched.canMarkAsUnwatched(pathFound):
+                menu.addAction(QtGui.QPixmap(resourcespath + "no_eye.png"), getMessage("mark-as-unwatched-menu-label"), lambda p=pathFound: self._markFileUnwatchedViaContext(p))  # TODO: Move to language
+            elif self._syncplayClient.watched.canMarkAsWatched(pathFound):
+                menu.addAction(QtGui.QPixmap(resourcespath + "yes_eye.png"), getMessage("mark-as-watched-menu-label"), lambda p=pathFound: self._markFileWatchedViaContext(p))  # TODO: Move to language
+
+        def addSkippedFileItems(itemIndex, menu):
+            playlistItems = [self.playlist.item(i).text() for i in range(self.playlist.count())]
+            playlistSkipWarnings = self._syncplayClient.watched.getPlaylistSkipWarnings(playlistItems)
+            skipWarning = playlistSkipWarnings.get(itemIndex)
+            if not skipWarning:
+                return
+            skippedFilePath = self._syncplayClient.watched.findSkippedFilePath(skipWarning)
+            if not skippedFilePath:
+                return
+
+            skippedFilename = os.path.basename(skippedFilePath)
+            skippedFilenameLabel = self._getPreviousFileMenuFilenameLabel(menu, skippedFilename)
+            previousFileMenu = self._getPreviousFileSubmenu(menu, skippedFilenameLabel)
+            previousFileMenu.addAction(QtGui.QPixmap(resourcespath + "film_go.png"), getMessage("openmedia-menu-label"), lambda p=skippedFilePath: self.openFile(p, resetPosition=True, fromUser=True))
+            previousFileMenu.addAction(QtGui.QPixmap(resourcespath + "folder_film.png"), getMessage("open-containing-folder"), lambda p=skippedFilePath: utils.open_system_file_browser(p))
+
+            if not self._syncplayClient.watched.playlistContainsSkippedFile(playlistItems, skipWarning):
+                if not self.isItemInPlaylist(skippedFilename):
+                    previousFileMenu.addAction(QtGui.QPixmap(resourcespath + "film_add.png"), getMessage("add-previous-file-to-playlist-menu-label"), lambda p=skippedFilePath, i=itemIndex: self._addFileToPlaylistAtIndexViaContext(p, i))
+
+            if self._syncplayClient.watched.canMarkAsWatched(skippedFilePath):
+                previousFileMenu.addAction(QtGui.QPixmap(resourcespath + "yes_eye.png"), getMessage("mark-previous-file-as-watched-menu-label"), lambda p=skippedFilePath: self._markFileWatchedViaContext(p))
+
         indexes = self.playlist.selectedIndexes()
-        if len(indexes) > 0:
-            item = self.playlist.selectedIndexes()[0]
+        selectedRows = sorted(set(index.row() for index in indexes))
+        if selectedRows:
+            item = indexes[0]
         else:
             item = None
         menu = QtWidgets.QMenu()
@@ -750,6 +919,21 @@ class MainWindow(QtWidgets.QMainWindow):
                 menu.addAction(QtGui.QPixmap(resourcespath + "folder_film.png"),
                                getMessage('open-containing-folder'),
                                lambda: utils.open_system_file_browser(pathFound))
+                if len(selectedRows) == 1:
+                    addSeenUnseenItems(pathFound, menu)
+            if len(selectedRows) > 1:
+                selectedFilePaths = []
+                for row in selectedRows:
+                    filename = self.playlist.item(row).text()
+                    selectedPath = self._syncplayClient.fileSwitch.findFilepath(filename) if not isURL(filename) else None
+                    if selectedPath:
+                        selectedFilePaths.append(getCorrectedPathForFile(selectedPath))
+                if any(self._syncplayClient.watched.canMarkAsWatched(path) for path in selectedFilePaths):
+                    menu.addAction(QtGui.QPixmap(resourcespath + "yes_eye.png"), getMessage("mark-as-watched-menu-label"), lambda paths=selectedFilePaths: self._markFilesWatchedViaContext(paths))
+                if any(self._syncplayClient.watched.canMarkAsUnwatched(path) for path in selectedFilePaths):
+                    menu.addAction(QtGui.QPixmap(resourcespath + "no_eye.png"), getMessage("mark-as-unwatched-menu-label"), lambda paths=selectedFilePaths: self._markFilesUnwatchedViaContext(paths))
+            else:
+                addSkippedFileItems(item.row(), menu)
             if self._syncplayClient.isUntrustedTrustableURI(firstFile):
                 domain = utils.getDomainFromURL(firstFile)
                 if domain:
@@ -1186,7 +1370,10 @@ class MainWindow(QtWidgets.QMainWindow):
         URIsLayout.addWidget(URIsButtonBox, 2, 0, 1, 1)
         URIsDialog.setLayout(URIsLayout)
         URIsDialog.setModal(True)
-        URIsDialog.setWindowFlags(URIsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            URIsDialog.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            URIsDialog.setWindowFlags(URIsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         URIsDialog.show()
         result = URIsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1217,7 +1404,10 @@ class MainWindow(QtWidgets.QMainWindow):
         RoomsLayout.addWidget(RoomsButtonBox, 2, 0, 1, 1)
         RoomsDialog.setLayout(RoomsLayout)
         RoomsDialog.setModal(True)
-        RoomsDialog.setWindowFlags(RoomsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            RoomsDialog.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            RoomsDialog.setWindowFlags(RoomsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         RoomsDialog.show()
         result = RoomsDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1252,7 +1442,10 @@ class MainWindow(QtWidgets.QMainWindow):
         editPlaylistDialog.setModal(True)
         editPlaylistDialog.setMinimumWidth(600)
         editPlaylistDialog.setMinimumHeight(500)
-        editPlaylistDialog.setWindowFlags(editPlaylistDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            editPlaylistDialog.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            editPlaylistDialog.setWindowFlags(editPlaylistDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         editPlaylistDialog.show()
         result = editPlaylistDialog.exec_()
         if result == QtWidgets.QDialog.Accepted:
@@ -1283,7 +1476,10 @@ class MainWindow(QtWidgets.QMainWindow):
         MediaDirectoriesAddFolderButton.pressed.connect(lambda: self.openAddMediaDirectoryDialog(MediaDirectoriesTextbox, MediaDirectoriesDialog))
         MediaDirectoriesLayout.addWidget(MediaDirectoriesAddFolderButton, 1, 1, 1, 1, Qt.AlignTop)
         MediaDirectoriesDialog.setLayout(MediaDirectoriesLayout)
-        MediaDirectoriesDialog.setWindowFlags(MediaDirectoriesDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            MediaDirectoriesDialog.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            MediaDirectoriesDialog.setWindowFlags(MediaDirectoriesDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         MediaDirectoriesDialog.setModal(True)
         MediaDirectoriesDialog.show()
         result = MediaDirectoriesDialog.exec_()
@@ -1309,7 +1505,10 @@ class MainWindow(QtWidgets.QMainWindow):
         TrustedDomainsButtonBox.rejected.connect(TrustedDomainsDialog.reject)
         TrustedDomainsLayout.addWidget(TrustedDomainsButtonBox, 2, 0, 1, 1)
         TrustedDomainsDialog.setLayout(TrustedDomainsLayout)
-        TrustedDomainsDialog.setWindowFlags(TrustedDomainsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            TrustedDomainsDialog.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            TrustedDomainsDialog.setWindowFlags(TrustedDomainsDialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         TrustedDomainsDialog.setModal(True)
         TrustedDomainsDialog.show()
         result = TrustedDomainsDialog.exec_()
@@ -2137,7 +2336,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.QtGui = QtGui
         if isMacOS():
             self.setWindowFlags(self.windowFlags())
-        else:
+        elif not (isWindows() and IsPySide6):
             try:    
                 self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
             except TypeError:
@@ -2151,7 +2350,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addMainFrame(self)
         self.loadSettings()
         self.setWindowIcon(QtGui.QPixmap(resourcespath + "syncplay.png"))
-        self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
+        if isWindows() and IsPySide6:
+            self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+        else:
+            self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.show()
         self.setAcceptDrops(True)
         self.clearedPlaylistNote = False
