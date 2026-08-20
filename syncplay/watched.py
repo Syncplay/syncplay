@@ -1009,8 +1009,8 @@ class WatchedManager(object):
                 return False
 
             if not self._shouldUseWatchedSubfolderInfo():
-                if self._shouldUseWatchedHistoryInfo():
-                    self._recordHistory("watched", filename)
+                if self._shouldUseWatchedHistoryInfo() and not self._recordHistory("watched", filename, showConcurrentUpdateError=True):
+                    return False
                 self._showManualActionMessage(
                     getMessage("marked-file-as-watched-notification").format(filename))
                 return True
@@ -1055,7 +1055,8 @@ class WatchedManager(object):
                     self._client.ui.showErrorMessage(
                         getMessage("watched-file-tracking-disabled-error"))
                     return False
-                self._recordHistory("unwatched", filename)
+                if not self._recordHistory("unwatched", filename, showConcurrentUpdateError=True):
+                    return False
                 self._showManualActionMessage(
                     getMessage("marked-file-as-unwatched-notification").format(filename))
                 return True
@@ -1064,7 +1065,8 @@ class WatchedManager(object):
             if constants.WATCHED_HISTORY_ENABLED and not utils.isWatchedSubfolder(watchedDirectoryPath):
                 correctedPath = utils.getCorrectedPathForFile(fileSourcePath)
                 if self.isWatchedFile(correctedPath):
-                    self._recordHistory("unwatched", filename)
+                    if not self._recordHistory("unwatched", filename, showConcurrentUpdateError=True):
+                        return False
                     self._showManualActionMessage(
                         getMessage("marked-file-as-unwatched-notification").format(filename))
                     return True
@@ -1607,21 +1609,22 @@ class WatchedManager(object):
                 os.remove(tmpPath)
             except OSError:
                 pass
-            return False
+            return None
 
-    def _recordHistory(self, action, filename):
+    def _recordHistory(self, action, filename, showConcurrentUpdateError=False):
         """Record or remove a watched entry in the single filename-keyed JSON index."""
         if not constants.WATCHED_HISTORY_ENABLED:
-            return
+            return False
         if not filename:
-            return
+            return False
 
         filename = self._normaliseHistoryFilename(filename)
         if not filename:
-            return
+            return False
 
         jsonPath = self._getJsonPath()
         retries = 3
+        allFailuresWereConcurrent = True
         for _ in range(retries):
             watchedData = self._loadJson(jsonPath)
             cached = self._jsonCache.get(jsonPath, {})
@@ -1642,8 +1645,15 @@ class WatchedManager(object):
                     "lastRoom": room,
                 }
 
-            if self._writeJson(jsonPath, watchedData, expectedMtime=expectedMtime):
-                return
+            writeResult = self._writeJson(jsonPath, watchedData, expectedMtime=expectedMtime)
+            if writeResult is True:
+                return True
+            if writeResult is None:
+                allFailuresWereConcurrent = False
 
-        self._client.ui.showDebugMessage(
-            getMessage("watched-json-concurrent-update-error").format(jsonPath))
+        if allFailuresWereConcurrent:
+            message = getMessage("watched-json-concurrent-update-error").format(jsonPath)
+            self._client.ui.showDebugMessage(message)
+            if showConcurrentUpdateError:
+                self._client.ui.showErrorMessage(message)
+        return False
