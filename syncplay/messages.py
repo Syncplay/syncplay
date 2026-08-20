@@ -4,6 +4,7 @@ from syncplay import constants
 from . import messages_de
 from . import messages_en
 from . import messages_es
+from . import messages_es_ES
 from . import messages_eo
 from . import messages_fi
 from . import messages_fr
@@ -21,6 +22,8 @@ messages = {
     "de": messages_de.de,
     "en": messages_en.en,
     "es": messages_es.es,
+    "es": messages_es.es,
+    "es_ES": messages_es_ES.es_ES,
     "eo": messages_eo.eo,
     "fi": messages_fi.fi,
     "fr": messages_fr.fr,
