@@ -2502,6 +2502,7 @@ class FileSwitchManager(object):
         self.directorySearchError = None
         self.newInfo = False
         self.currentlyUpdating = False
+        self.updateInfoPending = False
         self.newWatchlist = []
         self.fileSwitchTimer = task.LoopingCall(self.updateInfo)
         self.fileSwitchTimer.start(constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL, True)
@@ -2540,9 +2541,26 @@ class FileSwitchManager(object):
             self.directorySearchError = None
         self._client.playlist.doubleCheckForWatchedPreviousFile()
 
-    def updateInfo(self):
-        if not self.currentlyUpdating and self.mediaDirectories:
-            threads.deferToThread(self._updateInfoThread).addCallback(lambda x: self.checkForFileSwitchUpdate())
+    def updateInfo(self, queueIfUpdating=False):
+        if not self.mediaDirectories:
+            return
+        if self.currentlyUpdating:
+            if queueIfUpdating:
+                self.updateInfoPending = True
+            return
+        self.currentlyUpdating = True
+        threads.deferToThread(self._updateInfoThread).addBoth(self._updateInfoFinished)
+
+    def _updateInfoFinished(self, result):
+        self.currentlyUpdating = False
+        if self.updateInfoPending:
+            self.updateInfoPending = False
+            if self.folderSearchEnabled and self.mediaDirectories:
+                self.directorySearchError = None
+                self.updateInfo()
+                return result
+        self.checkForFileSwitchUpdate()
+        return result
 
     def setFilenameWatchlist(self, unfoundFilenames):
         self.filenameWatchlist = unfoundFilenames
@@ -2550,7 +2568,6 @@ class FileSwitchManager(object):
     def _updateInfoThread(self):
         with self.lock:
             try:
-                self.currentlyUpdating = True
                 dirsToSearch = self.mediaDirectories
 
                 if not self.folderSearchEnabled:
@@ -2596,8 +2613,6 @@ class FileSwitchManager(object):
                         self.newInfo = True
             except Exception as e:
                 self._client.ui.showDebugMessage(str(e))
-            finally:
-                self.currentlyUpdating = False
 
     def infoUpdated(self):
         self._client.fileSwitchFoundFiles()

@@ -838,11 +838,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self._syncplayClient.playlist.shuffleEntirePlaylist()
 
     def _markFileWatchedViaContext(self, filePath: str) -> None:
-        self._syncplayClient.watched.userMarkWatched(filePath)
-        self.playlist.updatePlaylistIndexIcon()
+        self._markFilesWatchedViaContext([filePath])
 
     def _markFileUnwatchedViaContext(self, filePath: str) -> None:
-        self._syncplayClient.watched.userMarkUnwatched(filePath)
+        self._markFilesUnwatchedViaContext([filePath])
+
+    def _markFilesWatchedViaContext(self, filePaths) -> None:
+        self._syncplayClient.watched.userMarkFilesWatched(filePaths)
+        self.playlist.updatePlaylistIndexIcon()
+
+    def _markFilesUnwatchedViaContext(self, filePaths) -> None:
+        self._syncplayClient.watched.userMarkFilesUnwatched(filePaths)
         self.playlist.updatePlaylistIndexIcon()
 
     def _addFileToPlaylistAtIndexViaContext(self, filePath: str, index: int) -> None:
@@ -894,8 +900,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 previousFileMenu.addAction(QtGui.QPixmap(resourcespath + "yes_eye.png"), getMessage("mark-previous-file-as-watched-menu-label"), lambda p=skippedFilePath: self._markFileWatchedViaContext(p))
 
         indexes = self.playlist.selectedIndexes()
-        if len(indexes) > 0:
-            item = self.playlist.selectedIndexes()[0]
+        selectedRows = sorted(set(index.row() for index in indexes))
+        if selectedRows:
+            item = indexes[0]
         else:
             item = None
         menu = QtWidgets.QMenu()
@@ -912,8 +919,21 @@ class MainWindow(QtWidgets.QMainWindow):
                 menu.addAction(QtGui.QPixmap(resourcespath + "folder_film.png"),
                                getMessage('open-containing-folder'),
                                lambda: utils.open_system_file_browser(pathFound))
-                addSeenUnseenItems(pathFound, menu)
-            addSkippedFileItems(item.row(), menu)
+                if len(selectedRows) == 1:
+                    addSeenUnseenItems(pathFound, menu)
+            if len(selectedRows) > 1:
+                selectedFilePaths = []
+                for row in selectedRows:
+                    filename = self.playlist.item(row).text()
+                    selectedPath = self._syncplayClient.fileSwitch.findFilepath(filename) if not isURL(filename) else None
+                    if selectedPath:
+                        selectedFilePaths.append(getCorrectedPathForFile(selectedPath))
+                if any(self._syncplayClient.watched.canMarkAsWatched(path) for path in selectedFilePaths):
+                    menu.addAction(QtGui.QPixmap(resourcespath + "yes_eye.png"), getMessage("mark-as-watched-menu-label"), lambda paths=selectedFilePaths: self._markFilesWatchedViaContext(paths))
+                if any(self._syncplayClient.watched.canMarkAsUnwatched(path) for path in selectedFilePaths):
+                    menu.addAction(QtGui.QPixmap(resourcespath + "no_eye.png"), getMessage("mark-as-unwatched-menu-label"), lambda paths=selectedFilePaths: self._markFilesUnwatchedViaContext(paths))
+            else:
+                addSkippedFileItems(item.row(), menu)
             if self._syncplayClient.isUntrustedTrustableURI(firstFile):
                 domain = utils.getDomainFromURL(firstFile)
                 if domain:

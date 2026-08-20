@@ -839,11 +839,29 @@ class WatchedManager(object):
 
     def userMarkWatched(self, fileSourcePath):
         """Manual 'Mark as watched' context-menu action."""
-        self._userInitiatedMoveToWatched(fileSourcePath)
+        return self.userMarkFilesWatched([fileSourcePath])
 
     def userMarkUnwatched(self, fileSourcePath):
         """Manual 'Mark as unwatched' context-menu action."""
-        self._userInitiatedMoveToParent(fileSourcePath)
+        return self.userMarkFilesUnwatched([fileSourcePath])
+
+    def userMarkFilesWatched(self, fileSourcePaths):
+        changed = False
+        for fileSourcePath in fileSourcePaths:
+            if self.canMarkAsWatched(fileSourcePath) and self._userInitiatedMoveToWatched(fileSourcePath):
+                changed = True
+        if changed:
+            self._client.fileSwitch.updateInfo(queueIfUpdating=True)
+        return changed
+
+    def userMarkFilesUnwatched(self, fileSourcePaths):
+        changed = False
+        for fileSourcePath in fileSourcePaths:
+            if self.canMarkAsUnwatched(fileSourcePath) and self._userInitiatedMoveToParent(fileSourcePath):
+                changed = True
+        if changed:
+            self._client.fileSwitch.updateInfo(queueIfUpdating=True)
+        return changed
 
     # ------------------------------------------------------------------
     # Auto-move queue processing
@@ -971,6 +989,15 @@ class WatchedManager(object):
     # Manual mark watched / unwatched
     # ------------------------------------------------------------------
 
+    def _showManualActionMessage(self, message):
+        try:
+            self._client.ui.showMessage(message)
+        except Exception as e:
+            try:
+                self._client.ui.showDebugMessage("Completed watched action but could not notify: {}".format(e))
+            except Exception:
+                pass
+
     def _userInitiatedMoveToWatched(self, fileSourcePath):
         try:
             directory = os.path.dirname(fileSourcePath)
@@ -979,15 +1006,14 @@ class WatchedManager(object):
             if not self._shouldUseWatchedFileInfo():
                 self._client.ui.showErrorMessage(
                     getMessage("watched-file-tracking-disabled-error"))
-                return
+                return False
 
             if not self._shouldUseWatchedSubfolderInfo():
                 if self._shouldUseWatchedHistoryInfo():
                     self._recordHistory("watched", filename)
-                self._client.fileSwitch.updateInfo()
-                self._client.ui.showMessage(
+                self._showManualActionMessage(
                     getMessage("marked-file-as-watched-notification").format(filename))
-                return
+                return True
 
             watchedDirectory = utils.getWatchedSubfolder(directory)
             self._createWatchedSubdirIfNeeded(watchedDirectory)
@@ -995,27 +1021,28 @@ class WatchedManager(object):
                 self._client.ui.showErrorMessage(
                     getMessage("watched-subfolder-unavailable-error").format(
                         fileSourcePath, constants.WATCHED_SUBFOLDER))
-                return
+                return False
             destPath = os.path.join(watchedDirectory, filename)
             watchedDirectoryName = os.path.basename(watchedDirectory) or constants.WATCHED_SUBFOLDER
             if os.path.exists(destPath):
                 self._client.ui.showErrorMessage(
                     getMessage("cannot-move-file-due-to-name-conflict-error").format(fileSourcePath, watchedDirectoryName))
-                return
+                return False
             try:
                 self._moveFile(fileSourcePath, destPath)
             except FileExistsError:
                 self._client.ui.showErrorMessage(
                     getMessage("cannot-move-file-due-to-name-conflict-error").format(fileSourcePath, watchedDirectoryName))
-                return
+                return False
             if self._shouldUseWatchedHistoryInfo():
                 self._recordHistory("watched", filename)
-            self._client.fileSwitch.updateInfo()
-            self._client.ui.showMessage(
+            self._showManualActionMessage(
                 getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, watchedDirectoryName))
+            return True
         except Exception as e:
             self._client.ui.showErrorMessage(getMessage("watched-mark-watched-error").format(os.path.basename(fileSourcePath), e))
             self._client.ui.showDebugMessage(getMessage("watched-mark-watched-error").format(os.path.basename(fileSourcePath), e))
+            return False
 
     def _userInitiatedMoveToParent(self, fileSourcePath):
         try:
@@ -1027,54 +1054,53 @@ class WatchedManager(object):
                 if not constants.WATCHED_HISTORY_ENABLED:
                     self._client.ui.showErrorMessage(
                         getMessage("watched-file-tracking-disabled-error"))
-                    return
+                    return False
                 self._recordHistory("unwatched", filename)
-                self._client.fileSwitch.updateInfo()
-                self._client.ui.showMessage(
+                self._showManualActionMessage(
                     getMessage("marked-file-as-unwatched-notification").format(filename))
-                return
+                return True
 
             # Mixed mode: a file can be watched via JSON without physically being inside the watched subfolder.
             if constants.WATCHED_HISTORY_ENABLED and not utils.isWatchedSubfolder(watchedDirectoryPath):
                 correctedPath = utils.getCorrectedPathForFile(fileSourcePath)
                 if self.isWatchedFile(correctedPath):
                     self._recordHistory("unwatched", filename)
-                    self._client.fileSwitch.updateInfo()
-                    self._client.ui.showMessage(
+                    self._showManualActionMessage(
                         getMessage("marked-file-as-unwatched-notification").format(filename))
-                    return
+                    return True
 
             if not utils.isWatchedSubfolder(watchedDirectoryPath):
                 self._client.ui.showErrorMessage(
                     getMessage("file-not-in-watched-subfolder-error").format(fileSourcePath))
-                return
+                return False
             parentDir = utils.getUnwatchedParentfolder(watchedDirectoryPath)
             if not parentDir:
                 self._client.ui.showErrorMessage(
                     getMessage("watched-parent-folder-unavailable-error").format(fileSourcePath))
-                return
+                return False
             parentName = os.path.basename(parentDir)
             destPath = os.path.join(parentDir, filename)
             if os.path.exists(destPath):
                 self._client.ui.showErrorMessage(
                     getMessage("cannot-move-file-due-to-parent-name-conflict-error").format(fileSourcePath, parentName))
-                return
+                return False
             try:
                 self._moveFile(fileSourcePath, destPath)
             except FileExistsError:
                 self._client.ui.showErrorMessage(
                     getMessage("cannot-move-file-due-to-parent-name-conflict-error").format(fileSourcePath, parentName))
-                return
+                return False
             try:
                 self._recordHistory("unwatched", filename)
             except Exception as e:
                 self._client.ui.showDebugMessage(getMessage("watched-record-history-error").format(filename, e))
-            self._client.fileSwitch.updateInfo()
-            self._client.ui.showMessage(
+            self._showManualActionMessage(
                 getMessage("moved-file-from-watched-subfolder-notification").format(fileSourcePath, parentName))
+            return True
         except Exception as e:
             self._client.ui.showErrorMessage(getMessage("watched-mark-unwatched-error").format(os.path.basename(fileSourcePath), e))
             self._client.ui.showDebugMessage(getMessage("watched-mark-unwatched-error").format(os.path.basename(fileSourcePath), e))
+            return False
 
     def getSkippedEpisodeInfo(self, filename):
         """Return metadata about a likely skipped episode for the given playlist filename, or None."""
