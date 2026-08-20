@@ -36,8 +36,8 @@ es = {
     "slowdown-notification": "Ralentizando debido a diferencia de tiempo con {}",  # User
     "revert-notification": "Revirtiendo a la velocidad normal",
 
-    "pause-notification": "{} pausado ({})", # User, Time - TODO: Change into format "{} paused at {}" in line with English message
-    "unpause-notification": "{} resumido",  # User
+    "pause-notification": "{} ha pausado ({})", # User, Time - TODO: Change into format "{} paused at {}" in line with English message
+    "unpause-notification": "{} ha reanudado",  # User
     "seek-notification": "{} saltó desde {} hasta {}",  # User, from time, to time
 
     "current-offset-notification": "Compensación actual: {} segundos",  # Offset
@@ -51,8 +51,8 @@ es = {
     "playing-notification/room-addendum":  " en la sala: '{}'",  # Room
 
     "not-all-ready": "No están listos: {}",  # Usernames
-    "all-users-ready": "Todos están listos ({} users)",  # Number of ready users
-    "ready-to-unpause-notification": "Se te ha establecido como listo - despausa nuevamente para resumir",
+    "all-users-ready": "Todos están listos ({} usuarios)",  # Number of ready users
+    "ready-to-unpause-notification": "Se te ha establecido como listo - vuelve a despausar para reanudar",
     "set-as-ready-notification": "Se te ha establecido como listo",
     "set-as-not-ready-notification": "Se te ha establecido como no-listo",
     "autoplaying-notification": "Reproduciendo automáticamente en {}...",  # Number of seconds until playback will start
@@ -60,10 +60,10 @@ es = {
     "identifying-as-controller-notification": "Autentificando como el operador de la sala, con contraseña '{}'...",
     "failed-to-identify-as-controller-notification": "{} falló la autentificación como operador de la sala.",
     "authenticated-as-controller-notification": "{} autentificado como operador de la sala",
-    "created-controlled-room-notification": "Sala administrada '{}' creada con contraseña '{}'. Por favor guarda esta información para referencias futuras!\n\nIn managed rooms everyone is kept in sync with the room operator(s) who are the only ones who can pause, unpause, seek, and change the playlist.\n\nYou should ask regular viewers to join the room '{}' but the room operators can join the room '{}' to automatically authenticate themselves.", # RoomName, operatorPassword, roomName, roomName:operatorPassword # TODO: Translate
+    "created-controlled-room-notification": "Sala administrada '{}' creada con contraseña '{}'. Por favor, ¡guarda esta información para poder revisarla luego!\n\nEn salas administradas, todos se sincronizan con el operador/operadores de la sala, y solo ellos pueden pausar, reanudar, mover el cursor y cambiar la lista de reproducción.\n\nDeberías pedir a los espectadores normales que se unan a la sala '{}', pero los operadores pueden unirse a la sala '{}' para autentificarse automáticamente.", # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
-    "other-set-as-ready-notification": "{} was set as ready by {}", # User set as ready, user who set them as ready # TODO: Translate
-    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+    "other-set-as-ready-notification": "{} ha sido marcado como listo por {}", # User set as ready, user who set them as ready
+    "other-set-as-not-ready-notification": "{} ha sido marcado como no-listo por {}", # User set as not ready, user who set them as not ready
 
     "file-different-notification": "El archivo que reproduces parece ser diferente al archivo de {}",  # User
     "file-differences-notification": "Tu archivo difiere de la(s) siguiente(s) forma(s): {}",  # Differences
@@ -73,12 +73,12 @@ es = {
     "file-difference-duration": "duración",
     "alone-in-the-room": "Estás solo en la sala",
 
-    "different-filesize-notification": " (el tamaño de su archivo difiere con el tuyo!)",
+    "different-filesize-notification": " (¡el tamaño de su archivo difiere con el tuyo!)",
     "userlist-playing-notification": "{} está reproduciendo:",  # Username
-    "file-played-by-notification": "Archivo: {} está siendo reproducido por:",  # File
-    "no-file-played-notification": "{} está ahora reproduciendo un archivo",  # Username
-    "notplaying-notification": "Personas que no reproducen algún archivo:",
-    "userlist-room-notification":  "En sala '{}':",  # Room
+    "file-played-by-notification": "El archivo {} está siendo reproducido por:",  # File
+    "no-file-played-notification": "{} no está reproduciendo un archivo",  # Username
+    "notplaying-notification": "Personas que no están reproduciendo ningún archivo:",
+    "userlist-room-notification":  "En la sala '{}':",  # Room
     "userlist-file-notification": "Archivo",
     "controller-userlist-userflag": "Operador",
     "ready-userlist-userflag": "Listo",
@@ -98,20 +98,20 @@ es = {
     "commandlist-notification/undo": "\tu - deshacer última búsqueda",
     "commandlist-notification/pause": "\tp - activar pausa",
     "commandlist-notification/seek": "\t[s][+-]tiempo - ir al tiempo definido, si no se especifica + o -, será el tiempo absoluto en segundos o min:sec",
-    "commandlist-notification/offset": "\to[+-]duration - offset local playback by the given duration (in seconds or min:sec) from the server seek position - this is a deprecated feature", # TODO: Translate
+    "commandlist-notification/offset": "\to[+-]duración - desfasa la reproducción local por la duración introducida (en segundos o min:seg) respecto al puntero del servdor. Esta funcionalidad está deprecada",
     "commandlist-notification/help": "\th - esta ayuda",
-    "commandlist-notification/toggle": "\tt - activa/inactiva señal que estás listo para ver",
-    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
-    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
+    "commandlist-notification/toggle": "\tt - activa/inactiva la señal que estás listo para ver",
+    "commandlist-notification/setready": "\tsr [nombre] - establece al usuario como listo",
+    "commandlist-notification/setnotready": "\tsn [nombre] - establece al usuario como no-listo",
     "commandlist-notification/create": "\tc [nombre] - crear sala administrada usando el nombre de la sala actual",
     "commandlist-notification/auth": "\ta [contraseña] - autentificar como operador de la sala con la contraseña de operador",
     "commandlist-notification/chat": "\tch [mensaje] - enviar un mensaje en la sala",
-    "commandList-notification/queue": "\tqa [file/url] - add file or url to bottom of playlist",  # TO DO: Translate
-    "commandList-notification/queueandselect": "\tqas [file/url] - add file or url to bottom of playlist and select it",  # TO DO: Translate
-    "commandList-notification/playlist": "\tql - show the current playlist",  # TO DO: Translate
-    "commandList-notification/select": "\tqs [index] - select given entry in the playlist",  # TO DO: Translate
-    "commandList-notification/next": "\tqn - select next entry in the playlist", # TODO: Translate
-    "commandList-notification/delete": "\tqd [index] - delete the given entry from the playlist",  # TO DO: Translate
+    "commandList-notification/queue": "\tqa [archivo/url] - añadir archivo o url al final de la lista de reproducción",
+    "commandList-notification/queueandselect": "\tqas [archivo/url] - añadir archivo o url al final de la lista de reproducción y seleccionarlo",
+    "commandList-notification/playlist": "\tql - mostrar la lista de reproducción actual",
+    "commandList-notification/select": "\tqs [índice] - seleccionar la entrada solicitada de la lista de reproducción",
+    "commandList-notification/next": "\tqn - seleccionar la siguiente entrada de la lista de reproducción",
+    "commandList-notification/delete": "\tqd [index] - borrar la entrada solicitada de la lista de reproducción",
     "syncplay-version-notification": "Versión de Syncplay: {}",  # syncplay.version
     "more-info-notification": "Más información disponible en: {}",  # projectURL
 
@@ -132,13 +132,13 @@ es = {
     "mpc-version-insufficient-error": "La versión de MPC no es suficiente, por favor utiliza `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "La versión de MPC no es suficiente, por favor utiliza `mpc-be` >= `{}`",
     "mpv-version-error": "Syncplay no es compatible con esta versión de mpv. Por favor utiliza una versión diferente de mpv (p.ej. Git HEAD).",
-    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.", # TODO: Translate
+    "mpv-failed-advice": "La razón por la que mpv no puede arrancar puede ser por el uso de comandos de terminal incorrectos o por una versión no soportada de mpv.",
     "player-file-open-error": "El reproductor falló al abrir el archivo",
     "player-path-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2, y IINA",
-    "hostname-empty-error": "El nombre del host no puede ser vacío",
-    "empty-error": "{} no puede ser vacío",  # Configuration
+    "hostname-empty-error": "El nombre del host no puede estar vacío",
+    "empty-error": "{} no puede estar vacío",  # Configuration
     "media-player-error": "Error del reproductor multimedia: \"{}\"",  # Error line
-    "unable-import-gui-error": "No se lograron importar las librerías GUI. Si no tienes instalado PySide, entonces tendrás que instalarlo para que funcione el GUI. If you want to run Syncplay in console mode then run it with the --no-gui command line switch. See https://syncplay.pl/guide/ for more details.", # TODO: Translate end of message and update second sentence to be a translation of "You need to have the correct version of PySide installed for the GUI to work."
+    "unable-import-gui-error": "No se han podido importar las librerías para la GUI. Debes tener instalada la versión corrcta de PySide para que funcione. Si deseas ejecutar Syncplay en modo consola, puedes hacerlo con el parámetro --no-gui. Ves a https://syncplay.pl/guide/ para más detalles.",
     "unable-import-twisted-error": "No se logró importar Twisted. Por favor instala Twisted v16.4.0 o posterior.",
 
     "arguments-missing-error": "Están faltando algunos argumentos necesarios. Por favor revisa --help",
@@ -147,23 +147,23 @@ es = {
 
     "player-path-config-error": "La ruta del reproductor no está definida correctamente. Los reproductores soportados son: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2 y IINA.",
     "no-file-path-config-error": "El archivo debe ser seleccionado antes de iniciar el reproductor",
-    "no-hostname-config-error": "El nombre del host no puede ser vacío",
+    "no-hostname-config-error": "El nombre del host no puede estar vacío",
     "invalid-port-config-error": "El puerto debe ser válido",
-    "empty-value-config-error": "{} no puede ser vacío",  # Config option
+    "empty-value-config-error": "{} no puede estar vacío",  # Config option
 
     "not-json-error": "No es una cadena de caracteres JSON válida\n",
     "hello-arguments-error": "Not enough Hello arguments\n",  # DO NOT TRANSLATE
     "version-mismatch-error": "No coinciden las versiones del cliente y servidor\n",
-    "vlc-failed-connection": "Falló la conexión con VLC. Si no has instalado syncplay.lua y estás usando la última versión de VLC, por favor revisa https://syncplay.pl/LUA/ para obtener instrucciones. Syncplay and VLC 4 are not currently compatible, so either use VLC 3 or an alternative such as mpv.", # TO DO: TRANSLATE
+    "vlc-failed-connection": "Falló la conexión con VLC. Si no has instalado syncplay.lua y estás usando la última versión de VLC, por favor revisa https://syncplay.pl/LUA/ para obtener instrucciones. Por el momento, Syncplay y VLC 4 no son compatibles, te recomendamos usar VLC 3 o una alternativa, como mpv",
     "vlc-failed-noscript": "VLC ha reportado que la interfaz syncplay.lua no se ha instalado. Por favor revisa https://syncplay.pl/LUA/ para obtener instrucciones.",
     "vlc-failed-versioncheck": "Esta versión de VLC no está soportada por Syncplay.",
-    "vlc-initial-warning": 'VLC does not always provide accurate position information to Syncplay, especially for .mp4 and .avi files. If you experience problems with erroneous seeking then please try an alternative media player such as <a href="https://mpv.io/">mpv</a> (or <a href="https://github.com/stax76/mpv.net/">mpv.net</a> for Windows users).', # TODO: Translatef
+    "vlc-initial-warning": 'VLC no siempre proveerá información precisa a Syncplay, especialmente para archivos .mp4 y .avi. Si tienes problemas con tiempos incorrectos, te recomendamos probar un reproductor alternativo, como <a href="https://mpv.io/">mpv</a> (o <a href="https://github.com/stax76/mpv.net/">mpv.net</a> para usuarios de Windows).',
 
     "feature-sharedPlaylists": "listas de reproducción compartidas",  # used for not-supported-by-server-error
     "feature-chat": "chat",  # used for not-supported-by-server-error
     "feature-readiness": "preparación",  # used for not-supported-by-server-error
     "feature-managedRooms": "salas administradas",  # used for not-supported-by-server-error
-    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-setOthersReadiness": "forzado de listo",  # used for not-supported-by-server-error
 
     "not-supported-by-server-error": "La característica {} no está soportada por este servidor..",  # feature
     "shared-playlists-not-supported-by-server-error": "El servidor no admite la función de listas de reproducción compartidas. Para asegurarse de que funciona correctamente, se requiere un servidor que ejecute Syncplay {}+, pero el servidor está ejecutando Syncplay {}.",  # minVersion, serverVersion
@@ -173,8 +173,8 @@ es = {
     "invalid-offset-value": "Valor de desplazamiento inválido",
 
     "switch-file-not-found-error": "No se pudo cambiar el archivo '{0}'. Syncplay busca en los directorios de medios especificados.",  # File not found
-    "folder-search-timeout-error": "Se anuló la búsqueda de medios en el directorio de medios, ya que tardó demasiado buscando en '{}' (after having processed the first {:,} files). Esto ocurrirá si seleccionas una carpeta con demasiadas subcarpetas en tu lista de carpetas de medios para buscar. Para que el cambio automático de archivos vuelva a funcionar, selecciona Archivo->Establecer directorios de medios en la barra de menú y elimina este directorio o reemplázalo con una subcarpeta apropiada. Si la carpeta está bien, puedes volver a reactivarlo seleccionando Archivo->Establecer directorios de medios y presionando 'OK'.", # Folder, Files processed - Note: {:,} is {} but with added commas seprators - TODO: Translate
-    "folder-search-timeout-warning": "Warning: It has taken {} seconds to scan {:,} files in the folder '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through or if there are too many files to process.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators. TODO: Translate
+    "folder-search-timeout-error": "Se anuló la búsqueda de medios en el directorio de medios, ya que tardó demasiado buscando en '{}' (after having processed the first {:,} files). Esto ocurrirá si seleccionas una carpeta con demasiadas subcarpetas en tu lista de carpetas de medios para buscar. Para que el cambio automático de archivos vuelva a funcionar, selecciona Archivo->Establecer directorios de medios en la barra de menú y elimina este directorio o reemplázalo con una subcarpeta apropiada. Si la carpeta está bien, puedes volver a reactivarlo seleccionando Archivo->Establecer directorios de medios y presionando 'OK'.", # Folder, Files processed - Note: {:,} is {} but with added commas seprators
+    "folder-search-timeout-warning": "Advertencia: Se ha tardado {} segundos en escanear {:,} archivos de la carpeta '{}'. Esto ocurre si has seleccionado una carpeta con demasiadas subcarpetas en tu lista de carpetas de medios para escanear, o si hay demasiados archivos que procesar.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators.
     "folder-search-first-file-timeout-error": "Se anuló la búsqueda de medios en '{}', ya que tardó demasiado buscando en acceder al directorio. Esto podría ocurrir si se trata de una unidad de red, o si tienes configurada la unidad para centrifugar luego de cierto período de inactividad. Para que el cambio automático de archivos vuelva a funcionar, por favor dirígete a Archivo->Establecer directorios de medios y elimina el directorio o resuelve el problema (p.ej. cambiando la configuración de ahorro de energía).",  # Folder
     "added-file-not-in-media-directory-error": "Has cargado un archivo en '{}' el cual no es un directorio de medios conocido. Puedes agregarlo como un directorio de medios seleccionado Archivo->Establecer directorios de medios en la barra de menú.",  # Folder
     "no-media-directories-error": "No se han establecido directorios de medios. Para que las funciones de lista de reproducción compartida y cambio de archivos funcionen correctamente, selecciona Archivo->Establecer directorios de medios y especifica dónde debe buscar Syncplay para encontrar archivos multimedia.",
@@ -202,7 +202,7 @@ es = {
     "version-argument": 'imprime tu versión',
     "version-message": "Estás usando la versión de Syncplay {} ({})",
 
-    "load-playlist-from-file-argument": "loads playlist from text file (one entry per line)", # TODO: Translate
+    "load-playlist-from-file-argument": "carga una lista de reproducción desde un archivo de texto (una entrada por línea)",
 
     # Client labels
     "config-window-title": "Configuración de Syncplay",
@@ -212,7 +212,7 @@ es = {
     "name-label":  "Nombre de usuario (opcional):",
     "password-label":  "Contraseña del servidor (si corresponde):",
     "room-label": "Sala por defecto: ",
-    "roomlist-msgbox-label": "Edit room list (one per line)", # TODO: Translate
+    "roomlist-msgbox-label": "Editar lista de salas (una por línea)",
 
     "media-setting-title": "Configuración del reproductor multimedia",
     "executable-path-label": "Ruta al reproductor multimedia:",
@@ -230,7 +230,7 @@ es = {
     "filename-privacy-label": "Información del nombre de archivo:",
     "filesize-privacy-label": "Información del tamaño de archivo:",
     "checkforupdatesautomatically-label": "Buscar actualizaciones de Syncplay automáticamente",
-    "autosavejoinstolist-label": "Add rooms you join to the room list", # TO DO: Translate
+    "autosavejoinstolist-label": "Añade salas a las que te unes a la lista de salas",
     "slowondesync-label": "Ralentizar si hay una desincronización menor (no soportado en MPC-HC/BE)",
     "rewindondesync-label": "Rebobinar si hay una desincronización mayor (recomendado)",
     "fastforwardondesync-label": "Avanzar rápidamente si hay un retraso (recomendado)",
@@ -317,7 +317,7 @@ es = {
     "autoplay-menu-label": "Mostrar botón de auto-reproducción",
     "autoplay-guipushbuttonlabel": "Reproducir cuando todos estén listos",
     "autoplay-minimum-label": "Mín. de usuarios:",
-    "hideemptyrooms-menu-label": "Hide empty persistent rooms", # TODO: Translate
+    "hideemptyrooms-menu-label": "Esconder salas vacías persistentes",
 
     "sendmessage-label": "Enviar",
 
@@ -336,8 +336,8 @@ es = {
     "openmedia-menu-label": "A&brir archivo multimedia",
     "openstreamurl-menu-label": "Abrir URL de &flujo de medios",
     "setmediadirectories-menu-label": "&Establecer directorios de medios",
-    "loadplaylistfromfile-menu-label": "&Load playlist from file",  # TODO: Translate
-    "saveplaylisttofile-menu-label": "&Save playlist to file",  # TODO: Translate
+    "loadplaylistfromfile-menu-label": "&Carga lista de reproducción desde archivo",
+    "saveplaylisttofile-menu-label": "&Guarda lista de reproducción a archivo",
     "exit-menu-label": "&Salir",
     "advanced-menu-label": "A&vanzado",
     "window-menu-label": "&Ventana",
@@ -362,7 +362,7 @@ es = {
     "startTLS-initiated": "Intentando conexión segura",
     "startTLS-secure-connection-ok": "Conexión segura establecida ({})",
     "startTLS-server-certificate-invalid": 'Falló la conexión segura. El servidor utiliza un certificado inválido. Esta comunicación podría ser interceptada por un tercero. Para más detalles y solución de problemas, consulta <a href="https://syncplay.pl/trouble">aquí</a>.',
-    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay does not trust this server because it uses a certificate that is not valid for its hostname.", # TODO: Translate
+    "startTLS-server-certificate-invalid-DNS-ID": "Syncplay no confía en este servidor ya que usa un certificado que no es válido para su hostname.",
     "startTLS-not-supported-client": "Este cliente no soporta TLS",
     "startTLS-not-supported-server": "Este servidor no soporta TLS",
 
@@ -424,7 +424,7 @@ es = {
     "privacy-sendhashed-tooltip": "Enviar una versión \"hasheada\" de la información, para que sea menos visible para otros clientes.",
     "privacy-dontsend-tooltip": "No enviar esta información al servidor. Esto proporciona la máxima privacidad.",
     "checkforupdatesautomatically-tooltip": "Regularmente verificar con el sitio Web de Syncplay para ver si hay una nueva versión de Syncplay disponible.",
-    "autosavejoinstolist-tooltip": "When you join a room in a server, automatically remember the room name in the list of rooms to join.", # TO DO: Translate
+    "autosavejoinstolist-tooltip": "Cuando te unas a una sala en un servidor, recuerda automáticamente el nombre de la sala en la lista de salas a las que unirte",
     "slowondesync-tooltip": "Reducir la velocidad de reproducción temporalmente cuando sea necesario, para volver a sincronizar con otros espectadores. No soportado en MPC-HC/BE.",
     "dontslowdownwithme-tooltip": "Significa que otros no se ralentizan ni rebobinan si la reproducción se retrasa. Útil para operadores de la sala.",
     "pauseonleave-tooltip": "Pausa la reproducción si te desconectas o alguien sale de tu sala.",
@@ -484,7 +484,7 @@ es = {
 
     # Server messages to client
     "new-syncplay-available-motd-message": "Estás usando Syncplay {} pero hay una versión más nueva disponible en https://syncplay.pl",  # ClientVersion
-    "persistent-rooms-notice": "NOTICE: This server uses persistent rooms, which means that the playlist information is stored between playback sessions. If you want to create a room where information is not saved then put -temp at the end of the room name.", # TO DO: Translate - NOTE: Do not translate the word -temp
+    "persistent-rooms-notice": "AVISO: Este servidor usa salas persistentes, lo cual hace que la información de listas de reproducción se guarde entre sesiones. Si deseas crear una sala en la que esta información no se guarde, introduce -temp al final del nombre de esa sala.",
 
     # Server notifications
     "welcome-server-notification": "Bienvenido al servidor de Syncplay, ver. {0}",  # version
@@ -502,8 +502,8 @@ es = {
     "server-salt-argument": "cadena aleatoria utilizada para generar contraseñas de salas administradas",
     "server-disable-ready-argument": "deshabilitar la función de preparación",
     "server-motd-argument": "ruta al archivo del cual se obtendrá el texto motd",
-    "server-rooms-argument": "path to database file to use and/or create to store persistent room data. Enables rooms to persist without watchers and through restarts", # TODO: Translate
-    "server-permanent-rooms-argument": "path to file which lists permenant rooms that will be listed even if the room is empty (in the form of a text file which lists one room per line) - requires persistent rooms to be enabled", # TODO: Translate
+    "server-rooms-argument": "ruta al archivo de base de datos que usar y/o crear para guardar datos de sala persistentes. Activa las salas persistan sin espectadores y entre reinicios.",
+    "server-permanent-rooms-argument": "ruta al archivo que lista las salas permanentes que se mostrarán incluso si la sala está vacía (como archivo de texto conteniendo una por línea) - requiere que las salas persistentes estén activadas",
     "server-chat-argument": "¿Debería deshabilitarse el chat?",
     "server-chat-maxchars-argument": "Número máximo de caracteres en un mensaje de chat (el valor predeterminado es {})", # Default number of characters
     "server-maxusernamelength-argument": "Número máximo de caracteres para el nombre de usuario (el valor predeterminado es {})",
@@ -549,12 +549,14 @@ es = {
     "openusersstream-menu-label": "Abrir el flujo de {}",  # [username]'s
     "openusersfile-menu-label": "Abrir el archivo de {}",  # [username]'s
 
-    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
-    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
+    "setasready-menu-label": "Establecido {} como listo",  # [Username]
+    "setasnotready-menu-label": "Establecido {} como no-listo",  # [Username]
 
     "playlist-instruction-item-message": "Desplazar aquí el archivo para agregarlo a la lista de reproducción compartida.",
     "sharedplaylistenabled-tooltip": "Los operadores de la sala pueden agregar archivos a una lista de reproducción sincronizada, para que visualizar la misma cosa sea más sencillo para todos. Configurar directorios multimedia en 'Misc'.",
 
+    "playlist-empty-error": "La lista de reproducción está vacía.",
+    "playlist-invalid-index-error": "Índice de lista de reproducción no válido",
     "playlist-empty-error": "Playlist is currently empty.", # TO DO: Translate
     "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
 
