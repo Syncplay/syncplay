@@ -1,10 +1,12 @@
 -- syncplayintf.lua -- An interface for communication between mpv and Syncplay
 -- Author: Etoh, utilising repl.lua code by James Ross-Gowan (see below)
--- Thanks: RiCON, James Ross-Gowan, Argon-, wm4, uau
+-- Thanks: RiCON, James Ross-Gowan, Argon-, wm4, uau, the mpv developers
 
 -- Includes code copied/adapted from repl.lua -- A graphical REPL for mpv input commands
+-- and mpv's player/lua/console.lua
 --
 -- c 2016, James Ross-Gowan
+-- c 2019, the mpv developers
 --
 -- Permission to use, copy, modify, and/or distribute this software for any
 -- purpose with or without fee is hereby granted, provided that the above
@@ -19,6 +21,7 @@
 -- CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 -- See https://github.com/rossy/mpv-repl for a copy of repl.lua
+-- Search for "the mpv developers" for the relevant original code snippets used
 
 local CANVAS_WIDTH = 1920
 local CANVAS_HEIGHT = 1080
@@ -419,23 +422,45 @@ opts = {
 }
 
 function detect_platform()
+    local result = mp.get_property('platform')
+    if result then
+        return result
+    end
+
+    -- The platform property is only in mpv >= 0.36.0, so fallback if it doesn't exist
     local o = {}
     -- Kind of a dumb way of detecting the platform but whatever
     if mp.get_property_native('options/vo-mmcss-profile', o) ~= o then
         return 'windows'
     elseif mp.get_property_native('options/input-app-events', o) ~= o then
-        return 'macos'
+        return 'darwin'
     end
     return 'linux'
 end
 
--- Pick a better default font for Windows and macOS
+-- Pick a better default font for Windows and macOS/Darwin
 local platform = detect_platform()
 if platform == 'windows' then
     opts.font = 'Consolas'
-elseif platform == 'macos' then
+elseif platform == 'darwin' then
     opts.font = 'Menlo'
 end
+
+function detect_windowing_system()
+    -- Based on https://github.com/mpv-player/mpv/blob/a0fba7be57f3822d967b04f0f6b6d6341e7516e7/player/lua/console.lua#L28-L36
+    -- by the mpv developers
+    if platform == 'linux' then
+        if os.getenv('WAYLAND_DISPLAY') or os.getenv('WAYLAND_SOCKET') then
+            return 'wayland'
+        else
+            return 'x11'
+        end
+    end
+
+    return nil
+end
+
+local windowing_system = detect_windowing_system()
 
 -- Apply user-set options
 options.read_options(opts)
@@ -808,50 +833,100 @@ function del_to_start()
     update()
 end
 
+-- The following clipboard functionality is based on code by the mpv developers:
+-- mpv 0.39: https://github.com/mpv-player/mpv/blob/a0fba7be57f3822d967b04f0f6b6d6341e7516e7/player/lua/console.lua#L1018-L1071
+-- mpv 0.40: https://github.com/mpv-player/mpv/blob/18defc8530caf7694b132a501e9c34476d4cef80/player/lua/console.lua#L1317-L1347
+
+function get_clipboard_x11_cli(clip)
+    local res = utils.subprocess({
+        args = { 'xclip', '-selection', clip and 'clipboard' or 'primary', '-out' },
+        playback_only = false,
+    })
+    if not res.error then
+        return res.stdout
+    end
+end
+
+function get_clipboard_wayland_property(clip)
+    if mp.get_property('current-clipboard-backend') == 'wayland' then
+        local property = clip and 'clipboard/text' or 'clipboard/text-primary'
+        return mp.get_property(property, '')
+    end
+    -- Wayland VO clipboard is only updated on window focus
+    if clip and mp.get_property_bool('focused') then
+        return mp.get_property('clipboard/text', '')
+    end
+end
+
+function get_clipboard_wayland_cli(clip)
+    local res = utils.subprocess({
+        args = { 'wl-paste', clip and '-n' or '-np' },
+        playback_only = false,
+    })
+    if not res.error then
+        return res.stdout
+    end
+end
+
+function get_clipboard_windows_cli()
+    local res = utils.subprocess({
+        args = { 'powershell', '-NoProfile', '-Command', [[& {
+            Trap {
+                Write-Error -ErrorRecord $_
+                Exit 1
+            }
+
+            $clip = ""
+            if (Get-Command "Get-Clipboard" -errorAction SilentlyContinue) {
+                $clip = Get-Clipboard -Raw -Format Text -TextFormatType UnicodeText
+            } else {
+                Add-Type -AssemblyName PresentationCore
+                $clip = [Windows.Clipboard]::GetText()
+            }
+
+            $clip = $clip -Replace "`r",""
+            $u8clip = [System.Text.Encoding]::UTF8.GetBytes($clip)
+            [Console]::OpenStandardOutput().Write($u8clip, 0, $u8clip.Length)
+        }]] },
+        playback_only = false,
+    })
+    if not res.error then
+        return res.stdout
+    end
+end
+
+function get_clipboard_darwin_cli()
+    local res = utils.subprocess({
+        args = { 'pbpaste' },
+        playback_only = false,
+    })
+    if not res.error then
+        return res.stdout
+    end
+end
+
 -- Returns a string of UTF-8 text from the clipboard (or the primary selection)
 function get_clipboard(clip)
+    local has_clipboard_property = mp.get_property('current-clipboard-backend') ~= nil
+
     if platform == 'linux' then
-        local res = utils.subprocess({ args = {
-            'xclip', '-selection', clip and 'clipboard' or 'primary', '-out'
-        } })
-        if not res.error then
-            return res.stdout
+        if windowing_system == 'x11' then
+            return get_clipboard_x11_cli(clip) or ''
+        elseif windowing_system == 'wayland' then
+            return (has_clipboard_property and get_clipboard_wayland_property(clip)) or get_clipboard_wayland_cli(clip) or ''
         end
+    elseif has_clipboard_property and (platform == 'windows' or platform == 'darwin') then
+        return mp.get_property('clipboard/text', '')
     elseif platform == 'windows' then
-        local res = utils.subprocess({ args = {
-            'powershell', '-NoProfile', '-Command', [[& {
-                Trap {
-                    Write-Error -ErrorRecord $_
-                    Exit 1
-                }
-
-                $clip = ""
-                if (Get-Command "Get-Clipboard" -errorAction SilentlyContinue) {
-                    $clip = Get-Clipboard -Raw -Format Text -TextFormatType UnicodeText
-                } else {
-                    Add-Type -AssemblyName PresentationCore
-                    $clip = [Windows.Clipboard]::GetText()
-                }
-
-                $clip = $clip -Replace "`r",""
-                $u8clip = [System.Text.Encoding]::UTF8.GetBytes($clip)
-                [Console]::OpenStandardOutput().Write($u8clip, 0, $u8clip.Length)
-            }]]
-        } })
-        if not res.error then
-            return res.stdout
-        end
-    elseif platform == 'macos' then
-        local res = utils.subprocess({ args = { 'pbpaste' } })
-        if not res.error then
-            return res.stdout
-        end
+        return get_clipboard_windows_cli() or ''
+    elseif platform == 'darwin' then
+        return get_clipboard_darwin_cli() or ''
     end
     return ''
 end
 
 -- Paste text from the window-system's clipboard. 'clip' determines whether the
--- clipboard or the primary selection buffer is used (on X11 only.)
+-- clipboard or the primary selection buffer is used (on X11 and Wayland only.)
 function paste(clip)
     local text = get_clipboard(clip)
     local before_cur = line:sub(1, cursor - 1)
