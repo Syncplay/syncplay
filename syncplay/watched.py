@@ -736,7 +736,7 @@ class WatchedManager(object):
         self._pendingMoves = []        # list of normalised source paths
         self._attempts = {}            # path -> attempt count
         self._lastAttemptTime = 0.0
-        # JSON index cache: jsonPath -> {"data": {filename: {...}}, "mtime": float}
+        # JSON index cache: jsonPath -> {"data": {filename: {...}}, "mtime": float, "readError": Exception|None}
         self._jsonCache = {}
         self._shownPlaylistWarningNotificationKeys = set()
 
@@ -1545,12 +1545,22 @@ class WatchedManager(object):
 
     def _loadJson(self, jsonPath):
         """Load (or reload) the single config-adjacent JSON watched index into cache."""
+        readError = None
         try:
             mtime = os.path.getmtime(jsonPath)
-        except OSError:
+        except FileNotFoundError:
             mtime = None
+        except OSError as e:
+            mtime = None
+            readError = e
 
         cached = self._jsonCache.get(jsonPath)
+        if readError is not None:
+            if cached is None or cached.get("readError") is None:
+                self._client.ui.showDebugMessage(
+                    getMessage("watched-json-read-error").format(jsonPath, readError))
+            self._jsonCache[jsonPath] = {"data": {}, "mtime": mtime, "readError": readError}
+            return {}
         if cached is not None and cached["mtime"] == mtime:
             return cached["data"]
 
@@ -1560,18 +1570,22 @@ class WatchedManager(object):
                 with open(jsonPath, "r", encoding="utf-8") as fh:
                     raw = fh.read()
                 parsed = json.loads(raw)
-                watched = parsed.get("watched", {})
-                if isinstance(watched, dict):
-                    for filename, metadata in watched.items():
-                        normalisedFilename = self._normaliseHistoryFilename(filename)
-                        if not normalisedFilename or not isinstance(metadata, dict):
-                            continue
-                        data[normalisedFilename] = metadata
+                if not isinstance(parsed, dict) or parsed.get("version", 1) != 1:
+                    raise WatchedHistoryError(getMessage("watched-json-invalid-data-error"))
+                watched = parsed.get("watched")
+                if not isinstance(watched, dict):
+                    raise WatchedHistoryError(getMessage("watched-json-invalid-data-error"))
+                for filename, metadata in watched.items():
+                    normalisedFilename = self._normaliseHistoryFilename(filename)
+                    if not normalisedFilename or not isinstance(metadata, dict):
+                        raise WatchedHistoryError(getMessage("watched-json-invalid-data-error"))
+                    data[normalisedFilename] = metadata
             except Exception as e:
                 self._client.ui.showDebugMessage(
                     getMessage("watched-json-read-error").format(jsonPath, e))
+                readError = e
                 data = {}
-        self._jsonCache[jsonPath] = {"data": data, "mtime": mtime}
+        self._jsonCache[jsonPath] = {"data": data, "mtime": mtime, "readError": readError}
         return data
 
     def _writeJson(self, jsonPath, watchedData, expectedMtime=None):
@@ -1598,7 +1612,7 @@ class WatchedManager(object):
                 newMtime = os.path.getmtime(jsonPath)
             except OSError:
                 newMtime = None
-            self._jsonCache[jsonPath] = {"data": dict(watchedData), "mtime": newMtime}
+            self._jsonCache[jsonPath] = {"data": dict(watchedData), "mtime": newMtime, "readError": None}
             return True
         except Exception as e:
             self._client.ui.showErrorMessage(
@@ -1623,11 +1637,19 @@ class WatchedManager(object):
             return False
 
         jsonPath = self._getJsonPath()
+        cached = self._jsonCache.get(jsonPath)
+        if cached is not None and cached.get("readError") is not None:
+            self._jsonCache.pop(jsonPath, None)
         retries = 3
         allFailuresWereConcurrent = True
         for _ in range(retries):
             watchedData = self._loadJson(jsonPath)
             cached = self._jsonCache.get(jsonPath, {})
+            readError = cached.get("readError")
+            if readError is not None:
+                self._client.ui.showErrorMessage(
+                    getMessage("watched-json-read-error").format(jsonPath, readError))
+                return False
             expectedMtime = cached.get("mtime")
             watchedData = dict(watchedData)
 
