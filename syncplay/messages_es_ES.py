@@ -6,10 +6,10 @@
 
 es_ES = {
     "LANGUAGE": "Español (España)",
-    "LANGUAGE-TAG": "es-ES",
+    "LANGUAGE-TAG": "es_ES",
 
     # Strings for Windows NSIS installer
-    "installer-language-file": "Spanish.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
+    "installer-language-file": "SpanishInternational.nlf", # Relevant .nlf file at https://github.com/kichik/nsis/tree/master/Contrib/Language%20files
     "installer-associate": "Asociar Syncplay con archivos multimedia.",
     "installer-shortcut": "Crear accesos directos en las siguientes ubicaciones:",
     "installer-start-menu": "Menú de inicio",
