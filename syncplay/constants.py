@@ -22,6 +22,7 @@ def getValueForOS(constantDict):
 # You might want to change these
 DEFAULT_PORT = 8999
 OSD_DURATION = 3.0
+MAX_OSD_FILENAME_LENGTH = 250
 OSD_WARNING_MESSAGE_DURATION = 5.0
 NO_ALERT_OSD_WARNING_DURATION = 13.0
 MPC_OSD_POSITION = 1  # Right corner, 1 for left
@@ -107,7 +108,7 @@ DEFAULT_CHAT_FONT_WEIGHT = 1
 MAX_CHAT_MESSAGE_LENGTH = 150  # Number of displayed characters
 MAX_USERNAME_LENGTH = 16  # Number of displayed characters
 MAX_ROOM_NAME_LENGTH = 35  # Number of displayed characters
-MAX_FILENAME_LENGTH = 250  # Number of displayed characters
+MAX_FILENAME_LENGTH = 2000  # Maximum readable filename metadata characters (updated from server feature)
 FALLBACK_MAX_CHAT_MESSAGE_LENGTH = 50  # Number of displayed characters
 FALLBACK_MAX_USERNAME_LENGTH = 16  # Number of displayed characters
 FALLBACK_MAX_ROOM_NAME_LENGTH = 35  # Number of displayed characters

@@ -1451,9 +1451,13 @@ class SyncplayUserlist(object):
             else:
                 duration = utils.formatTime(file_['duration'])
                 message = getMessage("playing-notification").format(username, file_['name'], duration)
+                osdFilename = utils.shortenFilenameForOSD(file_['name'])
+                osdMessage = getMessage("playing-notification").format(username, osdFilename, duration)
                 if self.currentUser.room != room or self.currentUser.username == username:
-                    message += getMessage("playing-notification/room-addendum").format(room)
-                self.ui.showMessage(message, hideFromOSD)
+                    roomAddendum = getMessage("playing-notification/room-addendum").format(room)
+                    message += roomAddendum
+                    osdMessage += roomAddendum
+                self.ui.showMessage(message, hideFromOSD, osdMessage=osdMessage)
                 if username == self.currentUser.username:
                     self._client.watched.maybeShowPlaylistWarningNotificationForFilename(self._client.playlist, file_['name'])
                 if self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room:
@@ -1766,9 +1770,9 @@ class UiManager(object):
     def setSSLMode(self, sslMode, sslInformation=""):
         self.__ui.setSSLMode(sslMode, sslInformation)
 
-    def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL, isMotd=False):
+    def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL, isMotd=False, osdMessage=None):
         if not noPlayer:
-            self.showOSDMessage(message, duration=constants.OSD_DURATION, OSDType=OSDType, mood=mood)
+            self.showOSDMessage(osdMessage if osdMessage is not None else message, duration=constants.OSD_DURATION, OSDType=OSDType, mood=mood)
         self.__ui.showMessage(message, noTimestamp=noTimestamp, isMotd=isMotd)
 
     def updateAutoPlayState(self, newState):
