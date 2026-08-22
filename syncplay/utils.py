@@ -338,8 +338,8 @@ def hashFilename(filename, stripURL=False):
     strippedFilename = stripfilename(filename, stripURL)
     try:
         strippedFilename = strippedFilename.encode('utf-8')
-    except UnicodeDecodeError:
-        pass
+    except UnicodeEncodeError:
+        strippedFilename = strippedFilename.encode('utf-8', errors='surrogatepass')
     filenameHash = hashlib.sha256(strippedFilename).hexdigest()[:12]
     return filenameHash
 
