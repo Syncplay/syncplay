@@ -165,7 +165,7 @@ de = {
     "feature-managedRooms": "Zentral gesteuerte Räume",  # used for not-supported-by-server-error
     "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
 
-    "not-supported-by-server-error": "Diese Funktion wird vom Server nicht unterstützt. Es wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
+    "not-supported-by-server-error": "Die Funktion {} wird von diesem Server nicht unterstützt.",  # feature
     "shared-playlists-not-supported-by-server-error": "Die Geteilte-Playlists-Funktion wird von diesem Server eventuell nicht unterstützt. Um ein korrektes Funktionieren sicherzustellen wird ein Server mit Syncplay Version {}+ benötigt, aktuell verwendet wird jedoch Version {}.",  # minVersion, serverVersion
     "shared-playlists-disabled-by-server-error": "Die Geteilte-Playlists-Funktion wurde in der Serverkonfiguration deaktiviert. Um diese Funktion zu verwenden, musst du dich mit einem anderen Server verbinden.",
 
