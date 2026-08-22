@@ -344,6 +344,16 @@ def hashFilename(filename, stripURL=False):
     return filenameHash
 
 
+def isFilenameHash(filename):
+    return isinstance(filename, str) and re.fullmatch(r"[0-9a-f]{12}", filename) is not None
+
+
+def hashFilenameForProtocol(filename):
+    if not isinstance(filename, str) or not filename or filename == constants.PRIVACY_HIDDENFILENAME or isFilenameHash(filename):
+        return filename
+    return hashFilename(filename)
+
+
 def hashFilesize(size):
     return hashlib.sha256(str(size).encode('utf-8')).hexdigest()[:12]
 
