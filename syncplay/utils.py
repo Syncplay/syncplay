@@ -354,6 +354,30 @@ def hashFilenameForProtocol(filename):
     return hashFilename(filename)
 
 
+def _stripURLUserInfo(url):
+    scheme, separator, remainder = url.partition("://")
+    if not separator:
+        return url
+
+    authorityEnd = len(remainder)
+    for delimiter in "/?#":
+        delimiterIndex = remainder.find(delimiter)
+        if delimiterIndex != -1:
+            authorityEnd = min(authorityEnd, delimiterIndex)
+    authority = remainder[:authorityEnd]
+    if "@" not in authority:
+        return url
+    safeAuthority = authority.rsplit("@", 1)[-1]
+    return "{}://{}{}".format(scheme, safeAuthority, remainder[authorityEnd:])
+
+
+def shortenFilenameForOSD(filename):
+    if not isinstance(filename, str):
+        return filename
+    safeFilename = _stripURLUserInfo(filename) if isURL(filename) else filename
+    return safeFilename[:constants.MAX_OSD_FILENAME_LENGTH]
+
+
 def hashFilesize(size):
     return hashlib.sha256(str(size).encode('utf-8')).hexdigest()[:12]
 

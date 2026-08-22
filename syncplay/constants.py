@@ -22,6 +22,7 @@ def getValueForOS(constantDict):
 # You might want to change these
 DEFAULT_PORT = 8999
 OSD_DURATION = 3.0
+MAX_OSD_FILENAME_LENGTH = 250
 OSD_WARNING_MESSAGE_DURATION = 5.0
 NO_ALERT_OSD_WARNING_DURATION = 13.0
 MPC_OSD_POSITION = 1  # Right corner, 1 for left
