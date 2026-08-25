@@ -1,4 +1,3 @@
-
 import ast
 import collections
 import hashlib
@@ -43,6 +42,7 @@ from syncplay.constants import PRIVACY_SENDHASHED_MODE, PRIVACY_DONTSEND_MODE, \
     PRIVACY_HIDDENFILENAME
 from syncplay.messages import getMissingStrings, getMessage, isNoOSDMessage
 from syncplay.protocols import SyncClientProtocol
+from syncplay.watched import WatchedManager
 from syncplay.utils import isMacOS
 class SyncClientFactory(ClientFactory):
     def __init__(self, client, retry=constants.RECONNECT_RETRIES):
@@ -68,11 +68,29 @@ class SyncplayClient(object):
         constants.SHOW_DIFFERENT_ROOM_OSD = config['showDifferentRoomOSD']
         constants.SHOW_SAME_ROOM_OSD = config['showSameRoomOSD']
         constants.SHOW_DURATION_NOTIFICATION = config['showDurationNotification']
+        constants.SHOW_PLAYLIST_SKIP_WARNINGS = config['showPlaylistSkipWarnings']
+        constants.SHOW_PLAYLIST_ORDER_WARNINGS = config['showPlaylistOrderWarnings']
         constants.DEBUG_MODE = config['debug']
         constants.FOLDER_SEARCH_FIRST_FILE_TIMEOUT = config['folderSearchFirstFileTimeout']
         constants.FOLDER_SEARCH_TIMEOUT = config['folderSearchTimeout']
         constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = config['folderSearchDoubleCheckInterval']
         constants.FOLDER_SEARCH_WARNING_THRESHOLD = config['folderSearchWarningThreshold']
+
+        watchedName = config['watchedSubfolder'] or ""
+        watchedName = watchedName.strip()
+        if watchedName in (".", ".."):
+            watchedName = ""
+        elif watchedName:
+            if os.path.sep in watchedName or (os.path.altsep and os.path.altsep in watchedName):
+                watchedName = os.path.basename(watchedName)
+
+        constants.WATCHED_SUBFOLDER = watchedName
+        constants.WATCHED_AUTOMOVE = config['watchedAutoMove'] if len(constants.WATCHED_SUBFOLDER) > 0 else False
+        constants.WATCHED_AUTOCREATESUBFOLDERS = config['watchedSubfolderAutocreate'] if len(constants.WATCHED_SUBFOLDER) > 0 else False
+
+        constants.WATCHED_HISTORY_ENABLED = config['watchedHistoryEnabled']
+        constants.AUTO_REMOVE_WATCHED_FROM_PLAYLIST = config['autoRemoveWatchedFromPlaylist']
+        constants.WATCHED_HISTORY_FILENAME = constants.WATCHED_HISTORY_FILENAME_DEFAULT
 
         self.controlpasswords = {}
         self.lastControlPasswordAttempt = None
@@ -141,6 +159,7 @@ class SyncplayClient(object):
         self._warnings = self._WarningManager(self._player, self.userlist, self.ui, self)
         self.fileSwitch = FileSwitchManager(self)
         self.playlist = SyncplayPlaylist(self)
+        self.watched = WatchedManager(self)
         self.playlistMayNeedRestoring = False
 
         self._serverSupportsTLS = True
@@ -156,6 +175,7 @@ class SyncplayClient(object):
 
     def initProtocol(self, protocol):
         self._protocol = protocol
+        self._lastGlobalUpdate = time.time()
 
     def destroyProtocol(self):
         if self._protocol:
@@ -188,9 +208,10 @@ class SyncplayClient(object):
 
     def checkIfConnected(self):
         if self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > constants.PROTOCOL_TIMEOUT:
+            protocol = self._protocol
             self._lastGlobalUpdate = None
             self.ui.showErrorMessage(getMessage("server-timeout-error"))
-            self._protocol.drop()
+            protocol.abort()
             return False
         return True
 
@@ -248,6 +269,11 @@ class SyncplayClient(object):
             ):
                 pauseChange = self._toggleReady(pauseChange, paused)
 
+        self.watched.processQueue()
+        self.currentlyPlayingFilename = self.userlist.currentUser.file["name"] if self.userlist.currentUser.file else None
+        playingCurrentIndex = not self.playlist._notPlayingCurrentIndex()
+        if playingCurrentIndex:
+            self.playlist.recordPlayedNearEOF(paused, position)
         if self._lastGlobalUpdate:
             self._lastPlayerUpdate = time.time()
             if (pauseChange or seeked) and self._protocol:
@@ -263,6 +289,18 @@ class SyncplayClient(object):
         self.fileOpenBeforeChangingPlaylistIndex = self.userlist.currentUser.file["path"] if self.userlist.currentUser.file else None
         self.waitingToLoadNewfile = True
         self.waitingToLoadNewfileSince = time.time()
+        position = self.getStoredPlayerPosition()
+        currentLength = self.userlist.currentUser.file["duration"] if self.userlist.currentUser.file else 0
+        if (
+                position is not None and
+                self.lastUpdatedFileTime is not None and
+                time.time() - self.lastUpdatedFileTime >= constants.WATCHED_NEAR_EOF_MINIMUM_TIME and
+                self.playlist.lastNearEOFPlayedTime >= constants.WATCHED_NEAR_EOF_MINIMUM_PLAYED_TIME and
+                currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
+                abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD
+        ):
+            self.playlist.clearNearEOFMarker()
+            self.watched.markCurrentFileWatched()
 
     def prepareToAdvancePlaylist(self):
         if self.playlist.canSwitchToNextPlaylistIndex():
@@ -542,6 +580,7 @@ class SyncplayClient(object):
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
         self.playlist.changeToPlaylistIndexFromFilename(filename)
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def setTrustedDomains(self, newTrustedDomains):
         from syncplay.ui.ConfigurationGetter import ConfigurationGetter
@@ -564,7 +603,7 @@ class SyncplayClient(object):
 
     def _isURITrustableAndTrusted(self, URIToTest):
         """Returns a tuple of booleans: (trustable, trusted).
-        
+
         A given URI is "trustable" if it uses HTTP or HTTPS (constants.TRUSTABLE_WEB_PROTOCOLS).
         A given URI is "trusted" if it matches an entry in the trustedDomains config.
         Such an entry is considered matching if the domain is the same and the path
@@ -624,6 +663,7 @@ class SyncplayClient(object):
             self.establishRewindDoubleCheck()
             self.lastRewindTime = time.time()
             self.autoplayCheck()
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def fileSwitchFoundFiles(self):
         self.ui.fileSwitchFoundFiles()
@@ -631,9 +671,11 @@ class SyncplayClient(object):
 
     def setPlaylistIndex(self, index):
         self._protocol.setPlaylistIndex(index)
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def changeToPlaylistIndex(self, *args, **kwargs):
         self.playlist.changeToPlaylistIndex(*args, **kwargs)
+        self.playlist.doubleCheckForWatchedPreviousFile()
 
     def loopSingleFiles(self):
         return self._config["loopSingleFiles"] or self.isPlayingMusic()
@@ -871,9 +913,8 @@ class SyncplayClient(object):
             self._clientSupportsTLS = False
 
         def retry(retries):
-            self._lastGlobalUpdate = None
-            self.ui.setSSLMode(False)
-            self.playlistMayNeedRestoring = True
+            # Use shared state reset method
+            self._performRetryStateReset()
             if retries == 0:
                 self.onDisconnect()
             if retries > constants.RECONNECT_RETRIES:
@@ -882,8 +923,6 @@ class SyncplayClient(object):
                 reactor.callLater(0.1, self.stop, True)
                 return None
 
-            self.ui.showMessage(getMessage("reconnection-attempt-notification"))
-            self.reconnecting = True
             return(0.1 * (2 ** min(retries, 5)))
 
         self._reconnectingService = ClientService(self._endpoint, self.protocolFactory, retryPolicy=retry)
@@ -914,11 +953,49 @@ class SyncplayClient(object):
         self.destroyProtocol()
         if self._player:
             self._player.drop()
+
+        self.watched.flushQueueOnShutdown()
         if self.ui:
             self.ui.drop()
         reactor.callLater(0.1, reactor.stop)
         if promptForAction:
             self.ui.promptFor(getMessage("enter-to-exit-prompt"))
+
+    def _performRetryStateReset(self):
+        """
+        Shared method to reset connection state for both automatic and manual retries.
+        This contains the common logic from the original retry function.
+        """
+        self._lastGlobalUpdate = None
+        self.ui.setSSLMode(False)
+        self.playlistMayNeedRestoring = True
+        self.ui.showMessage(getMessage("reconnection-attempt-notification"))
+        self.reconnecting = True
+
+    def manualReconnect(self):
+        """
+        Trigger a manual reconnection by forcing the retry mechanism.
+        This performs the same steps as the automatic retry function.
+        """
+        if not self._running or not hasattr(self, '_reconnectingService'):
+            self.ui.showErrorMessage(getMessage("connection-failed-notification"))
+            return
+
+        from twisted.internet import reactor
+
+        def performReconnect():
+            # Apply the shared state reset logic
+            self._performRetryStateReset()
+
+            # Stop current service and restart it to trigger reconnection
+            if self._reconnectingService and self._reconnectingService.running:
+                self._reconnectingService.stopService()
+
+            # Restart the service to trigger a reconnection attempt
+            self._reconnectingService.startService()
+
+        # Use callLater for threading purposes as suggested
+        reactor.callLater(0.1, performReconnect)
 
     def requireServerFeature(featureRequired):
         def requireServerFeatureDecorator(f):
@@ -1377,6 +1454,8 @@ class SyncplayUserlist(object):
                 if self.currentUser.room != room or self.currentUser.username == username:
                     message += getMessage("playing-notification/room-addendum").format(room)
                 self.ui.showMessage(message, hideFromOSD)
+                if username == self.currentUser.username:
+                    self._client.watched.maybeShowPlaylistWarningNotificationForFilename(self._client.playlist, file_['name'])
                 if self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room:
                     fileDifferences = self.getFileDifferencesForUser(self.currentUser.file, file_)
                     if fileDifferences is not None:
@@ -1766,6 +1845,20 @@ class SyncplayPlaylist():
         self.addedChangeListCallback = False
         self.switchToNewPlaylistItem = False
         self._lastPlaylistIndexChange = time.time()
+        self.lastNearEOFName = None
+        self.lastNearEOFPath = None
+        self.lastNearEOFPlayedTime = 0.0
+        self.lastNearEOFLastTime = 0.0
+        self.lastNearEOFWasPlaying = False
+        self.lastOwnPlaylistIndexEchoName = None
+        self.lastOwnPlaylistIndexEchoTime = 0.0
+
+    def clearNearEOFMarker(self):
+        self.lastNearEOFName = None
+        self.lastNearEOFPath = None
+        self.lastNearEOFPlayedTime = 0.0
+        self.lastNearEOFLastTime = 0.0
+        self.lastNearEOFWasPlaying = False
 
     def needsSharedPlaylistsEnabled(f):  # @NoSelf
         @wraps(f)
@@ -1815,7 +1908,7 @@ class SyncplayPlaylist():
             self._client.addPlayerReadyCallback(lambda x: self.loadDelayedPath(changeToIndex))
             return
 
-        if self._client._protocol.hadFirstPlaylistIndex and self._client.delayedLoadPath:
+        if self._client._protocol and self._client._protocol.hadFirstPlaylistIndex and self._client.delayedLoadPath:
             delayedLoadPath = str(self._client.delayedLoadPath)
             self._client.delayedLoadPath = None
             if self._client.sharedPlaylistIsEnabled():
@@ -1863,11 +1956,18 @@ class SyncplayPlaylist():
         try:
             filename = self._playlist[index]
             self._ui.setPlaylistIndexFilename(filename)
+            if username == self._client.getUsername():
+                self.lastOwnPlaylistIndexEchoName = filename
+                self.lastOwnPlaylistIndexEchoTime = time.time()
             if not self._client.sharedPlaylistIsEnabled():
                 self._playlistIndex = index
-            if username is not None and self._client.userlist.currentUser.file and filename == self._client.userlist.currentUser.file['name']:
-                self._playlistIndex = index
-                return
+            if username is not None and self._client.userlist.currentUser.file and utils.sameFilename(filename, self._client.userlist.currentUser.file['name']):
+                if not self.queuedIndexFilename or utils.sameFilename(self.queuedIndexFilename, filename):
+                    self._playlistIndex = index
+                    return
+                self._ui.showDebugMessage(
+                    "Not treating '{}' as already loaded because '{}' is still queued to load.".format(
+                        filename, self.queuedIndexFilename))
         except IndexError:
             pass
 
@@ -1884,9 +1984,10 @@ class SyncplayPlaylist():
                     state["playstate"]["position"] = 0
                     state["playstate"]["paused"] = True
                     self._client.lastAdvanceTime = time.time()
-                    self._client._protocol.sendMessage({"State": state})
+                    self._client._protocol and self._client._protocol.sendMessage({"State": state})
                     self._playerPaused = True
                     self._client.autoplayCheck()
+                    self.doubleCheckForWatchedPreviousFile()
         elif index is not None:
             filename = self._playlist[index]
             self._ui.setPlaylistIndexFilename(filename)
@@ -1988,6 +2089,10 @@ class SyncplayPlaylist():
 
         with open(path) as f:
             newPlaylist = f.read().splitlines()
+            if path.lower().endswith(".m3u8"):
+                newPlaylist = [
+                    line for line in newPlaylist if line.strip() and not line.startswith("#")
+                ]
             if shuffle:
                 random.shuffle(newPlaylist)
             if newPlaylist:
@@ -2008,8 +2113,8 @@ class SyncplayPlaylist():
         if self.playlistNeedsRestoring(files, username):
             self._ui.showDebugMessage("Restoring playlist on reconnect...")
             files = self._playlist.copy()
-            self._client._protocol.setPlaylist(files)
-            self._client._protocol.setPlaylistIndex(self._playlistIndex)
+            self._client._protocol and self._client._protocol.setPlaylist(files)
+            self._client._protocol and self._client._protocol.setPlaylistIndex(self._playlistIndex)
             return
         self.queuedIndexFilename = None
         self._client.playlistMayNeedRestoring = False
@@ -2030,13 +2135,14 @@ class SyncplayPlaylist():
 
         if username is None:
             if self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():
-                self._client._protocol.setPlaylist(files)
+                self._client._protocol and self._client._protocol.setPlaylist(files)
                 self.changeToPlaylistIndex(newIndex)
                 self._ui.setPlaylist(self._playlist, filename)
                 self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(self._client.getUsername()))
         else:
             self._ui.setPlaylist(self._playlist)
             self._ui.showMessage(getMessage("playlist-contents-changed-notification").format(username))
+        self.doubleCheckForWatchedPreviousFile()
 
     def addToPlaylist(self, file):
         self.changePlaylist([*self._playlist, file])
@@ -2086,12 +2192,226 @@ class SyncplayPlaylist():
     def advancePlaylistCheck(self):
         position = self._client.getStoredPlayerPosition()
         currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
+        if currentLength <= 0:
+            return
         if (
             currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
             abs(position - currentLength) < constants.PLAYLIST_LOAD_NEXT_FILE_TIME_FROM_END_THRESHOLD and
             self.notJustChangedPlaylist()
         ):
-                self.loadNextFileInPlaylist()
+            watchedIndex = self._playlistIndex
+            watchedFilename = None
+            expectedNextFilename = None
+            if watchedIndex is not None and self._playlist and watchedIndex >= 0 and watchedIndex < len(self._playlist):
+                watchedFilename = self._playlist[watchedIndex]
+            if self._thereIsNextPlaylistIndex():
+                nextIndex = self._nextPlaylistIndex()
+                if nextIndex is not None and self._playlist and nextIndex >= 0 and nextIndex < len(self._playlist):
+                    expectedNextFilename = self._playlist[nextIndex]
+            self.clearNearEOFMarker()
+            self._client.watched.markCurrentFileWatched()
+            self.loadNextFileInPlaylist()
+            if watchedFilename and expectedNextFilename and not utils.sameFilename(watchedFilename, expectedNextFilename):
+                self.scheduleAutoRemoveWatchedPlaylistItem(watchedFilename, watchedIndex, expectedNextFilename)
+
+    @needsSharedPlaylistsEnabled
+    def recordPlayedNearEOF(self, paused, position):
+        if not self._client.userlist.currentUser.file:
+            self.lastNearEOFWasPlaying = False
+            return
+        if position == None:
+            self.lastNearEOFWasPlaying = False
+            return
+        currentLength = self._client.userlist.currentUser.file["duration"] if self._client.userlist.currentUser.file else 0
+        if currentLength <= 0:
+            self.lastNearEOFWasPlaying = False
+            return
+        isPlaying = paused is False
+        remainingTime = currentLength - position
+        nearEOFWindow = min(constants.PLAYLIST_NEAR_EOF_WINDOW, currentLength / 2)
+
+        if (
+            isPlaying and
+            remainingTime < nearEOFWindow and
+            currentLength > constants.PLAYLIST_LOAD_NEXT_FILE_MINIMUM_LENGTH and
+            self.notJustChangedPlaylist()
+        ):
+            now_monotime = time.monotonic()
+            if self.lastNearEOFName != self._client.userlist.currentUser.file['name']:
+                self.lastNearEOFName = self._client.userlist.currentUser.file['name']
+                self.lastNearEOFPath = self._client.userlist.currentUser.file['path']
+                self.lastNearEOFPlayedTime = 0.0
+                self.lastNearEOFWasPlaying = False
+            if self.lastNearEOFWasPlaying:
+                elapsed = now_monotime - self.lastNearEOFLastTime
+                if elapsed <= constants.PLAYLIST_NEAR_EOF_LATCH_TTL:
+                    self.lastNearEOFPlayedTime += max(0.0, elapsed)
+            self.lastNearEOFLastTime = now_monotime
+            self.lastNearEOFWasPlaying = True
+        else:
+            self.lastNearEOFWasPlaying = False
+
+    @needsSharedPlaylistsEnabled
+    def doubleCheckForWatchedPreviousFile(self):
+        if not self.lastNearEOFName or not self.lastNearEOFPath:
+            return False
+
+        if self._playingSpecificFilename(self.lastNearEOFName):
+            return False
+
+        now_monotime = time.monotonic()
+        if self.lastNearEOFPlayedTime < constants.WATCHED_NEAR_EOF_MINIMUM_TIME:
+            self.clearNearEOFMarker()
+            return False
+
+        age = now_monotime - self.lastNearEOFLastTime
+        if age > constants.PLAYLIST_NEAR_EOF_LATCH_TTL:
+            self.clearNearEOFMarker()
+            return False
+        filePath = self.lastNearEOFPath
+        self.clearNearEOFMarker()
+        self._client.watched.markFileWatched(filePath)
+        return True
+
+    def _getIndexOfFilenameInPlaylist(self, playlist, filename, expectedIndex=None):
+        if not playlist:
+            return None
+
+        if (
+            expectedIndex is not None and
+            expectedIndex >= 0 and
+            expectedIndex < len(playlist) and
+            utils.sameFilename(playlist[expectedIndex], filename)
+        ):
+            return expectedIndex
+
+        for index, playlistFilename in enumerate(playlist):
+            if utils.sameFilename(playlistFilename, filename):
+                return index
+
+        return None
+
+    def scheduleAutoRemoveWatchedPlaylistItem(self, filename, expectedIndex=None, expectedNextFilename=None):
+        if not constants.AUTO_REMOVE_WATCHED_FROM_PLAYLIST:
+            return
+        if not filename or not expectedNextFilename or utils.sameFilename(filename, expectedNextFilename):
+            return
+        deadline = time.time() + constants.PLAYLIST_AUTO_REMOVE_WATCHED_TIMEOUT
+        scheduledRoom = self._client.userlist.currentUser.room
+        scheduledAfter = time.time()
+        reactor.callLater(
+            constants.PLAYLIST_AUTO_REMOVE_WATCHED_RECHECK_INTERVAL,
+            self._autoRemoveWatchedPlaylistItemWhenSafe,
+            filename,
+            deadline,
+            expectedIndex,
+            expectedNextFilename,
+            scheduledRoom,
+            scheduledAfter)
+
+    def _autoRemoveWatchedPlaylistItemWhenSafe(self, filename, deadline, expectedIndex=None, expectedNextFilename=None, scheduledRoom=None, scheduledAfter=0.0):
+        if not constants.AUTO_REMOVE_WATCHED_FROM_PLAYLIST:
+            return
+        if not filename or not expectedNextFilename:
+            return
+        if self._client.userlist.currentUser.room != scheduledRoom:
+            self._ui.showDebugMessage(
+                "Not auto-removing watched playlist item '{}' because the room changed while waiting.".format(filename))
+            return
+        if self._getIndexOfFilenameInPlaylist(self._playlist, filename, expectedIndex) is None:
+            return
+        if self._getIndexOfFilenameInPlaylist(self._playlist, expectedNextFilename) is None:
+            return
+
+        if not self._autoRemoveWatchedPlaylistItemIsSafe(filename, expectedNextFilename, scheduledRoom, scheduledAfter):
+            if time.time() < deadline:
+                reactor.callLater(
+                    constants.PLAYLIST_AUTO_REMOVE_WATCHED_RECHECK_INTERVAL,
+                    self._autoRemoveWatchedPlaylistItemWhenSafe,
+                    filename,
+                    deadline,
+                    expectedIndex,
+                    expectedNextFilename,
+                    scheduledRoom,
+                    scheduledAfter)
+            else:
+                self._ui.showDebugMessage(
+                    "Not auto-removing watched playlist item '{}' because the room did not settle on '{}'.".format(
+                        filename, expectedNextFilename))
+            return
+
+        self.autoRemoveWatchedPlaylistItem(filename, expectedIndex)
+
+    def _autoRemoveWatchedPlaylistItemIsSafe(self, watchedFilename, expectedNextFilename, scheduledRoom=None, scheduledAfter=0.0):
+        return (
+            self._roomHasMovedToExpectedNextFilename(watchedFilename, expectedNextFilename, scheduledRoom) and
+            self._playlistIndexEchoReceivedForExpectedNextFilename(expectedNextFilename, scheduledAfter)
+        )
+
+    def _playlistIndexEchoReceivedForExpectedNextFilename(self, expectedNextFilename, scheduledAfter):
+        if self.lastOwnPlaylistIndexEchoTime < scheduledAfter:
+            return False
+        if not self.lastOwnPlaylistIndexEchoName:
+            return False
+        return utils.sameFilename(self.lastOwnPlaylistIndexEchoName, expectedNextFilename)
+
+    def _roomHasMovedToExpectedNextFilename(self, watchedFilename, expectedNextFilename, scheduledRoom=None):
+        if not watchedFilename or not expectedNextFilename:
+            return False
+
+        currentUser = self._client.userlist.currentUser
+        if scheduledRoom is not None and currentUser.room != scheduledRoom:
+            return False
+        currentRoom = currentUser.room
+
+        expectedNextIndex = self._getIndexOfFilenameInPlaylist(self._playlist, expectedNextFilename)
+        if expectedNextIndex is None or self._playlistIndex != expectedNextIndex:
+            return False
+
+        if not currentUser.file:
+            return False
+        if utils.sameFilename(currentUser.file.get("name"), watchedFilename):
+            return False
+        if not utils.sameFilename(currentUser.file.get("name"), expectedNextFilename):
+            return False
+
+        for user in self._client.userlist._users.values():
+            if user.room != currentRoom:
+                continue
+            if not user.file:
+                return False
+            if utils.sameFilename(user.file.get("name"), watchedFilename):
+                return False
+            if not utils.sameFilename(user.file.get("name"), expectedNextFilename):
+                return False
+
+        return True
+
+    def autoRemoveWatchedPlaylistItem(self, filename, expectedIndex=None):
+        if not constants.AUTO_REMOVE_WATCHED_FROM_PLAYLIST:
+            return False
+        if not filename:
+            return False
+        if not self._client.sharedPlaylistIsEnabled():
+            return False
+        if not self._client.isConnectedAndInARoom():
+            return False
+        if not self._client.userlist.currentUser.canControl():
+            return False
+        if not self._playlist:
+            return False
+
+        playlist = self._playlist.copy()
+        removeIndex = self._getIndexOfFilenameInPlaylist(playlist, filename, expectedIndex)
+
+        if removeIndex is None:
+            self._ui.showDebugMessage(
+                "Not auto-removing watched playlist item '{}' because it is no longer in the playlist.".format(filename))
+            return False
+
+        del playlist[removeIndex]
+        self.changePlaylist(playlist, username=None, resetIndex=False)
+        return True
 
     def notJustChangedPlaylist(self):
         secondsSinceLastChange = time.time() - self._lastPlaylistIndexChange
@@ -2132,6 +2452,12 @@ class SyncplayPlaylist():
             self._ui.showDebugMessage("Not playing current index - Filename mismatch or no file")
             return True
 
+    def _playingSpecificFilename(self, filenameToCompare):
+        if self._client.userlist.currentUser.file:
+            return self._client.userlist.currentUser.file['name'] == filenameToCompare
+        else:
+            return False
+
     def _thereIsNextPlaylistIndex(self):
         if self._playlistIndex is None:
             return False
@@ -2162,6 +2488,8 @@ class SyncplayPlaylist():
         return self._previousPlaylist != self._playlist and self._playlist != newPlaylist
 
 
+
+
 class FileSwitchManager(object):
     def __init__(self, client):
         self._client = client
@@ -2174,6 +2502,7 @@ class FileSwitchManager(object):
         self.directorySearchError = None
         self.newInfo = False
         self.currentlyUpdating = False
+        self.updateInfoPending = False
         self.newWatchlist = []
         self.fileSwitchTimer = task.LoopingCall(self.updateInfo)
         self.fileSwitchTimer.start(constants.FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL, True)
@@ -2210,10 +2539,28 @@ class FileSwitchManager(object):
         if self.directorySearchError:
             self._client.ui.showErrorMessage(self.directorySearchError)
             self.directorySearchError = None
+        self._client.playlist.doubleCheckForWatchedPreviousFile()
 
-    def updateInfo(self):
-        if not self.currentlyUpdating and self.mediaDirectories:
-            threads.deferToThread(self._updateInfoThread).addCallback(lambda x: self.checkForFileSwitchUpdate())
+    def updateInfo(self, queueIfUpdating=False):
+        if not self.mediaDirectories:
+            return
+        if self.currentlyUpdating:
+            if queueIfUpdating:
+                self.updateInfoPending = True
+            return
+        self.currentlyUpdating = True
+        threads.deferToThread(self._updateInfoThread).addBoth(self._updateInfoFinished)
+
+    def _updateInfoFinished(self, result):
+        self.currentlyUpdating = False
+        if self.updateInfoPending:
+            self.updateInfoPending = False
+            if self.folderSearchEnabled and self.mediaDirectories:
+                self.directorySearchError = None
+                self.updateInfo()
+                return result
+        self.checkForFileSwitchUpdate()
+        return result
 
     def setFilenameWatchlist(self, unfoundFilenames):
         self.filenameWatchlist = unfoundFilenames
@@ -2221,7 +2568,6 @@ class FileSwitchManager(object):
     def _updateInfoThread(self):
         with self.lock:
             try:
-                self.currentlyUpdating = True
                 dirsToSearch = self.mediaDirectories
 
                 if not self.folderSearchEnabled:
@@ -2267,8 +2613,6 @@ class FileSwitchManager(object):
                         self.newInfo = True
             except Exception as e:
                 self._client.ui.showDebugMessage(str(e))
-            finally:
-                self.currentlyUpdating = False
 
     def infoUpdated(self):
         self._client.fileSwitchFoundFiles()
@@ -2278,13 +2622,14 @@ class FileSwitchManager(object):
             return
 
         if self._client.userlist.currentUser.file and utils.sameFilename(filename, self._client.userlist.currentUser.file['name']):
-            return self._client.userlist.currentUser.file['path']
+            return utils.getCorrectedPathForFile(self._client.userlist.currentUser.file['path'])
 
         if self.mediaFilesCache is not None:
             for directory in self.mediaFilesCache:
                 files = self.mediaFilesCache[directory]
                 if len(files) > 0 and filename in files:
                     filepath = os.path.join(directory, filename)
+                    filepath = utils.getCorrectedPathForFile(filepath)
                     if os.path.isfile(filepath):
                         return filepath
 
@@ -2292,6 +2637,7 @@ class FileSwitchManager(object):
             directoryList = self.mediaDirectories
             for directory in directoryList:
                 filepath = os.path.join(directory, filename)
+                filepath = utils.getCorrectedPathForFile(filepath)
                 if os.path.isfile(filepath):
                     return filepath
 
@@ -2313,7 +2659,13 @@ class FileSwitchManager(object):
             for directory in self.mediaFilesCache:
                 files = self.mediaFilesCache[directory]
                 if filename in files:
-                    return directory
+                    filepath = os.path.join(directory, filename)
+                    if os.path.isfile(filepath):
+                        return directory
+                    watched_directory = os.path.join(directory, constants.WATCHED_SUBFOLDER)
+                    watched_filepath = os.path.join(directory, constants.WATCHED_SUBFOLDER, filename)
+                    if os.path.isfile(watched_filepath):
+                        return watched_directory
         return None
 
     def isDirectoryInList(self, directoryToFind, folderList):
