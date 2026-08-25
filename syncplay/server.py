@@ -760,7 +760,7 @@ class Watcher(object):
         if file_ and "name" in file_:
             filename = file_["name"]
             normalizedFilename = truncateText(filename, constants.MAX_FILENAME_LENGTH)
-            if isinstance(filename, str) and normalizedFilename and len(filename) > constants.MAX_FILENAME_LENGTH:
+            if isinstance(filename, str) and filename and (len(filename) > constants.MAX_FILENAME_LENGTH or not normalizedFilename):
                 file_["name"] = hashFilenameForProtocol(filename)
             else:
                 file_["name"] = normalizedFilename

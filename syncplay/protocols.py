@@ -240,9 +240,9 @@ class SyncClientProtocol(JSONCommandProtocol):
     def sendFileSetting(self, file_):
         fileToSend = file_
         filename = file_.get("name") if file_ else None
-        if isinstance(filename, str) and len(filename) > constants.MAX_FILENAME_LENGTH:
+        if isinstance(filename, str):
             normalizedFilename = utils.truncateText(filename, constants.MAX_FILENAME_LENGTH)
-            if normalizedFilename:
+            if filename and (len(filename) > constants.MAX_FILENAME_LENGTH or not normalizedFilename):
                 fileToSend = dict(file_)
                 fileToSend["name"] = utils.hashFilenameForProtocol(filename)
         self.sendSet({"file": fileToSend})
