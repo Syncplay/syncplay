@@ -371,11 +371,15 @@ def _stripURLUserInfo(url):
     return "{}://{}{}".format(scheme, safeAuthority, remainder[authorityEnd:])
 
 
-def shortenFilenameForOSD(filename):
-    if not isinstance(filename, str):
+def filenameForDisplay(filename):
+    if not isinstance(filename, str) or not isURL(filename):
         return filename
-    safeFilename = _stripURLUserInfo(filename) if isURL(filename) else filename
-    return safeFilename[:constants.MAX_OSD_FILENAME_LENGTH]
+    return urllib.parse.unquote(_stripURLUserInfo(filename))
+
+
+def shortenFilenameForOSD(filename):
+    displayFilename = filenameForDisplay(filename)
+    return displayFilename[:constants.MAX_OSD_FILENAME_LENGTH] if isinstance(displayFilename, str) else displayFilename
 
 
 def hashFilesize(size):

@@ -4,7 +4,6 @@ import re
 import sys
 import time
 import urllib.error
-import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from functools import wraps
@@ -764,10 +763,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 if user.file:
                     filesizeitem = QtGui.QStandardItem(formatSize(user.file['size']))
                     filedurationitem = QtGui.QStandardItem("({})".format(formatTime(user.file['duration'])))
-                    filename = user.file['name']
-                    if isURL(filename):
-                        filename = urllib.parse.unquote(filename)
+                    filename = utils.filenameForDisplay(user.file['name'])
                     filenameitem = QtGui.QStandardItem(filename)
+                    filenameitem.setData(user.file['name'], Qt.UserRole + constants.FILEITEM_FILENAME_ROLE)
                     fileSwitchState = self.getFileSwitchState(user.file['name']) if room == currentUser.room else None
                     if fileSwitchState != constants.FILEITEM_SWITCH_NO_SWITCH:
                         filenameTooltip = getMessage("switch-to-file-tooltip").format(filename)
@@ -978,7 +976,10 @@ class MainWindow(QtWidgets.QMainWindow):
             addUsersFileToPlaylistLabelText = getMessage("addotherusersfiletoplaylist-menu-label").format(shortUsername)
             addUsersStreamToPlaylistLabelText = getMessage("addotherusersstreamstoplaylist-menu-label").format(shortUsername)
 
-        filename = item.sibling(item.row(), 3).data()
+        filenameItem = item.sibling(item.row(), 3)
+        filename = filenameItem.data(Qt.UserRole + constants.FILEITEM_FILENAME_ROLE)
+        if filename is None:
+            filename = filenameItem.data()
         isUserRow = item.parent().row() != -1
         while item.parent().row() != -1:
             item = item.parent()
@@ -1079,7 +1080,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def roomClicked(self, item):
         username = item.sibling(item.row(), 0).data()
-        filename = item.sibling(item.row(), 3).data()
+        filenameItem = item.sibling(item.row(), 3)
+        filename = filenameItem.data(Qt.UserRole + constants.FILEITEM_FILENAME_ROLE)
+        if filename is None:
+            filename = filenameItem.data()
         while item.parent().row() != -1:
             item = item.parent()
         roomToJoin = item.sibling(item.row(), 0).data()
