@@ -134,8 +134,7 @@ class MpvPlayer(BasePlayer):
             messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")
             self._listener.mpvpipe.show_text(messageString, duration, constants.MPLAYER_OSD_LEVEL)
             return
-        messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace(
-            "\\\\", constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER).replace("<NEWLINE>", "\\n")
+        messageString = message.replace("\r", "").replace("\n", "").replace("%", "%%")
         self._listener.sendLine(["script-message-to", "syncplayintf", "{}-osd-{}".format(OSDType, mood), messageString])
 
     def displayChatMessage(self, username, message):
@@ -145,8 +144,8 @@ class MpvPlayer(BasePlayer):
             duration = int(constants.OSD_DURATION * 1000)
             self._listener.mpvpipe.show_text(messageString, duration, constants.MPLAYER_OSD_LEVEL)
             return
-        username = self._sanitizeText(username.replace("\\", constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
-        message = self._sanitizeText(message.replace("\\", constants.MPV_INPUT_BACKSLASH_SUBSTITUTE_CHARACTER))
+        username = username.replace("\r", "").replace("\n", "").replace("%", "%%")
+        message = message.replace("\r", "").replace("\n", "").replace("%", "%%")
         messageString = "<{}> {}".format(username, message)
         self._listener.sendLine(["script-message-to", "syncplayintf", "chat", messageString])
 
