@@ -100,6 +100,7 @@ class SyncplayClient(object):
 
         self.lastRewindTime = None
         self.lastUpdatedFileTime = None
+        self.knownFilenameHashes = {}
         self.lastAdvanceTime = None
         self.fileOpenBeforeChangingPlaylistIndex = None
         self.waitingToLoadNewfile = False
@@ -576,6 +577,9 @@ class SyncplayClient(object):
                 size = 0
         if not utils.isURL(path) and os.path.exists(path):
             self.fileSwitch.notifyUserIfFileNotInMediaDirectory(filename, path)
+        if filename:
+            self.knownFilenameHashes[utils.hashFilename(filename)] = filename
+            self.playlist.resolveFilenameHashes()
         filename, size = self.__executePrivacySettings(filename, size)
         self.userlist.currentUser.setFile(filename, duration, size, path)
         self.sendFile()
@@ -1451,9 +1455,13 @@ class SyncplayUserlist(object):
             else:
                 duration = utils.formatTime(file_['duration'])
                 message = getMessage("playing-notification").format(username, file_['name'], duration)
+                osdFilename = utils.shortenFilenameForOSD(file_['name'])
+                osdMessage = getMessage("playing-notification").format(username, osdFilename, duration)
                 if self.currentUser.room != room or self.currentUser.username == username:
-                    message += getMessage("playing-notification/room-addendum").format(room)
-                self.ui.showMessage(message, hideFromOSD)
+                    roomAddendum = getMessage("playing-notification/room-addendum").format(room)
+                    message += roomAddendum
+                    osdMessage += roomAddendum
+                self.ui.showMessage(message, hideFromOSD, osdMessage=osdMessage)
                 if username == self.currentUser.username:
                     self._client.watched.maybeShowPlaylistWarningNotificationForFilename(self._client.playlist, file_['name'])
                 if self.currentUser.file and not self.currentUser.isFileSame(file_) and self.currentUser.room == room:
@@ -1500,6 +1508,8 @@ class SyncplayUserlist(object):
                 self.currentUser.setControllerStatus(isController)
             self.currentUser.setReady(isReady)
             return
+        if file_:
+            file_ = self._client.playlist.resolveFileHash(file_)
         user = SyncplayUser(username, room, file_)
         if isController is not None:
             user.setControllerStatus(isController)
@@ -1532,6 +1542,8 @@ class SyncplayUserlist(object):
             self.__showUserChangeMessage(username, room, None, oldRoom)
 
     def modUser(self, username, room, file_):
+        if file_:
+            file_ = self._client.playlist.resolveFileHash(file_)
         if username in self._users:
             user = self._users[username]
             oldRoom = user.room if user.room else None
@@ -1766,9 +1778,9 @@ class UiManager(object):
     def setSSLMode(self, sslMode, sslInformation=""):
         self.__ui.setSSLMode(sslMode, sslInformation)
 
-    def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL, isMotd=False):
+    def showMessage(self, message, noPlayer=False, noTimestamp=False, OSDType=constants.OSD_NOTIFICATION, mood=constants.MESSAGE_NEUTRAL, isMotd=False, osdMessage=None):
         if not noPlayer:
-            self.showOSDMessage(message, duration=constants.OSD_DURATION, OSDType=OSDType, mood=mood)
+            self.showOSDMessage(osdMessage if osdMessage is not None else message, duration=constants.OSD_DURATION, OSDType=OSDType, mood=mood)
         self.__ui.showMessage(message, noTimestamp=noTimestamp, isMotd=isMotd)
 
     def updateAutoPlayState(self, newState):
@@ -1885,6 +1897,35 @@ class SyncplayPlaylist():
             return self._playlist.index(filePath)
         except ValueError:
             return
+
+    def resolveFilenameHash(self, filename):
+        if not utils.isFilenameHash(filename):
+            return filename
+        knownFilename = self._client.knownFilenameHashes.get(filename)
+        if knownFilename is not None:
+            return knownFilename
+        for playlistFilename in self._playlist:
+            if utils.sameFilename(playlistFilename, filename):
+                self._client.knownFilenameHashes[filename] = playlistFilename
+                return playlistFilename
+        return filename
+
+    def resolveFileHash(self, file_):
+        filename = self.resolveFilenameHash(file_["name"])
+        if filename != file_["name"]:
+            file_ = file_.copy()
+            file_["name"] = filename
+        return file_
+
+    def resolveFilenameHashes(self):
+        changed = False
+        for user in self._client.userlist._users.values():
+            resolvedFile = self.resolveFileHash(user.file) if user.file else user.file
+            if resolvedFile is not user.file:
+                user.file = resolvedFile
+                changed = True
+        if changed:
+            self._client.userlist.userListChange()
 
     def changeToPlaylistIndexFromFilename(self, filename):
         try:
@@ -2132,6 +2173,7 @@ class SyncplayPlaylist():
 
         self._updateUndoPlaylistBuffer(newPlaylist=files, newRoom=self._client.userlist.currentUser.room)
         self._playlist = files
+        self.resolveFilenameHashes()
 
         if username is None:
             if self._client.isConnectedAndInARoom() and self._client.sharedPlaylistIsEnabled():

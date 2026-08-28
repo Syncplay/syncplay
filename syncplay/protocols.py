@@ -1,6 +1,7 @@
 # coding:utf8
 import json
 import time
+from copy import deepcopy
 from datetime import datetime
 from functools import wraps
 
@@ -11,6 +12,7 @@ from twisted.python.versions import Version
 from zope.interface.declarations import implementer
 
 import syncplay
+from syncplay import constants, utils
 from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT, CONTROLLED_ROOMS_MIN_VERSION, USER_READY_MIN_VERSION, SHARED_PLAYLIST_MIN_VERSION, CHAT_MIN_VERSION, UNKNOWN_UI_MODE
 from syncplay.messages import getMessage
 from syncplay.utils import meetsMinVersion
@@ -153,8 +155,8 @@ class SyncClientProtocol(JSONCommandProtocol):
             self._client.ui.showMessage(motd, noPlayer=True, noTimestamp=True, isMotd=True)
         self._client.ui.showMessage(getMessage("connected-successful-notification"))
         self._client.connected()
-        self._client.sendFile()
         self._client.setServerVersion(version, featureList)
+        self._client.sendFile()
 
     def persistentRoomWarning(self, serverFeatures):
         return serverFeatures["persistentRooms"] if "persistentRooms" in serverFeatures else False
@@ -236,7 +238,14 @@ class SyncClientProtocol(JSONCommandProtocol):
         self.sendSet({"room": setting})
 
     def sendFileSetting(self, file_):
-        self.sendSet({"file": file_})
+        fileToSend = file_
+        filename = file_.get("name") if file_ else None
+        if isinstance(filename, str):
+            normalizedFilename = utils.truncateText(filename, constants.MAX_FILENAME_LENGTH)
+            if filename and (len(filename) > constants.MAX_FILENAME_LENGTH or not normalizedFilename):
+                fileToSend = dict(file_)
+                fileToSend["name"] = utils.hashFilenameForProtocol(filename)
+        self.sendSet({"file": fileToSend})
         self.sendList()
 
     def sendChatMessage(self, chatMessage):
@@ -711,6 +720,80 @@ class SyncServerProtocol(JSONCommandProtocol):
         }
         userlist[dummyRoom][" " * dummyCount] = dummyFile
 
+    def _listMessageFits(self, userlist):
+        encodedMessage = json.dumps({"List": userlist}).encode('utf-8')
+        return len(encodedMessage) + len(self.delimiter) < self.MAX_LENGTH
+
+    def _resolveRememberedUsername(self, room, rememberedUsername):
+        if not rememberedUsername:
+            return None
+        rememberedUsernameLower = rememberedUsername.lower()
+        for watcher in room.getWatchers():
+            if watcher.getName().lower() == rememberedUsernameLower:
+                return watcher.getName()
+        rememberedUsernameBase = rememberedUsername.rstrip('_').lower()
+        matches = []
+        for watcher in room.getWatchers():
+            if watcher.getName().rstrip('_').lower() == rememberedUsernameBase:
+                matches.append(watcher.getName())
+        return matches[0] if len(matches) == 1 else None
+
+    def _getFilenameHashPriority(self, watcher, lastEditors, lastIndexChangers):
+        room = watcher.getRoom()
+        username = watcher.getName()
+        if room in lastEditors and lastEditors[room] == username:
+            return 3
+        if watcher.isController():
+            return 2
+        if room in lastIndexChangers and lastIndexChangers[room] == username:
+            return 1
+        return 0
+
+    def _getWatcherFilenameHashSaving(self, userlist, watcher):
+        room = watcher.getRoom()
+        if not room or room.getName() not in userlist:
+            return 0
+        if watcher.getName() not in userlist[room.getName()]:
+            return 0
+        file_ = userlist[room.getName()][watcher.getName()]["file"]
+        filename = file_.get("name") if file_ else None
+        hashedFilename = utils.hashFilenameForProtocol(filename)
+        if hashedFilename == filename:
+            return 0
+        filenameSize = len(json.dumps(filename).encode('utf-8'))
+        hashedFilenameSize = len(json.dumps(hashedFilename).encode('utf-8'))
+        return filenameSize - hashedFilenameSize
+
+    def _hashWatcherFilenameInList(self, userlist, watcher):
+        if self._getWatcherFilenameHashSaving(userlist, watcher) <= 0:
+            return False
+        room = watcher.getRoom()
+        file_ = userlist[room.getName()][watcher.getName()]["file"]
+        file_["name"] = utils.hashFilenameForProtocol(file_["name"])
+        return True
+
+    def _reduceListFilenameMetadata(self, userlist, watchers):
+        reducedUserlist = deepcopy(userlist)
+        lastEditors = {}
+        lastIndexChangers = {}
+        rooms = set([watcher.getRoom() for watcher in watchers if watcher.getRoom()])
+        for room in rooms:
+            lastEditors[room] = self._resolveRememberedUsername(room, room.getLastPlaylistEditor())
+            lastIndexChangers[room] = self._resolveRememberedUsername(room, room.getLastPlaylistIndexChanger())
+        for priority in range(4):
+            candidates = []
+            for watcher in watchers:
+                if self._getFilenameHashPriority(watcher, lastEditors, lastIndexChangers) != priority:
+                    continue
+                saving = self._getWatcherFilenameHashSaving(reducedUserlist, watcher)
+                if saving > 0:
+                    candidates.append((saving, watcher))
+            candidates.sort(key=lambda candidate: candidate[0], reverse=True)
+            for _, watcher in candidates:
+                if self._hashWatcherFilenameInList(reducedUserlist, watcher) and self._listMessageFits(reducedUserlist):
+                    return reducedUserlist
+        return reducedUserlist
+
     def sendList(self):
         userlist = {}
         watchers = self._factory.getAllWatchersForUser(self._watcher)
@@ -721,6 +804,8 @@ class SyncServerProtocol(JSONCommandProtocol):
             for emptyRoom in self._factory.getEmptyPersistentRooms():
                 dummyCount += 1
                 self._addDummyUserOnList(userlist, emptyRoom, dummyCount)
+        if not self._listMessageFits(userlist):
+            userlist = self._reduceListFilenameMetadata(userlist, watchers)
         self.sendMessage({"List": userlist})
 
     @requireLogged

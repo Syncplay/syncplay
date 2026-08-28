@@ -338,10 +338,48 @@ def hashFilename(filename, stripURL=False):
     strippedFilename = stripfilename(filename, stripURL)
     try:
         strippedFilename = strippedFilename.encode('utf-8')
-    except UnicodeDecodeError:
-        pass
+    except UnicodeEncodeError:
+        strippedFilename = strippedFilename.encode('utf-8', errors='surrogatepass')
     filenameHash = hashlib.sha256(strippedFilename).hexdigest()[:12]
     return filenameHash
+
+
+def isFilenameHash(filename):
+    return isinstance(filename, str) and re.fullmatch(r"[0-9a-f]{12}", filename) is not None
+
+
+def hashFilenameForProtocol(filename):
+    if not isinstance(filename, str) or not filename or filename == constants.PRIVACY_HIDDENFILENAME or isFilenameHash(filename):
+        return filename
+    return hashFilename(filename)
+
+
+def _stripURLUserInfo(url):
+    scheme, separator, remainder = url.partition("://")
+    if not separator:
+        return url
+
+    authorityEnd = len(remainder)
+    for delimiter in "/?#":
+        delimiterIndex = remainder.find(delimiter)
+        if delimiterIndex != -1:
+            authorityEnd = min(authorityEnd, delimiterIndex)
+    authority = remainder[:authorityEnd]
+    if "@" not in authority:
+        return url
+    safeAuthority = authority.rsplit("@", 1)[-1]
+    return "{}://{}{}".format(scheme, safeAuthority, remainder[authorityEnd:])
+
+
+def filenameForDisplay(filename):
+    if not isinstance(filename, str) or not isURL(filename):
+        return filename
+    return urllib.parse.unquote(_stripURLUserInfo(filename))
+
+
+def shortenFilenameForOSD(filename):
+    displayFilename = filenameForDisplay(filename)
+    return displayFilename[:constants.MAX_OSD_FILENAME_LENGTH] if isinstance(displayFilename, str) else displayFilename
 
 
 def hashFilesize(size):
