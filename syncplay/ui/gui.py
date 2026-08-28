@@ -1381,7 +1381,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.updatingPlaylist = True
             for URI in URIsToAdd:
                 URI = URI.rstrip()
-                URI = urllib.parse.unquote(URI)
                 if URI != "":
                     self.addStreamToPlaylist(URI)
             self.updatingPlaylist = False
