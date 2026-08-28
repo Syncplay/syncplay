@@ -485,6 +485,8 @@ es = {
     # Server messages to client
     "new-syncplay-available-motd-message": "Estás usando Syncplay {} pero hay una versión más nueva disponible en https://syncplay.pl",  # ClientVersion
     "persistent-rooms-notice": "AVISO: Este servidor usa salas persistentes, lo cual hace que la información de listas de reproducción se guarde entre sesiones. Si deseas crear una sala en la que esta información no se guarde, introduce -temp al final del nombre de esa sala.",
+    "ready-chat-message": "He marcado a {} como listo.",  # User
+    "not-ready-chat-message": "He marcado a {} como no listo.",  # User
 
     # Server notifications
     "welcome-server-notification": "Bienvenido al servidor de Syncplay, ver. {0}",  # version
@@ -557,8 +559,6 @@ es = {
 
     "playlist-empty-error": "La lista de reproducción está vacía.",
     "playlist-invalid-index-error": "Índice de lista de reproducción no válido",
-    "playlist-empty-error": "Playlist is currently empty.", # TO DO: Translate
-    "playlist-invalid-index-error": "Invalid playlist index", # TO DO: Translate
 
     # Watchlist terms
     # TODO: Please double-check these translations and remove this message if they are fine

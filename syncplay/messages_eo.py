@@ -134,7 +134,6 @@ eo = {
     "mpc-version-insufficient-error": "Versio de MPC ne sufiĉas, bonvolu uzi `mpc-hc` ≥ `{}`",
     "mpc-be-version-insufficient-error": "Versio de MPC ne sufiĉas, bonvolu uzi `mpc-be` ≥ `{}`",
     "mpv-version-error": "Syncplay ne akordas ĉi tiun version de mpv. Bonvolu uzi alian version de mpv (ekz. Git HEAD).",
-    "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.",
     "mpv-failed-advice": "Eble mpv ne povas starti pro nesubtenataj konzolaj parametroj, aŭ nesubtenata versio de mpv.", # FARU: «konzolaj» – ĉu bona traduko de «command-line»?
     "player-file-open-error": "Ludilo malsukcesis malfermi dosieron",
     "player-path-error": "Vojo al ludilo ne estas ĝuste agordita. Nun subtenataj ludiloj estas: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2, kaj IINA",
@@ -525,7 +524,7 @@ eo = {
     # Server errors
     "unknown-command-server-error": "Nekonata ordono {}",  # message
     "not-json-server-error": "{} ne estas teksto kodita por JSON",  # message
-    "line-decode-server-error": "{} ne estas teksto kodita per UTF-8",
+    "line-decode-server-error": "La teksto ne estas kodita per UTF-8",
     "not-known-server-error": "La servilo devas koni vin, antaŭ ol vi sendos ĉi tiun ordonon",
     "client-drop-server-error": "Client drop: {} -- {}",  # host, error # FARU: Mi ne komprenas.
     "password-required-server-error": "Necesas pasvorto",
