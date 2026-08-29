@@ -181,6 +181,7 @@ function detectchanges()
             oldtitle = newtitle
             notificationbuffer = notificationbuffer .. "playstate"..msgseperator..tostring(get_play_state())..msgterminator
             notificationbuffer = notificationbuffer .. "position"..msgseperator..tostring(get_time())..msgterminator
+            notificationbuffer = notificationbuffer .. "rate"..msgseperator..tostring(get_var("rate", 0))..msgterminator
             newduration = get_duration()
             if oldduration ~= newduration then
                 oldduration = newduration
@@ -270,6 +271,15 @@ function set_var(vartoset, varvalue)
         vlc.var.set(input,tostring(vartoset),varvalue)
     else
         errormsg = noinput
+    end
+
+    -- Also set rate on playlist object so VLC's hotkey speed stepping
+    -- uses the externally-set rate as its base (not a cached old value)
+    if vartoset == "rate" then
+        local playlist = vlc.object.playlist()
+        if playlist then
+            vlc.var.set(playlist, "rate", varvalue)
+        end
     end
 
     return  errormsg
