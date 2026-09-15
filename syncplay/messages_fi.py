@@ -251,9 +251,14 @@ fi = {
      "language-label": "Kieli:",
      "automatic-language": "Vakiollinen ({})",  # Default language
      "showdurationnotification-label": "Varoita median kokonaiskeston eroavaisuuksista",
+     "showplaylistskipwarnings-label": "Varoita, kun soittolista saattaa ohittaa katsomattomia tiedostoja",
+     "showplaylistskipwarnings-tooltip": "Näytä varoitukset, kun Syncplay arvioi soittolistan ohittavan tiedostoja, joita ei ole katsottu.",
+     "showplaylistorderwarnings-label": "Varoita, kun soittolistan tiedostot näyttävät olevan väärässä järjestyksessä",
+     "showplaylistorderwarnings-tooltip": "Näytä varoitukset, kun Syncplay arvioi soittolistan tiedostojen olevan mahdollisesti väärässä järjestyksessä.",
      "basics-label": "Perusteet",
+     "files-label": "Tiedostot",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
      "readiness-label": "Toista/tauota",
-     "misc-label": "Muut",
+     "misc-label": "Yksityisyys/Muut",  # TODO: Double-check this translation in the live UI alongside adjacent tab labels.
      "core-behaviour-title": "Huoneen lähtökohtainen käyttäytymismalli",
      "syncplay-internals-title": "Syncplayn sisäiset ominaisuudet",
      "syncplay-mediasearchdirectories-title": "Hakemistot joista mediaa etsitään",
@@ -551,4 +556,52 @@ fi = {
 
     "playlist-empty-error": "Toistoluettelo on tällä hetkellä tyhjä.",
     "playlist-invalid-index-error": "Epäkelpo toistoluettelohakemisto",
+
+    # Watched file functionality
+    # TODO: Please double-check these translations and remove this message if they are fine
+    "syncplay-watchedhistory-title": "Katsottujen tiedostojen historia",
+    "syncplay-watchedhistoryenabled-label": "Ota katsottujen tiedostojen historia käyttöön (JSON-indeksi)",
+    "syncplay-autoremovefromplaylist-label": "Poista katsotut tiedostot automaattisesti toistoluettelosta",
+    "watchedhistoryenabled-tooltip": "Tallenna katsotut tiedostot Syncplayn asetustiedoston viereen tiedostoon '.syncplay-watched.json'. Katsottu-tila säilyy vaikka tiedosto siirretään tai poistetaan.",
+    "autoremovewatchedfromplaylist-tooltip": "Poistaa kohteen jaetusta toistoluettelosta, kun Syncplay merkitsee sen katsotuksi toiston saavutettua lopun.",
+    "watched-json-read-error": "Katsottujen tiedostojen historiatiedostoa '{}' ei voitu lukea: {}",
+    "watched-json-write-error": "Katsottujen tiedostojen historiatiedostoa '{}' ei voitu kirjoittaa: {}",
+    "watched-json-concurrent-update-error": "Katsottujen tiedostojen historiatiedostoa ei voitu päivittää samanaikaisten muutosten vuoksi: {}",
+    "watched-move-permission-error": "'{}' ei voitu siirtää katsottujen alikansioon käyttöoikeusvirheen vuoksi.",
+    "watched-move-failed-error": "'{}' ei voitu siirtää katsottujen alikansioon: {}",
+    "watched-move-too-many-retries-error": "'{}' siirtäminen katsottujen alikansioon keskeytettiin liian monen yrityksen jälkeen.",
+    "watched-mark-watched-error": "'{}' ei voitu merkitä katsotuksi: {}",
+    "watched-mark-unwatched-error": "'{}' ei voitu merkitä katsomattomaksi: {}",
+    "watched-record-history-error": "'{}' katseluhistorian tallentaminen epäonnistui: {}",
+    "marked-file-as-watched-notification": "'{}' merkitty katsotuksi.",
+    "marked-file-as-unwatched-notification": "'{}' merkitty katsomattomaksi.",
+    "watched-last-watched-tooltip": "Viimeksi katsottu {} huoneessa '{}' ({})",  # how long, room, date and time
+    "watched-datetime-format": "%d %B %Y %H:%M",
+    "watched-ago-minutes": "{} minuutti(a) sitten",
+    "watched-ago-hours": "{} tunti(a) sitten",
+    "watched-ago-days": "{} päivä(ä) sitten",
+    "syncplay-watchedfiles-title": "Katsotut tiedostot",
+    "syncplay-watchedautomove-label": "Siirrä katsotut tiedostot automaattisesti alikansioon (jos alikansio on olemassa)",
+    "syncplay-watchedmovesubfolder-label": "Katsottujen tiedostojen alikansio",
+    "syncplay-watchedsubfolderautocreate-label": "Luo katsottujen tiedostojen alikansio automaattisesti tarvittaessa",
+    "mark-as-watched-menu-label": "Merkitse katsotuksi",
+    "mark-as-unwatched-menu-label": "Merkitse katsomattomaksi",
+    "previous-file-menu-section-label": "Edellinen tiedosto: '{}'",  # filename
+    "mark-previous-file-as-watched-menu-label": "Merkitse katsotuksi",
+    "add-previous-file-to-playlist-menu-label": "Lisää soittolistaan",
+    "watchedautomove-tooltip": "Siirtää tiedoston automaattisesti katsottujen alikansioon, kun tiedosto päättyy. Tämä toimii vain jos yläkansio on mediakansio.",
+    "watchedsubfolder-tooltip": "Alikansio, johon katsotut tiedostot siirretään suhteessa tiedoston kansioon (alikansion täytyy olla olemassa siirtoa varten). Tämä toimii vain jos yläkansio on mediakansio.",
+    "watchedsubfolderautocreate-tooltip": "Luo katsottujen alikansion automaattisesti, jos sitä ei ole olemassa siirron aikana. Tämä toimii vain jos yläkansio on mediakansio.",
+    "cannot-move-file-due-to-name-conflict-error": "'{}' ei voitu siirtää alikansioon '{}' koska samanniminen tiedosto on jo olemassa.",
+    "cannot-move-file-due-to-parent-name-conflict-error": "'{}' ei voitu siirtää takaisin kansioon '{}' koska samanniminen tiedosto on jo olemassa.",
+    "file-not-in-watched-subfolder-error": "'{}' ei ole katsottujen tiedostojen alikansiossa.",  # path
+    "watched-file-tracking-disabled-error": "Katsottujen tiedostojen seuranta on poistettu käytöstä.",
+    "watched-subfolder-unavailable-error": "'{}' ei voitu siirtää alikansioon '{}', koska alikansiota ei löytynyt tai sitä ei voitu luoda.",  # path, subfolder
+    "watched-parent-folder-unavailable-error": "'{}' ei voitu siirtää pois katsottujen tiedostojen alikansiosta, koska yläkansiota ei löytynyt.",  # path
+    "moved-file-to-subfolder-notification": "'{}' siirrettiin alikansioon '{}'.",
+    "moved-file-from-watched-subfolder-notification": "'{}' siirrettiin takaisin kansioon '{}'.",  # path, parent folder
+
+
+    "playlist-skip-warning-tooltip": "Varoitus: Tämä näyttää ohittavan katsomattoman tiedoston {}.",  # missing file number
+    "playlist-out-of-order-warning-tooltip": "Varoitus: Tiedosto {} näyttää olevan väärässä järjestyksessä tiedoston {} jälkeen. Sen sijaan odotettiin tiedostoa {}."  # actual file number, previous file number, expected file number
 }

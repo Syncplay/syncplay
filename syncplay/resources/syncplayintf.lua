@@ -210,7 +210,7 @@ function process_alert_osd()
         elseif alert_osd_mood == MOOD_GOOD then
             messageColour = "{\\1c&H"..GOOD_ALERT_TEXT_COLOUR.."}"
         end
-        local messageString = wordwrapify_string(alert_osd)
+        local messageString = wordwrapify_string(ass_escape_preserving_newlines(alert_osd), false)
         local startRow = 0
         if messageString ~= '' and messageString ~= nil then
             local toDisplay
@@ -234,7 +234,7 @@ function process_notification_osd(startRow)
         local messageColour
         messageColour = "{\\1c&H"..NOTIFICATION_TEXT_COLOUR.."}"
         local messageString
-        messageString = wordwrapify_string(notification_osd)
+        messageString = wordwrapify_string(ass_escape_preserving_newlines(notification_osd), false)
         messageString = messageColour..messageString
         messageString = format_chatroom(messageString)
         stringToAdd = messageString
@@ -262,7 +262,7 @@ function process_chat_item_scrolling(i)
         if xpos > (-1*roughlen) then
             local row = chat_log[i].row-1+opts['scrollingFirstRowOffset']
             local ypos = opts['chatTopMargin']+(row * (opts['chatOutputRelativeFontSize']*FONT_SIZE_MULTIPLIER))
-            return format_scrolling(xpos,ypos,text)
+            return format_scrolling(xpos,ypos,ass_escape(text))
         else
             chat_log[i].text = ''
         end
@@ -272,7 +272,7 @@ end
 function process_chat_item_chatroom(i, startRow)
     local text = chat_log[i].text
     if text ~= '' then
-        local text = wordwrapify_string(text)
+        local text = wordwrapify_string(ass_escape(text), false)
         local rowNumber = i+startRow-1
         return(format_chatroom(text))
     end
@@ -454,6 +454,19 @@ function ass_escape(str)
     return str
 end
 
+function ass_escape_preserving_newlines(str)
+    local escaped = ""
+    local startPos = 1
+    while true do
+        local newlineStart, newlineEnd = str:find("\\n", startPos, true)
+        if newlineStart == nil then
+            return escaped .. ass_escape(str:sub(startPos))
+        end
+        escaped = escaped .. ass_escape(str:sub(startPos, newlineStart - 1)) .. "\\n"
+        startPos = newlineEnd + 1
+    end
+end
+
 function update()
     return
 end
@@ -628,7 +641,38 @@ function trim_string(line,maxCharacters)
     return str:sub(1,pos-1), str:sub(pos)
 end
 
-function wordwrapify_string(line)
+local function utf8_codepoint_at(str, pos)
+    local b1 = str:byte(pos)
+    if b1 < 0x80 then
+        return b1
+    elseif b1 < 0xE0 then
+        return (b1 - 0xC0) * 0x40 + (str:byte(pos + 1) - 0x80)
+    elseif b1 < 0xF0 then
+        return (b1 - 0xE0) * 0x1000 + (str:byte(pos + 1) - 0x80) * 0x40 + (str:byte(pos + 2) - 0x80)
+    else
+        return (b1 - 0xF0) * 0x40000 + (str:byte(pos + 1) - 0x80) * 0x1000 + (str:byte(pos + 2) - 0x80) * 0x40 + (str:byte(pos + 3) - 0x80)
+    end
+end
+
+local function is_wordwrap_continuation(codepoint)
+    -- Keep wrapping markers out of common multi-codepoint grapheme sequences.
+    return codepoint == 0x200C or codepoint == 0x200D or codepoint == 0x2060 or codepoint == 0xFEFF
+        or (codepoint >= 0x0300 and codepoint <= 0x036F)
+        or (codepoint >= 0x1AB0 and codepoint <= 0x1AFF)
+        or (codepoint >= 0x1DC0 and codepoint <= 0x1DFF)
+        or (codepoint >= 0x20D0 and codepoint <= 0x20FF)
+        or (codepoint >= 0xFE00 and codepoint <= 0xFE0F)
+        or (codepoint >= 0xFE20 and codepoint <= 0xFE2F)
+        or (codepoint >= 0x1F3FB and codepoint <= 0x1F3FF)
+        or (codepoint >= 0xE0020 and codepoint <= 0xE007F)
+        or (codepoint >= 0xE0100 and codepoint <= 0xE01EF)
+end
+
+local function is_regional_indicator(codepoint)
+    return codepoint ~= nil and codepoint >= 0x1F1E6 and codepoint <= 0x1F1FF
+end
+
+function wordwrapify_string(line, restoreBackslashSubstitute)
 -- Used to ensure characters wrap on a per-character rather than per-word basis
 -- to avoid issues with long filenames, etc.
 
@@ -637,10 +681,13 @@ function wordwrapify_string(line)
         return ""
     end
     local newstr = ""
-    local currentChar = 0
+    local currentChar = 1
     local nextChar = 0
     local chars = 0
     local maxChars = str:len()
+    local previousChar = nil
+    local previousCodepoint = nil
+    local regionalIndicatorCount = 0
     str = string.gsub(str, "\\\"", "\"");
     repeat
         nextChar = next_utf8(str, currentChar)
@@ -648,14 +695,32 @@ function wordwrapify_string(line)
             return newstr
         end
         local charToTest = str:sub(currentChar,nextChar-1)
-        if charToTest ~= "{"  and charToTest ~= "}" and charToTest ~= "%" then
-            newstr = newstr .. WORDWRAPIFY_MAGICWORD .. str:sub(currentChar,nextChar-1)
+        local codepoint = utf8_codepoint_at(str, currentChar)
+        local safeToWrap = charToTest ~= "{" and charToTest ~= "}" and charToTest ~= "%"
+            and previousChar ~= "\\"
+            and previousCodepoint ~= 0x200C and previousCodepoint ~= 0x200D
+            and previousCodepoint ~= 0x2060 and previousCodepoint ~= 0xFEFF
+            and not is_wordwrap_continuation(codepoint)
+            and not (is_regional_indicator(previousCodepoint)
+                and is_regional_indicator(codepoint)
+                and regionalIndicatorCount % 2 == 1)
+        if safeToWrap then
+            newstr = newstr .. WORDWRAPIFY_MAGICWORD .. charToTest
         else
-            newstr = newstr .. str:sub(currentChar,nextChar-1)
+            newstr = newstr .. charToTest
         end
+        if is_regional_indicator(codepoint) then
+            regionalIndicatorCount = regionalIndicatorCount + 1
+        else
+            regionalIndicatorCount = 0
+        end
+        previousChar = charToTest
+        previousCodepoint = codepoint
         currentChar = nextChar
     until currentChar > maxChars
-    newstr = string.gsub(newstr,opts['backslashSubstituteCharacter'], '\\\239\187\191') -- Workaround for \ escape issues
+    if restoreBackslashSubstitute ~= false then
+        newstr = string.gsub(newstr,opts['backslashSubstituteCharacter'], '\\\239\187\191') -- Workaround for \ escape issues
+    end
     return newstr
 end
 

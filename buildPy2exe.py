@@ -29,6 +29,56 @@ except ImportError:
 import syncplay
 from syncplay.messages import getMissingStrings, getMessage, getLanguages
 
+try:
+    import PySide6
+    from PySide6 import QtCore as BuildQtCore
+    QT_BINDING = 'PySide6'
+    QT_PACKAGES = 'PySide6, shiboken6'
+except ImportError:
+    from PySide2 import QtCore as BuildQtCore
+    QT_BINDING = 'PySide2'
+    QT_PACKAGES = 'PySide2'
+
+
+def installPySide6Py2exeHook():
+    if QT_BINDING != 'PySide6':
+        return
+
+    import ast
+    from py2exe import hooks as py2exeHooks
+
+    qtModules = list(PySide6.__all__)
+
+    def hookPySide6(finder, module):
+        tree = ast.parse(module.__source__)
+        foundModuleFinder = [False]
+        foundDirectorySetup = [False]
+
+        class ChangeDef(ast.NodeTransformer):
+            def visit_FunctionDef(self, node):
+                if node.name == '_find_all_qt_modules':
+                    node.body = ast.parse('return {!r}'.format(qtModules)).body
+                    foundModuleFinder[0] = True
+                elif node.name == '_setupQtDirectories':
+                    node.body = ast.parse(
+                        'global Shiboken\nfrom shiboken6 import Shiboken'
+                    ).body
+                    foundDirectorySetup[0] = True
+                return node
+
+        patchedTree = ast.fix_missing_locations(ChangeDef().visit(tree))
+        if not foundModuleFinder[0] or not foundDirectorySetup[0]:
+            raise RuntimeError('PySide6 package layout is not compatible with the py2exe build workaround')
+        module.__code_object__ = compile(
+            patchedTree, module.__file__, 'exec', optimize=module.__optimize__
+        )
+        finder.import_hook('shiboken6')
+
+    py2exeHooks.hook_PySide6 = hookPySide6
+
+
+installPySide6Py2exeHook()
+
 missingStrings = getMissingStrings()
 if missingStrings is not None and missingStrings != "":
     import warnings
@@ -52,6 +102,7 @@ NSIS_COMPILE = get_nsis_path()
 
 OUT_DIR = "syncplay_v{}".format(syncplay.version)
 SETUP_SCRIPT_PATH = "syncplay_setup.nsi"
+DEFAULT_INSTALL_DIR = "$PROGRAMFILES64\\Syncplay" if sys.maxsize > 2**32 else "$PROGRAMFILES\\Syncplay"
 
 languages = getLanguages()
 
@@ -122,7 +173,8 @@ NSIS_SCRIPT_TEMPLATE = r"""
 
   Name "Syncplay $version"
   OutFile "Syncplay-$version-Setup.exe"
-  InstallDir $$PROGRAMFILES\Syncplay
+  InstallDir "$installDir"
+  InstallDirRegKey HKLM SOFTWARE\Syncplay "Install_Dir"
   RequestExecutionLevel admin
   ManifestDPIAware true
   XPStyle on
@@ -548,6 +600,7 @@ class NSISScript(object):
             raise RuntimeError("Cannot create setup script, file exists at {}".format(SETUP_SCRIPT_PATH))
         contents = Template(NSIS_SCRIPT_TEMPLATE).substitute(
             version=syncplay.version,
+            installDir=DEFAULT_INSTALL_DIR,
             uninstallFiles=uninstallFiles,
             installFiles=installFiles,
             totalSize=totalSize,
@@ -590,7 +643,7 @@ class NSISScript(object):
         for dir_ in fileList.keys():
             for file_ in fileList[dir_]:
                 delete.append('DELETE "$INSTDIR\\{}\\{}"'.format(dir_, file_))
-            delete.append('RMdir "$INSTDIR\\{}"'.format(file_))
+            delete.append('RMdir "$INSTDIR\\{}"'.format(dir_))
         return "\n".join(delete)
 
 def pruneUnneededLibraries():
@@ -613,16 +666,31 @@ def pruneUnneededLibraries():
                     'Qt5WebEngineCore.dll', 'Qt5WebEngineWidgets.dll', 'Qt5WebSockets.dll', 'Qt5WinExtras.dll', 'Qt5Xml.dll',
                     'Qt5XmlPatterns.dll']
     windowsDLL = ['MSVCP140.dll', 'VCRUNTIME140.dll']
+    if QT_BINDING == 'PySide6':
+        unneededModules = ['PySide6.QtConcurrent.pyd', 'PySide6.QtDesigner.pyd', 'PySide6.QtHelp.pyd',
+                           'PySide6.QtOpenGL.pyd', 'PySide6.QtOpenGLWidgets.pyd', 'PySide6.QtPrintSupport.pyd',
+                           'PySide6.QtQml.pyd', 'PySide6.QtQuick.pyd', 'PySide6.QtQuickControls2.pyd',
+                           'PySide6.QtQuickTest.pyd', 'PySide6.QtQuickWidgets.pyd', 'PySide6.QtSql.pyd',
+                           'PySide6.QtSvg.pyd', 'PySide6.QtSvgWidgets.pyd', 'PySide6.QtTest.pyd',
+                           'PySide6.QtUiTools.pyd', 'PySide6.QtXml.pyd']
+        unneededLibs = ['Qt6Concurrent.dll', 'Qt6Designer.dll', 'Qt6Help.dll', 'Qt6OpenGL.dll', 'Qt6OpenGLWidgets.dll',
+                        'Qt6PrintSupport.dll', 'Qt6Qml.dll', 'Qt6Quick.dll', 'Qt6QuickControls2.dll', 'Qt6QuickTest.dll',
+                        'Qt6QuickWidgets.dll', 'Qt6Sql.dll', 'Qt6Svg.dll', 'Qt6SvgWidgets.dll', 'Qt6Test.dll',
+                        'Qt6UiTools.dll', 'Qt6Xml.dll']
+        windowsDLL = []
     deleteList = unneededModules + unneededLibs + windowsDLL
-    deleteList.append('api-*')
+    if QT_BINDING == 'PySide2':
+        deleteList.append('api-*')
     for filename in deleteList:
         for p in Path(libDir).glob(filename):
             p.unlink()
 
 def copyQtPlugins(paths):
     import shutil
-    from PySide2 import QtCore
-    basePath = QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.PluginsPath)
+    if QT_BINDING == 'PySide6':
+        basePath = BuildQtCore.QLibraryInfo.path(BuildQtCore.QLibraryInfo.PluginsPath)
+    else:
+        basePath = BuildQtCore.QLibraryInfo.location(BuildQtCore.QLibraryInfo.PluginsPath)
     basePath = basePath.replace('/', '\\')
     destBase = os.getcwd() + '\\' + OUT_DIR
     for elem in paths:
@@ -656,7 +724,11 @@ resources = [
 resources.extend(guiIcons)
 intf_resources = ["syncplay/resources/lua/intf/syncplay.lua"]
 
-qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
+if QT_BINDING == 'PySide6':
+    qt_plugins = ['platforms\\qwindows.dll', 'styles\\qmodernwindowsstyle.dll']
+else:
+    qt_plugins = ['platforms\\qwindows.dll', 'styles\\qwindowsvistastyle.dll']
+
 
 common_info = dict(
     name='Syncplay',
@@ -678,7 +750,7 @@ info = dict(
     options={
         'py2exe': {
             'dist_dir': OUT_DIR,
-            'packages': 'PySide2, cffi, OpenSSL, certifi',
+            'packages': '{}, cffi, OpenSSL, certifi'.format(QT_PACKAGES),
             'includes': 'twisted, sys, encodings, datetime, os, time, math, urllib, ast, unicodedata, _ssl, win32pipe, win32file, sqlite3',
             'excludes': 'venv, doctest, pdb, unittest, win32clipboard, win32pdh, win32security, win32trace, win32ui, winxpgui, win32process, tcl, tkinter',
             'dll_excludes': 'msvcr71.dll, MSVCP90.dll, POWRPROF.dll',
