@@ -2588,10 +2588,13 @@ class FileSwitchManager(object):
 
     # -- authoritative full reconciliation scan ---------------------------
 
-    def updateInfo(self):
+    def updateInfo(self, queueIfUpdating=False):
         # Request an authoritative full reconciliation scan. Single-flight: if a
         # scan is already running, record one pending reconciliation instead of
-        # dispatching a second worker.
+        # dispatching a second worker. queueIfUpdating is accepted for call-site
+        # compatibility (e.g. batched watched-history actions); it is a no-op
+        # because a scan already in flight is always followed by one pending
+        # reconciliation here, regardless of the caller's intent.
         if not self.mediaDirectories:
             return
         if self._scanInFlight:

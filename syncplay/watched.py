@@ -779,7 +779,7 @@ class WatchedManager(object):
         self._pendingMoves = []        # list of normalised source paths
         self._attempts = {}            # path -> attempt count
         self._lastAttemptTime = 0.0
-        # JSON index cache: jsonPath -> {"data": {filename: {...}}, "mtime": float}
+        # JSON index cache: jsonPath -> {"data": {filename: {...}}, "mtime": float, "readError": Exception|None}
         self._jsonCache = {}
         self._shownPlaylistWarningNotificationKeys = set()
 
@@ -882,11 +882,29 @@ class WatchedManager(object):
 
     def userMarkWatched(self, fileSourcePath):
         """Manual 'Mark as watched' context-menu action."""
-        self._userInitiatedMoveToWatched(fileSourcePath)
+        return self.userMarkFilesWatched([fileSourcePath])
 
     def userMarkUnwatched(self, fileSourcePath):
         """Manual 'Mark as unwatched' context-menu action."""
-        self._userInitiatedMoveToParent(fileSourcePath)
+        return self.userMarkFilesUnwatched([fileSourcePath])
+
+    def userMarkFilesWatched(self, fileSourcePaths):
+        changed = False
+        for fileSourcePath in fileSourcePaths:
+            if self.canMarkAsWatched(fileSourcePath) and self._userInitiatedMoveToWatched(fileSourcePath):
+                changed = True
+        if changed:
+            self._client.fileSwitch.updateInfo(queueIfUpdating=True)
+        return changed
+
+    def userMarkFilesUnwatched(self, fileSourcePaths):
+        changed = False
+        for fileSourcePath in fileSourcePaths:
+            if self.canMarkAsUnwatched(fileSourcePath) and self._userInitiatedMoveToParent(fileSourcePath):
+                changed = True
+        if changed:
+            self._client.fileSwitch.updateInfo(queueIfUpdating=True)
+        return changed
 
     # ------------------------------------------------------------------
     # Auto-move queue processing
@@ -1014,6 +1032,15 @@ class WatchedManager(object):
     # Manual mark watched / unwatched
     # ------------------------------------------------------------------
 
+    def _showManualActionMessage(self, message):
+        try:
+            self._client.ui.showMessage(message)
+        except Exception as e:
+            try:
+                self._client.ui.showDebugMessage("Completed watched action but could not notify: {}".format(e))
+            except Exception:
+                pass
+
     def _userInitiatedMoveToWatched(self, fileSourcePath):
         try:
             directory = os.path.dirname(fileSourcePath)
@@ -1022,15 +1049,14 @@ class WatchedManager(object):
             if not self._shouldUseWatchedFileInfo():
                 self._client.ui.showErrorMessage(
                     getMessage("watched-file-tracking-disabled-error"))
-                return
+                return False
 
             if not self._shouldUseWatchedSubfolderInfo():
-                if self._shouldUseWatchedHistoryInfo():
-                    self._recordHistory("watched", filename)
-                self._client.fileSwitch.updateInfo()
-                self._client.ui.showMessage(
+                if self._shouldUseWatchedHistoryInfo() and not self._recordHistory("watched", filename, showConcurrentUpdateError=True):
+                    return False
+                self._showManualActionMessage(
                     getMessage("marked-file-as-watched-notification").format(filename))
-                return
+                return True
 
             watchedDirectory = utils.getWatchedSubfolder(directory)
             self._createWatchedSubdirIfNeeded(watchedDirectory)
@@ -1038,27 +1064,28 @@ class WatchedManager(object):
                 self._client.ui.showErrorMessage(
                     getMessage("watched-subfolder-unavailable-error").format(
                         fileSourcePath, constants.WATCHED_SUBFOLDER))
-                return
+                return False
             destPath = os.path.join(watchedDirectory, filename)
             watchedDirectoryName = os.path.basename(watchedDirectory) or constants.WATCHED_SUBFOLDER
             if os.path.exists(destPath):
                 self._client.ui.showErrorMessage(
                     getMessage("cannot-move-file-due-to-name-conflict-error").format(fileSourcePath, watchedDirectoryName))
-                return
+                return False
             try:
                 self._moveFile(fileSourcePath, destPath)
             except FileExistsError:
                 self._client.ui.showErrorMessage(
                     getMessage("cannot-move-file-due-to-name-conflict-error").format(fileSourcePath, watchedDirectoryName))
-                return
+                return False
             if self._shouldUseWatchedHistoryInfo():
                 self._recordHistory("watched", filename)
-            self._client.fileSwitch.updateInfo()
-            self._client.ui.showMessage(
+            self._showManualActionMessage(
                 getMessage("moved-file-to-subfolder-notification").format(fileSourcePath, watchedDirectoryName))
+            return True
         except Exception as e:
             self._client.ui.showErrorMessage(getMessage("watched-mark-watched-error").format(os.path.basename(fileSourcePath), e))
             self._client.ui.showDebugMessage(getMessage("watched-mark-watched-error").format(os.path.basename(fileSourcePath), e))
+            return False
 
     def _userInitiatedMoveToParent(self, fileSourcePath):
         try:
@@ -1070,54 +1097,55 @@ class WatchedManager(object):
                 if not constants.WATCHED_HISTORY_ENABLED:
                     self._client.ui.showErrorMessage(
                         getMessage("watched-file-tracking-disabled-error"))
-                    return
-                self._recordHistory("unwatched", filename)
-                self._client.fileSwitch.updateInfo()
-                self._client.ui.showMessage(
+                    return False
+                if not self._recordHistory("unwatched", filename, showConcurrentUpdateError=True):
+                    return False
+                self._showManualActionMessage(
                     getMessage("marked-file-as-unwatched-notification").format(filename))
-                return
+                return True
 
             # Mixed mode: a file can be watched via JSON without physically being inside the watched subfolder.
             if constants.WATCHED_HISTORY_ENABLED and not utils.isWatchedSubfolder(watchedDirectoryPath):
                 correctedPath = utils.getCorrectedPathForFile(fileSourcePath)
                 if self.isWatchedFile(correctedPath):
-                    self._recordHistory("unwatched", filename)
-                    self._client.fileSwitch.updateInfo()
-                    self._client.ui.showMessage(
+                    if not self._recordHistory("unwatched", filename, showConcurrentUpdateError=True):
+                        return False
+                    self._showManualActionMessage(
                         getMessage("marked-file-as-unwatched-notification").format(filename))
-                    return
+                    return True
 
             if not utils.isWatchedSubfolder(watchedDirectoryPath):
                 self._client.ui.showErrorMessage(
                     getMessage("file-not-in-watched-subfolder-error").format(fileSourcePath))
-                return
+                return False
             parentDir = utils.getUnwatchedParentfolder(watchedDirectoryPath)
             if not parentDir:
                 self._client.ui.showErrorMessage(
                     getMessage("watched-parent-folder-unavailable-error").format(fileSourcePath))
-                return
+                return False
             parentName = os.path.basename(parentDir)
             destPath = os.path.join(parentDir, filename)
             if os.path.exists(destPath):
                 self._client.ui.showErrorMessage(
                     getMessage("cannot-move-file-due-to-parent-name-conflict-error").format(fileSourcePath, parentName))
-                return
+                return False
             try:
                 self._moveFile(fileSourcePath, destPath)
             except FileExistsError:
                 self._client.ui.showErrorMessage(
                     getMessage("cannot-move-file-due-to-parent-name-conflict-error").format(fileSourcePath, parentName))
-                return
+                return False
             try:
                 self._recordHistory("unwatched", filename)
             except Exception as e:
                 self._client.ui.showDebugMessage(getMessage("watched-record-history-error").format(filename, e))
-            self._client.fileSwitch.updateInfo()
-            self._client.ui.showMessage(
+            self._showManualActionMessage(
                 getMessage("moved-file-from-watched-subfolder-notification").format(fileSourcePath, parentName))
+            return True
         except Exception as e:
             self._client.ui.showErrorMessage(getMessage("watched-mark-unwatched-error").format(os.path.basename(fileSourcePath), e))
             self._client.ui.showDebugMessage(getMessage("watched-mark-unwatched-error").format(os.path.basename(fileSourcePath), e))
+            return False
 
     def getSkippedEpisodeInfo(self, filename):
         """Return metadata about a likely skipped episode for the given playlist filename, or None."""
@@ -1560,12 +1588,22 @@ class WatchedManager(object):
 
     def _loadJson(self, jsonPath):
         """Load (or reload) the single config-adjacent JSON watched index into cache."""
+        readError = None
         try:
             mtime = os.path.getmtime(jsonPath)
-        except OSError:
+        except FileNotFoundError:
             mtime = None
+        except OSError as e:
+            mtime = None
+            readError = e
 
         cached = self._jsonCache.get(jsonPath)
+        if readError is not None:
+            if cached is None or cached.get("readError") is None:
+                self._client.ui.showDebugMessage(
+                    getMessage("watched-json-read-error").format(jsonPath, readError))
+            self._jsonCache[jsonPath] = {"data": {}, "mtime": mtime, "readError": readError}
+            return {}
         if cached is not None and cached["mtime"] == mtime:
             return cached["data"]
 
@@ -1575,18 +1613,22 @@ class WatchedManager(object):
                 with open(jsonPath, "r", encoding="utf-8") as fh:
                     raw = fh.read()
                 parsed = json.loads(raw)
-                watched = parsed.get("watched", {})
-                if isinstance(watched, dict):
-                    for filename, metadata in watched.items():
-                        normalisedFilename = self._normaliseHistoryFilename(filename)
-                        if not normalisedFilename or not isinstance(metadata, dict):
-                            continue
-                        data[normalisedFilename] = metadata
+                if not isinstance(parsed, dict) or parsed.get("version", 1) != 1:
+                    raise WatchedHistoryError(getMessage("watched-json-invalid-data-error"))
+                watched = parsed.get("watched")
+                if not isinstance(watched, dict):
+                    raise WatchedHistoryError(getMessage("watched-json-invalid-data-error"))
+                for filename, metadata in watched.items():
+                    normalisedFilename = self._normaliseHistoryFilename(filename)
+                    if not normalisedFilename or not isinstance(metadata, dict):
+                        raise WatchedHistoryError(getMessage("watched-json-invalid-data-error"))
+                    data[normalisedFilename] = metadata
             except Exception as e:
                 self._client.ui.showDebugMessage(
                     getMessage("watched-json-read-error").format(jsonPath, e))
+                readError = e
                 data = {}
-        self._jsonCache[jsonPath] = {"data": data, "mtime": mtime}
+        self._jsonCache[jsonPath] = {"data": data, "mtime": mtime, "readError": readError}
         return data
 
     def _writeJson(self, jsonPath, watchedData, expectedMtime=None):
@@ -1613,7 +1655,7 @@ class WatchedManager(object):
                 newMtime = os.path.getmtime(jsonPath)
             except OSError:
                 newMtime = None
-            self._jsonCache[jsonPath] = {"data": dict(watchedData), "mtime": newMtime}
+            self._jsonCache[jsonPath] = {"data": dict(watchedData), "mtime": newMtime, "readError": None}
             return True
         except Exception as e:
             self._client.ui.showErrorMessage(
@@ -1624,24 +1666,33 @@ class WatchedManager(object):
                 os.remove(tmpPath)
             except OSError:
                 pass
-            return False
+            return None
 
-    def _recordHistory(self, action, filename):
+    def _recordHistory(self, action, filename, showConcurrentUpdateError=False):
         """Record or remove a watched entry in the single filename-keyed JSON index."""
         if not constants.WATCHED_HISTORY_ENABLED:
-            return
+            return False
         if not filename:
-            return
+            return False
 
         filename = self._normaliseHistoryFilename(filename)
         if not filename:
-            return
+            return False
 
         jsonPath = self._getJsonPath()
+        cached = self._jsonCache.get(jsonPath)
+        if cached is not None and cached.get("readError") is not None:
+            self._jsonCache.pop(jsonPath, None)
         retries = 3
+        allFailuresWereConcurrent = True
         for _ in range(retries):
             watchedData = self._loadJson(jsonPath)
             cached = self._jsonCache.get(jsonPath, {})
+            readError = cached.get("readError")
+            if readError is not None:
+                self._client.ui.showErrorMessage(
+                    getMessage("watched-json-read-error").format(jsonPath, readError))
+                return False
             expectedMtime = cached.get("mtime")
             watchedData = dict(watchedData)
 
@@ -1659,8 +1710,15 @@ class WatchedManager(object):
                     "lastRoom": room,
                 }
 
-            if self._writeJson(jsonPath, watchedData, expectedMtime=expectedMtime):
-                return
+            writeResult = self._writeJson(jsonPath, watchedData, expectedMtime=expectedMtime)
+            if writeResult is True:
+                return True
+            if writeResult is None:
+                allFailuresWereConcurrent = False
 
-        self._client.ui.showDebugMessage(
-            getMessage("watched-json-concurrent-update-error").format(jsonPath))
+        if allFailuresWereConcurrent:
+            message = getMessage("watched-json-concurrent-update-error").format(jsonPath)
+            self._client.ui.showDebugMessage(message)
+            if showConcurrentUpdateError:
+                self._client.ui.showErrorMessage(message)
+        return False

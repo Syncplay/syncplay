@@ -172,7 +172,7 @@ fr = {
     "invalid-seek-value": "Valeur de recherche non valide",
     "invalid-offset-value": "Valeur de décalage non valide",
 
-    "switch-file-not-found-error": "Impossible de passer au fichier ''. Syncplay recherche dans les répertoires multimédias spécifiés.",  # File not found
+    "switch-file-not-found-error": "Impossible de passer au fichier '{0}'. Syncplay recherche dans les répertoires multimédias spécifiés.",  # File not found
     "folder-search-timeout-error": "La recherche de médias dans les répertoires de médias a été abandonnée car la recherche dans '{}' a pris trop de temps (after having processed the first {:,} files). Cela se produira si vous sélectionnez un dossier avec trop de sous-dossiers dans votre liste de dossiers multimédias à parcourir. Pour que le basculement automatique des fichiers fonctionne à nouveau, veuillez sélectionner Fichier->Définir les répertoires multimédias dans la barre de menu et supprimez ce répertoire ou remplacez-le par un sous-dossier approprié. Si le dossier est correct, vous pouvez le réactiver en sélectionnant Fichier->Définir les répertoires multimédias et en appuyant sur «OK».", # Folder, Files processed - Note: {:,} is {} but with added commas seprators - TODO: Translate
     "folder-search-timeout-warning": "Warning: It has taken {} seconds to scan {:,} files in the folder '{}'. This will occur if you select a folder with too many sub-folders in your list of media folders to search through or if there are too many files to process.",  # Folder, Files processed. Note: {:,} is {} but with added commas seprators. TODO: Translate
     "folder-search-first-file-timeout-error": "La recherche de média dans '{}' a été abandonnée car elle a pris trop de temps pour accéder au répertoire. Cela peut arriver s'il s'agit d'un lecteur réseau ou si vous configurez votre lecteur pour qu'il ralentisse après une période d'inactivité. Pour que le basculement automatique des fichiers fonctionne à nouveau, accédez à Fichier-> Définir les répertoires multimédias et supprimez le répertoire ou résolvez le problème (par exemple en modifiant les paramètres d'économie d'énergie).",  # Folder
@@ -490,9 +490,9 @@ fr = {
     "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
 
     # Server notifications
-    "welcome-server-notification": "Bienvenue sur le serveur Syncplay, ver.",  # version
-    "client-connected-room-server-notification": "({2}) connecté à la salle '{1}'",  # username, host, room
-    "client-left-server-notification": "a quitté le serveur",  # name
+    "welcome-server-notification": "Bienvenue sur le serveur Syncplay, ver. {0}",  # version
+    "client-connected-room-server-notification": "{0}({2}) connecté à la salle '{1}'",  # username, host, room
+    "client-left-server-notification": "{0} a quitté le serveur",  # name
     "no-salt-notification": "VEUILLEZ NOTER: Pour permettre aux mots de passe d'opérateur de salle générés par cette instance de serveur de fonctionner lorsque le serveur est redémarré, veuillez ajouter l'argument de ligne de commande suivant lors de l'exécution du serveur Syncplay à l'avenir: --salt {}",  # Salt
 
 
