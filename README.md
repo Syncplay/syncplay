@@ -24,7 +24,7 @@
 # Syncplay
 ![GitHub Actions build status](https://github.com/Syncplay/syncplay/workflows/Build/badge.svg)
 
-Solution to synchronize video playback across multiple instances of mpv, VLC, MPC-HC, MPC-BE and mplayer2 over the Internet.
+Solution to synchronize video playback across multiple instances of mpv, VLC, MPC-HC, MPC-BE, PotPlayer and mplayer2 over the Internet.
 
 ## Official website
 https://syncplay.pl

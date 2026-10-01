@@ -189,6 +189,13 @@ MPC_BE_PATHS = [
     r"c:\program files\mpc-be\mpc-be64.exe",
     r"c:\program files\mpc-be\mpc-be.exe"
 ]
+POTPLAYER_PATHS = [
+    r"c:\program files\daum\potplayer\potplayermini64.exe",
+    r"c:\program files\daum\potplayer\potplayer64.exe",
+    r"c:\program files (x86)\daum\potplayer\potplayermini.exe",
+    r"c:\program files (x86)\daum\potplayer\potplayer.exe"
+]
+POTPLAYER_EXECUTABLES = ["potplayermini64.exe", "potplayer64.exe", "potplayermini.exe", "potplayer.exe"]
 MPLAYER_PATHS = ["mplayer2", "mplayer"]
 MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"c:\program files\mpv\mpv.exe", r"c:\program files\mpv-player\mpv.exe",
              r"c:\program Files (x86)\mpv\mpv.exe", r"c:\program Files (x86)\mpv-player\mpv.exe",
@@ -223,6 +230,7 @@ MEMENTO_ICONPATH = "memento.png"
 MPC_ICONPATH = "mpc-hc.png"
 MPC64_ICONPATH = "mpc-hc64.png"
 MPC_BE_ICONPATH = "mpc-be.png"
+POTPLAYER_ICONPATH = "potplayer.png"
 
 MPV_ERROR_MESSAGES_TO_REPEAT = ['[ytdl_hook] Your version of youtube-dl is too old', '[ytdl_hook] youtube-dl failed', 'Failed to recognize file format.', '[syncplayintf] Lua error']
 
@@ -234,6 +242,15 @@ MPC_LOCK_WAIT_TIME = 0.2
 MPC_RETRY_WAIT_TIME = 0.01
 MPC_MAX_RETRIES = 30
 MPC_PAUSE_TOGGLE_DELAY = 0.05
+POTPLAYER_OPEN_MAX_WAIT_TIME = 15
+POTPLAYER_OPEN_FILE_TIMEOUT = 10
+POTPLAYER_COMMAND_TIMEOUT = 1000  # Milliseconds
+POTPLAYER_POLL_INTERVAL = 0.005
+POTPLAYER_FULL_POLL_EVERY = 10  # Title, duration and speed are read on every Nth poll only
+POTPLAYER_SEEK_SETTLE_TIME = 1.0
+POTPLAYER_NEWFILE_SETTLE_TIMEOUT = 3.0
+POTPLAYER_NEWFILE_ENFORCE_TIME = 1.5
+POTPLAYER_SEEK_LANDING_MARGIN = 300  # Milliseconds; exact seeks land within a frame, stale time refreshes on the old timeline
 MPV_NEWFILE_IGNORE_TIME = 1
 MPV_SENDMESSAGE_COOLDOWN_TIME = 0.05
 MPV_MAX_NEWFILE_COOLDOWN_TIME = 3

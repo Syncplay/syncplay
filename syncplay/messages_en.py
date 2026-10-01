@@ -136,10 +136,13 @@ en = {
     "mpc-slave-error": "Unable to start MPC in slave mode!",
     "mpc-version-insufficient-error": "MPC version not sufficient, please use `mpc-hc` >= `{}`",
     "mpc-be-version-insufficient-error": "MPC version not sufficient, please use `mpc-be` >= `{}`",
+    "potplayer-launch-error": "Unable to start PotPlayer or find its window!",
+    "potplayer-file-open-error": "PotPlayer could not open \"{}\"",
+    "potplayer-keyframe-seek-warning": "PotPlayer jumped to a keyframe instead of the exact time, which makes syncing less accurate. In PotPlayer, turn off \"Playback > Jump (to) > Use keyframe to jump to a time\".",
     "mpv-version-error": "Syncplay is not compatible with this version of mpv. Please use a different version of mpv (e.g. Git HEAD).",
     "mpv-failed-advice": "The reason mpv cannot start may be due to the use of unsupported command line arguments or an unsupported version of mpv.",
     "player-file-open-error": "Player failed opening file",
-    "player-path-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2, and IINA",
+    "player-path-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE, PotPlayer, mplayer2, and IINA",
     "hostname-empty-error": "Hostname can't be empty",
     "empty-error": "{} can't be empty",  # Configuration
     "media-player-error": "Media player error: \"{}\"",  # Error line
@@ -150,7 +153,7 @@ en = {
 
     "unable-to-start-client-error": "Unable to start client",
 
-    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE, mplayer2, and IINA.",
+    "player-path-config-error": "Player path is not set properly. Supported players are: mpv, mpv.net, VLC, MPC-HC, MPC-BE, PotPlayer, mplayer2, and IINA.",
     "no-file-path-config-error": "File must be selected before starting your player",
     "no-hostname-config-error": "Hostname can't be empty",
     "invalid-port-config-error": "Port must be valid",
@@ -429,7 +432,7 @@ en = {
 
     "edit-rooms-tooltip": "Edit room list.",
 
-    "executable-path-tooltip": "Location of your chosen supported media player (mpv, mpv.net, VLC, MPC-HC/BE, mplayer2 or IINA).",
+    "executable-path-tooltip": "Location of your chosen supported media player (mpv, mpv.net, VLC, MPC-HC/BE, PotPlayer, mplayer2 or IINA).",
     "media-path-tooltip": "Location of video or stream to be opened. Necessary for mplayer2.",
     "player-arguments-tooltip": "Additional command line arguments / switches to pass on to this media player.",
     "mediasearcdirectories-arguments-tooltip": "Directories where Syncplay will search for media files, e.g. when you are using the click to switch feature. Syncplay will look recursively through subfolders.",
