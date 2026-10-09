@@ -166,8 +166,6 @@ class TwistedSocketNotifier(QObject):
             if not err:
                 w.socket.getpeername()
                 return False
-        except AttributeError:
-            return False
         except OSError:
             pass
         err = err or errno.ECONNREFUSED
