@@ -1259,7 +1259,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if isMacOS() and IsPySide:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
-            options = QtWidgets.QFileDialog.Options()
+            options = QtWidgets.QFileDialog.Option(0)
         self.mediadirectory = ""
         currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
         if currentdirectory and os.path.isdir(currentdirectory):
@@ -1288,7 +1288,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if isMacOS() and IsPySide:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
-            options = QtWidgets.QFileDialog.Options()
+            options = QtWidgets.QFileDialog.Option(0)
         self.mediadirectory = ""
         currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
         if currentdirectory and os.path.isdir(currentdirectory):
@@ -1317,7 +1317,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if isMacOS() and IsPySide:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
-            options = QtWidgets.QFileDialog.Options()
+            options = QtWidgets.QFileDialog.Option(0)
         self.mediadirectory = ""
         currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
         if currentdirectory and os.path.isdir(currentdirectory):
@@ -1338,7 +1338,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if isMacOS() and IsPySide:
             options = QtWidgets.QFileDialog.Options(QtWidgets.QFileDialog.DontUseNativeDialog)
         else:
-            options = QtWidgets.QFileDialog.Options()
+            options = QtWidgets.QFileDialog.Option(0)
         self.mediadirectory = ""
         currentdirectory = os.path.dirname(self._syncplayClient.userlist.currentUser.file["path"]) if self._syncplayClient.userlist.currentUser.file else None
         if currentdirectory and os.path.isdir(currentdirectory):

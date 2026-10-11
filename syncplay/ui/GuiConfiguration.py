@@ -289,7 +289,7 @@ class ConfigDialog(QtWidgets.QDialog):
         QtWidgets.QMessageBox.information(self, "Syncplay", getMessage("language-changed-msgbox-label"))
 
     def browsePlayerpath(self):
-        options = QtWidgets.QFileDialog.Options()
+        options = QtWidgets.QFileDialog.Option(0)
         defaultdirectory = ""
         browserfilter = "All files (*)"
 
@@ -445,7 +445,7 @@ class ConfigDialog(QtWidgets.QDialog):
         return QStandardPaths.standardLocations(QStandardPaths.DocumentsLocation)[0]
 
     def _exportWatchedHistory(self):
-        options = QtWidgets.QFileDialog.Options()
+        options = QtWidgets.QFileDialog.Option(0)
         exportPath, filtr = QtWidgets.QFileDialog.getSaveFileName(
             self,
             getMessage("watched-history-export-title"),
@@ -493,7 +493,7 @@ class ConfigDialog(QtWidgets.QDialog):
             self.showErrorMessage(getMessage("watched-history-operation-error").format(e))
 
     def _importWatchedHistory(self):
-        options = QtWidgets.QFileDialog.Options()
+        options = QtWidgets.QFileDialog.Option(0)
         importPath, filtr = QtWidgets.QFileDialog.getOpenFileName(
             self,
             getMessage("watched-history-import-title"),
@@ -525,7 +525,7 @@ class ConfigDialog(QtWidgets.QDialog):
 
     def browseMediapath(self):
         self.loadMediaBrowseSettings()
-        options = QtWidgets.QFileDialog.Options()
+        options = QtWidgets.QFileDialog.Option(0)
         if IsPySide:
             if self.config["mediaSearchDirectories"] and os.path.isdir(self.config["mediaSearchDirectories"][0]):
                 defaultdirectory = self.config["mediaSearchDirectories"][0]
