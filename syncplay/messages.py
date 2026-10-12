@@ -15,6 +15,7 @@ from . import messages_tr
 from . import messages_ru
 from . import messages_zh_CN
 from . import messages_ko
+from . import messages_uk_UA
 import re
 
 # In alphabetical order
@@ -33,6 +34,7 @@ messages = {
     "ru": messages_ru.ru,
     "zh_CN": messages_zh_CN.zh_CN,
      "ko": messages_ko.ko,
+    "uk_UA": messages_uk_UA.uk_UA,
     "CURRENT": None
 }
 
