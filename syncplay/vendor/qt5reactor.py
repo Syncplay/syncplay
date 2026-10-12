@@ -104,17 +104,30 @@ Original port to QT4: U{Gabe Rudy<mailto:rudy@goldenhelix.com>}
 Subsequent port by therve
 """
 
+import errno
+import os
+import socket
 import sys
 
 from syncplay.vendor.Qt.QtCore import (
      QCoreApplication, QEventLoop, QObject, QSocketNotifier, QTimer, Signal)
-from twisted.internet import posixbase
+from twisted.internet import error, posixbase
 from twisted.internet.interfaces import IReactorFDSet
 from twisted.python import log, runtime
 from zope.interface import implementer
 
 class TwistedSocketNotifier(QObject):
-    """Connection between an fd event and reader/writer callbacks."""
+    """Connection between an fd event and reader/writer callbacks.
+
+    Note: on macOS, events are not processed from within the QSocketNotifier callback itself,
+    only after it has returned. Processing can disconnect the socket, which unregisters both
+    its read and write notifiers. Qt's CFSocket-based dispatcher can deliver the read and
+    write callbacks for a socket back-to-back (e.g. a refused connection is both readable and
+    writable), and unregistering the other notifier from within the first callback leaves the
+    second pointing at freed socket data, crashing in QCoreApplication::sendEvent (Syncplay
+    issue #814). Within the callback, a notifier therefore only disables itself, and the rest
+    is deferred.
+    """
 
     activated = Signal(int)
 
@@ -138,7 +151,39 @@ class TwistedSocketNotifier(QObject):
         self.notifier.deleteLater()
         self.deleteLater()
 
+    def _connectionRefused(self, w):
+        """
+        On macOS, Qt's CFSocket-based notifier consumes the pending SO_ERROR of a connecting
+        socket, so Twisted would see no error for a refused connection and treat it as
+        established. Detect that here (a refused socket has no peer) and fail the connection
+        attempt the way Twisted would have. Returns True if the connection attempt failed.
+        """
+        if sys.platform != 'darwin' or getattr(w, 'connected', 1) or not hasattr(w, 'connector'):
+            return False
+        err = 0
+        try:
+            err = w.socket.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            if not err:
+                w.socket.getpeername()
+                return False
+        except OSError:
+            pass
+        err = err or errno.ECONNREFUSED
+        w.failIfNotConnected(error.getConnectError((err, os.strerror(err))))
+        return True
+
     def read(self, fd):
+        if not self.watcher:
+            return
+        if sys.platform == 'darwin':
+            # Don't process the event until we've returned from Qt's socket callback
+            # (see the note on TwistedSocketNotifier)
+            self.notifier.setEnabled(False)
+            QTimer.singleShot(0, self._read)
+        else:
+            self._read()
+
+    def _read(self):
         if not self.watcher:
             return
         w = self.watcher
@@ -148,6 +193,9 @@ class TwistedSocketNotifier(QObject):
         def _read():
             # Don't call me again, until the data has been read
             self.notifier.setEnabled(False)
+            if self._connectionRefused(w):
+                self.reactor._iterate(fromqt=True)
+                return
             why = None
             try:
                 why = w.doRead()
@@ -168,11 +216,25 @@ class TwistedSocketNotifier(QObject):
     def write(self, sock):
         if not self.watcher:
             return
+        if sys.platform == 'darwin':
+            # Don't process the event until we've returned from Qt's socket callback
+            # (see the note on TwistedSocketNotifier)
+            self.notifier.setEnabled(False)
+            QTimer.singleShot(0, self._write)
+        else:
+            self._write()
+
+    def _write(self):
+        if not self.watcher:
+            return
         w = self.watcher
 
         def _write():
-            why = None
             self.notifier.setEnabled(False)
+            if self._connectionRefused(w):
+                self.reactor._iterate(fromqt=True)
+                return
+            why = None
             try:
                 why = w.doWrite()
             except:
