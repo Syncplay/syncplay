@@ -137,6 +137,10 @@ class SyncplayClient(object):
 
         self._running = False
         self._askPlayerTimer = None
+        self._filesizeRecheckTimer = None
+        self._filesizeRecheckPath = None
+        self._lastObservedFilesize = None
+        self._filesizeStableSince = None
 
         self._lastPlayerUpdate = None
         self._playerPosition = 0.0
@@ -187,6 +191,7 @@ class SyncplayClient(object):
         if not self._player.alertOSDSupported:
             constants.OSD_WARNING_MESSAGE_DURATION = constants.NO_ALERT_OSD_WARNING_DURATION
         self.scheduleAskPlayer()
+        self.scheduleFilesizeRecheck()
         self.__playerReady.callback(player)
 
     def addPlayerReadyCallback(self, lambdaToCall):
@@ -205,6 +210,76 @@ class SyncplayClient(object):
         if self._player:
             self._player.askForStatus()
         self.checkIfConnected()
+
+    def scheduleFilesizeRecheck(self, when=constants.FILESIZE_RECHECK_DELAY):
+        self._filesizeRecheckTimer = task.LoopingCall(self.recheckFilesize)
+        self._filesizeRecheckTimer.start(when, now=False)
+
+    def _resetFilesizeRecheckState(self, path=None):
+        self._filesizeRecheckPath = path
+        self._lastObservedFilesize = None
+        self._filesizeStableSince = None
+
+    def _getFilesize(self, path):
+        try:
+            return os.path.getsize(path)
+        except OSError:
+            return None
+
+    def recheckFilesize(self):
+        if not self._running:
+            return
+        file_ = self.userlist.currentUser.file
+        if not file_ or not file_.get('path'):
+            self._resetFilesizeRecheckState()
+            return
+        path = file_['path']
+        if utils.isURL(path):
+            self._resetFilesizeRecheckState()
+            return
+        if self._config['filesizePrivacyMode'] == PRIVACY_DONTSEND_MODE:
+            self._resetFilesizeRecheckState()
+            return
+        if path != self._filesizeRecheckPath:
+            self._resetFilesizeRecheckState(path)
+        return threads.deferToThread(
+            self._getFilesize, path
+        ).addCallback(self._processFilesizeRecheck, path)
+
+    def _processFilesizeRecheck(self, size, path):
+        if not self._running:
+            return
+        file_ = self.userlist.currentUser.file
+        if not file_ or file_.get('path') != path:
+            self._resetFilesizeRecheckState()
+            return
+        if self._config['filesizePrivacyMode'] == PRIVACY_DONTSEND_MODE:
+            self._resetFilesizeRecheckState(path)
+            return
+        if size is None:
+            self._resetFilesizeRecheckState(path)
+            return
+        size = self.__executeFilesizePrivacySettings(size)
+        if size == file_['size']:
+            self._resetFilesizeRecheckState(path)
+            return
+        if self.userlist.currentFilesizeMatchesUserInRoom(size):
+            file_['size'] = size
+            self._resetFilesizeRecheckState(path)
+            self.sendFile()
+            return
+        now = time.monotonic()
+        if size != self._lastObservedFilesize:
+            self._lastObservedFilesize = size
+            self._filesizeStableSince = now
+            return
+        if (
+            self._filesizeStableSince is not None
+            and now - self._filesizeStableSince >= constants.FILESIZE_STABLE_THRESHOLD
+        ):
+            file_['size'] = size
+            self._resetFilesizeRecheckState(path)
+            self.sendFile()
 
     def checkIfConnected(self):
         if self._lastGlobalUpdate and self._protocol and time.time() - self._lastGlobalUpdate > constants.PROTOCOL_TIMEOUT:
@@ -688,11 +763,15 @@ class SyncplayClient(object):
             filename = utils.hashFilename(filename)
         elif self._config['filenamePrivacyMode'] == PRIVACY_DONTSEND_MODE:
             filename = PRIVACY_HIDDENFILENAME
+        size = self.__executeFilesizePrivacySettings(size)
+        return filename, size
+
+    def __executeFilesizePrivacySettings(self, size):
         if self._config['filesizePrivacyMode'] == PRIVACY_SENDHASHED_MODE:
             size = utils.hashFilesize(size)
         elif self._config['filesizePrivacyMode'] == PRIVACY_DONTSEND_MODE:
             size = 0
-        return filename, size
+        return size
 
     def setServerVersion(self, version, featureList):
         self.serverVersion = version
@@ -1435,6 +1514,31 @@ class SyncplayUserlist(object):
             return True
         else:
             return False
+
+    def currentFilesizeMatchesUserInRoom(self, size):
+        file_ = self.currentUser.file
+
+        if (
+            not file_
+            or size == 0
+            or file_['name'] == PRIVACY_HIDDENFILENAME
+        ):
+            return False
+
+        candidateFile = file_.copy()
+        candidateFile['size'] = size
+
+        for otherUser in self._users.values():
+            if (
+                otherUser.room == self.currentUser.room
+                and otherUser.file
+                and otherUser.file['size'] != 0
+                and otherUser.file['name'] != PRIVACY_HIDDENFILENAME
+                and otherUser.isFileSame(candidateFile)
+            ):
+                return True
+
+        return False
 
     def __showUserChangeMessage(self, username, room, file_, oldRoom=None):
         if room:
