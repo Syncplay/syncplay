@@ -101,6 +101,9 @@ class SyncplayClient(object):
         self.lastRewindTime = None
         self.lastUpdatedFileTime = None
         self.lastAdvanceTime = None
+        self.openedStrmSource = None
+        self.openedStrmResolvedPath = None
+        self.openedStrmSourceTime = None
         self.fileOpenBeforeChangingPlaylistIndex = None
         self.waitingToLoadNewfile = False
         self.waitingToLoadNewfileSince = None
@@ -559,21 +562,53 @@ class SyncplayClient(object):
             self.ui.showDebugMessage("Fixing file duration to allow for playlist advancement")
             self.userlist.currentUser.file["duration"] = self._playerPosition
 
+    def _isStrmPath(self, filePath):
+        if not filePath:
+            return False
+        return urlparse(filePath).path.lower().endswith(".strm")
+
     def updateFile(self, filename, duration, path):
         self.lastUpdatedFileTime = time.time()
         newPath = ""
-        if utils.isURL(path):
-            filename = path
         if not path:
             return
-        try:
-            size = os.path.getsize(path)
-        except:
+        usingOpenedStrmSource = False
+        if self.openedStrmSource:
+            if self.openedStrmResolvedPath is None:
+                resolutionTimedOut = (
+                    self.openedStrmSourceTime is None or
+                    time.time() - self.openedStrmSourceTime > constants.STREAM_ADDITIONAL_IGNORE_TIME
+                )
+                if resolutionTimedOut:
+                    self.openedStrmSource = None
+                    self.openedStrmResolvedPath = None
+                    self.openedStrmSourceTime = None
+                elif self._isStrmPath(path):
+                    usingOpenedStrmSource = True
+                else:
+                    self.openedStrmResolvedPath = path
+                    usingOpenedStrmSource = True
+            elif path == self.openedStrmResolvedPath:
+                usingOpenedStrmSource = True
+            else:
+                self.openedStrmSource = None
+                self.openedStrmResolvedPath = None
+                self.openedStrmSourceTime = None
+        if usingOpenedStrmSource:
+            path = self.openedStrmSource
+            filename = path if utils.isURL(path) else os.path.basename(path)
+            size = 0
+        else:
+            if utils.isURL(path):
+                filename = path
             try:
-                path = path.decode('utf-8')
                 size = os.path.getsize(path)
             except:
-                size = 0
+                try:
+                    path = path.decode('utf-8')
+                    size = os.path.getsize(path)
+                except:
+                    size = 0
         if not utils.isURL(path) and os.path.exists(path):
             self.fileSwitch.notifyUserIfFileNotInMediaDirectory(filename, path)
         filename, size = self.__executePrivacySettings(filename, size)
@@ -655,6 +690,13 @@ class SyncplayClient(object):
                 and ((fromUser and filePath.endswith(".txt")) or filePath.endswith(".m3u") or filePath.endswith(".m3u8")):
             self.playlist.loadPlaylistFromFile(filePath, resetPosition)
             return
+
+        self.openedStrmSource = None
+        self.openedStrmResolvedPath = None
+        self.openedStrmSourceTime = None
+        if self._isStrmPath(filePath):
+            self.openedStrmSource = filePath
+            self.openedStrmSourceTime = time.time()
 
         self.playlist.openedFile()
         self._player.openFile(filePath, resetPosition)
