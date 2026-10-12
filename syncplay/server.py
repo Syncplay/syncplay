@@ -20,7 +20,7 @@ import syncplay
 from syncplay import constants
 from syncplay.messages import getMessage
 from syncplay.protocols import SyncServerProtocol
-from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid, truncateText, getListAsMultilineString, convertMultilineStringToList
+from syncplay.utils import RoomPasswordProvider, NotControlledRoom, RandomStringGenerator, meetsMinVersion, playlistIsValid, truncateText, getListAsMultilineString, convertMultilineStringToList, hashFilenameForProtocol
 
 class SyncFactory(Factory):
     def __init__(self, port='', password='', motdFilePath=None, roomsDbFile=None, permanentRoomsFile=None, isolateRooms=False, salt=None,
@@ -234,7 +234,10 @@ class SyncFactory(Factory):
     def setPlaylist(self, watcher, files):
         room = watcher.getRoom()
         if room.canControl(watcher) and playlistIsValid(files):
+            playlistChanged = files != room.getPlaylist()
             watcher.getRoom().setPlaylist(files, watcher)
+            if playlistChanged:
+                room.setLastPlaylistEditor(watcher.getName())
             self._roomManager.broadcastRoom(watcher, lambda w: w.setPlaylist(watcher.getName(), files))
         else:
             watcher.setPlaylist(room.getName(), room.getPlaylist())
@@ -243,7 +246,10 @@ class SyncFactory(Factory):
     def setPlaylistIndex(self, watcher, index):
         room = watcher.getRoom()
         if room.canControl(watcher):
+            playlistIndexChanged = index != room.getPlaylistIndex()
             watcher.getRoom().setPlaylistIndex(index, watcher)
+            if playlistIndexChanged:
+                room.setLastPlaylistIndexChanger(watcher.getName())
             self._roomManager.broadcastRoom(watcher, lambda w: w.setPlaylistIndex(watcher.getName(), index))
         else:
             watcher.setPlaylistIndex(room.getName(), room.getPlaylistIndex())
@@ -544,6 +550,8 @@ class Room(object):
         self._setBy = None
         self._playlist = []
         self._playlistIndex = None
+        self._lastPlaylistEditor = None
+        self._lastPlaylistIndexChanger = None
         self._lastUpdate = time.time()
         self._lastSavedUpdate = 0
         self._position = 0
@@ -669,6 +677,18 @@ class Room(object):
     def getPlaylistIndex(self):
         return self._playlistIndex
 
+    def setLastPlaylistEditor(self, username):
+        self._lastPlaylistEditor = username
+
+    def getLastPlaylistEditor(self):
+        return self._lastPlaylistEditor
+
+    def setLastPlaylistIndexChanger(self, username):
+        self._lastPlaylistIndexChanger = username
+
+    def getLastPlaylistIndexChanger(self):
+        return self._lastPlaylistIndexChanger
+
     def getControllers(self):
         return []
 
@@ -738,7 +758,12 @@ class Watcher(object):
 
     def setFile(self, file_):
         if file_ and "name" in file_:
-            file_["name"] = truncateText(file_["name"], constants.MAX_FILENAME_LENGTH)
+            filename = file_["name"]
+            normalizedFilename = truncateText(filename, constants.MAX_FILENAME_LENGTH)
+            if isinstance(filename, str) and filename and (len(filename) > constants.MAX_FILENAME_LENGTH or not normalizedFilename):
+                file_["name"] = hashFilenameForProtocol(filename)
+            else:
+                file_["name"] = normalizedFilename
         self._file = file_
         self._server.sendFileUpdate(self)
 
