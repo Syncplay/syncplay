@@ -14,6 +14,7 @@ from syncplay.players.basePlayer import BasePlayer
 from syncplay.utils import getRuntimeDir, isURL, findResourcePath
 from syncplay.utils import isMacOS, isWindows, isASCII
 from syncplay.utils import playerPathExists
+from syncplay.utils import isolateBidiText
 from syncplay.vendor.python_mpv_jsonipc.python_mpv_jsonipc import MPV
 
 class MpvPlayer(BasePlayer):
@@ -130,6 +131,14 @@ class MpvPlayer(BasePlayer):
 
     def displayMessage(self, message, duration=(constants.OSD_DURATION * 1000), OSDType=constants.OSD_NOTIFICATION,
                        mood=constants.MESSAGE_NEUTRAL):
+        # Isolate the text like the chat log does, so RTL text (e.g. Arabic) keeps its own direction.
+        # Chat messages come here too when the mpv chat is off.
+        chatMessage = re.match(constants.MESSAGE_WITH_USERNAME_REGEX, message, re.UNICODE)
+        if chatMessage:
+            username = isolateBidiText(chatMessage.group("username"))
+            message = "<{}>{}".format(username, isolateBidiText(message[chatMessage.end(1):]))  # all text after "<name>"
+        else:
+            message = isolateBidiText(message, constants.BIDI_ISOLATE_LTR_FORMAT)
         if not self._client._config["chatOutputEnabled"]:
             messageString = self._sanitizeText(message.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")
             self._listener.mpvpipe.show_text(messageString, duration, constants.MPLAYER_OSD_LEVEL)
@@ -138,6 +147,8 @@ class MpvPlayer(BasePlayer):
         self._listener.sendLine(["script-message-to", "syncplayintf", "{}-osd-{}".format(OSDType, mood), messageString])
 
     def displayChatMessage(self, username, message):
+        username = isolateBidiText(username)
+        message = isolateBidiText(message)
         if not self._client._config["chatOutputEnabled"]:
             messageString = "<{}> {}".format(username, message)
             messageString = self._sanitizeText(messageString.replace("\\n", "<NEWLINE>")).replace("<NEWLINE>", "\\n")

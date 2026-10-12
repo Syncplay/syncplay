@@ -672,6 +672,28 @@ local function is_regional_indicator(codepoint)
     return codepoint ~= nil and codepoint >= 0x1F1E6 and codepoint <= 0x1F1FF
 end
 
+local function is_rtl_letter(codepoint)
+    -- Hebrew, Arabic, Syriac, Thaana, NKo, Samaritan, Mandaic (+ presentation forms),
+    -- historic RTL scripts, Adlam, Mende Kikakui and Arabic mathematical symbols.
+    -- Direction control characters (LRM, RLM, isolates) are not letters and do not count.
+    return (codepoint >= 0x0590 and codepoint <= 0x08FF)
+        or (codepoint >= 0xFB1D and codepoint <= 0xFDFF)
+        or (codepoint >= 0xFE70 and codepoint <= 0xFEFC)
+        or (codepoint >= 0x10800 and codepoint <= 0x10FFF)
+        or (codepoint >= 0x1E800 and codepoint <= 0x1EFFF)
+end
+
+local function contains_rtl_text(str)
+    local pos = 1
+    while pos <= str:len() do
+        if is_rtl_letter(utf8_codepoint_at(str, pos)) then
+            return true
+        end
+        pos = next_utf8(str, pos)
+    end
+    return false
+end
+
 function wordwrapify_string(line, restoreBackslashSubstitute)
 -- Used to ensure characters wrap on a per-character rather than per-word basis
 -- to avoid issues with long filenames, etc.
@@ -680,6 +702,10 @@ function wordwrapify_string(line, restoreBackslashSubstitute)
     if str == nil or str == "" then
         return ""
     end
+    -- The wrap markers contain spaces, which split RTL words into single letters and reverse them.
+    -- Text with RTL letters gets no markers (whole string, so a multi-line OSD block counts as one).
+    -- libass still wraps it at spaces, and inside a word when the word is wider than the screen.
+    local has_rtl_text = contains_rtl_text(str)
     local newstr = ""
     local currentChar = 1
     local nextChar = 0
@@ -701,6 +727,7 @@ function wordwrapify_string(line, restoreBackslashSubstitute)
             and previousCodepoint ~= 0x200C and previousCodepoint ~= 0x200D
             and previousCodepoint ~= 0x2060 and previousCodepoint ~= 0xFEFF
             and not is_wordwrap_continuation(codepoint)
+            and not has_rtl_text
             and not (is_regional_indicator(previousCodepoint)
                 and is_regional_indicator(codepoint)
                 and regionalIndicatorCount % 2 == 1)
