@@ -313,7 +313,7 @@ class MpcHcApi:
 
 
 class MPCHCAPIPlayer(BasePlayer):
-    speedSupported = False
+    speedSupported = True
     alertOSDSupported = False
     customOpenDialog = False
     chatOSDSupported = False
@@ -370,6 +370,7 @@ class MPCHCAPIPlayer(BasePlayer):
         self.__positionUpdate.set()
 
     def setSpeed(self, value):
+        self._lastSpeedSetTime = time.time()
         try:
             self._mpcApi.setSpeed(value)
         except MpcHcApi.PlayerNotReadyException:

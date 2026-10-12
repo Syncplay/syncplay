@@ -116,6 +116,9 @@ class ConsoleUI(threading.Thread):
     def showErrorMessage(self, message, criticalerror=False):
         print("ERROR:\t" + message)
 
+    def updateSpeed(self, speed):
+        pass
+
     def setSSLMode(self, sslMode, sslInformation):
         pass
 
@@ -245,6 +248,19 @@ class ConsoleUI(threading.Thread):
             except:
                 pass
 
+        elif command.group('command') in constants.COMMANDS_SPEED:
+            parameter = command.group('parameter')
+            if parameter is None:
+                self.showMessage(getMessage("current-speed-notification").format(self._syncplayClient.getGlobalSpeed()), True)
+            else:
+                try:
+                    speed = round(float(parameter.strip()), 2)
+                    if speed < 0.1 or speed > 10.0:
+                        raise ValueError
+                    self._syncplayClient.setSpeed(speed)
+                except ValueError:
+                    self.showErrorMessage(getMessage("invalid-speed-value"))
+
         else:
             if self._tryAdvancedCommands(data):
                 return
@@ -262,6 +278,7 @@ class ConsoleUI(threading.Thread):
             self.showMessage(getMessage("commandlist-notification/create"), True)
             self.showMessage(getMessage("commandlist-notification/auth"), True)
             self.showMessage(getMessage("commandlist-notification/chat"), True)
+            self.showMessage(getMessage("commandlist-notification/speed"), True)
             self.showMessage(getMessage("commandList-notification/queue"), True)
             self.showMessage(getMessage("commandList-notification/queueandselect"), True)
             self.showMessage(getMessage("commandList-notification/playlist"), True)

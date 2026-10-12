@@ -357,11 +357,10 @@ mp.register_script_message('set_syncplayintf_options', function(e)
 end)
 
 function state_paused_and_position()
-    -- bob
     local pause_status = tostring(mp.get_property_native("pause"))
     local position_status = tostring(mp.get_property_native("time-pos"))
-    mp.command('print-text "<paused='..pause_status..', pos='..position_status..'>"')
-    -- mp.command('print-text "<paused>true</paused><position>7.6</position>"')
+    local speed_status = tostring(mp.get_property_native("speed"))
+    mp.command('print-text "<paused='..pause_status..', pos='..position_status..', speed='..speed_status..'>"')
 end
 
 mp.register_script_message('get_paused_and_position', function()
