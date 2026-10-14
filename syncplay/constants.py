@@ -116,8 +116,13 @@ FALLBACK_MAX_FILENAME_LENGTH = 250  # Number of displayed characters
 # Options for the File Switch feature:
 FOLDER_SEARCH_FIRST_FILE_TIMEOUT = 25.0  # Secs - How long to wait to find the first file in folder search (to take account of HDD spin up)
 FOLDER_SEARCH_TIMEOUT = 20.0  # Secs - How long to wait until searches in folder to update cache are aborted (after first file is found)
-FOLDER_SEARCH_WARNING_THRESHOLD = 2.0 # Secs - how long until a warning saying how many files have been scanned
-FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0  # Secs - Frequency of updating cache
+FOLDER_SEARCH_WARNING_THRESHOLD = 2.0 # Secs - additional grace (on top of FOLDER_SEARCH_WARNING_BASE_DELAY) before the slow-scan warning may appear
+FOLDER_SEARCH_WARNING_BASE_DELAY = 3.0 # Secs - base grace before a slow scan may warn; effective point is this + folderSearchWarningThreshold
+FOLDER_SEARCH_DOUBLE_CHECK_INTERVAL = 30.0  # Secs - Urgent polling cadence used while a needed current/next local file is unresolved
+FOLDER_SEARCH_RECONCILIATION_INTERVAL = 300.0  # Secs - Slow safety reconciliation cadence while needed files are resolvable (internal, not user-configurable)
+FOLDER_SEARCH_EVENT_COALESCE_INTERVAL = 1.0  # Secs - Coalescing window for the downstream fileSwitchFoundFiles() notification after direct cache events
+FOLDER_SEARCH_DEGRADED_RECOVERY_SCANS = 3  # Consecutive successful full reconciliations required to clear the degraded operational state
+FOLDER_SEARCH_NETWORK_WATCH_LIMIT = 32  # Process-wide budget for Windows network-directory watches (recursive roots + supplemental direct watches)
 
 # Changable values for watched features (you usually don't need to change these)
 WATCHED_CHECKQUEUE_INTERVAL = 1.0 # Secs
