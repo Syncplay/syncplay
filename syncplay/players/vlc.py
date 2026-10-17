@@ -60,10 +60,6 @@ class VLCClientFactory(ReconnectingClientFactory):
     def startedConnecting(self, connector):
         self._playerController._client.ui.showDebugMessage("Starting to connect to VLC...")
 
-    def clientConnectionLost(self, connector, reason):
-        self._playerController._client.ui.showDebugMessage("Connection to VLC lost: {}".format(reason))
-        ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
-
     def clientConnectionFailed(self, connector, reason):
         self._playerController._client.ui.showDebugMessage("Connection to VLC failed: {}".format(reason))
         ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
