@@ -2123,10 +2123,14 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         try:
             if self.config['lastCheckedForUpdates']:
-                configLastChecked = datetime.strptime(self.config["lastCheckedForUpdates"], "%Y-%m-%d %H:%M:%S.%f")
-                if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates.toPython():
-                    self.lastCheckedForUpdates = QDateTime.fromString(self.config["lastCheckedForUpdates"], 'yyyy-MM-dd HH-mm-ss')
-            if self.lastCheckedForUpdates is None:
+                lastCheckedFromConfig = QDateTime.fromString(self.config["lastCheckedForUpdates"], 'yyyy-MM-d HH:mm:ss.z')
+                if lastCheckedFromConfig.isValid() and (
+                    self.lastCheckedForUpdates is None
+                    or not self.lastCheckedForUpdates.isValid()
+                    or lastCheckedFromConfig > self.lastCheckedForUpdates
+                ):
+                    self.lastCheckedForUpdates = lastCheckedFromConfig
+            if self.lastCheckedForUpdates is None or not self.lastCheckedForUpdates.isValid():
                 self.checkForUpdates()
             else:
                 timeDelta = currentDateTimeValue.toPython() - self.lastCheckedForUpdates.toPython()
