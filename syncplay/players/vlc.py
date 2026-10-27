@@ -216,6 +216,7 @@ class VlcPlayer(BasePlayer):
         duration=constants.OSD_DURATION * 1000, OSDType=constants.OSD_DURATION, mood=constants.MESSAGE_NEUTRAL
     ):
         duration /= 1000
+        message = message.replace('\r', '').replace('\n', '')
         if OSDType != constants.OSD_ALERT:
             self._listener.sendLine('display-osd: {}, {}, {}'.format('top-right', duration, message))
         else:
@@ -253,6 +254,7 @@ class VlcPlayer(BasePlayer):
         return fileURL
 
     def openFile(self, filePath, resetPosition=False):
+        filePath = filePath.replace('\r', '').replace('\n', '')
         if not utils.isURL(filePath):
             normedPath = os.path.normpath(filePath)
             if os.path.isfile(normedPath):
