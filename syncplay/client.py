@@ -385,7 +385,10 @@ class SyncplayClient(object):
         else:
             hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
             self.setPosition(position)
-            self.ui.showMessage(getMessage("rewind-notification").format(setBy), hideFromOSD)
+            if setBy is None:
+                self.ui.showDebugMessage("Suppressed rewind notification because setBy is None")
+            else:
+                self.ui.showMessage(getMessage("rewind-notification").format(setBy), hideFromOSD)
             madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
@@ -396,7 +399,10 @@ class SyncplayClient(object):
         else:
             hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
             self.setPosition(position + constants.FASTFORWARD_EXTRA_TIME)
-            self.ui.showMessage(getMessage("fastforward-notification").format(setBy), hideFromOSD)
+            if setBy is None:
+                self.ui.showDebugMessage("Suppressed fastforward notification because setBy is None")
+            else:
+                self.ui.showMessage(getMessage("fastforward-notification").format(setBy), hideFromOSD)
             madeChangeOnPlayer = True
         return madeChangeOnPlayer
 
@@ -404,7 +410,10 @@ class SyncplayClient(object):
         hideFromOSD = not constants.SHOW_SAME_ROOM_OSD
         self._player.setPaused(False)
         madeChangeOnPlayer = True
-        self.ui.showMessage(getMessage("unpause-notification").format(setBy), hideFromOSD)
+        if setBy is None:
+            self.ui.showDebugMessage("Suppressed unpause notification because setBy is None")
+        else:
+            self.ui.showMessage(getMessage("unpause-notification").format(setBy), hideFromOSD)
         return madeChangeOnPlayer
 
     def _serverPaused(self, setBy):
@@ -413,7 +422,9 @@ class SyncplayClient(object):
             self.setPosition(self.getGlobalPosition())
         self._player.setPaused(True)
         madeChangeOnPlayer = True
-        if (self.lastLeftTime < time.time() - constants.OSD_DURATION) or hideFromOSD == True:
+        if setBy is None:
+            self.ui.showDebugMessage("Suppressed pause notification because setBy is None")
+        elif (self.lastLeftTime < time.time() - constants.OSD_DURATION) or hideFromOSD == True:
             self.ui.showMessage(getMessage("pause-notification").format(setBy, utils.formatTime(self.getGlobalPosition())), hideFromOSD)
         else:
             self.ui.showMessage(getMessage("left-paused-notification").format(self.lastLeftUser, setBy), hideFromOSD)
@@ -427,8 +438,11 @@ class SyncplayClient(object):
             madeChangeOnPlayer = True
         else:
             madeChangeOnPlayer = False
-        message = getMessage("seek-notification").format(setBy, utils.formatTime(self.playerPositionBeforeLastSeek), utils.formatTime(position))
-        self.ui.showMessage(message, hideFromOSD)
+        if setBy is None:
+            self.ui.showDebugMessage("Suppressed seek notification because setBy is None")
+        else:
+            message = getMessage("seek-notification").format(setBy, utils.formatTime(self.playerPositionBeforeLastSeek), utils.formatTime(position))
+            self.ui.showMessage(message, hideFromOSD)
         return madeChangeOnPlayer
 
     def _slowDownToCoverTimeDifference(self, diff, setBy):
@@ -440,7 +454,10 @@ class SyncplayClient(object):
             else:
                 self._player.setSpeed(constants.SLOWDOWN_RATE)
                 self._speedChanged = True
-                self.ui.showMessage(getMessage("slowdown-notification").format(setBy), hideFromOSD)
+                if setBy is None:
+                    self.ui.showDebugMessage("Suppressed slowdown notification because setBy is None")
+                else:
+                    self.ui.showMessage(getMessage("slowdown-notification").format(setBy), hideFromOSD)
                 madeChangeOnPlayer = True
         elif self._speedChanged and diff < constants.SLOWDOWN_RESET_THRESHOLD:
             self._player.setSpeed(1.00)
