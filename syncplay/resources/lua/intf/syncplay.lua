@@ -276,19 +276,28 @@ function set_var(vartoset, varvalue)
 end
 
 function get_time()
-    local realtime, errormsg, longtime, title, titletime
+    local realtime, errormsg, longtime, title, titletime, dur
     realtime, errormsg = get_var("time", 0) -- Seconds
     if errormsg ~= nil and errormsg ~= "" then
         return errormsg
     end
 
     title = get_var("title", 0)
-
-    if errormsg ~= nil and errormsg ~= "" then
-        return realtime
+    if title == nil then
+        title = 0
     end
     titletime = title * titlemultiplier -- weeks
     longtime = titletime + realtime
+
+    -- Single-file media should not use DVD-style title weeks. If title
+    -- pushes the clock past duration, ignore title (fixes MPV/VLC desync).
+    dur = get_duration()
+    if dur ~= nil and dur > 0 and longtime > dur + 5 then
+        if realtime <= dur + 5 then
+            return realtime
+        end
+        return dur
+    end
     return longtime
 end
 

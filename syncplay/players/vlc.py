@@ -327,7 +327,11 @@ class VlcPlayer(BasePlayer):
                 self.setPaused(True)
             self._pausedAsk.set()
         elif name == "position":
-            newPosition = float(value.replace(",", ".")) if (value != "no-input" and not self._filechanged) else self._client.getGlobalPosition()
+            if value != "no-input" and not self._filechanged:
+                newPosition = utils.sanitizeVlcTitleOffset(
+                    float(value.replace(",", ".")), self._duration)
+            else:
+                newPosition = self._client.getGlobalPosition()
             if newPosition == self._previousPosition and newPosition != self._duration and self._paused is False:
                 self._client.ui.showDebugMessage(
                     "Not considering position {} duplicate as new time because of VLC time precision bug".format(

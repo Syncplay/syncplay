@@ -415,6 +415,22 @@ def isURL(path):
         return False
 
 
+def sanitizeVlcTitleOffset(position, duration):
+    """Strip VLC Lua title×week offsets that land far beyond media duration."""
+    if duration is None or duration <= 0:
+        return position
+    limit = duration + constants.VLC_POSITION_OVER_DURATION_TOLERANCE
+    if position <= limit:
+        return position
+    week = constants.VLC_TITLE_WEEK_SECONDS
+    sanitized = position
+    while sanitized > limit and sanitized >= week:
+        sanitized -= week
+    if sanitized > limit:
+        return position
+    return sanitized
+
+
 def getPlayerArgumentsByPathAsArray(arguments, path):
     if arguments and not isinstance(arguments, str) and path in arguments:
         return arguments[path]
