@@ -1,0 +1,64 @@
+name: Build AppImage
+
+on: [push, pull_request]
+
+jobs:
+  appimage-fuse2:
+    name: Build AppImage for fuse2 (Ubuntu 22.04 and older)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install FUSE dependencies
+        run: sudo apt-get update && sudo apt-get install -y libfuse2 libfuse3-3
+
+      - name: Build AppImage
+        run: ci/appimage-script.sh fuse2
+
+      - name: Validate AppImage
+        run: |
+          mkdir -p dist_actions
+          ci/appimage-deploy.sh
+
+      - name: Prepare artifact version
+        run: |
+          export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+          echo "VER=$VER" >> $GITHUB_ENV
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Syncplay-${{ env.VER }}-x86_64.AppImage
+          path: |
+            dist_actions/Syncplay-${{ env.VER }}-x86_64.AppImage
+
+  appimage-fuse3:
+    name: Build AppImage for fuse3 (Ubuntu 24.04 and newer)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install FUSE dependencies
+        run: sudo apt-get update && sudo apt-get install -y libfuse2 libfuse3-3
+
+      - name: Build AppImage
+        run: ci/appimage-script.sh fuse3
+
+      - name: Validate AppImage
+        run: |
+          mkdir -p dist_actions
+          ci/appimage-deploy.sh
+
+      - name: Prepare artifact version
+        run: |
+          export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+          echo "VER=$VER" >> $GITHUB_ENV
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Syncplay-${{ env.VER }}-fuse3-x86_64.AppImage
+          path: |
+            dist_actions/Syncplay-${{ env.VER }}-fuse3-x86_64.AppImage
