@@ -112,6 +112,23 @@ export PIP_REQUIREMENTS="."
 export PIP_WORKDIR="$REPO_ROOT"
 export VERSION="$(cat $REPO_ROOT/syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
 
+# resolve a shared library path, trying common locations then ldconfig
+resolve_lib () {
+    local name="$1"
+    local cand
+    for cand in \
+        "/usr/lib/x86_64-linux-gnu/$name" \
+        "/lib/x86_64-linux-gnu/$name" \
+        "/usr/lib/$name"; do
+        if [ -f "$cand" ]; then
+            echo "$cand"
+            return
+        fi
+    done
+    cand=$(ldconfig -p 2>/dev/null | grep -m1 "/$name$" | awk '{print $NF}')
+    echo "$cand"
+}
+
 # linuxdeploy builds the AppDir (its primary purpose per the linuxdeploy user
 # guide). --appimage-type is an appimagetool flag, not a linuxdeploy flag, so it
 # must not be passed to linuxdeploy (doing so errors with "Flag could not be
@@ -120,9 +137,9 @@ export VERSION="$(cat $REPO_ROOT/syncplay/__init__.py | awk '/version/ {gsub("\0
     -e $(which readelf) \
     -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
     --custom-apprun AppRun.sh \
-    -l /usr/lib/x86_64-linux-gnu/libgthread-2.0.so.0 \
-    -l /usr/lib/x86_64-linux-gnu/libxkbcommon-x11.so.0 \
-    -l /usr/lib/x86_64-linux-gnu/libxcb.so.1
+    -l "$(resolve_lib libgthread-2.0.so.0)" \
+    -l "$(resolve_lib libxkbcommon-x11.so.0)" \
+    -l "$(resolve_lib libxcb.so.1)"
 
 # appimagetool (which linuxdeploy's appimage plugin wraps) creates the AppImage
 # from the AppDir; pass --appimage-type to select fuse2 or fuse3 per variant.

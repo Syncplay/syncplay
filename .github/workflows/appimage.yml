@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install FUSE dependencies
-        run: sudo apt-get update && sudo apt-get install -y libfuse2 libfuse3-3
+        run: sudo apt-get update && sudo apt-get install -y libfuse2 libfuse3-3 libxkbcommon-x11-0 libxcb1 libglib2.0-0
 
       - name: Build AppImage
         run: ci/appimage-script.sh fuse2
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install FUSE dependencies
-        run: sudo apt-get update && sudo apt-get install -y libfuse2 libfuse3-3
+        run: sudo apt-get update && sudo apt-get install -y libfuse2 libfuse3-3 libxkbcommon-x11-0 libxcb1 libglib2.0-0
 
       - name: Build AppImage
         run: ci/appimage-script.sh fuse3
