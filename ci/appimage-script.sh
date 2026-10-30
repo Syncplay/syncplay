@@ -55,9 +55,11 @@ pushd "$BUILD_DIR"
 
 wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
 wget https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-conda/master/linuxdeploy-plugin-conda.sh
+wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
 
 chmod +x linuxdeploy*.AppImage
 chmod +x linuxdeploy*.sh
+chmod +x appimagetool*.AppImage
 
 # set up custom AppRun script
 cat > AppRun.sh <<\EAT
@@ -110,20 +112,25 @@ export PIP_REQUIREMENTS="."
 export PIP_WORKDIR="$REPO_ROOT"
 export VERSION="$(cat $REPO_ROOT/syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
 
-# build a single appimage variant
+# linuxdeploy builds the AppDir (its primary purpose per the linuxdeploy user
+# guide). --appimage-type is an appimagetool flag, not a linuxdeploy flag, so it
+# must not be passed to linuxdeploy (doing so errors with "Flag could not be
+# matched"); the AppImage type is selected via appimagetool below.
+./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin conda \
+    -e $(which readelf) \
+    -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
+    --custom-apprun AppRun.sh \
+    -l /usr/lib/x86_64-linux-gnu/libgthread-2.0.so.0 \
+    -l /usr/lib/x86_64-linux-gnu/libxkbcommon-x11.so.0 \
+    -l /usr/lib/x86_64-linux-gnu/libxcb.so.1
+
+# appimagetool (which linuxdeploy's appimage plugin wraps) creates the AppImage
+# from the AppDir; pass --appimage-type to select fuse2 or fuse3 per variant.
 build_appimage () {
     local type="$1"
     local suffix="$2"
 
-    ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin conda \
-        -e $(which readelf) \
-        -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
-        --output appimage --custom-apprun AppRun.sh \
-        --appimage-type="$type" \
-        -l /usr/lib/x86_64-linux-gnu/libgthread-2.0.so.0 \
-        -l /usr/lib/x86_64-linux-gnu/libxkbcommon-x11.so.0 \
-        -l /usr/lib/x86_64-linux-gnu/libxcb.so.1
-    mv Syncplay*.AppImage "$OLD_CWD/Syncplay-$VERSION${suffix}-x86_64.AppImage"
+    ./appimagetool-x86_64.AppImage --appimage-type="$type" AppDir "$OLD_CWD/Syncplay-$VERSION${suffix}-x86_64.AppImage"
 }
 
 # fuse2 appimage: runs on Ubuntu 22.04 and older
