@@ -124,32 +124,39 @@ resolve_lib () {
     echo "$cand"
 }
 
-# linuxdeploy builds the AppDir (its primary purpose per the linuxdeploy user
-# guide). --appimage-type is not implemented by the available appimagetool
-# version, so it must not be passed; appimagetool embeds its own AppImage
-# runtime and determines the fuse version itself.
-./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin conda \
-    -e $(which readelf) \
-    -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
-    --custom-apprun AppRun.sh \
-    -l "$(resolve_lib libgthread-2.0.so.0)" \
-    -l "$(resolve_lib libxkbcommon-x11.so.0)" \
-    -l "$(resolve_lib libxcb.so.1)"
-
-# appimagetool creates the AppImage from the AppDir. Both fuse variants are
-# built on every commit and named per target Ubuntu version.
+# build one appimage variant: set the fuse library first so linuxdeploy bundles
+# it into the AppDir, then create the AppImage with appimagetool.
+# --appimage-type is not implemented by the available appimagetool version, so
+# the fuse version is differentiated by which libfuse is bundled:
+#   fuse2 -> libfuse.so.2      (Ubuntu 22.04 and older)
+#   fuse3 -> libfuse3.so.3     (Ubuntu 24.04 and newer)
 build_appimage () {
-    local suffix="$1"
+    local fuse_lib="$1"
+    local suffix="$2"
 
+    export FUSE_LIB="$fuse_lib"
+
+    # linuxdeploy builds the AppDir (its primary purpose per the linuxdeploy user
+    # guide) and bundles the fuse library matching the target Ubuntu version.
+    ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin conda \
+        -e $(which readelf) \
+        -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
+        --custom-apprun AppRun.sh \
+        -l "$(resolve_lib libgthread-2.0.so.0)" \
+        -l "$(resolve_lib libxkbcommon-x11.so.0)" \
+        -l "$(resolve_lib libxcb.so.1)" \
+        -l "$(resolve_lib "${FUSE_LIB}")"
+
+    # appimagetool creates the AppImage from the AppDir.
     ./appimagetool-x86_64.AppImage AppDir "$OLD_CWD/Syncplay-$VERSION${suffix}-x86_64.AppImage"
 }
 
 # fuse2 appimage: runs on Ubuntu 22.04 and older
 if [ "$FUSE_VARIANT" = "fuse2" ] || [ "$FUSE_VARIANT" = "both" ]; then
-    build_appimage ""
+    build_appimage libfuse.so.2 ""
 fi
 
 # fuse3 appimage: runs on Ubuntu 24.04 and newer
 if [ "$FUSE_VARIANT" = "fuse3" ] || [ "$FUSE_VARIANT" = "both" ]; then
-    build_appimage "-fuse3"
+    build_appimage libfuse3.so.3 "-fuse3"
 fi
