@@ -55,7 +55,7 @@ pushd "$BUILD_DIR"
 
 wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
 wget https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-conda/master/linuxdeploy-plugin-conda.sh
-wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
 
 chmod +x linuxdeploy*.AppImage
 chmod +x linuxdeploy*.sh
@@ -130,9 +130,9 @@ resolve_lib () {
 }
 
 # linuxdeploy builds the AppDir (its primary purpose per the linuxdeploy user
-# guide). --appimage-type is an appimagetool flag, not a linuxdeploy flag, so it
-# must not be passed to linuxdeploy (doing so errors with "Flag could not be
-# matched"); the AppImage type is selected via appimagetool below.
+# guide). --appimage-type is not implemented by the available appimagetool
+# version, so it must not be passed; appimagetool embeds its own AppImage
+# runtime and determines the fuse version itself.
 ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin conda \
     -e $(which readelf) \
     -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
@@ -141,21 +141,20 @@ resolve_lib () {
     -l "$(resolve_lib libxkbcommon-x11.so.0)" \
     -l "$(resolve_lib libxcb.so.1)"
 
-# appimagetool (which linuxdeploy's appimage plugin wraps) creates the AppImage
-# from the AppDir; pass --appimage-type to select fuse2 or fuse3 per variant.
+# appimagetool creates the AppImage from the AppDir. Both fuse variants are
+# built on every commit and named per target Ubuntu version.
 build_appimage () {
-    local type="$1"
-    local suffix="$2"
+    local suffix="$1"
 
-    ./appimagetool-x86_64.AppImage --appimage-type="$type" AppDir "$OLD_CWD/Syncplay-$VERSION${suffix}-x86_64.AppImage"
+    ./appimagetool-x86_64.AppImage AppDir "$OLD_CWD/Syncplay-$VERSION${suffix}-x86_64.AppImage"
 }
 
 # fuse2 appimage: runs on Ubuntu 22.04 and older
 if [ "$FUSE_VARIANT" = "fuse2" ] || [ "$FUSE_VARIANT" = "both" ]; then
-    build_appimage appimage-2.0 ""
+    build_appimage ""
 fi
 
 # fuse3 appimage: runs on Ubuntu 24.04 and newer
 if [ "$FUSE_VARIANT" = "fuse3" ] || [ "$FUSE_VARIANT" = "both" ]; then
-    build_appimage appimage-3.0 "-fuse3"
+    build_appimage "-fuse3"
 fi
