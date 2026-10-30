@@ -55,11 +55,9 @@ pushd "$BUILD_DIR"
 
 wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
 wget https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-conda/master/linuxdeploy-plugin-conda.sh
-wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
 
 chmod +x linuxdeploy*.AppImage
 chmod +x linuxdeploy*.sh
-chmod +x appimagetool*.AppImage
 
 # set up custom AppRun script
 cat > AppRun.sh <<\EAT
@@ -112,21 +110,20 @@ export PIP_REQUIREMENTS="."
 export PIP_WORKDIR="$REPO_ROOT"
 export VERSION="$(cat $REPO_ROOT/syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
 
-# build the AppDir with linuxdeploy (no --output appimage yet)
-./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin conda \
-    -e $(which readelf) \
-    -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
-    --custom-apprun AppRun.sh \
-    -l /usr/lib/x86_64-linux-gnu/libgthread-2.0.so.0 \
-    -l /usr/lib/x86_64-linux-gnu/libxkbcommon-x11.so.0 \
-    -l /usr/lib/x86_64-linux-gnu/libxcb.so.1
-
-# build a single appimage variant using appimagetool directly
+# build a single appimage variant
 build_appimage () {
     local type="$1"
     local suffix="$2"
 
-    ./appimagetool-x86_64.AppImage --appimage-type="$type" AppDir "$OLD_CWD/Syncplay-$VERSION${suffix}-x86_64.AppImage"
+    ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin conda \
+        -e $(which readelf) \
+        -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
+        --output appimage --custom-apprun AppRun.sh \
+        --appimage-type="$type" \
+        -l /usr/lib/x86_64-linux-gnu/libgthread-2.0.so.0 \
+        -l /usr/lib/x86_64-linux-gnu/libxkbcommon-x11.so.0 \
+        -l /usr/lib/x86_64-linux-gnu/libxcb.so.1
+    mv Syncplay*.AppImage "$OLD_CWD/Syncplay-$VERSION${suffix}-x86_64.AppImage"
 }
 
 # fuse2 appimage: runs on Ubuntu 22.04 and older
