@@ -92,11 +92,6 @@ cat > pl.syncplay.syncplay.appdata.xml <<\EAT
     </description>
     <launchable type="desktop-id">pl.syncplay.syncplay.desktop</launchable>
     <url type="homepage">https://syncplay.pl/</url>
-    <screenshots>
-        <screenshot type="default">
-            https://syncplay.pl/2019-05-26.png
-        </screenshot>
-    </screenshots>
     <provides>
         <id>pl.syncplay.syncplay.desktop</id>
     </provides>
