@@ -1417,8 +1417,6 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("run-label"))
         self.runButton.released.connect(self._runWithoutStoringConfig)
-        self.runButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("run-label"))
-        self.runButton.pressed.connect(self._runWithoutStoringConfig)
         self.runButton.setToolTip(getMessage("nostore-tooltip"))
         self.storeAndRunButton = QtWidgets.QPushButton(QtGui.QIcon(resourcespath + 'accept.png'), getMessage("storeandrun-label"))
         self.storeAndRunButton.released.connect(self._saveDataAndLeave)
