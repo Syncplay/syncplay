@@ -2268,8 +2268,17 @@ class MainWindow(QtWidgets.QMainWindow):
     def saveSettings(self):
         settings = QSettings("Syncplay", "MainWindow")
         settings.beginGroup("MainWindow")
-        settings.setValue("size", self.size())
-        settings.setValue("pos", self.pos())
+        isMaximized = bool(self.windowState() & Qt.WindowMaximized)
+        settings.setValue("maximized", isMaximized)
+        if isMaximized:
+            # Save the normal (pre-maximized) geometry so that restoring to a
+            # non-maximized state later still uses a sensible size and position.
+            normalGeom = self.normalGeometry()
+            settings.setValue("size", normalGeom.size())
+            settings.setValue("pos", normalGeom.topLeft())
+        else:
+            settings.setValue("size", self.size())
+            settings.setValue("pos", self.pos())
         settings.setValue("showPlaybackButtons", self.playbackAction.isChecked())
         settings.setValue("showAutoPlayButton", self.autoplayAction.isChecked())
         settings.setValue("hideEmptyRooms", self.hideEmptyRoomsAction.isChecked())
@@ -2298,6 +2307,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if not posIsOnScreen:
             movePos = QPoint(200,200)
         self.move(movePos)
+        # Remember whether to restore maximized state; applied after show() in __init__
+        self._restoreMaximized = settings.value("maximized", "false") == "true"
         if settings.value("showPlaybackButtons", "false") == "true":
             self.playbackAction.setChecked(True)
             self.updatePlaybackFrameVisibility()
@@ -2354,6 +2365,8 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.show()
+        if getattr(self, "_restoreMaximized", False):
+            self.showMaximized()
         self.setAcceptDrops(True)
         self.clearedPlaylistNote = False
         self.uiMode = constants.GRAPHICAL_UI_MODE
