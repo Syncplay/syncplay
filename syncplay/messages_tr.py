@@ -62,8 +62,8 @@ tr = {
     "authenticated-as-controller-notification": "{}, oda operatörü olarak doğrulandı",
     "created-controlled-room-notification": "Yönetilen oda '{}' '{}' şifresiyle oluşturuldu. Lütfen bu bilgileri ileride başvurmak üzere kaydedin!\n\nYönetilen odalarda, oynatma listesini duraklatabilen, devam ettirebilen, arayabilen ve değiştirebilen tek kişi olan oda operatörleri ile herkes senkronize edilir.\n\nNormal izleyicilerden '{}' odasına katılmalarını istemelisiniz, ancak oda operatörleri kendilerini otomatik olarak doğrulamak için '{}' odasına katılabilir.",  # RoomName, operatorPassword, roomName, roomName:operatorPassword
 
-    "other-set-as-ready-notification": "{} was set as ready by {}",  # User set as ready, user who set them as ready # TODO: Translate
-    "other-set-as-not-ready-notification": "{} was set as not ready by {}", # User set as not ready, user who set them as not ready # TODO: Translate
+    "other-set-as-ready-notification": "{0}, {1} tarafından hazır olarak işaretlendi",  # User set as ready, user who set them as ready
+    "other-set-as-not-ready-notification": "{0}, {1} tarafından 'hazır değil' olarak işaretlendi",  # User set as not ready, user who set them as not ready
 
     "file-different-notification": "Oynadığınız dosya, {} dosyasından farklı görünüyor",  # User
     "file-differences-notification": "Dosyanız aşağıdaki şekil(ler)de farklılık gösterir: {}",  # Differences
@@ -101,8 +101,8 @@ tr = {
     "commandlist-notification/offset": "\to[+-]süre - yerel oynatmayı sunucu arama konumundan verilen süreye göre (saniye veya dakika:saniye cinsinden) dengeleme - bu, kullanımdan kaldırılmış bir özelliktir",
     "commandlist-notification/help": "\th - yardım",
     "commandlist-notification/toggle": "\tt - izlemeye hazır olup olmadığınızı değiştirir",
-    "commandlist-notification/setready": "\tsr [name] - sets user as ready",  # TODO: Translate
-    "commandlist-notification/setnotready": "\tsn [name] - sets user as not ready",  # TODO: Translate
+    "commandlist-notification/setready": "\tsr [name] - kullanıcıyı hazır olarak işaretler",
+    "commandlist-notification/setnotready": "\tsn [name] - kullanıcıyı 'hazır değil' olarak işaretler",
     "commandlist-notification/create": "\tc [name] - mevcut odanın adını kullanarak yönetilen oda oluştur",
     "commandlist-notification/auth": "\ta [password] - operatör şifresi ile oda operatörü olarak kimlik doğrular",
     "commandlist-notification/chat": "\tch [message] - bir odaya sohbet mesajı gönderir",
@@ -163,7 +163,7 @@ tr = {
     "feature-chat": "sohbet",  # used for not-supported-by-server-error
     "feature-readiness": "hazırlık",  # used for not-supported-by-server-error
     "feature-managedRooms": "yönetilen odalar",  # used for not-supported-by-server-error
-    "feature-setOthersReadiness": "readiness override",  # used for not-supported-by-server-error # TODO: Translate
+    "feature-setOthersReadiness": "başkalarının hazır olma durumunu değiştirme",  # used for not-supported-by-server-error
 
     "not-supported-by-server-error": "{} özelliği bu sunucu tarafından desteklenmiyor ..",  # feature
     "shared-playlists-not-supported-by-server-error": "Paylaşılan çalma listeleri özelliği sunucu tarafından desteklenmeyebilir. Doğru çalıştığından emin olmak için Syncplay  {}+ çalıştıran bir sunucu gerektirir, ancak sunucu Syncplay {} çalıştırmaktadır.",  # minVersion, serverVersion
@@ -224,7 +224,7 @@ tr = {
 
     "more-title": "Daha fazla ayar göster",
     "never-rewind-value": "Asla",
-    "seconds-suffix": " secs",
+    "seconds-suffix": " sn",
     "privacy-sendraw-option": "raw gönder",
     "privacy-sendhashed-option": "hashed gönder",
     "privacy-dontsend-option": "Gönderme",
@@ -265,7 +265,7 @@ tr = {
     "previous-file-menu-section-label": "Önceki dosya: '{}'",  # filename
     "mark-previous-file-as-watched-menu-label": "İzlenmiş olarak işaretle",
     "add-previous-file-to-playlist-menu-label": "Oynatma listesine ekle",
-    "sync-label": "Sync",
+    "sync-label": "Senkronizasyon",
     "sync-otherslagging-title": "Başkaları geride kalıyorsa ...",
     "sync-youlaggging-title": "Geride kalıyorsan ...",
     "messages-label": "mesajlar",
@@ -488,8 +488,8 @@ tr = {
     # Server messages to client
     "new-syncplay-available-motd-message": "Syncplay {} kullanıyorsunuz ancak daha yeni bir sürüm https://syncplay.pl adresinde mevcut",  # ClientVersion
     "persistent-rooms-notice": "DİKKAT: Bu sunucu kalıcı odalar kullanır; bu, oynatma oturumları arasında oynatma listesi bilgilerinin saklandığı anlamına gelir. Bilgilerin kaydedilmediği bir oda oluşturmak istiyorsanız oda adının sonuna -temp koyun.",
-    "ready-chat-message": "I have set {} as ready.",  # User # TODO: Translate
-    "not-ready-chat-message": "I have set {} as not ready.",  # User # TODO: Translate
+    "ready-chat-message": "{} kullanıcısını hazır olarak işaretledim.",  # User
+    "not-ready-chat-message": "{} kullanıcısını 'hazır değil' olarak işaretledim.",  # User
 
     # Server notifications
     "welcome-server-notification": "Syncplay sunucusuna hoş geldiniz, ver. {0}",  # version
@@ -516,10 +516,10 @@ tr = {
     "server-startTLS-argument": "Dosya yolundaki sertifika dosyalarını kullanarak TLS bağlantılarını etkinleştirin",
     "server-messed-up-motd-unescaped-placeholders": "Günün Mesajında çıkış karaktersiz yer tutucular var. Tüm $ işaretleri iki katına çıkarılmalıdır ($$).",
     "server-messed-up-motd-too-long": "Günün Mesajı çok uzun - maksimum {} karakter olmalı, {} verildi.",
-    "server-listen-only-on-ipv4": "Listen only on IPv4 when starting the server.",
-    "server-listen-only-on-ipv6": "Listen only on IPv6 when starting the server.",
-    "server-interface-ipv4": "The IP address to bind to for IPv4. Leaving it empty defaults to using all.",
-    "server-interface-ipv6": "The IP address to bind to for IPv6. Leaving it empty defaults to using all.",
+    "server-listen-only-on-ipv4": "Sunucu başlatılırken yalnızca IPv4 üzerinden dinle.",
+    "server-listen-only-on-ipv6": "Sunucu başlatılırken yalnızca IPv6 üzerinden dinle.",
+    "server-interface-ipv4": "Sunucunun IPv4 üzerinden dinleyeceği yerel IP adresi. Boş bırakılırsa tüm yerel IPv4 adresleri kullanılır.",
+    "server-interface-ipv6": "Sunucunun IPv6 üzerinden dinleyeceği yerel IP adresi. Boş bırakılırsa tüm yerel IPv6 adresleri kullanılır.",
 
     # Server errors
     "unknown-command-server-error": "Bilinmeyen komut {}",  # message
@@ -554,8 +554,8 @@ tr = {
     "openusersstream-menu-label": "{} kişisinin akışını açın",  # [username]'s
     "openusersfile-menu-label": "{} kişisinin dosyasını açın",  # [username]'s
 
-    "setasready-menu-label": "Set {} as ready",  # [Username] # TODO: Translate
-    "setasnotready-menu-label": "Set {} as not ready",  # [Username] # TODO: Translate
+    "setasready-menu-label": "{} kullanıcısını hazır olarak işaretle",  # [Username]
+    "setasnotready-menu-label": "{} kullanıcısını 'hazır değil' olarak işaretle",  # [Username]
 
     "playlist-instruction-item-message": "Dosyayı paylaşılan çalma listesine eklemek için buraya sürükleyin.",
     "sharedplaylistenabled-tooltip": "Oda operatörleri, herkesin aynı şeyi izlemesini kolaylaştırmak için senkronize edilmiş bir çalma listesine dosya ekleyebilir. 'Misc' altında ortam dizinlerini yapılandırın.",
@@ -582,6 +582,8 @@ tr = {
     "moved-file-from-watched-subfolder-notification": "'{}' tekrar '{}' konumuna taşındı.",  # path, parent folder
     "syncplay-watchedhistory-title": "İzlenen dosya geçmişi",
     "syncplay-watchedhistoryenabled-label": "İzlenen dosya geçmişini etkinleştir (JSON dizini)",
+    "syncplay-watchedhistory-export-label": "İzlenen dosya geçmişini dışa aktar",
+    "syncplay-watchedhistory-import-label": "İzlenen dosya geçmişini içe aktar ve birleştir",
     "syncplay-autoremovefromplaylist-label": "İzlenmiş dosyaları oynatma listesinden otomatik olarak kaldır",
     "watchedhistoryenabled-tooltip": "İzlenen dosyaları Syncplay yapılandırma dosyasının yanında '.syncplay-watched.json' dosyasında kaydeder. Dosyalar taşınsa veya silinse bile izlenmiş durumu korunur.",
     "autoremovewatchedfromplaylist-tooltip": "Oynatma sona ulaştıktan sonra Syncplay öğeyi izlenmiş olarak işaretlediğinde, öğeyi paylaşılan oynatma listesinden kaldırır.",
@@ -589,8 +591,22 @@ tr = {
     "watchedsubfolder-tooltip": "İzlenen dosyaların, dosya klasörüne göre taşınacağı alt klasör (dosyanın taşınması için alt klasörün var olması gerekir). Bu yalnızca üst klasör bir medya klasörü ise çalışır.",
     "watchedsubfolderautocreate-tooltip": "Dosya taşınırken izlenenler alt klasörü yoksa otomatik olarak oluşturur. Bu yalnızca üst klasör bir medya klasörü ise çalışır.",
     "watched-json-read-error": "'{}' izlenen dosya geçmişi dosyası okunamadı: {}",
+    "watched-json-invalid-data-error": "İzlenen dosya geçmişi dosyası geçersiz veri içeriyor.",
     "watched-json-write-error": "'{}' izlenen dosya geçmişi dosyası yazılamadı: {}",
     "watched-json-concurrent-update-error": "Eşzamanlı değişiklikler nedeniyle izlenen dosya geçmişi güncellenemedi: {}",
+    "watched-history-export-title": "İzlenen dosya geçmişini dışa aktar",
+    "watched-history-import-title": "İzlenen dosya geçmişini içe aktar",
+    "watched-history-json-filter": "JSON dosyaları (*.json);;Tüm dosyalar (*)",
+    "watched-history-reconcile-prompt": "İzlenenler alt klasörlerinde bulunan {} dosya izlenen dosya geçmişinde kayıtlı değil. Dışa aktarmadan önce eklensin mi?\n\nÖrnekler:\n{}",
+    "watched-history-add-and-export": "Ekle ve dışa aktar",
+    "watched-history-export-without-adding": "Eklemeden dışa aktar",
+    "watched-history-export-success": "İzlenen dosya geçmişi '{}' konumuna dışa aktarıldı.",  # path
+    "watched-history-export-added": "Dışa aktarmadan önce izlenenler alt klasörlerinden {} dosya eklendi.",  # count
+    "watched-history-import-success": "İzlenen dosya geçmişi içe aktarıldı. Eklenen: {}; güncellenen: {}; değişmeyen: {}; atlanan: {}.",  # counts
+    "watched-history-no-import-changes": "Seçtiğiniz izlenen dosya geçmişi dosyasında yeni ya da daha güncel bir kayıt yok.",
+    "watched-history-backup-created": "Yedek '{}' konumunda oluşturuldu.",  # path
+    "watched-history-invalid-error": "Seçilen dosya geçerli bir Syncplay izlenen dosya geçmişi dosyası değil.",
+    "watched-history-operation-error": "İzlenen dosya geçmişi işlemi başarısız oldu: {}",  # error
     "watched-move-permission-error": "'{}' izin hatası nedeniyle izlenenler alt klasörüne taşınamadı.",
     "watched-move-failed-error": "'{}' izlenenler alt klasörüne taşınamadı: {}",
     "watched-move-too-many-retries-error": "'{}' izlenenler alt klasörüne taşınırken çok fazla deneme yapıldığı için vazgeçildi.",
