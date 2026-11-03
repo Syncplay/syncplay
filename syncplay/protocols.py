@@ -11,7 +11,7 @@ from twisted.python.versions import Version
 from zope.interface.declarations import implementer
 
 import syncplay
-from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT, CONTROLLED_ROOMS_MIN_VERSION, USER_READY_MIN_VERSION, SHARED_PLAYLIST_MIN_VERSION, CHAT_MIN_VERSION, UNKNOWN_UI_MODE
+from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT, CONTROLLED_ROOMS_MIN_VERSION, USER_READY_MIN_VERSION, SHARED_PLAYLIST_MIN_VERSION, CHAT_MIN_VERSION, UNKNOWN_UI_MODE, SERVER_HELLO_TIMEOUT
 from syncplay.messages import getMessage
 from syncplay.utils import meetsMinVersion
 
@@ -468,6 +468,7 @@ class SyncServerProtocol(JSONCommandProtocol):
         self._clientLatencyCalculation = 0
         self._clientLatencyCalculationArrivalTime = 0
         self._watcher = None
+        self._helloTimeout = None
 
     def __hash__(self):
         return hash('|'.join((
@@ -491,7 +492,18 @@ class SyncServerProtocol(JSONCommandProtocol):
         self.sendError(error)
         self.drop()
 
+    def connectionMade(self):
+        from twisted.internet import reactor
+        self._helloTimeout = reactor.callLater(SERVER_HELLO_TIMEOUT, self._dropIfNotLogged)
+
+    def _dropIfNotLogged(self):
+        # Abort rather than close: a connection that never sends a Hello may never read either.
+        if not self._logged:
+            self.abort()
+
     def connectionLost(self, reason):
+        if self._helloTimeout and self._helloTimeout.active():
+            self._helloTimeout.cancel()
         self._factory.removeWatcher(self._watcher)
 
     def getFeatures(self):
