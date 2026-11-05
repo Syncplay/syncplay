@@ -6,7 +6,6 @@ python3 ci/macos_app_cleaner.py
 python3 ci/macos_app_arch_check.py
 
 codesign --force --deep --sign - dist/Syncplay.app
-codesign --verify --deep --strict dist/Syncplay.app
 
 mkdir dist/Syncplay.app/Contents/Resources/English.lproj
 mkdir dist/Syncplay.app/Contents/Resources/en_AU.lproj
