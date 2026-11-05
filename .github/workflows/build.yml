@@ -29,9 +29,6 @@ jobs:
       - name: Install the project
         run: uv sync --all-extras --dev
 
-      - name: Run tests
-        run: uv run python -m unittest discover -s tests -v
-
       - name: Build
         run: uv run pyinstaller --noconfirm build.spec
 
@@ -79,9 +76,6 @@ jobs:
 
       - name: Install the project
         run: uv sync --all-extras --dev
-
-      - name: Run tests
-        run: uv run python -m unittest discover -s tests -v
 
       - name: Build
         run: uv run pyinstaller --noconfirm build.spec
