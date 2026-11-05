@@ -87,7 +87,8 @@ jobs:
         env:
           CFLAGS: -arch x86_64 -arch arm64
           ARCHFLAGS: -arch x86_64 -arch arm64
-        run: uv pip install --python .venv/bin/python --reinstall --no-binary :all: "cffi==1.17.1" "zope.interface==7.2"
+        run: |
+          uv pip install --python .venv/bin/python --reinstall --no-binary :all: "cffi==1.17.1" "zope.interface==7.2"
 
       - name: Build
         run: uv run pyinstaller --noconfirm build.spec
