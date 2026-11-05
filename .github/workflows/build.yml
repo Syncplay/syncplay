@@ -90,6 +90,12 @@ jobs:
         run: |
           uv pip install --python .venv/bin/python --reinstall --no-binary :all: "cffi==1.17.1" "zope.interface==7.2"
 
+      - name: Install universal2 wheels
+        run: |
+          /Library/Frameworks/Python.framework/Versions/3.10/bin/python3.10 -m pip download --platform macosx_10_10_universal2 --only-binary :all: --no-deps --dest . "cryptography==44.0.2"
+          /Library/Frameworks/Python.framework/Versions/3.10/bin/python3.10 -m pip download --platform macosx_10_9_universal2 --only-binary :all: --no-deps --dest . "charset-normalizer==3.4.1"
+          uv pip install --python .venv/bin/python --reinstall --no-deps --no-index --find-links . "cryptography==44.0.2" "charset-normalizer==3.4.1"
+
       - name: Build
         run: uv run pyinstaller --noconfirm build.spec
 
