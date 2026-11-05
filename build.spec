@@ -1,23 +1,22 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import importlib.util
+
 from syncplay import version
+
+hiddenimports = [
+    "{}.{}".format(binding, module)
+    for binding in ("PySide6", "PySide2", "PyQt5")
+    if importlib.util.find_spec(binding)
+    for module in ("QtGui", "QtWidgets", "QtCore")
+]
 
 a = Analysis(
     ['syncplayClient.py'],
     pathex=[],
     binaries=[],
     datas=[['syncplay/resources', 'resources']],
-    hiddenimports=[
-        "PySide6.QtGui",
-        "PySide6.QtWidgets",
-        "PySide6.QtCore",
-        "PySide2.QtGui",
-        "PySide2.QtWidgets",
-        "PySide2.QtCore",
-        "PyQt5.QtGui",
-        "PyQt5.QtWidgets",
-        "PyQt5.QtCore"
-    ],
+    hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -106,7 +105,7 @@ app = BUNDLE(
                 'CFBundleShortVersionString': version,
                 'CFBundleIdentifier': 'pl.syncplay.Syncplay',
                 'LSMinimumSystemVersion': '10.12.0',
-                'NSHumanReadableCopyright': 'Copyright © 2025 Syncplay All Rights Reserved'
+                'NSHumanReadableCopyright': 'Copyright © 2026 Syncplay All Rights Reserved'
             }
         ]
     }

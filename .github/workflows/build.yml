@@ -4,10 +4,24 @@ on: [push, pull_request]
 jobs:
   windows:
     name: Build for Windows
-    runs-on: windows-2019
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python-version: '3.8'
+            architecture: x86
+          - python-version: '3.11'
+            architecture: x64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: ${{ matrix.architecture }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -15,8 +29,21 @@ jobs:
       - name: Install the project
         run: uv sync --all-extras --dev
 
+      - name: Run tests
+        run: uv run python -m unittest discover -s tests -v
+
       - name: Build
-        run: uv run pyinstaller build.spec
+        run: uv run pyinstaller --noconfirm build.spec
+
+      - name: Test packaged GUI startup
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath ".\dist\syncplay\Syncplay.exe" -PassThru
+          Start-Sleep -Seconds 5
+          if ($process.HasExited) {
+            throw "Packaged Syncplay.exe exited during startup with code $($process.ExitCode)"
+          }
+          Stop-Process -Id $process.Id
 
       - name: Create installer
         run: uv run ./ci/win-create-nsis.py
@@ -29,14 +56,14 @@ jobs:
       - name: Deploy portable
         uses: actions/upload-artifact@v4
         with:
-          name: Syncplay_${{ env.VER }}_Portable
+          name: Syncplay_${{ env.VER }}_${{ matrix.architecture }}_Portable
           path: |
             dist/syncplay
 
       - name: Deploy installer
         uses: actions/upload-artifact@v4
         with:
-          name: Syncplay-${{ env.VER }}-Setup.exe
+          name: Syncplay-${{ env.VER }}-${{ matrix.architecture }}-Setup.exe
           path: |
             Syncplay-${{ env.VER }}-Setup.exe
 
@@ -53,8 +80,11 @@ jobs:
       - name: Install the project
         run: uv sync --all-extras --dev
 
+      - name: Run tests
+        run: uv run python -m unittest discover -s tests -v
+
       - name: Build
-        run: uv run pyinstaller build.spec
+        run: uv run pyinstaller --noconfirm build.spec
 
       - name: Prepare for deployment
         run: |
