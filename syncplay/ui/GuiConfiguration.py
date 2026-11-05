@@ -14,7 +14,7 @@ from syncplay.utils import resourcespath, posixresourcespath, playerPathExists
 
 from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, IsPySide, IsPySide2, IsPySide6
 from syncplay.vendor.Qt.QtCore import Qt, QSettings, QCoreApplication, QUrl, QEventLoop, Signal, QStandardPaths
-from syncplay.vendor.Qt.QtWidgets import QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QPlainTextEdit
+from syncplay.vendor.Qt.QtWidgets import QLineEdit, QLabel, QCheckBox, QButtonGroup, QRadioButton, QSpinBox, QPlainTextEdit
 from syncplay.vendor.Qt.QtGui import QDesktopServices
 try:
     if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
@@ -657,6 +657,11 @@ class ConfigDialog(QtWidgets.QDialog):
                 widget.setChecked(True)
         elif isinstance(widget, QLineEdit):
             widget.setText(self.config[valueName])
+        elif isinstance(widget, QSpinBox):
+            try:
+                widget.setValue(int(self.config[valueName]))
+            except (KeyError, TypeError, ValueError):
+                pass
 
     def saveValues(self, widget):
         valueName = str(widget.objectName())
@@ -679,6 +684,11 @@ class ConfigDialog(QtWidgets.QDialog):
                 self.config[radioName] = radioValue
         elif isinstance(widget, QLineEdit):
             self.config[valueName] = widget.text()
+        elif isinstance(widget, QSpinBox):
+            try:
+                self.config[valueName] = widget.value()
+            except (KeyError, AttributeError):
+                pass
 
     def connectChildren(self, widget):
         widgetName = str(widget.objectName())
@@ -1325,6 +1335,14 @@ class ConfigDialog(QtWidgets.QDialog):
         self.showDurationNotificationCheckbox = QCheckBox(getMessage("showdurationnotification-label"))
         self.showDurationNotificationCheckbox.setObjectName("showDurationNotification")
         self.displaySettingsLayout.addWidget(self.showDurationNotificationCheckbox)
+
+        self.showPlaylistSkipWarningsCheckbox = QCheckBox(getMessage("showplaylistskipwarnings-label"))
+        self.showPlaylistSkipWarningsCheckbox.setObjectName("showPlaylistSkipWarnings")
+        self.displaySettingsLayout.addWidget(self.showPlaylistSkipWarningsCheckbox)
+
+        self.showPlaylistOrderWarningsCheckbox = QCheckBox(getMessage("showplaylistorderwarnings-label"))
+        self.showPlaylistOrderWarningsCheckbox.setObjectName("showPlaylistOrderWarnings")
+        self.displaySettingsLayout.addWidget(self.showPlaylistOrderWarningsCheckbox)
 
         self.languageFrame = QtWidgets.QFrame()
         self.languageLayout = QtWidgets.QHBoxLayout()

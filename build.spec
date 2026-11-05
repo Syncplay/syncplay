@@ -1,8 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import importlib.util
+import sys
 
 from syncplay import version
+
+target_arch = "universal2" if sys.platform == "darwin" else None
 
 hiddenimports = [
     "{}.{}".format(binding, module)
@@ -50,7 +53,7 @@ exe_client = EXE(
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
-    target_arch=None,
+    target_arch=target_arch,
     codesign_identity=None,
     entitlements_file=None,
     icon=['syncplay/resources/icon.ico'],
@@ -96,6 +99,7 @@ app = BUNDLE(
     icon='./syncplay/resources/icon.icns',
     bundle_identifier=None,
     version=version,
+    target_arch=target_arch,
     info_plist={
         'NSPrincipalClass': 'NSApplication',
         'NSAppleScriptEnabled': False,

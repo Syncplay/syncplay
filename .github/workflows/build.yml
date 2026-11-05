@@ -66,16 +66,28 @@ jobs:
 
   macos:
     name: Build for macOS
-    runs-on: macos-13
+    runs-on: macos-15-intel
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup universal2 Python
+        run: |
+          curl -LO https://www.python.org/ftp/python/3.10.6/python-3.10.6-macos11.pkg
+          sudo installer -verbose -pkg ./python-3.10.6-macos11.pkg -target /
+          echo "/Library/Frameworks/Python.framework/Versions/3.10/bin" >> $GITHUB_PATH
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
       - name: Install the project
-        run: uv sync --all-extras --dev
+        run: uv sync --all-extras --dev --python /Library/Frameworks/Python.framework/Versions/3.10/bin/python3.10
+
+      - name: Build universal2 dependencies
+        env:
+          CFLAGS: -arch x86_64 -arch arm64
+          ARCHFLAGS: -arch x86_64 -arch arm64
+        run: uv pip install --python .venv/bin/python --reinstall --no-binary :all: "cffi==1.17.1" "zope.interface==7.2"
 
       - name: Build
         run: uv run pyinstaller --noconfirm build.spec
