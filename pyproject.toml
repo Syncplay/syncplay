@@ -5,7 +5,7 @@ description = "Client/server to synchronize media playback on mpv/VLC/MPC-HC/MPC
 readme = "README.md"
 urls = { Project-URL = "https://syncplay.pl/" }
 requires-python = ">=3.6"
-license = "Apache-2.0"
+license = { file = "LICENSE" }
 authors = []
 dependencies = [
     "certifi>=2018.11.29",
