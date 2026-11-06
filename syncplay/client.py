@@ -930,6 +930,7 @@ class SyncplayClient(object):
             waitForConnection = self._reconnectingService.whenConnected(failAfterFailures=1)
         except TypeError:
             waitForConnection = self._reconnectingService.whenConnected()
+        self._reconnectingService.startService()
 
         def connectedNow(f):
             hostIP = connectionHandle.result.transport.addr[0]
@@ -943,7 +944,6 @@ class SyncplayClient(object):
         connectionHandle = waitForConnection.addCallbacks(connectedNow, failed)
         message = getMessage("connection-attempt-notification").format(host, port)
         self.ui.showMessage(message)
-        reactor.callLater(0, self._reconnectingService.startService)
         reactor.run()
 
     def stop(self, promptForAction=False):
