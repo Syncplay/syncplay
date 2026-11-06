@@ -1483,7 +1483,7 @@ def _pyside6():
         print("ImportError: %s" % e)
 
     _setup(module, extras)
-    Qt.__binding_version__ = module.__version__
+    Qt.__binding_version__ = Qt._QtCore.__version__
 
     if hasattr(Qt, "_shiboken6"):
         Qt.QtCompat.wrapInstance = _wrapinstance
