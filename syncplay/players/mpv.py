@@ -32,31 +32,26 @@ class MpvPlayer(BasePlayer):
 
     @staticmethod
     def run(client, playerPath, filePath, args):
-        from twisted.internet import reactor, threads
+        try:
+            ver = MpvPlayer.RE_VERSION.search(subprocess.check_output([playerPath, '--version']).decode('utf-8'))
+        except:
+            ver = None
+        constants.MPV_NEW_VERSION = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 23
+        if not constants.MPV_NEW_VERSION:
+            from twisted.internet import reactor
+            the_reactor = reactor
+            the_reactor.callFromThread(client.ui.showErrorMessage,
+                                        "This version of mpv is not compatible with Syncplay. "
+                                        "Please use mpv >=0.23.0.", True)
+            the_reactor.callFromThread(client.stop)
+            return
 
-        def checkVersion():
-            try:
-                return MpvPlayer.RE_VERSION.search(subprocess.check_output([playerPath, '--version']).decode('utf-8'))
-            except Exception:
-                return None
-
-        def startPlayer(ver):
-            constants.MPV_NEW_VERSION = ver is None or int(ver.group(1)) > 0 or int(ver.group(2)) >= 23
-            if not constants.MPV_NEW_VERSION:
-                reactor.callFromThread(client.ui.showErrorMessage,
-                                       "This version of mpv is not compatible with Syncplay. "
-                                       "Please use mpv >=0.23.0.", True)
-                reactor.callFromThread(client.stop)
-                return
-
-            constants.MPV_OSC_VISIBILITY_CHANGE_VERSION = False if ver is None else int(ver.group(1)) > 0 or int(ver.group(2)) >= 28
-            if not constants.MPV_OSC_VISIBILITY_CHANGE_VERSION:
-                client.ui.showDebugMessage(
-                    "This version of mpv is not known to be compatible with changing the OSC visibility. "
-                    "Please use mpv >=0.28.0.")
-            return MpvPlayer(client, MpvPlayer.getExpandedPath(playerPath), filePath, args)
-
-        return threads.deferToThread(checkVersion).addCallback(startPlayer)
+        constants.MPV_OSC_VISIBILITY_CHANGE_VERSION = False if ver is None else int(ver.group(1)) > 0 or int(ver.group(2)) >= 28
+        if not constants.MPV_OSC_VISIBILITY_CHANGE_VERSION:
+            client.ui.showDebugMessage(
+                "This version of mpv is not known to be compatible with changing the OSC visibility. "
+                "Please use mpv >=0.28.0.")
+        return MpvPlayer(client, MpvPlayer.getExpandedPath(playerPath), filePath, args)
 
     @staticmethod
     def getStartupArgs(userArgs):
