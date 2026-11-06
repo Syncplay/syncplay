@@ -1797,6 +1797,8 @@ def _log(text):
 
 
 def _warn(text):
+    if sys.stderr is None:
+        return
     try:
         sys.stderr.write("Qt.py [warning]: %s\n" % text)
     except UnicodeDecodeError:
