@@ -26,7 +26,7 @@ for p in to_be_deleted:
 
 # Clean PySide6 folder
 
-PATH = f'dist/Syncplay.app/Contents/Resources/lib/python{pyver}/PySide6'
+PATH = 'dist/Syncplay.app/Contents/Resources/PySide6'
 
 shutil.rmtree(f'{PATH}/examples', ignore_errors=True)
 shutil.rmtree(f'{PATH}/include', ignore_errors=True)
@@ -41,7 +41,6 @@ for f in glob(f'{PATH}/Qt*'):
 for a in glob(f'{PATH}/*.app'):
     to_be_deleted.append(a)
 
-to_be_deleted.remove(f'{PATH}/Qt')
 to_be_deleted.extend([f'{PATH}/lupdate', f'{PATH}/qmllint', f'{PATH}/lrelease'])
 
 for p in to_be_deleted:
@@ -53,7 +52,7 @@ for p in to_be_deleted:
 
 # Clean PySide6/Qt folder
 
-PATH = f'dist/Syncplay.app/Contents/Resources/lib/python{pyver}/PySide6/Qt'
+PATH = 'dist/Syncplay.app/Contents/Resources/PySide6/Qt'
 
 to_be_deleted.extend([f'{PATH}/qml', f'{PATH}/translations'])
 
@@ -66,7 +65,7 @@ for p in to_be_deleted:
 
 # Clean PySide6/Qt/lib folder
 
-PATH = f'dist/Syncplay.app/Contents/Resources/lib/python{pyver}/PySide6/Qt/lib'
+PATH = 'dist/Syncplay.app/Contents/Resources/PySide6/Qt/lib'
 
 to_be_kept = ['QtCore', 'QtDBus', 'QtGui', 'QtWidgets']
 to_be_deleted = [f'{PATH}/metatypes']
@@ -84,7 +83,7 @@ for p in to_be_deleted:
 
 # Clean PySide6/Qt/plugins folder
 
-PATH = f'dist/Syncplay.app/Contents/Resources/lib/python{pyver}/PySide6/Qt/plugins'
+PATH = 'dist/Syncplay.app/Contents/Resources/PySide6/Qt/plugins'
 
 to_be_kept = ['platforms', 'styles']
 to_be_deleted = []
@@ -104,8 +103,8 @@ for p in to_be_deleted:
 
 cwd = os.getcwd()
 
-FROM = f'dist/Syncplay.app/Contents/Resources/lib/python{pyver}/shiboken6'
-TO = f'dist/Syncplay.app/Contents/Resources/lib/python{pyver}/PySide6'
+FROM = 'dist/Syncplay.app/Contents/Resources/shiboken6'
+TO = 'dist/Syncplay.app/Contents/Resources/PySide6'
 
 fn = os.path.basename(glob(f'{FROM}/libshiboken6*.dylib')[0])
 
