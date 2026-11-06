@@ -1311,6 +1311,8 @@ def _setup(module, extras):
             submodule = _import_sub_module(
                 module, name)
         except ImportError as e:
+            if name == "QtCore":
+                raise
             try:
                 # For extra modules like sip and shiboken that may not be
                 # children of the binding.
