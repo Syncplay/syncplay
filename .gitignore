@@ -15,4 +15,3 @@ dist.7z
 !.appveyor.yml
 !.github
 __pycache__
-requirements*.txt
