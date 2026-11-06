@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from functools import wraps
 from platform import python_version
 
-from twisted.internet import task
+from twisted.internet import task, threads
 
 from syncplay import utils, constants, version, revision, release_number
 from syncplay.messages import getMessage
@@ -2108,14 +2108,28 @@ class MainWindow(QtWidgets.QMainWindow):
                 if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates.toPython():
                     self.lastCheckedForUpdates = QDateTime.fromString(self.config["lastCheckedForUpdates"], 'yyyy-MM-dd HH-mm-ss')
             if self.lastCheckedForUpdates is None:
-                self.checkForUpdates()
+                self._startAutomaticUpdateCheck()
             else:
                 timeDelta = currentDateTimeValue.toPython() - self.lastCheckedForUpdates.toPython()
                 if timeDelta.total_seconds() > constants.AUTOMATIC_UPDATE_CHECK_FREQUENCY:
-                    self.checkForUpdates()
+                    self._startAutomaticUpdateCheck()
         except Exception as e:
             self.showDebugMessage("Automatic check for updates failed. An update check was manually trigggered. Reason: {}".format(str(e)))
-            self.checkForUpdates()
+            self._startAutomaticUpdateCheck()
+
+    def _startAutomaticUpdateCheck(self):
+        self.lastCheckedForUpdates = QDateTime.currentDateTime()
+        threads.deferToThread(self._syncplayClient.checkForUpdate, False).addCallbacks(
+            self._automaticUpdateCheckCompleted, self._automaticUpdateCheckFailed)
+
+    def _automaticUpdateCheckCompleted(self, result):
+        self._showUpdateCheckResult(result, userInitiated=False)
+        return result
+
+    def _automaticUpdateCheckFailed(self, failure):
+        self.showDebugMessage("Automatic check for updates failed: {}".format(failure.getErrorMessage()))
+        self.showMessage(getMessage("update-check-failed-notification").format(version))
+        return None
 
     def userCheckForUpdates(self):
         self.checkForUpdates(userInitiated=True)
@@ -2123,8 +2137,11 @@ class MainWindow(QtWidgets.QMainWindow):
     @needsClient
     def checkForUpdates(self, userInitiated=False):
         self.lastCheckedForUpdates = QDateTime.currentDateTime()
-        updateStatus, updateMessage, updateURL, self.publicServerList = self._syncplayClient.checkForUpdate(userInitiated)
+        return self._showUpdateCheckResult(
+            self._syncplayClient.checkForUpdate(userInitiated), userInitiated)
 
+    def _showUpdateCheckResult(self, result, userInitiated=False):
+        updateStatus, updateMessage, updateURL, self.publicServerList = result
         if updateMessage is None:
             if updateStatus == "uptodate":
                 updateMessage = getMessage("syncplay-uptodate-notification")
