@@ -1,37 +1,44 @@
 
 import os
 import re
+import sys
 import time
+import urllib.error
 import urllib.parse
+import urllib.request
 from datetime import datetime, timezone
 from functools import wraps
 from platform import python_version
 
-from twisted.internet import task, threads
+from twisted.internet import task
 
 from syncplay import utils, constants, version, revision, release_number
 from syncplay.messages import getMessage
 from syncplay.ui.consoleUI import ConsoleUI
 from syncplay.utils import resourcespath
 from syncplay.utils import isLinux, isWindows, isMacOS
-from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL, getCorrectedPathForFile
+from syncplay.utils import formatTime, sameFilename, sameFilesize, sameFileduration, RoomPasswordProvider, formatSize, isURL
+from syncplay.utils import getCorrectedPathForFile
+from syncplay.vendor import Qt
 from syncplay.vendor.Qt import QtCore, QtWidgets, QtGui, __binding__, __binding_version__, __qt_version__, IsPySide, IsPySide2, IsPySide6
-from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime, QStandardPaths
-
+from syncplay.vendor.Qt.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine, QDateTime
 applyDPIScaling = True
-
 if isLinux():
     applyDPIScaling = False
 else:
     applyDPIScaling = True
-try:
-    if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, applyDPIScaling)
-except AttributeError:
-    pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
-if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, applyDPIScaling)
-
+if not IsPySide6:
+    try:
+        if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+            QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, applyDPIScaling)
+    except AttributeError:
+        pass  # To ignore error "Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created"
+    if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, applyDPIScaling)
+if IsPySide6:
+    from PySide6.QtCore import QStandardPaths
+elif IsPySide2:
+    from PySide2.QtCore import QStandardPaths
 if isMacOS() and IsPySide:
     from Foundation import NSURL
     from Cocoa import NSString, NSUTF8StringEncoding
@@ -139,7 +146,7 @@ class AboutDialog(QtWidgets.QDialog):
             self.setWindowTitle(getMessage("about-dialog-title"))
             if isWindows():
                 if IsPySide6:
-                    self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+                    self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint  | Qt.CustomizeWindowHint                        )
                 else:
                     self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QPixmap(resourcespath + 'syncplay.png'))
@@ -205,7 +212,7 @@ class CertificateDialog(QtWidgets.QDialog):
             self.setWindowTitle(getMessage("tls-information-title"))
             if isWindows():
                 if IsPySide6:
-                    self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint)
+                    self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint  | Qt.CustomizeWindowHint                        )
                 else:
                     self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QPixmap(resourcespath + 'syncplay.png'))
@@ -368,6 +375,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     if self.selfWindow._syncplayClient.watched.isWatchedFile(filePath):
                         self.item(item).setBackground(QtGui.QBrush(QtGui.QColor("grey")))
                         self.item(item).setForeground(QtGui.QBrush(QtGui.QColor("black")))
+                        pass
                     else:
                         self.item(item).setForeground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Text)))
                         self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
@@ -378,6 +386,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     else:
                         self.item(item).setForeground(QtGui.QBrush(QtGui.QColor(constants.STYLE_DIFFERENTITEM_COLOR)))
                         self.item(item).setBackground(QtGui.QBrush(self.selfWindow.palette().color(QtGui.QPalette.Base)))
+
                 tooltip = self._getPlaylistItemTooltip(item, itemFilename, playlistSkipWarnings, playlistOrderWarnings)
                 self.item(item).setToolTip(tooltip or "")
                 if item in playlistSkipWarnings or item in playlistOrderWarnings:
@@ -442,24 +451,23 @@ class MainWindow(QtWidgets.QMainWindow):
             return self._getWatchedTooltipForMetadata(meta)
 
         def _getWatchedTooltipForMetadata(self, meta):
-            lastWatchedAt = meta.get("lastWatchedAt") if meta else None
-            if not lastWatchedAt:
+            if not meta or not meta.get("lastWatchedAt"):
                 return None
             try:
-                dtUtc = datetime.strptime(lastWatchedAt, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-            except (TypeError, ValueError):
+                dtUtc = datetime.strptime(meta["lastWatchedAt"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+                delta = datetime.now(timezone.utc) - dtUtc
+                seconds = int(delta.total_seconds())
+                if seconds < 3600:
+                    age = getMessage("watched-ago-minutes").format(max(1, seconds // 60))
+                elif seconds < 86400:
+                    age = getMessage("watched-ago-hours").format(seconds // 3600)
+                else:
+                    age = getMessage("watched-ago-days").format(delta.days)
+                room = meta.get("lastRoom") or meta.get("lastWatchedRoom") or ""
+                return getMessage("watched-last-watched-tooltip").format(
+                    age, room, dtUtc.astimezone().strftime(getMessage("watched-datetime-format")))
+            except Exception:
                 return None
-            delta = datetime.now(timezone.utc) - dtUtc
-            seconds = int(delta.total_seconds())
-            if seconds < 3600:
-                age = getMessage("watched-ago-minutes").format(max(1, seconds // 60))
-            elif seconds < 86400:
-                age = getMessage("watched-ago-hours").format(seconds // 3600)
-            else:
-                age = getMessage("watched-ago-days").format(delta.days)
-            room = meta.get("lastRoom") or meta.get("lastWatchedRoom") or ""
-            return getMessage("watched-last-watched-tooltip").format(
-                age, room, dtUtc.astimezone().strftime(getMessage("watched-datetime-format")))
 
         def setWindow(self, window):
             self.selfWindow = window
@@ -849,7 +857,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.playlist.updatePlaylistIndexIcon()
 
     def _getPreviousFileMenuFilenameLabel(self, menu, filename):
-        return menu.fontMetrics().elidedText(filename, Qt.ElideMiddle, 320)
+        try:
+            return menu.fontMetrics().elidedText(filename, Qt.ElideMiddle, 320)
+        except Exception:
+            if len(filename) <= 70:
+                return filename
+            return "{}...{}".format(filename[:40], filename[-27:])
 
     def _getPreviousFileSubmenu(self, menu, filenameLabel):
         return menu.addMenu(getMessage("previous-file-menu-section-label").format(filenameLabel))
@@ -859,9 +872,9 @@ class MainWindow(QtWidgets.QMainWindow):
         def addSeenUnseenItems(pathFound, menu):
             pathFound = getCorrectedPathForFile(pathFound)
             if self._syncplayClient.watched.canMarkAsUnwatched(pathFound):
-                menu.addAction(QtGui.QPixmap(resourcespath + "no_eye.png"), getMessage("mark-as-unwatched-menu-label"), lambda p=pathFound: self._markFileUnwatchedViaContext(p))
+                menu.addAction(QtGui.QPixmap(resourcespath + "no_eye.png"), getMessage("mark-as-unwatched-menu-label"), lambda p=pathFound: self._markFileUnwatchedViaContext(p))  # TODO: Move to language
             elif self._syncplayClient.watched.canMarkAsWatched(pathFound):
-                menu.addAction(QtGui.QPixmap(resourcespath + "yes_eye.png"), getMessage("mark-as-watched-menu-label"), lambda p=pathFound: self._markFileWatchedViaContext(p))
+                menu.addAction(QtGui.QPixmap(resourcespath + "yes_eye.png"), getMessage("mark-as-watched-menu-label"), lambda p=pathFound: self._markFileWatchedViaContext(p))  # TODO: Move to language
 
         def addSkippedFileItems(itemIndex, menu):
             playlistItems = [self.playlist.item(i).text() for i in range(self.playlist.count())]
@@ -1180,12 +1193,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @needsClient
     def reconnectToServer(self):
+        """
+        Trigger a manual reconnection using the client's built-in retry mechanism.
+        This is simpler and more reliable than doing a complete restart.
+        """
         try:
-            self._syncplayClient.manualReconnect()
-        except RuntimeError as e:
+            if self._syncplayClient:
+                self._syncplayClient.manualReconnect()
+            else:
+                self.showErrorMessage(getMessage("connection-failed-notification"))
+        except Exception as e:
             self.showErrorMessage(getMessage("reconnect-failed-error").format(str(e)))
 
-    @needsClient
     def exitSyncplay(self):
         self._syncplayClient.stop()
 
@@ -2108,28 +2127,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 if self.lastCheckedForUpdates is None or configLastChecked > self.lastCheckedForUpdates.toPython():
                     self.lastCheckedForUpdates = QDateTime.fromString(self.config["lastCheckedForUpdates"], 'yyyy-MM-dd HH-mm-ss')
             if self.lastCheckedForUpdates is None:
-                self._startAutomaticUpdateCheck()
+                self.checkForUpdates()
             else:
                 timeDelta = currentDateTimeValue.toPython() - self.lastCheckedForUpdates.toPython()
                 if timeDelta.total_seconds() > constants.AUTOMATIC_UPDATE_CHECK_FREQUENCY:
-                    self._startAutomaticUpdateCheck()
+                    self.checkForUpdates()
         except Exception as e:
             self.showDebugMessage("Automatic check for updates failed. An update check was manually trigggered. Reason: {}".format(str(e)))
-            self._startAutomaticUpdateCheck()
-
-    def _startAutomaticUpdateCheck(self):
-        self.lastCheckedForUpdates = QDateTime.currentDateTime()
-        threads.deferToThread(self._syncplayClient.checkForUpdate, False).addCallbacks(
-            self._automaticUpdateCheckCompleted, self._automaticUpdateCheckFailed)
-
-    def _automaticUpdateCheckCompleted(self, result):
-        self._showUpdateCheckResult(result, userInitiated=False)
-        return result
-
-    def _automaticUpdateCheckFailed(self, failure):
-        self.showDebugMessage("Automatic check for updates failed: {}".format(failure.getErrorMessage()))
-        self.showMessage(getMessage("update-check-failed-notification").format(version))
-        return None
+            self.checkForUpdates()
 
     def userCheckForUpdates(self):
         self.checkForUpdates(userInitiated=True)
@@ -2137,11 +2142,8 @@ class MainWindow(QtWidgets.QMainWindow):
     @needsClient
     def checkForUpdates(self, userInitiated=False):
         self.lastCheckedForUpdates = QDateTime.currentDateTime()
-        return self._showUpdateCheckResult(
-            self._syncplayClient.checkForUpdate(userInitiated), userInitiated)
+        updateStatus, updateMessage, updateURL, self.publicServerList = self._syncplayClient.checkForUpdate(userInitiated)
 
-    def _showUpdateCheckResult(self, result, userInitiated=False):
-        updateStatus, updateMessage, updateURL, self.publicServerList = result
         if updateMessage is None:
             if updateStatus == "uptodate":
                 updateMessage = getMessage("syncplay-uptodate-notification")
@@ -2333,8 +2335,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.QtGui = QtGui
         if isMacOS():
             self.setWindowFlags(self.windowFlags())
-        else:
-            try:
+        elif not (isWindows() and IsPySide6):
+            try:    
                 self.setWindowFlags(self.windowFlags() & Qt.AA_DontUseNativeMenuBar)
             except TypeError:
                 self.setWindowFlags(self.windowFlags())
