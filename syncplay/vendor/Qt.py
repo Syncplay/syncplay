@@ -1479,13 +1479,19 @@ def _pyside6():
     import PySide6 as module
     extras = ["QtUiTools"]
     try:
-        import shiboken6
+        try:
+            import shiboken6
+        except ImportError:
+            from PySide6 import shiboken6
         extras.append("shiboken6")
-    except ImportError as e:
-        print("ImportError: %s" % e)
+    except ImportError:
+        pass
 
     _setup(module, extras)
-    Qt.__binding_version__ = Qt._QtCore.__version__
+    Qt.__binding_version__ = getattr(
+        module, "__version__",
+        getattr(Qt._QtCore, "__version__", Qt._QtCore.qVersion())
+    )
 
     if hasattr(Qt, "_shiboken6"):
         Qt.QtCompat.wrapInstance = _wrapinstance
