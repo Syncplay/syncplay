@@ -4,7 +4,7 @@ version = "1.7.7"
 description = "Client/server to synchronize media playback on mpv/VLC/MPC-HC/MPC-BE on many computers"
 readme = "README.md"
 urls = { Project-URL = "https://syncplay.pl/" }
-requires-python = ">=3.6"
+requires-python = ">=3.8"
 license = { file = "LICENSE" }
 authors = []
 dependencies = [
@@ -32,8 +32,6 @@ classifiers=[
     "Natural Language :: Russian",
     "Natural Language :: Spanish",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
