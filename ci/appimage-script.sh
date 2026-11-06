@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # Copyright (C) 2019 Syncplay
 # This file is licensed under the MIT license - http://opensource.org/licenses/MIT
@@ -24,6 +24,12 @@
 set -x
 set -e
 
+# first argument selects the fuse variant:
+#   fuse2 -> Ubuntu 22.04 and older (libfuse2)
+#   fuse3 -> Ubuntu 24.04 and newer (libfuse3)
+# anything else (or no argument) builds both variants
+FUSE_VARIANT="${1:-both}"
+
 # use RAM disk if possible
 if [ "$CI" == "" ] && [ -d /dev/shm ]; then
     TEMP_BASE=/dev/shm
@@ -31,7 +37,7 @@ else
     TEMP_BASE=/tmp
 fi
 
-BUILD_DIR=$(mktemp -d -p "$TEMP_BASE" appimagelint-build-XXXXXX)
+BUILD_DIR=$(mktemp -d -p "$TEMP_BASE" appimage-build-XXXXXX)
 
 cleanup () {
     if [ -d "$BUILD_DIR" ]; then
@@ -43,20 +49,21 @@ trap cleanup EXIT
 
 # store repo root as variable
 REPO_ROOT=$(readlink -f $(dirname $(dirname "$0")))
-#REPO_ROOT="."
 OLD_CWD=$(readlink -f .)
 
 pushd "$BUILD_DIR"
 
-wget https://github.com/TheAssassin/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
 wget https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-conda/master/linuxdeploy-plugin-conda.sh
+wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
 
 chmod +x linuxdeploy*.AppImage
 chmod +x linuxdeploy*.sh
+chmod +x appimagetool*.AppImage
 
 # set up custom AppRun script
 cat > AppRun.sh <<\EAT
-#! /bin/bash
+#!/bin/bash
 # make sure to set APPDIR when run directly from the AppDir
 if [ -z $APPDIR ]; then APPDIR=$(readlink -f $(dirname "$0")); fi
 export LD_LIBRARY_PATH="$APPDIR"/usr/lib
@@ -85,11 +92,6 @@ cat > pl.syncplay.syncplay.appdata.xml <<\EAT
     </description>
     <launchable type="desktop-id">pl.syncplay.syncplay.desktop</launchable>
     <url type="homepage">https://syncplay.pl/</url>
-    <screenshots>
-        <screenshot type="default">
-            <image>https://syncplay.pl/2019-05-26.png</image>
-        </screenshot>
-    </screenshots>
     <provides>
         <id>pl.syncplay.syncplay.desktop</id>
     </provides>
@@ -104,15 +106,57 @@ cp "$REPO_ROOT"/syncplay/resources/syncplay.desktop ./pl.syncplay.syncplay.deskt
 export PIP_REQUIREMENTS="."
 export PIP_WORKDIR="$REPO_ROOT"
 export VERSION="$(cat $REPO_ROOT/syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
-export OUTPUT=Syncplay-$VERSION-x86_64.AppImage
 
-./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin conda \
-    -e $(which readelf) \
-    -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
-    --output appimage --custom-apprun AppRun.sh \
-    -l /usr/lib/x86_64-linux-gnu/libgthread-2.0.so.0 \
-    -l /usr/lib/x86_64-linux-gnu/libxkbcommon-x11.so.0 \
-    -l /usr/lib/x86_64-linux-gnu/libxcb.so.1 \
-;
+# resolve a shared library path, trying common locations then ldconfig
+resolve_lib () {
+    local name="$1"
+    local cand
+    for cand in \
+        "/usr/lib/x86_64-linux-gnu/$name" \
+        "/lib/x86_64-linux-gnu/$name" \
+        "/usr/lib/$name"; do
+        if [ -f "$cand" ]; then
+            echo "$cand"
+            return
+        fi
+    done
+    cand=$(ldconfig -p 2>/dev/null | grep -m1 "/$name$" | awk '{print $NF}')
+    echo "$cand"
+}
 
-mv Syncplay*.AppImage "$OLD_CWD"
+# build one appimage variant: set the fuse library first so linuxdeploy bundles
+# it into the AppDir, then create the AppImage with appimagetool.
+# --appimage-type is not implemented by the available appimagetool version, so
+# the fuse version is differentiated by which libfuse is bundled:
+#   fuse2 -> libfuse.so.2      (Ubuntu 22.04 and older)
+#   fuse3 -> libfuse3.so.3     (Ubuntu 24.04 and newer)
+build_appimage () {
+    local fuse_lib="$1"
+    local suffix="$2"
+
+    export FUSE_LIB="$fuse_lib"
+
+    # linuxdeploy builds the AppDir (its primary purpose per the linuxdeploy user
+    # guide) and bundles the fuse library matching the target Ubuntu version.
+    ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin conda \
+        -e $(which readelf) \
+        -i "$REPO_ROOT"/syncplay/resources/syncplay.png -d pl.syncplay.syncplay.desktop \
+        --custom-apprun AppRun.sh \
+        -l "$(resolve_lib libgthread-2.0.so.0)" \
+        -l "$(resolve_lib libxkbcommon-x11.so.0)" \
+        -l "$(resolve_lib libxcb.so.1)" \
+        -l "$(resolve_lib "${FUSE_LIB}")"
+
+    # appimagetool creates the AppImage from the AppDir.
+    ./appimagetool-x86_64.AppImage AppDir "$OLD_CWD/Syncplay-$VERSION${suffix}-x86_64.AppImage"
+}
+
+# fuse2 appimage: runs on Ubuntu 22.04 and older
+if [ "$FUSE_VARIANT" = "fuse2" ] || [ "$FUSE_VARIANT" = "both" ]; then
+    build_appimage libfuse.so.2 ""
+fi
+
+# fuse3 appimage: runs on Ubuntu 24.04 and newer
+if [ "$FUSE_VARIANT" = "fuse3" ] || [ "$FUSE_VARIANT" = "both" ]; then
+    build_appimage libfuse3.so.3 "-fuse3"
+fi
