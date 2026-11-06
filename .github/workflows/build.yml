@@ -15,7 +15,7 @@ jobs:
             architecture: x64
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -51,14 +51,14 @@ jobs:
           echo "VER=$version" >> $env:GITHUB_ENV
 
       - name: Deploy portable
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Syncplay_${{ env.VER }}_${{ matrix.architecture }}_Portable
           path: |
             dist/syncplay
 
       - name: Deploy installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Syncplay-${{ env.VER }}-${{ matrix.architecture }}-Setup.exe
           path: |
@@ -69,7 +69,7 @@ jobs:
     runs-on: macos-15-intel
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup universal2 Python
         run: |
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build
         run: ci/deb-script.sh
@@ -142,14 +142,14 @@ jobs:
           ls -al dist_actions
 
       - name: Deploy full deb
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: syncplay.deb
           path: |
             dist_actions/syncplay_*.deb
 
       - name: Deploy server deb
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: syncplay-server.deb
           path: |
