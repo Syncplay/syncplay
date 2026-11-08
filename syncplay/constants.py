@@ -191,6 +191,7 @@ MPC_BE_PATHS = [
 ]
 MPLAYER_PATHS = ["mplayer2", "mplayer"]
 MPV_PATHS = ["mpv", "/opt/mpv/mpv", r"c:\program files\mpv\mpv.exe", r"c:\program files\mpv-player\mpv.exe",
+             r"c:\program files\MPV Player\mpv.exe",
              r"c:\program Files (x86)\mpv\mpv.exe", r"c:\program Files (x86)\mpv-player\mpv.exe",
              "/Applications/mpv.app/Contents/MacOS/mpv"]
 MPVNET_PATHS = [r"c:\program files\mpv.net\mpvnet.exe", r"c:\program Files (x86)\mpv.net\mpvnet.exe"]
