@@ -672,6 +672,40 @@ local function is_regional_indicator(codepoint)
     return codepoint ~= nil and codepoint >= 0x1F1E6 and codepoint <= 0x1F1FF
 end
 
+local function is_rtl_letter(codepoint)
+    -- Hebrew, Arabic, Syriac, Thaana, NKo, Samaritan, Mandaic (+ presentation forms),
+    -- historic RTL scripts, Adlam, Mende Kikakui and Arabic mathematical symbols.
+    -- Direction control characters (LRM, RLM, isolates) are not letters and do not count.
+    return (codepoint >= 0x0590 and codepoint <= 0x08FF)
+        or (codepoint >= 0xFB1D and codepoint <= 0xFDFF)
+        or (codepoint >= 0xFE70 and codepoint <= 0xFEFC)
+        or (codepoint >= 0x10800 and codepoint <= 0x10FFF)
+        or (codepoint >= 0x1E800 and codepoint <= 0x1EFFF)
+end
+
+local function is_ascii_letter(codepoint)
+    return codepoint ~= nil and ((codepoint >= 0x41 and codepoint <= 0x5A) or (codepoint >= 0x61 and codepoint <= 0x7A))
+end
+
+local function is_direction_safe_wrap_point(previousCodepoint, codepoint)
+    -- A wrap marker here cannot change the direction of the text around it: between two ASCII letters,
+    -- or next to an underscore. This keeps long file names and URLs wrapping in text with RTL letters.
+    -- Not next to digits or other punctuation, where the hidden spaces can reorder a number like 10:30.
+    return (is_ascii_letter(previousCodepoint) and is_ascii_letter(codepoint))
+        or previousCodepoint == 0x5F or codepoint == 0x5F
+end
+
+local function contains_rtl_text(str)
+    local pos = 1
+    while pos <= str:len() do
+        if is_rtl_letter(utf8_codepoint_at(str, pos)) then
+            return true
+        end
+        pos = next_utf8(str, pos)
+    end
+    return false
+end
+
 function wordwrapify_string(line, restoreBackslashSubstitute)
 -- Used to ensure characters wrap on a per-character rather than per-word basis
 -- to avoid issues with long filenames, etc.
@@ -680,6 +714,10 @@ function wordwrapify_string(line, restoreBackslashSubstitute)
     if str == nil or str == "" then
         return ""
     end
+    -- The wrap markers contain spaces, which split RTL words into single letters and reverse them.
+    -- Text with RTL letters (whole string, so a multi-line OSD block counts as one) only gets markers
+    -- where they cannot change the direction. libass still wraps the rest at spaces.
+    local has_rtl_text = contains_rtl_text(str)
     local newstr = ""
     local currentChar = 1
     local nextChar = 0
@@ -701,6 +739,7 @@ function wordwrapify_string(line, restoreBackslashSubstitute)
             and previousCodepoint ~= 0x200C and previousCodepoint ~= 0x200D
             and previousCodepoint ~= 0x2060 and previousCodepoint ~= 0xFEFF
             and not is_wordwrap_continuation(codepoint)
+            and (not has_rtl_text or is_direction_safe_wrap_point(previousCodepoint, codepoint))
             and not (is_regional_indicator(previousCodepoint)
                 and is_regional_indicator(codepoint)
                 and regionalIndicatorCount % 2 == 1)

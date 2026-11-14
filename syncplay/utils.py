@@ -13,6 +13,7 @@ import sys
 import tempfile
 import time
 import traceback
+import unicodedata
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -404,6 +405,39 @@ def meetsMinVersion(version, minVersion):
     def versiontotuple(ver):
         return tuple(map(int, ver.split(".")))
     return versiontotuple(version) >= versiontotuple(minVersion)
+
+
+def getBidiIsolateFormat(text):
+    # The Unicode isolate for user text (e.g. a chat message): the direction of most words wins.
+    # If both directions have the same number of words, the first letter decides (first-strong isolate).
+    rtlWords = ltrWords = 0
+    for word in text.split():
+        for char in word:
+            direction = unicodedata.bidirectional(char)
+            if direction in ("R", "AL"):
+                rtlWords += 1
+                break
+            if direction == "L":
+                ltrWords += 1
+                break
+    if rtlWords > ltrWords:
+        return constants.BIDI_ISOLATE_RTL_FORMAT
+    if ltrWords > rtlWords:
+        return constants.BIDI_ISOLATE_LTR_FORMAT
+    return constants.BIDI_ISOLATE_FORMAT
+
+
+def isolateBidiText(text, isolateFormat=None):
+    # Put each line with RTL characters (e.g. Arabic) in Unicode isolate marks, so it keeps its own direction.
+    # Other lines do not change. Without a format, a line follows its own words.
+    # Leading spaces stay outside the isolate, so HTML can still collapse them.
+    lines = []
+    for line in text.split("\n"):
+        content = line.lstrip()
+        if any(unicodedata.bidirectional(char) in ("R", "AL") for char in content):
+            line = line[:len(line) - len(content)] + (isolateFormat or getBidiIsolateFormat(content)).format(content)
+        lines.append(line)
+    return "\n".join(lines)
 
 
 def isURL(path):

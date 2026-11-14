@@ -37,8 +37,10 @@ if not IsPySide6:
         QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, applyDPIScaling)
 if IsPySide6:
     from PySide6.QtCore import QStandardPaths
+    from PySide6.QtGui import QTextDocumentWriter
 elif IsPySide2:
     from PySide2.QtCore import QStandardPaths
+    from PySide2.QtGui import QTextDocumentWriter
 if isMacOS() and IsPySide:
     from Foundation import NSURL
     from Cocoa import NSString, NSUTF8StringEncoding
@@ -247,6 +249,69 @@ class CertificateDialog(QtWidgets.QDialog):
 
     def closeDialog(self):
         self.close()
+
+
+class ChatLogBrowser(QtWidgets.QTextBrowser):
+    # Copy and drag text without the invisible isolate marks that showMessage adds for RTL text.
+    # The copied data is the same as a plain QTextBrowser gives, and the selection is never laid out,
+    # because the chat log is one very long paragraph and laying it out takes seconds.
+    copyFormats = None
+    knownFormats = ("text/plain", "text/html", "text/markdown", "application/vnd.oasis.opendocument.text")
+
+    def createMimeDataFromSelection(self):
+        marks = constants.BIDI_ISOLATE_MARKS
+        selection = self.textCursor()
+        if not any(mark in selection.selectedText() for mark in marks):
+            return super().createMimeDataFromSelection()
+        document = QtGui.QTextDocument()
+        document.setDefaultFont(self.document().defaultFont())
+        cursor = QtGui.QTextCursor(document)
+        cursor.beginEditBlock()  # otherwise Qt lays out the text again after every deletion
+        cursor.insertFragment(selection.selection())
+        # Qt positions count UTF-16 units, so an emoji (or any character above U+FFFF) takes two
+        positions = []
+        position = 0
+        for char in document.toPlainText():
+            if char in marks:
+                positions.append(position)
+            position += 2 if ord(char) > 0xFFFF else 1
+        for position in reversed(positions):
+            cursor.setPosition(position)
+            cursor.setPosition(position + 1, QtGui.QTextCursor.KeepAnchor)
+            cursor.removeSelectedText()
+        cursor.endEditBlock()
+        fragment = QtGui.QTextDocumentFragment(document)
+
+        if ChatLogBrowser.copyFormats is None:
+            probe = QtWidgets.QTextEdit()
+            probe.setPlainText("x")
+            probe.selectAll()
+            probeData = probe.createMimeDataFromSelection()
+            probeData.setParent(probe)  # freed together with the probe
+            ChatLogBrowser.copyFormats = list(probeData.formats())
+        if any(mimeType not in ChatLogBrowser.knownFormats for mimeType in ChatLogBrowser.copyFormats):
+            # A format added by a newer Qt: let Qt build the data (same result, but slower)
+            copySource = QtWidgets.QTextEdit()
+            document.setParent(copySource)  # freed together with copySource
+            copySource.setDocument(document)
+            copySource.selectAll()
+            return copySource.createMimeDataFromSelection()
+        # Same formats, in the same order, as Qt's own copy (QTextEditMimeData)
+        mimeData = QtWidgets.QTextEdit().createMimeDataFromSelection()
+        for mimeType in ChatLogBrowser.copyFormats:
+            if mimeType == "text/plain":
+                mimeData.setText(fragment.toPlainText())
+            elif mimeType == "text/html":
+                html = fragment.toHtml(b"utf-8") if IsPySide2 else fragment.toHtml()
+                mimeData.setData(mimeType, html.encode("utf-8"))
+            elif mimeType == "text/markdown":
+                mimeData.setData(mimeType, fragment.toMarkdown().encode("utf-8"))
+            else:
+                buffer = QtCore.QBuffer()
+                QTextDocumentWriter(buffer, b"ODF").write(fragment)
+                buffer.close()
+                mimeData.setData(mimeType, buffer.data())
+        return mimeData
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -657,8 +722,12 @@ class MainWindow(QtWidgets.QMainWindow):
         if messageWithUsername:
             username = messageWithUsername.group("username")
             message = messageWithUsername.group("message")
+        # Isolate lines and user names with RTL text (e.g. Arabic), so they keep their own direction in the LTR log.
+        # Notification lines are UI text, and all UI languages are LTR. Chat and MOTD lines follow their own words.
+        message = utils.isolateBidiText(message, None if username or isMotd else constants.BIDI_ISOLATE_LTR_FORMAT)
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         if username:
+            username = utils.isolateBidiText(username)
             message = constants.STYLE_USER_MESSAGE.format(constants.STYLE_USERNAME, username, message)
         # When showing a MOTD, escape spaces and use a monospace font to preserve the look of ASCII art.
         if isMotd:
@@ -1121,6 +1190,7 @@ class MainWindow(QtWidgets.QMainWindow):
         message = str(message)
         if criticalerror:
             QtWidgets.QMessageBox.critical(self, "Syncplay", message)
+        message = utils.isolateBidiText(message, constants.BIDI_ISOLATE_LTR_FORMAT)  # like notification lines in showMessage
         message = message.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
         message = message.replace("&lt;a href=&quot;https://syncplay.pl/trouble&quot;&gt;", '<a href="https://syncplay.pl/trouble">').replace("&lt;/a&gt;", "</a>")
         message = message.replace("&lt;a href=&quot;https://mpv.io/&quot;&gt;", '<a href="https://mpv.io/">').replace("&lt;/a&gt;", "</a>")
@@ -1645,7 +1715,7 @@ class MainWindow(QtWidgets.QMainWindow):
         window.topSplit = self.topSplitter(Qt.Horizontal, self)
 
         window.outputLayout = QtWidgets.QVBoxLayout()
-        window.outputbox = QtWidgets.QTextBrowser()
+        window.outputbox = ChatLogBrowser()
         if isDarkMode: window.outputbox.document().setDefaultStyleSheet(constants.STYLE_DARK_LINKS_COLOR);
         window.outputbox.setReadOnly(True)
         window.outputbox.setTextInteractionFlags(window.outputbox.textInteractionFlags() | Qt.TextSelectableByKeyboard)
