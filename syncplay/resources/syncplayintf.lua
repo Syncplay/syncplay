@@ -683,6 +683,18 @@ local function is_rtl_letter(codepoint)
         or (codepoint >= 0x1E800 and codepoint <= 0x1EFFF)
 end
 
+local function is_ascii_letter(codepoint)
+    return codepoint ~= nil and ((codepoint >= 0x41 and codepoint <= 0x5A) or (codepoint >= 0x61 and codepoint <= 0x7A))
+end
+
+local function is_direction_safe_wrap_point(previousCodepoint, codepoint)
+    -- A wrap marker here cannot change the direction of the text around it: between two ASCII letters,
+    -- or next to an underscore. This keeps long file names and URLs wrapping in text with RTL letters.
+    -- Not next to digits or other punctuation, where the hidden spaces can reorder a number like 10:30.
+    return (is_ascii_letter(previousCodepoint) and is_ascii_letter(codepoint))
+        or previousCodepoint == 0x5F or codepoint == 0x5F
+end
+
 local function contains_rtl_text(str)
     local pos = 1
     while pos <= str:len() do
@@ -703,8 +715,8 @@ function wordwrapify_string(line, restoreBackslashSubstitute)
         return ""
     end
     -- The wrap markers contain spaces, which split RTL words into single letters and reverse them.
-    -- Text with RTL letters gets no markers (whole string, so a multi-line OSD block counts as one).
-    -- libass still wraps it at spaces, and inside a word when the word is wider than the screen.
+    -- Text with RTL letters (whole string, so a multi-line OSD block counts as one) only gets markers
+    -- where they cannot change the direction. libass still wraps the rest at spaces.
     local has_rtl_text = contains_rtl_text(str)
     local newstr = ""
     local currentChar = 1
@@ -727,7 +739,7 @@ function wordwrapify_string(line, restoreBackslashSubstitute)
             and previousCodepoint ~= 0x200C and previousCodepoint ~= 0x200D
             and previousCodepoint ~= 0x2060 and previousCodepoint ~= 0xFEFF
             and not is_wordwrap_continuation(codepoint)
-            and not has_rtl_text
+            and (not has_rtl_text or is_direction_safe_wrap_point(previousCodepoint, codepoint))
             and not (is_regional_indicator(previousCodepoint)
                 and is_regional_indicator(codepoint)
                 and regionalIndicatorCount % 2 == 1)
