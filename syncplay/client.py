@@ -2087,19 +2087,24 @@ class SyncplayPlaylist():
             self._ui.showDebugMessage("Not loading {} as file could not be found".format(path))
             return
 
-        with open(path) as f:
-            newPlaylist = f.read().splitlines()
-            if path.lower().endswith(".m3u8"):
-                newPlaylist = [
-                    line for line in newPlaylist if line.strip() and not line.startswith("#")
-                ]
-            if shuffle:
-                random.shuffle(newPlaylist)
-            if newPlaylist:
-                self.changePlaylist(newPlaylist, username=None, resetIndex=True)
+        try:
+            with open(path, encoding="utf-8-sig") as f:
+                newPlaylist = f.read().splitlines()
+        except UnicodeDecodeError:
+            # Playlists saved by older versions of Syncplay use the locale encoding
+            with open(path) as f:
+                newPlaylist = f.read().splitlines()
+        if path.lower().endswith(".m3u8"):
+            newPlaylist = [
+                line for line in newPlaylist if line.strip() and not line.startswith("#")
+            ]
+        if shuffle:
+            random.shuffle(newPlaylist)
+        if newPlaylist:
+            self.changePlaylist(newPlaylist, username=None, resetIndex=True)
 
     def savePlaylistToFile(self, path):
-        with open(path, 'w') as playlistFile:
+        with open(path, 'w', encoding='utf-8') as playlistFile:
             playlistToSave = utils.getListAsMultilineString(self._playlist)
             playlistFile.write(playlistToSave)
             self._ui.showMessage("Playlist saved as {}".format(path)) # TODO: Move to messages_en
