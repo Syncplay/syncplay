@@ -72,5 +72,4 @@ build-backend = "setuptools.build_meta"
 dev = [
     "dmgbuild; sys_platform == 'darwin'",
     "pyinstaller",
-    "toml",
 ]
