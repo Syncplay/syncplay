@@ -72,4 +72,14 @@ build-backend = "setuptools.build_meta"
 dev = [
     "dmgbuild; sys_platform == 'darwin'",
     "pyinstaller",
+    "ruff",
 ]
+
+[tool.ruff]
+# Vendored Qt helper (kept byte-identical to upstream) and the PyInstaller and
+# dmgbuild configuration scripts, which are executed with injected globals.
+extend-exclude = ["syncplay/vendor", "build.spec", "appdmg.py"]
+
+[tool.ruff.lint]
+# Start with the checks that catch real breakage, not style.
+select = ["E9", "F63", "F7", "F82"]

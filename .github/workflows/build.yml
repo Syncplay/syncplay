@@ -35,6 +35,9 @@ jobs:
       - name: Install the project
         run: uv sync --locked --all-extras --dev
 
+      - name: Lint
+        run: uv run ruff check .
+
       - name: Test
         run: uv run python -m unittest discover -s tests -v
 
