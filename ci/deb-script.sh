@@ -15,8 +15,8 @@ Version: "$(
   fi
 )"
 Architecture: all
-Maintainer: <dev@syncplay.pl>
-Depends: python3 (>= 3.6), python3-pyside2.qtwidgets | python3-pyside6.qtwidgets, python3-pyside2.qtcore | python3-pyside6.qtcore, python3-twisted (>= 16.4.0), python3-certifi, python3-pem, mpv (>= 0.23) | vlc (>= 2.2.1)
+Maintainer: Syncplay <dev@syncplay.pl>
+Depends: python3 (>= 3.8), python3-pyside2.qtwidgets | python3-pyside6.qtwidgets, python3-pyside2.qtcore | python3-pyside6.qtcore, python3-twisted (>= 16.4.0), python3-certifi, python3-pem, mpv (>= 0.23) | vlc (>= 2.2.1)
 Homepage: https://syncplay.pl
 Section: web
 Priority: optional
@@ -30,5 +30,5 @@ py3clean -p syncplay
 chmod 555 /tmp/syncplay/DEBIAN/prerm
 
 fakeroot make install DESTDIR=/tmp/syncplay
-fakeroot dpkg -b /tmp/syncplay/
+fakeroot dpkg-deb --build /tmp/syncplay/
 
