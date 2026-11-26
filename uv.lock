@@ -985,19 +985,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pypiwin32"
-version = "223"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pywin32", version = "311", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
-    { name = "pywin32", version = "312", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/13/e8/4f38eb30c4dae36634a53c5b2cd73b517ea3607e10d00f61f2494449cec0/pypiwin32-223.tar.gz", hash = "sha256:71be40c1fbd28594214ecaecb58e7aa8b708eabfa0125c8a109ebd51edbd776a", size = 622, upload-time = "2018-02-26T00:43:23.994Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d0/1b/2f292bbd742e369a100c91faa0483172cd91a1a422a6692055ac920946c5/pypiwin32-223-py3-none-any.whl", hash = "sha256:67adf399debc1d5d14dffc1ab5acacb800da569754fafdc576b2a039485aa775", size = 1674, upload-time = "2018-02-26T00:43:23.108Z" },
-]
-
-[[package]]
 name = "pyside2"
 version = "5.15.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1434,16 +1421,14 @@ wheels = [
 
 [[package]]
 name = "syncplay"
-version = "1.7.7"
 source = { editable = "." }
 dependencies = [
     { name = "appnope", version = "0.1.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9' and sys_platform == 'darwin'" },
     { name = "appnope", version = "1.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9' and sys_platform == 'darwin'" },
     { name = "certifi" },
-    { name = "importlib-metadata", version = "8.5.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
-    { name = "importlib-metadata", version = "8.7.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
     { name = "pem" },
-    { name = "pypiwin32", marker = "sys_platform == 'win32'" },
+    { name = "pywin32", version = "311", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9' and sys_platform == 'win32'" },
+    { name = "pywin32", version = "312", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9' and sys_platform == 'win32'" },
     { name = "twisted", version = "25.5.0", source = { registry = "https://pypi.org/simple" }, extra = ["tls"], marker = "python_full_version < '3.9.12'" },
     { name = "twisted", version = "26.4.0", source = { registry = "https://pypi.org/simple" }, extra = ["tls"], marker = "python_full_version >= '3.9.12' and python_full_version < '3.10'" },
     { name = "twisted", version = "26.10.0", source = { registry = "https://pypi.org/simple" }, extra = ["tls"], marker = "python_full_version >= '3.10'" },
@@ -1466,9 +1451,9 @@ gui = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "dmgbuild", version = "1.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
-    { name = "dmgbuild", version = "1.6.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
-    { name = "dmgbuild", version = "1.6.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "dmgbuild", version = "1.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9' and sys_platform == 'darwin'" },
+    { name = "dmgbuild", version = "1.6.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*' and sys_platform == 'darwin'" },
+    { name = "dmgbuild", version = "1.6.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10' and sys_platform == 'darwin'" },
     { name = "pyinstaller" },
     { name = "toml" },
 ]
@@ -1477,11 +1462,10 @@ dev = [
 requires-dist = [
     { name = "appnope", marker = "sys_platform == 'darwin'", specifier = ">=0.1.0" },
     { name = "certifi", specifier = ">=2018.11.29" },
-    { name = "importlib-metadata", marker = "python_full_version < '3.10'" },
     { name = "pem", specifier = ">=21.2.0" },
-    { name = "pypiwin32", marker = "sys_platform == 'win32'", specifier = ">=223" },
     { name = "pyside2", marker = "python_full_version < '3.11' and sys_platform != 'darwin' and extra == 'gui'", specifier = ">=5.11.0" },
-    { name = "pyside6", marker = "(python_full_version >= '3.11' and extra == 'gui') or (sys_platform == 'darwin' and extra == 'gui')" },
+    { name = "pyside6", marker = "(python_full_version >= '3.11' or sys_platform == 'darwin') and extra == 'gui'" },
+    { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=223" },
     { name = "requests", marker = "sys_platform == 'darwin' and extra == 'gui'", specifier = ">=2.20.0" },
     { name = "twisted", extras = ["tls"], specifier = ">=16.4.0" },
     { name = "zope-interface", marker = "sys_platform == 'win32'", specifier = ">=4.4.0" },
@@ -1490,7 +1474,7 @@ provides-extras = ["gui"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "dmgbuild" },
+    { name = "dmgbuild", marker = "sys_platform == 'darwin'" },
     { name = "pyinstaller" },
     { name = "toml" },
 ]
