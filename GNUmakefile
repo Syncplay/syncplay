@@ -41,6 +41,7 @@ common:
 	-mkdir -p $(SHARE_PATH)/icons/
 	-mkdir -p $(SHARE_PATH)/man/man1/
 	cp -r syncplay $(LIB_PATH)/syncplay/
+	find $(LIB_PATH)/syncplay -name '__pycache__' -type d -prune -exec rm -rf {} +
 	chmod 755 $(LIB_PATH)/syncplay/
 	cp -r syncplay/resources/hicolor $(SHARE_PATH)/icons/
 	cp -r syncplay/resources/*.png $(LIB_PATH)/syncplay/syncplay/resources/
@@ -56,8 +57,7 @@ u-common:
 
 client:
 	-mkdir -p $(BIN_PATH)
-	cp syncplayClient.py $(BIN_PATH)/syncplay
-	sed -i -e '/# libpath/ a\import site\nsite.addsitedir\("${PREFIX}/lib/syncplay"\)' $(BIN_PATH)/syncplay
+	sed -e '/# libpath/ a\import site\nsite.addsitedir\("${PREFIX}/lib/syncplay"\)' syncplayClient.py > $(BIN_PATH)/syncplay
 	chmod 755 $(BIN_PATH)/syncplay
 	cp syncplayClient.py $(LIB_PATH)/syncplay/
 	cp syncplay/resources/syncplay.desktop $(APP_SHORTCUT_PATH)/
@@ -73,8 +73,7 @@ u-client:
 
 server:
 	-mkdir -p $(BIN_PATH)
-	cp syncplayServer.py $(BIN_PATH)/syncplay-server
-	sed -i -e '/# libpath/ a\import site\nsite.addsitedir\("${PREFIX}/lib/syncplay"\)' $(BIN_PATH)/syncplay-server
+	sed -e '/# libpath/ a\import site\nsite.addsitedir\("${PREFIX}/lib/syncplay"\)' syncplayServer.py > $(BIN_PATH)/syncplay-server
 	chmod 755 $(BIN_PATH)/syncplay-server
 	cp syncplayServer.py $(LIB_PATH)/syncplay/
 	cp syncplay/resources/syncplay-server.desktop $(APP_SHORTCUT_PATH)/

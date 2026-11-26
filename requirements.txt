@@ -1,6 +1,0 @@
-certifi>=2018.11.29
-pem>=21.2.0
-twisted[tls]>=16.4.0
-appnope>=0.1.0; sys_platform == 'darwin'
-pypiwin32>=223; sys_platform == 'win32'
-zope.interface>=4.4.0; sys_platform == 'win32'

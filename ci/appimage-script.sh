@@ -103,7 +103,7 @@ cp "$REPO_ROOT"/syncplay/resources/syncplay.desktop ./pl.syncplay.syncplay.deskt
 #export CONDA_PACKAGES="Pillow"
 export PIP_REQUIREMENTS="."
 export PIP_WORKDIR="$REPO_ROOT"
-export VERSION="$(cat $REPO_ROOT/syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+export VERSION="$(cd "$REPO_ROOT" && python3 -c 'import syncplay; print(syncplay.version)')"
 export OUTPUT=Syncplay-$VERSION-x86_64.AppImage
 
 ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin conda \

@@ -1,8 +1,11 @@
 include LICENSE
-include syncplay/resources/*.desktop
-include syncplay/resources/*.png
-include syncplay/resources/*.mng
-include syncplay/resources/*.lua
-include syncplay/resources/*.rtf
-include syncplay/resources/*.txt
-include syncplay/resources/lua/intf/*.lua
+include README.md
+include Makefile
+include GNUmakefile
+include build.spec
+include appdmg.py
+recursive-include ci *.sh *.py
+recursive-include docs *.1
+recursive-include syncplay/resources *
+global-exclude *.py[cod]
+prune syncplay/resources/__pycache__

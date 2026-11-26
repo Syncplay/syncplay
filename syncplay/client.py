@@ -1752,7 +1752,7 @@ class UiManager(object):
         self.__ui.setFeatures(featureList)
 
     def showDebugMessage(self, message):
-        if constants.DEBUG_MODE and message.rstrip():
+        if constants.DEBUG_MODE and message.rstrip() and sys.stderr is not None:
             sys.stderr.write("{}{}\n".format(time.strftime(constants.UI_TIME_FORMAT, time.localtime()), message.rstrip()))
 
     def showChatMessage(self, username, userMessage):

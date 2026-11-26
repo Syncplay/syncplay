@@ -567,6 +567,8 @@ class ConfigurationGetter(object):
                         if isDarkMode:
                             self.app.setStyle(QtWidgets.QStyleFactory.create("fusion"))
                             self.app.setPalette(self.getDarkPalette(QtGui))
+                        elif IsPySide6:
+                            self.app.setStyle(QtWidgets.QStyleFactory.create("windowsvista"))
                 qt5reactor.install()
                 if isMacOS():
                     import appnope

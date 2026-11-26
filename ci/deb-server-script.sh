@@ -7,7 +7,7 @@ mkdir -p /tmp/syncplay-server/DEBIAN
 
 echo "Package: syncplay-server
 Version: "$(
-  sed -n -e "s/^.*version = //p" syncplay/__init__.py | sed "s/'//g"
+  python3 -c "import syncplay; print(syncplay.version)"
 )$(
   if [ $(git describe --exact-match --tags HEAD | wc -l) = '0' ]; 
   then
@@ -15,8 +15,8 @@ Version: "$(
   fi
 )"
 Architecture: all
-Maintainer: <dev@syncplay.pl>
-Depends: python3 (>= 3.6), python3-twisted (>= 16.4.0), python3-certifi
+Maintainer: Syncplay <dev@syncplay.pl>
+Depends: python3 (>= 3.8), python3-twisted (>= 16.4.0), python3-certifi
 Conflicts: syncplay
 Homepage: https://syncplay.pl
 Section: web
@@ -32,4 +32,4 @@ py3clean -p syncplay-server
 chmod 555 /tmp/syncplay-server/DEBIAN/prerm
 
 fakeroot make install-server DESTDIR=/tmp/syncplay-server
-fakeroot dpkg -b /tmp/syncplay-server/
+fakeroot dpkg-deb --build /tmp/syncplay-server/
