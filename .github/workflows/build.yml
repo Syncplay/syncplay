@@ -2,6 +2,39 @@ name: Build
 on: [push, pull_request]
 
 jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Check the lockfile
+        run: uv lock --check
+
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+
+      - name: Test
+        run: uv run python -m unittest discover -s tests -v
+
+      - name: Build
+        run: uv build
+
+      - name: Test the built wheel
+        run: |
+          uv venv wheel-test --python 3.12
+          uv pip install --python wheel-test/bin/python dist/*.whl
+          cd wheel-test && bin/python -m unittest discover -s ../tests -v
+
   windows:
     name: Build for Windows
     runs-on: windows-2022
