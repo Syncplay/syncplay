@@ -7,6 +7,10 @@ from syncplay import version
 
 target_arch = "universal2" if sys.platform == "darwin" else None
 
+# UPX rewrites the Mach-O headers, which breaks the ad-hoc signing and
+# notarisation steps of the macOS build.
+use_upx = sys.platform != "darwin"
+
 hiddenimports = [
     "{}.{}".format(binding, module)
     for binding in ("PySide6", "PySide2", "PyQt5")
@@ -49,7 +53,7 @@ exe_client = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=use_upx,
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
@@ -69,7 +73,7 @@ exe_server = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=use_upx,
     console=True,  # Use console=True for server scripts
     disable_windowed_traceback=False,
     argv_emulation=False,
@@ -84,7 +88,7 @@ coll = COLLECT(
     a.binaries,
     a.datas,
     strip=False,
-    upx=True,
+    upx=use_upx,
     upx_exclude=[],
     name='syncplay',
 )
@@ -97,7 +101,7 @@ app = BUNDLE(
     [('syncplayServer', exe_server.name, 'EXECUTABLE')],
     name='Syncplay.app',
     icon='./syncplay/resources/icon.icns',
-    bundle_identifier=None,
+    bundle_identifier='pl.syncplay.Syncplay',
     version=version,
     target_arch=target_arch,
     info_plist={
@@ -107,8 +111,9 @@ app = BUNDLE(
             {
                 'CFBundleName': 'Syncplay',
                 'CFBundleShortVersionString': version,
+                'CFBundleVersion': version,
                 'CFBundleIdentifier': 'pl.syncplay.Syncplay',
-                'LSMinimumSystemVersion': '10.12.0',
+                'LSMinimumSystemVersion': '11.0.0',
                 'NSHumanReadableCopyright': 'Copyright © 2026 Syncplay All Rights Reserved'
             }
         ]
