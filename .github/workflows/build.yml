@@ -135,13 +135,26 @@ jobs:
           CFLAGS: -arch x86_64 -arch arm64
           ARCHFLAGS: -arch x86_64 -arch arm64
         run: |
-          uv pip install --python .venv/bin/python --reinstall --no-binary :all: "cffi==1.17.1" "zope.interface==7.2"
+          # Compile the locked versions from source so the binary matches uv.lock.
+          freeze() { uv pip freeze --python .venv/bin/python | sed -n "s/^$1==//p"; }
+          uv pip install --python .venv/bin/python --reinstall --no-binary :all: \
+            "cffi==$(freeze cffi)" "zope.interface==$(freeze 'zope\.interface')"
 
       - name: Install universal2 wheels
+        env:
+          # cryptography dropped universal2 wheels in 50, so the macOS build
+          # cannot follow uv.lock here. These are the newest versions that still
+          # publish macosx_*_universal2 wheels for this interpreter; bump them
+          # only after checking that a universal2 wheel exists for the version.
+          CRYPTOGRAPHY: cryptography==44.0.2
+          CHARSET_NORMALIZER: charset-normalizer==3.4.1
         run: |
-          /Library/Frameworks/Python.framework/Versions/3.10/bin/python3.10 -m pip download --platform macosx_10_10_universal2 --only-binary :all: --no-deps --dest . "cryptography==44.0.2"
-          /Library/Frameworks/Python.framework/Versions/3.10/bin/python3.10 -m pip download --platform macosx_10_9_universal2 --only-binary :all: --no-deps --dest . "charset-normalizer==3.4.1"
-          uv pip install --python .venv/bin/python --reinstall --no-deps --no-index --find-links . "cryptography==44.0.2" "charset-normalizer==3.4.1"
+          PY=/Library/Frameworks/Python.framework/Versions/3.10/bin/python3.10
+          for spec in "$CRYPTOGRAPHY" "$CHARSET_NORMALIZER"; do
+            "$PY" -m pip download --platform macosx_10_10_universal2 --only-binary :all: --no-deps --dest . "$spec"
+          done
+          uv pip install --python .venv/bin/python --reinstall --no-deps --no-index --find-links . \
+            "$CRYPTOGRAPHY" "$CHARSET_NORMALIZER"
 
       - name: Build
         run: uv run pyinstaller --noconfirm build.spec
