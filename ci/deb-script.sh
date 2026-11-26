@@ -7,7 +7,7 @@ mkdir -p /tmp/syncplay/DEBIAN
 
 echo "Package: syncplay
 Version: "$(
-  sed -n -e "s/^.*version = //p" syncplay/__init__.py | sed "s/'//g"
+  python3 -c "import syncplay; print(syncplay.version)"
 )$(
   if [ $(git describe --exact-match --tags HEAD | wc -l) = '0' ]; 
   then

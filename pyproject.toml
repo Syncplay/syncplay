@@ -1,6 +1,6 @@
 [project]
 name = "syncplay"
-version = "1.7.7"
+dynamic = ["version"]
 description = "Client/server to synchronize media playback on mpv/VLC/MPC-HC/MPC-BE on many computers"
 readme = "README.md"
 urls = { Project-URL = "https://syncplay.pl/" }
@@ -53,6 +53,9 @@ syncplay-server = "syncplay.ep_server:main"
 
 [project.gui-scripts]
 syncplay = "syncplay.ep_client:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "syncplay.version" }
 
 [build-system]
 requires = ["setuptools >= 61.0"]

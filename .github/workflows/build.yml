@@ -47,7 +47,7 @@ jobs:
 
       - name: Prepare for deployment
         run: |
-          $version = (Get-Content syncplay/__init__.py | Select-String -Pattern "version\s*=\s*'(.+?)'" | ForEach-Object { $_.Matches.Groups[1].Value })
+          $version = uv run python -c "import syncplay; print(syncplay.version)"
           echo "VER=$version" >> $env:GITHUB_ENV
 
       - name: Deploy portable
@@ -102,7 +102,7 @@ jobs:
       - name: Prepare for deployment
         run: |
           ls -al
-          export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+          export VER="$(python3 -c 'import syncplay; print(syncplay.version)')"
           echo "VER=$VER" >> $GITHUB_ENV
           mkdir dist_actions
           ci/macos-deploy.sh
@@ -134,7 +134,7 @@ jobs:
       - name: Prepare for deployment
         run: |
           ls -al
-          export VER="$(cat syncplay/__init__.py | awk '/version/ {gsub("\047", "", $3); print $NF}')"
+          export VER="$(python3 -c 'import syncplay; print(syncplay.version)')"
           echo "VER=$VER" >> $GITHUB_ENV
           mkdir dist_actions
           mv /tmp/syncplay.deb dist_actions/syncplay_${VER}.deb
