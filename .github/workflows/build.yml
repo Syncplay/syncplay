@@ -1,5 +1,17 @@
 name: Build
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [master]
+    tags: ["*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -48,7 +60,7 @@ jobs:
             architecture: x64
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -88,6 +100,7 @@ jobs:
         with:
           name: Syncplay_${{ env.VER }}_${{ matrix.architecture }}_Portable
           path: |
+          retention-days: ${{ github.event_name == \'pull_request\' && 7 || 14 }}
             dist/syncplay
 
       - name: Deploy installer
@@ -95,6 +108,7 @@ jobs:
         with:
           name: Syncplay-${{ env.VER }}-${{ matrix.architecture }}-Setup.exe
           path: |
+          retention-days: ${{ github.event_name == \'pull_request\' && 7 || 14 }}
             Syncplay-${{ env.VER }}-Setup.exe
 
   macos:
@@ -142,10 +156,11 @@ jobs:
           ls -al dist_actions
 
       - name: Deploy
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Syncplay_${{ env.VER }}.dmg
           path: |
+          retention-days: ${{ github.event_name == \'pull_request\' && 7 || 14 }}
             dist_actions/Syncplay_${{ env.VER }}.dmg
 
   deb:
@@ -179,6 +194,7 @@ jobs:
         with:
           name: syncplay.deb
           path: |
+          retention-days: ${{ github.event_name == \'pull_request\' && 7 || 14 }}
             dist_actions/syncplay_*.deb
 
       - name: Deploy server deb
@@ -186,4 +202,5 @@ jobs:
         with:
           name: syncplay-server.deb
           path: |
+          retention-days: ${{ github.event_name == \'pull_request\' && 7 || 14 }}
             dist_actions/syncplay-server_*.deb
